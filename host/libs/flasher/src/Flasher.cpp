@@ -7,6 +7,7 @@
 #include <Device/Operations/Flash.h>
 #include <Device/Operations/Backup.h>
 #include <Device/Operations/StartApplication.h>
+#include <Device/Operations/Identify.h>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -53,8 +54,8 @@ void Flasher::backupFirmware(bool startApplication) {
     }
 }
 
-void Flasher::flashBootloader(bool startApplication) {
-    flash(false, startApplication);
+void Flasher::flashBootloader() {
+    flash(false, false);
 }
 
 void Flasher::flash(bool flashFirmware, bool startApplication) {
@@ -155,8 +156,9 @@ void Flasher::handleOperationFinished(operation::Type opType, int data) {
             break;
         }
         break;
+    case operation::Type::Identify :
     case operation::Type::StartApplication :
-        qCInfo(logCategoryFlasher) << device_ << "Launching firmware. Name: '"
+        qCInfo(logCategoryFlasher) << device_ << "Launching device software. Name: '"
                                    << device_->property(DeviceProperties::verboseName) << "', version: '"
                                    << device_->property(DeviceProperties::applicationVer) << "'.";
         emit devicePropertiesChanged();
@@ -189,24 +191,31 @@ void Flasher::handleOperationFinished(operation::Type opType, int data) {
 }
 
 void Flasher::manageFlash(int lastFlashedChunk) {
-    bool flashFirmware = (action_ == Action::FlashFirmware);
+    bool flashFw = (action_ == Action::FlashFirmware);
 
     // Bootloader uses range 0 to N-1 for chunk numbers, our signals use range 1 to N.
     int flashedChunk = lastFlashedChunk + 1;
 
     if (flashedChunk == chunkCount_) {  // the last chunk
         binaryFile_.close();
-        const char* binaryType = (flashFirmware) ? "firmware" : "bootloader";
+        const char* binaryType = (flashFw) ? "firmware" : "bootloader";
         qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_ << " - " << binaryType << " is flashed.";
-        (flashFirmware)
+        (flashFw)
             ? emit flashFirmwareProgress(flashedChunk, chunkCount_)
             : emit flashBootloaderProgress(flashedChunk, chunkCount_);
-        if (startApp_) {
-            operation_ = std::make_unique<operation::StartApplication>(device_);
+        if (flashFw) {
+            if (startApp_) {
+                operation_ = std::make_unique<operation::StartApplication>(device_);
+                connectHandlers(operation_.get());
+                operation_->run();
+            } else {
+                finish(Result::Ok);
+            }
+        } else {  // flash bootloader
+            operation_ = std::make_unique<operation::Identify>(device_, MAX_GET_FW_INFO_RETRIES);
             connectHandlers(operation_.get());
-            operation_->run();
-        } else {
-            finish(Result::Ok);
+            device::operation::Identify *identify = dynamic_cast<device::operation::Identify*>(operation_.get());
+            identify->runWithDelay(IDENTIFY_OPERATION_DELAY);  // starting new bootloader takes some time
         }
         return;
     }
@@ -215,7 +224,7 @@ void Flasher::manageFlash(int lastFlashedChunk) {
         if (flashedChunk == chunkProgress_) { // this is faster than modulo
             chunkProgress_ += FLASH_PROGRESS_STEP;
             qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
-            (flashFirmware)
+            (flashFw)
                 ? emit flashFirmwareProgress(flashedChunk, chunkCount_)
                 : emit flashBootloaderProgress(flashedChunk, chunkCount_);
         } else {

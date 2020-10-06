@@ -8,7 +8,7 @@ namespace strata {
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT(1000);
 
-constexpr uint MAX_PLATFORM_ID_RETRIES(5);
+constexpr uint MAX_GET_FW_INFO_RETRIES(5);
 
 constexpr uint MAX_CHUNK_RETRIES(1);
 

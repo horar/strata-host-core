@@ -18,6 +18,8 @@ bool BaseDeviceCommand::ackReceived() const {
 }
 
 void BaseDeviceCommand::onTimeout() {
+    // Default result is 'InProgress' - command timed out, finish operation with failure.
+    // In some cases timeout is not a problem, result is 'Done' or 'Retry' then.
     result_ = CommandResult::InProgress;
 }
 

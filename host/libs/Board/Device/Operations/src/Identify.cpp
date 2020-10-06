@@ -14,6 +14,18 @@ Identify::Identify(const device::DevicePtr& device, bool requireFwInfoResponse) 
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, requireFwInfoResponse));
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+
+    currentCommand_ = commandList_.end();
+}
+
+Identify::Identify(const device::DevicePtr& device, uint maxFwInfoRetries) :
+    BaseDeviceOperation(device, Type::Identify)
+{
+    // BaseDeviceOperation member device_ must be used as a parameter for commands!
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, maxFwInfoRetries));
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+
+    currentCommand_ = commandList_.end();
 }
 
 void Identify::runWithDelay(std::chrono::milliseconds delay)

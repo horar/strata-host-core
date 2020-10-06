@@ -20,7 +20,7 @@ StackLayout {
         }
     }
 
-    property int device_id: model.device_id
+    property var device_id: model.device_id // var type so Constants.DEVICE_IDs are not coerced to 32 bit signed ints
     property string class_id: model.class_id
     property string firmware_version: model.firmware_version
     property bool connected: model.connected
@@ -84,9 +84,10 @@ StackLayout {
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
 
-        PlatformSettings {
-            id: platformSettings
-        }
+        // Commented out to remove OTA features from release v2.5.0
+//        PlatformSettings {
+//            id: platformSettings
+//        }
     }
 
     SGUserSettings {

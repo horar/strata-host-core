@@ -67,6 +67,11 @@ public:
      */
     bool getDocument(const std::string& doc_id, std::string& result);
 
+    /**
+     * Stop the replication operations and close the database
+     */
+    void stop();
+
 signals:
     void documentUpdated(QString documentId);
 
