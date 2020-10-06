@@ -10,6 +10,7 @@ SGFileTabItem::SGFileTabItem(const QString &filename, const QUrl &filepath, cons
     filepath_(filepath),
     filetype_(filetype)
 {
+    unsavedChanges_ = false;
 }
 
 QString SGFileTabItem::filename() const
@@ -25,6 +26,11 @@ QUrl SGFileTabItem::filepath() const
 QString SGFileTabItem::filetype() const
 {
     return filetype_;
+}
+
+bool SGFileTabItem::unsavedChanges() const
+{
+    return unsavedChanges_;
 }
 
 QString SGFileTabItem::id() const
@@ -59,6 +65,15 @@ bool SGFileTabItem::setFiletype(const QString &filetype)
     return false;
 }
 
+bool SGFileTabItem::setUnsavedChanges(const bool &unsaved)
+{
+    if (unsavedChanges_ != unsaved) {
+        unsavedChanges_ = unsaved;
+        return true;
+    }
+    return false;
+}
+
 /*******************************************************************
  * class SGFileTabModel
  ******************************************************************/
@@ -83,6 +98,7 @@ QHash<int, QByteArray> SGFileTabModel::roleNames() const
     roles.insert(FilepathRole, "filepath");
     roles.insert(FiletypeRole, "filetype");
     roles.insert(IdRole, "id");
+    roles.insert(UnsavedChangesRole, "unsavedChanges");
     return roles;
 }
 
@@ -105,6 +121,8 @@ QVariant SGFileTabModel::data(const QModelIndex &index, int role) const
         return tab->filetype();
     case IdRole:
         return tab->id();
+    case UnsavedChangesRole:
+        return tab->unsavedChanges();
     default:
         return QVariant();
     }
@@ -134,6 +152,9 @@ bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, in
     case IdRole:
         qWarning() << "Cannot set id of tab item";
         return false;
+    case UnsavedChangesRole:
+        success = tab->setUnsavedChanges(value.toBool());
+        break;
     default:
         return false;
     }

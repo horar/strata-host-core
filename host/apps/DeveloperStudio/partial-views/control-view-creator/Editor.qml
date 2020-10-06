@@ -124,6 +124,7 @@ Item {
                                         left: parent.left
                                         verticalCenter: parent.verticalCenter
                                         leftMargin: 5
+                                        rightMargin: 2
                                     }
                                     verticalAlignment: Text.AlignVCenter
                                     elide: Text.ElideRight
@@ -131,11 +132,12 @@ Item {
 
                                 SGIcon {
                                     id: closeFileIcon
-                                    source: "qrc:/sgimages/times-circle.svg"
+                                    source: model.unsavedChanges ? "qrc:/sgimages/asterisk.svg" : "qrc:/sgimages/times-circle.svg"
                                     height: tabText.paintedHeight
                                     width: height
                                     implicitWidth: height
-                                    visible: fileTab.hovered
+                                    iconColor: "white"
+                                    visible: model.unsavedChanges || fileTab.hovered
                                     anchors {
                                         left: tabText.right
                                         leftMargin: 4
@@ -148,8 +150,16 @@ Item {
                                     MouseArea {
                                         anchors.fill: parent
                                         hoverEnabled: true
+
                                         onEntered: {
                                             cursorShape = Qt.PointingHandCursor
+                                            closeFileIcon.source = "qrc:/sgimages/times-circle.svg"
+                                        }
+
+                                        onExited: {
+                                            if (model.unsavedChanges) {
+                                                closeFileIcon.source = "qrc:/sgimages/asterisk.svg"
+                                            }
                                         }
 
                                         onClicked: {

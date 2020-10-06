@@ -16,11 +16,9 @@ Item {
 
     property int modelIndex: index
     property string file: model.filename
-    property string fileText
-
-    Component.onCompleted: {
-        channel.registerObject("valueLink", channelObject)
-    }
+    property string fileText: ""
+    property int savedVersionId
+    property int currentVersionId
 
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
@@ -33,6 +31,8 @@ Item {
         var request = new XMLHttpRequest();
         request.open("PUT", fileUrl, false);
         request.send(text);
+        savedVersionId = currentVersionId;
+        model.unsavedChanges = false;
         return request.status;
     }
 
@@ -43,11 +43,13 @@ Item {
 
     WebChannel {
         id: channel
+        registeredObjects: [channelObject]
     }
 
     QtObject {
         id: channelObject
         objectName: "fileChannel"
+        WebChannel.id: "valueLink"
 
         signal setValue(string value);
 
@@ -57,6 +59,15 @@ Item {
 
         function setFileText(value) {
             fileText = value;
+        }
+
+        function setVersionId(version) {
+            // If this is the first change, then we have just initialized the editor
+            if (!savedVersionId) {
+                savedVersionId = version
+            }
+            currentVersionId = version
+            model.unsavedChanges = (savedVersionId !== version)
         }
     }
 
@@ -83,6 +94,22 @@ Item {
                 });
                 fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
+            }
+        }
+
+        onJavaScriptConsoleMessage: {
+            switch (level) {
+            case WebEngineView.InfoMessageLevel:
+                console.info(sourceID, "-", lineNumber, "-", message)
+                break;
+            case WebEngineView.WarningMessageLevel:
+                console.warn(sourceID, "-", lineNumber, "-", message);
+                break;
+            case WebEngineView.ErrorMessageLevel:
+                console.error(sourceID, "-", lineNumber, "-", message);
+                break;
+            default:
+                break;
             }
         }
 
