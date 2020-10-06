@@ -168,7 +168,7 @@ Rectangle {
                     fileModel.url = sdsModel.newControlView.createNewProject(fileOutput.text, templateButtonGroup.checkedButton.path);
                     viewStack.currentIndex = editUseStrip.offset
                     editUseStrip.checkedIndices = 1
-                    openProjectContainer.addToTheProjectList(fileOutput.text)
+                    openProjectContainer.addToTheProjectList(fileModel.url.toString())
                 }
             }
 
