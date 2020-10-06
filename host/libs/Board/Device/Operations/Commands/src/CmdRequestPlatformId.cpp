@@ -16,8 +16,12 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         const char *name = payload[JSON_NAME].GetString();
-        const char *platformId = payload[JSON_PLATFORM_ID].GetString();
-        const char *classId = payload[JSON_CLASS_ID].GetString();
+        const char *platformId = "";
+        const char *classId = "";
+        if (payload.HasMember(JSON_PLATFORM_ID)) {
+            platformId = payload[JSON_PLATFORM_ID].GetString();
+            classId = payload[JSON_CLASS_ID].GetString();
+        }
         setDeviceProperties(name, platformId, classId, nullptr, nullptr);
         result_ = CommandResult::Done;
         return true;
