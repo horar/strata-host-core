@@ -8,6 +8,7 @@ import QtQuick.Extras 1.4
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
@@ -123,7 +124,7 @@ Rectangle {
             anchors.bottomMargin: 50
             color: "transparent"
 
-            SGStatusLogBox{
+            SGStatusLogBoxSelectableDelegates{
                 id: messageList
                 anchors.fill: parent
                 showMessageIds: true
