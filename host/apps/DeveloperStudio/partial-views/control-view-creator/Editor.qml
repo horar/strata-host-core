@@ -14,6 +14,7 @@ import "../"
 Item {
     id: editorRoot
     property alias treeModel: treeModel
+    property alias openFilesModel: openFilesModel
 
     SGQrcTreeModel {
         id: treeModel

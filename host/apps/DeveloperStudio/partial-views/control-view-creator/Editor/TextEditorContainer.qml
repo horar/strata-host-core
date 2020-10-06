@@ -51,6 +51,12 @@ Item {
                 saveFile();
             }
         }
+
+        onSaveAllRequested: {
+            if (model.unsavedChanges) {
+                saveFile();
+            }
+        }
     }
 
     WebChannel {

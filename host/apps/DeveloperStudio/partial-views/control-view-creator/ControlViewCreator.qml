@@ -12,6 +12,7 @@ Rectangle {
     objectName: "ControlViewCreator"
 
     property url currentFileUrl: ""
+    property alias openFilesModel: editor.openFilesModel
 
     SGUserSettings {
         id: sgUserSettings
@@ -168,6 +169,10 @@ Rectangle {
         if (editor.treeModel.url !== '') {
             sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
         }
+    }
+
+    function checkForUnsavedFiles() {
+        return editor.openFilesModel.getUnsavedCount();
     }
 
     function loadDebugView (compiledRccFile) {

@@ -43,6 +43,15 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
+        let unsavedCount = controlViewCreator.checkForUnsavedFiles()
+        if (unsavedCount > 0) {
+            close.accepted = false
+            confirmClosePopup.unsavedFileCount = unsavedCount
+            confirmClosePopup.open()
+            return
+        }
+
+
         SessionUtils.close_session()
 
         // End session with HCS
@@ -70,6 +79,33 @@ SGWidgets.SGMainWindow {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
             }
         }
+    }
+
+    SGConfirmationPopup {
+        id: confirmClosePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+        cancelButtonText: "Don't save"
+        acceptButtonColor: SGColorsJS.STRATA_GREEN
+        acceptButtonHoverColor: Qt.darker(SGColorsJS.STRATA_GREEN, 1.25)
+        closePolicy: Popup.NoAutoClose
+
+        property int unsavedFileCount
+
+        onCancelled: {
+            controlViewCreator.openFilesModel.closeAll()
+            mainWindow.close()
+        }
+
+        onAccepted: {
+            controlViewCreator.openFilesModel.saveAll()
+            mainWindow.close()
+        }
+
     }
 
     ColumnLayout {
