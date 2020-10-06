@@ -441,7 +441,7 @@ Item {
                     id: dimmensionalModeSpace
                     anchors {
                         top: basicImageLed.bottom
-                        topMargin: 10
+                        topMargin: 60
 
                     }
                     labelLeft: false
