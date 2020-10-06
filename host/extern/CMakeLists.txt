@@ -6,7 +6,12 @@ include(ExternalProject)
 include(GitHashAndInstallationStatus)
 
 # root of all 3rd party installed project
-set(EXTERN_INSTALL_DIR_NAME 3p)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(EXTERN_INSTALL_DIR_NAME 3p-d)
+else()
+    set(EXTERN_INSTALL_DIR_NAME 3p)  
+endif()
+
 if(EXTERN_INSTALL_DIR_PATH)
     if(NOT ${EXTERN_INSTALL_DIR_PATH} MATCHES ${EXTERN_INSTALL_DIR_NAME})
         string(APPEND EXTERN_INSTALL_DIR_PATH "/${EXTERN_INSTALL_DIR_NAME}")
