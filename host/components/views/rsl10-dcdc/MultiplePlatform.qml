@@ -10,7 +10,7 @@ Item{
     property string title: "<b> Automotive 4 channels PMIC Converter </b>"
     property string warningHVVinLable: "5.5V"
     property string warningLVVinLable: "4.5V"
-    property string opn: "STR-PWRNCV6922-R0-GEVB"
+    property string opn: "STR-PWRNCV6922-R0-GEVK"
     property real minVin: 2.5
     property real nominalVin: 5
     property real vinScale: 10
@@ -47,7 +47,7 @@ Item{
             partNumber = " <b> NCV81599 </b>"
             warningHVVinLable = "32V"
             warningLVVinLable = "4.5V"
-            opn = "STR-PWRNCV81599-R0-GEVB"
+            opn = "STR-PWRNCV81599-R0-GEVK"
             minVin = 4.5
             nominalVin = 18
             vinScale = 20
@@ -78,7 +78,7 @@ Item{
             title =  "<b> Automotive Low Noise and High PSSR Linear Regulator </b> "
             warningHVVinLable = "5.5V"
             warningLVVinLable = "1.8V"
-            opn = "STR-PWRNCV330-R0-GEVB"
+            opn = "STR-PWRNCV330-R0-GEVK"
             minVin = 1.8
             nominalVin = 5
             vinScale = 10
@@ -109,7 +109,7 @@ Item{
                   title = "<b> Automotive AOT Buck Converter </b>"
                   warningHVVinLable = "5.5V"
                   warningLVVinLable = "2.5V"
-                  opn = "STR-PWRNCV6357-R0-GEVB"
+                  opn = "STR-PWRNCV6357-R0-GEVK"
                   minVin = 2.5
                   nominalVin = 5
                   vinScale = 10
@@ -140,7 +140,7 @@ Item{
             title = "<b> Automotive PWM Buck Converter </b>"
             warningHVVinLable = "5.5V"
             warningLVVinLable = "1.9V"
-            opn = "STR-PWRNCV91300-R0-GEVB"
+            opn = "STR-PWRNCV91300-R0-GEVK"
             minVin = 1.9
             nominalVin = 5
             vinScale = 10
@@ -175,7 +175,7 @@ Item{
             title = "<b> Automotive Buck Regulator </b>"
             warningHVVinLable = "37V"
             warningLVVinLable = "3.5V"
-            opn = "STR-PWRNCV890430-R0-GEVB"
+            opn = "STR-PWRNCV890430-R0-GEVK"
             minVin = 3.5
             nominalVin = 18
             vinScale = 20
@@ -210,7 +210,7 @@ Item{
             title = "<b> Automotive Charge Pump Buck Boost Converter </b>"
             warningHVVinLable = "40V"
             warningLVVinLable = "3V"
-            opn = "STR-PWRNCV48920-R0-GEVB"
+            opn = "STR-PWRNCV48920-R0-GEVK"
             minVin = 3
             nominalVin = 20
             vinScale = 20
@@ -245,7 +245,7 @@ Item{
             title = "<b> DCX-LLC demoboard </b>"
             warningHVVinLable = "70V"
             warningLVVinLable = "30V"
-            opn = "STR-PWRFD6000-R0-GEVB"
+            opn = "STR-PWRFD6000-R0-GEVK"
             minVin = 30
             nominalVin = 60
             vinScale = 100
@@ -276,7 +276,7 @@ Item{
             title = "<b> Automotive Linear Regulator </b>"
             warningHVVinLable = "5.5V"
             warningLVVinLable = "1.9V"
-            opn = "STR-PWRNCV816x-R0-GEVB"
+            opn = "STR-PWRNCV816x-R0-GEVK"
             minVin = 1.9
             nominalVin = 5
             vinScale = 10
@@ -307,7 +307,7 @@ Item{
             title = "<b> Automotive Buck Converter </b>"
             warningHVVinLable = "5.5V"
             warningLVVinLable = "2.5V"
-            opn = "STR-PWRNCV6323-R0-GEVB"
+            opn = "STR-PWRNCV6323-R0-GEVK"
             minVin = 2.5
             nominalVin = 5
             vinScale = 10
@@ -338,7 +338,7 @@ Item{
             title = "<b> Automotive 4 channels PMIC Converter </b>"
             warningHVVinLable = "5.5V"
             warningLVVinLable = "2.5V"
-            opn = "STR-PWRNCV6922-R0-GEVB"
+            opn = "STR-PWRNCV6922-R0-GEVK"
             minVin = 2.5
             nominalVin = 5
             vinScale = 10
@@ -373,7 +373,7 @@ Item{
             title = "<b> Automotive Dual Output Buck Converter </b>"
             warningHVVinLable = "5.5V"
             warningLVVinLable = "2.7V"
-            opn = "STR-PWRNCV896530-R0-GEVB"
+            opn = "STR-PWRNCV896530-R0-GEVK"
             minVin = 2.7
             nominalVin = 5
             vinScale = 10
