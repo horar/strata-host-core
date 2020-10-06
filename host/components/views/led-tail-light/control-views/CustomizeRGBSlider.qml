@@ -1,6 +1,8 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
+import tech.strata.sgwidgets 1.0
+import tech.strata.fonts 1.0
 
 Slider {
     id: root
@@ -15,20 +17,26 @@ Slider {
     property int color_value: 0
     property real slider_start_color: 0
     property real slider_start_color2 : 1
+    property real grooveHandleRatio: .2
+    property color textColor: "black"
+    property real fontSizeMultiplier: 1.0
+    property bool showToolTip: true
+    property color sliderColor: "White"
+
     signal userSet(real value)
     signal moved()
+    orientation: Qt.Vertical
     onUserSet: {
         console.log("user set:", value)
+
     }
     function increase () {
-        increase()
+        root.increase()
     }
     function decrease () {
-        decrease()
+        root.decrease()
     }
-    function valueAt (position) {
-        return valueAt(position)
-    }
+
     property real lastValue
     onPressedChanged: {
         if (!live && !pressed && value.toFixed(0) != lastValue) {
@@ -36,6 +44,7 @@ Slider {
         } else {
             lastValue = value.toFixed(0)
         }
+       //  toolTip.text = value.toFixed(0)
 
     }
     onMoved: {
@@ -46,19 +55,36 @@ Slider {
             lastValue = value.toFixed(0)
         }
         root.moved()
-        console.log("in onmoved",value.toFixed(0))
+    }
+//    onValueChanged: {
+//        toolTip.text = value.toFixed(0)
+//    }
 
+    property real roundedValue: parseFloat(value.toFixed(decimals))
+
+    property int decimals: {
+        if (stepSize === 0.0) {
+            // stepSize of 0 logically means infinite decimals; 15 is max of double precision IEEE 754
+            return 15
+        } else if (Math.floor(root.stepSize) === root.stepSize) {
+            return 0
+        } else {
+            return root.stepSize.toString().split(".")[1].length || 0
+        }
     }
 
 
-
     background: Rectangle {
+        id: groove
         y: 4
         x: 5
         width: root.width-10
         height: root.height-8
         radius: 5
         layer.enabled: true
+        //        property real grooveHandleRatio: root.grooveHandleRatio < 0 ? 0 : root.grooveHandleRatio > 1 ? 1 : root.grooveHandleRatio
+        //        implicitWidth:  handle.width * grooveHandleRatio
+        //        implicitHeight: handle.height
         layer.effect: LinearGradient {
             start: Qt.point(0, 0)
             end: Qt.point(0, height)
@@ -69,6 +95,37 @@ Slider {
         }
 
     }
+    handle: Rectangle {
+        y: root.topPadding + root.visualPosition * (root.availableHeight - height)
+        x: root.leftPadding + root.availableWidth / 2 - width / 2
+        implicitWidth: 26
+        implicitHeight: 26
+        radius: 13
+        color: sliderColor
+        border.color: sliderColor
+
+        ToolTip {
+            id: toolTip
+            visible: root.showToolTip && root.pressed
+            text: (root.valueAt(root.position))
+
+            contentItem: SGText {
+                id: toolTipText
+                color: root.textColor
+                text: toolTip.text
+                font.family: Fonts.inconsolata
+                fontSizeMultiplier: root.fontSizeMultiplier
+            }
+
+            background: Rectangle {
+                id: toolTipBackground
+                color: "#eee"
+                radius: 2
+            }
+        }
+
+    }
+
     // Dumbed down version of hsvToRgb function to match simpler RGB gradient slider
     function hToRgb(h){
         var r, g, b;
