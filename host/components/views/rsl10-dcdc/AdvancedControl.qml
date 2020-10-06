@@ -253,8 +253,8 @@ Item {
                     throttlePlotting: true
                     pointCount: if (platformInterface.systemMode === false) {1} else {50}
                     title: "<b>Efficiency</b>"
-                    xAxisTitle: "<b>50 Âµs / div<b>"
-                    yAxisTitle: "<b>Î· [%]</b>"
+                    yAxisTitle: "<b>η [%]</b>"
+                    xAxisTitle: "<b>10 µs / div<b>"
                     inputData: effi_calc
                     maxYValue: 100
                     minYValue: 0
