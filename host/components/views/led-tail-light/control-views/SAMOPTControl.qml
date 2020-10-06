@@ -106,186 +106,182 @@ Item {
     property var soc_sam_conf_1: platformInterface.soc_sam_conf_1
     onSoc_sam_conf_1Changed: {
         samconfi1Text.text = soc_sam_conf_1.caption
-        out1.checked = soc_sam_conf_1.values[0]
-        out2.checked = soc_sam_conf_1.values[1]
-        out3.checked = soc_sam_conf_1.values[2]
-        out4.checked = soc_sam_conf_1.values[3]
-        out5.checked = soc_sam_conf_1.values[4]
-        out6.checked = soc_sam_conf_1.values[5]
-        out7.checked = soc_sam_conf_1.values[6]
-        out8.checked = soc_sam_conf_1.values[7]
-        out9.checked = soc_sam_conf_1.values[8]
-        out10.checked = soc_sam_conf_1.values[9]
-        out11.checked = soc_sam_conf_1.values[10]
-        out12.checked = soc_sam_conf_1.values[11]
+        out12.checked = soc_sam_conf_1.values[0]
+        out11.checked = soc_sam_conf_1.values[1]
+        out10.checked = soc_sam_conf_1.values[2]
+        out9.checked = soc_sam_conf_1.values[3]
+        out8.checked = soc_sam_conf_1.values[4]
+        out7.checked = soc_sam_conf_1.values[5]
+        out6.checked = soc_sam_conf_1.values[6]
+        out5.checked = soc_sam_conf_1.values[7]
+        out4.checked = soc_sam_conf_1.values[8]
+        out3.checked = soc_sam_conf_1.values[9]
+        out2.checked = soc_sam_conf_1.values[10]
+        out1.checked = soc_sam_conf_1.values[11]
 
-        platformInterface.soc_sam_conf_1_out1 = soc_sam_conf_1.values[0]
-        platformInterface.soc_sam_conf_1_out2 = soc_sam_conf_1.values[1]
-        platformInterface.soc_sam_conf_1_out3 = soc_sam_conf_1.values[2]
-        platformInterface.soc_sam_conf_1_out4 = soc_sam_conf_1.values[3]
-        platformInterface.soc_sam_conf_1_out5 = soc_sam_conf_1.values[4]
-        platformInterface.soc_sam_conf_1_out6 = soc_sam_conf_1.values[5]
-        platformInterface.soc_sam_conf_1_out7 = soc_sam_conf_1.values[6]
-        platformInterface.soc_sam_conf_1_out8 = soc_sam_conf_1.values[7]
-        platformInterface.soc_sam_conf_1_out9 = soc_sam_conf_1.values[8]
-        platformInterface.soc_sam_conf_1_out10 = soc_sam_conf_1.values[9]
-        platformInterface.soc_sam_conf_1_out11 = soc_sam_conf_1.values[10]
-        platformInterface.soc_sam_conf_1_out12 = soc_sam_conf_1.values[11]
+        platformInterface.soc_sam_conf_1_out12 = soc_sam_conf_1.values[0]
+        platformInterface.soc_sam_conf_1_out11 = soc_sam_conf_1.values[1]
+        platformInterface.soc_sam_conf_1_out10 = soc_sam_conf_1.values[2]
+        platformInterface.soc_sam_conf_1_out9 = soc_sam_conf_1.values[3]
+        platformInterface.soc_sam_conf_1_out8 = soc_sam_conf_1.values[4]
+        platformInterface.soc_sam_conf_1_out7 = soc_sam_conf_1.values[5]
+        platformInterface.soc_sam_conf_1_out6 = soc_sam_conf_1.values[6]
+        platformInterface.soc_sam_conf_1_out5 = soc_sam_conf_1.values[7]
+        platformInterface.soc_sam_conf_1_out4 = soc_sam_conf_1.values[8]
+        platformInterface.soc_sam_conf_1_out3 = soc_sam_conf_1.values[9]
+        platformInterface.soc_sam_conf_1_out2 = soc_sam_conf_1.values[10]
+        platformInterface.soc_sam_conf_1_out1 = soc_sam_conf_1.values[11]
 
-        setStatesForControls(out1,soc_sam_conf_1.states[0])
-        setStatesForControls(out2,soc_sam_conf_1.states[1])
-        setStatesForControls(out3,soc_sam_conf_1.states[2])
-        setStatesForControls(out4,soc_sam_conf_1.states[3])
-        setStatesForControls(out5,soc_sam_conf_1.states[4])
-        setStatesForControls(out6,soc_sam_conf_1.states[5])
-        setStatesForControls(out7,soc_sam_conf_1.states[6])
-        setStatesForControls(out8,soc_sam_conf_1.states[7])
-        setStatesForControls(out9,soc_sam_conf_1.states[8])
-        setStatesForControls(out10,soc_sam_conf_1.states[9])
-        setStatesForControls(out11,soc_sam_conf_1.states[10])
-        setStatesForControls(out12,soc_sam_conf_1.states[11])
+        setStatesForControls(out12,soc_sam_conf_1.states[0])
+        setStatesForControls(out11,soc_sam_conf_1.states[1])
+        setStatesForControls(out10,soc_sam_conf_1.states[2])
+        setStatesForControls(out9,soc_sam_conf_1.states[3])
+        setStatesForControls(out8,soc_sam_conf_1.states[4])
+        setStatesForControls(out7,soc_sam_conf_1.states[5])
+        setStatesForControls(out6,soc_sam_conf_1.states[6])
+        setStatesForControls(out5,soc_sam_conf_1.states[7])
+        setStatesForControls(out4,soc_sam_conf_1.states[8])
+        setStatesForControls(out3,soc_sam_conf_1.states[9])
+        setStatesForControls(out2,soc_sam_conf_1.states[10])
+        setStatesForControls(out1,soc_sam_conf_1.states[11])
     }
 
     property var soc_sam_conf_1_values: platformInterface.soc_sam_conf_1_values.values
     onSoc_sam_conf_1_valuesChanged: {
-        out1.checked = soc_sam_conf_1_values[0]
-        out2.checked = soc_sam_conf_1_values[1]
-        out3.checked = soc_sam_conf_1_values[2]
-        out4.checked = soc_sam_conf_1_values[3]
-        out5.checked = soc_sam_conf_1_values[4]
-        out6.checked = soc_sam_conf_1_values[5]
-        out7.checked = soc_sam_conf_1_values[6]
-        out8.checked = soc_sam_conf_1_values[7]
-        out9.checked = soc_sam_conf_1_values[8]
-        out10.checked = soc_sam_conf_1_values[9]
-        out11.checked = soc_sam_conf_1_values[10]
-        out12.checked = soc_sam_conf_1_values[11]
+        out12.checked = soc_sam_conf_1_values[0]
+        out11.checked = soc_sam_conf_1_values[1]
+        out10.checked = soc_sam_conf_1_values[2]
+        out9.checked = soc_sam_conf_1_values[3]
+        out8.checked = soc_sam_conf_1_values[4]
+        out7.checked = soc_sam_conf_1_values[5]
+        out6.checked = soc_sam_conf_1_values[6]
+        out5.checked = soc_sam_conf_1_values[7]
+        out4.checked = soc_sam_conf_1_values[8]
+        out3.checked = soc_sam_conf_1_values[9]
+        out2.checked = soc_sam_conf_1_values[10]
+        out1.checked = soc_sam_conf_1_values[11]
 
-        platformInterface.soc_sam_conf_1_out1 = soc_sam_conf_1_values[0]
-        platformInterface.soc_sam_conf_1_out2 = soc_sam_conf_1_values[1]
-        platformInterface.soc_sam_conf_1_out3 = soc_sam_conf_1_values[2]
-        platformInterface.soc_sam_conf_1_out4 = soc_sam_conf_1_values[3]
-        platformInterface.soc_sam_conf_1_out5 = soc_sam_conf_1_values[4]
-        platformInterface.soc_sam_conf_1_out6 = soc_sam_conf_1_values[5]
-        platformInterface.soc_sam_conf_1_out7 = soc_sam_conf_1_values[6]
-        platformInterface.soc_sam_conf_1_out8 = soc_sam_conf_1_values[7]
-        platformInterface.soc_sam_conf_1_out9 = soc_sam_conf_1_values[8]
-        platformInterface.soc_sam_conf_1_out10 = soc_sam_conf_1_values[9]
-        platformInterface.soc_sam_conf_1_out11 = soc_sam_conf_1_values[10]
-        platformInterface.soc_sam_conf_1_out12 = soc_sam_conf_1_values[11]
-
-
-
-
+        platformInterface.soc_sam_conf_1_out12 = soc_sam_conf_1_values[0]
+        platformInterface.soc_sam_conf_1_out11 = soc_sam_conf_1_values[1]
+        platformInterface.soc_sam_conf_1_out10 = soc_sam_conf_1_values[2]
+        platformInterface.soc_sam_conf_1_out9 = soc_sam_conf_1_values[3]
+        platformInterface.soc_sam_conf_1_out8 = soc_sam_conf_1_values[4]
+        platformInterface.soc_sam_conf_1_out7 = soc_sam_conf_1_values[5]
+        platformInterface.soc_sam_conf_1_out6 = soc_sam_conf_1_values[6]
+        platformInterface.soc_sam_conf_1_out5 = soc_sam_conf_1_values[7]
+        platformInterface.soc_sam_conf_1_out4 = soc_sam_conf_1_values[8]
+        platformInterface.soc_sam_conf_1_out3 = soc_sam_conf_1_values[9]
+        platformInterface.soc_sam_conf_1_out2 = soc_sam_conf_1_values[10]
+        platformInterface.soc_sam_conf_1_out1 = soc_sam_conf_1_values[11]
 
     }
 
     property var soc_sam_conf_1_state: platformInterface.soc_sam_conf_1_states.states
     onSoc_sam_conf_1_stateChanged: {
-        setStatesForControls(out1,soc_sam_conf_1_state[0])
-        setStatesForControls(out2,soc_sam_conf_1_state[1])
-        setStatesForControls(out3,soc_sam_conf_1_state[2])
-        setStatesForControls(out4,soc_sam_conf_1_state[3])
-        setStatesForControls(out5,soc_sam_conf_1_state[4])
-        setStatesForControls(out6,soc_sam_conf_1_state[5])
-        setStatesForControls(out7,soc_sam_conf_1_state[6])
-        setStatesForControls(out8,soc_sam_conf_1_state[7])
-        setStatesForControls(out9,soc_sam_conf_1_state[8])
-        setStatesForControls(out10,soc_sam_conf_1_state[9])
-        setStatesForControls(out11,soc_sam_conf_1_state[10])
-        setStatesForControls(out12,soc_sam_conf_1_state[11])
+        setStatesForControls(out12,soc_sam_conf_1_state[0])
+        setStatesForControls(out11,soc_sam_conf_1_state[1])
+        setStatesForControls(out10,soc_sam_conf_1_state[2])
+        setStatesForControls(out9,soc_sam_conf_1_state[3])
+        setStatesForControls(out8,soc_sam_conf_1_state[4])
+        setStatesForControls(out7,soc_sam_conf_1_state[5])
+        setStatesForControls(out6,soc_sam_conf_1_state[6])
+        setStatesForControls(out5,soc_sam_conf_1_state[7])
+        setStatesForControls(out4,soc_sam_conf_1_state[8])
+        setStatesForControls(out3,soc_sam_conf_1_state[9])
+        setStatesForControls(out2,soc_sam_conf_1_state[10])
+        setStatesForControls(out1,soc_sam_conf_1_state[11])
     }
 
     property var soc_sam_conf_2: platformInterface.soc_sam_conf_2
     onSoc_sam_conf_2Changed: {
         samConfig2Text.text = soc_sam_conf_2.caption
-        samOut1.checked = soc_sam_conf_2.values[0]
-        samOut2.checked = soc_sam_conf_2.values[1]
-        samOut3.checked = soc_sam_conf_2.values[2]
-        samOut4.checked = soc_sam_conf_2.values[3]
-        samOut5.checked = soc_sam_conf_2.values[4]
-        samOut6.checked = soc_sam_conf_2.values[5]
-        samOut7.checked = soc_sam_conf_2.values[6]
-        samOut8.checked = soc_sam_conf_2.values[7]
-        samOut9.checked = soc_sam_conf_2.values[8]
-        samOut10.checked = soc_sam_conf_2.values[9]
-        samOut11.checked = soc_sam_conf_2.values[10]
-        samOut12.checked = soc_sam_conf_2.values[11]
+        samOut12.checked = soc_sam_conf_2.values[0]
+        samOut11.checked = soc_sam_conf_2.values[1]
+        samOut10.checked = soc_sam_conf_2.values[2]
+        samOut9.checked = soc_sam_conf_2.values[3]
+        samOut8.checked = soc_sam_conf_2.values[4]
+        samOut7.checked = soc_sam_conf_2.values[5]
+        samOut6.checked = soc_sam_conf_2.values[6]
+        samOut5.checked = soc_sam_conf_2.values[7]
+        samOut4.checked = soc_sam_conf_2.values[8]
+        samOut3.checked = soc_sam_conf_2.values[9]
+        samOut2.checked = soc_sam_conf_2.values[10]
+        samOut1.checked = soc_sam_conf_2.values[11]
 
 
-        platformInterface.soc_sam_conf_2_out1 = soc_sam_conf_2.values[0]
-        platformInterface.soc_sam_conf_2_out2 = soc_sam_conf_2.values[1]
-        platformInterface.soc_sam_conf_2_out3 = soc_sam_conf_2.values[2]
-        platformInterface.soc_sam_conf_2_out4 = soc_sam_conf_2.values[3]
-        platformInterface.soc_sam_conf_2_out5 = soc_sam_conf_2.values[4]
-        platformInterface.soc_sam_conf_2_out6 = soc_sam_conf_2.values[5]
-        platformInterface.soc_sam_conf_2_out7 = soc_sam_conf_2.values[6]
-        platformInterface.soc_sam_conf_2_out8 = soc_sam_conf_2.values[7]
-        platformInterface.soc_sam_conf_2_out9 = soc_sam_conf_2.values[8]
-        platformInterface.soc_sam_conf_2_out10 = soc_sam_conf_2.values[9]
-        platformInterface.soc_sam_conf_2_out11 = soc_sam_conf_2.values[10]
-        platformInterface.soc_sam_conf_2_out12 = soc_sam_conf_2.values[11]
+        platformInterface.soc_sam_conf_2_out12 = soc_sam_conf_2.values[0]
+        platformInterface.soc_sam_conf_2_out11 = soc_sam_conf_2.values[1]
+        platformInterface.soc_sam_conf_2_out10 = soc_sam_conf_2.values[2]
+        platformInterface.soc_sam_conf_2_out9 = soc_sam_conf_2.values[3]
+        platformInterface.soc_sam_conf_2_out8 = soc_sam_conf_2.values[4]
+        platformInterface.soc_sam_conf_2_out7 = soc_sam_conf_2.values[5]
+        platformInterface.soc_sam_conf_2_out6 = soc_sam_conf_2.values[6]
+        platformInterface.soc_sam_conf_2_out5 = soc_sam_conf_2.values[7]
+        platformInterface.soc_sam_conf_2_out4 = soc_sam_conf_2.values[8]
+        platformInterface.soc_sam_conf_2_out3 = soc_sam_conf_2.values[9]
+        platformInterface.soc_sam_conf_2_out2 = soc_sam_conf_2.values[10]
+        platformInterface.soc_sam_conf_2_out1 = soc_sam_conf_2.values[11]
 
-        setStatesForControls(samOut1,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut2,soc_sam_conf_2.states[1])
-        setStatesForControls(samOut3,soc_sam_conf_2.states[2])
-        setStatesForControls(samOut4,soc_sam_conf_2.states[3])
-        setStatesForControls(samOut5,soc_sam_conf_2.states[4])
-        setStatesForControls(samOut6,soc_sam_conf_2.states[5])
-        setStatesForControls(samOut7,soc_sam_conf_2.states[6])
-        setStatesForControls(samOut8,soc_sam_conf_2.states[7])
-        setStatesForControls(samOut9,soc_sam_conf_2.states[8])
-        setStatesForControls(samOut10,soc_sam_conf_2.states[9])
-        setStatesForControls(samOut11,soc_sam_conf_2.states[10])
-        setStatesForControls(samOut12,soc_sam_conf_2.states[11])
+        setStatesForControls(samOut12,soc_sam_conf_2.states[0])
+        setStatesForControls(samOut11,soc_sam_conf_2.states[1])
+        setStatesForControls(samOut10,soc_sam_conf_2.states[2])
+        setStatesForControls(samOut9,soc_sam_conf_2.states[3])
+        setStatesForControls(samOut8,soc_sam_conf_2.states[4])
+        setStatesForControls(samOut7,soc_sam_conf_2.states[5])
+        setStatesForControls(samOut6,soc_sam_conf_2.states[6])
+        setStatesForControls(samOut5,soc_sam_conf_2.states[7])
+        setStatesForControls(samOut4,soc_sam_conf_2.states[8])
+        setStatesForControls(samOut3,soc_sam_conf_2.states[9])
+        setStatesForControls(samOut2,soc_sam_conf_2.states[10])
+        setStatesForControls(samOut1,soc_sam_conf_2.states[11])
     }
 
     property var soc_sam_conf_2_values: platformInterface.soc_sam_conf_2_values.values
     onSoc_sam_conf_2_valuesChanged: {
-        samOut1.checked = soc_sam_conf_2_values[0]
-        samOut2.checked = soc_sam_conf_2_values[1]
-        samOut3.checked = soc_sam_conf_2_values[2]
-        samOut4.checked = soc_sam_conf_2_values[3]
-        samOut5.checked = soc_sam_conf_2_values[4]
-        samOut6.checked = soc_sam_conf_2_values[5]
-        samOut7.checked = soc_sam_conf_2_values[6]
-        samOut8.checked = soc_sam_conf_2_values[7]
-        samOut9.checked = soc_sam_conf_2_values[8]
-        samOut10.checked = soc_sam_conf_2_values[9]
-        samOut11.checked = soc_sam_conf_2_values[10]
-        samOut12.checked = soc_sam_conf_2_values[11]
+        samOut12.checked = soc_sam_conf_2_values[0]
+        samOut11.checked = soc_sam_conf_2_values[1]
+        samOut10.checked = soc_sam_conf_2_values[2]
+        samOut9.checked = soc_sam_conf_2_values[3]
+        samOut8.checked = soc_sam_conf_2_values[4]
+        samOut7.checked = soc_sam_conf_2_values[5]
+        samOut6.checked = soc_sam_conf_2_values[6]
+        samOut5.checked = soc_sam_conf_2_values[7]
+        samOut4.checked = soc_sam_conf_2_values[8]
+        samOut3.checked = soc_sam_conf_2_values[9]
+        samOut2.checked = soc_sam_conf_2_values[10]
+        samOut1.checked = soc_sam_conf_2_values[11]
 
 
-        platformInterface.soc_sam_conf_2_out1 = soc_sam_conf_2_values[0]
-        platformInterface.soc_sam_conf_2_out2 = soc_sam_conf_2_values[1]
-        platformInterface.soc_sam_conf_2_out3 = soc_sam_conf_2_values[2]
-        platformInterface.soc_sam_conf_2_out4 = soc_sam_conf_2_values[3]
-        platformInterface.soc_sam_conf_2_out5 = soc_sam_conf_2_values[4]
-        platformInterface.soc_sam_conf_2_out6 = soc_sam_conf_2_values[5]
-        platformInterface.soc_sam_conf_2_out7 = soc_sam_conf_2_values[6]
-        platformInterface.soc_sam_conf_2_out8 = soc_sam_conf_2_values[7]
-        platformInterface.soc_sam_conf_2_out9 = soc_sam_conf_2_values[8]
-        platformInterface.soc_sam_conf_2_out10 = soc_sam_conf_2_values[9]
-        platformInterface.soc_sam_conf_2_out11 = soc_sam_conf_2_values[10]
-        platformInterface.soc_sam_conf_2_out12 = soc_sam_conf_2_values[11]
+        platformInterface.soc_sam_conf_2_out12 = soc_sam_conf_2_values[0]
+        platformInterface.soc_sam_conf_2_out11 = soc_sam_conf_2_values[1]
+        platformInterface.soc_sam_conf_2_out10 = soc_sam_conf_2_values[2]
+        platformInterface.soc_sam_conf_2_out9 = soc_sam_conf_2_values[3]
+        platformInterface.soc_sam_conf_2_out8 = soc_sam_conf_2_values[4]
+        platformInterface.soc_sam_conf_2_out7 = soc_sam_conf_2_values[5]
+        platformInterface.soc_sam_conf_2_out6 = soc_sam_conf_2_values[6]
+        platformInterface.soc_sam_conf_2_out5 = soc_sam_conf_2_values[7]
+        platformInterface.soc_sam_conf_2_out4 = soc_sam_conf_2_values[8]
+        platformInterface.soc_sam_conf_2_out3 = soc_sam_conf_2_values[9]
+        platformInterface.soc_sam_conf_2_out2 = soc_sam_conf_2_values[10]
+        platformInterface.soc_sam_conf_2_out1 = soc_sam_conf_2_values[11]
 
 
     }
 
     property var soc_sam_conf_2_state: platformInterface.soc_sam_conf_2_states.states
     onSoc_sam_conf_2_stateChanged: {
-        setStatesForControls(samOut1,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut2,soc_sam_conf_2_state[1])
-        setStatesForControls(samOut3,soc_sam_conf_2_state[2])
-        setStatesForControls(samOut4,soc_sam_conf_2_state[3])
-        setStatesForControls(samOut5,soc_sam_conf_2_state[4])
-        setStatesForControls(samOut6,soc_sam_conf_2_state[5])
-        setStatesForControls(samOut7,soc_sam_conf_2_state[6])
-        setStatesForControls(samOut8,soc_sam_conf_2_state[7])
-        setStatesForControls(samOut9,soc_sam_conf_2_state[8])
-        setStatesForControls(samOut10,soc_sam_conf_2_state[9])
-        setStatesForControls(samOut11,soc_sam_conf_2_state[10])
-        setStatesForControls(samOut12,soc_sam_conf_2_state[11])
+        setStatesForControls(samOut12,soc_sam_conf_2_state[0])
+        setStatesForControls(samOut11,soc_sam_conf_2_state[1])
+        setStatesForControls(samOut10,soc_sam_conf_2_state[2])
+        setStatesForControls(samOut9,soc_sam_conf_2_state[3])
+        setStatesForControls(samOut8,soc_sam_conf_2_state[4])
+        setStatesForControls(samOut7,soc_sam_conf_2_state[5])
+        setStatesForControls(samOut6,soc_sam_conf_2_state[6])
+        setStatesForControls(samOut5,soc_sam_conf_2_state[7])
+        setStatesForControls(samOut4,soc_sam_conf_2_state[8])
+        setStatesForControls(samOut3,soc_sam_conf_2_state[9])
+        setStatesForControls(samOut2,soc_sam_conf_2_state[10])
+        setStatesForControls(samOut1,soc_sam_conf_2_state[11])
     }
 
 
@@ -632,38 +628,35 @@ Item {
 
                                 platformInterface.set_soc_write.update(
                                             true,
-                                            [platformInterface.soc_sam_conf_1_out1,
-                                             platformInterface.soc_sam_conf_1_out2,
-                                             platformInterface.soc_sam_conf_1_out3,
-                                             platformInterface.soc_sam_conf_1_out4,
-                                             platformInterface.soc_sam_conf_1_out5,
-                                             platformInterface.soc_sam_conf_1_out6,
-                                             platformInterface.soc_sam_conf_1_out7,
-                                             platformInterface.soc_sam_conf_1_out8,
-                                             platformInterface.soc_sam_conf_1_out9,
-                                             platformInterface.soc_sam_conf_1_out10,
+                                            [platformInterface.soc_sam_conf_1_out12,
                                              platformInterface.soc_sam_conf_1_out11,
-                                             platformInterface.soc_sam_conf_1_out12
-
+                                             platformInterface.soc_sam_conf_1_out10,
+                                             platformInterface.soc_sam_conf_1_out9,
+                                             platformInterface.soc_sam_conf_1_out8,
+                                             platformInterface.soc_sam_conf_1_out7,
+                                             platformInterface.soc_sam_conf_1_out6,
+                                             platformInterface.soc_sam_conf_1_out5,
+                                             platformInterface.soc_sam_conf_1_out4,
+                                             platformInterface.soc_sam_conf_1_out3,
+                                             platformInterface.soc_sam_conf_1_out2,
+                                             platformInterface.soc_sam_conf_1_out1
                                             ],
-                                            [platformInterface.soc_sam_conf_2_out1,
-                                             platformInterface.soc_sam_conf_2_out2,
-                                             platformInterface.soc_sam_conf_2_out3,
-                                             platformInterface.soc_sam_conf_2_out4,
-                                             platformInterface.soc_sam_conf_2_out5,
-                                             platformInterface.soc_sam_conf_2_out6,
-                                             platformInterface.soc_sam_conf_2_out7,
-                                             platformInterface.soc_sam_conf_2_out8,
-                                             platformInterface.soc_sam_conf_2_out9,
-                                             platformInterface.soc_sam_conf_2_out10,
+                                            [platformInterface.soc_sam_conf_2_out12,
                                              platformInterface.soc_sam_conf_2_out11,
-                                             platformInterface.soc_sam_conf_2_out12
+                                             platformInterface.soc_sam_conf_2_out10,
+                                             platformInterface.soc_sam_conf_2_out9,
+                                             platformInterface.soc_sam_conf_2_out8,
+                                             platformInterface.soc_sam_conf_2_out7,
+                                             platformInterface.soc_sam_conf_2_out6,
+                                             platformInterface.soc_sam_conf_2_out5,
+                                             platformInterface.soc_sam_conf_2_out4,
+                                             platformInterface.soc_sam_conf_2_out3,
+                                             platformInterface.soc_sam_conf_2_out2,
+                                             platformInterface.soc_sam_conf_2_out1
                                             ],
                                             samOpenLoadDiagnostic.currentText,
                                             platformInterface.soc_crcValue,
                                             platformInterface.addr_curr_apply)
-
-
                             }
                         }
 
@@ -757,32 +750,31 @@ Item {
                                 platformInterface.soc_crcValue = checked
                                 platformInterface.set_soc_write.update(
                                             false,
-                                            [platformInterface.soc_sam_conf_1_out1,
-                                             platformInterface.soc_sam_conf_1_out2,
-                                             platformInterface.soc_sam_conf_1_out3,
-                                             platformInterface.soc_sam_conf_1_out4,
-                                             platformInterface.soc_sam_conf_1_out5,
-                                             platformInterface.soc_sam_conf_1_out6,
-                                             platformInterface.soc_sam_conf_1_out7,
-                                             platformInterface.soc_sam_conf_1_out8,
-                                             platformInterface.soc_sam_conf_1_out9,
-                                             platformInterface.soc_sam_conf_1_out10,
+                                            [platformInterface.soc_sam_conf_1_out12,
                                              platformInterface.soc_sam_conf_1_out11,
-                                             platformInterface.soc_sam_conf_1_out12
-
+                                             platformInterface.soc_sam_conf_1_out10,
+                                             platformInterface.soc_sam_conf_1_out9,
+                                             platformInterface.soc_sam_conf_1_out8,
+                                             platformInterface.soc_sam_conf_1_out7,
+                                             platformInterface.soc_sam_conf_1_out6,
+                                             platformInterface.soc_sam_conf_1_out5,
+                                             platformInterface.soc_sam_conf_1_out4,
+                                             platformInterface.soc_sam_conf_1_out3,
+                                             platformInterface.soc_sam_conf_1_out2,
+                                             platformInterface.soc_sam_conf_1_out1
                                             ],
-                                            [platformInterface.soc_sam_conf_2_out1,
-                                             platformInterface.soc_sam_conf_2_out2,
-                                             platformInterface.soc_sam_conf_2_out3,
-                                             platformInterface.soc_sam_conf_2_out4,
-                                             platformInterface.soc_sam_conf_2_out5,
-                                             platformInterface.soc_sam_conf_2_out6,
-                                             platformInterface.soc_sam_conf_2_out7,
-                                             platformInterface.soc_sam_conf_2_out8,
-                                             platformInterface.soc_sam_conf_2_out9,
-                                             platformInterface.soc_sam_conf_2_out10,
+                                            [platformInterface.soc_sam_conf_2_out12,
                                              platformInterface.soc_sam_conf_2_out11,
-                                             platformInterface.soc_sam_conf_2_out12
+                                             platformInterface.soc_sam_conf_2_out10,
+                                             platformInterface.soc_sam_conf_2_out9,
+                                             platformInterface.soc_sam_conf_2_out8,
+                                             platformInterface.soc_sam_conf_2_out7,
+                                             platformInterface.soc_sam_conf_2_out6,
+                                             platformInterface.soc_sam_conf_2_out5,
+                                             platformInterface.soc_sam_conf_2_out4,
+                                             platformInterface.soc_sam_conf_2_out3,
+                                             platformInterface.soc_sam_conf_2_out2,
+                                             platformInterface.soc_sam_conf_2_out1
                                             ],
                                             samOpenLoadDiagnostic.currentText,
                                             platformInterface.soc_crcValue,
@@ -998,31 +990,31 @@ Item {
 
                                 platformInterface.set_soc_write.update(
                                             false,
-                                            [platformInterface.soc_sam_conf_1_out1,
-                                             platformInterface.soc_sam_conf_1_out2,
-                                             platformInterface.soc_sam_conf_1_out3,
-                                             platformInterface.soc_sam_conf_1_out4,
-                                             platformInterface.soc_sam_conf_1_out5,
-                                             platformInterface.soc_sam_conf_1_out6,
-                                             platformInterface.soc_sam_conf_1_out7,
-                                             platformInterface.soc_sam_conf_1_out8,
-                                             platformInterface.soc_sam_conf_1_out9,
-                                             platformInterface.soc_sam_conf_1_out10,
+                                            [platformInterface.soc_sam_conf_1_out12,
                                              platformInterface.soc_sam_conf_1_out11,
-                                             platformInterface.soc_sam_conf_1_out12
+                                             platformInterface.soc_sam_conf_1_out10,
+                                             platformInterface.soc_sam_conf_1_out9,
+                                             platformInterface.soc_sam_conf_1_out8,
+                                             platformInterface.soc_sam_conf_1_out7,
+                                             platformInterface.soc_sam_conf_1_out6,
+                                             platformInterface.soc_sam_conf_1_out5,
+                                             platformInterface.soc_sam_conf_1_out4,
+                                             platformInterface.soc_sam_conf_1_out3,
+                                             platformInterface.soc_sam_conf_1_out2,
+                                             platformInterface.soc_sam_conf_1_out1
                                             ],
-                                            [platformInterface.soc_sam_conf_2_out1,
-                                             platformInterface.soc_sam_conf_2_out2,
-                                             platformInterface.soc_sam_conf_2_out3,
-                                             platformInterface.soc_sam_conf_2_out4,
-                                             platformInterface.soc_sam_conf_2_out5,
-                                             platformInterface.soc_sam_conf_2_out6,
-                                             platformInterface.soc_sam_conf_2_out7,
-                                             platformInterface.soc_sam_conf_2_out8,
-                                             platformInterface.soc_sam_conf_2_out9,
-                                             platformInterface.soc_sam_conf_2_out10,
+                                            [platformInterface.soc_sam_conf_2_out12,
                                              platformInterface.soc_sam_conf_2_out11,
-                                             platformInterface.soc_sam_conf_2_out12
+                                             platformInterface.soc_sam_conf_2_out10,
+                                             platformInterface.soc_sam_conf_2_out9,
+                                             platformInterface.soc_sam_conf_2_out8,
+                                             platformInterface.soc_sam_conf_2_out7,
+                                             platformInterface.soc_sam_conf_2_out6,
+                                             platformInterface.soc_sam_conf_2_out5,
+                                             platformInterface.soc_sam_conf_2_out4,
+                                             platformInterface.soc_sam_conf_2_out3,
+                                             platformInterface.soc_sam_conf_2_out2,
+                                             platformInterface.soc_sam_conf_2_out1
                                             ],
                                             samOpenLoadDiagnostic.currentText,
                                             platformInterface.soc_crcValue,
@@ -1280,7 +1272,6 @@ Item {
 
                             SGText {
                                 id:samconfi1Text
-                                //text: "<b>" + qsTr("SAM_CONF_1") + "</b>"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold: true
                                 anchors.verticalCenter: parent.verticalCenter
@@ -1296,15 +1287,15 @@ Item {
                             Layout.fillWidth: true
 
                             SGAlignedLabel {
-                                id: out1Label
-                                target: out1
-                                text: "OUT 0"
+                                id: out12Label
+                                target: out12
+                                text: "OUT 12"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
-                                    id: out1
+                                    id: out12
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
@@ -1313,35 +1304,34 @@ Item {
 
 
                                     onToggled: {
-                                        platformInterface.soc_sam_conf_1_out1 = checked
+                                        platformInterface.soc_sam_conf_1_out12 = checked
                                         platformInterface.set_soc_write.update(
                                                     false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
+                                                    [platformInterface.soc_sam_conf_1_out12,
                                                      platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
                                                     ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
+                                                    [platformInterface.soc_sam_conf_2_out12,
                                                      platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
                                                     platformInterface.soc_crcValue,
@@ -1356,15 +1346,15 @@ Item {
                             Layout.fillWidth: true
 
                             SGAlignedLabel {
-                                id: out2Label
-                                target: out2
-                                text: "OUT 1"
+                                id: out11Label
+                                target: out11
+                                text: "OUT 11"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
-                                    id: out2
+                                    id: out11
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
@@ -1372,447 +1362,34 @@ Item {
                                     checked: false
 
                                     onToggled: {
-                                        platformInterface.soc_sam_conf_1_out2 = checked
+                                        platformInterface.soc_sam_conf_1_out11 = checked
                                         platformInterface.set_soc_write.update(
                                                     false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
+                                                    [platformInterface.soc_sam_conf_1_out12,
                                                      platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
-                                                    ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
-                                                     platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
-                                                    ],
-                                                    samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_crcValue,
-                                                    platformInterface.addr_curr)
-                                    }
-                                }
-
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: out3Label
-                                target: out3
-                                text: "OUT 2"
-                                alignment: SGAlignedLabel.SideTopCenter
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                font.bold : true
-                                anchors.verticalCenter: parent.verticalCenter
-                                SGSwitch {
-                                    id: out3
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                    checked: false
-
-                                    onToggled: {
-                                        platformInterface.soc_sam_conf_1_out3 = checked
-                                        platformInterface.set_soc_write.update(
-                                                    false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
                                                      platformInterface.soc_sam_conf_1_out10,
-                                                     platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
-                                                    ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
-                                                     platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
-                                                    ],
-                                                    samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_crcValue,
-                                                    platformInterface.addr_curr)
-                                    }
-                                }
-
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: out4Label
-                                target: out4
-                                text: "OUT 3"
-                                alignment: SGAlignedLabel.SideTopCenter
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                font.bold : true
-                                anchors.verticalCenter: parent.verticalCenter
-                                SGSwitch {
-                                    id: out4
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                    checked: false
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onToggled: {
-                                        platformInterface.soc_sam_conf_1_out4 = checked
-                                        platformInterface.set_soc_write.update(
-                                                    false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
                                                      platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
-                                                     platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
-                                                    ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
-                                                     platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
-                                                    ],
-                                                    samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_crcValue,
-                                                    platformInterface.addr_curr)
-                                    }
-                                }
-
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: out5Label
-                                target: out5
-                                text: "OUT 4"
-                                alignment: SGAlignedLabel.SideTopCenter
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                font.bold : true
-                                anchors.verticalCenter: parent.verticalCenter
-                                SGSwitch {
-                                    id: out5
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                    checked: false
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onToggled: {
-                                        platformInterface.soc_sam_conf_1_out5 = checked
-                                        platformInterface.set_soc_write.update(
-                                                    false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
                                                      platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
-                                                     platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
-                                                    ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
-                                                     platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
-                                                    ],
-                                                    samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_crcValue,
-                                                    platformInterface.addr_curr)
-                                    }
-                                }
-
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: out6Label
-                                target: out6
-                                text: "OUT 5"
-                                alignment: SGAlignedLabel.SideTopCenter
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                font.bold : true
-                                anchors.verticalCenter: parent.verticalCenter
-                                SGSwitch {
-                                    id: out6
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                    checked: false
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onToggled: {
-                                        platformInterface.soc_sam_conf_1_out6 = checked
-                                        platformInterface.set_soc_write.update(
-                                                    false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
                                                      platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
-                                                     platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
-                                                    ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
-                                                     platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
-                                                    ],
-                                                    samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_crcValue,
-                                                    platformInterface.addr_curr)
-                                    }
-                                }
-
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: out7Label
-                                target: out7
-                                text: "OUT 6"
-                                alignment: SGAlignedLabel.SideTopCenter
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                font.bold : true
-                                anchors.verticalCenter: parent.verticalCenter
-                                SGSwitch {
-                                    id: out7
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                    checked: false
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onToggled: {
-                                        platformInterface.soc_sam_conf_1_out7 = checked
-                                        platformInterface.set_soc_write.update(
-                                                    false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
                                                      platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
-                                                     platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
-                                                    ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
-                                                     platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
-                                                    ],
-                                                    samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_crcValue,
-                                                    platformInterface.addr_curr)
-                                    }
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: out8Label
-                                target: out8
-                                text: "OUT 7"
-                                alignment: SGAlignedLabel.SideTopCenter
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                font.bold : true
-                                anchors.verticalCenter: parent.verticalCenter
-                                SGSwitch {
-                                    id: out8
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                    checked: false
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onToggled: {
-                                        platformInterface.soc_sam_conf_1_out8 = checked
-                                        platformInterface.set_soc_write.update(
-                                                    false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
                                                      platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
-                                                     platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
-                                                    ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
-                                                     platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
-                                                    ],
-                                                    samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_crcValue,
-                                                    platformInterface.addr_curr)
-                                    }
-                                }
-
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: out9Label
-                                target: out9
-                                text: "OUT 8"
-                                alignment: SGAlignedLabel.SideTopCenter
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                font.bold : true
-                                anchors.verticalCenter: parent.verticalCenter
-                                SGSwitch {
-                                    id: out9
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                    checked: false
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    onToggled: {
-                                        platformInterface.soc_sam_conf_1_out9 = checked
-                                        platformInterface.set_soc_write.update(
-                                                    false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
                                                      platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
-                                                     platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
                                                     ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
+                                                    [platformInterface.soc_sam_conf_2_out12,
                                                      platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
                                                     platformInterface.soc_crcValue,
@@ -1829,7 +1406,7 @@ Item {
                             SGAlignedLabel {
                                 id: out10Label
                                 target: out10
-                                text: "OUT 9"
+                                text: "OUT 10"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
@@ -1841,37 +1418,36 @@ Item {
                                     uncheckedLabel: "Off"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
-                                    anchors.verticalCenter: parent.verticalCenter
+
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out10 = checked
                                         platformInterface.set_soc_write.update(
                                                     false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
+                                                    [platformInterface.soc_sam_conf_1_out12,
                                                      platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
                                                     ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
+                                                    [platformInterface.soc_sam_conf_2_out12,
                                                      platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
                                                     platformInterface.soc_crcValue,
@@ -1886,15 +1462,15 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGAlignedLabel {
-                                id: out11Label
-                                target: out11
-                                text: "OUT 10"
+                                id: out9Label
+                                target: out9
+                                text: "OUT 9"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
-                                    id: out11
+                                    id: out9
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
@@ -1902,35 +1478,439 @@ Item {
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
-                                        platformInterface.soc_sam_conf_1_out11 = checked
+                                        platformInterface.soc_sam_conf_1_out9 = checked
                                         platformInterface.set_soc_write.update(
                                                     false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
+                                                    [platformInterface.soc_sam_conf_1_out12,
                                                      platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
                                                     ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
+                                                    [platformInterface.soc_sam_conf_2_out12,
                                                      platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
+                                                    ],
+                                                    samOpenLoadDiagnostic.currentText,
+                                                    platformInterface.soc_crcValue,
+                                                    platformInterface.addr_curr)
+                                    }
+                                }
+
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: out8Label
+                                target: out8
+                                text: "OUT 8"
+                                alignment: SGAlignedLabel.SideTopCenter
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                font.bold : true
+                                anchors.verticalCenter: parent.verticalCenter
+                                SGSwitch {
+                                    id: out8
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    checked: false
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onToggled: {
+                                        platformInterface.soc_sam_conf_1_out8 = checked
+                                        platformInterface.set_soc_write.update(
+                                                    false,
+                                                    [platformInterface.soc_sam_conf_1_out12,
+                                                     platformInterface.soc_sam_conf_1_out11,
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
+                                                    ],
+                                                    [platformInterface.soc_sam_conf_2_out12,
+                                                     platformInterface.soc_sam_conf_2_out11,
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
+                                                    ],
+                                                    samOpenLoadDiagnostic.currentText,
+                                                    platformInterface.soc_crcValue,
+                                                    platformInterface.addr_curr)
+                                    }
+                                }
+
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: out7Label
+                                target: out7
+                                text: "OUT 7"
+                                alignment: SGAlignedLabel.SideTopCenter
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                font.bold : true
+                                anchors.verticalCenter: parent.verticalCenter
+                                SGSwitch {
+                                    id: out7
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    checked: false
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onToggled: {
+                                        platformInterface.soc_sam_conf_1_out7 = checked
+                                        platformInterface.set_soc_write.update(
+                                                    false,
+                                                    [platformInterface.soc_sam_conf_1_out12,
+                                                     platformInterface.soc_sam_conf_1_out11,
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
+                                                    ],
+                                                    [platformInterface.soc_sam_conf_2_out12,
+                                                     platformInterface.soc_sam_conf_2_out11,
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
+                                                    ],
+                                                    samOpenLoadDiagnostic.currentText,
+                                                    platformInterface.soc_crcValue,
+                                                    platformInterface.addr_curr)
+                                    }
+                                }
+
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: out6Label
+                                target: out6
+                                text: "OUT 6"
+                                alignment: SGAlignedLabel.SideTopCenter
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                font.bold : true
+                                anchors.verticalCenter: parent.verticalCenter
+                                SGSwitch {
+                                    id: out6
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    checked: false
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onToggled: {
+                                        platformInterface.soc_sam_conf_1_out6 = checked
+                                        platformInterface.set_soc_write.update(
+                                                    false,
+                                                    [platformInterface.soc_sam_conf_1_out12,
+                                                     platformInterface.soc_sam_conf_1_out11,
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
+                                                    ],
+                                                    [platformInterface.soc_sam_conf_2_out12,
+                                                     platformInterface.soc_sam_conf_2_out11,
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
+                                                    ],
+                                                    samOpenLoadDiagnostic.currentText,
+                                                    platformInterface.soc_crcValue,
+                                                    platformInterface.addr_curr)
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: out5Label
+                                target: out5
+                                text: "OUT 5"
+                                alignment: SGAlignedLabel.SideTopCenter
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                font.bold : true
+                                anchors.verticalCenter: parent.verticalCenter
+                                SGSwitch {
+                                    id: out5
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    checked: false
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onToggled: {
+                                        platformInterface.soc_sam_conf_1_out5 = checked
+                                        platformInterface.set_soc_write.update(
+                                                    false,
+                                                    [platformInterface.soc_sam_conf_1_out12,
+                                                     platformInterface.soc_sam_conf_1_out11,
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
+                                                    ],
+                                                    [platformInterface.soc_sam_conf_2_out12,
+                                                     platformInterface.soc_sam_conf_2_out11,
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
+                                                    ],
+                                                    samOpenLoadDiagnostic.currentText,
+                                                    platformInterface.soc_crcValue,
+                                                    platformInterface.addr_curr)
+                                    }
+                                }
+
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: out4Label
+                                target: out4
+                                text: "OUT 4"
+                                alignment: SGAlignedLabel.SideTopCenter
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                font.bold : true
+                                anchors.verticalCenter: parent.verticalCenter
+                                SGSwitch {
+                                    id: out4
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    checked: false
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onToggled: {
+                                        platformInterface.soc_sam_conf_1_out4 = checked
+                                        platformInterface.set_soc_write.update(
+                                                    false,
+                                                    [platformInterface.soc_sam_conf_1_out12,
+                                                     platformInterface.soc_sam_conf_1_out11,
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
+                                                    ],
+                                                    [platformInterface.soc_sam_conf_2_out12,
+                                                     platformInterface.soc_sam_conf_2_out11,
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
+                                                    ],
+                                                    samOpenLoadDiagnostic.currentText,
+                                                    platformInterface.soc_crcValue,
+                                                    platformInterface.addr_curr)
+                                    }
+                                }
+
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: out3Label
+                                target: out3
+                                text: "OUT 3"
+                                alignment: SGAlignedLabel.SideTopCenter
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                font.bold : true
+                                anchors.verticalCenter: parent.verticalCenter
+                                SGSwitch {
+                                    id: out3
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    checked: false
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onToggled: {
+                                        platformInterface.soc_sam_conf_1_out3 = checked
+                                        platformInterface.set_soc_write.update(
+                                                    false,
+                                                    [platformInterface.soc_sam_conf_1_out12,
+                                                     platformInterface.soc_sam_conf_1_out11,
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
+                                                    ],
+                                                    [platformInterface.soc_sam_conf_2_out12,
+                                                     platformInterface.soc_sam_conf_2_out11,
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
+                                                    ],
+                                                    samOpenLoadDiagnostic.currentText,
+                                                    platformInterface.soc_crcValue,
+                                                    platformInterface.addr_curr)
+                                    }
+                                }
+
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: out2Label
+                                target: out2
+                                text: "OUT 2"
+                                alignment: SGAlignedLabel.SideTopCenter
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                font.bold : true
+                                anchors.verticalCenter: parent.verticalCenter
+                                SGSwitch {
+                                    id: out2
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    checked: false
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    onToggled: {
+                                        platformInterface.soc_sam_conf_1_out2 = checked
+                                        platformInterface.set_soc_write.update(
+                                                    false,
+                                                    [platformInterface.soc_sam_conf_1_out12,
+                                                     platformInterface.soc_sam_conf_1_out11,
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
+                                                    ],
+                                                    [platformInterface.soc_sam_conf_2_out12,
+                                                     platformInterface.soc_sam_conf_2_out11,
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
                                                     platformInterface.soc_crcValue,
@@ -1944,15 +1924,15 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGAlignedLabel {
-                                id: out12Label
-                                target: out12
-                                text: "OUT 11"
+                                id: out1Label
+                                target: out1
+                                text: "OUT 1"
                                 alignment: SGAlignedLabel.SideTopCenter
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
-                                    id: out12
+                                    id: out1
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
@@ -1960,35 +1940,34 @@ Item {
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
-                                        platformInterface.soc_sam_conf_1_out12 = checked
+                                        platformInterface.soc_sam_conf_1_out1 = checked
                                         platformInterface.set_soc_write.update(
                                                     false,
-                                                    [platformInterface.soc_sam_conf_1_out1,
-                                                     platformInterface.soc_sam_conf_1_out2,
-                                                     platformInterface.soc_sam_conf_1_out3,
-                                                     platformInterface.soc_sam_conf_1_out4,
-                                                     platformInterface.soc_sam_conf_1_out5,
-                                                     platformInterface.soc_sam_conf_1_out6,
-                                                     platformInterface.soc_sam_conf_1_out7,
-                                                     platformInterface.soc_sam_conf_1_out8,
-                                                     platformInterface.soc_sam_conf_1_out9,
-                                                     platformInterface.soc_sam_conf_1_out10,
+                                                    [platformInterface.soc_sam_conf_1_out12,
                                                      platformInterface.soc_sam_conf_1_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
-
+                                                     platformInterface.soc_sam_conf_1_out10,
+                                                     platformInterface.soc_sam_conf_1_out9,
+                                                     platformInterface.soc_sam_conf_1_out8,
+                                                     platformInterface.soc_sam_conf_1_out7,
+                                                     platformInterface.soc_sam_conf_1_out6,
+                                                     platformInterface.soc_sam_conf_1_out5,
+                                                     platformInterface.soc_sam_conf_1_out4,
+                                                     platformInterface.soc_sam_conf_1_out3,
+                                                     platformInterface.soc_sam_conf_1_out2,
+                                                     platformInterface.soc_sam_conf_1_out1
                                                     ],
-                                                    [platformInterface.soc_sam_conf_2_out1,
-                                                     platformInterface.soc_sam_conf_2_out2,
-                                                     platformInterface.soc_sam_conf_2_out3,
-                                                     platformInterface.soc_sam_conf_2_out4,
-                                                     platformInterface.soc_sam_conf_2_out5,
-                                                     platformInterface.soc_sam_conf_2_out6,
-                                                     platformInterface.soc_sam_conf_2_out7,
-                                                     platformInterface.soc_sam_conf_2_out8,
-                                                     platformInterface.soc_sam_conf_2_out9,
-                                                     platformInterface.soc_sam_conf_2_out10,
+                                                    [platformInterface.soc_sam_conf_2_out12,
                                                      platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_2_out12
+                                                     platformInterface.soc_sam_conf_2_out10,
+                                                     platformInterface.soc_sam_conf_2_out9,
+                                                     platformInterface.soc_sam_conf_2_out8,
+                                                     platformInterface.soc_sam_conf_2_out7,
+                                                     platformInterface.soc_sam_conf_2_out6,
+                                                     platformInterface.soc_sam_conf_2_out5,
+                                                     platformInterface.soc_sam_conf_2_out4,
+                                                     platformInterface.soc_sam_conf_2_out3,
+                                                     platformInterface.soc_sam_conf_2_out2,
+                                                     platformInterface.soc_sam_conf_2_out1
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
                                                     platformInterface.soc_crcValue,
@@ -2014,7 +1993,6 @@ Item {
 
                             SGText {
                                 id: samConfig2Text
-                                // text: "<b>" + qsTr("SAM_CONF_2") + "</b>"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 anchors.verticalCenter: parent.verticalCenter
                                 font.bold: true
@@ -2033,7 +2011,7 @@ Item {
                             Layout.fillWidth: true
 
                             SGSwitch {
-                                id: samOut1
+                                id: samOut12
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
@@ -2041,35 +2019,34 @@ Item {
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
-                                    platformInterface.soc_sam_conf_2_out1 = checked
+                                    platformInterface.soc_sam_conf_2_out12 = checked
                                     platformInterface.set_soc_write.update(
                                                 false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
+                                                [platformInterface.soc_sam_conf_1_out12,
                                                  platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
                                                 ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
+                                                [platformInterface.soc_sam_conf_2_out12,
                                                  platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
                                                 platformInterface.soc_crcValue,
@@ -2081,7 +2058,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGSwitch {
-                                id: samOut2
+                                id: samOut11
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
@@ -2089,378 +2066,34 @@ Item {
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
-                                    platformInterface.soc_sam_conf_2_out2 = checked
+                                    platformInterface.soc_sam_conf_2_out11 = checked
                                     platformInterface.set_soc_write.update(
                                                 false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
+                                                [platformInterface.soc_sam_conf_1_out12,
                                                  platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
-                                                ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
-                                                 platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
-                                                ],
-                                                samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_crcValue,
-                                                platformInterface.addr_curr)
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGSwitch {
-                                id: samOut3
-                                labelsInside: true
-                                checkedLabel: "On"
-                                uncheckedLabel: "Off"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                checked: false
-                                anchors.verticalCenter: parent.verticalCenter
-                                onToggled: {
-                                    platformInterface.soc_sam_conf_2_out3 = checked
-                                    platformInterface.set_soc_write.update(
-                                                false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
                                                  platformInterface.soc_sam_conf_1_out10,
-                                                 platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
-                                                ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
-                                                 platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
-                                                ],
-                                                samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_crcValue,
-                                                platformInterface.addr_curr)
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGSwitch {
-                                id: samOut4
-                                labelsInside: true
-                                checkedLabel: "On"
-                                uncheckedLabel: "Off"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                checked: false
-                                anchors.verticalCenter: parent.verticalCenter
-                                onToggled: {
-                                    platformInterface.soc_sam_conf_2_out4 = checked
-                                    platformInterface.set_soc_write.update(
-                                                false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
                                                  platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
-                                                 platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
-                                                ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
-                                                 platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
-                                                ],
-                                                samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_crcValue,
-                                                platformInterface.addr_curr)
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGSwitch {
-                                id: samOut5
-                                labelsInside: true
-                                checkedLabel: "On"
-                                uncheckedLabel: "Off"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                checked: false
-                                anchors.verticalCenter: parent.verticalCenter
-                                onToggled: {
-                                    platformInterface.soc_sam_conf_2_out5 = checked
-                                    platformInterface.set_soc_write.update(
-                                                false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
                                                  platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
-                                                 platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
-                                                ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
-                                                 platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
-                                                ],
-                                                samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_crcValue,
-                                                platformInterface.addr_curr)
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGSwitch {
-                                id: samOut6
-                                labelsInside: true
-                                checkedLabel: "On"
-                                uncheckedLabel: "Off"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                checked: false
-                                anchors.verticalCenter: parent.verticalCenter
-                                onToggled: {
-                                    platformInterface.soc_sam_conf_2_out6 = checked
-                                    platformInterface.set_soc_write.update(
-                                                false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
                                                  platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
-                                                 platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
-                                                ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
-                                                 platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
-                                                ],
-                                                samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_crcValue,
-                                                platformInterface.addr_curr)
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGSwitch {
-                                id: samOut7
-                                labelsInside: true
-                                checkedLabel: "On"
-                                uncheckedLabel: "Off"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                checked: false
-                                anchors.verticalCenter: parent.verticalCenter
-                                onToggled: {
-                                    platformInterface.soc_sam_conf_2_out7 = checked
-                                    platformInterface.set_soc_write.update(
-                                                false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
                                                  platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
-                                                 platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
-                                                ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
-                                                 platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
-                                                ],
-                                                samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_crcValue,
-                                                platformInterface.addr_curr)
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGSwitch {
-                                id: samOut8
-                                labelsInside: true
-                                checkedLabel: "On"
-                                uncheckedLabel: "Off"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                checked: false
-                                anchors.verticalCenter: parent.verticalCenter
-                                onToggled: {
-                                    platformInterface.soc_sam_conf_2_out8 = checked
-                                    platformInterface.set_soc_write.update(
-                                                false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
                                                  platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
-                                                 platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
-                                                ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
-                                                 platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
-                                                ],
-                                                samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_crcValue,
-                                                platformInterface.addr_curr)
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGSwitch {
-                                id: samOut9
-                                labelsInside: true
-                                checkedLabel: "On"
-                                uncheckedLabel: "Off"
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                checked: false
-                                anchors.verticalCenter: parent.verticalCenter
-                                onToggled: {
-                                    platformInterface.soc_sam_conf_2_out9 = checked
-                                    platformInterface.set_soc_write.update(
-                                                false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
                                                  platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
-                                                 platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
                                                 ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
+                                                [platformInterface.soc_sam_conf_2_out12,
                                                  platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
                                                 platformInterface.soc_crcValue,
@@ -2484,32 +2117,31 @@ Item {
                                     platformInterface.soc_sam_conf_2_out10 = checked
                                     platformInterface.set_soc_write.update(
                                                 false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
+                                                [platformInterface.soc_sam_conf_1_out12,
                                                  platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
                                                 ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
+                                                [platformInterface.soc_sam_conf_2_out12,
                                                  platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
                                                 platformInterface.soc_crcValue,
@@ -2522,7 +2154,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGSwitch {
-                                id: samOut11
+                                id: samOut9
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
@@ -2530,35 +2162,370 @@ Item {
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
-                                    platformInterface.soc_sam_conf_2_out11 = checked
+                                    platformInterface.soc_sam_conf_2_out9 = checked
                                     platformInterface.set_soc_write.update(
                                                 false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
+                                                [platformInterface.soc_sam_conf_1_out12,
                                                  platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
                                                 ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
+                                                [platformInterface.soc_sam_conf_2_out12,
                                                  platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
+                                                ],
+                                                samOpenLoadDiagnostic.currentText,
+                                                platformInterface.soc_crcValue,
+                                                platformInterface.addr_curr)
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGSwitch {
+                                id: samOut8
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                checked: false
+                                anchors.verticalCenter: parent.verticalCenter
+                                onToggled: {
+                                    platformInterface.soc_sam_conf_2_out8 = checked
+                                    platformInterface.set_soc_write.update(
+                                                false,
+                                                [platformInterface.soc_sam_conf_1_out12,
+                                                 platformInterface.soc_sam_conf_1_out11,
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
+                                                ],
+                                                [platformInterface.soc_sam_conf_2_out12,
+                                                 platformInterface.soc_sam_conf_2_out11,
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
+                                                ],
+                                                samOpenLoadDiagnostic.currentText,
+                                                platformInterface.soc_crcValue,
+                                                platformInterface.addr_curr)
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGSwitch {
+                                id: samOut7
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                checked: false
+                                anchors.verticalCenter: parent.verticalCenter
+                                onToggled: {
+                                    platformInterface.soc_sam_conf_2_out7 = checked
+                                    platformInterface.set_soc_write.update(
+                                                false,
+                                                [platformInterface.soc_sam_conf_1_out12,
+                                                 platformInterface.soc_sam_conf_1_out11,
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
+                                                ],
+                                                [platformInterface.soc_sam_conf_2_out12,
+                                                 platformInterface.soc_sam_conf_2_out11,
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
+                                                ],
+                                                samOpenLoadDiagnostic.currentText,
+                                                platformInterface.soc_crcValue,
+                                                platformInterface.addr_curr)
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGSwitch {
+                                id: samOut6
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                checked: false
+                                anchors.verticalCenter: parent.verticalCenter
+                                onToggled: {
+                                    platformInterface.soc_sam_conf_2_out6 = checked
+                                    platformInterface.set_soc_write.update(
+                                                false,
+                                                [platformInterface.soc_sam_conf_1_out12,
+                                                 platformInterface.soc_sam_conf_1_out11,
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
+                                                ],
+                                                [platformInterface.soc_sam_conf_2_out12,
+                                                 platformInterface.soc_sam_conf_2_out11,
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
+                                                ],
+                                                samOpenLoadDiagnostic.currentText,
+                                                platformInterface.soc_crcValue,
+                                                platformInterface.addr_curr)
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGSwitch {
+                                id: samOut5
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                checked: false
+                                anchors.verticalCenter: parent.verticalCenter
+                                onToggled: {
+                                    platformInterface.soc_sam_conf_2_out5 = checked
+                                    platformInterface.set_soc_write.update(
+                                                false,
+                                                [platformInterface.soc_sam_conf_1_out12,
+                                                 platformInterface.soc_sam_conf_1_out11,
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
+                                                ],
+                                                [platformInterface.soc_sam_conf_2_out12,
+                                                 platformInterface.soc_sam_conf_2_out11,
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
+                                                ],
+                                                samOpenLoadDiagnostic.currentText,
+                                                platformInterface.soc_crcValue,
+                                                platformInterface.addr_curr)
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGSwitch {
+                                id: samOut4
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                checked: false
+                                anchors.verticalCenter: parent.verticalCenter
+                                onToggled: {
+                                    platformInterface.soc_sam_conf_2_out4 = checked
+                                    platformInterface.set_soc_write.update(
+                                                false,
+                                                [platformInterface.soc_sam_conf_1_out12,
+                                                 platformInterface.soc_sam_conf_1_out11,
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
+                                                ],
+                                                [platformInterface.soc_sam_conf_2_out12,
+                                                 platformInterface.soc_sam_conf_2_out11,
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
+                                                ],
+                                                samOpenLoadDiagnostic.currentText,
+                                                platformInterface.soc_crcValue,
+                                                platformInterface.addr_curr)
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGSwitch {
+                                id: samOut3
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                checked: false
+                                anchors.verticalCenter: parent.verticalCenter
+                                onToggled: {
+                                    platformInterface.soc_sam_conf_2_out3 = checked
+                                    platformInterface.set_soc_write.update(
+                                                false,
+                                                [platformInterface.soc_sam_conf_1_out12,
+                                                 platformInterface.soc_sam_conf_1_out11,
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
+                                                ],
+                                                [platformInterface.soc_sam_conf_2_out12,
+                                                 platformInterface.soc_sam_conf_2_out11,
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
+                                                ],
+                                                samOpenLoadDiagnostic.currentText,
+                                                platformInterface.soc_crcValue,
+                                                platformInterface.addr_curr)
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGSwitch {
+                                id: samOut2
+                                labelsInside: true
+                                checkedLabel: "On"
+                                uncheckedLabel: "Off"
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                checked: false
+                                anchors.verticalCenter: parent.verticalCenter
+                                onToggled: {
+                                    platformInterface.soc_sam_conf_2_out2 = checked
+                                    platformInterface.set_soc_write.update(
+                                                false,
+                                                [platformInterface.soc_sam_conf_1_out12,
+                                                 platformInterface.soc_sam_conf_1_out11,
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
+                                                ],
+                                                [platformInterface.soc_sam_conf_2_out12,
+                                                 platformInterface.soc_sam_conf_2_out11,
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
                                                 platformInterface.soc_crcValue,
@@ -2570,7 +2537,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGSwitch {
-                                id: samOut12
+                                id: samOut1
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
@@ -2578,35 +2545,34 @@ Item {
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
-                                    platformInterface.soc_sam_conf_2_out12 = checked
+                                    platformInterface.soc_sam_conf_2_out1 = checked
                                     platformInterface.set_soc_write.update(
                                                 false,
-                                                [platformInterface.soc_sam_conf_1_out1,
-                                                 platformInterface.soc_sam_conf_1_out2,
-                                                 platformInterface.soc_sam_conf_1_out3,
-                                                 platformInterface.soc_sam_conf_1_out4,
-                                                 platformInterface.soc_sam_conf_1_out5,
-                                                 platformInterface.soc_sam_conf_1_out6,
-                                                 platformInterface.soc_sam_conf_1_out7,
-                                                 platformInterface.soc_sam_conf_1_out8,
-                                                 platformInterface.soc_sam_conf_1_out9,
-                                                 platformInterface.soc_sam_conf_1_out10,
+                                                [platformInterface.soc_sam_conf_1_out12,
                                                  platformInterface.soc_sam_conf_1_out11,
-                                                 platformInterface.soc_sam_conf_1_out12
-
+                                                 platformInterface.soc_sam_conf_1_out10,
+                                                 platformInterface.soc_sam_conf_1_out9,
+                                                 platformInterface.soc_sam_conf_1_out8,
+                                                 platformInterface.soc_sam_conf_1_out7,
+                                                 platformInterface.soc_sam_conf_1_out6,
+                                                 platformInterface.soc_sam_conf_1_out5,
+                                                 platformInterface.soc_sam_conf_1_out4,
+                                                 platformInterface.soc_sam_conf_1_out3,
+                                                 platformInterface.soc_sam_conf_1_out2,
+                                                 platformInterface.soc_sam_conf_1_out1
                                                 ],
-                                                [platformInterface.soc_sam_conf_2_out1,
-                                                 platformInterface.soc_sam_conf_2_out2,
-                                                 platformInterface.soc_sam_conf_2_out3,
-                                                 platformInterface.soc_sam_conf_2_out4,
-                                                 platformInterface.soc_sam_conf_2_out5,
-                                                 platformInterface.soc_sam_conf_2_out6,
-                                                 platformInterface.soc_sam_conf_2_out7,
-                                                 platformInterface.soc_sam_conf_2_out8,
-                                                 platformInterface.soc_sam_conf_2_out9,
-                                                 platformInterface.soc_sam_conf_2_out10,
+                                                [platformInterface.soc_sam_conf_2_out12,
                                                  platformInterface.soc_sam_conf_2_out11,
-                                                 platformInterface.soc_sam_conf_2_out12
+                                                 platformInterface.soc_sam_conf_2_out10,
+                                                 platformInterface.soc_sam_conf_2_out9,
+                                                 platformInterface.soc_sam_conf_2_out8,
+                                                 platformInterface.soc_sam_conf_2_out7,
+                                                 platformInterface.soc_sam_conf_2_out6,
+                                                 platformInterface.soc_sam_conf_2_out5,
+                                                 platformInterface.soc_sam_conf_2_out4,
+                                                 platformInterface.soc_sam_conf_2_out3,
+                                                 platformInterface.soc_sam_conf_2_out2,
+                                                 platformInterface.soc_sam_conf_2_out1
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
                                                 platformInterface.soc_crcValue,

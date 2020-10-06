@@ -192,80 +192,80 @@ Item {
     property var led_out_en: platformInterface.led_out_en
     onLed_out_enChanged: {
         ledoutEnLabel.text =  led_out_en.caption
-        setOutEnState(out0ENLED,led_out_en.states[0])
-        setOutEnState(out1ENLED,led_out_en.states[1])
-        setOutEnState(out2ENLED,led_out_en.states[2])
-        setOutEnState(out3ENLED,led_out_en.states[3])
-        setOutEnState(out4ENLED,led_out_en.states[4])
-        setOutEnState(out5ENLED,led_out_en.states[5])
-        setOutEnState(out6ENLED,led_out_en.states[6])
-        setOutEnState(out7ENLED,led_out_en.states[7])
-        setOutEnState(out8ENLED,led_out_en.states[8])
-        setOutEnState(out9ENLED,led_out_en.states[9])
-        setOutEnState(out10ENLED,led_out_en.states[10])
-        setOutEnState(out11ENLED,led_out_en.states[11])
+        setOutEnState(out11ENLED,led_out_en.states[0])
+        setOutEnState(out10ENLED,led_out_en.states[1])
+        setOutEnState(out9ENLED,led_out_en.states[2])
+        setOutEnState(out8ENLED,led_out_en.states[3])
+        setOutEnState(out7ENLED,led_out_en.states[4])
+        setOutEnState(out6ENLED,led_out_en.states[5])
+        setOutEnState(out5ENLED,led_out_en.states[6])
+        setOutEnState(out4ENLED,led_out_en.states[7])
+        setOutEnState(out3ENLED,led_out_en.states[8])
+        setOutEnState(out2ENLED,led_out_en.states[9])
+        setOutEnState(out1ENLED,led_out_en.states[10])
+        setOutEnState(out0ENLED,led_out_en.states[11])
 
 
         if(led_out_en.values[0] === true)
-            out0ENLED.checked = true
-        else out0ENLED.checked = false
-
-        if(led_out_en.values[1] === true)
-            out1ENLED.checked = true
-        else out1ENLED.checked = false
-
-        if(led_out_en.values[2] === true)
-            out2ENLED.checked = true
-        else out2ENLED.checked = false
-
-        if(led_out_en.values[3] === true)
-            out3ENLED.checked = true
-        else out3ENLED.checked = false
-
-        if(led_out_en.values[4] === true)
-            out4ENLED.checked = true
-        else out4ENLED.checked = false
-
-        if(led_out_en.values[5] === true)
-            out5ENLED.checked = true
-        else out5ENLED.checked = false
-
-        if(led_out_en.values[6] === true)
-            out6ENLED.checked = true
-        else out6ENLED.checked = false
-
-        if(led_out_en.values[7] === true)
-            out7ENLED.checked = true
-        else out7ENLED.checked = false
-
-        if(led_out_en.values[8] === true)
-            out8ENLED.checked = true
-        else out8ENLED.checked = false
-
-        if(led_out_en.values[9] === true)
-            out9ENLED.checked = true
-        else out9ENLED.checked = false
-
-        if(led_out_en.values[10] === true)
-            out10ENLED.checked = true
-        else out10ENLED.checked = false
-
-        if(led_out_en.values[11] === true)
             out11ENLED.checked = true
         else out11ENLED.checked = false
 
-        platformInterface.outputEnable0 = led_out_en.values[0]
-        platformInterface.outputEnable1 = led_out_en.values[1]
-        platformInterface.outputEnable2 = led_out_en.values[2]
-        platformInterface.outputEnable3 = led_out_en.values[3]
-        platformInterface.outputEnable4 = led_out_en.values[4]
-        platformInterface.outputEnable5 = led_out_en.values[5]
-        platformInterface.outputEnable6 = led_out_en.values[6]
-        platformInterface.outputEnable7 = led_out_en.values[7]
-        platformInterface.outputEnable8 = led_out_en.values[8]
-        platformInterface.outputEnable9 = led_out_en.values[9]
-        platformInterface.outputEnable10 = led_out_en.values[10]
-        platformInterface.outputEnable11 = led_out_en.values[11]
+        if(led_out_en.values[1] === true)
+            out10ENLED.checked = true
+        else out10ENLED.checked = false
+
+        if(led_out_en.values[2] === true)
+            out9ENLED.checked = true
+        else out9ENLED.checked = false
+
+        if(led_out_en.values[3] === true)
+            out8ENLED.checked = true
+        else out8ENLED.checked = false
+
+        if(led_out_en.values[4] === true)
+            out7ENLED.checked = true
+        else out7ENLED.checked = false
+
+        if(led_out_en.values[5] === true)
+            out6ENLED.checked = true
+        else out6ENLED.checked = false
+
+        if(led_out_en.values[6] === true)
+            out5ENLED.checked = true
+        else out5ENLED.checked = false
+
+        if(led_out_en.values[7] === true)
+            out4ENLED.checked = true
+        else out4ENLED.checked = false
+
+        if(led_out_en.values[8] === true)
+            out3ENLED.checked = true
+        else out3ENLED.checked = false
+
+        if(led_out_en.values[9] === true)
+            out2ENLED.checked = true
+        else out2ENLED.checked = false
+
+        if(led_out_en.values[10] === true)
+            out1ENLED.checked = true
+        else out1ENLED.checked = false
+
+        if(led_out_en.values[11] === true)
+            out0ENLED.checked = true
+        else out0ENLED.checked = false
+
+        platformInterface.outputEnable11 = led_out_en.values[0]
+        platformInterface.outputEnable10 = led_out_en.values[1]
+        platformInterface.outputEnable9 = led_out_en.values[2]
+        platformInterface.outputEnable8 = led_out_en.values[3]
+        platformInterface.outputEnable7 = led_out_en.values[4]
+        platformInterface.outputEnable6 = led_out_en.values[5]
+        platformInterface.outputEnable5 = led_out_en.values[6]
+        platformInterface.outputEnable4 = led_out_en.values[7]
+        platformInterface.outputEnable3 = led_out_en.values[8]
+        platformInterface.outputEnable2 = led_out_en.values[9]
+        platformInterface.outputEnable1 = led_out_en.values[10]
+        platformInterface.outputEnable0 = led_out_en.values[11]
 
 
 
@@ -273,83 +273,83 @@ Item {
 
     property var led_out_en_states: platformInterface.led_out_en_states.states
     onLed_out_en_statesChanged: {
-        setOutEnState(out0ENLED,led_out_en_states[0])
-        setOutEnState(out1ENLED,led_out_en_states[1])
-        setOutEnState(out2ENLED,led_out_en_states[2])
-        setOutEnState(out3ENLED,led_out_en_states[3])
-        setOutEnState(out4ENLED,led_out_en_states[4])
-        setOutEnState(out5ENLED,led_out_en_states[5])
-        setOutEnState(out6ENLED,led_out_en_states[6])
-        setOutEnState(out7ENLED,led_out_en_states[7])
-        setOutEnState(out8ENLED,led_out_en_states[8])
-        setOutEnState(out9ENLED,led_out_en_states[9])
-        setOutEnState(out10ENLED,led_out_en_states[10])
-        setOutEnState(out11ENLED,led_out_en_states[11])
+        setOutEnState(out11ENLED,led_out_en_states[0])
+        setOutEnState(out10ENLED,led_out_en_states[1])
+        setOutEnState(out9ENLED,led_out_en_states[2])
+        setOutEnState(out8ENLED,led_out_en_states[3])
+        setOutEnState(out7ENLED,led_out_en_states[4])
+        setOutEnState(out6ENLED,led_out_en_states[5])
+        setOutEnState(out5ENLED,led_out_en_states[6])
+        setOutEnState(out4ENLED,led_out_en_states[7])
+        setOutEnState(out3ENLED,led_out_en_states[8])
+        setOutEnState(out2ENLED,led_out_en_states[9])
+        setOutEnState(out1ENLED,led_out_en_states[10])
+        setOutEnState(out0ENLED,led_out_en_states[11])
     }
 
     property var led_out_en_values: platformInterface.led_out_en_values.values
     onLed_out_en_valuesChanged:  {
 
         if(led_out_en_values[0] === true)
-            out0ENLED.checked = true
-        else out0ENLED.checked = false
-
-        if(led_out_en_values[1] === true)
-            out1ENLED.checked = true
-        else out1ENLED.checked = false
-
-        if(led_out_en_values[2] === true)
-            out2ENLED.checked = true
-        else out2ENLED.checked = false
-
-        if(led_out_en_values[3] === true)
-            out3ENLED.checked = true
-        else out3ENLED.checked = false
-
-        if(led_out_en_values[4] === true)
-            out4ENLED.checked = true
-        else out4ENLED.checked = false
-
-        if(led_out_en_values[5] === true)
-            out5ENLED.checked = true
-        else out5ENLED.checked = false
-
-        if(led_out_en_values[6] === true)
-            out6ENLED.checked = true
-        else out6ENLED.checked = false
-
-        if(led_out_en_values[7] === true)
-            out7ENLED.checked = true
-        else out7ENLED.checked = false
-
-        if(led_out_en_values[8] === true)
-            out8ENLED.checked = true
-        else out8ENLED.checked = false
-
-        if(led_out_en_values[9] === true)
-            out9ENLED.checked = true
-        else out9ENLED.checked = false
-
-        if(led_out_en_values[10] === true)
-            out10ENLED.checked = true
-        else out10ENLED.checked = false
-
-        if(led_out_en_values[11] === true)
             out11ENLED.checked = true
         else out11ENLED.checked = false
 
-        platformInterface.outputEnable0 =led_out_en_values[0]
-        platformInterface.outputEnable1 = led_out_en_values[1]
-        platformInterface.outputEnable2 =led_out_en_values[2]
-        platformInterface.outputEnable3 = led_out_en_values[3]
-        platformInterface.outputEnable4 = led_out_en_values[4]
-        platformInterface.outputEnable5 = led_out_en_values[5]
-        platformInterface.outputEnable6 = led_out_en_values[6]
-        platformInterface.outputEnable7 = led_out_en_values[7]
-        platformInterface.outputEnable8 = led_out_en_values[8]
-        platformInterface.outputEnable9 = led_out_en_values[9]
-        platformInterface.outputEnable10 = led_out_en_values[10]
-        platformInterface.outputEnable11 = led_out_en_values[11]
+        if(led_out_en_values[1] === true)
+            out10ENLED.checked = true
+        else out10ENLED.checked = false
+
+        if(led_out_en_values[2] === true)
+            out9ENLED.checked = true
+        else out9ENLED.checked = false
+
+        if(led_out_en_values[3] === true)
+            out8ENLED.checked = true
+        else out8ENLED.checked = false
+
+        if(led_out_en_values[4] === true)
+            out7ENLED.checked = true
+        else out7ENLED.checked = false
+
+        if(led_out_en_values[5] === true)
+            out6ENLED.checked = true
+        else out6ENLED.checked = false
+
+        if(led_out_en_values[6] === true)
+            out5ENLED.checked = true
+        else out5ENLED.checked = false
+
+        if(led_out_en_values[7] === true)
+            out4ENLED.checked = true
+        else out4ENLED.checked = false
+
+        if(led_out_en_values[8] === true)
+            out3ENLED.checked = true
+        else out3ENLED.checked = false
+
+        if(led_out_en_values[9] === true)
+            out2ENLED.checked = true
+        else out2ENLED.checked = false
+
+        if(led_out_en_values[10] === true)
+            out1ENLED.checked = true
+        else out1ENLED.checked = false
+
+        if(led_out_en_values[11] === true)
+            out0ENLED.checked = true
+        else out0ENLED.checked = false
+
+        platformInterface.outputEnable11 =led_out_en_values[0]
+        platformInterface.outputEnable10 = led_out_en_values[1]
+        platformInterface.outputEnable9 =led_out_en_values[2]
+        platformInterface.outputEnable8 = led_out_en_values[3]
+        platformInterface.outputEnable7 = led_out_en_values[4]
+        platformInterface.outputEnable6 = led_out_en_values[5]
+        platformInterface.outputEnable5 = led_out_en_values[6]
+        platformInterface.outputEnable4 = led_out_en_values[7]
+        platformInterface.outputEnable3 = led_out_en_values[8]
+        platformInterface.outputEnable2 = led_out_en_values[9]
+        platformInterface.outputEnable1 = led_out_en_values[10]
+        platformInterface.outputEnable0 = led_out_en_values[11]
     }
 
 
@@ -357,80 +357,80 @@ Item {
     onLed_extChanged: {
         externalLED.text = led_ext.caption
         if(led_ext.values[0] === true)
-            out0interExterLED.checked = true
-        else out0interExterLED.checked = false
-
-        if(led_ext.values[1] === true)
-            out1interExterLED.checked = true
-        else out1interExterLED.checked = false
-
-        if(led_ext.values[2] === true)
-            out2interExterLED.checked = true
-        else out2interExterLED.checked = false
-
-        if(led_ext.values[3] === true)
-            out3interExterLED.checked = true
-        else out3interExterLED.checked = false
-
-        if(led_ext.values[4] === true)
-            out4interExterLED.checked = true
-        else out4interExterLED.checked = false
-
-        if(led_ext.values[5] === true)
-            out5interExterLED.checked = true
-        else out5interExterLED.checked = false
-
-        if(led_ext.values[6] === true)
-            out6interExterLED.checked = true
-        else out6interExterLED.checked = false
-
-        if(led_ext.values[7] === true)
-            out7interExterLED.checked = true
-        else out7interExterLED.checked = false
-
-        if(led_ext.values[8] === true)
-            out8interExterLED.checked = true
-        else out8interExterLED.checked = false
-
-        if(led_ext.values[9] === true)
-            out9interExterLED.checked = true
-        else out9interExterLED.checked = false
-
-        if(led_ext.values[10] === true)
-            out10interExterLED.checked = true
-        else out10interExterLED.checked = false
-
-        if(led_ext.values[11] === true)
             out11interExterLED.checked = true
         else out11interExterLED.checked = false
 
-        platformInterface.outputExt0 = led_ext.values[0]
-        platformInterface.outputExt1 = led_ext.values[1]
-        platformInterface.outputExt2 = led_ext.values[2]
-        platformInterface.outputExt3 = led_ext.values[3]
-        platformInterface.outputExt4 = led_ext.values[4]
-        platformInterface.outputExt5 = led_ext.values[5]
-        platformInterface.outputExt6 = led_ext.values[6]
-        platformInterface.outputExt7 = led_ext.values[7]
-        platformInterface.outputExt8 = led_ext.values[8]
-        platformInterface.outputExt9 = led_ext.values[9]
-        platformInterface.outputExt10 = led_ext.values[10]
-        platformInterface.outputExt11 = led_ext.values[11]
+        if(led_ext.values[1] === true)
+            out10interExterLED.checked = true
+        else out10interExterLED.checked = false
+
+        if(led_ext.values[2] === true)
+            out9interExterLED.checked = true
+        else out9interExterLED.checked = false
+
+        if(led_ext.values[3] === true)
+            out8interExterLED.checked = true
+        else out8interExterLED.checked = false
+
+        if(led_ext.values[4] === true)
+            out7interExterLED.checked = true
+        else out7interExterLED.checked = false
+
+        if(led_ext.values[5] === true)
+            out6interExterLED.checked = true
+        else out6interExterLED.checked = false
+
+        if(led_ext.values[6] === true)
+            out5interExterLED.checked = true
+        else out5interExterLED.checked = false
+
+        if(led_ext.values[7] === true)
+            out4interExterLED.checked = true
+        else out4interExterLED.checked = false
+
+        if(led_ext.values[8] === true)
+            out3interExterLED.checked = true
+        else out3interExterLED.checked = false
+
+        if(led_ext.values[9] === true)
+            out2interExterLED.checked = true
+        else out2interExterLED.checked = false
+
+        if(led_ext.values[10] === true)
+            out1interExterLED.checked = true
+        else out1interExterLED.checked = false
+
+        if(led_ext.values[11] === true)
+            out0interExterLED.checked = true
+        else out0interExterLED.checked = false
+
+        platformInterface.outputExt11 = led_ext.values[0]
+        platformInterface.outputExt10 = led_ext.values[1]
+        platformInterface.outputExt9 = led_ext.values[2]
+        platformInterface.outputExt8 = led_ext.values[3]
+        platformInterface.outputExt7 = led_ext.values[4]
+        platformInterface.outputExt6 = led_ext.values[5]
+        platformInterface.outputExt5 = led_ext.values[6]
+        platformInterface.outputExt4 = led_ext.values[7]
+        platformInterface.outputExt3 = led_ext.values[8]
+        platformInterface.outputExt2 = led_ext.values[9]
+        platformInterface.outputExt1 = led_ext.values[10]
+        platformInterface.outputExt0 = led_ext.values[11]
 
 
 
-        setStatesForControls(out0interExterLED,led_ext.states[0])
-        setStatesForControls(out1interExterLED,led_ext.states[1])
-        setStatesForControls(out2interExterLED,led_ext.states[2])
-        setStatesForControls(out3interExterLED,led_ext.states[3])
-        setStatesForControls(out4interExterLED,led_ext.states[4])
-        setStatesForControls(out5interExterLED,led_ext.states[5])
-        setStatesForControls(out6interExterLED,led_ext.states[6])
-        setStatesForControls(out7interExterLED,led_ext.states[7])
-        setStatesForControls(out8interExterLED,led_ext.states[8])
-        setStatesForControls(out9interExterLED,led_ext.states[9])
-        setStatesForControls(out10interExterLED,led_ext.states[10])
-        setStatesForControls(out11interExterLED,led_ext.states[11])
+        setStatesForControls(out11interExterLED,led_ext.states[0])
+        setStatesForControls(out10interExterLED,led_ext.states[1])
+        setStatesForControls(out9interExterLED,led_ext.states[2])
+        setStatesForControls(out8interExterLED,led_ext.states[3])
+        setStatesForControls(out7interExterLED,led_ext.states[4])
+        setStatesForControls(out6interExterLED,led_ext.states[5])
+        setStatesForControls(out5interExterLED,led_ext.states[6])
+        setStatesForControls(out4interExterLED,led_ext.states[7])
+        setStatesForControls(out3interExterLED,led_ext.states[8])
+        setStatesForControls(out2interExterLED,led_ext.states[9])
+        setStatesForControls(out1interExterLED,led_ext.states[10])
+        setStatesForControls(out0interExterLED,led_ext.states[11])
 
 
     }
@@ -438,81 +438,81 @@ Item {
     property var led_ext_values: platformInterface.led_ext_values.values
     onLed_ext_valuesChanged:  {
         if(led_ext_values[0] === true)
-            out0interExterLED.checked = true
-        else out0interExterLED.checked = false
-
-        if(led_ext_values[1] === true)
-            out1interExterLED.checked = true
-        else out1interExterLED.checked = false
-
-        if(led_ext_values[2] === true)
-            out2interExterLED.checked = true
-        else out2interExterLED.checked = false
-
-        if(led_ext_values[3] === true)
-            out3interExterLED.checked = true
-        else out3interExterLED.checked = false
-
-        if(led_ext_values[4] === true)
-            out4interExterLED.checked = true
-        else out4interExterLED.checked = false
-
-        if(led_ext_values[5] === true)
-            out5interExterLED.checked = true
-        else out5interExterLED.checked = false
-
-        if(led_ext_values[6] === true)
-            out6interExterLED.checked = true
-        else out6interExterLED.checked = false
-
-        if(led_ext_values[7] === true)
-            out7interExterLED.checked = true
-        else out7interExterLED.checked = false
-
-        if(led_ext_values[8] === true)
-            out8interExterLED.checked = true
-        else out8interExterLED.checked = false
-
-        if(led_ext_values[9] === true)
-            out9interExterLED.checked = true
-        else out9interExterLED.checked = false
-
-        if(led_ext_values[10] === true)
-            out10interExterLED.checked = true
-        else out10interExterLED.checked = false
-
-        if(led_ext_values[11] === true)
             out11interExterLED.checked = true
         else out11interExterLED.checked = false
 
-        platformInterface.outputExt0 = led_ext_values[0]
-        platformInterface.outputExt1 = led_ext_values[1]
-        platformInterface.outputExt2 = led_ext_values[2]
-        platformInterface.outputExt3 = led_ext_values[3]
-        platformInterface.outputExt4 = led_ext_values[4]
-        platformInterface.outputExt5 = led_ext_values[5]
-        platformInterface.outputExt6 = led_ext_values[6]
-        platformInterface.outputExt7 = led_ext_values[7]
-        platformInterface.outputExt8 = led_ext_values[8]
-        platformInterface.outputExt9 = led_ext_values[9]
-        platformInterface.outputExt10 = led_ext_values[10]
-        platformInterface.outputExt11 = led_ext_values[11]
+        if(led_ext_values[1] === true)
+            out10interExterLED.checked = true
+        else out10interExterLED.checked = false
+
+        if(led_ext_values[2] === true)
+            out9interExterLED.checked = true
+        else out9interExterLED.checked = false
+
+        if(led_ext_values[3] === true)
+            out8interExterLED.checked = true
+        else out8interExterLED.checked = false
+
+        if(led_ext_values[4] === true)
+            out7interExterLED.checked = true
+        else out7interExterLED.checked = false
+
+        if(led_ext_values[5] === true)
+            out6interExterLED.checked = true
+        else out6interExterLED.checked = false
+
+        if(led_ext_values[6] === true)
+            out5interExterLED.checked = true
+        else out5interExterLED.checked = false
+
+        if(led_ext_values[7] === true)
+            out4interExterLED.checked = true
+        else out4interExterLED.checked = false
+
+        if(led_ext_values[8] === true)
+            out3interExterLED.checked = true
+        else out3interExterLED.checked = false
+
+        if(led_ext_values[9] === true)
+            out2interExterLED.checked = true
+        else out2interExterLED.checked = false
+
+        if(led_ext_values[10] === true)
+            out1interExterLED.checked = true
+        else out1interExterLED.checked = false
+
+        if(led_ext_values[11] === true)
+            out0interExterLED.checked = true
+        else out0interExterLED.checked = false
+
+        platformInterface.outputExt11 = led_ext_values[0]
+        platformInterface.outputExt10 = led_ext_values[1]
+        platformInterface.outputExt9 = led_ext_values[2]
+        platformInterface.outputExt8 = led_ext_values[3]
+        platformInterface.outputExt7 = led_ext_values[4]
+        platformInterface.outputExt6 = led_ext_values[5]
+        platformInterface.outputExt5 = led_ext_values[6]
+        platformInterface.outputExt4 = led_ext_values[7]
+        platformInterface.outputExt3 = led_ext_values[8]
+        platformInterface.outputExt2 = led_ext_values[9]
+        platformInterface.outputExt1 = led_ext_values[10]
+        platformInterface.outputExt0 = led_ext_values[11]
     }
 
     property var led_ext_states: platformInterface.led_ext_states.states
     onLed_ext_statesChanged: {
-        setStatesForControls(out0interExterLED,led_ext_states[0])
-        setStatesForControls(out1interExterLED,led_ext_states[0])
-        setStatesForControls(out2interExterLED,led_ext_states[0])
-        setStatesForControls(out3interExterLED,led_ext_states[0])
-        setStatesForControls(out4interExterLED,led_ext_states[0])
-        setStatesForControls(out5interExterLED,led_ext_states[0])
-        setStatesForControls(out6interExterLED,led_ext_states[0])
-        setStatesForControls(out7interExterLED,led_ext_states[0])
-        setStatesForControls(out8interExterLED,led_ext_states[0])
-        setStatesForControls(out9interExterLED,led_ext_states[0])
-        setStatesForControls(out10interExterLED,led_ext_states[0])
         setStatesForControls(out11interExterLED,led_ext_states[0])
+        setStatesForControls(out10interExterLED,led_ext_states[0])
+        setStatesForControls(out9interExterLED,led_ext_states[0])
+        setStatesForControls(out8interExterLED,led_ext_states[0])
+        setStatesForControls(out7interExterLED,led_ext_states[0])
+        setStatesForControls(out6interExterLED,led_ext_states[0])
+        setStatesForControls(out5interExterLED,led_ext_states[0])
+        setStatesForControls(out4interExterLED,led_ext_states[0])
+        setStatesForControls(out3interExterLED,led_ext_states[0])
+        setStatesForControls(out2interExterLED,led_ext_states[0])
+        setStatesForControls(out1interExterLED,led_ext_states[0])
+        setStatesForControls(out0interExterLED,led_ext_states[0])
 
 
     }
@@ -521,118 +521,118 @@ Item {
     onLed_fault_statusChanged: {
         faultText.text = led_fault_status.caption
         if(led_fault_status.values[0] === false)
-            out0faultStatusLED.status = SGStatusLight.Off
-        else  out0faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[1] === false)
-            out1faultStatusLED.status = SGStatusLight.Off
-        else  out1faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[2] === false)
-            out2faultStatusLED.status = SGStatusLight.Off
-        else  out2faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[3] === false)
-            out3faultStatusLED.status = SGStatusLight.Off
-        else  out3faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[4] === false)
-            out4faultStatusLED.status = SGStatusLight.Off
-        else  out4faultStatusLED.status = SGStatusLight.Red
-
-
-        if(led_fault_status.values[5] === false)
-            out5faultStatusLED.status = SGStatusLight.Off
-        else  out5faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[6] === false)
-            out6faultStatusLED.status = SGStatusLight.Off
-        else  out6faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[7] === false)
-            out7faultStatusLED.status = SGStatusLight.Off
-        else  out7faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[8] === false)
-            out8faultStatusLED.status = SGStatusLight.Off
-        else  out8faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[9] === false)
-            out9faultStatusLED.status = SGStatusLight.Off
-        else  out9faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[10] === false)
-            out10faultStatusLED.status = SGStatusLight.Off
-        else  out10faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status.values[11] === false)
             out11faultStatusLED.status = SGStatusLight.Off
         else  out11faultStatusLED.status = SGStatusLight.Red
 
-        setStatesForControls(out0faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out1faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out2faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out3faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out4faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out5faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out6faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out7faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out8faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out9faultStatusLED,led_fault_status.states[0])
-        setStatesForControls(out10faultStatusLED,led_fault_status.states[0])
+        if(led_fault_status.values[1] === false)
+            out10faultStatusLED.status = SGStatusLight.Off
+        else  out10faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status.values[2] === false)
+            out9faultStatusLED.status = SGStatusLight.Off
+        else  out9faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status.values[3] === false)
+            out8faultStatusLED.status = SGStatusLight.Off
+        else  out8faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status.values[4] === false)
+            out7faultStatusLED.status = SGStatusLight.Off
+        else  out7faultStatusLED.status = SGStatusLight.Red
+
+
+        if(led_fault_status.values[5] === false)
+            out6faultStatusLED.status = SGStatusLight.Off
+        else  out6faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status.values[6] === false)
+            out5faultStatusLED.status = SGStatusLight.Off
+        else  out5faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status.values[7] === false)
+            out4faultStatusLED.status = SGStatusLight.Off
+        else  out4faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status.values[8] === false)
+            out3faultStatusLED.status = SGStatusLight.Off
+        else  out3faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status.values[9] === false)
+            out2faultStatusLED.status = SGStatusLight.Off
+        else  out2faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status.values[10] === false)
+            out1faultStatusLED.status = SGStatusLight.Off
+        else  out1faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status.values[11] === false)
+            out0faultStatusLED.status = SGStatusLight.Off
+        else  out0faultStatusLED.status = SGStatusLight.Red
+
         setStatesForControls(out11faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out10faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out9faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out8faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out7faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out6faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out5faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out4faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out3faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out2faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out1faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out0faultStatusLED,led_fault_status.states[0])
 
     }
 
     property var led_fault_status_values: platformInterface.led_fault_status_values.values
     onLed_fault_status_valuesChanged: {
         if(led_fault_status_values[0] === false)
-            out0faultStatusLED.status = SGStatusLight.Off
-        else  out0faultStatusLED.status = SGStatusLight.Red
+            out11faultStatusLED.status = SGStatusLight.Off
+        else  out11faultStatusLED.status = SGStatusLight.Red
 
         if(led_fault_status_values[1] === false)
-            out1faultStatusLED.status = SGStatusLight.Off
-        else  out1faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status_values[2] === false)
-            out2faultStatusLED.status = SGStatusLight.Off
-        else  out2faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status_values[3] === false)
-            out3faultStatusLED.status = SGStatusLight.Off
-        else  out3faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status_values[4] === false)
-            out4faultStatusLED.status = SGStatusLight.Off
-        else  out4faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status_values[5] === false)
-            out5faultStatusLED.status = SGStatusLight.Off
-        else  out5faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status_values[6] === false)
-            out6faultStatusLED.status = SGStatusLight.Off
-        else  out6faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status_values[7] === false)
-            out7faultStatusLED.status = SGStatusLight.Off
-        else  out7faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status_values[8] === false)
-            out8faultStatusLED.status = SGStatusLight.Off
-        else  out8faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status_values[9] === false)
-            out9faultStatusLED.status = SGStatusLight.Off
-        else  out9faultStatusLED.status = SGStatusLight.Red
-
-        if(led_fault_status_values[10] === false)
             out10faultStatusLED.status = SGStatusLight.Off
         else  out10faultStatusLED.status = SGStatusLight.Red
 
+        if(led_fault_status_values[2] === false)
+            out9faultStatusLED.status = SGStatusLight.Off
+        else  out9faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status_values[3] === false)
+            out8faultStatusLED.status = SGStatusLight.Off
+        else  out8faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status_values[4] === false)
+            out7faultStatusLED.status = SGStatusLight.Off
+        else  out7faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status_values[5] === false)
+            out6faultStatusLED.status = SGStatusLight.Off
+        else  out6faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status_values[6] === false)
+            out5faultStatusLED.status = SGStatusLight.Off
+        else  out5faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status_values[7] === false)
+            out4faultStatusLED.status = SGStatusLight.Off
+        else  out4faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status_values[8] === false)
+            out3faultStatusLED.status = SGStatusLight.Off
+        else  out3faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status_values[9] === false)
+            out2faultStatusLED.status = SGStatusLight.Off
+        else  out2faultStatusLED.status = SGStatusLight.Red
+
+        if(led_fault_status_values[10] === false)
+            out1faultStatusLED.status = SGStatusLight.Off
+        else  out1faultStatusLED.status = SGStatusLight.Red
+
         if(led_fault_status_values[11] === false)
-            out11faultStatusLED.status = SGStatusLight.Off
-        else  out11faultStatusLED.status = SGStatusLight.Red
+            out0faultStatusLED.status = SGStatusLight.Off
+        else  out0faultStatusLED.status = SGStatusLight.Red
 
     }
 
@@ -640,18 +640,18 @@ Item {
     property var led_fault_status_states: platformInterface.led_fault_status_states.states
     onLed_fault_status_statesChanged: {
 
-        setStatesForControls(out0faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out1faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out2faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out3faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out4faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out5faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out6faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out7faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out8faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out9faultStatusLED,led_fault_status_states[0])
-        setStatesForControls(out10faultStatusLED,led_fault_status_states[0])
         setStatesForControls(out11faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out10faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out9faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out8faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out7faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out6faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out5faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out4faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out3faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out2faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out1faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out0faultStatusLED,led_fault_status_states[0])
 
 
     }
@@ -660,162 +660,158 @@ Item {
     onLed_pwm_enablesChanged: {
         pwmEnableText.text = led_pwm_enables.caption
 
-        out0pwmEnableLED.checked = led_pwm_enables.values[0]
-        platformInterface.outputPwm0 = led_pwm_enables.values[0]
+        out11pwmEnableLED.checked = led_pwm_enables.values[0]
+        platformInterface.outputPwm11 = led_pwm_enables.values[0]
 
-        platformInterface.outputPwm1 = led_pwm_enables.values[1]
-        out1pwmEnableLED.checked = led_pwm_enables.values[1]
+        platformInterface.outputPwm10 = led_pwm_enables.values[1]
+        out10pwmEnableLED.checked = led_pwm_enables.values[1]
 
-        platformInterface.outputPwm2 = led_pwm_enables.values[2]
-        out2pwmEnableLED.checked = led_pwm_enables.values[2]
+        platformInterface.outputPwm9 = led_pwm_enables.values[2]
+        out9pwmEnableLED.checked = led_pwm_enables.values[2]
 
-        platformInterface.outputPwm3 = led_pwm_enables.values[3]
-        out3pwmEnableLED.checked = led_pwm_enables.values[3]
+        platformInterface.outputPwm8 = led_pwm_enables.values[3]
+        out8pwmEnableLED.checked = led_pwm_enables.values[3]
 
-        platformInterface.outputPwm4 = led_pwm_enables.values[4]
-        out4pwmEnableLED.checked = led_pwm_enables.values[4]
+        platformInterface.outputPwm7 = led_pwm_enables.values[4]
+        out7pwmEnableLED.checked = led_pwm_enables.values[4]
 
-        platformInterface.outputPwm5 = led_pwm_enables.values[5]
-        out5pwmEnableLED.checked = led_pwm_enables.values[5]
+        platformInterface.outputPwm6 = led_pwm_enables.values[5]
+        out6pwmEnableLED.checked = led_pwm_enables.values[5]
 
-        platformInterface.outputPwm6 = led_pwm_enables.values[6]
-        out6pwmEnableLED.checked = led_pwm_enables.values[6]
+        platformInterface.outputPwm5 = led_pwm_enables.values[6]
+        out5pwmEnableLED.checked = led_pwm_enables.values[6]
 
-        platformInterface.outputPwm7 = led_pwm_enables.values[7]
-        out7pwmEnableLED.checked = led_pwm_enables.values[7]
+        platformInterface.outputPwm4 = led_pwm_enables.values[7]
+        out4pwmEnableLED.checked = led_pwm_enables.values[7]
 
-        platformInterface.outputPwm8 = led_pwm_enables.values[8]
-        out8pwmEnableLED.checked = led_pwm_enables.values[8]
+        platformInterface.outputPwm3 = led_pwm_enables.values[8]
+        out3pwmEnableLED.checked = led_pwm_enables.values[8]
 
-        platformInterface.outputPwm9 = led_pwm_enables.values[9]
-        out9pwmEnableLED.checked = led_pwm_enables.values[9]
+        platformInterface.outputPwm2 = led_pwm_enables.values[9]
+        out2pwmEnableLED.checked = led_pwm_enables.values[9]
 
-        platformInterface.outputPwm10 = led_pwm_enables.values[10]
-        out10pwmEnableLED.checked = led_pwm_enables.values[10]
+        platformInterface.outputPwm1 = led_pwm_enables.values[10]
+        out1pwmEnableLED.checked = led_pwm_enables.values[10]
 
-        platformInterface.outputPwm11 = led_pwm_enables.values[11]
-        out11pwmEnableLED.checked = led_pwm_enables.values[11]
+        platformInterface.outputPwm0 = led_pwm_enables.values[11]
+        out0pwmEnableLED.checked = led_pwm_enables.values[11]
 
 
-        setStatesForControls(out0pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out1pwmEnableLED,led_pwm_enables.states[1])
-        setStatesForControls(out2pwmEnableLED,led_pwm_enables.states[2])
-        setStatesForControls(out3pwmEnableLED,led_pwm_enables.states[3])
-        setStatesForControls(out4pwmEnableLED,led_pwm_enables.states[4])
-        setStatesForControls(out5pwmEnableLED,led_pwm_enables.states[5])
-        setStatesForControls(out6pwmEnableLED,led_pwm_enables.states[6])
-        setStatesForControls(out7pwmEnableLED,led_pwm_enables.states[7])
-        setStatesForControls(out8pwmEnableLED,led_pwm_enables.states[8])
-        setStatesForControls(out9pwmEnableLED,led_pwm_enables.states[9])
-        setStatesForControls(out10pwmEnableLED,led_pwm_enables.states[10])
-        setStatesForControls(out11pwmEnableLED,led_pwm_enables.states[11])
+        setStatesForControls(out11pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out10pwmEnableLED,led_pwm_enables.states[1])
+        setStatesForControls(out9pwmEnableLED,led_pwm_enables.states[2])
+        setStatesForControls(out8pwmEnableLED,led_pwm_enables.states[3])
+        setStatesForControls(out7pwmEnableLED,led_pwm_enables.states[4])
+        setStatesForControls(out6pwmEnableLED,led_pwm_enables.states[5])
+        setStatesForControls(out5pwmEnableLED,led_pwm_enables.states[6])
+        setStatesForControls(out4pwmEnableLED,led_pwm_enables.states[7])
+        setStatesForControls(out3pwmEnableLED,led_pwm_enables.states[8])
+        setStatesForControls(out2pwmEnableLED,led_pwm_enables.states[9])
+        setStatesForControls(out1pwmEnableLED,led_pwm_enables.states[10])
+        setStatesForControls(out0pwmEnableLED,led_pwm_enables.states[11])
     }
 
     property var led_pwm_enables_values: platformInterface.led_pwm_enables_values.values
     onLed_pwm_enables_valuesChanged: {
-        out0pwmEnableLED.checked = led_pwm_enables_values[0]
-        platformInterface.outputPwm0 = led_pwm_enables_values[0]
+        platformInterface.outputPwm11 = led_pwm_enables_values[0]
+        out11pwmEnableLED.checked = led_pwm_enables_values[0]
 
-        platformInterface.outputPwm1 = led_pwm_enables_values[1]
-        out1pwmEnableLED.checked = led_pwm_enables_values[1]
+        platformInterface.outputPwm10 = led_pwm_enables_values[1]
+        out10pwmEnableLED.checked = led_pwm_enables_values[1]
 
-        out2pwmEnableLED.checked = led_pwm_enables_values[2]
-        platformInterface.outputPwm2 = led_pwm_enables_values[2]
+        platformInterface.outputPwm9 = led_pwm_enables_values[2]
+        out9pwmEnableLED.checked = led_pwm_enables_values[2]
 
-        platformInterface.outputPwm3 = led_pwm_enables_values[3]
-        out3pwmEnableLED.checked = led_pwm_enables_values[3]
+        platformInterface.outputPwm8 = led_pwm_enables_values[3]
+        out8pwmEnableLED.checked = led_pwm_enables_values[3]
 
-        platformInterface.outputPwm4 = led_pwm_enables_values[4]
-        out4pwmEnableLED.checked = led_pwm_enables_values[4]
+        platformInterface.outputPwm7 = led_pwm_enables_values[4]
+        out7pwmEnableLED.checked = led_pwm_enables_values[4]
 
-        platformInterface.outputPwm5 = led_pwm_enables_values[5]
-        out5pwmEnableLED.checked = led_pwm_enables_values[5]
+        platformInterface.outputPwm6 = led_pwm_enables_values[5]
+        out6pwmEnableLED.checked = led_pwm_enables_values[5]
 
-        platformInterface.outputPwm6 = led_pwm_enables_values[6]
-        out6pwmEnableLED.checked = led_pwm_enables_values[6]
+        platformInterface.outputPwm5 = led_pwm_enables_values[6]
+        out5pwmEnableLED.checked = led_pwm_enables_values[6]
 
-        platformInterface.outputPwm7 = led_pwm_enables_values[7]
-        out7pwmEnableLED.checked = led_pwm_enables_values[7]
+        platformInterface.outputPwm4 = led_pwm_enables_values[7]
+        out4pwmEnableLED.checked = led_pwm_enables_values[7]
 
-        platformInterface.outputPwm8 = led_pwm_enables_values[8]
-        out8pwmEnableLED.checked = led_pwm_enables_values[8]
+        platformInterface.outputPwm3 = led_pwm_enables_values[8]
+        out3pwmEnableLED.checked = led_pwm_enables_values[8]
 
-        platformInterface.outputPwm9 = led_pwm_enables_values[9]
-        out9pwmEnableLED.checked = led_pwm_enables_values[9]
+        platformInterface.outputPwm2 = led_pwm_enables_values[9]
+        out2pwmEnableLED.checked = led_pwm_enables_values[9]
 
-        platformInterface.outputPwm10 = led_pwm_enables_values[10]
-        out10pwmEnableLED.checked = led_pwm_enables_values[10]
+        platformInterface.outputPwm1 = led_pwm_enables_values[10]
+        out1pwmEnableLED.checked = led_pwm_enables_values[10]
 
-        platformInterface.outputPwm11 = led_pwm_enables_values[11]
-        out11pwmEnableLED.checked = led_pwm_enables_values[11]
+        platformInterface.outputPwm0 = led_pwm_enables_values[11]
+        out0pwmEnableLED.checked = led_pwm_enables_values[11]
 
     }
 
     property var led_pwm_enables_states: platformInterface.led_pwm_enables_states.states
     onLed_pwm_enables_statesChanged: {
-
-        setStatesForControls(out0pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out1pwmEnableLED,led_pwm_enables_states[1])
-        setStatesForControls(out2pwmEnableLED,led_pwm_enables_states[2])
-        setStatesForControls(out3pwmEnableLED,led_pwm_enables_states[3])
-        setStatesForControls(out4pwmEnableLED,led_pwm_enables_states[4])
-        setStatesForControls(out5pwmEnableLED,led_pwm_enables_states[5])
-        setStatesForControls(out6pwmEnableLED,led_pwm_enables_states[6])
-        setStatesForControls(out7pwmEnableLED,led_pwm_enables_states[7])
-        setStatesForControls(out8pwmEnableLED,led_pwm_enables_states[8])
-        setStatesForControls(out9pwmEnableLED,led_pwm_enables_states[9])
-        setStatesForControls(out10pwmEnableLED,led_pwm_enables_states[10])
-        setStatesForControls(out11pwmEnableLED,led_pwm_enables_states[11])
+        setStatesForControls(out11pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out10pwmEnableLED,led_pwm_enables_states[1])
+        setStatesForControls(out9pwmEnableLED,led_pwm_enables_states[2])
+        setStatesForControls(out8pwmEnableLED,led_pwm_enables_states[3])
+        setStatesForControls(out7pwmEnableLED,led_pwm_enables_states[4])
+        setStatesForControls(out6pwmEnableLED,led_pwm_enables_states[5])
+        setStatesForControls(out5pwmEnableLED,led_pwm_enables_states[6])
+        setStatesForControls(out4pwmEnableLED,led_pwm_enables_states[7])
+        setStatesForControls(out3pwmEnableLED,led_pwm_enables_states[8])
+        setStatesForControls(out2pwmEnableLED,led_pwm_enables_states[9])
+        setStatesForControls(out1pwmEnableLED,led_pwm_enables_states[10])
+        setStatesForControls(out0pwmEnableLED,led_pwm_enables_states[11])
     }
 
 
     property var led_pwm_duty: platformInterface.led_pwm_duty
     onLed_pwm_dutyChanged: {
-        console.log("tanya",led_pwm_duty.values[0])
-        out0duty.value = led_pwm_duty.values[0]
-        out1duty.value = led_pwm_duty.values[1]
-        out2duty.value = led_pwm_duty.values[2]
-        out3duty.value = led_pwm_duty.values[3]
-        out4duty.value = led_pwm_duty.values[4]
+        out11duty.value = led_pwm_duty.values[0]
+        out10duty.value = led_pwm_duty.values[1]
+        out9duty.value = led_pwm_duty.values[2]
+        out8duty.value = led_pwm_duty.values[3]
+        out7duty.value = led_pwm_duty.values[4]
+        out6duty.value = led_pwm_duty.values[5]
+        out5duty.value = led_pwm_duty.values[6]
+        out4duty.value = led_pwm_duty.values[7]
+        out3duty.value = led_pwm_duty.values[8]
+        out2duty.value = led_pwm_duty.values[9]
+        out1duty.value = led_pwm_duty.values[10]
+        out0duty.value = led_pwm_duty.values[11]
 
-        out5duty.value = led_pwm_duty.values[5]
-        out6duty.value = led_pwm_duty.values[6]
-        out7duty.value = led_pwm_duty.values[7]
-
-        out8duty.value = led_pwm_duty.values[8]
-        out9duty.value = led_pwm_duty.values[9]
-        out10duty.value = led_pwm_duty.values[10]
-        out11duty.value = led_pwm_duty.values[11]
-
-        platformInterface.outputDuty0 = led_pwm_duty.values[0]
-        platformInterface.outputDuty1 = led_pwm_duty.values[1]
-        platformInterface.outputDuty2 = led_pwm_duty.values[2]
-        platformInterface.outputDuty3 = led_pwm_duty.values[3]
-        platformInterface.outputDuty4 = led_pwm_duty.values[4]
-        platformInterface.outputDuty5 = led_pwm_duty.values[5]
-        platformInterface.outputDuty6 = led_pwm_duty.values[6]
-        platformInterface.outputDuty7 = led_pwm_duty.values[7]
-        platformInterface.outputDuty8 = led_pwm_duty.values[8]
-        platformInterface.outputDuty9 = led_pwm_duty.values[9]
-        platformInterface.outputDuty10 = led_pwm_duty.values[10]
-        platformInterface.outputDuty11 =  led_pwm_duty.values[11]
+        platformInterface.outputDuty11 = led_pwm_duty.values[0]
+        platformInterface.outputDuty10 = led_pwm_duty.values[1]
+        platformInterface.outputDuty9 = led_pwm_duty.values[2]
+        platformInterface.outputDuty8 = led_pwm_duty.values[3]
+        platformInterface.outputDuty7 = led_pwm_duty.values[4]
+        platformInterface.outputDuty6 = led_pwm_duty.values[5]
+        platformInterface.outputDuty5 = led_pwm_duty.values[6]
+        platformInterface.outputDuty4 = led_pwm_duty.values[7]
+        platformInterface.outputDuty3 = led_pwm_duty.values[8]
+        platformInterface.outputDuty2 = led_pwm_duty.values[9]
+        platformInterface.outputDuty1 = led_pwm_duty.values[10]
+        platformInterface.outputDuty0 =  led_pwm_duty.values[11]
 
 
-        out0duty.from = led_pwm_duty.scales[1]
-        out0duty.to = led_pwm_duty.scales[0]
+        out11duty.from = led_pwm_duty.scales[1]
+        out11duty.to = led_pwm_duty.scales[0]
 
-        setStateForPWMDuty(out0duty,led_pwm_duty.states[0])
-        setStateForPWMDuty(out1duty,led_pwm_duty.states[1])
-        setStateForPWMDuty(out2duty,led_pwm_duty.states[2])
-        setStateForPWMDuty(out3duty,led_pwm_duty.states[3])
-        setStateForPWMDuty(out4duty,led_pwm_duty.states[4])
-        setStateForPWMDuty(out5duty,led_pwm_duty.states[5])
-        setStateForPWMDuty(out6duty,led_pwm_duty.states[6])
-        setStateForPWMDuty(out7duty,led_pwm_duty.states[7])
-        setStateForPWMDuty(out8duty,led_pwm_duty.states[8])
-        setStateForPWMDuty(out9duty,led_pwm_duty.states[9])
-        setStateForPWMDuty(out10duty,led_pwm_duty.states[10])
-        setStateForPWMDuty(out11duty,led_pwm_duty.states[11])
+        setStateForPWMDuty(out11duty,led_pwm_duty.states[0])
+        setStateForPWMDuty(out10duty,led_pwm_duty.states[1])
+        setStateForPWMDuty(out9duty,led_pwm_duty.states[2])
+        setStateForPWMDuty(out8duty,led_pwm_duty.states[3])
+        setStateForPWMDuty(out7duty,led_pwm_duty.states[4])
+        setStateForPWMDuty(out6duty,led_pwm_duty.states[5])
+        setStateForPWMDuty(out5duty,led_pwm_duty.states[6])
+        setStateForPWMDuty(out4duty,led_pwm_duty.states[7])
+        setStateForPWMDuty(out3duty,led_pwm_duty.states[8])
+        setStateForPWMDuty(out2duty,led_pwm_duty.states[9])
+        setStateForPWMDuty(out1duty,led_pwm_duty.states[10])
+        setStateForPWMDuty(out0duty,led_pwm_duty.states[11])
 
     }
 
@@ -823,31 +819,31 @@ Item {
 
     property var led_pwm_duty_values: platformInterface.led_pwm_duty_values.values
     onLed_pwm_duty_valuesChanged: {
-        out0duty.value = led_pwm_duty_values[0]
-        out1duty.value = led_pwm_duty_values[1]
-        out2duty.value = led_pwm_duty_values[2]
-        out3duty.value = led_pwm_duty_values[3]
-        out4duty.value = led_pwm_duty_values[4]
-        out5duty.value = led_pwm_duty_values[5]
-        out6duty.value = led_pwm_duty_values[6]
-        out7duty.value = led_pwm_duty_values[7]
-        out8duty.value = led_pwm_duty_values[8]
-        out9duty.value = led_pwm_duty_values[9]
-        out10duty.value = led_pwm_duty_values[10]
-        out11duty.value = led_pwm_duty_values[11]
+        out11duty.value = led_pwm_duty_values[0]
+        out10duty.value = led_pwm_duty_values[1]
+        out9duty.value = led_pwm_duty_values[2]
+        out8duty.value = led_pwm_duty_values[3]
+        out7duty.value = led_pwm_duty_values[4]
+        out6duty.value = led_pwm_duty_values[5]
+        out5duty.value = led_pwm_duty_values[6]
+        out4duty.value = led_pwm_duty_values[7]
+        out3duty.value = led_pwm_duty_values[8]
+        out2duty.value = led_pwm_duty_values[9]
+        out1duty.value = led_pwm_duty_values[10]
+        out0duty.value = led_pwm_duty_values[11]
 
-        platformInterface.outputDuty0 = led_pwm_duty_values[0]
-        platformInterface.outputDuty1 = led_pwm_duty_values[1]
-        platformInterface.outputDuty2 = led_pwm_duty_values[2]
-        platformInterface.outputDuty3 = led_pwm_duty_values[3]
-        platformInterface.outputDuty4 = led_pwm_duty_values[4]
-        platformInterface.outputDuty5 = led_pwm_duty_values[5]
-        platformInterface.outputDuty6 = led_pwm_duty_values[6]
-        platformInterface.outputDuty7 = led_pwm_duty_values[7]
-        platformInterface.outputDuty8 = led_pwm_duty_values[8]
-        platformInterface.outputDuty9 = led_pwm_duty_values[9]
-        platformInterface.outputDuty10 = led_pwm_duty_values[10]
-        platformInterface.outputDuty11 =  led_pwm_duty_values[11]
+        platformInterface.outputDuty11 = led_pwm_duty_values[0]
+        platformInterface.outputDuty10 = led_pwm_duty_values[1]
+        platformInterface.outputDuty9 = led_pwm_duty_values[2]
+        platformInterface.outputDuty8 = led_pwm_duty_values[3]
+        platformInterface.outputDuty7 = led_pwm_duty_values[4]
+        platformInterface.outputDuty6 = led_pwm_duty_values[5]
+        platformInterface.outputDuty5 = led_pwm_duty_values[6]
+        platformInterface.outputDuty4 = led_pwm_duty_values[7]
+        platformInterface.outputDuty3 = led_pwm_duty_values[8]
+        platformInterface.outputDuty2 = led_pwm_duty_values[9]
+        platformInterface.outputDuty1 = led_pwm_duty_values[10]
+        platformInterface.outputDuty0 =  led_pwm_duty_values[11]
 
     }
 
@@ -1852,7 +1848,7 @@ Item {
                                             //color: "red"
                                             SGText {
                                                 id: text1
-                                                text: "<b>" + qsTr("OUT0") + "</b>"
+                                                text: "<b>" + qsTr("OUT12") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
@@ -1866,7 +1862,7 @@ Item {
 
 
                                             SGSwitch {
-                                                id: out0ENLED
+                                                id: out11ENLED
                                                 labelsInside: true
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
@@ -1881,38 +1877,36 @@ Item {
                                                     if(checked) {
                                                         platformInterface.set_led_out_en.update(
                                                                     [true,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
                                                                     ] )
-                                                        platformInterface.outputEnable0 = true
+                                                        platformInterface.outputEnable11 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
                                                                     [false,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
                                                                     ] )
-                                                        platformInterface.outputEnable0 = false
+                                                        platformInterface.outputEnable11 = false
 
                                                     }
 
@@ -1926,7 +1920,7 @@ Item {
                                             Layout.fillHeight: true
 
                                             SGSwitch {
-                                                id: out0interExterLED
+                                                id: out11interExterLED
                                                 labelsInside: true
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
@@ -1942,38 +1936,36 @@ Item {
                                                     if(checked) {
                                                         platformInterface.set_led_ext.update(
                                                                     [true,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
                                                                     ] )
-                                                        platformInterface.outputExt0 = true
+                                                        platformInterface.outputExt11 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
                                                                     [false,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
                                                                     ] )
-                                                        platformInterface.outputExt0 = false
+                                                        platformInterface.outputExt11 = false
 
                                                     }
                                                 }
@@ -1984,7 +1976,7 @@ Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGSwitch {
-                                                id: out0pwmEnableLED
+                                                id: out11pwmEnableLED
                                                 labelsInside: true
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
@@ -1997,35 +1989,35 @@ Item {
                                                 anchors.centerIn: parent
 
                                                 onToggled: {
-                                                    platformInterface.outputPwm0 = checked
+                                                    platformInterface.outputPwm11 = checked
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
+                                                                                              [platformInterface.outputDuty11,
                                                                                                platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
 
                                                                                               ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm11,
                                                                                                   platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
 
                                                 }
 
@@ -2036,22 +2028,22 @@ Item {
                                         }
 
                                         Rectangle {
-                                            id: out0faultStatusLEDContainer
+                                            id: out11faultStatusLEDContainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGStatusLight {
-                                                id: out0faultStatusLED
+                                                id: out11faultStatusLED
                                                 width: 30
                                                 anchors.centerIn: parent
                                             }
                                         }
 
                                         Rectangle {
-                                            id: out0dutyContainer
+                                            id: out11dutyContainer
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
                                             CustomizeRGBSlider {
-                                                id: out0duty
+                                                id: out11duty
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
@@ -2059,48 +2051,46 @@ Item {
                                                 slider_start_color: 0.1666
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out0duty.from = led_pwm_duty_scales[1]
-                                                    out0duty.to = led_pwm_duty_scales[0]
-                                                    out0duty.value = led_pwm_duty_scales[2]
+                                                    out11duty.from = led_pwm_duty_scales[1]
+                                                    out11duty.to = led_pwm_duty_scales[0]
+                                                    out11duty.value = led_pwm_duty_scales[2]
                                                 }
 
                                                 property var led_pwm_duty_states0: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states0Changed: {
-                                                    console.log(led_pwm_duty_states0[0])
-                                                    setStateForPWMDuty(out0duty,led_pwm_duty_states0[0])
+                                                    setStateForPWMDuty(out11duty,led_pwm_duty_states0[0])
                                                 }
 
                                                 onUserSet: {
-                                                    console.log("pwm duty", out0duty.value)
-                                                    platformInterface.outputDuty0 =  out0duty.value.toFixed(0)
+                                                    platformInterface.outputDuty11 =  out11duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
+                                                                                              [platformInterface.outputDuty11,
                                                                                                platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
 
                                                                                               ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm11,
                                                                                                   platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
                                                 }
 
 
@@ -2120,2331 +2110,7 @@ Item {
                                             Layout.preferredHeight: parent.height/10
 
                                             SGText {
-                                                text: "<b>" + qsTr("OUT1") + "</b>"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out1ENLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     true,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable1 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     false,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable1 = false
-
-                                                    }
-
-
-
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-
-                                            SGSwitch {
-                                                id: out1interExterLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     true,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt1 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     false,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt1 = false
-
-                                                    }
-                                                }
-
-
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out1pwmEnableLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    platformInterface.outputPwm1 = checked
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGStatusLight {
-                                                id: out1faultStatusLED
-                                                width: 30
-                                                anchors.centerIn: parent
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/3
-                                            CustomizeRGBSlider {
-                                                id: out1duty
-                                                width: 30
-                                                height: parent.height
-                                                orientation: Qt.Vertical
-                                                anchors.centerIn: parent
-                                                slider_start_color: 0.1666
-                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
-                                                onLed_pwm_duty_scalesChanged: {
-                                                    out1duty.from = led_pwm_duty_scales[1]
-                                                    out1duty.to = led_pwm_duty_scales[0]
-                                                    out1duty.value = led_pwm_duty_scales[2]
-                                                }
-
-                                                property var led_pwm_duty_states1: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states1Changed: {
-                                                    setStateForPWMDuty(out1duty,led_pwm_duty_states1[1])
-                                                }
-
-                                                onUserSet: {
-                                                    platformInterface.outputDuty1 =  out1duty.value.toFixed(0)
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    ColumnLayout {
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/10
-                                            //color: "red"
-                                            SGText {
-                                                text: "<b>" + qsTr("OUT2") + "</b>"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out2ENLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     true,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable2 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     false,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable2 = false
-                                                    }
-
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out2interExterLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     true,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt2 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     false,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt2 = false
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out2pwmEnableLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    platformInterface.outputPwm2 = checked
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGStatusLight {
-                                                id: out2faultStatusLED
-                                                width: 30
-                                                anchors.centerIn: parent
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/3
-                                            // color: "red"
-
-                                            CustomizeRGBSlider {
-                                                id: out2duty
-                                                width: 30
-                                                height: parent.height
-                                                orientation: Qt.Vertical
-                                                anchors.centerIn: parent
-                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
-                                                onLed_pwm_duty_scalesChanged: {
-                                                    out2duty.from = led_pwm_duty_scales[1]
-                                                    out2duty.to = led_pwm_duty_scales[0]
-                                                    out2duty.value = led_pwm_duty_scales[2]
-                                                }
-
-                                                property var led_pwm_duty_states2: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states2Changed: {
-                                                    setStateForPWMDuty(out2duty,led_pwm_duty_states2[2])
-                                                }
-
-                                                onUserSet:  {
-                                                    platformInterface.outputDuty2 =  out2duty.value.toFixed(0)
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-
-
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    ColumnLayout {
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/10
-                                            //color: "red"
-                                            SGText {
-                                                text: "<b>" + qsTr("OUT3") + "</b>"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                            }
-                                        }
-
-                                        Rectangle{
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-
-                                            SGSwitch {
-                                                id: out3ENLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     true,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable3 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     false,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable3 = false
-
-                                                    }
-
-
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out3interExterLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     true,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt3 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     false,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt3 = false
-
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out3pwmEnableLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    platformInterface.outputPwm3 = checked
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGStatusLight {
-                                                id: out3faultStatusLED
-                                                width: 30
-                                                anchors.centerIn: parent
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/3
-                                            CustomizeRGBSlider {
-                                                id: out3duty
-                                                width: 30
-                                                height: parent.height
-                                                orientation: Qt.Vertical
-                                                anchors.centerIn: parent
-                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
-                                                onLed_pwm_duty_scalesChanged: {
-                                                    out3duty.from = led_pwm_duty_scales[1]
-                                                    out3duty.to = led_pwm_duty_scales[0]
-                                                    out3duty.value = led_pwm_duty_scales[2]
-                                                }
-
-                                                property var led_pwm_duty_states3: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states3Changed: {
-                                                    setStateForPWMDuty(out3duty,led_pwm_duty_states3[3])
-                                                }
-
-
-                                                onUserSet:
-                                                {
-                                                    platformInterface.outputDuty3 =  out3duty.value.toFixed(0)
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                                //                                                onValueChanged: {
-                                                //                                                    platformInterface.outputDuty3 =  out3duty.value.toFixed(0)
-
-                                                //                                                }
-
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    ColumnLayout {
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/10
-                                            SGText {
-                                                text: "<b>" + qsTr("OUT4") + "</b>"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out4ENLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     true,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable4 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     false,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-                                                                    ] )
-                                                        platformInterface.outputEnable4 = false
-
-                                                    }
-
-
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out4interExterLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     true,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt4 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     false,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-                                                                    ] )
-                                                        platformInterface.outputExt4 = false
-
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out4pwmEnableLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    platformInterface.outputPwm4 = checked
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGStatusLight {
-                                                id: out4faultStatusLED
-                                                width: 30
-                                                anchors.centerIn: parent
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/3
-                                            CustomizeRGBSlider {
-                                                id: out4duty
-                                                width: 30
-                                                height: parent.height
-                                                orientation: Qt.Vertical
-                                                anchors.centerIn: parent
-                                                slider_start_color: 0.0
-                                                slider_start_color2: 0
-                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
-                                                onLed_pwm_duty_scalesChanged: {
-                                                    out4duty.from = led_pwm_duty_scales[1]
-                                                    out4duty.to = led_pwm_duty_scales[0]
-                                                    out4duty.value = led_pwm_duty_scales[2]
-                                                }
-
-                                                property var led_pwm_duty_states4: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states4Changed: {
-                                                    setStateForPWMDuty(out4duty,led_pwm_duty_states4[4])
-                                                }
-
-
-                                                onUserSet: {
-                                                    platformInterface.outputDuty4 =  out4duty.value.toFixed(0)
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    ColumnLayout {
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/10
-                                            //color: "red"
-                                            SGText {
-                                                text: "<b>" + qsTr("OUT5") + "</b>"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out5ENLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     true,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable5 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     false,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-                                                                    ] )
-                                                        platformInterface.outputEnable5 = false
-
-                                                    }
-
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out5interExterLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     true,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt5 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     false,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-                                                                    ] )
-                                                        platformInterface.outputExt5 = false
-
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out5pwmEnableLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    platformInterface.outputPwm5 = checked
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [ platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],  [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGStatusLight {
-                                                id: out5faultStatusLED
-                                                width: 30
-                                                anchors.centerIn: parent
-                                            }
-
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/3
-                                            CustomizeRGBSlider {
-                                                id: out5duty
-                                                width: 30
-                                                height: parent.height
-                                                orientation: Qt.Vertical
-                                                anchors.centerIn: parent
-                                                slider_start_color: 0.0
-                                                slider_start_color2: 0
-                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
-                                                onLed_pwm_duty_scalesChanged: {
-                                                    out5duty.from = led_pwm_duty_scales[1]
-                                                    out5duty.to = led_pwm_duty_scales[0]
-                                                    out5duty.value = led_pwm_duty_scales[2]
-                                                }
-
-                                                property var led_pwm_duty_states5: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states5Changed: {
-                                                    setStateForPWMDuty(out5duty,led_pwm_duty_states5[5])
-                                                }
-
-
-                                                onUserSet: {
-                                                    platformInterface.outputDuty5 =  out5duty.value.toFixed(0)
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],
-                                                                                              [ platformInterface.outputPwm0,
-                                                                                               platformInterface.outputPwm1,
-                                                                                               platformInterface.outputPwm2,
-                                                                                               platformInterface.outputPwm3,
-                                                                                               platformInterface.outputPwm4,
-                                                                                               platformInterface.outputPwm5,
-                                                                                               platformInterface.outputPwm6,
-                                                                                               platformInterface.outputPwm7,
-                                                                                               platformInterface.outputPwm8,
-                                                                                               platformInterface.outputPwm9,
-                                                                                               platformInterface.outputPwm10,
-                                                                                               platformInterface.outputPwm11])
-
-                                                }
-
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    ColumnLayout {
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/10
-                                            SGText {
-                                                text: "<b>" + qsTr("OUT6") + "</b>"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-
-                                            SGSwitch {
-                                                id: out6ENLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     true,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable6 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     false,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-                                                                    ] )
-                                                        platformInterface.outputEnable6 = false
-
-                                                    }
-
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out6interExterLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     true,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt6 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     false,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-                                                                    ] )
-                                                        platformInterface.outputExt6 = false
-
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out6pwmEnableLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    platformInterface.outputPwm6 = checked
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],  [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGStatusLight {
-                                                id: out6faultStatusLED
-                                                width: 30
-                                                anchors.centerIn: parent
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/3
-                                            CustomizeRGBSlider {
-                                                id: out6duty
-                                                width: 30
-                                                height: parent.height
-                                                orientation: Qt.Vertical
-                                                anchors.centerIn: parent
-                                                slider_start_color: 0.0
-                                                slider_start_color2: 0
-                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
-                                                onLed_pwm_duty_scalesChanged: {
-                                                    out6duty.from = led_pwm_duty_scales[1]
-                                                    out6duty.to = led_pwm_duty_scales[0]
-                                                    out6duty.value = led_pwm_duty_scales[2]
-                                                }
-
-                                                property var led_pwm_duty_states6: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states6Changed: {
-                                                    setStateForPWMDuty(out6duty,led_pwm_duty_states6[6])
-                                                }
-
-                                                onUserSet: {
-                                                    platformInterface.outputDuty6 =  out6duty.value.toFixed(0)
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-
-
-
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    ColumnLayout {
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/10
-                                            //color: "red"
-                                            SGText {
-                                                text: "<b>" + qsTr("OUT7") + "</b>"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out7ENLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     true,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable7 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     false,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-                                                                    ] )
-                                                        platformInterface.outputEnable7 = false
-
-                                                    }
-
-
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out7interExterLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     true,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt7 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     false,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-                                                                    ] )
-                                                        platformInterface.outputExt7 = false
-
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out7pwmEnableLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    platformInterface.outputPwm7 = checked
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGStatusLight {
-                                                id: out7faultStatusLED
-                                                width: 30
-                                                anchors.centerIn: parent
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/3
-                                            CustomizeRGBSlider {
-                                                id: out7duty
-                                                width: 30
-                                                height: parent.height
-                                                orientation: Qt.Vertical
-                                                anchors.centerIn: parent
-                                                slider_start_color: 0.0
-                                                slider_start_color2: 0
-
-                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
-                                                onLed_pwm_duty_scalesChanged: {
-                                                    out7duty.from = led_pwm_duty_scales[1]
-                                                    out7duty.to = led_pwm_duty_scales[0]
-                                                    out7duty.value = led_pwm_duty_scales[2]
-                                                }
-
-                                                property var led_pwm_duty_states7: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states7Changed: {
-                                                    setStateForPWMDuty(out7duty,led_pwm_duty_states7[7])
-                                                }
-
-
-                                                onUserSet: {
-
-                                                    platformInterface.outputDuty7 =  out7duty.value.toFixed(0)
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    ColumnLayout {
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/10
-                                            SGText {
-                                                text: "<b>" + qsTr("OUT8") + "</b>"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out8ENLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     true,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable8 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     false,
-                                                                     platformInterface.outputEnable9,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-                                                                    ] )
-                                                        platformInterface.outputEnable8 = false
-
-                                                    }
-
-
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out8interExterLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     true,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt8 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     false,
-                                                                     platformInterface.outputExt9,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-                                                                    ] )
-                                                        platformInterface.outputExt8 = false
-
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out8pwmEnableLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    platformInterface.outputPwm8 = checked
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGStatusLight {
-                                                id: out8faultStatusLED
-                                                width: 30
-                                                anchors.centerIn: parent
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/3
-                                            CustomizeRGBSlider {
-                                                id: out8duty
-                                                width: 30
-                                                height: parent.height
-                                                orientation: Qt.Vertical
-                                                anchors.centerIn: parent
-                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
-                                                onLed_pwm_duty_scalesChanged: {
-                                                    out8duty.from = led_pwm_duty_scales[1]
-                                                    out8duty.to = led_pwm_duty_scales[0]
-                                                    out8duty.value = led_pwm_duty_scales[2]
-                                                }
-                                                property var led_pwm_duty_states8: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states8Changed: {
-                                                    setStateForPWMDuty(out8duty,led_pwm_duty_states8[8])
-                                                }
-
-
-                                                onUserSet: {
-
-                                                    platformInterface.outputDuty8 =  out8duty.value.toFixed(0)
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-
-
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    ColumnLayout {
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/10
-                                            //color: "red"
-                                            SGText {
-                                                text: "<b>" + qsTr("OUT9") + "</b>"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                anchors.bottom: parent.bottom
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out9ENLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     true,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-
-                                                                    ] )
-                                                        platformInterface.outputEnable9 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     false,
-                                                                     platformInterface.outputEnable10,
-                                                                     platformInterface.outputEnable11
-                                                                    ] )
-                                                        platformInterface.outputEnable9 = false
-
-                                                    }
-
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out9interExterLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-
-                                                onToggled: {
-                                                    if(checked) {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     true,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-
-                                                                    ] )
-                                                        platformInterface.outputExt9 = true
-                                                    }
-                                                    else {
-                                                        platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     false,
-                                                                     platformInterface.outputExt10,
-                                                                     platformInterface.outputExt11
-                                                                    ] )
-                                                        platformInterface.outputExt9 = false
-
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGSwitch {
-                                                id: out9pwmEnableLED
-                                                labelsInside: true
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                checked: false
-                                                anchors.centerIn: parent
-                                                onToggled: {
-                                                    platformInterface.outputPwm9 = checked
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGStatusLight {
-                                                id: out9faultStatusLED
-                                                width: 30
-                                                anchors.centerIn: parent
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/3
-                                            CustomizeRGBSlider {
-                                                id: out9duty
-                                                width: 30
-                                                height: parent.height
-                                                orientation: Qt.Vertical
-                                                anchors.centerIn: parent
-                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
-                                                onLed_pwm_duty_scalesChanged: {
-                                                    out9duty.from = led_pwm_duty_scales[1]
-                                                    out9duty.to = led_pwm_duty_scales[0]
-                                                    out9duty.value = led_pwm_duty_scales[2]
-                                                }
-
-                                                property var led_pwm_duty_states9: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states9Changed: {
-                                                    setStateForPWMDuty(out9duty,led_pwm_duty_states9[9])
-                                                }
-
-                                                onUserSet: {
-                                                    platformInterface.outputDuty9 =  out9duty.value.toFixed(0)
-                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                              platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
-                                                                                               platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
-
-                                                                                              ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
-                                                                                                  platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
-                                                }
-
-
-
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    ColumnLayout {
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: parent.height/10
-                                            SGText {
-                                                text: "<b>" + qsTr("OUT10") + "</b>"
+                                                text: "<b>" + qsTr("OUT11") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
@@ -4470,40 +2136,42 @@ Item {
                                                 onToggled: {
                                                     if(checked) {
                                                         platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
+                                                                    [platformInterface.outputEnable11,
                                                                      true,
-                                                                     platformInterface.outputEnable11
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
 
                                                                     ] )
                                                         platformInterface.outputEnable10 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
+                                                                    [platformInterface.outputEnable11,
                                                                      false,
-                                                                     platformInterface.outputEnable11
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
                                                                     ] )
                                                         platformInterface.outputEnable10 = false
 
                                                     }
+
 
 
                                                 }
@@ -4513,6 +2181,7 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+
 
                                             SGSwitch {
                                                 id: out10interExterLED
@@ -4530,41 +2199,43 @@ Item {
                                                 onToggled: {
                                                     if(checked) {
                                                         platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
+                                                                    [platformInterface.outputExt11,
                                                                      true,
-                                                                     platformInterface.outputExt11
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
 
                                                                     ] )
                                                         platformInterface.outputExt10 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
+                                                                    [platformInterface.outputExt11,
                                                                      false,
-                                                                     platformInterface.outputExt11
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
                                                                     ] )
                                                         platformInterface.outputExt10 = false
 
                                                     }
                                                 }
+
+
                                             }
                                         }
                                         Rectangle {
@@ -4583,36 +2254,37 @@ Item {
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+
                                                 onToggled: {
                                                     platformInterface.outputPwm10 = checked
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
+                                                                                              [platformInterface.outputDuty11,
                                                                                                platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
 
                                                                                               ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm11,
                                                                                                   platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
                                                 }
 
                                             }
@@ -4645,41 +2317,41 @@ Item {
                                                     out10duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states10: platformInterface.led_pwm_duty_states.states
-                                                onLed_pwm_duty_states10Changed: {
-                                                    setStateForPWMDuty(out10duty,led_pwm_duty_states10[10])
+                                                property var led_pwm_duty_states1: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states1Changed: {
+                                                    setStateForPWMDuty(out10duty,led_pwm_duty_states1[1])
                                                 }
 
                                                 onUserSet: {
                                                     platformInterface.outputDuty10 =  out10duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
+                                                                                              [platformInterface.outputDuty11,
                                                                                                platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
 
                                                                                               ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm11,
                                                                                                   platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
                                                 }
 
 
@@ -4699,7 +2371,7 @@ Item {
                                             Layout.preferredHeight: parent.height/10
                                             //color: "red"
                                             SGText {
-                                                text: "<b>" + qsTr("OUT11") + "</b>"
+                                                text: "<b>" + qsTr("OUT10") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
@@ -4711,7 +2383,7 @@ Item {
                                             Layout.fillHeight: true
 
                                             SGSwitch {
-                                                id: out11ENLED
+                                                id: out9ENLED
                                                 labelsInside: true
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
@@ -4726,40 +2398,39 @@ Item {
                                                 onToggled: {
                                                     if(checked) {
                                                         platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
+                                                                    [platformInterface.outputEnable11,
                                                                      platformInterface.outputEnable10,
-                                                                     true
-                                                                    ] )
+                                                                     true,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
 
-                                                        platformInterface.outputEnable11 = true
+                                                                    ] )
+                                                        platformInterface.outputEnable9 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
-                                                                    [platformInterface.outputEnable0,
-                                                                     platformInterface.outputEnable1,
-                                                                     platformInterface.outputEnable2,
-                                                                     platformInterface.outputEnable3,
-                                                                     platformInterface.outputEnable4,
-                                                                     platformInterface.outputEnable5,
-                                                                     platformInterface.outputEnable6,
-                                                                     platformInterface.outputEnable7,
-                                                                     platformInterface.outputEnable8,
-                                                                     platformInterface.outputEnable9,
+                                                                    [platformInterface.outputEnable11,
                                                                      platformInterface.outputEnable10,
-                                                                     false
-                                                                    ])
+                                                                     false,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
 
-                                                        platformInterface.outputEnable11 = false
-
+                                                                    ] )
+                                                        platformInterface.outputEnable9 = false
                                                     }
 
                                                 }
@@ -4771,7 +2442,7 @@ Item {
                                             Layout.fillHeight: true
 
                                             SGSwitch {
-                                                id: out11interExterLED
+                                                id: out9interExterLED
                                                 labelsInside: true
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
@@ -4785,41 +2456,39 @@ Item {
                                                 onToggled: {
                                                     if(checked) {
                                                         platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
+                                                                    [platformInterface.outputExt11,
                                                                      platformInterface.outputExt10,
-                                                                     true
-                                                                    ] )
+                                                                     true,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
 
-                                                        platformInterface.outputExt11 = true
+                                                                    ] )
+                                                        platformInterface.outputExt9 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
-                                                                    [platformInterface.outputExt0,
-                                                                     platformInterface.outputExt1,
-                                                                     platformInterface.outputExt2,
-                                                                     platformInterface.outputExt3,
-                                                                     platformInterface.outputExt4,
-                                                                     platformInterface.outputExt5,
-                                                                     platformInterface.outputExt6,
-                                                                     platformInterface.outputExt7,
-                                                                     platformInterface.outputExt8,
-                                                                     platformInterface.outputExt9,
+                                                                    [platformInterface.outputExt11,
                                                                      platformInterface.outputExt10,
-                                                                     false
-                                                                    ])
+                                                                     false,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
 
-                                                        platformInterface.outputExt11 = false
-
-
+                                                                    ] )
+                                                        platformInterface.outputExt9 = false
                                                     }
                                                 }
                                             }
@@ -4829,7 +2498,7 @@ Item {
                                             Layout.fillHeight: true
 
                                             SGSwitch {
-                                                id: out11pwmEnableLED
+                                                id: out9pwmEnableLED
                                                 labelsInside: true
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
@@ -4841,58 +2510,2375 @@ Item {
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
-                                                    platformInterface.outputPwm11 = checked
+                                                    platformInterface.outputPwm9 = checked
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
+                                                                                              [platformInterface.outputDuty11,
                                                                                                platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
 
                                                                                               ], [
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm11,
                                                                                                   platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
                                                 }
-
 
                                             }
                                         }
 
                                         Rectangle {
-                                            id: out11faultStatusLEDContainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGStatusLight {
-                                                id: out11faultStatusLED
+                                                id: out9faultStatusLED
                                                 width: 30
                                                 anchors.centerIn: parent
                                             }
                                         }
 
                                         Rectangle {
-                                            id: out11dutyContainer
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            // color: "red"
+
+                                            CustomizeRGBSlider {
+                                                id: out9duty
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.centerIn: parent
+                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
+                                                onLed_pwm_duty_scalesChanged: {
+                                                    out9duty.from = led_pwm_duty_scales[1]
+                                                    out9duty.to = led_pwm_duty_scales[0]
+                                                    out9duty.value = led_pwm_duty_scales[2]
+                                                }
+
+                                                property var led_pwm_duty_states2: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states2Changed: {
+                                                    setStateForPWMDuty(out9duty,led_pwm_duty_states2[2])
+                                                }
+
+                                                onUserSet:  {
+                                                    platformInterface.outputDuty9 =  out9duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT9") + "</b>"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                            }
+                                        }
+
+                                        Rectangle{
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+
+                                            SGSwitch {
+                                                id: out8ENLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     true,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+                                                                    ] )
+                                                        platformInterface.outputEnable8 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     false,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+                                                                    ] )
+                                                        platformInterface.outputEnable8 = false
+
+                                                    }
+
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out8interExterLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     true,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+                                                                    ] )
+                                                        platformInterface.outputExt8 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     false,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+                                                                    ] )
+                                                        platformInterface.outputExt8 = false
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out8pwmEnableLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    platformInterface.outputPwm8 = checked
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out8faultStatusLED
+                                                width: 30
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
                                             CustomizeRGBSlider {
-                                                id: out11duty
+                                                id: out8duty
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.centerIn: parent
+                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
+                                                onLed_pwm_duty_scalesChanged: {
+                                                    out8duty.from = led_pwm_duty_scales[1]
+                                                    out8duty.to = led_pwm_duty_scales[0]
+                                                    out8duty.value = led_pwm_duty_scales[2]
+                                                }
+
+                                                property var led_pwm_duty_states3: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states3Changed: {
+                                                    setStateForPWMDuty(out8duty,led_pwm_duty_states3[3])
+                                                }
+
+
+                                                onUserSet:
+                                                {
+                                                    platformInterface.outputDuty8 =  out8duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT8") + "</b>"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out7ENLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     true,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable7 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     false,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable7 = false
+
+                                                    }
+
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out7interExterLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     true,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+                                                                    ] )
+                                                        platformInterface.outputExt7 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     false,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+
+                                                                    ] )
+                                                        platformInterface.outputExt7 = false
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out7pwmEnableLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    platformInterface.outputPwm7 = checked
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out7faultStatusLED
+                                                width: 30
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                id: out7duty
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.centerIn: parent
+                                                slider_start_color: 0.0
+                                                slider_start_color2: 0
+                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
+                                                onLed_pwm_duty_scalesChanged: {
+                                                    out7duty.from = led_pwm_duty_scales[1]
+                                                    out7duty.to = led_pwm_duty_scales[0]
+                                                    out7duty.value = led_pwm_duty_scales[2]
+                                                }
+
+                                                property var led_pwm_duty_states4: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states4Changed: {
+                                                    setStateForPWMDuty(out7duty,led_pwm_duty_states4[4])
+                                                }
+
+
+                                                onUserSet: {
+                                                    platformInterface.outputDuty7 =  out7duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT7") + "</b>"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out6ENLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     true,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable6 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     false,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable6 = false
+
+                                                    }
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out6interExterLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     true,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+
+                                                                    ] )
+                                                        platformInterface.outputExt6 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     false,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+
+                                                                    ] )
+                                                        platformInterface.outputExt6 = false
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out6pwmEnableLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    platformInterface.outputPwm6 = checked
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out5faultStatusLED
+                                                width: 30
+                                                anchors.centerIn: parent
+                                            }
+
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                id: out6duty
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.centerIn: parent
+                                                slider_start_color: 0.0
+                                                slider_start_color2: 0
+                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
+                                                onLed_pwm_duty_scalesChanged: {
+                                                    out6duty.from = led_pwm_duty_scales[1]
+                                                    out6duty.to = led_pwm_duty_scales[0]
+                                                    out6duty.value = led_pwm_duty_scales[2]
+                                                }
+
+                                                property var led_pwm_duty_states5: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states5Changed: {
+                                                    setStateForPWMDuty(out6duty,led_pwm_duty_states5[5])
+                                                }
+
+
+                                                onUserSet: {
+                                                    platformInterface.outputDuty6 =  out6duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+
+                                                }
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT6") + "</b>"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+
+                                            SGSwitch {
+                                                id: out5ENLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     true,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable5 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     false,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+                                                                    ] )
+                                                        platformInterface.outputEnable5 = false
+
+                                                    }
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out5interExterLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     true,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+
+                                                                    ] )
+                                                        platformInterface.outputExt5 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     false,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+                                                                    ] )
+                                                        platformInterface.outputExt5 = false
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out5pwmEnableLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    platformInterface.outputPwm5 = checked
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out6faultStatusLED
+                                                width: 30
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                id: out5duty
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.centerIn: parent
+                                                slider_start_color: 0.0
+                                                slider_start_color2: 0
+                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
+                                                onLed_pwm_duty_scalesChanged: {
+                                                    out5duty.from = led_pwm_duty_scales[1]
+                                                    out5duty.to = led_pwm_duty_scales[0]
+                                                    out5duty.value = led_pwm_duty_scales[2]
+                                                }
+
+                                                property var led_pwm_duty_states6: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states6Changed: {
+                                                    setStateForPWMDuty(out5duty,led_pwm_duty_states6[6])
+                                                }
+
+                                                onUserSet: {
+                                                    platformInterface.outputDuty5 =  out5duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+
+
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT5") + "</b>"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out4ENLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     true,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+                                                                    ] )
+                                                        platformInterface.outputEnable4 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     false,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+                                                                    ] )
+                                                        platformInterface.outputEnable4 = false
+
+                                                    }
+
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out4interExterLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     true,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+
+                                                                    ] )
+                                                        platformInterface.outputExt4 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     false,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+
+                                                                    ] )
+                                                        platformInterface.outputExt4 = false
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out4pwmEnableLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    platformInterface.outputPwm4 = checked
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out4faultStatusLED
+                                                width: 30
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                id: out4duty
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.centerIn: parent
+                                                slider_start_color: 0.0
+                                                slider_start_color2: 0
+
+                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
+                                                onLed_pwm_duty_scalesChanged: {
+                                                    out4duty.from = led_pwm_duty_scales[1]
+                                                    out4duty.to = led_pwm_duty_scales[0]
+                                                    out4duty.value = led_pwm_duty_scales[2]
+                                                }
+
+                                                property var led_pwm_duty_states7: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states7Changed: {
+                                                    setStateForPWMDuty(out4duty,led_pwm_duty_states7[7])
+                                                }
+
+
+                                                onUserSet: {
+
+                                                    platformInterface.outputDuty4 =  out4duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT4") + "</b>"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out3ENLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     true,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable3 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     false,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable3 = false
+
+                                                    }
+
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out3interExterLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     true,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+                                                                    ] )
+                                                        platformInterface.outputExt3 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     false,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+                                                                    ] )
+                                                        platformInterface.outputExt3 = false
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out3pwmEnableLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    platformInterface.outputPwm3 = checked
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out3faultStatusLED
+                                                width: 30
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                id: out3duty
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.centerIn: parent
+                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
+                                                onLed_pwm_duty_scalesChanged: {
+                                                    out3duty.from = led_pwm_duty_scales[1]
+                                                    out3duty.to = led_pwm_duty_scales[0]
+                                                    out3duty.value = led_pwm_duty_scales[2]
+                                                }
+                                                property var led_pwm_duty_states8: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states8Changed: {
+                                                    setStateForPWMDuty(out3duty,led_pwm_duty_states8[8])
+                                                }
+
+
+                                                onUserSet: {
+
+                                                    platformInterface.outputDuty3 =  out3duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT3") + "</b>"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out2ENLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     true,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable2 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     false,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable2 = false
+
+                                                    }
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out2interExterLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     true,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+                                                                    ] )
+                                                        platformInterface.outputExt2 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     false,
+                                                                     platformInterface.outputExt1,
+                                                                     platformInterface.outputExt0
+                                                                    ] )
+                                                        platformInterface.outputExt2 = false
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out2pwmEnableLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    platformInterface.outputPwm2 = checked
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out2faultStatusLED
+                                                width: 30
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                id: out2duty
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.centerIn: parent
+                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
+                                                onLed_pwm_duty_scalesChanged: {
+                                                    out2duty.from = led_pwm_duty_scales[1]
+                                                    out2duty.to = led_pwm_duty_scales[0]
+                                                    out2duty.value = led_pwm_duty_scales[2]
+                                                }
+
+                                                property var led_pwm_duty_states9: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states9Changed: {
+                                                    setStateForPWMDuty(out2duty,led_pwm_duty_states9[9])
+                                                }
+
+                                                onUserSet: {
+                                                    platformInterface.outputDuty2 =  out2duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT2") + "</b>"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out1ENLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     true,
+                                                                     platformInterface.outputEnable0
+
+                                                                    ] )
+                                                        platformInterface.outputEnable1 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     false,
+                                                                     platformInterface.outputEnable0
+                                                                    ] )
+                                                        platformInterface.outputEnable1 = false
+
+                                                    }
+
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out1interExterLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     true,
+                                                                     platformInterface.outputExt0
+
+                                                                    ] )
+                                                        platformInterface.outputExt1 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     false,
+                                                                     platformInterface.outputExt0
+
+                                                                    ] )
+                                                        platformInterface.outputExt1 = false
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out1pwmEnableLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    platformInterface.outputPwm1 = checked
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out1faultStatusLED
+                                                width: 30
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                id: out1duty
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.centerIn: parent
+                                                slider_start_color: 0.1666
+                                                property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
+                                                onLed_pwm_duty_scalesChanged: {
+                                                    out1duty.from = led_pwm_duty_scales[1]
+                                                    out1duty.to = led_pwm_duty_scales[0]
+                                                    out1duty.value = led_pwm_duty_scales[2]
+                                                }
+
+                                                property var led_pwm_duty_states10: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states10Changed: {
+                                                    setStateForPWMDuty(out1duty,led_pwm_duty_states10[10])
+                                                }
+
+                                                onUserSet: {
+                                                    platformInterface.outputDuty1 =  out1duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+
+
+                                            }
+                                        }
+
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT1") + "</b>"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                anchors.bottom: parent.bottom
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out0ENLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     true
+                                                                    ] )
+
+                                                        platformInterface.outputEnable0 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable11,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable1,
+                                                                     false
+                                                                    ] )
+
+                                                        platformInterface.outputEnable0 = false
+
+                                                    }
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out0interExterLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     true
+                                                                    ] )
+
+                                                        platformInterface.outputExt0 = true
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_ext.update(
+                                                                    [platformInterface.outputExt11,
+                                                                     platformInterface.outputExt10,
+                                                                     platformInterface.outputExt9,
+                                                                     platformInterface.outputExt8,
+                                                                     platformInterface.outputExt7,
+                                                                     platformInterface.outputExt6,
+                                                                     platformInterface.outputExt5,
+                                                                     platformInterface.outputExt4,
+                                                                     platformInterface.outputExt3,
+                                                                     platformInterface.outputExt2,
+                                                                     platformInterface.outputExt1,
+                                                                     false
+                                                                    ])
+
+                                                        platformInterface.outputExt0 = false
+
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGSwitch {
+                                                id: out0pwmEnableLED
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                checked: false
+                                                anchors.centerIn: parent
+                                                onToggled: {
+                                                    platformInterface.outputPwm0 = checked
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty11,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
+
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
+                                                }
+
+
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            id: out0faultStatusLEDContainer
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out0faultStatusLED
+                                                width: 30
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            id: out0dutyContainer
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                id: out0duty
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
@@ -4901,48 +4887,47 @@ Item {
                                                 slider_start_color: 0.1666
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out11duty.from = led_pwm_duty_scales[1]
-                                                    out11duty.to = led_pwm_duty_scales[0]
-                                                    out11duty.value = led_pwm_duty_scales[2]
+                                                    out0duty.from = led_pwm_duty_scales[1]
+                                                    out0duty.to = led_pwm_duty_scales[0]
+                                                    out0duty.value = led_pwm_duty_scales[2]
                                                 }
 
                                                 property var led_pwm_duty_states11: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states11Changed: {
-                                                    setStateForPWMDuty(out11duty,led_pwm_duty_states11[11])
+                                                    setStateForPWMDuty(out0duty,led_pwm_duty_states11[11])
                                                 }
 
                                                 onUserSet: {
-                                                    platformInterface.outputDuty11 =  out11duty.value.toFixed(0)
+                                                    platformInterface.outputDuty0 =  out0duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
-                                                                                              [platformInterface.outputDuty0,
-                                                                                               platformInterface.outputDuty1,
-                                                                                               platformInterface.outputDuty2,
-                                                                                               platformInterface.outputDuty3,
-                                                                                               platformInterface.outputDuty4,
-                                                                                               platformInterface.outputDuty5,
-                                                                                               platformInterface.outputDuty6,
-                                                                                               platformInterface.outputDuty7,
-                                                                                               platformInterface.outputDuty8,
-                                                                                               platformInterface.outputDuty9,
+                                                                                              [platformInterface.outputDuty11,
                                                                                                platformInterface.outputDuty10,
-                                                                                               platformInterface.outputDuty11
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty0
 
-                                                                                              ],[
-                                                                                                  platformInterface.outputPwm0,
-                                                                                                  platformInterface.outputPwm1,
-                                                                                                  platformInterface.outputPwm2,
-                                                                                                  platformInterface.outputPwm3,
-                                                                                                  platformInterface.outputPwm4,
-                                                                                                  platformInterface.outputPwm5,
-                                                                                                  platformInterface.outputPwm6,
-                                                                                                  platformInterface.outputPwm7,
-                                                                                                  platformInterface.outputPwm8,
-                                                                                                  platformInterface.outputPwm9,
+                                                                                              ], [
+                                                                                                  platformInterface.outputPwm11,
                                                                                                   platformInterface.outputPwm10,
-                                                                                                  platformInterface.outputPwm11])
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm0])
                                                 }
-
 
                                             }
                                         }
@@ -4950,8 +4935,6 @@ Item {
                                 }
                             }
                         }
-
-
                     }
                 }
 
