@@ -17,13 +17,13 @@ Item {
         id: filterHelpContainer1
         property point topLeft
         property point bottomRight
-        width:  (out0ENLED.width) * 13.2
+        width:  (out11ENLED.width) * 13.2
         height: (bottomRight.y - topLeft.y)
         x: topLeft.x
         y: topLeft.y
         function update() {
-            topLeft = out0ENLED.mapToItem(root, 0,  0)
-            bottomRight = out11ENLED.mapToItem(root, out11ENLED.width, out11ENLED.height)
+            topLeft = out11ENLED.mapToItem(root, 0,  0)
+            bottomRight = out0ENLED.mapToItem(root, out0ENLED.width, out0ENLED.height)
         }
     }
 
@@ -31,13 +31,13 @@ Item {
         id: filterHelpContainer2
         property point topLeft
         property point bottomRight
-        width:  (out0interExterLED.width) * 13.2
+        width:  (out11interExterLED.width) * 13.2
         height: (bottomRight.y - topLeft.y)
         x: topLeft.x
         y: topLeft.y
         function update() {
-            topLeft = out0interExterLED.mapToItem(root, 0,  0)
-            bottomRight = out11interExterLED.mapToItem(root, out11interExterLED.width, out11interExterLED.height)
+            topLeft = out11interExterLED.mapToItem(root, 0,  0)
+            bottomRight = out0interExterLED.mapToItem(root, out0interExterLED.width, out0interExterLED.height)
         }
     }
 
@@ -45,13 +45,13 @@ Item {
         id: filterHelpContainer3
         property point topLeft
         property point bottomRight
-        width:  (out0pwmEnableLED.width) * 13.2
+        width:  (out11pwmEnableLED.width) * 13.2
         height: (bottomRight.y - topLeft.y)
         x: topLeft.x
         y: topLeft.y
         function update() {
-            topLeft = out0pwmEnableLED.mapToItem(root, 0,  0)
-            bottomRight = out11pwmEnableLED.mapToItem(root, out11pwmEnableLED.width, out11pwmEnableLED.height)
+            topLeft = out11pwmEnableLED.mapToItem(root, 0,  0)
+            bottomRight = out0pwmEnableLED.mapToItem(root, out0pwmEnableLED.width, out0pwmEnableLED.height)
         }
     }
 
@@ -59,13 +59,13 @@ Item {
         id: filterHelpContainer4
         property point topLeft
         property point bottomRight
-        width:  (out0faultStatusLEDContainer.width) * 13.2
+        width:  (out11faultStatusLEDContainer.width) * 13.2
         height: (bottomRight.y - topLeft.y)
         x: topLeft.x
         y: topLeft.y
         function update() {
-            topLeft = out0faultStatusLEDContainer.mapToItem(root, 0,  0)
-            bottomRight = out11faultStatusLEDContainer.mapToItem(root, out11faultStatusLEDContainer.width, out11faultStatusLEDContainer.height)
+            topLeft = out11faultStatusLEDContainer.mapToItem(root, 0,  0)
+            bottomRight = out0faultStatusLEDContainer.mapToItem(root, out0faultStatusLEDContainer.width, out0faultStatusLEDContainer.height)
         }
     }
 
@@ -73,13 +73,13 @@ Item {
         id: filterHelpContainer5
         property point topLeft
         property point bottomRight
-        width:  (out0dutyContainer.width) * 13.2
+        width:  (out11dutyContainer.width) * 13.2
         height: (bottomRight.y - topLeft.y)
         x: topLeft.x
         y: topLeft.y
         function update() {
-            topLeft = out0dutyContainer.mapToItem(root, 0,  0)
-            bottomRight = out11dutyContainer.mapToItem(root, out11dutyContainer.width, out11dutyContainer.height)
+            topLeft = out11dutyContainer.mapToItem(root, 0,  0)
+            bottomRight = out0dutyContainer.mapToItem(root, out0dutyContainer.width, out0dutyContainer.height)
         }
     }
 
