@@ -10,6 +10,8 @@ import tech.strata.fonts 1.0
 
 import "qrc:/partial-views/general"
 
+import "../"
+
 Rectangle {
     id: openProjectContainer
 
@@ -80,6 +82,46 @@ Rectangle {
         }
     }
 
+    SGConfirmationPopup {
+        id: confirmClosePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+        cancelButtonText: "Don't save"
+        acceptButtonColor: SGColorsJS.STRATA_GREEN
+        acceptButtonHoverColor: Qt.darker(SGColorsJS.STRATA_GREEN, 1.25)
+        closePolicy: Popup.NoAutoClose
+
+        property int unsavedFileCount
+        property url newFileUrl
+        property bool addToProjectList: false
+
+        onCancelled: {
+            editor.openFilesModel.closeAll()
+            openProjectContainer.url = newFileUrl
+            viewStack.currentIndex = editUseStrip.offset
+            editUseStrip.checkedIndices = 1
+            if (addToProjectList) {
+                addToTheProjectList(fileDialog.fileUrl.toString())
+                filePath.text = "Select a .QRC file..."
+            }
+        }
+
+        onAccepted: {
+            editor.openFilesModel.saveAll()
+            openProjectContainer.url = newFileUrl
+            viewStack.currentIndex = editUseStrip.offset
+            editUseStrip.checkedIndices = 1
+            if (addToProjectList) {
+                addToTheProjectList(fileDialog.fileUrl.toString())
+                filePath.text = "Select a .QRC file..."
+            }
+        }
+
+    }
 
     ColumnLayout {
         id:recentProjColumn
@@ -209,10 +251,19 @@ Rectangle {
                                 removeFromProjectList(model.url.toString())
                             }
                             else {
-                                openProjectContainer.url = model.url
-                                toolBarListView.currentIndex = toolBarListView.editTab
+                                let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+                                if (unsavedFileCount > 0 && openProjectContainer.url.toString() !== model.url) {
+                                    confirmClosePopup.unsavedFileCount = unsavedFileCount
+                                    confirmClosePopup.newFileUrl = model.url
+                                    confirmClosePopup.addToProjectList = false
+                                    confirmClosePopup.open()
+                                } else {
+                                    openProjectContainer.url = model.url
+                                    toolBarListView.currentIndex = toolBarListView.editTab
+                                }
                             }
                         }
+                        
                     }
                 }
             }
@@ -276,10 +327,18 @@ Rectangle {
 
                 onClicked: {
                     if (fileDialog.fileUrl.toString() !== "") {
-                        openProjectContainer.url = fileDialog.fileUrl
-                        toolBarListView.currentIndex = toolBarListView.editTab
-                        addToTheProjectList(fileDialog.fileUrl.toString())
-                        filePath.text = "Select a .QRC file..."
+                        let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+                        if (unsavedFileCount > 0 && openProjectContainer.url !== fileDialog.fileUrl) {
+                            confirmClosePopup.unsavedFileCount = unsavedFileCount
+                            confirmClosePopup.newFileUrl = fileDialog.fileUrl
+                            confirmClosePopup.addToProjectList = false
+                            confirmClosePopup.open()
+                        } else {
+                            openProjectContainer.url = fileDialog.fileUrl
+                            toolBarListView.currentIndex = toolBarListView.editTab
+                            addToTheProjectList(fileDialog.fileUrl.toString())
+                            filePath.text = "Select a .QRC file..."
+                        }
                     }
                 }
             }

@@ -6,10 +6,47 @@ import QtQuick.Dialogs 1.2
 import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/template_data.js" as TemplateData
+import "../"
 
 Rectangle {
     id: createNewContainer
     color: "#ccc"
+
+    SGConfirmationPopup {
+        id: confirmClosePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+        cancelButtonText: "Don't save"
+        acceptButtonColor: SGColorsJS.STRATA_GREEN
+        acceptButtonHoverColor: Qt.darker(SGColorsJS.STRATA_GREEN, 1.25)
+        closePolicy: Popup.NoAutoClose
+
+        property int unsavedFileCount
+
+        onCancelled: {
+            editor.openFilesModel.closeAll()
+            editor.treeModel.url = sdsModel.newControlView.createNewProject(
+                        fileOutput.text,
+                        templateButtonGroup.checkedButton.path
+            );
+            viewStack.currentIndex = editUseStrip.offset
+            editUseStrip.checkedIndices = 1
+        }
+
+        onAccepted: {
+            editor.openFilesModel.saveAll()
+            editor.treeModel.url = sdsModel.newControlView.createNewProject(
+                        fileOutput.text,
+                        templateButtonGroup.checkedButton.path
+            );
+            viewStack.currentIndex = editUseStrip.offset
+            editUseStrip.checkedIndices = 1
+        }
+    }
 
     ColumnLayout {
         anchors {
@@ -166,9 +203,20 @@ Rectangle {
 
                 onClicked: {
                     if (fileSelector.fileUrl.toString() !== "") {
-                        openProjectContainer.url = sdsModel.newControlView.createNewProject(fileSelector.fileUrl, templateButtonGroup.checkedButton.path);
-                        toolBarListView.currentIndex = toolBarListView.editTab;
-                        openProjectContainer.addToTheProjectList(fileSelector.fileUrl)
+                        let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+                        if (unsavedFileCount > 0) {
+                            confirmClosePopup.unsavedFileCount = unsavedFileCount
+                            confirmClosePopup.open()
+                        } else {
+                            if (fileSelector.fileUrl.toString() !== "") {
+                                openProjectContainer.url = sdsModel.newControlView.createNewProject(
+                                            fileSelector.fileUrl,
+                                            templateButtonGroup.checkedButton.path
+                                );
+                                toolBarListView.currentIndex = toolBarListView.editTab;
+                                openProjectContainer.addToTheProjectList(editor.treeModel.url.toString())
+                            }
+                        }
                     }
                 }
             }
