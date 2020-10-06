@@ -26,6 +26,10 @@ Popup {
     property string cancelButtonColor: "#999"
     property string cancelButtonHoverColor: "#666"
 
+    signal accepted()
+    signal cancelled()
+    signal manuallyClosed()
+
     DropShadow {
         width: root.width
         height: root.height
@@ -88,7 +92,10 @@ Popup {
                         anchors {
                             fill: confirmTitleText
                         }
-                        onClicked: root.close()
+                        onClicked: {
+                            root.manuallyClosed()
+                            root.close()
+                        }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                     }
@@ -136,6 +143,7 @@ Popup {
                     }
 
                     onClicked: {
+                        root.accepted()
                         root.close()
                     }
 
@@ -184,6 +192,7 @@ Popup {
                     }
 
                     onClicked: {
+                        root.cancelled()
                         root.close()
                     }
 
