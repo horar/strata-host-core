@@ -815,7 +815,7 @@ Item {
                     anchors {
                         top : outputVoltage.bottom
                         topMargin : 20
-                        horizontalCenter: parent.horizontalCenter
+                        horizontalCenter: outputVoltage.horizontalCenter
                         horizontalCenterOffset:  10
                     }
 
