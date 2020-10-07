@@ -171,6 +171,18 @@ public:
      */
     Q_INVOKABLE QByteArray getMd5(const QString &filepath);
 
+    /**
+     * @brief stopWatchingPath Removes the `path` from internal QFileSystemWatcher
+     * @param path The path to the file or directory
+     */
+    Q_INVOKABLE void stopWatchingPath(const QString &path);
+
+    /**
+     * @brief startWatchingPath Adds the `path` to internal QFileSystemWatcher
+     * @param path The path to the file or directory
+     */
+    Q_INVOKABLE void startWatchingPath(const QString &path);
+
 
     /***
      * SIGNALS

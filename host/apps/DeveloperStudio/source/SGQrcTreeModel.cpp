@@ -523,6 +523,16 @@ QByteArray SGQrcTreeModel::getMd5(const QString &filepath)
     return QByteArray();
 }
 
+void SGQrcTreeModel::stopWatchingPath(const QString &path)
+{
+    fsWatcher_.removePath(path);
+}
+
+void SGQrcTreeModel::startWatchingPath(const QString &path)
+{
+    fsWatcher_.addPath(path);
+}
+
 /***
  * PRIVATE FUNCTIONS
  ***/
@@ -535,6 +545,12 @@ void SGQrcTreeModel::clear(bool emitSignals)
 
     uidMap_.clear();
     qrcItems_.clear();
+    if (fsWatcher_.files().count() > 0) {
+        fsWatcher_.removePaths(fsWatcher_.files());
+    }
+    if (fsWatcher_.directories().count() > 0) {
+        fsWatcher_.removePaths(fsWatcher_.directories());
+    }
     delete root_;
 
     if (emitSignals) {
@@ -661,9 +677,11 @@ void SGQrcTreeModel::startSave()
 
 void SGQrcTreeModel::save()
 {
+    fsWatcher_.removePath(SGUtilsCpp::urlToLocalFile(url_));
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
     if (!qrcFile.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text)) {
-       qCCritical(logCategoryControlViewCreator) << "Could not open" << url_;
+       qCritical(logCategoryControlViewCreator) << "Could not open" << url_;
+       fsWatcher_.addPath(SGUtilsCpp::urlToLocalFile(url_));
        return;
     }
 
@@ -671,6 +689,7 @@ void SGQrcTreeModel::save()
     QTextStream stream(&qrcFile);
     stream << qrcDoc_.toString(4);
     qrcFile.close();
+    fsWatcher_.addPath(SGUtilsCpp::urlToLocalFile(url_));
 }
 
 
@@ -701,7 +720,12 @@ void SGQrcTreeModel::projectFilesModified(const QString &path)
         if (node->filepath() == url) {
             // If the file still exists, then it has been modified, else it has been deleted or renamed
             if (QFileInfo::exists(path)) {
-                emit fileChanged(url);
+                if (node->filepath() == url_) {
+                    // If we encounter a change to the project's .qrc file, then reparse the qrc
+                    createModel();
+                } else {
+                    emit fileChanged(url);
+                }
                 return;
             } else {
                 deletedNode = node;

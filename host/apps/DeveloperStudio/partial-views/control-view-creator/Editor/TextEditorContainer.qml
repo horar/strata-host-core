@@ -25,21 +25,33 @@ Item {
     }
 
     function saveFile() {
-        webEngine.runJavaScript('getValue()', function (fileText) {
-            let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), fileText);
+        const path = SGUtilsCpp.urlToLocalFile(model.filepath);
+        treeModel.stopWatchingPath(path);
+        const result = SGUtilsCpp.atomicWrite(path, channelObject.fileText);
+        treeModel.startWatchingPath(path);
 
-            if (success) {
-                savedVersionId = currentVersionId;
-                model.unsavedChanges = false;
-            } else {
-                console.error("Unable to save file", model.filepath)
-            }
-        });
+        if (success) {
+            savedVersionId = currentVersionId;
+            model.unsavedChanges = false;
+        } else {
+            console.error("Unable to save file", model.filepath)
+        }
     }
 
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
             saveFile()
+        }
+    }
+
+    Connections {
+        target: treeModel
+
+        onFileChanged: {
+            if (model.filepath === path) {
+                channelObject.fileText = openFile(model.filepath)
+                channelObject.setHtml(channelObject.fileText);
+            }
         }
     }
 
@@ -52,6 +64,8 @@ Item {
         id: channelObject
         objectName: "fileChannel"
         WebChannel.id: "valueLink"
+
+        property string fileText: ""
 
         signal setValue(string value);
         signal setContainerHeight(string height);
@@ -94,8 +108,8 @@ Item {
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
                 channelObject.setContainerHeight(height.toString())
-                let fileText = openFile(model.filepath)
-                channelObject.setHtml(fileText)
+                channelObject.fileText = openFile(model.filepath)
+                channelObject.setHtml(channelObject.fileText)
             }
         }
 
