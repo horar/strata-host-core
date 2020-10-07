@@ -170,13 +170,29 @@ Rectangle{
                     anchors.horizontalCenter: base.horizontalCenter
                     color: "lightgray"
 
+                    Image {
+                        id: moonImage
+                        width:parent.width/7
+                        height: parent.height/3
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: "car-Images/moonIcon.png"
+                        fillMode: Image.PreserveAspectFit
+                    }
+
+
                     SGSlider {
                         id: brightnessControl
-                        anchors.centerIn: parent
-                        width: parent.width/1.2
+                        anchors.left: moonImage.right
+                        anchors.leftMargin: 1
+                        anchors.verticalCenter: moonImage.verticalCenter
+                        anchors.verticalCenterOffset: 9.5
+                        width: parent.width/1.3
                         fontSizeMultiplier: ratioCalc * 1.2
                         from: -1
                         to: 0.6
+                        fromText.opacity: 0.0
+                        toText.opacity : 0.0
                         value: 0
                         stepSize: 0.01
                         live: false
@@ -184,6 +200,18 @@ Rectangle{
                         onUserSet: platformInterface.set_car_demo_background.update(parseFloat(value.toFixed(2)))
 
                     }
+
+                    Image {
+                        id: sunicon
+                        width:parent.width/7
+                        height: parent.height/3
+                        anchors.left: brightnessControl.right
+                        anchors.leftMargin: 1
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: "car-Images/sunIcon.png"
+                        fillMode: Image.PreserveAspectFit
+                    }
+
                 }
 
             }
