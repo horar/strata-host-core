@@ -120,7 +120,7 @@ Item {
         Help.registerTarget(lockPWMDuty,"Locks together the PWM duty cycle for all LED channels. Use OUT1 PWM Duty slider to control all channels when locked together. The duty cycles are always locked together for the NCV7684 because it only has one duty cycle for all channels.",5,"ledDriverHelp")
         Help.registerTarget(pwmLinearLog,"Selects between logarithmic and linear translation of PWM Duty value.",6,"ledDriverHelp")
         Help.registerTarget(pwmFrequency,"Sets the PWM frequency. This list varies depending on if the NCV7684 or NCV7685 is connected.",7,"ledDriverHelp")
-        Help.registerTarget(filterHelpContainer1, "Toggles each LED on or off. If PWM is enabled, these controls will be disabled.", 8, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer1, "Toggles each LED on or off. This control is ignored if PWM is enabled for a specific channel.", 8, "ledDriverHelp")
         Help.registerTarget(filterHelpContainer2, "Toggles each LED to use either onboard LEDs or externally connected LEDs through 24 pin header at the top of the PCB.", 9, "ledDriverHelp")
         Help.registerTarget(filterHelpContainer3, "Toggles PWM for each LED channel on or off. If PWM is disabled, these controls will also be disabled." , 10, "ledDriverHelp")
         Help.registerTarget(filterHelpContainer4, "Indicates fault on each LED channel. Disabled unless I2C/SAM Open Load Diagnostic control set to 'Diagnostic Only' or 'Auto Retry' and diagRange indicator is green (VLED above DIAGEN threshold)." , 11, "ledDriverHelp")
