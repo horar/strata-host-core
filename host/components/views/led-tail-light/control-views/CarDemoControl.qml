@@ -90,6 +90,7 @@ Rectangle{
                     anchors.fill: parent
                 }
 
+
                 BrightnessContrast {
                     id: baseCar
                     anchors.fill: base
@@ -157,6 +158,29 @@ Rectangle{
                     anchors.fill: parent
                     visible: false
                     fillMode: Image.PreserveAspectFit
+                }
+
+                Rectangle {
+                    width: parent.width/3
+                    height: parent.height/8
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 30
+                    anchors.horizontalCenter: base.horizontalCenter
+                    color: "lightgray"
+
+                    SGSlider {
+                        anchors.centerIn: parent
+                        width: parent.width/1.2
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        from: -1
+                        to: 0.6
+                        value: 0
+                        stepSize: 0.1
+                        live: false
+                        showInputBox: false
+                        onUserSet: platformInterface.set_car_demo_background.update(parseFloat(value.toFixed(1)))
+
+                    }
                 }
 
             }

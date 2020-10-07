@@ -45,6 +45,23 @@ Item {
         "value": false
     }
 
+    property var set_car_demo_background : ({
+                                 "cmd" : "car_demo_background",
+                                 "payload": {
+                                     "value": 0.0
+                                 },
+
+                                 update: function (value) {
+                                     this.set(value)
+                                     this.send(this)
+                                 },
+                                 set: function (value) {
+                                     this.payload.value = value
+                                 },
+                                 send: function () { CorePlatformInterface.send(this) },
+                                 show: function () { CorePlatformInterface.show(this) }
+                             })
+
 
 
 
