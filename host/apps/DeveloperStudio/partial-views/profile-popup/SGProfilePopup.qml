@@ -4,11 +4,12 @@ import QtQuick.Layouts 1.3
 import Qt.labs.settings 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.signals 1.0
 
-import 'qrc:/partial-views'
-import 'qrc:/partial-views/login/registration'
-import "qrc:/partial-views/general/"
-import 'qrc:/partial-views/login'
+import '../'
+import '../login/registration'
+import "../general"
+import '../login'
 import 'qrc:/js/login_utilities.js' as LoginUtil
 import 'qrc:/js/navigation_control.js' as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -20,10 +21,13 @@ SGStrataPopup {
 
     headerText: NavigationControl.context.first_name[0].toUpperCase() + NavigationControl.context.first_name.slice(1) + "'s Profile"
     modal: true
+    visible: true
     closePolicy: Popup.CloseOnEscape
     focus: true
     horizontalPadding: 20
     bottomPadding: 20
+    x: container.width/2 - root.width/2
+    y: container.parent.windowHeight/2 - root.height/2
 
     property string firstName: NavigationControl.context.first_name
     property string lastName: NavigationControl.context.last_name
@@ -57,6 +61,7 @@ SGStrataPopup {
         currentPasswordRow.editable = false
         passReqsPopup.close()
         resetFields()
+        parent.active = false
     }
 
     onFirstNameChanged: firstNameColumn.plainText.text = firstName
@@ -191,6 +196,7 @@ SGStrataPopup {
                     firstNameColumn.editable = false;
                     lastNameColumn.editable = false;
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                    resetHeight();
                 }
                 onCanceled: {
                     firstNameColumn.textField.text = ""
@@ -246,6 +252,7 @@ SGStrataPopup {
                     companyColumn.editable = false
                     jobTitleColumn.editable = false
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                    resetHeight();
                 }
                 onCanceled: {
                     companyColumn.textField.text = ""
@@ -276,13 +283,9 @@ SGStrataPopup {
                 placeHolderText: "Company"
             }
 
-            SGText {
+            SubSectionLabel {
                 id: titleText
                 text: "Title"
-                color: "grey"
-
-                Layout.columnSpan: 1
-                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             }
 
             SGTextValidationSwitch {
@@ -522,7 +525,7 @@ SGStrataPopup {
                 }
             }
             Connections {
-                target: LoginUtil.signals
+                target: Signals
 
                 onLoginResult: {
                     let resultObject = JSON.parse(result)
@@ -567,7 +570,26 @@ SGStrataPopup {
                 onProfileUpdateResult: {
                     if (result === "Success") {
                         // Get the user's new profile
-                        LoginUtil.get_profile(NavigationControl.context.user_id)
+                        for (const [key, value] of Object.entries(updatedProperties)) {
+                            switch (key) {
+                            case "firstname":
+                                NavigationControl.context.first_name = value
+                                authSettings.setValue("first_name", value)
+                                root.headerText = value[0].toUpperCase() + value.slice(1) + "'s Profile"
+                                root.firstName = value
+                                break;
+                            case "lastname":
+                                NavigationControl.context.last_name = value
+                                authSettings.setValue("last_name", value)
+                                root.lastName = value
+                                break;
+                            case "title":
+                                root.jobTitle = value
+                                break;
+                            default:
+                                break;
+                            }
+                        }
 
                         alertRect.text = "Successfully updated your account information!"
                         alertRect.color = "#57d445"
@@ -656,11 +678,13 @@ SGStrataPopup {
         if (!firstNameColumn.editable) {
             firstNameColumn.textField.text = ""
             lastNameColumn.textField.text = ""
+            basicInfoControls.resetHeight()
         }
 
         if (!companyColumn.editable) {
             companyColumn.textField.text = ""
             jobTitleColumn.textField.text = ""
+            companyControls.resetHeight()
         }
 
         if (!currentPasswordRow.editable) {

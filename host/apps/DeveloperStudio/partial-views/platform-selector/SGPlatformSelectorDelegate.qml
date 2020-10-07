@@ -13,8 +13,6 @@ import tech.strata.commoncpp 1.0
 
 Item {
     id: root
-    implicitWidth: 950
-    implicitHeight: 190
 
     property bool isCurrentItem: false
 
@@ -211,9 +209,11 @@ Item {
                     family: Fonts.franklinGothicBold
                 }
                 Layout.fillWidth: true
+                elide: Text.ElideRight
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
+                maximumLineCount: 2
             }
 
             Text {
@@ -238,6 +238,7 @@ Item {
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
+                maximumLineCount: 1
             }
 
             Text {
@@ -451,11 +452,11 @@ Item {
 
         Button {
             id: select
-            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.ui_exists && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
+            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.connected && model.ui_exists && model.available.control ? model.available.control : model.available.documents
+            visible: model.connected && model.available.control ? model.available.control : model.available.documents
 
             contentItem: Text {
                 text: select.text
@@ -479,10 +480,12 @@ Item {
                 let data = {
                     "device_id": model.device_id,
                     "class_id": model.class_id,
+                    "name": model.verbose_name,
                     "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
                     "available": model.available,
                     "firmware_version": model.firmware_version
                 }
+
                 PlatformSelection.openPlatformView(data)
             }
 

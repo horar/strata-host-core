@@ -1,22 +1,27 @@
-import QtQuick 2.9
+import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "qrc:/partial-views"
 import "qrc:/partial-views/general/"
-import "qrc:/js/feedback.js" as Feedback
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/feedback.js" as Feedback
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.signals 1.0
 
 SGStrataPopup {
     id: root
     headerText: "Strata Feedback"
     modal: true
+    visible: true
     glowColor: "#666"
     closePolicy: Popup.CloseOnEscape
-
+    width: container.width * 0.8
+    height: 600
+    x: container.width/2 - root.width/2
+    y: container.parent.windowHeight/2 - root.height/2
 
     onVisibleChanged: {
         if (visible) {
@@ -24,7 +29,10 @@ SGStrataPopup {
         }
     }
 
-    onClosed: alertToast.hide()
+    onClosed: {
+        alertToast.hide()
+        parent.active = false
+    }
 
     contentItem: ColumnLayout {
         id: mainColumn
@@ -240,8 +248,14 @@ SGStrataPopup {
                                 enabled: !feedbackStatus.visible
                                 // Text Length Limiter
                                 readOnly: feedbackStatus.visible
+                                KeyNavigation.tab: submitButton
+                                KeyNavigation.priority: KeyNavigation.BeforeItem
+                                Accessible.role: Accessible.EditableText
+                                Accessible.name: "FeedbackEdit"
+
                                 property int maximumLength: 1000
                                 property string previousText: text
+
                                 onTextChanged: {
                                     if(alertToast.visible) alertToast.hide();
 
@@ -255,10 +269,7 @@ SGStrataPopup {
                                         }
                                     }
                                     previousText = text
-
                                 }
-                                KeyNavigation.tab: submitButton
-                                KeyNavigation.priority: KeyNavigation.BeforeItem
                             }
                         }
                     }
@@ -287,23 +298,27 @@ SGStrataPopup {
                             }
                         }
 
-                        Keys.onReturnPressed:{
-                            submitButton.clicked()
-                        }
+                        Keys.onReturnPressed: pressSubmitButton()
+                        Accessible.onPressAction: pressSubmitButton()
 
                         onClicked: {
                             var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text, type: feedbackTypeListView.currentItem.typeValue }
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
                         }
+
+                        function pressSubmitButton() {
+                            submitButton.clicked()
+                        }
                     }
                 }
             }
+
         }
     }
 
     Connections {
-        target: Feedback.signals
+        target: Signals
 
         onFeedbackResult: {
             feedbackStatus.text = ""

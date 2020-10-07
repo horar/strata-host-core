@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 ColumnLayout {
     id: firmwareList
@@ -132,14 +133,9 @@ ColumnLayout {
 
                                     onClicked: {
                                         if (platformStack.firmware_version !== "") {
-                                            let chosenVersion = model.version.split(".")
-                                            let installedVersion = platformStack.firmware_version.split(".")
-
-                                            for (let i = 0; i < chosenVersion.length; i++) {
-                                                if (parseInt(chosenVersion[i]) > parseInt(installedVersion[i])) {
-                                                    flashStatus.startFlash()
-                                                    return
-                                                }
+                                            if (SGVersionUtils.greaterThan(model.version, platformStack.firmware_version)) {
+                                                flashStatus.startFlash()
+                                                return
                                             }
 
                                             warningPop.callback = this

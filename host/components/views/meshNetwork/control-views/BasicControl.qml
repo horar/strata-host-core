@@ -73,7 +73,7 @@ Rectangle {
            background: Rectangle {
                implicitWidth: 50
                implicitHeight: 25
-               color: clearButton.down ? "grey" : "transparent"
+               color: synchronizeButton.down ? "grey" : "transparent"
                border.color: "black"
                border.width: 2
                radius: 10
@@ -193,7 +193,7 @@ Rectangle {
                WebEngineView {
                     id: webView
                     anchors.fill: parent
-                    url: "qrc:/views/meshNetwork/images/HTML/mesh_help.html"
+                    url: "../images/HTML/mesh_help.html"
                    }
            }
 

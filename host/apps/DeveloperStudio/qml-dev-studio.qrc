@@ -9,7 +9,6 @@
         <file>js/navigation_control.js</file>
         <file>js/platform_selection.js</file>
         <file>js/restclient.js</file>
-        <file>js/uuid_map.js</file>
         <file>main.qml</file>
         <file>SplashScreen.qml</file>
         <file>partial-views/SGPrivacyPolicyPopUp.qml</file>
@@ -90,9 +89,10 @@
         <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
         <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
         <file>partial-views/login/LoginSettings.qml</file>
+        <file>js/uuid_map.js</file>
+        <file>partial-views/platform-view/ControlViewContainer.qml</file>
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
-        <file>partial-views/general/Signals.qml</file>
         <file>partial-views/general/SGNotificationToast.qml</file>
     </qresource>
 </RCC>

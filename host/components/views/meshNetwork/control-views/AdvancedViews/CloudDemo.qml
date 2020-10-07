@@ -6,7 +6,6 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import tech.strata.sgwidgets 1.0
 
-
 Rectangle {
     id: root
 
@@ -20,7 +19,7 @@ Rectangle {
     }
 
     Image{
-            source: "qrc:/views/meshNetwork/images/spreadsheet.png"
+            source: "../../images/spreadsheet.png"
             height:parent.height * .3
             anchors.centerIn: parent
             fillMode: Image.PreserveAspectFit

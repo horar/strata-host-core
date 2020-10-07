@@ -5,6 +5,7 @@
 .import QtQuick 2.0 as QtQuickModule
 
 .import tech.strata.logger 1.0 as LoggerModule
+.import tech.strata.signals 1.0 as SignalsModule
 
 var initialized = false
 
@@ -12,11 +13,6 @@ var initialized = false
   Settings: Store/retrieve login information
 */
 var settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml", null)
-
-/*
-  Signals: Signal component to notify Login status
-*/
-var signals = Utility.createObject("qrc:/partial-views/general/Signals.qml", null)
 
 /*
   Login: Send information to server
@@ -29,7 +25,7 @@ function login(login_info){
         "version": Rest.versionNumber(),
     }
 
-    Rest.xhr("post", "login", data, login_result, login_error, signals, headers)
+    Rest.xhr("post", "login", data, login_result, login_error, SignalsModule.Signals, headers)
 }
 
 /*
@@ -54,7 +50,7 @@ function login_result(response)
 
     // [TODO][prasanth]: jwt will be created/received in the hcs
     // for now, jwt will be received in the UI and then sent to HCS
-    signals.loginResult(JSON.stringify(result))
+    SignalsModule.Signals.loginResult(JSON.stringify(result))
 }
 
 /*
@@ -64,9 +60,9 @@ function login_error(error)
 {
     console.error(LoggerModule.Logger.devStudioLoginCategory, "Login failed: ", JSON.stringify(error))
     if (error.message === "No connection") {
-        signals.loginResult(JSON.stringify({"response":"No Connection"}))
+        SignalsModule.Signals.loginResult(JSON.stringify({"response":"No Connection"}))
     } else {
-        signals.loginResult(JSON.stringify({"response":"Bad Login Info"}))
+        SignalsModule.Signals.loginResult(JSON.stringify({"response":"Bad Login Info"}))
     }
 }
 
@@ -74,7 +70,7 @@ function login_error(error)
   Login: Clear token on logout
 */
 function logout() {
-    Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_error)//, signals)
+    Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_error)//, SignalsModule.Signals)
     Rest.jwt = ""
     Rest.session = ""
     if (settings.rememberMe) {
@@ -126,7 +122,7 @@ function register(registration_info){
         "title": registration_info.title,
         "company": registration_info.company
     };
-    Rest.xhr("post", "signup", data, register_result, register_error, signals)
+    Rest.xhr("post", "signup", data, register_result, register_error, SignalsModule.Signals)
 }
 
 /*
@@ -135,7 +131,7 @@ function register(registration_info){
 function register_result(response)
 {
     console.log(LoggerModule.Logger.devStudioLoginCategory, "Registration success!")
-    signals.registrationResult("Registered")
+    SignalsModule.Signals.registrationResult("Registered")
 }
 
 /*
@@ -145,11 +141,11 @@ function register_error(error)
 {
     console.error(LoggerModule.Logger.devStudioLoginCategory, "Registration Failed: ", JSON.stringify(error))
     if (error.message === "No connection") {
-        signals.registrationResult("No Connection")
+        SignalsModule.Signals.registrationResult("No Connection")
     } else if (error.message === "Cannot create user account, user exists"){
-        signals.registrationResult("Account already exists for this email address")
+        SignalsModule.Signals.registrationResult("Account already exists for this email address")
     } else {
-        signals.registrationResult("Bad Registration Request")
+        SignalsModule.Signals.registrationResult("Bad Registration Request")
     }
 }
 
@@ -158,7 +154,7 @@ function register_error(error)
 */
 function password_reset_request(request_info){
     var data = {"username":request_info.username};
-    Rest.xhr("post", "resetPasswordRequest", data, password_reset_result, password_reset_error, signals)
+    Rest.xhr("post", "resetPasswordRequest", data, password_reset_result, password_reset_error, SignalsModule.Signals)
 }
 
 /*
@@ -168,10 +164,10 @@ function password_reset_result(response)
 {
     if (!response.success) {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "Password Reset Request Failed: ", JSON.stringify(response))
-        signals.resetResult("No user found")
+        SignalsModule.Signals.resetResult("No user found")
     } else {
         console.log(LoggerModule.Logger.devStudioLoginCategory, "Password Reset Request Successful: ", JSON.stringify(response))
-        signals.resetResult("Reset Requested")
+        SignalsModule.Signals.resetResult("Reset Requested")
     }
 }
 
@@ -182,9 +178,9 @@ function password_reset_error(error)
 {
     console.error(LoggerModule.Logger.devStudioLoginCategory, "Password Reset Error: ", JSON.stringify(error))
     if (error.message === "No connection") {
-        signals.resetResult("No Connection")
+        SignalsModule.Signals.resetResult("No Connection")
     } else {
-        signals.resetResult("Bad Request")
+        SignalsModule.Signals.resetResult("Bad Request")
     }
 }
 
@@ -193,7 +189,7 @@ function password_reset_error(error)
 */
 function close_account(request_info) {
     var data = {"username":request_info.username};
-    Rest.xhr("post", "closeAccount", data, close_account_result, close_account_result, signals);
+    Rest.xhr("post", "closeAccount", data, close_account_result, close_account_result, SignalsModule.Signals);
 }
 
 /*
@@ -203,12 +199,12 @@ function close_account_result(response) {
     if (response.message !== "Account closed") {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Account Request Failed: ", JSON.stringify(response))
         if (response.message === "No connection") {
-            signals.closeAccountResult("No Connection");
+            SignalsModule.Signals.closeAccountResult("No Connection");
         } else {
-            signals.closeAccountResult(response.message);
+            SignalsModule.Signals.closeAccountResult(response.message);
         }
     } else {
-        signals.closeAccountResult("Success");
+        SignalsModule.Signals.closeAccountResult("Success");
     }
 }
 
@@ -217,14 +213,14 @@ function close_account_result(response) {
 */
 function get_profile(username) {
     var data = {"username": username};
-    Rest.xhr("post", "profile", data, get_profile_result, get_profile_result_failed, signals)
+    Rest.xhr("post", "profile", data, get_profile_result, get_profile_result_failed, SignalsModule.Signals)
 }
 
 /*
   Get Profile: Callback function for response from server
 */
 function get_profile_result(response) {
-    signals.getProfileResult("Success", response)
+    SignalsModule.Signals.getProfileResult("Success", response)
 }
 
 /*
@@ -232,7 +228,7 @@ function get_profile_result(response) {
 */
 function get_profile_result_failed(response) {
     console.error(LoggerModule.Logger.devStudioLoginCategory, "Get Profile request failed: ", JSON.stringify(response))
-    signals.getProfileResult("Failed to get profile", null)
+    SignalsModule.Signals.getProfileResult("Failed to get profile", null)
 }
 
 /*
@@ -243,20 +239,20 @@ function update_profile(username, updated_properties) {
     data._id = username;
 
     if (updated_properties.hasOwnProperty("password")) {
-        Rest.xhr("post", "profileUpdate", data, change_password_result, change_password_result, signals)
+        Rest.xhr("post", "profileUpdate", data, change_password_result, change_password_result, SignalsModule.Signals)
     } else {
-        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result, signals)
+        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result, SignalsModule.Signals)
     }
 }
 
 /*
   Update Profile Result: Callback function for response from update profile request
 */
-function update_profile_result(response) {
+function update_profile_result(response, updatedProperties) {
     if (response.message === "Profile update successful") {
-        signals.profileUpdateResult("Success")
+        SignalsModule.Signals.profileUpdateResult("Success", updatedProperties)
     } else {
-        signals.profileUpdateResult(response.message)
+        SignalsModule.Signals.profileUpdateResult(response.message, updatedProperties)
     }
 }
 
@@ -265,9 +261,9 @@ function update_profile_result(response) {
 */
 function change_password_result(response) {
     if (response.message === "Profile update successful") {
-        signals.changePasswordResult("Success")
+        SignalsModule.Signals.changePasswordResult("Success")
     } else {
-        signals.changePasswordResult(response.message)
+        SignalsModule.Signals.changePasswordResult(response.message)
     }
 }
 
@@ -287,15 +283,15 @@ function validate_token()
 function validation_result (response) {
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
-        signals.validationResult("Current token is valid")
+        SignalsModule.Signals.validationResult("Current token is valid")
     } else {
         Rest.jwt = ""
         if (response.message === "Invalid authentication token") {
-            signals.validationResult("Invalid authentication token")
+            SignalsModule.Signals.validationResult("Invalid authentication token")
         } else if (response.message === "No connection") {
-            signals.validationResult("No Connection")
+            SignalsModule.Signals.validationResult("No Connection")
         } else {
-            signals.validationResult("Error")
+            SignalsModule.Signals.validationResult("Error")
         }
     }
 }

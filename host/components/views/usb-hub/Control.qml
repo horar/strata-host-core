@@ -1,8 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.3
-import "qrc:/views/usb-hub/sgwidgets"
-import "qrc:/views/usb-hub/views"
+import "sgwidgets"
+import "views"
 
 Item {
     id: controlView
