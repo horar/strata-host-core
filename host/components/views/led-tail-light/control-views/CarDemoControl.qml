@@ -185,7 +185,7 @@ Rectangle{
                         anchors.left: moonImage.right
                         anchors.leftMargin: 1
                         anchors.verticalCenter: moonImage.verticalCenter
-                        anchors.verticalCenterOffset: 9.5
+                        anchors.verticalCenterOffset: 10
                         width: parent.width/1.3
                         fontSizeMultiplier: ratioCalc * 1.2
                         from: -1
