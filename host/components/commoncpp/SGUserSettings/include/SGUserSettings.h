@@ -82,6 +82,7 @@ public:
      */
     Q_INVOKABLE bool renameFile(const QString &origFileName, const QString &newFileName, const QString &subdirectory = "");
 
+
 signals: 
     void classIdChanged();
     void userChanged();

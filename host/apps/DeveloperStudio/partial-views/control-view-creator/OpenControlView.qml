@@ -5,6 +5,11 @@ import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.SGQrcListModel 1.0
+import tech.strata.commoncpp 1.0
+import tech.strata.fonts 1.0
+import "qrc:/partial-views"
+
+
 
 Rectangle {
     id: openProjectContainer
@@ -12,6 +17,41 @@ Rectangle {
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
     color: "#ccc"
+
+    SGStrataPopup {
+        id: root
+        padding: 10
+        headerText: "Invalid Project Path"
+        visible: false
+        width: parent.width/3
+        height: parent.height/5
+        anchors.centerIn: parent
+        onClosed : {
+            root.close()
+        }
+
+        contentItem: ColumnLayout {
+            id: mainColumn
+            Rectangle{
+                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: parent.height - 20
+                SGText{
+                    font {
+                        pixelSize: 15
+                        family: Fonts.franklinGothicBook
+                    }
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    anchors.centerIn: parent
+                    text: "Failed to open the selected project since it doesn't exist or missing"
+                    horizontalAlignment: Text.AlignHCenter
+                    color: "black"
+                }
+            }
+        }
+
+    }
+
 
     Component.onCompleted:  {
         loadSettings()
@@ -47,6 +87,18 @@ Rectangle {
         listModelForUrl.insert(0,{ url: fileUrl })
         saveSettings()
     }
+
+    function removeFromProjectList(fileUrl) {
+        for (var i = 0; i < previousFileURL.projects.length; ++i) {
+            if(previousFileURL.projects[i] === fileUrl) {
+                listModelForUrl.remove(i)
+                previousFileURL.project.splice(i,1)
+                 saveSettings()
+                return
+            }
+        }
+    }
+
 
     ColumnLayout {
         anchors {
@@ -120,8 +172,15 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         fileModel.url = model.url
-                        viewStack.currentIndex = editUseStrip.offset
-                        editUseStrip.checkedIndices = 1
+                        console.info(SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(fileModel.url)))
+                        if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(fileModel.url))) {
+                            root.open()
+                            removeFromProjectList(fileModel.url.toString())
+                        }
+                        else {
+                            viewStack.currentIndex = editUseStrip.offset
+                            editUseStrip.checkedIndices = 1
+                        }
                     }
                 }
             }
