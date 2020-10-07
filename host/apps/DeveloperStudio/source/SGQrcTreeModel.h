@@ -158,13 +158,14 @@ signals:
     void urlChanged();
     void projectDirectoryChanged();
     void rootChanged();
+    void errorParsing(const QString error);
 
 public slots:
     void childrenChanged(const QModelIndex &index, int role);
 
 private:
     void clear(bool emitSignals = true);
-    void readQrcFile();
+    bool readQrcFile();
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
     void startSave();

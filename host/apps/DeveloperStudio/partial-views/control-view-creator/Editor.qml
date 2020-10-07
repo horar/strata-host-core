@@ -21,6 +21,14 @@ Item {
 
         onModelAboutToBeReset: {
             openFilesModel.clear()
+            parsingErrorRect.errorMessage = ""
+            parsingErrorRect.visible = false
+
+        }
+
+        onErrorParsing: {
+            parsingErrorRect.errorMessage = error;
+            parsingErrorRect.visible = true
         }
     }
 
@@ -162,11 +170,37 @@ Item {
                     }
                 }
 
+                Rectangle {
+                    id: parsingErrorRect
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: "#666"
+                    visible: false
+
+                    property string errorMessage: ""
+
+                    SGText {
+                        id: errorText
+
+                        anchors {
+                            centerIn: parent
+                        }
+
+                        color: "white"
+                        font.bold: true
+                        fontSizeMultiplier: 2
+                        text: "Error: " + parsingErrorRect.errorMessage
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                }
+
                 StackLayout {
                     id: fileStack
-                    Layout.fillHeight: true
+                    Layout.fillHeight: visible
                     Layout.fillWidth: true
                     currentIndex: openFilesModel.currentIndex
+                    visible: !parsingErrorRect.visible
 
                     Repeater {
                         id: fileEditorRepeater

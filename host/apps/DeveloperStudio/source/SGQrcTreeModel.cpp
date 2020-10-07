@@ -1,5 +1,6 @@
 #include "SGQrcTreeModel.h"
 #include "SGUtilsCpp.h"
+#include "logging/LoggingQtCategories.h"
 
 #include <QDir>
 #include <QDebug>
@@ -457,34 +458,40 @@ void SGQrcTreeModel::clear(bool emitSignals)
     }
 }
 
-void SGQrcTreeModel::readQrcFile()
+bool SGQrcTreeModel::readQrcFile()
 {
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
-    const QString baseQrc = "<RCC><qresource prefix=\"/\"></qresource></RCC>";
 
     if (!qrcDoc_.isNull()) {
         qrcDoc_.clear();
     }
 
     if (!qrcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical() << "Failed to open qrc file";
-        return;
+        qCCritical(logCategoryControlViewCreator) << "Failed to open qrc file. Tried to open" << SGUtilsCpp::urlToLocalFile(url_);
+        emit errorParsing("Failed to open qrc file.");
+        return false;
     }
 
-    if (!qrcDoc_.setContent(&qrcFile)) {
-        qCritical() << "Failed to parse qrc file";
-        qrcDoc_.setContent(baseQrc);
+    QString errorMessage;
+    int errorLine;
+    int errorColumn;
+
+    if (!qrcDoc_.setContent(&qrcFile, &errorMessage, &errorLine, &errorColumn)) {
+        qCCritical(logCategoryControlViewCreator) << "Failed to parse qrc file." << errorMessage << "-" << QString::number(errorLine) + ":" + QString::number(errorColumn);
+        emit errorParsing("Invalid qrc file format.");
+        return false;
     }
 
-    // If the qrc is empty, then set it to the base qrc file
-    if (!qrcDoc_.hasChildNodes()) {
-        qrcDoc_.setContent(baseQrc);
+    if (qrcDoc_.elementsByTagName("qresource").count() == 0) {
+        qCCritical(logCategoryControlViewCreator) << "qresource tag missing from qrc file";
+        emit errorParsing("Missing qresource tag.");
+        return false;
     }
 
     QDomNode qresource = qrcDoc_.elementsByTagName("qresource").at(0);
     if (qresource.hasAttributes() && qresource.attributes().contains("prefix") && qresource.attributes().namedItem("prefix").nodeValue() != "/" ) {
-        qCritical() << "Unexpected prefix for qresource";
-        qInfo() << "Setting prefix to \"/\"";
+        qCCritical(logCategoryControlViewCreator) << "Unexpected prefix for qresource";
+        qCInfo(logCategoryControlViewCreator) << "Setting prefix to \"/\"";
         QDomElement e = qresource.toElement();
         QDomAttr prefix = e.attributeNode("prefix");
         prefix.setValue("/");
@@ -498,23 +505,25 @@ void SGQrcTreeModel::readQrcFile()
         qrcItems_.insert(absolutePath);
     }
 
-    qDebug() << "Successfully parsed qrc file";
+    qCDebug(logCategoryControlViewCreator) << "Successfully parsed qrc file";
     qrcFile.close();
+    return true;
 }
 
 void SGQrcTreeModel::createModel()
 {
     beginResetModel();
-    QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
+
     clear(false);
-    QString uid = QUuid::createUuid().toString();
-    root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
-    uidMap_.insert(uid, root_);
-    QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
+    if (readQrcFile()) {
+        QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
+        QString uid = QUuid::createUuid().toString();
+        root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
+        uidMap_.insert(uid, root_);
+        QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
+        recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems_, 0);
+    }
 
-    readQrcFile();
-
-    recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems_, 0);
     endResetModel();
     emit rootChanged();
 }
@@ -556,7 +565,7 @@ void SGQrcTreeModel::save()
 {
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
     if (!qrcFile.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text)) {
-       qCritical() << "Could not open" << url_;
+       qCCritical(logCategoryControlViewCreator) << "Could not open" << url_;
        return;
     }
 
