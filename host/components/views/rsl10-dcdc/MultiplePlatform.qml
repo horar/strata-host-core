@@ -212,7 +212,7 @@ Item{
             warningLVVinLable = "3V"
             opn = "STR-PWRNCV48920-R0-GEVK"
             minVin = 3
-            nominalVin = 20
+            nominalVin = 18
             vinScale = 20
             iinScale = 1.5
             voutScale = 10
