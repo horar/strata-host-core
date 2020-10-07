@@ -347,7 +347,7 @@ if not exist %CRYPTO_DLL_DIR% (
 )
 
 echo "Moving %CRYPTO_DLL% to %PKG_STRATA_QT%"
-move "%CRYPTO_DLL_DIR%" "%PKG_STRATA_QT%\%CRYPTO_DLL%"
+copy "%CRYPTO_DLL_DIR%" "%PKG_STRATA_QT%\%CRYPTO_DLL%"
 
 if exist %SSL_DLL_INVALID_DIR% (
     del %SSL_DLL_INVALID_DIR%
@@ -361,7 +361,7 @@ if not exist "%SSL_DLL_DIR%" (
 )
 
 echo "Moving %SSL_DLL% to %PKG_STRATA_QT%"
-move "%SSL_DLL_DIR%" "%PKG_STRATA_QT%\%SSL_DLL%"
+copy "%SSL_DLL_DIR%" "%PKG_STRATA_QT%\%SSL_DLL%"
 
 if not exist %MQTT_DLL_DIR% (
     echo "======================================================================="
