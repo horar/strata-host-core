@@ -207,10 +207,24 @@ echo " Preparing necessary files.."
 echo "======================================================================="
 
 # copy various license files
-cp -fv $STRATA_DEPLOYMENT_DIR/dependencies/strata/* $PKG_STRATA_DS
+cp -Rfv $STRATA_DEPLOYMENT_DIR/dependencies/strata/ $PKG_STRATA_DS/
+
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to copy license files to $PKG_STRATA_DS!"
+    echo "======================================================================="
+    exit 2
+fi
 
 # copy HCS config file
 cp -fv $STRATA_HCS_CONFIG_DIR/hcs_prod.config $PKG_STRATA_HCS/hcs.config
+
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to copy config file to $PKG_STRATA_HCS/hcs.config!"
+    echo "======================================================================="
+    exit 2
+fi
 
 # echo "Copying Qt Core/Components resources to $PKG_STRATA_COMPONENTS"
 # cp -fv ./bin/component-*.rcc $PKG_STRATA_COMPONENTS
@@ -219,6 +233,12 @@ echo "Copying Qml Views Resources to $PKG_STRATA_COMPONENTS_VIEWS"
 if [ ! -d $PKG_STRATA_COMPONENTS_VIEWS ] ; then mkdir -pv $PKG_STRATA_COMPONENTS_VIEWS; fi
 cp -fv ./bin/views-*.rcc $PKG_STRATA_COMPONENTS_VIEWS
 
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to views to $PKG_STRATA_COMPONENTS_VIEWS!"
+    echo "======================================================================="
+    exit 2
+fi
 
 # TODO (LC):
 # - move Frameworks to new module (or not?)
