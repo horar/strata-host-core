@@ -30,8 +30,10 @@ Rectangle{
 
         property var car_demo_brightness: platformInterface.car_demo_brightness.value
         onCar_demo_brightnessChanged: {
-            if(car_demo_brightness !== undefined)
+            if(car_demo_brightness !== undefined) {
                 baseCar.brightness = car_demo_brightness
+                brightnessControl.value = car_demo_brightness
+            }
         }
 
         property var car_demo_brightness_headlights: platformInterface.car_demo_brightness.headlights
@@ -169,16 +171,17 @@ Rectangle{
                     color: "lightgray"
 
                     SGSlider {
+                        id: brightnessControl
                         anchors.centerIn: parent
                         width: parent.width/1.2
                         fontSizeMultiplier: ratioCalc * 1.2
                         from: -1
                         to: 0.6
                         value: 0
-                        stepSize: 0.1
+                        stepSize: 0.01
                         live: false
                         showInputBox: false
-                        onUserSet: platformInterface.set_car_demo_background.update(parseFloat(value.toFixed(1)))
+                        onUserSet: platformInterface.set_car_demo_background.update(parseFloat(value.toFixed(2)))
 
                     }
                 }
