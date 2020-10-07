@@ -74,9 +74,11 @@ set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
 set CRYPTO_DLL=libcrypto-1_1-x64.dll
-set CRYPTO_DLL_DIR=%PKG_STRATA_DS%\%CRYPTO_DLL%
+set CRYPTO_DLL_DIR=%OPENSSL_PATH%\%CRYPTO_DLL%
+set CRYPTO_DLL_INVALID_DIR=%PKG_STRATA_DS%\%CRYPTO_DLL%
 set SSL_DLL=libssl-1_1-x64.dll
-set SSL_DLL_DIR=%PKG_STRATA_DS%\%SSL_DLL%
+set SSL_DLL_DIR=%OPENSSL_PATH%\%SSL_DLL%
+set SSL_DLL_INVALID_DIR=%PKG_STRATA_DS%\%SSL_DLL%
 set VCREDIST_BINARY=vc_redist.x64.exe
 set STRATA_OFFLINE=strata-setup-offline
 set STRATA_ONLINE=strata-setup-online
@@ -154,6 +156,14 @@ where signtool >nul 2>nul
 IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
     echo " signtool is missing from path! Aborting."
+    echo "======================================================================="
+    Exit /B 1
+)
+
+echo " Checking OpenSSL..."
+if not exist %OPENSSL_PATH% (
+    echo "======================================================================="
+    echo " Missing OpenSSL path: '%OPENSSL_PATH%', OpenSSL probably not installed"
     echo "======================================================================="
     Exit /B 1
 )
@@ -325,9 +335,13 @@ echo "Moving %VCREDIST_BINARY% to %PKG_STRATA_VC_REDIST%\StrataUtils\VC_REDIST"
 move "%PKG_STRATA_QT%\%VCREDIST_BINARY%" "%PKG_STRATA_VC_REDIST%\StrataUtils\VC_REDIST\%VCREDIST_BINARY%"
 
 REM Copy OpenSSL dlls to QT5 dir
+if exist %CRYPTO_DLL_INVALID_DIR% (
+    del %CRYPTO_DLL_INVALID_DIR%
+)
+
 if not exist %CRYPTO_DLL_DIR% (
     echo "======================================================================="
-    echo " Missing %CRYPTO_DLL_DIR%, build probably failed"
+    echo " Missing %CRYPTO_DLL_DIR%, OpenSSL probably not installed"
     echo "======================================================================="
     Exit /B 2
 )
@@ -335,9 +349,13 @@ if not exist %CRYPTO_DLL_DIR% (
 echo "Moving %CRYPTO_DLL% to %PKG_STRATA_QT%"
 move "%CRYPTO_DLL_DIR%" "%PKG_STRATA_QT%\%CRYPTO_DLL%"
 
+if exist %SSL_DLL_INVALID_DIR% (
+    del %SSL_DLL_INVALID_DIR%
+)
+
 if not exist "%SSL_DLL_DIR%" (
     echo "======================================================================="
-    echo " Missing %SSL_DLL_DIR%, build probably failed"
+    echo " Missing %SSL_DLL_DIR%, OpenSSL probably not installed"
     echo "======================================================================="
     Exit /B 2
 )
