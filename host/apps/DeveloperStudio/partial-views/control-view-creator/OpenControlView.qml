@@ -10,7 +10,6 @@ import tech.strata.fonts 1.0
 import "qrc:/partial-views"
 
 
-
 Rectangle {
     id: openProjectContainer
 
@@ -28,6 +27,7 @@ Rectangle {
         anchors.centerIn: parent
         onClosed : {
             root.close()
+            removeFromProjectList(fileModel.url.toString())
         }
 
         contentItem: ColumnLayout {
@@ -43,15 +43,13 @@ Rectangle {
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit
                     anchors.centerIn: parent
-                    text: "Failed to open the selected project since it doesn't exist or missing"
+                    text: "Failed to open the selected project. It doesn't exist or missing."
                     horizontalAlignment: Text.AlignHCenter
                     color: "black"
                 }
             }
         }
-
     }
-
 
     Component.onCompleted:  {
         loadSettings()
@@ -92,8 +90,8 @@ Rectangle {
         for (var i = 0; i < previousFileURL.projects.length; ++i) {
             if(previousFileURL.projects[i] === fileUrl) {
                 listModelForUrl.remove(i)
-                previousFileURL.project.splice(i,1)
-                 saveSettings()
+                previousFileURL.projects.splice(i,1)
+                saveSettings()
                 return
             }
         }
@@ -175,7 +173,6 @@ Rectangle {
                         console.info(SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(fileModel.url)))
                         if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(fileModel.url))) {
                             root.open()
-                            removeFromProjectList(fileModel.url.toString())
                         }
                         else {
                             viewStack.currentIndex = editUseStrip.offset
