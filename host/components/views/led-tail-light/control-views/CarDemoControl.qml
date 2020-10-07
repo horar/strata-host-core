@@ -180,7 +180,6 @@ Rectangle{
                         fillMode: Image.PreserveAspectFit
                     }
 
-
                     SGSlider {
                         id: brightnessControl
                         anchors.left: moonImage.right
@@ -198,7 +197,6 @@ Rectangle{
                         live: false
                         showInputBox: false
                         onUserSet: platformInterface.set_car_demo_background.update(parseFloat(value.toFixed(2)))
-
                     }
 
                     Image {
