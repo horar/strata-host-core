@@ -180,7 +180,7 @@ cmake \
     -DBUILD_TESTING=off \
     ../host
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to configure cmake build!"
     echo "======================================================================="
@@ -193,21 +193,21 @@ echo "======================================================================="
 cmake --build . -- -j $(sysctl -n hw.ncpu)
 # cmake --build . --config Debug
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to perform cmake build!"
     echo "======================================================================="
     exit 5
 fi
 
-if [ ! -d "$SDS_BINARY_DIR" ] ; then 
+if [ ! -d "$SDS_BINARY_DIR" ] ; then
     echo "======================================================================="
     echo " Missing $SDS_BINARY, build probably failed"
     echo "======================================================================="
     exit 2
 fi
 
-if [ ! -f "$HCS_BINARY_DIR" ] ; then 
+if [ ! -f "$HCS_BINARY_DIR" ] ; then
     echo "======================================================================="
     echo " Missing $HCS_BINARY, build probably failed"
     echo "======================================================================="
@@ -221,7 +221,7 @@ echo "======================================================================="
 # copy various license files
 cp -Rfv $STRATA_DEPLOYMENT_DIR/dependencies/strata/ $PKG_STRATA_DS/
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to copy license files to $PKG_STRATA_DS!"
     echo "======================================================================="
@@ -231,7 +231,7 @@ fi
 # copy HCS config file
 cp -fv $STRATA_HCS_CONFIG_DIR/hcs_prod.config $PKG_STRATA_HCS/hcs.config
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to copy config file to $PKG_STRATA_HCS/hcs.config!"
     echo "======================================================================="
@@ -245,7 +245,7 @@ echo "Copying Qml Views Resources to $PKG_STRATA_COMPONENTS_VIEWS"
 if [ ! -d $PKG_STRATA_COMPONENTS_VIEWS ] ; then mkdir -pv $PKG_STRATA_COMPONENTS_VIEWS; fi
 cp -fv ./bin/views-*.rcc $PKG_STRATA_COMPONENTS_VIEWS
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to copy views to $PKG_STRATA_COMPONENTS_VIEWS!"
     echo "======================================================================="
@@ -255,7 +255,7 @@ fi
 echo "Copying ${MQTT_DLL} to ${PKG_STRATA_COMPONENTS_COMMON}"
 cp -fv "${MQTT_DLL_DIR}" "${PKG_STRATA_COMPONENTS_COMMON}"
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to copy ${MQTT_DLL} to ${PKG_STRATA_COMPONENTS_COMMON}!"
     echo "======================================================================="
@@ -268,7 +268,7 @@ install_name_tool \
 	-change "${MQTT_DLL_DIR}" "@loader_path/${MQTT_DLL}" \
 	"${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}"
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to call install_name_tool for ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}!"
     echo "======================================================================="
@@ -291,7 +291,7 @@ macdeployqt "$SDS_BINARY_DIR" \
     -qmldir=../host/components \
     -verbose=1
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to macdeployqt $SDS_BINARY!"
     echo "======================================================================="
@@ -307,7 +307,7 @@ macdeployqt "$PKG_STRATA_HCS" \
     -executable="$HCS_BINARY_DIR" \
     -verbose=1
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to macdeployqt $HCS_BINARY!"
     echo "======================================================================="
@@ -325,7 +325,7 @@ binarycreator \
     -p $PACKAGES_DIR \
     $STRATA_OFFLINE
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to create offline installer $STRATA_OFFLINE_BINARY!"
     echo "======================================================================="
@@ -343,7 +343,7 @@ fi
 #    -p $PACKAGES_DIR \
 #    $STRATA_ONLINE
 
-#if [ $? != 0 ] ; then 
+#if [ $? != 0 ] ; then
 #    echo "======================================================================="
 #    echo " Failed to create online installer $STRATA_ONLINE_BINARY!"
 #    echo "======================================================================="
@@ -362,7 +362,7 @@ repogen \
     -p $PACKAGES_DIR \
     $STRATA_ONLINE_REPOSITORY
 
-if [ $? != 0 ] ; then 
+if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY!"
     echo "======================================================================="
