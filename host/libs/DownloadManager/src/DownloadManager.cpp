@@ -460,7 +460,7 @@ void DownloadManager::prepareResponse(InternalDownloadRequest *internalRequest, 
 
     internalRequest->savedFile.close();
 
-    if (errorString.isEmpty()) {
+    if (errorString.isEmpty() && internalRequest->state != InternalDownloadRequest::DownloadState::FinishedWithError) {
         internalRequest->state = InternalDownloadRequest::DownloadState::Finished;
     } else {
         qCWarning(logCategoryDownloadManager)
