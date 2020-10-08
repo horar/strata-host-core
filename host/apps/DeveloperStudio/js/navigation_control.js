@@ -343,15 +343,7 @@ function updateState(event, data)
                 }
 
                 if(userSettings.autoOpenView){
-                    console.log(JSON.stringify(platform_view_model_))
-                    connected_view = platform_view_model_.get(0)
-                    connected_view.device_id = data.device_id
-                    connected_view.firmware_version = data.firmware_version
-                    connected_view.connected = data.connected
-                    connected_view.name = data.name
-                    connected_view.available = data.available
-                    connected_view.view_open = true
-                    updateState(events.OPEN_PLATFORM_VIEW_EVENT, connected_view)
+                    updateState(events.OPEN_PLATFORM_VIEW_EVENT, data)
                 }
 
                 break;
