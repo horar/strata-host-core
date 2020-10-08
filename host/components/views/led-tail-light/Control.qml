@@ -410,6 +410,7 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = false
                 miscControl.visible = false
+                platformInterface.manual_value  = false
 
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
@@ -431,6 +432,7 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = false
                 miscControl.visible = false
+                platformInterface.manual_value  = false
 
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
@@ -454,6 +456,7 @@ Item {
                 sAMOPTControl.visible = false
                 miscControl.visible = false
                 alertViewBadge.opacity = 0.0
+                platformInterface.manual_value  = false
 
                 if(miscViewBadge.opacity  != 1.0)
                     miscViewBadge.opacity = 0.0
@@ -478,6 +481,7 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = true
                 miscControl.visible = false
+                platformInterface.manual_value  = false
 
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
@@ -500,6 +504,7 @@ Item {
                 sAMOPTControl.visible = false
                 miscControl.visible = true
                 miscViewBadge.opacity = 0.0
+                platformInterface.manual_value  = false
 
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0

@@ -45,25 +45,6 @@ Item {
         "value": false
     }
 
-    property var set_car_demo_background : ({
-                                 "cmd" : "car_demo_background",
-                                 "payload": {
-                                     "value": 0.0
-                                 },
-
-                                 update: function (value) {
-                                     this.set(value)
-                                     this.send(this)
-                                 },
-                                 set: function (value) {
-                                     this.payload.value = value
-                                 },
-                                 send: function () { CorePlatformInterface.send(this) },
-                                 show: function () { CorePlatformInterface.show(this) }
-                             })
-
-
-
 
     //Mode commands
     property var set_mode : ({
@@ -597,7 +578,8 @@ Item {
         "brake":false,
         "left":false,
         "reverse":false,
-        "right":false
+        "right":false,
+        "manual": false
     }
 
     //----------- ---
@@ -767,18 +749,20 @@ Item {
                                          "left":true,
                                          "right":false,
                                          "brake":true,
-                                         "reverse":false
+                                         "reverse":false,
+                                         "manual": false
                                      },
 
-                                     update: function (left,right,brake,reverse) {
-                                         this.set(left,right,brake,reverse)
+                                     update: function (left,right,brake,reverse,manual) {
+                                         this.set(left,right,brake,reverse,manual)
                                          this.send(this)
                                      },
-                                     set: function (left,right,brake,reverse) {
+                                     set: function (left,right,brake,reverse,manual) {
                                          this.payload.left = left
                                          this.payload.right = right
                                          this.payload.brake = brake
                                          this.payload.reverse = reverse
+                                         this.payload.manual = manual
                                      },
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
@@ -1716,6 +1700,7 @@ Item {
     property bool brake_value: false
     property bool hazard_value: true
     property bool reverse_value: false
+    property var manual_value: false
 
     property bool soc_sam_conf_1_out1: false
     property bool soc_sam_conf_1_out2: false

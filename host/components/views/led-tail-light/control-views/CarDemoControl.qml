@@ -32,7 +32,6 @@ Rectangle{
         onCar_demo_brightnessChanged: {
             if(car_demo_brightness !== undefined) {
                 baseCar.brightness = car_demo_brightness
-                brightnessControl.value = car_demo_brightness
             }
         }
 
@@ -47,6 +46,13 @@ Rectangle{
                 runningLight.visible = false
             }
         }
+
+        property var  manual_value : platformInterface.manual_value
+        onManual_valueChanged: {
+            if(manual_value === false)
+                brigtnesseImage.source = "sun_moon_off.png"
+        }
+
         Connections {
             target: Help.utility
             onInternal_tour_indexChanged: {
@@ -162,56 +168,6 @@ Rectangle{
                     fillMode: Image.PreserveAspectFit
                 }
 
-                Rectangle {
-                    width: parent.width/3
-                    height: parent.height/8
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 30
-                    anchors.horizontalCenter: base.horizontalCenter
-                    color: "lightgray"
-
-                    Image {
-                        id: moonImage
-                        width:parent.width/7
-                        height: parent.height/3
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: "car-Images/moonIcon.png"
-                        fillMode: Image.PreserveAspectFit
-                    }
-
-                    SGSlider {
-                        id: brightnessControl
-                        anchors.left: moonImage.right
-                        anchors.leftMargin: 1
-                        anchors.verticalCenter: moonImage.verticalCenter
-                        anchors.verticalCenterOffset: 10
-                        width: parent.width/1.3
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        from: -1
-                        to: 0.6
-                        fromText.opacity: 0.0
-                        toText.opacity : 0.0
-                        value: 0
-                        stepSize: 0.01
-                        live: false
-                        showInputBox: false
-                        onUserSet: platformInterface.set_car_demo_background.update(parseFloat(value.toFixed(2)))
-                    }
-
-                    Image {
-                        id: sunicon
-                        width:parent.width/7
-                        height: parent.height/3
-                        anchors.left: brightnessControl.right
-                        anchors.leftMargin: 1
-                        anchors.verticalCenter: parent.verticalCenter
-                        source: "car-Images/sunIcon.png"
-                        fillMode: Image.PreserveAspectFit
-                    }
-
-                }
-
             }
 
 
@@ -251,7 +207,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   true,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
 
@@ -259,7 +216,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
 
@@ -273,7 +231,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   true,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
 
                                                                                   )
                                         }
@@ -281,7 +240,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
                                     }
@@ -313,7 +273,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   true,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
 
@@ -321,7 +282,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
 
@@ -335,7 +297,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   true,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
 
                                                                                   )
                                         }
@@ -343,7 +306,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
                                     }
@@ -396,7 +360,8 @@ Rectangle{
                                         platformInterface.set_car_demo.update(true,
                                                                               true,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                                                              platformInterface.reverse_value,
+                                                                              platformInterface.manual_value
                                                                               )
                                     }
                                     else {
@@ -409,7 +374,8 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                                                              platformInterface.reverse_value,
+                                                                              platformInterface.manual_value
                                                                               )
 
                                     }
@@ -442,7 +408,8 @@ Rectangle{
                                         platformInterface.set_car_demo.update(true,
                                                                               true,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                                                              platformInterface.reverse_value,
+                                                                              platformInterface.manual_value
                                                                               )
                                     }
                                     else {
@@ -456,7 +423,8 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                                                              platformInterface.reverse_value,
+                                                                              platformInterface.manual_value
                                                                               )
 
                                     }
@@ -489,7 +457,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   true,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
 
                                                                                   )
                                         }
@@ -498,7 +467,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
 
                                                                                   )
                                         }
@@ -511,7 +481,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   true,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
 
                                                                                   )
                                         }
@@ -519,7 +490,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
                                     }
@@ -546,7 +518,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   true,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
 
                                                                                   )
                                         }
@@ -556,6 +529,7 @@ Rectangle{
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
                                                                                   platformInterface.reverse_value
+                                                                                  ,   platformInterface.manual_value
 
                                                                                   )
                                         }
@@ -568,7 +542,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   true,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
 
                                                                                   )
                                         }
@@ -576,7 +551,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
                                     }
@@ -637,7 +613,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
                                         else {
@@ -647,11 +624,11 @@ Rectangle{
                                             platformInterface.set_car_demo.update(false,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
 
-                                        console.log("platformInterface.left_value", platformInterface.left_value)
                                     }
                                 }
                             }
@@ -676,7 +653,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
                                         else {
@@ -686,7 +664,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
                                                                                   )
                                         }
 
@@ -708,12 +687,90 @@ Rectangle{
 
                         }
 
-                        //                        property var car_demo: platformInterface.car_demo
-                        //                        onCar_demoChanged: {
-                        //                            if(car_demo.left === false && car_demo.right === false) {
+                    }
 
-                        //                            }
-                        //                        }
+                    Rectangle{
+                        id: brigtnessContainer
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "light gray"
+
+
+                        Image {
+                            id:  brigtnesseImage
+                            source: "sun_moon_off.png"
+                            anchors.fill: parent
+                            fillMode: Image.PreserveAspectFit
+
+                            Rectangle{
+                                width: parent.width/2
+                                height: parent.height
+                                anchors.left: parent.left
+                                color: "transparent"
+                                MouseArea{
+                                    anchors.fill: parent
+                                    onClicked: {
+
+                                        if(platformInterface.manual_value === false) {
+                                            brigtnesseImage.source = "sun_moon_on.png"
+                                            platformInterface.manual_value = true
+                                            platformInterface.set_car_demo.update(
+                                                        platformInterface.left_value,
+                                                        platformInterface.right_value,
+                                                        platformInterface.brake_value,
+                                                        platformInterface.reverse_value,
+                                                        platformInterface.manual_value
+                                                        )
+
+                                        }
+                                        else {
+                                            platformInterface.manual_value = "down"
+                                            platformInterface.set_car_demo.update(
+                                                        platformInterface.left_value,
+                                                        platformInterface.right_value,
+                                                        platformInterface.brake_value,
+                                                        platformInterface.reverse_value,
+                                                        platformInterface.manual_value
+                                                        )
+                                        }
+                                    }
+                                }
+
+                            }
+                            Rectangle{
+                                width: parent.width/2
+                                height: parent.height
+                                anchors.right: parent.right
+                                color: "transparent"
+                                MouseArea{
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        if(platformInterface.manual_value === false) {
+                                            brigtnesseImage.source = "sun_moon_on.png"
+                                            platformInterface.manual_value = true
+                                            platformInterface.set_car_demo.update(
+                                                        platformInterface.left_value,
+                                                        platformInterface.right_value,
+                                                        platformInterface.brake_value,
+                                                        platformInterface.reverse_value,
+                                                        platformInterface.manual_value
+                                                        )
+
+                                        }
+                                        else {
+                                            platformInterface.manual_value = "up"
+                                            platformInterface.set_car_demo.update(
+                                                        platformInterface.left_value,
+                                                        platformInterface.right_value,
+                                                        platformInterface.brake_value,
+                                                        platformInterface.reverse_value,
+                                                        platformInterface.manual_value
+                                                        )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                 }
