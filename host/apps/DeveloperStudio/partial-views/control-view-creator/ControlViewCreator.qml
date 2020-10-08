@@ -34,6 +34,8 @@ Rectangle {
                 id: toolBarListView
 
                 anchors.fill: parent
+                anchors.topMargin: 5
+
                 spacing: 4
                 orientation: Qt.Vertical
                 currentIndex: -1
@@ -42,6 +44,7 @@ Rectangle {
                 property int newTab: 1
                 property int editTab: 2
                 property int viewTab: 3
+                property int recompileTab: 4
 
                 onCurrentIndexChanged: {
                     switch (currentIndex) {
@@ -71,7 +74,8 @@ Rectangle {
                     { imageSource: "qrc:/sgimages/file-blank.svg", imageText: "Open" },
                     { imageSource: "qrc:/sgimages/file-add.svg", imageText: "New" },
                     { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit" },
-                    { imageSource: "qrc:/sgimages/eye.svg", imageText: "View" }
+                    { imageSource: "qrc:/sgimages/eye.svg", imageText: "View" },
+                    { imageSource: "qrc:/sgimages/bolt.svg", imageText: "Recompile" }
                 ]
 
                 delegate: Rectangle {
@@ -79,7 +83,16 @@ Rectangle {
                     height: 60
 
                     color: ListView.isCurrentItem ? "#999" : "transparent"
-                    enabled: modelData.imageText === "Edit" && fileModel.url.toString() === "" ? false : true
+                    enabled: {
+                        if (index === toolBarListView.editTab
+                                || index === toolBarListView.viewTab
+                                || index === toolBarListView.recompileTab) {
+                            if (fileModel.url.toString() === "") {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
 
 
                     ColumnLayout {
@@ -89,9 +102,11 @@ Rectangle {
                         SGIcon {
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                             Layout.preferredHeight: 30
-                            Layout.leftMargin: modelData.imageText === "Edit" ? 6 : 0
+                            // Setting left margin is to handle centering for the edit image
+                            Layout.leftMargin: modelData.imageText === "Edit" ? 7 : 0
                             Layout.fillWidth: true
 
+                            // This color adds .25 alpha to #666
                             iconColor: parent.enabled ? "white" : Qt.rgba(102, 102, 102, 0.25)
                             source: modelData.imageSource
                         }
@@ -103,6 +118,7 @@ Rectangle {
                             horizontalAlignment: Text.AlignHCenter
 
                             text: modelData.imageText
+                            // This color adds .30 alpha to #666
                             color: parent.enabled ? "white" : Qt.rgba(102, 102, 102, 0.30)
                         }
                     }
