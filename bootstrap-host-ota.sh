@@ -305,6 +305,7 @@ echo "--------------------------------------------------------------------------
 #if the build does not fails, the errors can be ignored
 macdeployqt "$PKG_STRATA_HCS" \
     -executable="$HCS_BINARY_DIR" \
+    -no-plugins \
     -verbose=1
 
 if [ $? != 0 ] ; then
