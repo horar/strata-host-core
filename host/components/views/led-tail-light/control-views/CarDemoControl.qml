@@ -60,7 +60,7 @@ Rectangle{
                     Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 800
                 }
                 if(Help.current_tour_targets[index]["target"] === controlContainerForHelp) {
-                    Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 650
+                    Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 750
                 }
             }
         }
@@ -77,7 +77,7 @@ Rectangle{
         Item {
             id: controlContainerForHelp
             width: parent.width/8
-            height: parent.height/1.5
+            height: parent.height/1.6
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.verticalCenter: parent.verticalCenter
@@ -678,12 +678,14 @@ Rectangle{
                         onCar_demo_leftChanged: {
                             leftSignal.visible = car_demo_left
                             console.log("left on", car_demo_left)
+                            platformInterface.left_value = car_demo_left
                         }
 
                         property var car_demo_right: platformInterface.car_demo.right
                         onCar_demo_rightChanged: {
                             console.log("right on", car_demo_right)
                             rightSignal.visible = car_demo_right
+                            platformInterface.right_value = car_demo_right
 
                         }
 
@@ -695,12 +697,11 @@ Rectangle{
                         Layout.fillWidth: true
                         color: "light gray"
 
-
                         Image {
                             id:  brigtnesseImage
                             source: "sun_moon_off.png"
                             anchors.fill: parent
-                            fillMode: Image.PreserveAspectFit
+                            fillMode: Image.PreserveAspectCrop
 
                             Rectangle{
                                 width: parent.width/2

@@ -30,9 +30,9 @@
         <file>control-views/car-icon/reverse.svg</file>
         <file>control-views/car-icon/right-signal.svg</file>
         <file>control-views/NotificationBadge.qml</file>
-        <file>control-views/car-icon/sun_pressed.png</file>
-        <file>control-views/car-icon/moon_pressed.png</file>
         <file>control-views/car-icon/sun_moon_off.png</file>
         <file>control-views/car-icon/sun_moon_on.png</file>
+        <file>control-views/car-icon/sun_pressed.png</file>
+        <file>control-views/car-icon/moon_pressed.png</file>
     </qresource>
 </RCC>
