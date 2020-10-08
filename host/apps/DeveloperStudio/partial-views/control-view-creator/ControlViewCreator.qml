@@ -24,32 +24,69 @@ Rectangle {
         spacing:  0
 
         Rectangle {
-            id: topBar
-            Layout.preferredHeight: 45
-            Layout.fillWidth: true
-            Layout.maximumWidth: parent.width
+            Layout.fillHeight: true
+            Layout.preferredWidth: 70
+            Layout.maximumWidth: 70
+            Layout.alignment: Qt.AlignTop
             color: "#666"
-            visible: viewStack.currentIndex >= editUseStrip.offset
 
-            RowLayout {
-                height: parent.height
-                width: Math.min(implicitWidth, parent.width-5)
-                x: 2.5
-                spacing: 10
+            ListView {
+                id: toolBarListView
 
-                SGButton {
-                    text: "Open Control View Project"
-                    onClicked: {
-                        viewStack.currentIndex = 1
+                anchors.fill: parent
+                spacing: 4
+                orientation: Qt.Vertical
+
+                model: [
+                    { imageSource: "qrc:/sgimages/file-blank.svg", imageText: "Open" },
+                    { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit" },
+                    { imageSource: "qrc:/sgimages/eye.svg", imageText: "View" },
+                    { imageSource: "qrc:/sgimages/bolt.svg", imageText: "Recompile" }
+                ]
+
+                delegate: Rectangle {
+                    width: parent.width
+                    height: 60
+
+                    color: ListView.isCurrentItem ? "#999" : "transparent"
+
+                    ColumnLayout {
+                        anchors.margins: 5
+                        anchors.fill: parent
+
+                        SGIcon {
+                            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                            Layout.preferredHeight: 30
+                            Layout.leftMargin: modelData.imageText === "Edit" ? 6 : 0
+                            Layout.fillWidth: true
+
+                            iconColor: "white"
+                            source: modelData.imageSource
+                        }
+
+                        SGText {
+                            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            horizontalAlignment: Text.AlignHCenter
+
+                            text: modelData.imageText
+                            color: "white"
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.OpenHandCursor
+                        onClicked: {
+                            toolBarListView.currentIndex = index
+                        }
                     }
                 }
-
-                SGButton {
-                    text: "New Control View Project"
-                    onClicked: {
-                        viewStack.currentIndex = 2
-                    }
-                }
+            }
+        }
 
                 SGButtonStrip {
                     id: editUseStrip
@@ -60,70 +97,89 @@ Rectangle {
                             recompileControlViewQrc()
                             currentFileUrl = editor.treeModel.url
                         }
-                        viewStack.currentIndex = index + offset
                     }
 
-                    property int offset: 3 // number of views in stack before Editor/ControlViewContainer
-                }
+                    SGButton {
+                        text: "New Control View Project"
+                        onClicked: {
+                            viewStack.currentIndex = 2
+                        }
+                    }
 
-                SGButton {
-                    text: "Recompile/Reload Control View"
+                    SGButtonStrip {
+                        id: editUseStrip
+                        model: ["Edit", "Use Control View"]
+                        checkedIndices: 0
+                        onClicked: {
+                            if (currentFileUrl != fileModel.url) {
+                                recompileControlViewQrc()
+                                currentFileUrl = fileModel.url
+                            }
+                            viewStack.currentIndex = index + offset
+                        }
 
-                    onClicked: {
-                        recompileControlViewQrc()
+                        property int offset: 3 // number of views in stack before Editor/ControlViewContainer
+                    }
+
+                    SGButton {
+                        text: "Recompile/Reload Control View"
+
+                        onClicked: {
+                            recompileControlViewQrc()
+                        }
                     }
                 }
             }
-        }
 
-        StackLayout {
-            id: viewStack
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
-            onCurrentIndexChanged: {
-                if (currentIndex !== editUseStrip.offset && currentIndex !== (editUseStrip.offset + 1)) {
-                    editUseStrip.checkedIndices = 0
-                }
-            }
-
-            Start {
-                id: startContainer
+            StackLayout {
+                id: viewStack
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-            }
 
-            OpenControlView {
-                id: openProjectContainer
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-
-            NewControlView {
-                id: newControlViewContainer
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-
-            Editor {
-                id: editor
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-
-            Rectangle {
-                id: controlViewContainer
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                color: "lightcyan"
-
-                SGText {
-                    anchors {
-                        centerIn: parent
+                onCurrentIndexChanged: {
+                    if (currentIndex !== editUseStrip.offset && currentIndex !== (editUseStrip.offset + 1)) {
+                        editUseStrip.checkedIndices = 0
                     }
-                    fontSizeMultiplier: 2
-                    text: "Control view from RCC loaded here"
-                    opacity: .25
+                }
+
+                Start {
+                    id: startContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
+                OpenControlView {
+                    id: openProjectContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
+                NewControlView {
+                    id: newControlViewContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
+                Editor {
+                    id: editor
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
+                Rectangle {
+                    id: controlViewContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "lightcyan"
+
+                    SGText {
+                        anchors {
+                            centerIn: parent
+                        }
+                        fontSizeMultiplier: 2
+                        text: "Control view from RCC loaded here"
+                        opacity: .25
+                    }
                 }
             }
         }
