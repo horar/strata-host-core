@@ -449,12 +449,18 @@ void SGQrcTreeModel::startPopulating(const QByteArray &fileText)
     beginResetModel();
     clear(false);
 
-    createQrcXmlDocument(fileText);
-    QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
-    QString uid = QUuid::createUuid().toString();
-    root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
-    uidMap_.insert(uid, root_);
-    QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
+    if (fileText.isNull()) {
+        emit errorParsing("Could not open project .qrc file");
+        root_ = nullptr;
+    } else if (createQrcXmlDocument(fileText)) {
+        QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
+        QString uid = QUuid::createUuid().toString();
+        root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
+        uidMap_.insert(uid, root_);
+        QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
+
+        recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems_, 0);
+    }
 
     recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems_, 0);
     endResetModel();
@@ -469,6 +475,9 @@ void SGQrcTreeModel::clear(bool emitSignals)
 
     uidMap_.clear();
     qrcItems_.clear();
+    if (!qrcDoc_.isNull()) {
+        qrcDoc_.clear();
+    }
     delete root_;
 
     if (emitSignals) {
@@ -481,28 +490,27 @@ void SGQrcTreeModel::readQrcFile()
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
 
     if (!qrcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical() << "Failed to open qrc file";
-        emit errorOpeningQrc();
-        return;
-    }
+        qCCritical(logCategoryControlViewCreator) << "Failed to open qrc file";
+        qrcFile.close();
+        emit finishedReadingQrc(QByteArray());
+    } else {
+        QByteArray fileText = qrcFile.readAll();
+        qrcFile.close();
 
-    QByteArray fileText = qrcFile.readAll();
-    qrcFile.close();
-    emit finishedReadingQrc(fileText);
+        /*
+         * We don't want fileText to be null here because null signifies that we
+         * couldn't open the file.
+         */
+        if (fileText.isNull()) {
+            fileText = "";
+        }
+
+        emit finishedReadingQrc(fileText);
+    }
 }
 
 bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
 {
-    if (!qrcDoc_.isNull()) {
-        qrcDoc_.clear();
-    }
-
-    if (!qrcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCCritical(logCategoryControlViewCreator) << "Failed to open qrc file. Tried to open" << SGUtilsCpp::urlToLocalFile(url_);
-        emit errorParsing("Failed to open qrc file.");
-        return false;
-    }
-
     QString errorMessage;
     int errorLine;
     int errorColumn;

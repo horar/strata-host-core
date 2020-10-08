@@ -160,7 +160,6 @@ signals:
     void rootChanged();
     void errorParsing(const QString error);
     void finishedReadingQrc(const QByteArray &fileText);
-    void errorOpeningQrc();
 
 public slots:
     void childrenChanged(const QModelIndex &index, int role);
