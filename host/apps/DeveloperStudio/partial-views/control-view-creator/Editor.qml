@@ -12,7 +12,6 @@ import "Sidebar/"
 
 Item {
     id: editorRoot
-
     property alias treeModel: treeModel
 
     SGQrcTreeModel {
@@ -45,8 +44,9 @@ Item {
 
             ScrollView {
                 Layout.preferredHeight: 45
+                Layout.minimumHeight: 45
                 Layout.fillWidth: true
-                x:2.5
+                x: 2.5
                 clip: true
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
@@ -59,7 +59,7 @@ Item {
                     model: openFilesModel
                     orientation: ListView.Horizontal
                     layoutDirection: Qt.LeftToRight
-                    spacing: 3
+                    spacing: 1
 
                     delegate: Button {
                         id: fileTab
@@ -74,56 +74,55 @@ Item {
                                 openFilesModel.currentIndex = index
                             }
                         }
-                    }
 
-                    background: Rectangle {
-                        implicitHeight: 40
-                        color: fileTab.checked ? Qt.darker(fileTab.color, 1.3) : fileTab.color
-                        radius: 4
-                    }
-
-                    contentItem: Item {
-                        implicitWidth: tabText.paintedWidth + tabText.anchors.leftMargin + 3 + closeFileIcon.implicitWidth + closeFileIcon.anchors.rightMargin
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        SGText {
-                            id: tabText
-                            text: model.filename
-                            color: fileTab.checked ? "white" : "black"
-                            anchors {
-                                left: parent.left
-                                verticalCenter: parent.verticalCenter
-                                leftMargin: 5
-                            }
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
+                        background: Rectangle {
+                            implicitHeight: 45
+                            color: fileTab.checked ? Qt.darker(fileTab.color, 1.3) : fileTab.color
                         }
 
-                        SGIcon {
-                            id: closeFileIcon
-                            source: "qrc:/sgimages/times-circle.svg"
-                            height: tabText.paintedHeight
-                            width: height
-                            implicitWidth: height
-                            visible: fileTab.hovered
-                            anchors {
-                                left: tabText.right
-                                leftMargin: 4
-                                right: parent.right
-                                verticalCenter: parent.verticalCenter
-                                rightMargin: 2
-                            }
-                            verticalAlignment: Qt.AlignVCenter
+                        contentItem: Item {
+                            implicitWidth: tabText.paintedWidth + tabText.anchors.leftMargin + 3 + closeFileIcon.implicitWidth + closeFileIcon.anchors.rightMargin
+                            anchors.verticalCenter: parent.verticalCenter
 
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                onEntered: {
-                                    cursorShape = Qt.PointingHandCursor
+                            SGText {
+                                id: tabText
+                                text: model.filename
+                                color: fileTab.checked ? "white" : "black"
+                                anchors {
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+                                    leftMargin: 5
                                 }
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
+                            }
 
-                                onClicked: {
-                                    openFilesModel.closeTabAt(index);
+                            SGIcon {
+                                id: closeFileIcon
+                                source: "qrc:/sgimages/times-circle.svg"
+                                height: tabText.paintedHeight
+                                width: height
+                                implicitWidth: height
+                                visible: fileTab.hovered
+                                anchors {
+                                    left: tabText.right
+                                    leftMargin: 4
+                                    right: parent.right
+                                    verticalCenter: parent.verticalCenter
+                                    rightMargin: 2
+                                }
+                                verticalAlignment: Qt.AlignVCenter
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onEntered: {
+                                        cursorShape = Qt.PointingHandCursor
+                                    }
+
+                                        onClicked: {
+                                            openFilesModel.closeTabAt(index);
+                                        }
                                 }
                             }
                         }
@@ -143,9 +142,6 @@ Item {
 
                     delegate: Component {
                         Loader {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
                             source: switch(model.filetype) {
                                 case "svg":
                                 case "jpg":

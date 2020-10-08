@@ -17,7 +17,7 @@ Rectangle {
         user: NavigationControl.context.user_id
     }
 
-    ColumnLayout {
+    RowLayout {
         anchors {
             fill: parent
         }
@@ -57,7 +57,7 @@ Rectangle {
                         viewStack.currentIndex = 3
                         break;
                     case viewTab:
-                        if (currentFileUrl != fileModel.url) {
+                        if (currentFileUrl != editor.treeModel.url) {
                             recompileControlViewQrc()
                             currentFileUrl = fileModel.url
                         }
@@ -86,7 +86,7 @@ Rectangle {
                         if (index === toolBarListView.editTab
                                 || index === toolBarListView.viewTab
                                 || index === toolBarListView.recompileTab) {
-                            if (fileModel.url.toString() === "") {
+                            if (editor.treeModel.url.toString() === "") {
                                 return false;
                             }
                         }
@@ -118,7 +118,6 @@ Rectangle {
                             horizontalAlignment: Text.AlignHCenter
 
                             text: modelData.imageText
-                            // This color adds .40 alpha to white
                             color: tabIcon.iconColor
                         }
                     }
