@@ -13,7 +13,6 @@ import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: sideBarRoot
-    color: "#777"
 
     ColumnLayout {
         anchors.fill: parent
@@ -54,6 +53,26 @@ Rectangle {
 
                 selection: ItemSelectionModel {
                     model: treeModel
+                }
+
+                headerDelegate: Rectangle {
+                    height: 25
+                    color: "#777"
+
+                    Text {
+                        width: parent.width
+                        height: parent.height
+                        anchors.verticalCenter: parent.verticalCenter
+                        leftPadding: 5
+                        verticalAlignment: Text.AlignVCenter
+
+                        text: SGUtilsCpp.fileName(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
+                        font.pointSize: 12
+                        font.bold: true
+                        font.capitalization: Font.AllUppercase
+                        color: "white"
+                        elide: Text.ElideRight
+                    }
                 }
 
                 rowDelegate: Rectangle {
