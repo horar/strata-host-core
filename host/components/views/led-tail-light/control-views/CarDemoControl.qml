@@ -770,6 +770,17 @@ Rectangle{
                                     }
                                 }
                             }
+                            property var car_demo_manual: platformInterface.car_demo.manual
+                            onCar_demo_manualChanged: {
+                                console.log(car_demo_manual)
+                                if(car_demo_manual === false) {
+                                    brigtnesseImage.source = "sun_moon_off.png"
+                                }
+                                else {
+                                    brigtnesseImage.source = "sun_moon_on.png"
+                                }
+                                platformInterface.manual_value = car_demo_manual
+                            }
                         }
                     }
 
