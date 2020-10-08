@@ -84,11 +84,11 @@ Item{
             vinScale = 10
             iinScale = 10
             voutScale = 10
-            ioutScale = 10
-            poutScale = 50
-            pdissScale = 10000
+            ioutScale = 5
+            poutScale = 15000
+            pdissScale = 15000
             showDecimal = true
-            poutStep = 5
+            poutStep = 1000
             pdissStep = 1000
             rst = false
             dio14 = false
