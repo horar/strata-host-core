@@ -120,9 +120,8 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        openProjectContainer.url = model.url
-                        viewStack.currentIndex = editUseStrip.offset
-                        editUseStrip.checkedIndices = 1
+                        fileModel.url = model.url
+                        toolBarListView.currentIndex = toolBarListView.editTab
                     }
                 }
             }
@@ -187,9 +186,8 @@ Rectangle {
 
                 onClicked: {
                     if (fileDialog.fileUrl.toString() !== "") {
-                        openProjectContainer.url = fileDialog.fileUrl
-                        viewStack.currentIndex = editUseStrip.offset
-                        editUseStrip.checkedIndices = 1
+                        fileModel.url = fileDialog.fileUrl
+                        toolBarListView.currentIndex = toolBarListView.editTab
                         addToTheProjectList(fileDialog.fileUrl.toString())
                         filePath.text = "Select a .QRC file..."
                     }
@@ -200,7 +198,7 @@ Rectangle {
                 text: "Cancel"
 
                 onClicked: {
-                    viewStack.currentIndex = 0
+                    toolBarListView.currentIndex = -1
                 }
             }
         }

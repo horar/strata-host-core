@@ -165,12 +165,8 @@ Rectangle {
                 text: "Create Project"
 
                 onClicked: {
-                    if (fileSelector.fileUrl.toString() !== "") {
-                        editor.treeModel.url = sdsModel.newControlView.createNewProject(fileSelector.fileUrl, templateButtonGroup.checkedButton.path);
-                        viewStack.currentIndex = editUseStrip.offset
-                        editUseStrip.checkedIndices = 1
-                        openProjectContainer.addToTheProjectList(editor.treeModel.url.toString())
-                    }
+                    fileModel.url = sdsModel.newControlView.createNewProject(fileOutput.text, templateButtonGroup.checkedButton.path);
+                    toolBarListView.currentIndex = toolBarListView.editTab
                 }
             }
 
@@ -178,7 +174,7 @@ Rectangle {
                 text: "Cancel"
 
                 onClicked: {
-                    viewStack.currentIndex = 0
+                    toolBarListView.currentIndex = -1
                 }
             }
         }
