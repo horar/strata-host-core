@@ -21,7 +21,8 @@ Rectangle{
         Component.onCompleted: {
             blinkerContainer.enabled = false
             Help.registerTarget(controlContainerForHelp, "Use these clickable controls to simulate common tail lights on a passenger vehicle: brake, hazard, reverse, and turn signals. The hazard signals are enabled by default and must be disabled to use individual left and right turn signals.", 0, "carDemoHelp")
-            Help.registerTarget(carContainer, "The LEDs on the PCB are updated and then subsequently updated here in the user interface from the hardware. The background behind the vehicle is correlated to an onboard ambient light sensor to simulate brighter or darker conditions. Automatic rear running lights (and front headlights in UI only) will be enabled during darker conditions. Hover your hand over the light sensor near the bottom right of the PCB to simulate darker conditions. Expose the light sensor to a brighter light, such as a cell phone flashlight, for brighter background conditions. An initial ambient light value is measured during each Car Demo Mode session – this value is considered 50% brightness and may not correlate directly with actual ambient light conditions. Starting Car Demo Mode in low light conditions will have adverse effects on demonstration.", 1, "carDemoHelp")
+            Help.registerTarget(carContainer, "The LEDs on the PCB are updated and then subsequently updated here in the user interface from the hardware. There are two methods of controlling the background brightness to simulate brighter or darker conditions: dynamic and manual described below. Rear running lights and front headlights (user interface only) will be enabled during darker conditions.\n\nDynamic = use the onboard ambient light sensor to control the background brightness. Hover your hand over the light sensor near the bottom right of the PCB to simulate darker conditions. Expose the light sensor to a brighter light, such as a cell phone flashlight, for brighter background conditions. An initial ambient light value is measured during each Car Demo Mode session – this value is considered 50% brightness and may not correlate directly with actual ambient light conditions. Starting Car Demo Mode in low light conditions will have adverse effects on demonstration. \n\nManual = use the sun or moon buttons to manually control the background brightness.", 1, "carDemoHelp")
+            Help.registerTarget(brigtnessContainer, "Manual control of the ambient light background brightness. The dynamic light sensor data is used by default if the light sensor is installed on the PCB, otherwise, manual control is default. Click the sun or moon icons to enable manual control then click the sun to increase and the moon to decrease background brightness. Revert back to dynamic light sensor mode by toggling to LED Driver tab then back to Car Demo Mode tab.", 2, "carDemoHelp")
         }
 
         property int transformX:0;
@@ -181,7 +182,7 @@ Rectangle{
                     width: parent.width
                     height: parent.height/1.5
                     anchors.centerIn: parent
-                    spacing: 20
+                    spacing: 15
                     Rectangle {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
@@ -340,10 +341,10 @@ Rectangle{
 
                         Image {
                             id: hazard
-                            width: 50
-                            height: 50
                             source: "car-icon/hazard.svg"
                             anchors.fill: parent
+                            width: 50
+                            height: 50
                             fillMode: Image.PreserveAspectFit
                             visible: true
                             MouseArea {
@@ -387,10 +388,10 @@ Rectangle{
 
                         Image {
                             id: noHazard
-                            width: 50
-                            height: 50
                             source: "car-icon/no-hazard.svg"
                             anchors.fill: parent
+                            width: 50
+                            height: 50
                             fillMode: Image.PreserveAspectFit
                             visible: false
                             MouseArea {
@@ -575,7 +576,6 @@ Rectangle{
                             }
 
                             platformInterface.reverse_value = car_demo_reverse
-                            //console.log(platformInterface.reverse_value)
                         }
 
                     }
@@ -585,7 +585,6 @@ Rectangle{
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "light gray"
-
 
                         Image{
                             id: blinkerBaseImage
@@ -677,32 +676,28 @@ Rectangle{
                         property var car_demo_left: platformInterface.car_demo.left
                         onCar_demo_leftChanged: {
                             leftSignal.visible = car_demo_left
-                            console.log("left on", car_demo_left)
                             platformInterface.left_value = car_demo_left
                         }
 
                         property var car_demo_right: platformInterface.car_demo.right
                         onCar_demo_rightChanged: {
-                            console.log("right on", car_demo_right)
                             rightSignal.visible = car_demo_right
                             platformInterface.right_value = car_demo_right
-
                         }
 
                     }
 
-                    Rectangle{
+                    Rectangle {
                         id: brigtnessContainer
                         Layout.fillHeight: true
                         Layout.fillWidth: true
+                        Layout.topMargin: -20
                         color: "light gray"
-
                         Image {
                             id:  brigtnesseImage
                             source: "sun_moon_off.png"
                             anchors.fill: parent
-                            fillMode: Image.PreserveAspectCrop
-
+                            fillMode: Image.PreserveAspectFit
                             Rectangle{
                                 width: parent.width/2
                                 height: parent.height
