@@ -19,5 +19,4 @@ macro(get_git_hash_and_installation_status GIT_REPO_PATH LIB_INSTALLATION_PATH)
 
     # checks for header files in a given path
     file(GLOB_RECURSE LIB_INSTALLED ${LIB_INSTALLATION_PATH}-${GIT_HASH}/*.h)
-
 endmacro()

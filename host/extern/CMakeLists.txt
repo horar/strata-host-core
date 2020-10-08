@@ -60,7 +60,7 @@ if(NOT LIB_INSTALLED)
             -DRAPIDJSON_BUILD_DOC=off
             -DRAPIDJSON_BUILD_EXAMPLES=off
             -DRAPIDJSON_BUILD_TESTS=off
-    )    
+    ) 
 endif()
 
 add_library(rapidjson::rapidjson INTERFACE IMPORTED GLOBAL)
@@ -87,7 +87,7 @@ if(NOT LIB_INSTALLED)
             -DSPDLOG_BUILD_EXAMPLE=off
             -DSPDLOG_BUILD_TESTS=off
             -DSPDLOG_NO_EXCEPTIONS=on
-    )  
+    )
 endif()
 
 add_library(spdlog::spdlog INTERFACE IMPORTED GLOBAL)
@@ -173,7 +173,7 @@ if(BUILD_TESTING)
                 -Dgtest_force_shared_crt=YES
                 -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         )     
-    endif() 
+    endif()
 
     add_library(gtest::gtest STATIC IMPORTED GLOBAL)
     set_target_properties(gtest::gtest PROPERTIES
@@ -264,7 +264,7 @@ if(NOT LIB_INSTALLED)
 
             COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/litecore <INSTALL_DIR>/include/litecore
             COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/fleece <INSTALL_DIR>/include/fleece
-        )   
+        ) 
     else()
         ExternalProject_Add(cblitecpp
             INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/cblitecpp-${GIT_HASH}
@@ -290,8 +290,8 @@ if(NOT LIB_INSTALLED)
             COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/litecore <INSTALL_DIR>/include/litecore
             COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/fleece <INSTALL_DIR>/include/fleece
         )
-    endif()    
-endif()     
+    endif()  
+endif()  
 
 add_library(strata::CouchbaseLiteCPP STATIC IMPORTED GLOBAL)
 set_target_properties(strata::CouchbaseLiteCPP PROPERTIES
