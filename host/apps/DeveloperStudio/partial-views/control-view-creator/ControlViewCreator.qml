@@ -28,15 +28,14 @@ Rectangle {
             Layout.preferredWidth: 70
             Layout.maximumWidth: 70
             Layout.alignment: Qt.AlignTop
-            color: "#666"
+            color: "#444"
 
             ListView {
                 id: toolBarListView
 
                 anchors.fill: parent
-                anchors.topMargin: 5
 
-                spacing: 4
+                spacing: 5
                 orientation: Qt.Vertical
                 currentIndex: -1
 
@@ -82,7 +81,7 @@ Rectangle {
                     width: parent.width
                     height: 60
 
-                    color: ListView.isCurrentItem ? "#999" : "transparent"
+                    color: ListView.isCurrentItem ? "#33b13b" : "transparent"
                     enabled: {
                         if (index === toolBarListView.editTab
                                 || index === toolBarListView.viewTab
@@ -100,14 +99,15 @@ Rectangle {
                         anchors.fill: parent
 
                         SGIcon {
+                            id: tabIcon
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                             Layout.preferredHeight: 30
                             // Setting left margin is to handle centering for the edit image
                             Layout.leftMargin: modelData.imageText === "Edit" ? 7 : 0
                             Layout.fillWidth: true
 
-                            // This color adds .25 alpha to #666
-                            iconColor: parent.enabled ? "white" : Qt.rgba(102, 102, 102, 0.25)
+                            // This color adds .40 alpha to white
+                            iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
                             source: modelData.imageSource
                         }
 
@@ -118,8 +118,8 @@ Rectangle {
                             horizontalAlignment: Text.AlignHCenter
 
                             text: modelData.imageText
-                            // This color adds .30 alpha to #666
-                            color: parent.enabled ? "white" : Qt.rgba(102, 102, 102, 0.30)
+                            // This color adds .40 alpha to white
+                            color: tabIcon.iconColor
                         }
                     }
 
