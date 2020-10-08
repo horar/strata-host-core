@@ -54,7 +54,6 @@ public:
             int boardCount);
 
     Q_INVOKABLE void clearBinaries();
-    Q_INVOKABLE QString generateUuid();
     Q_INVOKABLE void requestBootloaderUrl();
 
 signals:

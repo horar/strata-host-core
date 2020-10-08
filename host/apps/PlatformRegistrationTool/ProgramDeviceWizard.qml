@@ -371,7 +371,7 @@ FocusScope {
 
             onEntered: {
                 stateRegistration.currentClassId = prtModel.opnListModel.data(wizard.platformIndex, "classId")
-                stateRegistration.currentPlatformId = prtModel.generateUuid()
+                stateRegistration.currentPlatformId = CommonCpp.SGUtilsCpp.generateUuid()
                 stateRegistration.currentBoardCount = -1
             }
 

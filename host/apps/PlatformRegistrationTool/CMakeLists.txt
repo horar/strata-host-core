@@ -69,6 +69,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::FlasherConnector
     strata::DownloadManager
     strata::QtLogger
+    strata::SGUtilsCpp
 )
 
 target_include_directories(${PROJECT_NAME}

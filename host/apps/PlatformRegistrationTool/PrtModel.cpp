@@ -1,5 +1,6 @@
 #include "PrtModel.h"
 #include "logging/LoggingQtCategories.h"
+#include <SGUtilsCpp.h>
 #include "DownloadManager.h"
 
 #include <QDir>
@@ -7,7 +8,6 @@
 #include <QCoreApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QUuid>
 
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent),
@@ -231,11 +231,6 @@ void PrtModel::clearBinaries()
     if (firmwareFile_.isNull() == false) {
         firmwareFile_->deleteLater();
     }
-}
-
-QString PrtModel::generateUuid()
-{
-    return QUuid::createUuid().toString(QUuid::WithoutBraces);
 }
 
 void PrtModel::requestBootloaderUrl()
