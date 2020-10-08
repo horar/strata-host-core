@@ -57,6 +57,7 @@ PACKAGES_DIR=packages
 
 PKG_STRATA=$PACKAGES_DIR/com.onsemi.strata/data
 PKG_STRATA_COMPONENTS=$PACKAGES_DIR/com.onsemi.strata.components/data
+PKG_STRATA_COMPONENTS_COMMON=$PKG_STRATA_COMPONENTS/imports/tech/strata/commoncpp
 PKG_STRATA_COMPONENTS_VIEWS=$PKG_STRATA_COMPONENTS/views
 PKG_STRATA_DS=$PACKAGES_DIR/com.onsemi.strata.devstudio/data
 PKG_STRATA_HCS=$PACKAGES_DIR/com.onsemi.strata.hcs/data
@@ -69,6 +70,9 @@ STRATA_DEPLOYMENT_DIR=../deployment/Strata
 STRATA_RESOURCES_DIR=../host/resources/qtifw
 STRATA_HCS_CONFIG_DIR=../host/assets/config/hcs
 STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config.xml
+MQTT_DLL=QtMqtt
+MQTT_DLL_DIR="3p/lib/$MQTT_DLL"
+COMMON_CPP_DLL="libcomponent-commoncpp.so"
 STRATA_OFFLINE=strata-setup-offline
 STRATA_ONLINE=strata-setup-online
 STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.app
@@ -133,6 +137,14 @@ echo " Checking Qt macdeployqt..."
 if [ ! -x "$(command -v macdeployqt)" ]; then
     echo "======================================================================="
     echo " Qt's macdeployqt is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
+fi
+
+echo " Checking install_name_tool..."
+if [ ! -x "$(command -v install_name_tool)" ]; then
+    echo "======================================================================="
+    echo " install_name_tool is missing from path! Aborting."
     echo "======================================================================="
     exit 1
 fi
@@ -235,7 +247,30 @@ cp -fv ./bin/views-*.rcc $PKG_STRATA_COMPONENTS_VIEWS
 
 if [ $? != 0 ] ; then 
     echo "======================================================================="
-    echo " Failed to views to $PKG_STRATA_COMPONENTS_VIEWS!"
+    echo " Failed to copy views to $PKG_STRATA_COMPONENTS_VIEWS!"
+    echo "======================================================================="
+    exit 2
+fi
+
+echo "Copying ${MQTT_DLL} to ${PKG_STRATA_COMPONENTS_COMMON}"
+cp -fv "${MQTT_DLL_DIR}" "${PKG_STRATA_COMPONENTS_COMMON}"
+
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to copy ${MQTT_DLL} to ${PKG_STRATA_COMPONENTS_COMMON}!"
+    echo "======================================================================="
+    exit 2
+fi
+
+echo "Performing install_name_tool on ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}"
+# Link commoncpp to QtMqtt
+install_name_tool \
+	-change "${MQTT_DLL_DIR}" "@loader_path/${MQTT_DLL}" \
+	"${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}"
+
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to call install_name_tool for ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}!"
     echo "======================================================================="
     exit 2
 fi
@@ -259,6 +294,22 @@ macdeployqt "$SDS_BINARY_DIR" \
 if [ $? != 0 ] ; then 
     echo "======================================================================="
     echo " Failed to macdeployqt $SDS_BINARY!"
+    echo "======================================================================="
+    exit 3
+fi
+
+echo "-----------------------------------------------------------------------------"
+echo " Preparing $HCS_BINARY dependencies.."
+echo "-----------------------------------------------------------------------------"
+
+#if the build does not fails, the errors can be ignored
+macdeployqt "$PKG_STRATA_HCS" \
+    -executable="$HCS_BINARY_DIR" \
+    -verbose=1
+
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to macdeployqt $HCS_BINARY!"
     echo "======================================================================="
     exit 3
 fi
