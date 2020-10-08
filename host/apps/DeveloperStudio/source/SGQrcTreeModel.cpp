@@ -18,6 +18,7 @@ SGQrcTreeModel::SGQrcTreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
     QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
     connect(this, &SGQrcTreeModel::urlChanged, this, &SGQrcTreeModel::createModel);
+    connect(this, &SGQrcTreeModel::finishedReadingQrc, this, &SGQrcTreeModel::startPopulating);
 }
 
 SGQrcTreeModel::~SGQrcTreeModel()
@@ -443,6 +444,23 @@ void SGQrcTreeModel::childrenChanged(const QModelIndex &index, int role) {
     }
 }
 
+void SGQrcTreeModel::startPopulating(const QByteArray &fileText)
+{
+    beginResetModel();
+    clear(false);
+
+    createQrcXmlDocument(fileText);
+    QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
+    QString uid = QUuid::createUuid().toString();
+    root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
+    uidMap_.insert(uid, root_);
+    QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
+
+    recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems_, 0);
+    endResetModel();
+    emit rootChanged();
+}
+
 void SGQrcTreeModel::clear(bool emitSignals)
 {
     if (emitSignals) {
@@ -458,10 +476,23 @@ void SGQrcTreeModel::clear(bool emitSignals)
     }
 }
 
-bool SGQrcTreeModel::readQrcFile()
+void SGQrcTreeModel::readQrcFile()
 {
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
 
+    if (!qrcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCritical() << "Failed to open qrc file";
+        emit errorOpeningQrc();
+        return;
+    }
+
+    QByteArray fileText = qrcFile.readAll();
+    qrcFile.close();
+    emit finishedReadingQrc(fileText);
+}
+
+bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
+{
     if (!qrcDoc_.isNull()) {
         qrcDoc_.clear();
     }
@@ -488,45 +519,19 @@ bool SGQrcTreeModel::readQrcFile()
         return false;
     }
 
-    QDomNode qresource = qrcDoc_.elementsByTagName("qresource").at(0);
-    if (qresource.hasAttributes() && qresource.attributes().contains("prefix") && qresource.attributes().namedItem("prefix").nodeValue() != "/" ) {
-        qCCritical(logCategoryControlViewCreator) << "Unexpected prefix for qresource";
-        qCInfo(logCategoryControlViewCreator) << "Setting prefix to \"/\"";
-        QDomElement e = qresource.toElement();
-        QDomAttr prefix = e.attributeNode("prefix");
-        prefix.setValue("/");
-    }
-
-    QDomNodeList files = qrcDoc_.elementsByTagName("file");
-
-    for (int i = 0; i < files.count(); i++) {
-        QDomElement element = files.at(i).toElement();
-        QString absolutePath = SGUtilsCpp::joinFilePath(SGUtilsCpp::urlToLocalFile(projectDir_), element.text());
-        qrcItems_.insert(absolutePath);
-    }
-
-    qCDebug(logCategoryControlViewCreator) << "Successfully parsed qrc file";
-    qrcFile.close();
+    qDebug() << "Successfully parsed qrc file";
     return true;
 }
 
 void SGQrcTreeModel::createModel()
 {
-    beginResetModel();
-
-    clear(false);
-
-    if (url_.toString().length() > 0 && readQrcFile()) {
-        QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
-        QString uid = QUuid::createUuid().toString();
-        root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
-        uidMap_.insert(uid, root_);
-        QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
-        recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems_, 0);
-    }
-
-    endResetModel();
-    emit rootChanged();
+    // Create a thread to write data to disk
+    QThread *thread = QThread::create(std::bind(&SGQrcTreeModel::readQrcFile, this));
+    thread->setObjectName("SGQrcTreeModel - FileIO Thread");
+    // Delete the thread when it is finished saving
+    connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+    thread->setParent(this);
+    thread->start();
 }
 
 void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentDir, QSet<QString> qrcItems, int depth)
