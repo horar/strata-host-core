@@ -248,11 +248,11 @@ function update_profile(username, updated_properties) {
 /*
   Update Profile Result: Callback function for response from update profile request
 */
-function update_profile_result(response) {
+function update_profile_result(response, updatedProperties) {
     if (response.message === "Profile update successful") {
-        SignalsModule.Signals.profileUpdateResult("Success")
+        SignalsModule.Signals.profileUpdateResult("Success", updatedProperties)
     } else {
-        SignalsModule.Signals.profileUpdateResult(response.message)
+        SignalsModule.Signals.profileUpdateResult(response.message, updatedProperties)
     }
 }
 

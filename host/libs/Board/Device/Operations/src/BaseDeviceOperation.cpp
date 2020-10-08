@@ -21,9 +21,6 @@ BaseDeviceOperation::BaseDeviceOperation(const device::DevicePtr& device, Type t
     responseTimer_.setSingleShot(true);
     responseTimer_.setInterval(RESPONSE_TIMEOUT);
 
-    currentCommand_ = commandList_.end();
-
-
     connect(this, &BaseDeviceOperation::sendCommand, this, &BaseDeviceOperation::handleSendCommand, Qt::QueuedConnection);
     connect(device_.get(), &Device::msgFromDevice, this, &BaseDeviceOperation::handleDeviceResponse);
     connect(device_.get(), &Device::deviceError, this, &BaseDeviceOperation::handleDeviceError);
