@@ -18,8 +18,17 @@ add_executable(${PROJECT_NAME} WIN32
 )
 
 target_link_libraries(${PROJECT_NAME}
-    ${PROJECT_NAME}Lib
+    PRIVATE ${PROJECT_NAME}Lib
 )
+
+if(APPLE)
+    set(OPENSSL_ROOT_DIR ${SSL_LIB_PATH_MACOS})
+    find_package(OpenSSL 1.1 REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        OpenSSL::SSL
+        OpenSSL::Crypto
+    )
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
