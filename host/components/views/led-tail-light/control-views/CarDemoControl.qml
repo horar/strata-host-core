@@ -47,11 +47,11 @@ Rectangle{
             }
         }
 
-        property var  manual_value : platformInterface.manual_value
-        onManual_valueChanged: {
-            if(manual_value === false)
-                brigtnesseImage.source = "sun_moon_off.png"
-        }
+        //        property var  manual_value : platformInterface.manual_value
+        //        onManual_valueChanged: {
+        //            if(manual_value === false)
+        //                brigtnesseImage.source = "car-icon/sun_moon_off.png"
+        //        }
 
         Connections {
             target: Help.utility
@@ -77,7 +77,7 @@ Rectangle{
         Item {
             id: controlContainerForHelp
             width: parent.width/8
-            height: parent.height/1.8
+            height: parent.height/1.5
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.verticalCenter: parent.verticalCenter
@@ -710,9 +710,8 @@ Rectangle{
                                 MouseArea{
                                     anchors.fill: parent
                                     onClicked: {
-
                                         if(platformInterface.manual_value === false) {
-                                            brigtnesseImage.source = "sun_moon_on.png"
+                                            brigtnesseImage.source = "car-icon/sun_moon_on.png"
                                             platformInterface.manual_value = true
                                             platformInterface.set_car_demo.update(
                                                         platformInterface.left_value,
@@ -723,15 +722,18 @@ Rectangle{
                                                         )
 
                                         }
-                                        else {
-                                            platformInterface.manual_value = "down"
-                                            platformInterface.set_car_demo.update(
-                                                        platformInterface.left_value,
-                                                        platformInterface.right_value,
-                                                        platformInterface.brake_value,
-                                                        platformInterface.reverse_value,
-                                                        platformInterface.manual_value
-                                                        )
+                                    }
+                                    onPressed: {
+                                        console.log("pressed")
+                                        if(platformInterface.manual_value) {
+                                            brigtnesseImage.source = "car-icon/moon_pressed.png"
+                                            platformInterface.set_car_demo_background.update("down")
+                                        }
+                                    }
+
+                                    onReleased: {
+                                        if(platformInterface.manual_value) {
+                                            brigtnesseImage.source = "car-icon/sun_moon_on.png"
                                         }
                                     }
                                 }
@@ -746,7 +748,7 @@ Rectangle{
                                     anchors.fill: parent
                                     onClicked: {
                                         if(platformInterface.manual_value === false) {
-                                            brigtnesseImage.source = "sun_moon_on.png"
+                                            brigtnesseImage.source = "car-icon/sun_moon_on.png"
                                             platformInterface.manual_value = true
                                             platformInterface.set_car_demo.update(
                                                         platformInterface.left_value,
@@ -757,27 +759,30 @@ Rectangle{
                                                         )
 
                                         }
-                                        else {
-                                            platformInterface.manual_value = "up"
-                                            platformInterface.set_car_demo.update(
-                                                        platformInterface.left_value,
-                                                        platformInterface.right_value,
-                                                        platformInterface.brake_value,
-                                                        platformInterface.reverse_value,
-                                                        platformInterface.manual_value
-                                                        )
+
+                                    }
+
+                                    onPressed: {
+                                        console.log("pressed")
+                                        if(platformInterface.manual_value) {
+                                            brigtnesseImage.source = "car-icon/sun_pressed.png"
+                                            platformInterface.set_car_demo_background.update("up")
+                                        }
+                                    }
+                                    onReleased: {
+                                        if(platformInterface.manual_value) {
+                                            brigtnesseImage.source = "car-icon/sun_moon_on.png"
                                         }
                                     }
                                 }
                             }
                             property var car_demo_manual: platformInterface.car_demo.manual
                             onCar_demo_manualChanged: {
-                                console.log(car_demo_manual)
                                 if(car_demo_manual === false) {
-                                    brigtnesseImage.source = "sun_moon_off.png"
+                                    brigtnesseImage.source = "car-icon/sun_moon_off.png"
                                 }
                                 else {
-                                    brigtnesseImage.source = "sun_moon_on.png"
+                                    brigtnesseImage.source = "car-icon/sun_moon_on.png"
                                 }
                                 platformInterface.manual_value = car_demo_manual
                             }
