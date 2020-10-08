@@ -172,7 +172,7 @@ if(BUILD_TESTING)
             CMAKE_ARGS "${CMAKE_ARGS}"
                 -Dgtest_force_shared_crt=YES
                 -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        )   
+        )
     endif()
 
     add_library(gtest::gtest STATIC IMPORTED GLOBAL)
