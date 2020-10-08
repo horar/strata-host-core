@@ -75,7 +75,7 @@ Item{
         else if(class_id === "1ae9e1e7-a268-4302-8c3a-280f0aa095a5") {
             eeprom_ID = "1ae9e1e7-a268-4302-8c3a-280f0aa095a5"
             partNumber =  "<b> NCV330 </b>"
-            title =  "<b> Automotive Low Noise and High PSSR Linear Regulator </b> "
+            title =  "<b> Automotive Low Noise and High PSSR Linear Regul. </b> "
             warningHVVinLable = "5.5V"
             warningLVVinLable = "1.8V"
             opn = "STR-PWRNCV330-R0-GEVK"
