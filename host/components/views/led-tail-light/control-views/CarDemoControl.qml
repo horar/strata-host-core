@@ -22,7 +22,7 @@ Rectangle{
             blinkerContainer.enabled = false
             Help.registerTarget(controlContainerForHelp, "Use these clickable controls to simulate common tail lights on a passenger vehicle: brake, hazard, reverse, and turn signals. The hazard signals are enabled by default and must be disabled to use individual left and right turn signals.", 0, "carDemoHelp")
             Help.registerTarget(carContainer, "The LEDs on the PCB are updated and then subsequently updated here in the user interface from the hardware. There are two methods of controlling the background brightness to simulate brighter or darker conditions: dynamic and manual described below. Rear running lights and front headlights (user interface only) will be enabled during darker conditions.\n\nDynamic = use the onboard ambient light sensor to control the background brightness. Hover your hand over the light sensor near the bottom right of the PCB to simulate darker conditions. Expose the light sensor to a brighter light, such as a cell phone flashlight, for brighter background conditions. An initial ambient light value is measured during each Car Demo Mode session – this value is considered 50% brightness and may not correlate directly with actual ambient light conditions. Starting Car Demo Mode in low light conditions will have adverse effects on demonstration. \n\nManual = use the sun or moon buttons to manually control the background brightness.", 1, "carDemoHelp")
-            Help.registerTarget(brigtnessContainer, "Manual control of the ambient light background brightness. The dynamic light sensor data is used by default if the light sensor is installed on the PCB, otherwise, manual control is default. Click the sun or moon icons to enable manual control then click the sun to increase and the moon to decrease background brightness. Revert back to dynamic light sensor mode by toggling to LED Driver tab then back to Car Demo Mode tab.", 2, "carDemoHelp")
+            Help.registerTarget(brightnessContainerForHelp, "Manual control of the ambient light background brightness. The dynamic light sensor data is used by default if the light sensor is installed on the PCB, otherwise, manual control is default. Click the sun or moon icons to enable manual control then click the sun to increase and the moon to decrease background brightness. Revert back to dynamic light sensor mode by toggling to LED Driver tab then back to Car Demo Mode tab.", 2, "carDemoHelp")
         }
 
         property int transformX:0;
@@ -63,6 +63,9 @@ Rectangle{
                 if(Help.current_tour_targets[index]["target"] === controlContainerForHelp) {
                     Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 750
                 }
+                if(Help.current_tour_targets[index]["target"] === brightnessContainerForHelp) {
+                    Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 500
+                }
             }
         }
 
@@ -78,10 +81,23 @@ Rectangle{
         Item {
             id: controlContainerForHelp
             width: parent.width/8
-            height: parent.height/1.6
+            height: parent.height/2.1
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -50
+        }
+
+        Item {
+            id: brightnessContainerForHelp
+            width: brigtnessContainer.width /1.5
+            height: brigtnessContainer.height/2
+            anchors {
+                top: controlContainerForHelp.bottom
+                topMargin: 30
+                right: parent.right
+                rightMargin: 20
+            }
         }
 
         RowLayout {
@@ -173,6 +189,7 @@ Rectangle{
 
 
             Rectangle {
+                id: controlSection
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 color: "lightgray"
@@ -691,7 +708,7 @@ Rectangle{
                         id: brigtnessContainer
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        Layout.topMargin: -20
+                        Layout.topMargin: -35
                         color: "light gray"
                         Image {
                             id:  brigtnesseImage
