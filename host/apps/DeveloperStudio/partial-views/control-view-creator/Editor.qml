@@ -60,24 +60,22 @@ Item {
                     orientation: ListView.Horizontal
                     layoutDirection: Qt.LeftToRight
                     spacing: 1
+                    currentIndex: openFilesModel.currentIndex
 
                     delegate: Button {
                         id: fileTab
-                        checked: index === openFilesModel.currentIndex
                         hoverEnabled: true
 
                         property color color: "#aaaaaa"
                         property int modelIndex: index
 
                         onClicked: {
-                            if (checked) {
-                                openFilesModel.currentIndex = index
-                            }
+                            openFilesModel.currentIndex = index
                         }
 
                         background: Rectangle {
                             implicitHeight: 45
-                            color: fileTab.checked ? Qt.darker(fileTab.color, 1.3) : fileTab.color
+                            color: fileTab.ListView.isCurrentItem ? Qt.darker(fileTab.color, 1.3) : fileTab.color
                         }
 
                         contentItem: Item {
@@ -87,7 +85,7 @@ Item {
                             SGText {
                                 id: tabText
                                 text: model.filename
-                                color: fileTab.checked ? "white" : "black"
+                                color: fileTab.ListView.isCurrentItem ? "white" : "black"
                                 anchors {
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
@@ -120,9 +118,9 @@ Item {
                                         cursorShape = Qt.PointingHandCursor
                                     }
 
-                                        onClicked: {
-                                            openFilesModel.closeTabAt(index);
-                                        }
+                                    onClicked: {
+                                        openFilesModel.closeTabAt(index);
+                                    }
                                 }
                             }
                         }
