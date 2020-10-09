@@ -82,7 +82,7 @@ Item{
             minVin = 1.8
             nominalVin = 5
             vinScale = 10
-            iinScale = 10
+            iinScale = 5
             voutScale = 10
             ioutScale = 5
             poutScale = 15000
