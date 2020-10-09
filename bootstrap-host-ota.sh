@@ -149,6 +149,14 @@ if [ ! -x "$(command -v install_name_tool)" ]; then
     exit 1
 fi
 
+echo " Checking otool..."
+if [ ! -x "$(command -v otool)" ]; then
+    echo "======================================================================="
+    echo " otool is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
+fi
+
 echo "-----------------------------------------------------------------------------"
 echo " Actual/local branch list.."
 echo "-----------------------------------------------------------------------------"
@@ -263,11 +271,14 @@ if [ $? != 0 ] ; then
 fi
 
 echo "Performing install_name_tool on ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}"
+MQTT_DLL_DIR_ACTUAL=$(otool -L "${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}" | grep ${MQTT_DLL_DIR} | sed -e 's/^[ 	\t]*//;s/ (compatibility.*//')
 # Link commoncpp to QtMqtt
+echo "Changing ${MQTT_DLL_DIR_ACTUAL} to @loader_path/${MQTT_DLL}"
 install_name_tool \
-	-change "${MQTT_DLL_DIR}" "@loader_path/${MQTT_DLL}" \
+	-change "${MQTT_DLL_DIR_ACTUAL}" "@loader_path/${MQTT_DLL}" \
 	"${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}"
 
+# This is a bit problematic because there are no errors thrown even if it does not finds anything
 if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to call install_name_tool for ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}!"
