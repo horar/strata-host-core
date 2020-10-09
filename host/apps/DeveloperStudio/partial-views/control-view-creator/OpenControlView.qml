@@ -2,12 +2,13 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.12
 import QtQuick.Dialogs 1.2
+import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.SGQrcListModel 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
-import "qrc:/partial-views"
+import "qrc:/partial-views/general"
 
 
 Rectangle {
@@ -17,38 +18,52 @@ Rectangle {
     property var previousFileURL: { "projects" : [] }
     color: "#ccc"
 
-    SGStrataPopup {
-        id: root
-        padding: 10
-        headerText: "Invalid Project Path"
-        visible: false
-        width: parent.width/3
-        height: parent.height/5
-        anchors.centerIn: parent
-        onClosed : {
-            root.close()
-            removeFromProjectList(fileModel.url.toString())
-        }
+    //    SGStrataPopup {
+    //        id: root
+    //        padding: 10
+    //        headerText: "Invalid Project Path"
+    //        visible: false
+    //        width: parent.width/3
+    //        height: parent.height/5
+    //        anchors.centerIn: parent
+    //        headerColor.color: "red"
+    //        onClosed : {
+    //            root.close()
+    //            removeFromProjectList(fileModel.url.toString())
+    //        }
 
-        contentItem: ColumnLayout {
-            id: mainColumn
-            Rectangle{
-                Layout.preferredWidth: parent.width
-                Layout.preferredHeight: parent.height - 20
-                SGText{
-                    font {
-                        pixelSize: 15
-                        family: Fonts.franklinGothicBook
-                    }
-                    wrapMode: Text.WordWrap
-                    fontSizeMode: Text.Fit
-                    anchors.centerIn: parent
-                    text: "Failed to open the selected project. It doesn't exist or missing."
-                    horizontalAlignment: Text.AlignHCenter
-                    color: "black"
-                }
-            }
+    //        contentItem: ColumnLayout {
+    //            id: mainColumn
+    //            Rectangle{
+    //                Layout.preferredWidth: parent.width
+    //                Layout.preferredHeight: parent.height - 20
+    //                SGText{
+    //                    font {
+    //                        pixelSize: 15
+    //                        family: Fonts.franklinGothicMedium
+    //                    }
+    //                    width: parent.width
+    //                    wrapMode: Text.WordWrap
+    //                    anchors.centerIn: parent
+    //                    text: qsTr("This project does not exist anymore. Removing it from your recent projects...")
+    //                    verticalAlignment: Text.AlignVCenter
+    //                    color: "black"
+    //                }
+    //            }
+    //        }
+    //    }
+    SGNotificationToast {
+        id: root
+        width: parent.width/1.5
+        height: 40
+        interval : 3000
+        anchors {
+            top: parent.top
+            horizontalCenter: parent.horizontalCenter
         }
+        z:3
+        color : "red"
+        text : "This project does not exist anymore. Removing it from your recent projects..."
     }
 
     Component.onCompleted:  {
@@ -80,7 +95,6 @@ Rectangle {
             previousFileURL.projects.pop()
             listModelForUrl.remove(listModelForUrl.count - 1)
         }
-
         previousFileURL.projects.unshift(fileUrl)
         listModelForUrl.insert(0,{ url: fileUrl })
         saveSettings()
@@ -136,19 +150,19 @@ Rectangle {
             highlightFollowsCurrentItem: true
             spacing: 10
             delegate:  Rectangle {
-                id: rectangle
-                color: "white"
+                id: projectUrlContainer
                 width: openProjectContainer.width - 40
                 height: 40
+                color: removeProjectMenu.opened  ? "lightgray" : "white"
 
                 RowLayout {
                     anchors {
-                        fill: rectangle
+                        fill: projectUrlContainer
                         margins: 5
                     }
 
                     SGIcon {
-                        Layout.preferredHeight: rectangle.height*.5
+                        Layout.preferredHeight: projectUrlContainer.height*.5
                         Layout.preferredWidth: Layout.preferredHeight
                         source: "qrc:/sgimages/file-blank.svg"
                     }
@@ -164,19 +178,46 @@ Rectangle {
                     }
                 }
 
+                Menu {
+                    id: removeProjectMenu
+
+                    MenuItem {
+                        text: "Remove Projects From Recent Project"
+                        onTriggered: {
+                            removeFromProjectList(fileModel.url.toString())
+                        }
+                    }
+                    MenuItem {
+                        text: "Clear Recent Project List"
+                        onTriggered: {
+                            previousFileURL.projects = []
+                            listModelForUrl.clear()
+                            saveSettings()
+
+                        }
+                    }
+                }
+
+
                 MouseArea {
                     id: urlMouseArea
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: {
                         fileModel.url = model.url
-                        console.info(SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(fileModel.url)))
-                        if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(fileModel.url))) {
-                            root.open()
+                        if(mouse.button === Qt.RightButton) {
+                            removeProjectMenu.popup()
                         }
-                        else {
-                            viewStack.currentIndex = editUseStrip.offset
-                            editUseStrip.checkedIndices = 1
+                        else  {
+                            if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(fileModel.url))) {
+                                root.show()
+                                removeFromProjectList(fileModel.url.toString())
+                            }
+                            else {
+                                viewStack.currentIndex = editUseStrip.offset
+                                editUseStrip.checkedIndices = 1
+                            }
                         }
                     }
                 }
