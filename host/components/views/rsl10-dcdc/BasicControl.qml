@@ -816,7 +816,7 @@ Item {
                         top : outputVoltage.bottom
                         topMargin : 20
                         horizontalCenter: outputVoltage.horizontalCenter
-                        horizontalCenterOffset:  0
+                        horizontalCenterOffset:  10
                     }
 
                 }
