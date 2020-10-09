@@ -56,6 +56,7 @@ set PACKAGES_WIN_DIR=packages_win
 
 set PKG_STRATA=%PACKAGES_DIR%\com.onsemi.strata\data
 set PKG_STRATA_COMPONENTS=%PACKAGES_DIR%\com.onsemi.strata.components\data
+set PKG_STRATA_COMPONENTS_COMMON=%PKG_STRATA_COMPONENTS%\imports\tech\strata\commoncpp
 set PKG_STRATA_COMPONENTS_VIEWS=%PKG_STRATA_COMPONENTS%\views
 set PKG_STRATA_DS=%PACKAGES_DIR%\com.onsemi.strata.devstudio\data
 set PKG_STRATA_HCS=%PACKAGES_DIR%\com.onsemi.strata.hcs\data
@@ -73,6 +74,7 @@ set STRATA_HCS_CONFIG_DIR=..\host\assets\config\hcs
 set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
+set COMMON_CPP_DLL=component-commoncpp.dll
 set CRYPTO_DLL=libcrypto-1_1-x64.dll
 set CRYPTO_DLL_DIR_SDS=%PKG_STRATA_DS%\%CRYPTO_DLL%
 set CRYPTO_DLL_DIR_HCS=%PKG_STRATA_HCS%\%CRYPTO_DLL%
@@ -427,6 +429,73 @@ signtool sign /f %SIGNING_CERT% /p %SIGNING_PASS% /tr %SIGNING_TIMESTAMP_SERVER%
 IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
     echo " Failed to sign %HCS_BINARY%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "-----------------------------------------------------------------------------"
+echo "Signing %CRYPTO_DLL%"
+echo "-----------------------------------------------------------------------------"
+
+signtool sign /f %SIGNING_CERT% /p %SIGNING_PASS% /tr %SIGNING_TIMESTAMP_SERVER% /td %SIGNING_TIMESTAMP_ALG% "%PKG_STRATA_QT%\%CRYPTO_DLL%"
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to sign %CRYPTO_DLL%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "-----------------------------------------------------------------------------"
+echo "Signing %SSL_DLL%"
+echo "-----------------------------------------------------------------------------"
+
+signtool sign /f %SIGNING_CERT% /p %SIGNING_PASS% /tr %SIGNING_TIMESTAMP_SERVER% /td %SIGNING_TIMESTAMP_ALG% "%PKG_STRATA_QT%\%SSL_DLL%"
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to sign %SSL_DLL%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "-----------------------------------------------------------------------------"
+echo "Signing %ZMQ_DLL%"
+echo "-----------------------------------------------------------------------------"
+
+signtool sign /f %SIGNING_CERT% /p %SIGNING_PASS% /tr %SIGNING_TIMESTAMP_SERVER% /td %SIGNING_TIMESTAMP_ALG% "%PKG_STRATA_QT%\%ZMQ_DLL%"
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to sign %ZMQ_DLL%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "-----------------------------------------------------------------------------"
+echo "Signing %MQTT_DLL%"
+echo "-----------------------------------------------------------------------------"
+
+signtool sign /f %SIGNING_CERT% /p %SIGNING_PASS% /tr %SIGNING_TIMESTAMP_SERVER% /td %SIGNING_TIMESTAMP_ALG% "%PKG_STRATA_QT%\%MQTT_DLL%"
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to sign %MQTT_DLL%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "-----------------------------------------------------------------------------"
+echo "Signing %COMMON_CPP_DLL%"
+echo "-----------------------------------------------------------------------------"
+
+if not exist "%PKG_STRATA_COMPONENTS_COMMON%\%COMMON_CPP_DLL%" (
+    echo "======================================================================="
+    echo " Missing %COMMON_CPP_DLL%, build probably not installed"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+signtool sign /f %SIGNING_CERT% /p %SIGNING_PASS% /tr %SIGNING_TIMESTAMP_SERVER% /td %SIGNING_TIMESTAMP_ALG% "%PKG_STRATA_COMPONENTS_COMMON%\%COMMON_CPP_DLL%"
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to sign %COMMON_CPP_DLL%!"
     echo "======================================================================="
     Exit /B 3
 )
