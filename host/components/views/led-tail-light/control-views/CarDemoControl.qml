@@ -317,7 +317,6 @@ Rectangle{
                                                                                   platformInterface.brake_value,
                                                                                   platformInterface.reverse_value,
                                                                                   platformInterface.manual_value
-
                                                                                   )
                                         }
                                         else {
@@ -546,8 +545,8 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.reverse_value
-                                                                                  ,   platformInterface.manual_value
+                                                                                  platformInterface.reverse_value,
+                                                                                  platformInterface.manual_value
 
                                                                                   )
                                         }
@@ -661,7 +660,7 @@ Rectangle{
                                     onClicked: {
                                         leftSignal.visible = false
                                         platformInterface.left_value = false
-                                        console.log("right clicked", platformInterface.right_value)
+
                                         if(platformInterface.right_value === false) {
                                             rightSignal.visible = true
                                             blinkerBaseImage.source = "car-icon/right-signal.svg"
@@ -693,13 +692,12 @@ Rectangle{
                         property var car_demo_left: platformInterface.car_demo.left
                         onCar_demo_leftChanged: {
                             leftSignal.visible = car_demo_left
-                            platformInterface.left_value = car_demo_left
                         }
 
                         property var car_demo_right: platformInterface.car_demo.right
                         onCar_demo_rightChanged: {
+                            console.log("right clicked", platformInterface.right_value)
                             rightSignal.visible = car_demo_right
-                            platformInterface.right_value = car_demo_right
                         }
 
                     }
@@ -726,14 +724,23 @@ Rectangle{
                                         if(platformInterface.manual_value === false) {
                                             brigtnesseImage.source = "car-icon/sun_moon_on.png"
                                             platformInterface.manual_value = true
-                                            platformInterface.set_car_demo.update(
-                                                        platformInterface.left_value,
-                                                        platformInterface.right_value,
-                                                        platformInterface.brake_value,
-                                                        platformInterface.reverse_value,
-                                                        platformInterface.manual_value
-                                                        )
+                                            if(platformInterface.hazard_value === true) {
+                                                platformInterface.set_car_demo.update(true,
+                                                                                      true,
+                                                                                      platformInterface.brake_value,
+                                                                                      platformInterface.reverse_value,
+                                                                                      platformInterface.manual_value
+                                                                                      )
 
+                                            }
+                                            else  {
+                                                platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                      platformInterface.left_value,
+                                                                                      platformInterface.brake_value,
+                                                                                      platformInterface.reverse_value,
+                                                                                      platformInterface.manual_value
+                                                                                      )
+                                            }
                                         }
                                     }
                                     onPressed: {
@@ -763,14 +770,23 @@ Rectangle{
                                         if(platformInterface.manual_value === false) {
                                             brigtnesseImage.source = "car-icon/sun_moon_on.png"
                                             platformInterface.manual_value = true
-                                            platformInterface.set_car_demo.update(
-                                                        platformInterface.left_value,
-                                                        platformInterface.right_value,
-                                                        platformInterface.brake_value,
-                                                        platformInterface.reverse_value,
-                                                        platformInterface.manual_value
-                                                        )
+                                            if(platformInterface.hazard_value === true) {
+                                                platformInterface.set_car_demo.update(true,
+                                                                                      true,
+                                                                                      platformInterface.brake_value,
+                                                                                      platformInterface.reverse_value,
+                                                                                      platformInterface.manual_value
+                                                                                      )
 
+                                            }
+                                            else  {
+                                                platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                      platformInterface.left_value,
+                                                                                      platformInterface.brake_value,
+                                                                                      platformInterface.reverse_value,
+                                                                                      platformInterface.manual_value
+                                                                                      )
+                                            }
                                         }
 
                                     }
