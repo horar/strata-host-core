@@ -5,7 +5,6 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 Item {
     id: platformInterface
-    //Start up and error handling check cmds and notification section
     property var set_startup: ({
                                    "cmd":"startup",
                                    "payload": {
@@ -114,7 +113,6 @@ Item {
         "values": [true,true,true,true,true,true,true,true,true,true,true,true]
     }
 
-
     property var led_ext: {
         "caption":"External LED",
         "scales":[],
@@ -142,7 +140,6 @@ Item {
         "value":"",
         "values":[false,false,false,false,false,false,false,false,false,false,false,false]
     }
-
 
     property var led_fault_status_caption: {
         "caption":"Fault Status"
@@ -176,8 +173,6 @@ Item {
     property var led_pwm_enables_values: {
         "values": [true,true,true,true,true,true,true,true,true,true,true,true]
     }
-
-
 
     property var led_pwm_duty: {
         "caption":"PWM Duty",
@@ -564,9 +559,6 @@ Item {
         "values": ["No Diagnostic","Auto Retry","Diagnostic Only"]
     }
 
-
-
-
     //Car demo Notification
 
     property var car_demo_brightness: {
@@ -918,31 +910,6 @@ Item {
         "value":  8.0
     }
 
-
-    //    property var power_vs_select: {
-    //        "caption":"VS Voltage Select",
-    //        "states":[0],
-    //        "state":"enabled",
-    //        "value":"5V_USB",
-    //        "values":["5V_USB","VLED"]
-    //    }
-
-    //    property var power_vs_select_caption: {
-    //        "caption":"VS Voltage Select"
-    //    }
-
-    //    property var power_vs_select_states: {
-    //        "states":[0]
-    //    }
-
-    //    property var power_vs_select_value: {
-    //        "value": "5V_USB"
-    //    }
-
-    //    property var power_vs_select_values: {
-    //        "values": ["5V_USB","VLED"]
-    //    }
-
     property var power_vled: {
         "caption":"LED Voltage (VLED)",
         "scales":[],
@@ -1062,8 +1029,6 @@ Item {
     property var power_is_value: {
         "value": 0
     }
-
-
 
     property var power_vcc: {
         "caption":"Reference Voltage (VCC)",
@@ -1241,8 +1206,6 @@ Item {
 
    //** SAMOPTControl notification & cmds  **/
 
-
-
     property var soc_diag: {
         "caption":"DIAG",
         "scales":[],
@@ -1298,8 +1261,6 @@ Item {
     property var soc_vdd_disconnect_states: {
         "states":[0]
     }
-
-
 
 
     property var soc_mode: {
@@ -1746,8 +1707,6 @@ Item {
     property bool soc_sam_conf_2_out12: true
 
     property bool soc_crcValue: false
-    //property bool soc_otpValue: false
-
     property real addr_curr: 0
     property real addr_curr_apply: 0
 
@@ -1759,186 +1718,5 @@ Item {
         }
     }
 
-    //    Window {
-    //        id: debug
-    //        visible: true
-    //        width: 400
-    //        height: 400
-
-
-
-    //        Rectangle {
-    //            anchors.left: button2.right
-    //            anchors.leftMargin: 10
-    //            width: parent.width
-    //            height: 50
-    //            Slider {
-    //                id: slider
-
-    //                orientation: Qt.Horizontal
-    //                from: -1
-    //                to: 1
-    //            }
-    //        }
-
-    //        Button {
-    //            id: button2
-    //            anchors { top: parent.top }
-    //            text: "send car brightness"
-    //            onClicked: {
-
-    //                CorePlatformInterface.data_source_handler('{
-    //                    "value":"car_demo_brightness",
-    //                    "payload":{
-    //                                  "value": ' + slider.value + '
-    //                               }
-    //                             }')
-
-
-    //            }
-    //        }
-    //        Button {
-    //            id: button3
-    //            anchors { top: button2.bottom }
-    //            text: "send car_demo random"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler('{
-    //                            "value":"car_demo",
-    //                            "payload":{
-    //                                        "brake": ' + Boolean(Math.round(Math.random())) + ',
-    //                                        "left": ' + Boolean(Math.round(Math.random())) + ',
-    //                                        "reverse": ' + Boolean(Math.round(Math.random())) + ',
-    //                                        "right": ' + Boolean(Math.round(Math.random())) + '
-    //                            }
-
-    //            }')
-
-
-
-    //            }
-    //        }
-
-    //        Button {
-    //            id: button4
-    //            anchors { top: button3.bottom }
-    //            text: "send car_demo reset"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler('{
-    //                            "value":"car_demo",
-    //                            "payload":{
-    //                                        "brake":  false,
-    //                                        "left": false,
-    //                                        "reverse": false,
-    //                                        "right": false
-    //                            }
-    //                    }
-    //            ')
-
-    //            }
-    //        }
-
-    //        Button {
-    //            id: button5
-    //            anchors { top: button4.bottom }
-    //            text: "send led_oen_value & led_oen_state"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler('{
-    //                            "value":"led_oen_value",
-    //                            "payload":{
-    //                                  "value": ' + Boolean(Math.round(Math.random())) + '
-    //                            }
-    //                    }
-    //            ')
-    //                CorePlatformInterface.data_source_handler('{
-    //                            "value":"led_oen_state",
-    //                            "payload":{
-    //                                  "state": "enabled"
-    //                            }
-    //                    }
-    //            ')
-
-
-
-    //            }
-    //        }
-
-    //        /*
-    //    property var led_fault_status_values: {
-    //        "values": [false,false,false,false,false,false,false,false,false,false,false,false]
-
-    //    property var led_linear_log_values: {
-    //        "values": ["Linear","Log"]
-    //    }
-    //    }
-
-    //     */
-    //        Button {
-    //            id: button6
-
-
-    //            anchors { top: button5.bottom }
-    //            text: "send_led_linear_log_value"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler ('{
-    //                                "value": "led_linear_log_value" ,
-    //                                "payload":{
-    //                                  "value": "Log"
-    //                                }
-    //                            }')
-
-    //                led_out_en_values.values = enableArray
-    //                console.log(platformInterface.led_out_en_values.values)
-
-    //            }
-    //        }
-
-    //        Button {
-    //            id: button7
-
-    //            anchors { top: button6.bottom }
-    //            text: "send led_ext_caption"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler ('{
-    //                                "value": "led_ext_caption" ,
-    //                                "payload":{
-    //                                  "caption":"abc"
-    //                                }
-    //                            }')
-
-
-    //            }
-    //        }
-
-    //        Button {
-    //            id: button8
-    //            anchors { top: button7.bottom }
-    //            text: "send led_i2cerr_value"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler ('{
-    //                                "value": "led_i2cerr_value" ,
-    //                                "payload":{
-    //                                  "value": true
-    //                                }
-    //                            }')
-
-
-    //            }
-    //        }
-
-    //        Button {
-    //            id: button9
-    //            anchors { top: button8.bottom }
-    //            text: "send led_open_load_diagnostic_state"
-
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler ('{
-    //                                "value": "led_open_load_diagnostic_state" ,
-    //                                "payload":{
-    //                                  "state":"disabled_and_grayed_out"
-    //                                }
-    //                            }')
-    //            }
-    //        }
-    //    }
 }
 

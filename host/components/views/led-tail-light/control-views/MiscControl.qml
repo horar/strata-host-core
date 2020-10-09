@@ -117,9 +117,6 @@ Item {
                             onMisc_id_vers_1Changed: {
                                 idVers1Label.text = misc_id_vers_1.caption
                                 setStatesForControls(idVers1,misc_id_vers_1.states[0])
-
-
-                                //convert the text to hex
                                 idVers1.text =  toHex(misc_id_vers_1.value)
 
                             }
@@ -151,13 +148,11 @@ Item {
                             alignment: SGAlignedLabel.SideTopCenter
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
-
                             font.bold: true
 
                             SGStatusLight {
                                 id: oddChannelError
                                 width : 40
-
 
                             }
 
@@ -236,7 +231,6 @@ Item {
                                 height:  35 * ratioCalc
                                 width: 50 * ratioCalc
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                //boxFont.family: Fonts.digitalseven
                             }
 
                             SGText{
@@ -282,7 +276,6 @@ Item {
                             alignment: SGAlignedLabel.SideTopCenter
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
-                            //text: "Odd Channel Error"
                             font.bold: true
 
                             SGStatusLight {
@@ -335,9 +328,7 @@ Item {
                                     evenChannelError.status = SGStatusLight.Off
                                 }
                             }
-
                         }
-
                     }
                 }
             }
