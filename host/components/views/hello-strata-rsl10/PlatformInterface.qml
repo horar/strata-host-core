@@ -212,6 +212,10 @@ Item {
     // -------------------------------------------------------------------
     // Light Sensor APIs
 
+    property var light_sensor: {
+        "available":false
+    }
+
     // UI state
     property bool i2c_light_ui_start: false //Manual Integration
     property bool i2c_light_ui_active: false //status
