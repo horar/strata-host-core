@@ -2,7 +2,6 @@
 
 #include "Authenticator.h"
 #include "RestClient.h"
-#include "OpnListModel.h"
 
 #include <BoardManager.h>
 #include <FlasherConnector.h>
@@ -23,7 +22,6 @@ class PrtModel : public QObject
     Q_PROPERTY(int deviceCount READ deviceCount NOTIFY deviceCountChanged)
     Q_PROPERTY(Authenticator* authenticator READ authenticator CONSTANT)
     Q_PROPERTY(RestClient* restClient READ restClient CONSTANT)
-    Q_PROPERTY(OpnListModel* opnListModel READ opnListModel CONSTANT)
     Q_PROPERTY(QString bootloaderFilepath READ bootloaderFilepath NOTIFY bootloaderFilepathChanged)
 
 public:
@@ -33,7 +31,6 @@ public:
     int deviceCount() const;
     Authenticator* authenticator();
     RestClient* restClient();
-    OpnListModel* opnListModel();
     QString bootloaderFilepath();
 
     Q_INVOKABLE QString deviceFirmwareVersion() const;
@@ -41,7 +38,8 @@ public:
     Q_INVOKABLE void downloadBinaries(
             QString bootloaderUrl,
             QString bootloaderMd5,
-            int platformIndex);
+            QString firmwareUrl,
+            QString firmwareMd5);
 
     Q_INVOKABLE void programDevice();
     Q_INVOKABLE void notifyServiceAboutRegistration(
@@ -88,7 +86,7 @@ private:
     strata::DownloadManager downloadManager_;
     RestClient restClient_;
     Authenticator authenticator_;
-    OpnListModel opnListModel_;
+    QUrl cloudServiceUrl_;
 
     QString downloadJobId_;
     QPointer<QTemporaryFile> bootloaderFile_;
@@ -97,12 +95,6 @@ private:
     bool fakeDownloadBinaries(
                 const QString &bootloaderUrl,
                 const QString &firmwareUrl);
-
-    void downloadBinaries(
-            const QString &bootloaderUrl,
-            const QString &bootloaderChecksum,
-            const QString &firmwareUrl,
-            const QString &firmwareChecksum);
 
     QString resolveConfigFilePath();
     void finishRegistrationCommand(QString errorString);

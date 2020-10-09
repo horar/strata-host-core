@@ -22,7 +22,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     PrtModel.cpp
     RestClient.cpp
     Authenticator.cpp
-    OpnListModel.cpp
 
     images/images.qrc
     qml.qrc
