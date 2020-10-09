@@ -1,4 +1,4 @@
-option(BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)" OFF)
+option(BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)" ON)
 add_feature_info(BUILD_DONT_CLEAN_EXTERNAL BUILD_DONT_CLEAN_EXTERNAL "Don't clean external project (Makefile only)")
 set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM ${BUILD_DONT_CLEAN_EXTERNAL})
 
