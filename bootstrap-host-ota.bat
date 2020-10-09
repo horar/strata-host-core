@@ -74,9 +74,14 @@ set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
 set CRYPTO_DLL=libcrypto-1_1-x64.dll
-set CRYPTO_DLL_DIR=%PKG_STRATA_DS%\%CRYPTO_DLL%
+set CRYPTO_DLL_DIR_SDS=%PKG_STRATA_DS%\%CRYPTO_DLL%
+set CRYPTO_DLL_DIR_HCS=%PKG_STRATA_HCS%\%CRYPTO_DLL%
 set SSL_DLL=libssl-1_1-x64.dll
-set SSL_DLL_DIR=%PKG_STRATA_DS%\%SSL_DLL%
+set SSL_DLL_DIR_SDS=%PKG_STRATA_DS%\%SSL_DLL%
+set SSL_DLL_DIR_HCS=%PKG_STRATA_HCS%\%SSL_DLL%
+set ZMQ_DLL=libzmq.dll
+set ZMQ_DLL_DIR_SDS=%PKG_STRATA_DS%\%ZMQ_DLL%
+set ZMQ_DLL_DIR_HCS=%PKG_STRATA_HCS%\%ZMQ_DLL%
 set MSVCR_DLL=MSVCR100.dll
 set MSVCR_DLL_DIR=%windir%\system32\%MSVCR_DLL%
 set VCREDIST_BINARY=vc_redist.x64.exe
@@ -327,25 +332,47 @@ echo "Moving %VCREDIST_BINARY% to %PKG_STRATA_VC_REDIST%\StrataUtils\VC_REDIST"
 move "%PKG_STRATA_QT%\%VCREDIST_BINARY%" "%PKG_STRATA_VC_REDIST%\StrataUtils\VC_REDIST\%VCREDIST_BINARY%"
 
 REM Copy OpenSSL dlls to QT5 dir
-if not exist %CRYPTO_DLL_DIR% (
+if not exist %CRYPTO_DLL_DIR_SDS% (
     echo "======================================================================="
-    echo " Missing %CRYPTO_DLL_DIR%, build probably failed"
+    echo " Missing %CRYPTO_DLL_DIR_SDS%, build probably failed"
     echo "======================================================================="
     Exit /B 2
 )
 
 echo "Moving %CRYPTO_DLL% to %PKG_STRATA_QT%"
-move "%CRYPTO_DLL_DIR%" "%PKG_STRATA_QT%\%CRYPTO_DLL%"
+move "%CRYPTO_DLL_DIR_SDS%" "%PKG_STRATA_QT%\%CRYPTO_DLL%"
 
-if not exist "%SSL_DLL_DIR%" (
+if exist %CRYPTO_DLL_DIR_HCS% (
+    del "%CRYPTO_DLL_DIR_HCS%"
+)
+
+if not exist "%SSL_DLL_DIR_SDS%" (
     echo "======================================================================="
-    echo " Missing %SSL_DLL_DIR%, build probably failed"
+    echo " Missing %SSL_DLL_DIR_SDS%, build probably failed"
     echo "======================================================================="
     Exit /B 2
 )
 
 echo "Moving %SSL_DLL% to %PKG_STRATA_QT%"
-move "%SSL_DLL_DIR%" "%PKG_STRATA_QT%\%SSL_DLL%"
+move "%SSL_DLL_DIR_SDS%" "%PKG_STRATA_QT%\%SSL_DLL%"
+
+if exist %SSL_DLL_DIR_HCS% (
+    del "%SSL_DLL_DIR_HCS%"
+)
+
+if not exist "%ZMQ_DLL_DIR_SDS%" (
+    echo "======================================================================="
+    echo " Missing %ZMQ_DLL_DIR_SDS%, build probably failed"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+echo "Moving %ZMQ_DLL% to %PKG_STRATA_QT%"
+move "%ZMQ_DLL_DIR_SDS%" "%PKG_STRATA_QT%\%ZMQ_DLL%"
+
+if exist %ZMQ_DLL_DIR_HCS% (
+    del "%ZMQ_DLL_DIR_HCS%"
+)
 
 if not exist %MQTT_DLL_DIR% (
     echo "======================================================================="
