@@ -126,6 +126,7 @@ Controller.prototype.WelcomePageCallback = function ()
 Controller.prototype.TargetDirectoryPageCallback = function ()
 {
     console.log("TargetDirectoryPageCallback entered");
+    installer.setValue("RemoveTargetDir","false");
     if (isSilent)
         gui.clickButton(buttons.NextButton);
 }
@@ -147,7 +148,7 @@ Controller.prototype.ComponentSelectionPageCallback = function ()
 Controller.prototype.LicenseAgreementPageCallback = function ()
 {
     console.log("LicenseAgreementPageCallback entered");
-
+    installer.setValue("RemoveTargetDir","true");
     if (isSilent) {
         var widget = gui.currentPageWidget();
         if (widget != null) {
