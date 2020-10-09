@@ -116,10 +116,10 @@ Item{
                   iinScale = 10
                   voutScale = 10
                   ioutScale = 10
-                  poutScale = 20
+                  poutScale = 20000
                   pdissScale = 5000
                   showDecimal = true
-                  poutStep = 2
+                  poutStep = 2000
                   pdissStep = 500
                   rst = false
                   dio14 = false
@@ -145,12 +145,12 @@ Item{
             nominalVin = 5
             vinScale = 10
             iinScale = 5
-            voutScale = 10
+            voutScale = 5
             ioutScale = 5
-            poutScale = 20
-            pdissScale = 5000
+            poutScale = 10000
+            pdissScale = 10000
             showDecimal = true
-            poutStep = 2
+            poutStep = 500
             pdissStep = 500
             rst = false
             dio14 = true
@@ -164,10 +164,10 @@ Item{
             lowpowerDCDC = false
             pdiss = "mW"
             current = "A"
-            minVout1 = 3.069
-            minVout2 = 3.069
-            minVout3 = 3.069
-            minVout4 = 3.069
+            minVout1 = 1.023
+            minVout2 = 1.023
+            minVout3 = 1.023
+            minVout4 = 1.023
         }
         else if(class_id === "abd65a0b-3229-44a4-a97c-38ea3c24f990") {
             eeprom_ID = "abd65a0b-3229-44a4-a97c-38ea3c24f990"
@@ -314,11 +314,11 @@ Item{
             iinScale = 2
             voutScale = 10
             ioutScale = 2
-            poutScale = 20
-            pdissScale = 5000
+            poutScale = 5000
+            pdissScale = 1000
             showDecimal = true
-            poutStep = 2
-            pdissStep = 500
+            poutStep = 500
+            pdissStep = 100
             rst = false
             dio14 = false
             jumperDIO14 = false
