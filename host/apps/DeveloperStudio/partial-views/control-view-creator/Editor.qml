@@ -75,7 +75,7 @@ Item {
 
                         background: Rectangle {
                             implicitHeight: 45
-                            color: fileTab.ListView.isCurrentItem ? Qt.darker(fileTab.color, 1.3) : fileTab.color
+                            color: fileTab.ListView.isCurrentItem ? "white" : fileTab.color
                         }
 
                         contentItem: Item {
@@ -85,7 +85,7 @@ Item {
                             SGText {
                                 id: tabText
                                 text: model.filename
-                                color: fileTab.ListView.isCurrentItem ? "white" : "black"
+                                color: "black"
                                 anchors {
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
