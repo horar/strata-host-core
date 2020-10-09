@@ -71,7 +71,6 @@ STRATA_RESOURCES_DIR=../host/resources/qtifw
 STRATA_HCS_CONFIG_DIR=../host/assets/config/hcs
 STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config.xml
 MQTT_DLL=QtMqtt
-MQTT_DLL_DIR="3p/lib/$MQTT_DLL"
 COMMON_CPP_DLL="libcomponent-commoncpp.so"
 STRATA_OFFLINE=strata-setup-offline
 STRATA_ONLINE=strata-setup-online
@@ -261,7 +260,7 @@ if [ $? != 0 ] ; then
 fi
 
 echo "Copying ${MQTT_DLL} to ${PKG_STRATA_COMPONENTS_COMMON}"
-cp -fv "${MQTT_DLL_DIR}" "${PKG_STRATA_COMPONENTS_COMMON}"
+cp -fv 3p/qtmqtt-*/lib/${MQTT_DLL} "${PKG_STRATA_COMPONENTS_COMMON}"
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
@@ -271,7 +270,7 @@ if [ $? != 0 ] ; then
 fi
 
 echo "Performing install_name_tool on ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}"
-MQTT_DLL_DIR_ACTUAL=$(otool -L "${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}" | grep ${MQTT_DLL_DIR} | sed -e 's/^[ 	\t]*//;s/ (compatibility.*//')
+MQTT_DLL_DIR_ACTUAL=$(otool -L "${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}" | grep ${MQTT_DLL} | sed -e 's/^[ 	\t]*//;s/ (compatibility.*//')
 # Link commoncpp to QtMqtt
 echo "Changing ${MQTT_DLL_DIR_ACTUAL} to @loader_path/${MQTT_DLL}"
 install_name_tool \
