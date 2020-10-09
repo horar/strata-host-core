@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/LEDControl.qml</file>
         <file>control-views/CarDemoControl.qml</file>

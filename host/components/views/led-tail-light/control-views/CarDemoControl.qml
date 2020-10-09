@@ -25,9 +25,6 @@ Rectangle{
             Help.registerTarget(brightnessContainerForHelp, "Manual control of the ambient light background brightness. The dynamic light sensor data is used by default if the light sensor is installed on the PCB, otherwise, manual control is default. Click the sun or moon icons to enable manual control then click the sun to increase and the moon to decrease background brightness. Revert back to dynamic light sensor mode by toggling to LED Driver tab then back to Car Demo Mode tab.", 2, "carDemoHelp")
         }
 
-        property int transformX:0;
-        property int transformY:0;
-
 
         property var car_demo_brightness: platformInterface.car_demo_brightness.value
         onCar_demo_brightnessChanged: {
@@ -47,12 +44,6 @@ Rectangle{
                 runningLight.visible = false
             }
         }
-
-        //        property var  manual_value : platformInterface.manual_value
-        //        onManual_valueChanged: {
-        //            if(manual_value === false)
-        //                brigtnesseImage.source = "car-icon/sun_moon_off.png"
-        //        }
 
         Connections {
             target: Help.utility
@@ -114,7 +105,6 @@ Rectangle{
                     fillMode: Image.PreserveAspectFit
                     anchors.fill: parent
                 }
-
 
                 BrightnessContrast {
                     id: baseCar
@@ -215,7 +205,6 @@ Rectangle{
                                 id: withbrakes
                                 anchors.fill: parent
                                 onClicked: {
-                                    console.log("withBrakes")
                                     if(platformInterface.brake_value === false) {
                                         noBrake.visible = false
                                         brake.visible = true
@@ -281,7 +270,6 @@ Rectangle{
                                 id: nobrakes
                                 anchors.fill: parent
                                 onClicked: {
-                                    console.log("No Brakes")
                                     if(platformInterface.brake_value === false) {
                                         noBrake.visible = false
                                         brake.visible = true
@@ -334,7 +322,6 @@ Rectangle{
                             }
                             property var car_demo_brake: platformInterface.car_demo.brake
                             onCar_demo_brakeChanged: {
-                                console.log("car_demo_brake", car_demo_brake)
                                 if(car_demo_brake === false) {
                                     brakeLights.visible = false
                                     noBrake.visible = true
@@ -430,7 +417,6 @@ Rectangle{
                                                                               )
                                     }
                                     else {
-                                        console.log("hazard")
                                         leftSignal.visible = false
                                         rightSignal.visible = false
                                         hazard.visible = false
@@ -620,7 +606,6 @@ Rectangle{
                                     onClicked: {
                                         platformInterface.right_value = false
                                         rightSignal.visible = false
-                                        console.log("left clicked", platformInterface.left_value)
                                         if(platformInterface.left_value === false){
                                             leftSignal.visible = true
                                             blinkerBaseImage.source = "car-icon/left-signal.svg"
@@ -744,7 +729,6 @@ Rectangle{
                                         }
                                     }
                                     onPressed: {
-                                        console.log("pressed")
                                         if(platformInterface.manual_value) {
                                             brigtnesseImage.source = "car-icon/moon_pressed.png"
                                             platformInterface.set_car_demo_background.update("down")
@@ -792,7 +776,6 @@ Rectangle{
                                     }
 
                                     onPressed: {
-                                        console.log("pressed")
                                         if(platformInterface.manual_value) {
                                             brigtnesseImage.source = "car-icon/sun_pressed.png"
                                             platformInterface.set_car_demo_background.update("up")

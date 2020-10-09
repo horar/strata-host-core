@@ -44,8 +44,6 @@ Slider {
         } else {
             lastValue = value.toFixed(0)
         }
-       //  toolTip.text = value.toFixed(0)
-
     }
     onMoved: {
         if (live && value !== lastValue){
@@ -56,9 +54,6 @@ Slider {
         }
         root.moved()
     }
-//    onValueChanged: {
-//        toolTip.text = value.toFixed(0)
-//    }
 
     property real roundedValue: parseFloat(value.toFixed(decimals))
 
@@ -82,9 +77,6 @@ Slider {
         height: root.height-8
         radius: 5
         layer.enabled: true
-        //        property real grooveHandleRatio: root.grooveHandleRatio < 0 ? 0 : root.grooveHandleRatio > 1 ? 1 : root.grooveHandleRatio
-        //        implicitWidth:  handle.width * grooveHandleRatio
-        //        implicitHeight: handle.height
         layer.effect: LinearGradient {
             start: Qt.point(0, 0)
             end: Qt.point(0, height)

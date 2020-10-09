@@ -109,8 +109,6 @@ Item {
         }
     }
 
-
-
     Component.onCompleted: {
         Help.registerTarget(partNumber, "Indication of LED driver part assembled on PCB. The part number is reported to the user interface based on state of a GPIO pin PD9, low = NCV7684, high = NCV7685. The other LED driver can be installed if the state of the PD9 pin properly reflects the installed LED driver. See schematic and user manual for details on conversion to alternate LED driver.", 0, "ledDriverHelp")
         Help.registerTarget(enableOutput,"Toggles the output enable pin of the NCV7685. The NCV7684 does not support output enable.",1,"ledDriverHelp")
@@ -771,7 +769,6 @@ Item {
 
     property var led_pwm_duty: platformInterface.led_pwm_duty
     onLed_pwm_dutyChanged: {
-        console.log("tanya",led_pwm_duty.values[0])
         out0duty.value = led_pwm_duty.values[0]
         out1duty.value = led_pwm_duty.values[1]
         out2duty.value = led_pwm_duty.values[2]
@@ -1576,18 +1573,6 @@ Item {
                                             property var led_diag_states: platformInterface.led_diag_states.states
                                             onLed_diag_statesChanged: {
                                                 setStatesForControls(diagLabel,led_diag_states[0])
-                                                //                                                if(led_diag_state === "enabled") {
-                                                //                                                    diagLabel.enabled = true
-                                                //                                                    diagLabel.opacity = 1.0
-                                                //                                                }
-                                                //                                                else if (led_diag_state === "disabled") {
-                                                //                                                    diagLabel.enabled = false
-                                                //                                                    diagLabel.opacity = 1.0
-                                                //                                                }
-                                                //                                                else  {
-                                                //                                                    diagLabel.enabled = false
-                                                //                                                    diagLabel.opacity = 0.5
-                                                //                                                }
                                             }
 
                                             property var led_diag_value: platformInterface.led_diag_value.value
@@ -1768,8 +1753,6 @@ Item {
                                             Layout.fillHeight: true
                                             SGText {
                                                 id: externalLED
-                                                //text: "Internal \n External LED"
-                                                //horizontalAlignment: Text.AlignHCenter
                                                 font.bold: true
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
@@ -1787,7 +1770,6 @@ Item {
                                             Layout.fillHeight: true
                                             SGText {
                                                 id: pwmEnableText
-                                                // text: "<b>" + qsTr("PWM Enable") + "</b>"
                                                 font.bold: true
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
@@ -1805,7 +1787,6 @@ Item {
                                             Layout.fillHeight: true
                                             SGText {
                                                 id:faultText
-                                                // text: "<b>" + qsTr("Fault Status") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
@@ -1821,11 +1802,9 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
-                                            // color: "red"
                                             SGText {
                                                 id: pwmDutyText
                                                 font.bold: true
-                                                //text: "<b>" + qsTr("PWM Duty (%)") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
@@ -1847,7 +1826,6 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/10
-                                            //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT12") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -1859,7 +1837,6 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-
                                             SGSwitch {
                                                 id: out11ENLED
                                                 labelsInside: true
@@ -2170,8 +2147,6 @@ Item {
                                                         platformInterface.outputEnable10 = false
 
                                                     }
-
-
                                                 }
                                             }
                                         }
@@ -2363,7 +2338,6 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/10
-                                            //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT10") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -4054,10 +4028,10 @@ Item {
                                                 labelsInside: true
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
-                                                textColor: "black"              // Default: "black"
-                                                handleColor: "white"            // Default: "white"
-                                                grooveColor: "#ccc"             // Default: "#ccc"
-                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                textColor: "black"
+                                                handleColor: "white"
+                                                grooveColor: "#ccc"
+                                                grooveFillColor: "#0cf"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
@@ -4160,13 +4134,6 @@ Item {
                                                                                                   platformInterface.outputPwm10,
                                                                                                   platformInterface.outputPwm11])
                                                 }
-
-                                                //                                                onValueChanged: {
-                                                //                                                    platformInterface.outputDuty3 =  out3duty.value.toFixed(0)
-
-                                                //                                                }
-
-
                                             }
                                         }
 
@@ -4181,7 +4148,6 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/10
-                                            //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT3") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -4921,12 +4887,10 @@ Item {
 
                                                 property var led_pwm_duty_states0: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states0Changed: {
-                                                    console.log(led_pwm_duty_states0[0])
                                                     setStateForPWMDuty(out0duty,led_pwm_duty_states0[0])
                                                 }
 
                                                 onUserSet: {
-                                                    console.log("pwm duty", out0duty.value)
                                                     platformInterface.outputDuty0 =  out0duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -5187,7 +5151,6 @@ Item {
                                 SGAlignedLabel {
                                     id: diagRangeLabel
                                     target: diagRange
-                                    //text:  "diagRange"
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
@@ -5246,22 +5209,8 @@ Item {
 
                                         property var led_tw: platformInterface.led_tw
                                         onLed_twChanged:{
-
                                             twLabel.text =  led_tw_caption
                                             setStatesForControls(twLabel,led_tw.states[0])
-
-                                            //                                            if(led_tw.state === "enabled") {
-                                            //                                                twLabel.enabled = true
-                                            //                                                twLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else if (led_tw.state === "disabled") {
-                                            //                                                twLabel.enabled = false
-                                            //                                                twLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                twLabel.enabled = false
-                                            //                                                twLabel.opacity = 0.5
-                                            //                                            }
 
                                             if(led_tw.value === false)
                                                 tw.status = SGStatusLight.Off
@@ -5311,18 +5260,6 @@ Item {
                                         onLed_tsdChanged: {
                                             tsdLabel.text =  led_tsd_caption
                                             setStatesForControls(tsdLabel,led_tsd.states[0])
-                                            //                                            if(led_tsd.state === "enabled") {
-                                            //                                                tsdLabel.enabled = true
-                                            //                                                tsdLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else if (led_tsd.state === "disabled") {
-                                            //                                                tsdLabel.enabled = false
-                                            //                                                tsdLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                tsdLabel.enabled = false
-                                            //                                                tsdLabel.opacity = 0.5
-                                            //                                            }
                                             if(led_tsd.value === false)
                                                 tsd.status = SGStatusLight.Off
 
@@ -5370,19 +5307,6 @@ Item {
                                         onLed_diagerrChanged: {
                                             diagerrLabel.text =  led_diagerr.caption
                                             setStatesForControls(diagerrLabel,led_diagerr.states[0])
-
-                                            //                                            if(led_diagerr.state === "enabled") {
-                                            //                                                diagerrLabel.enabled = true
-                                            //                                                diagerrLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else if (led_diagerr.state === "disabled") {
-                                            //                                                diagerrLabel.enabled = false
-                                            //                                                diagerrLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                diagerrLabel.enabled = false
-                                            //                                                diagerrLabel.opacity = 0.5
-                                            //                                            }
 
                                             if(led_diagerr.value === false)
                                                 diagerr.status = SGStatusLight.Off
@@ -5432,18 +5356,6 @@ Item {
                                         onLed_olChanged: {
                                             olLabel.text =  led_ol.caption
                                             setStatesForControls(olLabel,led_ol.states[0])
-                                            //                                            if(led_ol.state === "enabled") {
-                                            //                                                olLabel.enabled = true
-                                            //                                                olLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else if (led_ol.state === "disabled") {
-                                            //                                                olLabel.enabled = false
-                                            //                                                olLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                olLabel.enabled = false
-                                            //                                                olLabel.opacity = 0.5
-                                            //                                            }
                                             if(led_ol.value === false)
                                                 ol.status = SGStatusLight.Off
 
@@ -5472,7 +5384,6 @@ Item {
                             }
 
                         }
-
                     }
                 }
             }
