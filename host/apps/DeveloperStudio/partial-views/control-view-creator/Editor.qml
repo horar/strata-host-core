@@ -132,12 +132,12 @@ Item {
 
                                 SGIcon {
                                     id: closeFileIcon
-                                    source: model.unsavedChanges ? "qrc:/sgimages/asterisk.svg" : "qrc:/sgimages/times-circle.svg"
+                                    source: "qrc:/sgimages/times-circle.svg"
                                     height: tabText.paintedHeight
                                     width: height
                                     implicitWidth: height
                                     iconColor: "white"
-                                    visible: model.unsavedChanges || fileTab.hovered
+                                    visible: fileTab.hovered
                                     anchors {
                                         left: tabText.right
                                         leftMargin: 4
@@ -153,19 +153,30 @@ Item {
 
                                         onEntered: {
                                             cursorShape = Qt.PointingHandCursor
-                                            closeFileIcon.source = "qrc:/sgimages/times-circle.svg"
-                                        }
-
-                                        onExited: {
-                                            if (model.unsavedChanges) {
-                                                closeFileIcon.source = "qrc:/sgimages/asterisk.svg"
-                                            }
                                         }
 
                                         onClicked: {
                                             openFilesModel.closeTabAt(index);
                                         }
                                     }
+                                }
+
+                                SGIcon {
+                                    id: unsavedChangesIcon
+                                    source: "qrc:/sgimages/asterisk.svg"
+                                    height: tabText.paintedHeight
+                                    width: height
+                                    implicitWidth: height
+                                    iconColor: "white"
+                                    visible: !closeFileIcon.visible && model.unsavedChanges
+                                    anchors {
+                                        left: tabText.right
+                                        leftMargin: 4
+                                        right: parent.right
+                                        verticalCenter: parent.verticalCenter
+                                        rightMargin: 2
+                                    }
+                                    verticalAlignment: Qt.AlignVCenter
                                 }
                             }
                         }
