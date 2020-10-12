@@ -25,6 +25,33 @@ FocusScope {
     property string currentFirmwareUrl
     property string currentFirmwareMd5
 
+    property string platsEndpointReplySchema: '{
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "opn": {"type": "string"},
+            "class_id": {"type": "string"},
+            "verbose_name": {"type": "string"},
+
+            "firmware": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "file": {"type": "string"},
+                        "filename": {"type": "string"},
+                        "filesize": {"type": "integer"},
+                        "md5": {"type": "string"},
+                        "timestamp": {"type": "string"},
+                        "version": {"type": "string"}
+                    },
+                    "required": ["file","md5", "timestamp","version"]
+                }
+            }
+        },
+        "required": ["opn","class_id", "verbose_name","firmware"]
+    }'
+
     clip: true
 
     Component.onCompleted: {
@@ -1008,7 +1035,7 @@ FocusScope {
             if (Array.isArray(response)) {
                 searchEdit.setIsInvalid("OPN not found.")
             } else {
-                var isValid = validateResponse(response)
+                var isValid = CommonCpp.SGUtilsCpp.validateJson(data, wizard.platsEndpointReplySchema)
                 if (isValid) {
                     setLatestFirmware(response["firmware"])
 
@@ -1049,40 +1076,5 @@ FocusScope {
 
         wizard.currentFirmwareUrl = firmwareList[latestFirmwareIndex]["file"]
         wizard.currentFirmwareMd5 = firmwareList[latestFirmwareIndex]["md5"]
-    }
-
-    function validateResponse(response) {
-        if (response.hasOwnProperty("class_id") === false
-                || response.hasOwnProperty("opn") === false
-                || response.hasOwnProperty("firmware") === false
-                || response.hasOwnProperty("verbose_name") === false)
-        {
-            console.error(Logger.prtCategory, "one of class_id, opn, firmware, verbose_name is missing")
-            return false
-        }
-
-        var firmwareList = response["firmware"]
-        if (Array.isArray(firmwareList) === false) {
-            console.error(Logger.prtCategory, "firmware key is not an array")
-            return false
-        }
-
-        if (firmwareList.length === 0) {
-            console.error(Logger.prtCategory, "firmware list is empty")
-            return false
-        }
-
-        for (var i = 0; i < firmwareList.length; ++i) {
-            if (firmwareList[i].hasOwnProperty("file") === false
-                    || firmwareList[i].hasOwnProperty("md5") === false
-                    || firmwareList[i].hasOwnProperty("timestamp") === false
-                    || firmwareList[i].hasOwnProperty("version") === false)
-            {
-                console.error(Logger.prtCategory, "firmware key is not valid")
-                return false
-            }
-        }
-
-        return true
     }
 }
