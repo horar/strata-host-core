@@ -70,8 +70,8 @@ STRATA_DEPLOYMENT_DIR=../deployment/Strata
 STRATA_RESOURCES_DIR=../host/resources/qtifw
 STRATA_HCS_CONFIG_DIR=../host/assets/config/hcs
 STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config.xml
-MQTT_DLL=QtMqtt
-COMMON_CPP_DLL="libcomponent-commoncpp.so"
+MQTT_LIB=QtMqtt
+COMMON_CPP_LIB="libcomponent-commoncpp.so"
 STRATA_OFFLINE=strata-setup-offline
 STRATA_ONLINE=strata-setup-online
 STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.app
@@ -259,28 +259,28 @@ if [ $? != 0 ] ; then
     exit 2
 fi
 
-echo "Copying ${MQTT_DLL} to ${PKG_STRATA_COMPONENTS_COMMON}"
-cp -fv 3p/qtmqtt-*/lib/${MQTT_DLL} "${PKG_STRATA_COMPONENTS_COMMON}"
+echo "Copying ${MQTT_LIB} to ${PKG_STRATA_COMPONENTS_COMMON}"
+cp -fv 3p/qtmqtt-*/lib/${MQTT_LIB} "${PKG_STRATA_COMPONENTS_COMMON}"
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to copy ${MQTT_DLL} to ${PKG_STRATA_COMPONENTS_COMMON}!"
+    echo " Failed to copy ${MQTT_LIB} to ${PKG_STRATA_COMPONENTS_COMMON}!"
     echo "======================================================================="
     exit 2
 fi
 
-echo "Performing install_name_tool on ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}"
-MQTT_DLL_DIR_ACTUAL=$(otool -L "${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}" | grep ${MQTT_DLL} | sed -e 's/^[ 	\t]*//;s/ (compatibility.*//')
+echo "Performing install_name_tool on ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_LIB}"
+MQTT_LIB_DIR_ACTUAL=$(otool -L "${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_LIB}" | grep ${MQTT_LIB} | sed -e 's/^[ 	\t]*//;s/ (compatibility.*//')
 # Link commoncpp to QtMqtt
-echo "Changing ${MQTT_DLL_DIR_ACTUAL} to @loader_path/${MQTT_DLL}"
+echo "Changing ${MQTT_LIB_DIR_ACTUAL} to @loader_path/${MQTT_LIB}"
 install_name_tool \
-	-change "${MQTT_DLL_DIR_ACTUAL}" "@loader_path/${MQTT_DLL}" \
-	"${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}"
+    -change "${MQTT_LIB_DIR_ACTUAL}" "@loader_path/${MQTT_LIB}" \
+    "${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_LIB}"
 
 # This is a bit problematic because there are no errors thrown even if it does not finds anything
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to call install_name_tool for ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_DLL}!"
+    echo " Failed to call install_name_tool for ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_LIB}!"
     echo "======================================================================="
     exit 2
 fi
