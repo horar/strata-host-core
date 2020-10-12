@@ -51,10 +51,11 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     if (systemInfo.productType == "windows") {
+        var target_dir = installer.value("TargetDir").split("/").join("\\");
         if (installer.value("add_start_menu_shortcut") == "true") {
             var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
-            component.addOperation("CreateShortcut", installer.value("TargetDir") + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst1,
-                                    "workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
+            component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst1,
+                                    "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
             console.log("will add Start Menu shortcut to: " + strata_ds_shortcut_dst1);
         }
         if (installer.value("add_desktop_shortcut") == "true") {
@@ -81,8 +82,8 @@ Component.prototype.createOperations = function()
                 }
             }
             if (valid_shortcut == true) {
-                component.addOperation("CreateShortcut", installer.value("TargetDir") + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
-                                        "workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
+                component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
+                                        "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
                 console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
             }
         }

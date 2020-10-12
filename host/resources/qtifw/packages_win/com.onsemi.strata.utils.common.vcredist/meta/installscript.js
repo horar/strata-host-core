@@ -45,10 +45,10 @@ Component.prototype.createOperations = function()
         // status code 0 means succefull installaion
         // status code 1638 means VC already exist. Therefore, no need to show warnings.
         // status code 3010 means that the oporation is successful but a restart is required
-        //component.addOperation("Execute", "{0,1638,3010}", installer.value("TargetDir") + "\\StrataUtils\\VC_REDIST\\vc_redist.x64.exe", "/install", "/quiet", "/norestart");
+        //component.addOperation("Execute", "{0,1638,3010}", installer.value("TargetDir").split("/").join("\\") + "\\StrataUtils\\VC_REDIST\\vc_redist.x64.exe", "/install", "/quiet", "/norestart");
 
         // we need to do it like this to capture the exit code, so we know if we need to restart computer (it will be written in the vc_redist_out.txt)
-        component.addElevatedOperation("Execute", "{0,1638,3010}", installer.value("TargetDir") + "\\StrataUtils\\VC_REDIST\\run_vc_redist.bat");
+        component.addElevatedOperation("Execute", "{0,1638,3010}", installer.value("TargetDir").split("/").join("\\") + "\\StrataUtils\\VC_REDIST\\run_vc_redist.bat");
     } else {
         console.log("Microsoft Visual C++ 2017 X64 Additional Runtime already installed");
     }

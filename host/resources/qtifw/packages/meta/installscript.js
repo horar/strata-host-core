@@ -43,9 +43,10 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     if ((systemInfo.productType == "windows") && (installer.value("add_start_menu_shortcut") == "true")) {
-        var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
-        component.addOperation("CreateShortcut", installer.value("TargetDir") + "\\Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
-                                "workingDirectory=" + installer.value("TargetDir"), "iconPath=%SystemRoot%\\system32\\SHELL32.dll",
+        var target_dir = installer.value("TargetDir").split("/").join("\\");
+        var strata_mt_shortcut_dst = installer.value("StartMenuDir").split("/").join("\\") + "\\Strata Maintenance Tool.lnk";
+        component.addOperation("CreateShortcut", target_dir + "\\Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
+                                "workingDirectory=" + target_dir, "iconPath=%SystemRoot%\\system32\\SHELL32.dll",
                                 "iconId=2", "description=Open Maintenance Tool");
         console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
     }
@@ -57,7 +58,7 @@ Component.prototype.createOperations = function()
 
 function isRestartRequired()
 {
-    var vc_redist_temp_file = installer.value("TargetDir") + "\\StrataUtils\\VC_REDIST\\vc_redist_out.txt";
+    var vc_redist_temp_file = installer.value("TargetDir").split("/").join("\\") + "\\StrataUtils\\VC_REDIST\\vc_redist_out.txt";
     if (installer.fileExists(vc_redist_temp_file) == true) {
         var exit_code = installer.readFile(vc_redist_temp_file, "UTF-8");
         console.log("Microsoft Visual C++ 2017 X64 Additional Runtime return code: '" + exit_code + "'");
@@ -95,7 +96,7 @@ Component.prototype.installationOrUpdateFinished = function()
 
     if (isComponentInstalled("com.onsemi.strata.devstudio") && ((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true))) {
         if (systemInfo.productType == "windows") {
-            installer.setValue("RunProgram", installer.value("TargetDir") + "\\Strata Developer Studio.exe");
+            installer.setValue("RunProgram", installer.value("TargetDir").split("/").join("\\") + "\\Strata Developer Studio.exe");
         } else if (systemInfo.productType == "osx") {
             installer.setValue("RunProgram", installer.value("TargetDir") + "/Strata Developer Studio.app/Contents/MacOS/Strata Developer Studio");
         } else {

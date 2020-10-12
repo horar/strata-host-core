@@ -271,8 +271,8 @@ Controller.prototype.UninstallationFinished = function()
         installer.execute("cmd", ["/c", delete_file_cmd, target_dir + ".DS_Store"]);
     }
 
-    if ((systemInfo.productType == "osx") && (installer.fileExists(installer.value("TargetDir")) == true)) {
-        installer.execute("cmd", ["/c", delete_dir_cmd, installer.value("TargetDir")]);
+    if ((systemInfo.productType == "osx") && (installer.fileExists(target_dir) == true)) {
+        installer.execute("cmd", ["/c", delete_dir_cmd, target_dir]);
     }
 
     if (requires_admin_rights == true) {
