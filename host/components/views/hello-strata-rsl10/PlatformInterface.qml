@@ -212,16 +212,16 @@ Item {
     // -------------------------------------------------------------------
     // Light Sensor APIs
 
-    property var light_sensor: {
-        "available":true
-    }
-
     // UI state
     property bool i2c_light_ui_start: false //Manual Integration
     property bool i2c_light_ui_active: false //status
     property string i2c_light_ui_time: "12.5ms" //integ_time
     property string i2c_light_ui_gain: "1" //
     property real i2c_light_ui_sensitivity: 100
+
+    property var light_sensor: {
+        "available":false
+    }
 
     // Notification for control state
     property var light_ctl_value: {
