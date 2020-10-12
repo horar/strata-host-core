@@ -55,9 +55,14 @@ CustomControl {
 
     property var light_sensor_enable: platformInterface.light_sensor.available
     onLight_sensor_enableChanged: {
-        if(light_sensor_enable === true)
+        if(light_sensor_enable === true) {
             lightSensorEnablePopUp.visible = false
-        else lightSensorEnablePopUp.visible = true
+            content.enabled = true
+        }
+        else {
+            lightSensorEnablePopUp.visible = true
+            content.enabled = false
+        }
     }
     property var light_ctl_enable_status: platformInterface.light_ctl_enable.status
     onLight_ctl_enable_statusChanged: {
