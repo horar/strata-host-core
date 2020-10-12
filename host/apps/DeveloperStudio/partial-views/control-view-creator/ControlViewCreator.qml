@@ -73,8 +73,8 @@ Rectangle {
                 }
 
                 model: [
-                    { imageSource: "qrc:/sgimages/file-blank.svg", imageText: "Open" },
-                    { imageSource: "qrc:/sgimages/file-add.svg", imageText: "New" },
+                    { imageSource: "qrc:/sgimages/folder-open-solid.svg", imageText: "Open" },
+                    { imageSource: "qrc:/sgimages/folder-plus.svg", imageText: "New" },
                     { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit" },
                     { imageSource: "qrc:/sgimages/eye.svg", imageText: "View" },
                 ]

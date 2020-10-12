@@ -29,6 +29,7 @@ Rectangle {
     }
 
     ColumnLayout {
+        id: iconTextGroup
         anchors.margins: 5
         anchors.fill: parent
         spacing: 2
@@ -66,6 +67,19 @@ Rectangle {
         enabled: parent.enabled
 
         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.OpenHandCursor
+
+        onEntered: {
+            if (iconTextGroup.enabled && !buttonContainer.ListView.isCurrentItem) {
+                tabIcon.iconColor = Qt.darker(tabIcon.iconColor, 1.25)
+            }
+        }
+
+        onExited: {
+            if (iconTextGroup.enabled) {
+                tabIcon.iconColor = "white"
+            }
+        }
+
         onClicked: {
             parent.onClicked()
         }
