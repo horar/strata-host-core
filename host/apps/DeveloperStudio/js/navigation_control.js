@@ -333,18 +333,18 @@ function updateState(event, data)
                     }
                 }
 
-                if(view_index !== -1){
+                if (view_index !== -1) {
                     connected_view = platform_view_model_.get(view_index)
                     connected_view.device_id = data.device_id
                     connected_view.firmware_version = data.firmware_version
                     connected_view.connected = true
 
-                    if(userSettings.switchToActive){
+                    if (userSettings.switchToActive) {
                         updateState(events.SWITCH_VIEW_EVENT, {"index": view_index})
                     }
                 }
 
-                if(userSettings.autoOpenView){
+                if (userSettings.autoOpenView) {
                     updateState(events.OPEN_PLATFORM_VIEW_EVENT, data)
                 }
 
