@@ -285,13 +285,6 @@ if [ $? != 0 ] ; then
     exit 2
 fi
 
-# TODO (LC):
-# - move Frameworks to new module (or not?)
-# - update rpaths...
-# - move Plugins etc.
-# - generate qt.conf with updated paths for ota apps
-# - copy non-in resources for ifw-packages ... (icons, banners, scripts, license etc.)
-
 echo "-----------------------------------------------------------------------------"
 echo " Preparing $SDS_BINARY dependencies.."
 echo "-----------------------------------------------------------------------------"
