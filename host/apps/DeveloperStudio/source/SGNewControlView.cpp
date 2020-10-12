@@ -63,6 +63,10 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolve_confli
             qCritical()<<"The files could not be copied" << "from: " + from.absoluteFilePath() + "to: " + to.absoluteFilePath();
             return false;
         }
+
+        // We need this because copying files from a qresource path yields a readonly file by default
+        QFile::setPermissions(to.absoluteFilePath(), QFileDevice::WriteUser | QFileDevice::ReadUser);
+
         // Checks if is qrc file
         if(to.absoluteFilePath().endsWith(".qrc")){
             qrcpath_ = rootpath_ + oldFile;
