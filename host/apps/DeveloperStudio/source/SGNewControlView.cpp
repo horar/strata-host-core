@@ -1,5 +1,7 @@
 #include "SGNewControlView.h"
 
+#include "SGUtilsCpp.h"
+
 SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
 {
 
@@ -9,13 +11,14 @@ SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
  * This creates a new project in a folder of your choosing
  * @param filepath @param originPath
  ***/
-QString SGNewControlView::createNewProject(const QString &filepath, const QString &originPath){
+QUrl SGNewControlView::createNewProject(const QString &filepath, const QString &originPath){
     // This is the current path of the origin directory in resources
     QResource orgSrc(originPath);
     qrcpath_ = "";
 
     QString path = QDir::toNativeSeparators(QUrl(filepath).toLocalFile());
     // Updating the new path to ensure that this file path always has a seperator at the end
+
     if(!path.endsWith(QDir::separator())){
         path = path + QDir::separator();
     }
@@ -30,11 +33,12 @@ QString SGNewControlView::createNewProject(const QString &filepath, const QStrin
         dir.mkpath(path);
         dir.cd(path);
     }
-     rootpath_ = path;
+
+    rootpath_ = path;
     // Copy files from templates selection
     QDir oldDir(orgSrc.absoluteFilePath());
     copyFiles(oldDir,dir,false);
-    return qrcpath_;
+    return SGUtilsCpp::pathToUrl(qrcpath_);
 }
 
 /***
@@ -66,6 +70,7 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolve_confli
         // Checks if is qrc file
         if(to.absoluteFilePath().endsWith(".qrc")){
             qrcpath_ = rootpath_ + oldFile;
+            qDebug() << "qrc path" << qrcpath_;
         }
     }
 
