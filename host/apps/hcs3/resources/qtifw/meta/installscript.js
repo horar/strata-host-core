@@ -36,8 +36,24 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     if( systemInfo.productType == "windows" ) {
-		component.addOperation("Mkdir", "C:\\ProgramData\\ON Semiconductor\\Strata Developer Studio\\HCS")
-		component.addOperation("Move", installer.value("TargetDir") + "\\hcs.config", "C:\\ProgramData\\ON Semiconductor\\Strata Developer Studio\\HCS\\hcs.config");
+        var programDataShortcut = installer.value("RootDir").split("/").join("\\") + "ProgramData\\ON Semiconductor\\Strata Developer Studio\\HCS";
+        console.log("default ProgramData path: " + programDataShortcut);
+        try {
+            var programDataFolder = installer.execute("cmd", ["/c", "echo", "%ProgramData%"]);
+            // the output of command is the first item, and the return code is the second
+            if ((programDataFolder != undefined) && (programDataFolder != null) && (programDataFolder[0] != undefined) && (programDataFolder[0] != null) && (programDataFolder[0] != "")) {
+                programDataShortcut = programDataFolder[0].trim() + "\\ON Semiconductor\\Strata Developer Studio\\HCS";
+                console.log("detected ProgramData path: " + programDataShortcut);
+            } else {
+                console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
+            }
+        } catch(e) {
+            console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
+            console.log(e);
+        }
+
+        component.addOperation("Mkdir", programDataShortcut)
+        component.addOperation("Move", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config", programDataShortcut + "\\hcs.config");
     }
 }
 
