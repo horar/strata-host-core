@@ -213,7 +213,7 @@ Item {
     // Light Sensor APIs
 
     property var light_sensor: {
-        "available":false
+        "available":true
     }
 
     // UI state

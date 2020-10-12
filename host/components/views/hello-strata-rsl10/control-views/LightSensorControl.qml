@@ -160,7 +160,6 @@ CustomControl {
         }
     }
 
-
     contentItem: RowLayout {
         id: content
         anchors.fill:parent
