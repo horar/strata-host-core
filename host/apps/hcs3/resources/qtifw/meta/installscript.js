@@ -34,7 +34,7 @@ Component.prototype.createOperations = function()
 {
     // call default implementation
     component.createOperations();
-	
+
     if( systemInfo.productType == "windows" ) {
 		component.addOperation("Mkdir", "C:\\ProgramData\\ON Semiconductor\\Strata Developer Studio\\HCS")
 		component.addOperation("Move", installer.value("TargetDir") + "\\hcs.config", "C:\\ProgramData\\ON Semiconductor\\Strata Developer Studio\\HCS\\hcs.config");
@@ -43,10 +43,10 @@ Component.prototype.createOperations = function()
 
 Component.prototype.beginInstallation = function()
 {
-    if (systemInfo.productType === "windows") {
+    if (systemInfo.productType == "windows") {
         component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "\\Strata Developer Studio.exe");
         component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "\\hcs.exe");
-    } else if (systemInfo.productType === "osx") {
+    } else if (systemInfo.productType == "osx") {
         component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "/Strata Developer Studio.app/Contents/MacOS/Strata Developer Studio");
         component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "/hcs");
     }

@@ -528,18 +528,18 @@ signtool sign ^
     /tr %SIGNING_TIMESTAMP_SERVER% ^
     /td %SIGNING_TIMESTAMP_ALG% ^
     %STRATA_OFFLINE_BINARY%
-    
+
 IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
     echo " Failed to sign the offline installer %STRATA_OFFLINE_BINARY%!"
     echo "======================================================================="
     Exit /B 3
 )
-    
+
 REM echo "======================================================================="
 REM echo " Preparing online installer %STRATA_ONLINE_BINARY%.."
 REM echo "======================================================================="
-REM 
+REM
 REM binarycreator ^
 REM     --verbose ^
 REM     --online-only ^
@@ -547,14 +547,14 @@ REM     -c %STRATA_CONFIG_XML% ^
 REM     -p %PACKAGES_DIR% ^
 REM     -p %PACKAGES_WIN_DIR% ^
 REM     %STRATA_ONLINE%
-REM 
+REM
 REM IF %ERRORLEVEL% NEQ 0 (
 REM     echo "======================================================================="
 REM     echo " Failed to create online installer %STRATA_ONLINE_BINARY%!"
 REM     echo "======================================================================="
 REM     Exit /B 3
 REM )
-REM 
+REM
 REM echo "-----------------------------------------------------------------------------"
 REM echo "Signing the online installer %STRATA_ONLINE_BINARY%"
 REM echo "-----------------------------------------------------------------------------"
@@ -564,7 +564,7 @@ REM     /p %SIGNING_PASS% ^
 REM     /tr %SIGNING_TIMESTAMP_SERVER% ^
 REM     /td %SIGNING_TIMESTAMP_ALG% ^
 REM     %STRATA_ONLINE_BINARY%
-REM     
+REM
 REM IF %ERRORLEVEL% NEQ 0 (
 REM     echo "======================================================================="
 REM     echo " Failed to sign the online installer %STRATA_ONLINE_BINARY%!"
@@ -603,7 +603,7 @@ if %BUILD_CLEANUP% EQU 1 (
     )
 )
 
-    
+
 echo "======================================================================="
 echo " OTA build finished"
 echo "======================================================================="

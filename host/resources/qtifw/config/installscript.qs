@@ -4,7 +4,7 @@ var delayStart = 0;
 
 function isValueSet(val)
 {
-    return (installer.containsValue(val) && ((installer.value(val).toLowerCase() == "true") || (installer.value(val) == "1")));
+    return ((installer.containsValue(val) == true) && ((installer.value(val).toLowerCase() == "true") || (installer.value(val) == "1")));
 }
 
 // if we run installer, it will be in installer mode
@@ -14,24 +14,24 @@ function isValueSet(val)
 //  --manage-packages                        Start application in package manager
 
 function Controller()
-{    
-    if(isValueSet("isSilent")) {
+{
+    if (isValueSet("isSilent") == true) {
         isSilent = true;
         installer.setValue("isSilent_internal","true");
-        ;
     } else {
         installer.setValue("isSilent_internal","false");
     }
-    
-    if(isValueSet("startSDS"))
+
+    if (isValueSet("startSDS") == true) {
         startSDS = true;
+    }
 
     console.log("Is isSilent set: " + isSilent);
     console.log("Is startSDS set: " + startSDS);
-    
+
     installer.uninstallationFinished.connect(Controller.prototype.UninstallationFinished);
 
-    if (isSilent) {
+    if (isSilent == true) {
         installer.installationFinished.connect(Controller.prototype.InstallationPerformed);
         installer.uninstallationFinished.connect(Controller.prototype.InstallationPerformed);
 
@@ -40,28 +40,30 @@ function Controller()
         //installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
         //installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
     }
-    
-    var widget = gui.pageById(QInstaller.Introduction); // get the introduction wizard page
-    if (widget != null)
-        widget.packageManagerCoreTypeChanged.connect(onPackageManagerCoreTypeChanged);
 
-    if(installer.containsValue("delayStart") && installer.value("delayStart") != "0") {
+    var widget = gui.pageById(QInstaller.Introduction); // get the introduction wizard page
+    if (widget != null) {
+        widget.packageManagerCoreTypeChanged.connect(onPackageManagerCoreTypeChanged);
+    }
+
+    if ((installer.containsValue("delayStart") == true) && installer.value("delayStart") != "0") {
         console.log("delayStart: " + installer.value("delayStart"));
         delayStart = parseInt(installer.value("delayStart")) || 0;
-        if(delayStart < 0)
+        if (delayStart < 0) {
             delayStart = 0;
+        }
     }
-    
+
     console.log("Is delayStart set: " + delayStart);
 
     // restore all custom variables to defaults, because they are persistent through Strata Maintenance Tool.ini
-    if(installer.isInstaller()) {
+    if (installer.isInstaller() == true) {
         // keep these as they were set unless it is installer
         installer.setValue("add_start_menu_shortcut", "true");
         installer.setValue("add_desktop_shortcut", "true");
     }
     installer.setValue("restart_is_required", "false");
-    
+
     // we already saved their values, so we can return them back to default now
     installer.setValue("isSilent", "false");
     installer.setValue("startSDS", "false");
@@ -80,8 +82,8 @@ Controller.prototype.IntroductionPageCallback = function()
     console.log("IntroductionPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
-        if(installer.isInstaller()) {
-            if (systemInfo.productType === "windows") {
+        if (installer.isInstaller() == true) {
+            if (systemInfo.productType == "windows") {
                 widget.MessageLabel.setText("Welcome to the " + installer.value("Name") + " Setup Wizard.\n\n"
                                         + "This will install the following on your computer: \n"
                                         + "  1) Strata Developer Studio\n"
@@ -108,27 +110,30 @@ Controller.prototype.IntroductionPageCallback = function()
         }
     }
 
-    if (isSilent) {
-        if(delayStart == 0)
+    if (isSilent == true) {
+        if (delayStart == 0) {
             gui.clickButton(buttons.NextButton);
-        else
+        } else {
             gui.clickButton(buttons.NextButton, delayStart);
+        }
     }
 }
 
 Controller.prototype.WelcomePageCallback = function ()
 {
     console.log("WelcomePageCallback entered");
-    if (isSilent)
+    if (isSilent == true) {
         gui.clickButton(buttons.NextButton, 3000);
+    }
 }
 
 Controller.prototype.TargetDirectoryPageCallback = function ()
 {
     console.log("TargetDirectoryPageCallback entered");
     installer.setValue("RemoveTargetDir","false");
-    if (isSilent)
+    if (isSilent == true) {
         gui.clickButton(buttons.NextButton);
+    }
 }
 
 Controller.prototype.ComponentSelectionPageCallback = function ()
@@ -136,7 +141,7 @@ Controller.prototype.ComponentSelectionPageCallback = function ()
     console.log("ComponentSelectionPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
-        if (isSilent) {
+        if (isSilent == true) {
             // select the ui components
             widget.selectAll();
             //widget.selectComponent("com.onsemi.strata.devstudio");
@@ -149,12 +154,13 @@ Controller.prototype.LicenseAgreementPageCallback = function ()
 {
     console.log("LicenseAgreementPageCallback entered");
     installer.setValue("RemoveTargetDir","true");
-    if (isSilent) {
+    if (isSilent == true) {
         var widget = gui.currentPageWidget();
         if (widget != null) {
             var licenseRadioButton = widget.findChild("AcceptLicenseRadioButton");
-            if(licenseRadioButton != null)
+            if (licenseRadioButton != null) {
                 licenseRadioButton.setChecked(true);
+            }
         }
         gui.clickButton(buttons.NextButton);
     }
@@ -163,31 +169,34 @@ Controller.prototype.LicenseAgreementPageCallback = function ()
 Controller.prototype.StartMenuDirectoryPageCallback = function ()
 {
     console.log("StartMenuDirectoryPageCallback entered");
-    if (isSilent)
+    if (isSilent) {
         gui.clickButton(buttons.NextButton);
+    }
 }
 
 Controller.prototype.ReadyForInstallationPageCallback = function ()
 {
     console.log("ReadyForInstallationPageCallback entered");
-    if (isSilent)
+    if (isSilent == true) {
         gui.clickButton(buttons.NextButton);
+    }
 }
 
 Controller.prototype.PerformInstallationPageCallback = function ()
 {
     console.log("PerformInstallationPageCallback entered");
-    //if (isSilent)
+    //if (isSilent == true) {
     //    gui.clickButton(buttons.CommitButton);
+    //}
 }
 
 Controller.prototype.InstallationPerformed = function ()
 {
     console.log("InstallationPerformed entered");
-    if (isSilent) {
+    if (isSilent == true) {
         var widget = gui.pageById(QInstaller.PerformInstallation);
         var widget_cmp = gui.currentPageWidget();
-        if(widget === widget_cmp) {
+        if (widget === widget_cmp) {
             console.log("InstallationPerformed clicking next button");
             gui.clickButton(buttons.NextButton, 2000);    // timer to avoid double clicking
         }
@@ -198,76 +207,88 @@ Controller.prototype.UninstallationFinished = function()
 {
     console.log("UninstallationFinished entered");
 
-    if(installer.status != QInstaller.Success)
+    if (installer.status != QInstaller.Success) {
         return;
+    }
 
-    if(installer.fileExists(installer.value("TargetDir")) == false)
+    if (installer.fileExists(installer.value("TargetDir")) == false) {
         return;
+    }
 
     var requires_admin_rights = false;
     var target_dir = installer.value("TargetDir") + "/";
     var delete_dir_cmd = "rd";
     var delete_file_cmd = "del";
-    if(systemInfo.productType == "windows") {
+    if (systemInfo.productType == "windows") {
         target_dir = target_dir.split("/").join("\\");
     } else {
         delete_dir_cmd = "rm";
         delete_file_cmd = "rm";
     }
-    
+
     var tempFile = target_dir + "tempFile.XXX";
     installer.execute("cmd", ["/c", "echo > ", tempFile]);
-    if(installer.fileExists(tempFile)) {
+    if (installer.fileExists(tempFile) == true) {
         console.log("tempFile created: " + tempFile + ", no need to elevate with admin rights");
         console.log(installer.execute("cmd", ["/c", "del", tempFile]));
     } else {
         console.log("tempFile not created: " + tempFile + ", elevating with admin rights");
-        if(systemInfo.productType == "windows") {
+        if (systemInfo.productType == "windows") {
             requires_admin_rights = true;
             installer.gainAdminRights();
         }
     }
 
-    if(installer.fileExists(target_dir + installer.value("MaintenanceToolName") + ".ini"))
+    if (installer.fileExists(target_dir + installer.value("MaintenanceToolName") + ".ini") == true) {
         installer.execute("cmd", ["/c", delete_file_cmd, target_dir + installer.value("MaintenanceToolName") + ".ini"]);
+    }
 
-    if(installer.fileExists(target_dir + installer.value("MaintenanceToolName") + ".dat"))
+    if (installer.fileExists(target_dir + installer.value("MaintenanceToolName") + ".dat") == true) {
         installer.execute("cmd", ["/c", delete_file_cmd, target_dir + installer.value("MaintenanceToolName") + ".dat"]);
+    }
 
-    if(installer.fileExists(target_dir + "network.xml"))
+    if (installer.fileExists(target_dir + "network.xml") == true) {
         installer.execute("cmd", ["/c", delete_file_cmd, target_dir + "network.xml"]);
+    }
 
-    if(installer.fileExists(target_dir + "installer.dat"))
+    if (installer.fileExists(target_dir + "installer.dat") == true) {
         installer.execute("cmd", ["/c", delete_file_cmd, target_dir + "installer.dat"]);
+    }
 
-    if(installer.fileExists(target_dir + "InstallationLog.txt"))
+    if (installer.fileExists(target_dir + "InstallationLog.txt") == true) {
         installer.execute("cmd", ["/c", delete_file_cmd, target_dir + "InstallationLog.txt"]);
+    }
 
-    if(installer.fileExists(target_dir + "installerResources"))
+    if (installer.fileExists(target_dir + "installerResources") == true) {
         installer.execute("cmd", ["/c", delete_dir_cmd, target_dir + "installerResources"]);
+    }
 
-    if((systemInfo.productType == "windows") && installer.fileExists(target_dir + "desktop.ini"))
+    if ((systemInfo.productType == "windows") && (installer.fileExists(target_dir + "desktop.ini") == true)) {
         installer.execute("cmd", ["/c", delete_file_cmd, target_dir + "desktop.ini"]);
+    }
 
-    if((systemInfo.productType == "osx") && installer.fileExists(target_dir + ".DS_Store"))
+    if ((systemInfo.productType == "osx") && (installer.fileExists(target_dir + ".DS_Store") == true)) {
         installer.execute("cmd", ["/c", delete_file_cmd, target_dir + ".DS_Store"]);
+    }
 
-    if((systemInfo.productType == "osx") && installer.fileExists(installer.value("TargetDir")))
+    if ((systemInfo.productType == "osx") && (installer.fileExists(installer.value("TargetDir")) == true)) {
         installer.execute("cmd", ["/c", delete_dir_cmd, installer.value("TargetDir")]);
+    }
 
-    if(requires_admin_rights == true)
+    if (requires_admin_rights == true) {
         installer.dropAdminRights();
+    }
 }
 
 function isComponentInstalled(component_name)
 {
     var component = installer.componentByName(component_name);
-    if(component != null) {
+    if (component != null) {
         var installed = component.isInstalled();
         console.log("component '" + component_name + "' found and is installed: " + installed);
         return installed;
     }
-    
+
     console.log("component '" + component_name + "' NOT found");
     return false;
 }
@@ -281,15 +302,17 @@ Controller.prototype.FinishedPageCallback = function ()
                                     + "Thank you for using ON Semiconductor. If you have any questions or in need of support, please contact your local sales representative.\n\n"
                                     + "Copyright " + (new Date().getFullYear()) + "\n\n"
                                     );
-        if(installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) {
+        if ((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true)) {
             var runItCheckBox = widget.findChild("RunItCheckBox");
-            if((runItCheckBox != null) && isComponentInstalled("com.onsemi.strata.devstudio"))
+            if ((runItCheckBox != null) && isComponentInstalled("com.onsemi.strata.devstudio") == true) {
                 runItCheckBox.setChecked(startSDS);
+            }
         }
     }
 
-    if (isSilent)
+    if (isSilent == true) {
         gui.clickButton(buttons.FinishButton);
+    }
 }
 
 function isComponentAvailable(component_name)
@@ -302,12 +325,12 @@ function isComponentAvailable(component_name)
     // boolean isUninstalled()
 
     var component = installer.componentByName(component_name);
-    if(component != null) {
+    if (component != null) {
         var available = component.installationRequested() || component.updateRequested() || (component.isInstalled() && !component.uninstallationRequested());
         console.log("component '" + component_name + "' found and is available: " + available);
         return available;
     }
-    
+
     console.log("component '" + component_name + "' NOT found");
     return false;
 }
@@ -318,8 +341,8 @@ Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
     var widget = gui.currentPageWidget();
     if (widget != null) {
         var desktopCheckBox = widget.findChild("desktopCheckBox");
-        if(desktopCheckBox != null) {
-            if(isComponentAvailable("com.onsemi.strata.devstudio") == true) {
+        if (desktopCheckBox != null) {
+            if (isComponentAvailable("com.onsemi.strata.devstudio") == true) {
                 desktopCheckBox.setEnabled(true);
                 desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "true");
             } else {
@@ -328,10 +351,12 @@ Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
             }
         }
         var startMenuCheckBox = widget.findChild("startMenuCheckBox");
-        if(startMenuCheckBox != null)
+        if (startMenuCheckBox != null) {
             startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut") == "true");
+        }
     }
 
-    if (isSilent)
+    if (isSilent == true) {
         gui.clickButton(buttons.NextButton);
+    }
 }
