@@ -17,53 +17,15 @@ Rectangle {
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
     color: "#ccc"
-
-    //    SGStrataPopup {
-    //        id: root
-    //        padding: 10
-    //        headerText: "Invalid Project Path"
-    //        visible: false
-    //        width: parent.width/3
-    //        height: parent.height/5
-    //        anchors.centerIn: parent
-    //        headerColor.color: "red"
-    //        onClosed : {
-    //            root.close()
-    //            removeFromProjectList(fileModel.url.toString())
-    //        }
-
-    //        contentItem: ColumnLayout {
-    //            id: mainColumn
-    //            Rectangle{
-    //                Layout.preferredWidth: parent.width
-    //                Layout.preferredHeight: parent.height - 20
-    //                SGText{
-    //                    font {
-    //                        pixelSize: 15
-    //                        family: Fonts.franklinGothicMedium
-    //                    }
-    //                    width: parent.width
-    //                    wrapMode: Text.WordWrap
-    //                    anchors.centerIn: parent
-    //                    text: qsTr("This project does not exist anymore. Removing it from your recent projects...")
-    //                    verticalAlignment: Text.AlignVCenter
-    //                    color: "black"
-    //                }
-    //            }
-    //        }
-    //    }
-    SGNotificationToast {
-        id: root
-        width: parent.width/1.5
-        height: 40
-        interval : 3000
-        anchors {
-            top: parent.top
-            horizontalCenter: parent.horizontalCenter
+    onVisibleChanged: {
+        if(!openProjectContainer.visible) {
+            alertMessage.visible = false
         }
-        z:3
-        color : "red"
-        text : "This project does not exist anymore. Removing it from your recent projects..."
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: alertMessage.visible = false
     }
 
     Component.onCompleted:  {
@@ -110,9 +72,29 @@ Rectangle {
             }
         }
     }
-
+    SGNotificationToast {
+        id: alertMessage
+        width: parent.width/1.5
+        height: 40
+        interval : 0
+        anchors {
+            top: recentProjColumn.top
+            topMargin: 44
+            horizontalCenter: parent.horizontalCenter
+        }
+        z:3
+        color : "red"
+        text : "This project does not exist anymore. Removing it from your recent projects..."
+        MouseArea {
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            anchors.fill: alertMessage
+            onClicked: alertMessage.visible = false
+        }
+    }
 
     ColumnLayout {
+        id:recentProjColumn
         anchors {
             fill: parent
             margins: 20
@@ -220,7 +202,7 @@ Rectangle {
                         }
                         else  {
                             if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(fileModel.url))) {
-                                root.show()
+                                alertMessage.visible = true
                                 removeFromProjectList(fileModel.url.toString())
                             }
                             else {
