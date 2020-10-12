@@ -319,7 +319,6 @@ function updateState(event, data)
                 let view_index = -1
                 let connected_view
 
-
                 // Find view bound to this device, set connected
                 // OR if none found, find view matching class_id, bind to it, set connected
                 for (let j = 0; j < platform_view_model_.count; j++) {
