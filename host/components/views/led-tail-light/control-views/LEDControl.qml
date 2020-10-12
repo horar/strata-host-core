@@ -1019,7 +1019,6 @@ Item {
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
-                                //text: "Gobal Current Set (ISET)"
                                 SGSlider {
                                     id: gobalCurrentSetSlider
                                     width: gobalCurrentSetContainer.width/1.2
@@ -1180,7 +1179,6 @@ Item {
                             SGAlignedLabel {
                                 id: lockPWMDutyENLabel
                                 target: lockPWMDutyEN
-                                // text: "Lock PWM EN Together"
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors {
                                     left: parent.left
@@ -1388,8 +1386,6 @@ Item {
                                             pwmLinearLog.checked = false
                                             platformInterface.pwm_lin_state = false
                                         }
-
-
                                     }
                                 }
                             }
@@ -1401,7 +1397,6 @@ Item {
                             SGAlignedLabel {
                                 id: pwmFrequencyLabel
                                 target: pwmFrequency
-                                // text: "PWM Frequency (Hz)"
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors {
                                     left: parent.left
@@ -1593,13 +1588,10 @@ Item {
                                     SGAlignedLabel {
                                         id: openLoadLabel
                                         target: openLoadDiagnostic
-                                        //text: "I2C Open Load\nDiagnostic"
                                         alignment: SGAlignedLabel.SideTopCenter
-
                                         anchors {
                                             left: parent.left
                                             verticalCenter: parent.verticalCenter
-
                                         }
 
                                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -1608,8 +1600,6 @@ Item {
                                         SGComboBox {
                                             id: openLoadDiagnostic
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                            // model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
-
                                             onActivated: {
                                                 platformInterface.set_led_diag_mode.update(currentText)
                                             }
@@ -1655,13 +1645,10 @@ Item {
                                         }
                                     }
                                 }
-
                             }
-
                         }
                     }
                 }
-
             }
         }
 
@@ -1670,7 +1657,6 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
             color: "transparent"
-
             ColumnLayout {
                 anchors.fill: parent
                 anchors.right: parent.right
@@ -1680,7 +1666,6 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: parent.height/20
                     color: "transparent"
-
                     Text {
                         id: channelHeading
                         text: "Individual Channel Configuration"
@@ -1735,7 +1720,6 @@ Item {
                                             Layout.fillHeight: true
                                             SGText {
                                                 id: ledoutEnLabel
-                                                //text: "<b>" + qsTr("OUT EN") + "</b>"
                                                 font.bold: true
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
@@ -2069,12 +2053,10 @@ Item {
                                                                                                   platformInterface.outputPwm10,
                                                                                                   platformInterface.outputPwm11])
                                                 }
-
-
                                             }
                                         }
                                     }
-                                } //end
+                                }
 
 
                                 Rectangle{
@@ -2322,12 +2304,10 @@ Item {
                                                                                                   platformInterface.outputPwm10,
                                                                                                   platformInterface.outputPwm11])
                                                 }
-
                                             }
                                         }
-
                                     }
-                                } //end
+                                }
 
 
                                 Rectangle {
@@ -2362,7 +2342,6 @@ Item {
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
-
                                                 onToggled: {
                                                     if(checked) {
                                                         platformInterface.set_led_out_en.update(
@@ -2400,7 +2379,6 @@ Item {
                                                         platformInterface.outputEnable9 = false
 
                                                     }
-
                                                 }
                                             }
                                         }
@@ -2576,11 +2554,8 @@ Item {
                                                                                                   platformInterface.outputPwm11])
                                                 }
 
-
-
                                             }
                                         }
-
                                     }
                                 }
 
@@ -2653,8 +2628,6 @@ Item {
                                                         platformInterface.outputEnable8 = false
 
                                                     }
-
-
                                                 }
                                             }
                                         }
@@ -2719,7 +2692,6 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-
                                             SGSwitch {
                                                 id: out8pwmEnableLED
                                                 labelsInside: true
@@ -2848,7 +2820,6 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/10
-                                            //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT8") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -2889,7 +2860,6 @@ Item {
                                                                      platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
-
                                                                     ] )
                                                         platformInterface.outputEnable7 = true
                                                     }
@@ -2933,7 +2903,6 @@ Item {
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
-
                                                 onToggled: {
                                                     if(checked) {
                                                         platformInterface.set_led_ext.update(
@@ -2949,7 +2918,6 @@ Item {
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
-
                                                                     ] )
                                                         platformInterface.outputExt7 = true
                                                     }
@@ -3059,9 +3027,7 @@ Item {
                                                     setStateForPWMDuty(out7duty,led_pwm_duty_states7[7])
                                                 }
 
-
                                                 onUserSet: {
-
                                                     platformInterface.outputDuty7 =  out7duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -3371,7 +3337,6 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/10
-                                            //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT6") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -3890,7 +3855,6 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/10
-                                            //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT4") + "</b>"
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -4100,10 +4064,7 @@ Item {
                                                 onLed_pwm_duty_states3Changed: {
                                                     setStateForPWMDuty(out3duty,led_pwm_duty_states3[3])
                                                 }
-
-
-                                                onUserSet:
-                                                {
+                                                onUserSet: {
                                                     platformInterface.outputDuty3 =  out3duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -4683,9 +4644,6 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            // color: "blue"
-
-
                                             SGSwitch {
                                                 id: out0ENLED
                                                 labelsInside: true
@@ -4734,10 +4692,7 @@ Item {
 
                                                                     ] )
                                                         platformInterface.outputEnable0 = false
-
                                                     }
-
-
                                                 }
                                             }
                                         }
@@ -4774,7 +4729,6 @@ Item {
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
-
                                                                     ] )
                                                         platformInterface.outputExt0 = true
                                                     }
@@ -4792,7 +4746,6 @@ Item {
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
-
                                                                     ] )
                                                         platformInterface.outputExt0 = false
 
@@ -4849,11 +4802,7 @@ Item {
                                                                                                   platformInterface.outputPwm11])
 
                                                 }
-
-
                                             }
-
-
                                         }
 
                                         Rectangle {
@@ -4930,8 +4879,6 @@ Item {
                                 }
                             }
                         }
-
-
                     }
                 }
 
@@ -4986,7 +4933,6 @@ Item {
                                 SGAlignedLabel {
                                     id: scIsetLabel
                                     target: scIset
-                                    //text:  "SC_Iset"
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
@@ -4997,7 +4943,6 @@ Item {
                                         width: 30
 
                                         property var led_sc_iset: platformInterface.led_sc_iset
-
                                         onLed_sc_isetChanged: {
                                             scIsetLabel.text =  led_sc_iset_caption
 
@@ -5018,7 +4963,6 @@ Item {
                                         property var led_sc_iset_states: platformInterface.led_sc_iset_states.states
                                         onLed_sc_iset_statesChanged: {
                                             setStatesForControls(scIsetLabel,led_sc_iset_states[0])
-                                            //
                                         }
 
                                         property var led_sc_iset_value: platformInterface.led_sc_iset_value.value
@@ -5040,7 +4984,6 @@ Item {
                                 SGAlignedLabel {
                                     id: i2CerrLabel
                                     target: i2Cerr
-                                    //text:  "I2Cerr"
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
@@ -5054,19 +4997,6 @@ Item {
                                         onLed_i2cerrChanged: {
                                             i2CerrLabel.text =  led_i2cerr.caption
                                             setStatesForControls(i2CerrLabel,led_i2cerr.states[0])
-                                            //                                            if(led_i2cerr.state === "enabled") {
-                                            //                                                i2CerrLabel.enabled = true
-                                            //                                                i2CerrLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else if (led_i2cerr.state === "disabled") {
-                                            //                                                i2CerrLabel.enabled = false
-                                            //                                                i2CerrLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                i2CerrLabel.enabled = false
-                                            //                                                i2CerrLabel.opacity = 0.5
-                                            //                                            }
-
                                             if(led_i2cerr.value === false) {
                                                 i2Cerr.status = SGStatusLight.Off
                                             }
@@ -5076,8 +5006,6 @@ Item {
                                         property var led_i2cerr_caption: platformInterface.led_i2cerr_caption.caption
                                         onLed_i2cerr_captionChanged: {
                                             i2CerrLabel.text =  led_i2cerr_caption
-
-
                                         }
 
                                         property var led_i2cerr_states: platformInterface.led_i2cerr_states.states
@@ -5102,7 +5030,6 @@ Item {
                                 SGAlignedLabel {
                                     id: uvLabel
                                     target: uv
-                                    //text:  "UV"
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
@@ -5197,7 +5124,6 @@ Item {
                                 SGAlignedLabel {
                                     id: twLabel
                                     target: tw
-
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
@@ -5245,7 +5171,6 @@ Item {
                                 SGAlignedLabel {
                                     id: tsdLabel
                                     target: tsd
-
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
@@ -5254,8 +5179,6 @@ Item {
                                     SGStatusLight {
                                         id: tsd
                                         width: 30
-
-
                                         property var led_tsd: platformInterface.led_tsd
                                         onLed_tsdChanged: {
                                             tsdLabel.text =  led_tsd_caption
@@ -5351,7 +5274,6 @@ Item {
                                     SGStatusLight {
                                         id: ol
                                         width: 30
-
                                         property var led_ol: platformInterface.led_ol
                                         onLed_olChanged: {
                                             olLabel.text =  led_ol.caption

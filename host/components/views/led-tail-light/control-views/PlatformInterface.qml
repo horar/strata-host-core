@@ -1614,7 +1614,6 @@ Item {
         "value": false
     }
 
-
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

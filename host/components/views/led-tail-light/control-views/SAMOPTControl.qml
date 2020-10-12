@@ -72,7 +72,6 @@ Item {
         }
     }
 
-
     MouseArea {
         id: containMouseArea
         anchors.fill:root
@@ -172,11 +171,6 @@ Item {
         platformInterface.soc_sam_conf_1_out10 = soc_sam_conf_1_values[9]
         platformInterface.soc_sam_conf_1_out11 = soc_sam_conf_1_values[10]
         platformInterface.soc_sam_conf_1_out12 = soc_sam_conf_1_values[11]
-
-
-
-
-
     }
 
     property var soc_sam_conf_1_state: platformInterface.soc_sam_conf_1_states.states
@@ -254,7 +248,6 @@ Item {
         samOut11.checked = soc_sam_conf_2_values[10]
         samOut12.checked = soc_sam_conf_2_values[11]
 
-
         platformInterface.soc_sam_conf_2_out1 = soc_sam_conf_2_values[0]
         platformInterface.soc_sam_conf_2_out2 = soc_sam_conf_2_values[1]
         platformInterface.soc_sam_conf_2_out3 = soc_sam_conf_2_values[2]
@@ -286,8 +279,6 @@ Item {
         setStatesForControls(samOut11,soc_sam_conf_2_state[10])
         setStatesForControls(samOut12,soc_sam_conf_2_state[11])
     }
-
-
 
     property var soc_otp_popup: platformInterface.soc_otp_popup
     onSoc_otp_popupChanged: {
@@ -324,7 +315,6 @@ Item {
             color: "transparent"
             anchors {
                 top: parent.top
-                // topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
             width: warningPopupContainerVDD.width - 50
@@ -364,7 +354,6 @@ Item {
                     bottomMargin: 10
                 }
                 color: "transparent"
-
                 RowLayout {
                     anchors.fill: parent
                     Rectangle{
@@ -377,13 +366,12 @@ Item {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "transparent"
-
                     }
+
                     Rectangle{
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "transparent"
-
                         SGButton {
                             id: reconnectButton
                             width: parent.width/1.5
@@ -395,7 +383,6 @@ Item {
                             roundedLeft: true
                             roundedRight: true
                             onClicked: {
-
                                 if(i2cStandalone.checked)
                                     platformInterface.set_soc_mode.update("I2C")
                                 else  platformInterface.set_soc_mode.update("SAM")
@@ -405,9 +392,7 @@ Item {
                 }
             }
         }
-
     }
-
 
     Popup {
         id: warningPopupOTP
@@ -432,7 +417,6 @@ Item {
             color: "transparent"
             anchors {
                 top: parent.top
-                // topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
             width: warningPopupContainerOTP.width - 50
@@ -461,7 +445,6 @@ Item {
                     font.bold: true
                 }
             }
-
 
             Rectangle {
                 id: selectionContainerForPopupOTP
@@ -537,7 +520,6 @@ Item {
             color: "transparent"
             anchors {
                 top: parent.top
-                // topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
             width: warningPopupContainer.width - 50
@@ -562,7 +544,6 @@ Item {
                     fontSizeMode: Text.Fit
                     width: parent.width
                     font.family: "Helvetica Neue"
-
                     font.pixelSize: ratioCalc * 15
                     font.bold: true
                 }
@@ -582,7 +563,6 @@ Item {
 
                 RowLayout {
                     anchors.fill: parent
-
                     Rectangle{
                         Layout.fillHeight: true
                         Layout.fillWidth: true
@@ -596,12 +576,10 @@ Item {
                             color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                             roundedLeft: true
                             roundedRight: true
-
                             onClicked: {
                                 warningPopup.close()
                             }
                         }
-
                     }
 
                     Rectangle{
@@ -620,15 +598,12 @@ Item {
                             width: parent.width/2
                             height:parent.height
                             anchors.centerIn: parent
-
                             text: "Continue"
                             color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                             roundedLeft: true
                             roundedRight: true
-
                             onClicked: {
                                 warningPopup.close()
-
                                 platformInterface.set_soc_write.update(
                                             true,
                                             [platformInterface.soc_sam_conf_1_out1,
@@ -662,12 +637,9 @@ Item {
                                             platformInterface.soc_crcValue,
                                             platformInterface.addr_curr_apply)
 
-
                             }
                         }
-
                     }
-
                 }
             }
         }
@@ -677,12 +649,10 @@ Item {
         width: parent.width/1.1
         height: parent.height/1.2
         anchors.centerIn: parent
-
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
             color: "transparent"
-
             Text {
                 id: i2cConfigHeading
                 text: "I2C Configuration"
@@ -721,8 +691,6 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-
-
                     SGAlignedLabel {
                         id: enableCRCLabel
                         target: enableCRC
@@ -733,10 +701,7 @@ Item {
                             verticalCenter: parent.verticalCenter
                             leftMargin: 20
                         }
-
-                        Component.onCompleted: {
-                            fontSizeMultiplier = Qt.binding(function(){ return ratioCalc * 1.2})
-                        }
+                        Component.onCompleted: { fontSizeMultiplier = Qt.binding(function(){ return ratioCalc * 1.2}) }
                         font.bold : true
                         SGSwitch {
                             id: enableCRC
@@ -747,12 +712,8 @@ Item {
                             handleColor: "white"            // Default: "white"
                             grooveColor: "#ccc"             // Default: "#ccc"
                             grooveFillColor: "#0cf"         // Default: "#0cf"
-
-                            Component.onCompleted: {
-                                fontSizeMultiplier = Qt.binding(function(){ return (ratioCalc * 1.2).toFixed(2)})
-                            }
+                            Component.onCompleted: { fontSizeMultiplier = Qt.binding(function(){ return (ratioCalc * 1.2).toFixed(2)})  }
                             onToggled: {
-                                console.log("fontSizeMultiplier2",fontSizeMultiplier,width,height)
                                 platformInterface.soc_crcValue = checked
                                 platformInterface.set_soc_write.update(
                                             false,
@@ -852,22 +813,17 @@ Item {
                             setStatesForControls(current7bit,soc_addr_curr.states[0])
                             current7bit.text = toHex(soc_addr_curr.value)
                             platformInterface.addr_curr = soc_addr_curr.value
-
                         }
-
                         property var soc_addr_curr_caption: platformInterface.soc_addr_curr_caption.caption
                         onSoc_addr_curr_captionChanged: {
                             text = soc_addr_curr_caption
                         }
-
                         property var soc_addr_curr_state: platformInterface.soc_addr_curr_states.states
                         onSoc_addr_curr_stateChanged: {
                             setStatesForControls(current7bit,soc_addr_curr_state[0])
                         }
-
                         property var soc_addr_curr_value: platformInterface.soc_addr_curr_value.value
                         onSoc_addr_curr_valueChanged: {
-                            console.log("curr_value",soc_addr_curr_value)
                             current7bit.text = toHex(soc_addr_curr_value)
                             platformInterface.addr_curr = soc_addr_curr_value
 
@@ -896,9 +852,6 @@ Item {
                             validator: RegExpValidator { regExp: /[0-9A-Fa-f]+/ }
                             onEditingFinished: {
                                 var hexTodecimal = parseInt(text, 16)
-                                console.log(text)
-                                console.log(hexTodecimal)
-
                                 if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
                                     console.log(text.toString(16).toUpperCase())
                                     new7bit.text = toHex(platformInterface.soc_addr_new.scales[0]).toUpperCase()
@@ -932,7 +885,6 @@ Item {
                         onSoc_addr_newChanged: {
                             new7bitLabel.text = soc_addr_new.caption
                             setStatesForControls(new7bit,soc_addr_new.states[0])
-
                             new7bit.text =  toHex(soc_addr_new.value)
                             platformInterface.addr_curr_apply = parseInt(new7bit.text , 16)
                         }
@@ -945,14 +897,12 @@ Item {
                         property var soc_addr_new_state: platformInterface.soc_addr_new_states.states
                         onSoc_addr_new_stateChanged: {
                             setStatesForControls(new7bit,soc_addr_new_state[0])
-
                         }
 
                         property var soc_addr_new_value: platformInterface.soc_addr_new_value.value
                         onSoc_addr_new_valueChanged: {
                             new7bit.text =  toHex(soc_addr_new_value)
                             platformInterface.addr_curr_apply = parseInt(new7bit.text , 16)
-                            console.log(platformInterface.addr_curr_apply)
                         }
 
                     }
@@ -976,12 +926,8 @@ Item {
                             anchors.fill: parent
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
-                                // controlNavigation.i2cAddressText = new7bit.text
                                 var hexTodecimal = parseInt(new7bit.text, 16)
-                                console.log(new7bit.text.toUpperCase())
-                                console.log(hexTodecimal)
                                 if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
-                                    console.log(new7bit.text.toString(16))
                                     new7bit.text = toHex(platformInterface.soc_addr_new.scales[0]).toUpperCase()
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
@@ -1028,7 +974,6 @@ Item {
                                             platformInterface.addr_curr_apply)
 
                             }
-
                         }
                     }
                 }
@@ -1083,7 +1028,6 @@ Item {
                             SGAlignedLabel {
                                 id: i2cStandaloneLabel
                                 target: i2cStandalone
-                                // text: "I2C/Standalone\n(I2CFLAG)"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors {
                                     left: parent.left
@@ -1102,7 +1046,6 @@ Item {
                                     grooveFillColor: "#0cf"         // Default: "#0cf"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     onToggled: {
-                                        console.log("fontSizeMultiplier1",fontSizeMultiplier,width,height)
                                         if(checked)
                                             platformInterface.set_soc_mode.update("I2C")
                                         else platformInterface.set_soc_mode.update("SAM")
@@ -1142,8 +1085,6 @@ Item {
                                         i2cStandalone.checked = true
                                     else  i2cStandalone.checked = false
                                 }
-
-
                             }
                         }
 
@@ -1153,10 +1094,8 @@ Item {
                             SGAlignedLabel {
                                 id: samConfigLabel
                                 target: samConfig
-                                // text: "SAM\n(Configuration)"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors {
-                                    //top:parent.top
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
                                     leftMargin: 20
@@ -1168,8 +1107,6 @@ Item {
                                 SGSwitch {
                                     id: samConfig
                                     labelsInside: true
-                                    //checkedLabel: "SAM1"
-                                    //uncheckedLabel: "SAM2"
                                     textColor: "black"              // Default: "black"
                                     handleColor: "white"            // Default: "white"
                                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -1187,7 +1124,6 @@ Item {
                                     onSoc_confChanged: {
                                         samConfigLabel.text = soc_conf.caption
                                         setStatesForControls(samConfig,soc_conf.states[0])
-
                                         samConfig.checkedLabel = soc_conf.values[0]
                                         samConfig.uncheckedLabel = soc_conf.values[1]
                                         if(soc_conf.value === "SAM1")
@@ -1268,18 +1204,14 @@ Item {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    // color: "green"
                     RowLayout{
                         id: sam1Row
                         anchors.fill: parent
-
                         Rectangle {
                             Layout.preferredWidth: parent.width/4
                             Layout.fillHeight: true
-
                             SGText {
                                 id:samconfi1Text
-                                //text: "<b>" + qsTr("SAM_CONF_1") + "</b>"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold: true
                                 anchors.verticalCenter: parent.verticalCenter
@@ -1404,7 +1336,6 @@ Item {
                                                     platformInterface.addr_curr)
                                     }
                                 }
-
                             }
                         }
 
@@ -1463,10 +1394,8 @@ Item {
                                                     platformInterface.addr_curr)
                                     }
                                 }
-
                             }
                         }
-
 
                         Rectangle {
                             Layout.fillHeight: true
@@ -1503,7 +1432,6 @@ Item {
                                                      platformInterface.soc_sam_conf_1_out10,
                                                      platformInterface.soc_sam_conf_1_out11,
                                                      platformInterface.soc_sam_conf_1_out12
-
                                                     ],
                                                     [platformInterface.soc_sam_conf_2_out1,
                                                      platformInterface.soc_sam_conf_2_out2,
@@ -1581,7 +1509,6 @@ Item {
                                                     platformInterface.addr_curr)
                                     }
                                 }
-
                             }
                         }
                         Rectangle {
@@ -1642,7 +1569,6 @@ Item {
                             }
                         }
 
-
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
@@ -1678,7 +1604,6 @@ Item {
                                                      platformInterface.soc_sam_conf_1_out10,
                                                      platformInterface.soc_sam_conf_1_out11,
                                                      platformInterface.soc_sam_conf_1_out12
-
                                                     ],
                                                     [platformInterface.soc_sam_conf_2_out1,
                                                      platformInterface.soc_sam_conf_2_out2,
@@ -1698,14 +1623,8 @@ Item {
                                                     platformInterface.addr_curr)
                                     }
                                 }
-
                             }
                         }
-
-
-
-
-
 
                         Rectangle {
                             Layout.fillHeight: true
@@ -1762,11 +1681,8 @@ Item {
                                                     platformInterface.addr_curr)
                                     }
                                 }
-
                             }
                         }
-
-
 
                         Rectangle {
                             Layout.fillHeight: true
@@ -1823,11 +1739,8 @@ Item {
                                                     platformInterface.addr_curr)
                                     }
                                 }
-
                             }
                         }
-
-
 
                         Rectangle {
                             Layout.fillHeight: true
@@ -1967,8 +1880,6 @@ Item {
                                     uncheckedLabel: "Off"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
-
-
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out1 = checked
                                         platformInterface.set_soc_write.update(
@@ -2005,10 +1916,8 @@ Item {
                                                     platformInterface.addr_curr)
                                     }
                                 }
-
                             }
                         }
-
                     }
                 }
                 Rectangle {
@@ -2018,14 +1927,11 @@ Item {
                     RowLayout{
                         id: sam2Row
                         anchors.fill: parent
-
                         Rectangle {
                             Layout.preferredWidth: parent.width/4
                             Layout.fillHeight: true
-
                             SGText {
                                 id: samConfig2Text
-                                // text: "<b>" + qsTr("SAM_CONF_2") + "</b>"
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 anchors.verticalCenter: parent.verticalCenter
                                 font.bold: true
@@ -2035,7 +1941,6 @@ Item {
                                     text = soc_sam_conf_2_caption
                                 }
                             }
-
                         }
                         Rectangle {
                             Layout.fillHeight: true
@@ -2635,9 +2540,7 @@ Item {
                                 }
                             }
                         }
-
-                    } // end of RowLayout
-
+                    }
                 }
             }
         }
@@ -2647,13 +2550,11 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-
             RowLayout {
                 anchors.fill: parent
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-
 
                     Text {
                         id: oneTimeProgramHeading

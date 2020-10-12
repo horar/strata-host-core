@@ -14,7 +14,6 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     property string voltageType: "Boost"
 
-
     Component.onCompleted: {
         Help.registerTarget(vedInputVoltageType, "Sets the VLED input voltage source for the LED driver. The power supply can be restarted if there is a Power Fault by clicking Reset VLED button or re-selecting the power supply type from this drop down. If there is no fault and the LEDs are not illuminated ensure:\n1) an external supply is provided for Buck and Bypass supplies\n2) the Boost supply is not overloaded\n3) the LED driver is configured to illuminate the LEDs on the LED Driver tab.\n\nBoost = Use onboard NCV5173 boost supply that is adjustable from 5.5 to 14V. The boost input voltage is supplied from the USB cable and a load switch prevents input currents higher than 400mA. The VLED Power Fault indicator will indicate an over current event. The maximum ILED current will be less than 400mA and depends on the set boost output voltage and efficiency of the boost regulator. Use Buck or Bypass power sources with external power supply for higher current applications. This is the default voltage source on boot.\n\nBuck = Use onboard NCV885301 buck supply that is adjustable from 2-18V. External voltage source that is greater than the user’s Buck Voltage Set value is required.\n\nBypass = Bypass both buck and boost input supplies to directly use externally supplied voltage source.", 0, "powerControlHelp")
         Help.registerTarget(resetButton, "Resets the VLED input supply specified in the VLED Input Voltage Type drop down.",1, "powerControlHelp")
@@ -66,7 +65,6 @@ Item {
             }
         }
     }
-
 
     function setStatesForControls (theId, index){
         if(index !== null && index !== undefined)  {
@@ -225,8 +223,6 @@ Item {
                                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                     onClicked: {
                                         platformInterface.set_power_vled_type.update(vedInputVoltageType.currentText)
-
-
                                     }
                                 }
                             }
@@ -293,10 +289,7 @@ Item {
                         onPower_voltage_set_valueChanged: {
                             voltageSet.value =  power_voltage_set_value
                         }
-
-
                     }
-
                 }
 
                 Rectangle {
@@ -319,9 +312,7 @@ Item {
                                 }
 
                                 fontSizeMultiplier: ratioCalc * 1.2
-                                //text: "Boost\nOCP"
                                 font.bold: true
-
                                 SGStatusLight {
                                     id: boostOCP
                                     width : 40
@@ -382,7 +373,6 @@ Item {
                                     horizontalCenterOffset: -20
                                 }
 
-
                                 SGStatusLight {
                                     id: vddPowerFault
                                     width : 40
@@ -420,7 +410,6 @@ Item {
                                             vddPowerFault.status = SGStatusLight.Off
                                         }
                                     }
-
                                 }
                             }
                         }
@@ -475,9 +464,6 @@ Item {
                                     property var power_tw_value: platformInterface.power_tw_value.value
                                     onPower_tw_valueChanged:{
                                         if(power_tw_value === true) {
-                                            //                                            if(!powerControl.visible) {
-                                            //                                                alertViewBadge.opacity = 1.0
-                                            //                                            }
                                             twPowerFault.status = SGStatusLight.Red
                                         }
                                         else {
@@ -532,9 +518,6 @@ Item {
                                     property var power_tsd_value: platformInterface.power_tsd_value.value
                                     onPower_tsd_valueChanged:{
                                         if(power_tsd_value === true) {
-                                            //                                            if(!powerControl.visible) {
-                                            //                                                alertViewBadge.opacity = 1.0
-                                            //                                            }
                                             tsdPowerFault.status = SGStatusLight.Red
                                         }
                                         else {
@@ -544,12 +527,8 @@ Item {
                                 }
                             }
                         }
-
-
                     }
                 }
-
-
             }
         }
 
@@ -794,8 +773,6 @@ Item {
                                         onPower_vconn_valueChanged:{
                                             batteryVoltage.text = power_vconn_value.toFixed(2)
                                         }
-
-
                                     }
                                 }
                             }
@@ -812,7 +789,6 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: ledCurrentLabel
-                                        //text: "LED Current\n(ILED)"
                                         target: ledCurrent
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
@@ -824,7 +800,6 @@ Item {
                                             width: 160 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>mA</b>"
-                                            //text: "500"
                                             boxFont.family: Fonts.digitalseven
                                         }
 
@@ -857,7 +832,6 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: supplyCurrentLabel
-                                        //text: "Supply Current\n(IS)"
                                         target: supplyCurrent
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
@@ -869,7 +843,6 @@ Item {
                                             width: 160 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>mA</b>"
-                                            //text: "500"
                                             boxFont.family: Fonts.digitalseven
                                         }
 
@@ -878,7 +851,6 @@ Item {
                                             supplyCurrentLabel.text = power_is.caption
                                             setStatesForControls(supplyCurrent,power_is.states[0])
                                             supplyCurrent.text = (power_is.value).toFixed(1)
-
                                         }
 
                                         property var power_is_caption: platformInterface.power_is_caption.caption
@@ -914,10 +886,7 @@ Item {
                                             width: 160 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>V</b>"
-                                            // text: "500"
                                             boxFont.family: Fonts.digitalseven
-
-
                                         }
 
                                         property var power_vcc: platformInterface.power_vcc
@@ -940,7 +909,6 @@ Item {
                                         property var power_vcc_value: platformInterface.power_vcc_value.value
                                         onPower_vcc_valueChanged:{
                                             voltage.text = power_vcc_value.toFixed(2)
-                                            console.log("testing", voltage.text, power_vcc_value, platformInterface.power_vcc_value.value)
                                         }
                                     }
                                 }
@@ -950,13 +918,8 @@ Item {
                                     Layout.fillWidth: true
                                 }
                             }
-
                         }
-
-
-
                     }
-
                 }
 
                 Rectangle {
@@ -972,7 +935,6 @@ Item {
                             SGAlignedLabel {
                                 id: ledDriverTempBottomLabel
                                 target: ledDriverTempBottom
-                                //text: "LED Driver Temp Bottom \n (°C)"
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -1058,8 +1020,6 @@ Item {
                                     id: tempGauge
                                     width: tempGaugeContainer.width
                                     height: tempGaugeContainer.height - tempGaugeLabel.contentHeight
-                                    //tickmarkStepSize: 10
-
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
@@ -1124,7 +1084,6 @@ Item {
                             SGAlignedLabel {
                                 id: powerLossGaugeLabel
                                 target: powerLoss
-                                //text: "Total Power Loss \n (W)"
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -1157,18 +1116,6 @@ Item {
                                     onPower_total_powerChanged: {
                                         powerLossGaugeLabel.text = power_total_power.caption
                                         setStatesForControls(powerLoss,power_total_power.states[0])
-                                        //                                        if(power_total_power.state === "enabled") {
-                                        //                                            powerLoss.opacity = 1.0
-                                        //                                            powerLoss.enabled = true
-                                        //                                        }
-                                        //                                        else if (power_total_power.state === "disabled") {
-                                        //                                            powerLoss.opacity = 1.0
-                                        //                                            powerLoss.enabled = false
-                                        //                                        }
-                                        //                                        else  {
-                                        //                                            powerLoss.opacity = 0.5
-                                        //                                            powerLoss.enabled = false
-                                        //                                        }
                                         powerLoss.maximumValue = power_total_power.scales[0]
                                         powerLoss.minimumValue = power_total_power.scales[1]
                                         powerLoss.tickmarkStepSize = power_total_power.scales[2]
@@ -1200,9 +1147,7 @@ Item {
                                 }
                             }
                         }
-
                     }
-
                 }
             }
         }

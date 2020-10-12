@@ -74,8 +74,6 @@ var uuid_map = {
     "245": "bldcMotorControl",
     "246": "meshNetwork",
     "265": "zigbee",
-    "led-tail-light" : "led-tail-light",
-
 
     /*****
         Real UUID generated from interaction with Deployment Portal (class_id)

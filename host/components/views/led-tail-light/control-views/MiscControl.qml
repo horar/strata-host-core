@@ -200,9 +200,7 @@ Item {
                                     oddChannelError.status = SGStatusLight.Off
                                 }
                             }
-
                         }
-
                     }
                 }
             }
@@ -277,13 +275,11 @@ Item {
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             font.bold: true
-
                             SGStatusLight {
                                 id: evenChannelError
                                 width : 40
 
                             }
-
                             property var misc_even_ch_error: platformInterface.misc_even_ch_error
                             onMisc_even_ch_errorChanged: {
                                 evenChannelErrorLabel.text = misc_even_ch_error.caption
