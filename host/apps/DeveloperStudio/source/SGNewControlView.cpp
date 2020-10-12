@@ -14,24 +14,23 @@ QString SGNewControlView::createNewProject(const QString &filepath, const QStrin
     QResource orgSrc(originPath);
     qrcpath_ = "";
 
-    QString path = filepath;
+    QString path = QDir::toNativeSeparators(QUrl(filepath).toLocalFile());
     // Updating the new path to ensure that this file path always has a seperator at the end
-    if(!filepath.endsWith(QDir::separator())){
-        path = filepath + QDir::separator();
+    if(!path.endsWith(QDir::separator())){
+        path = path + QDir::separator();
     }
-    rootpath_ = path;
 
-    const QUrl url(path);
     // Creates the new dir that will be the the new location path
-    QDir dir(url.path());
+    QDir dir(path);
     if(!dir.isRoot()){
         dir = QDir::root();
     }
 
-    if(!dir.cd(url.path())){
-        dir.mkpath(url.path());
-        dir.cd(url.path());
+    if(!dir.cd(path)){
+        dir.mkpath(path);
+        dir.cd(path);
     }
+     rootpath_ = path;
     // Copy files from templates selection
     QDir oldDir(orgSrc.absoluteFilePath());
     copyFiles(oldDir,dir,false);
