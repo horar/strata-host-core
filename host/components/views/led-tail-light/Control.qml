@@ -10,16 +10,13 @@ import tech.strata.fonts 1.0
 
 Item {
     id: controlNavigation
-    anchors {
-        fill: parent
-    }
+    anchors.fill: parent
 
     property real ratioCalc: controlNavigation.width / 1200
     property string i2cAddressText : "0x60"
     property string i2cCRCText: "Off"
     property int startUpPopupCount: 0
     property alias alertViewBadge: alertViewBadge
-
 
     PlatformInterface {
         id: platformInterface
@@ -34,20 +31,16 @@ Item {
             statusLog.model.get(j).color = "black"
         }
         statusLog.insert("I2C communication failed with 7-bit I2C Address = " + i2cAddressText + " and I2C CRC state = " + i2cCRCText, 0 , "red")
-
     }
 
     Component.onCompleted: {
         platformInterface.set_startup.update(96,false)
         platformInterface.set_mode.update("Car Demo")
-
-
     }
 
     property var startup: platformInterface.startup
     onStartupChanged: {
         if(startup.value === false){
-            console.log("i2cAddressText",i2cAddressText)
             if(startUpPopupCount != 0){
                 toSetThelof()
             }
@@ -55,7 +48,6 @@ Item {
             startUpPopupCount++
         }
         else startupWarningPopup.close()
-
     }
 
     property var mode_popup: platformInterface.mode_popup.value
@@ -113,7 +105,6 @@ Item {
         }
     }
 
-
     Popup {
         id: startupWarningPopup
         width: parent.width/2
@@ -122,8 +113,6 @@ Item {
         modal: true
         focus: false
         closePolicy: Popup.NoAutoClose
-
-
         background: Rectangle{
             id: startupWarningPopupContainer
             width: startupWarningPopup.width
@@ -181,11 +170,9 @@ Item {
                 anchors{
                     top: messageContainerForPopup.bottom
                     topMargin: 15
-
                     bottom: startupWarningPopupBox.Bottom
                     bottomMargin: 10
                 }
-
                 color:  "transparent"
 
                 RowLayout {
@@ -194,7 +181,6 @@ Item {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "transparent"
-
                         SGAlignedLabel {
                             id: new7bitLabel
                             target: new7bit
@@ -278,7 +264,6 @@ Item {
                                     }
                                     else i2cCRCText = "Off"
                                 }
-
                             }
                         }
                     }
@@ -300,31 +285,23 @@ Item {
 
                             onClicked: {
                                 var hexTodecimal = parseInt(new7bit.text, 16)
-                                console.log(new7bit.text)
-                                console.log(hexTodecimal)
                                 if(hexTodecimal > 127) {
-                                    console.log(text.toString(16))
                                     new7bit.text = toHex(127)
                                     i2cAddressText = "0x"+ toHex(127).toUpperCase()
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
-
                                 else if(hexTodecimal < 96){
                                     new7bit.text = toHex(96)
                                     i2cAddressText = "0x"+ toHex(96).toUpperCase()
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
                                 else if(hexTodecimal <= 127 && hexTodecimal >= 96){
-                                    console.log("new7bit.text",new7bit.text)
                                     new7bit.text = new7bit.text
                                     i2cAddressText = "0x"+ (new7bit.text).toUpperCase()
-                                    console.log(new7bit.text)
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
                                 platformInterface.set_startup.update(parseInt(new7bit.text, 16),enableCRC.checked)
                             }
-
-
                         }
                     }
                 }
@@ -411,10 +388,8 @@ Item {
                 sAMOPTControl.visible = false
                 miscControl.visible = false
                 platformInterface.manual_value  = false
-
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
-
                 if(miscViewBadge.opacity  != 1.0)
                     miscViewBadge.opacity = 0.0
             }
@@ -433,10 +408,8 @@ Item {
                 sAMOPTControl.visible = false
                 miscControl.visible = false
                 platformInterface.manual_value  = false
-
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
-
                 if(miscViewBadge.opacity  != 1.0)
                     miscViewBadge.opacity = 0.0
             }
@@ -457,7 +430,6 @@ Item {
                 miscControl.visible = false
                 alertViewBadge.opacity = 0.0
                 platformInterface.manual_value  = false
-
                 if(miscViewBadge.opacity  != 1.0)
                     miscViewBadge.opacity = 0.0
             }
@@ -482,10 +454,8 @@ Item {
                 sAMOPTControl.visible = true
                 miscControl.visible = false
                 platformInterface.manual_value  = false
-
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
-
                 if(miscViewBadge.opacity  != 1.0)
                     miscViewBadge.opacity = 0.0
             }
@@ -551,8 +521,8 @@ Item {
             id: miscControl
             visible: false
         }
-
     }
+
     SGIcon {
         id: helpIcon
         anchors {
@@ -566,12 +536,9 @@ Item {
         source:  "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
 
-
         MouseArea {
             id: helpMouse
-            anchors {
-                fill: helpIcon
-            }
+            anchors.fill: helpIcon
             onClicked: {
                 if(carDemoMode.visible)
                     Help.startHelpTour("carDemoHelp")
@@ -583,7 +550,6 @@ Item {
                     Help.startHelpTour("samoptHelp")
                 if(miscControl.visible)
                     Help.startHelpTour("miscHelp")
-
             }
             hoverEnabled: true
         }
