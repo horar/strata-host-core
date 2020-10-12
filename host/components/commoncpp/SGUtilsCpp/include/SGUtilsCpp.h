@@ -1,5 +1,4 @@
-#ifndef SGUTILSCPP_H
-#define SGUTILSCPP_H
+#pragma once
 
 #include <QObject>
 #include <QUrl>
@@ -33,5 +32,3 @@ public:
 private:
     const QStringList fileSizePrefixList_;
 };
-
-#endif  // SGUTILSCPP_H
