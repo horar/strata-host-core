@@ -15,12 +15,10 @@ QUrl SGNewControlView::createNewProject(const QString &filepath, const QString &
     // This is the current path of the origin directory in resources
     QResource orgSrc(originPath);
     qrcpath_ = "";
-    qDebug() << "Filepath:" << filepath;
 
     QString path = QDir::toNativeSeparators(QUrl(filepath).toLocalFile());
     // Updating the new path to ensure that this file path always has a seperator at the end
 
-    qDebug() << "Path" << path;
     if(!path.endsWith(QDir::separator())){
         path = path + QDir::separator();
     }
@@ -36,8 +34,7 @@ QUrl SGNewControlView::createNewProject(const QString &filepath, const QString &
         dir.cd(path);
     }
 
-    qDebug() << "Making path" << path;
-     rootpath_ = path;
+    rootpath_ = path;
     // Copy files from templates selection
     QDir oldDir(orgSrc.absoluteFilePath());
     copyFiles(oldDir,dir,false);
