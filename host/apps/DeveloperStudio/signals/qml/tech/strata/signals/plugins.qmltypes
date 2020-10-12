@@ -13,7 +13,7 @@ Module {
         isComposite: true
         isCreatable: false
         isSingleton: true
-        Signal { name: "connectionStatus"; Parameter {name: "status"; type: "int"}}
+        Signal { name: "connectionStatus"; Parameter {name: "status"; type: "int"} Parameter {name: "requestId"; type: "int"}}
         Signal { name: "loginResult"; Parameter {name: "result"; type: "string"}}
         Signal { name: "registrationResult"; Parameter {name: "result"; type: "string"}}
         Signal { name: "resetResult"; Parameter {name: "result"; type: "string"}}

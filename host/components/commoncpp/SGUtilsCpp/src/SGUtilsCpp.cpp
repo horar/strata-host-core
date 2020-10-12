@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QDateTime>
 #include <cmath>
+#include <QUuid>
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
     : QObject(parent),
@@ -138,4 +139,9 @@ QString SGUtilsCpp::formattedDataSize(qint64 bytes, int precision)
 QString SGUtilsCpp::formatDateTimeWithOffsetFromUtc(const QDateTime &dateTime, const QString &format)
 {
     return dateTime.toOffsetFromUtc(dateTime.offsetFromUtc()).toString(format);
+}
+
+QString SGUtilsCpp::generateUuid()
+{
+    return QUuid::createUuid().toString(QUuid::WithoutBraces);
 }
