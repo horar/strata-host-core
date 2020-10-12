@@ -681,7 +681,6 @@ Rectangle{
 
                         property var car_demo_right: platformInterface.car_demo.right
                         onCar_demo_rightChanged: {
-                            console.log("right clicked", platformInterface.right_value)
                             rightSignal.visible = car_demo_right
                         }
 
