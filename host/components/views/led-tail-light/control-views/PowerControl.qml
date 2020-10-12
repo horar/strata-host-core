@@ -43,11 +43,9 @@ Item {
 
     onWidthChanged: {
         filterHelpContainer1.update()
-
     }
     onHeightChanged: {
         filterHelpContainer1.update()
-
     }
 
     Connections {
@@ -321,9 +319,7 @@ Item {
 
                                 property var power_fault_vled: platformInterface.power_fault_vled
                                 onPower_fault_vledChanged: {
-                                    console.log(power_fault_vled.caption)
                                     boostOCPLabel.text = power_fault_vled.caption
-                                    console.log(boostOCPLabel.text)
                                     setStatesForControls(boostOCP,power_fault_vled.states[0])
                                     if(power_fault_vled.value === true)
                                         boostOCP.status = SGStatusLight.Red
