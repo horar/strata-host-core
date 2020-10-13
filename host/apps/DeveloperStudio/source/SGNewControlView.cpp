@@ -1,5 +1,7 @@
 #include "SGNewControlView.h"
 
+#include "SGUtilsCpp.h"
+
 SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
 {
 
@@ -9,33 +11,34 @@ SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
  * This creates a new project in a folder of your choosing
  * @param filepath @param originPath
  ***/
-QString SGNewControlView::createNewProject(const QString &filepath, const QString &originPath){
+QUrl SGNewControlView::createNewProject(const QUrl &filepath, const QString &originPath){
     // This is the current path of the origin directory in resources
     QResource orgSrc(originPath);
     qrcpath_ = "";
 
-    QString path = filepath;
+    QString path = SGUtilsCpp::urlToLocalFile(filepath);
     // Updating the new path to ensure that this file path always has a seperator at the end
-    if(!filepath.endsWith(QDir::separator())){
-        path = filepath + QDir::separator();
-    }
-    rootpath_ = path;
 
-    const QUrl url(path);
+    if(!path.endsWith(QDir::separator())){
+        path = path + QDir::separator();
+    }
+
     // Creates the new dir that will be the the new location path
-    QDir dir(url.path());
+    QDir dir(path);
     if(!dir.isRoot()){
         dir = QDir::root();
     }
 
-    if(!dir.cd(url.path())){
-        dir.mkpath(url.path());
-        dir.cd(url.path());
+    if(!dir.cd(path)){
+        dir.mkpath(path);
+        dir.cd(path);
     }
+
+    rootpath_ = path;
     // Copy files from templates selection
     QDir oldDir(orgSrc.absoluteFilePath());
     copyFiles(oldDir,dir,false);
-    return qrcpath_;
+    return SGUtilsCpp::pathToUrl(qrcpath_);
 }
 
 /***
@@ -60,9 +63,14 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolve_confli
             qCritical()<<"The files could not be copied" << "from: " + from.absoluteFilePath() + "to: " + to.absoluteFilePath();
             return false;
         }
+
+        // We need this because copying files from a qresource path yields a readonly file by default
+        QFile::setPermissions(to.absoluteFilePath(), QFileDevice::WriteUser | QFileDevice::ReadUser);
+
         // Checks if is qrc file
         if(to.absoluteFilePath().endsWith(".qrc")){
             qrcpath_ = rootpath_ + oldFile;
+            qDebug() << "qrc path" << qrcpath_;
         }
     }
 

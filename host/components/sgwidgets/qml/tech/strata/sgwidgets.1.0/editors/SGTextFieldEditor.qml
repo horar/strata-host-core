@@ -13,6 +13,8 @@ SGWidgets.SGBaseEditor {
     property string placeholderText
     property bool showCursorPosition: false
     property bool passwordMode: false
+    property string textFieldLeftIconSource
+    property bool textFieldBusyIndicatorRunning: false
 
     editor: SGWidgets.SGTextField {
         id: editorItem
@@ -26,6 +28,8 @@ SGWidgets.SGBaseEditor {
         placeholderText: root.placeholderText
         showCursorPosition: root.showCursorPosition
         passwordMode: root.passwordMode
+        leftIconSource: root.textFieldLeftIconSource
+        busyIndicatorRunning: root.textFieldBusyIndicatorRunning
 
         onTextChanged: root.text = text
         Binding {
