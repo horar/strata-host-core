@@ -251,7 +251,7 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
         QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
         for (const auto &item : controlViewItems) {
             QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views" + (requestItem->classId.isEmpty() ? "" : "/" + requestItem->classId));
-            if (downloadManager_->verifyFileChecksum(filePath, item.md5) == false) {
+            if (downloadManager_->verifyFileHash(filePath, item.md5) == false) {
                 filePath.clear();
             }
 

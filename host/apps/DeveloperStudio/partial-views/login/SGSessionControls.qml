@@ -28,6 +28,7 @@ Item {
             // on Strata startup, pass previous session JWT to Authenticator for re-validation if 'remember me' enabled
             if (Authenticator.settings.token !== "") {
                 if (Authenticator.settings.rememberMe) {
+                    connectionStatus.currentId = Authenticator.getNextId()
                     Authenticator.set_token(Authenticator.settings.token)
                     Authenticator.validate_token()
                     return

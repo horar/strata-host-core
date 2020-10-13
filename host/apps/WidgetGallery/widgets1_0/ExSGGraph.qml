@@ -357,6 +357,80 @@ Item {
         Row {
             spacing: 5
             SGWidgets.SGGraph {
+                // Note: Zoom/Pan mouse actions are disabled for log graph axes
+                id: gridLogGraph
+                width: 400
+                height: 300
+                title: "Graph to Toggle major, minor grid and x/y Logarithmic"
+                xMin: 1
+                xMax: 50
+                yMin: 1
+                yMax: 50
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
+                gridColor: "black"
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+                Button {
+                    text: "Add Major Gridline"
+                    onClicked: {
+                        if(gridLogGraph.xMinorGrid && gridLogGraph.yMinorGrid) {
+                            gridLogGraph.xMinorGrid = false
+                            gridLogGraph.yMinorGrid = false
+                        }
+                        gridLogGraph.xGrid = true
+                        gridLogGraph.yGrid = true
+                    }
+
+                }
+
+                Button {
+                    text: "Add Minor Gridline"
+                    onClicked: {
+                        gridLogGraph.xMinorGrid = true
+                        gridLogGraph.yMinorGrid = true
+                    }
+                }
+
+                Button {
+                    text: "Clear Gridline"
+                    onClicked: {
+                        gridLogGraph.xGrid = false
+                        gridLogGraph.yGrid = false
+                        gridLogGraph.xMinorGrid = false
+                        gridLogGraph.yMinorGrid = false
+                    }
+                }
+
+                Button {
+                    text: "Toggle X/Y Logarithmic Axes"
+                    onClicked: {
+                        if(gridLogGraph.xLogarithmic && gridLogGraph.yLogarithmic) {
+                            gridLogGraph.xLogarithmic = false
+                            gridLogGraph.yLogarithmic = false
+                            text = "Toggle X/Y Logarithmic Axes"
+                        }
+                        else {
+                            gridLogGraph.xLogarithmic = true
+                            gridLogGraph.yLogarithmic = true
+                            text = "Toggle X/Y Linear Axes"
+                        }
+                    }
+                }
+
+
+
+            }
+        }
+
+        Row {
+            spacing: 5
+            SGWidgets.SGGraph {
                 id: coloredGraph
                 width: 400
                 height: 300
