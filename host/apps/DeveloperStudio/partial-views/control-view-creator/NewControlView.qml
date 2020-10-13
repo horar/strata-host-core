@@ -165,9 +165,11 @@ Rectangle {
                 text: "Create Project"
 
                 onClicked: {
-                    fileModel.url = sdsModel.newControlView.createNewProject(fileOutput.text, templateButtonGroup.checkedButton.path);
-                    viewStack.currentIndex = editUseStrip.offset
-                    editUseStrip.checkedIndices = 1
+                    if (fileSelector.fileUrl.toString() !== "") {
+                        fileModel.url = sdsModel.newControlView.createNewProject(fileSelector.fileUrl, templateButtonGroup.checkedButton.path);
+                        viewStack.currentIndex = editUseStrip.offset
+                        editUseStrip.checkedIndices = 1
+                    }
                 }
             }
 
@@ -190,5 +192,9 @@ Rectangle {
         id: fileSelector
         folder: shortcuts.home
         selectFolder: true
+
+        onAccepted: {
+            fileOutput.text = fileSelector.fileUrl
+        }
     }
 }

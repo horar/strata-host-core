@@ -11,12 +11,12 @@ SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
  * This creates a new project in a folder of your choosing
  * @param filepath @param originPath
  ***/
-QUrl SGNewControlView::createNewProject(const QString &filepath, const QString &originPath){
+QUrl SGNewControlView::createNewProject(const QUrl &filepath, const QString &originPath){
     // This is the current path of the origin directory in resources
     QResource orgSrc(originPath);
     qrcpath_ = "";
 
-    QString path = QDir::toNativeSeparators(QUrl(filepath).toLocalFile());
+    QString path = SGUtilsCpp::urlToLocalFile(filepath);
     // Updating the new path to ensure that this file path always has a seperator at the end
 
     if(!path.endsWith(QDir::separator())){
