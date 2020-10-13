@@ -76,7 +76,7 @@ public:
     QString download(const QList<DownloadRequestItem> &items,
                      const Settings &settings=Settings());
 
-    bool verifyFileChecksum(
+    bool verifyFileHash(
             const QString &filePath,
             const QString &checksum,
             const QCryptographicHash::Algorithm &method=QCryptographicHash::Md5);

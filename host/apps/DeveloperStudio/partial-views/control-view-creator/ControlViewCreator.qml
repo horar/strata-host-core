@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
-import tech.strata.SGQrcListModel 1.0
 import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 
@@ -15,21 +14,6 @@ Rectangle {
         id: sgUserSettings
         classId: "controlViewCreator"
         user: NavigationControl.context.user_id
-    }
-
-    SGQrcListModel {
-        id: fileModel
-
-        onParsingFinished: {
-            for (let i = 0; i < fileModel.count; i++) {
-                if (fileModel.get(i).filename.toLowerCase() === "control.qml") {
-                    let item = fileModel.get(i);
-                    item.open = true;
-                    item.visible = true;
-                    break;
-                }
-            }
-        }
     }
 
     ColumnLayout {
@@ -71,9 +55,9 @@ Rectangle {
                     model: ["Edit", "Use Control View"]
                     checkedIndices: 0
                     onClicked: {
-                        if (currentFileUrl != fileModel.url) {
+                        if (currentFileUrl !== editor.treeModel.url) {
                             recompileControlViewQrc()
-                            currentFileUrl = fileModel.url
+                            currentFileUrl = editor.treeModel.url
                         }
                         viewStack.currentIndex = index + offset
                     }
@@ -145,9 +129,9 @@ Rectangle {
     }
 
     function recompileControlViewQrc () {
-        if (fileModel.url != '') {
-            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(fileModel.url)
-            if (compiledRccFile != '') {
+        if (editor.treeModel.url !== '') {
+            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
+            if (compiledRccFile !== '') {
                 loadDebugView(compiledRccFile)
             } else {
                 NavigationControl.removeView(controlViewContainer)

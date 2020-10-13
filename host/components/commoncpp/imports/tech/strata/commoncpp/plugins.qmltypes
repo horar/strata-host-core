@@ -377,5 +377,6 @@ Module {
             type: "string"
             Parameter { name: "dateTime"; type: "QDateTime" }
         }
+        Method { name: "generateUuid"; type: "string" }
     }
 }

@@ -4,11 +4,12 @@ import QtQml.Models 2.12
 import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
-import tech.strata.SGQrcListModel 1.0
 
 Rectangle {
     id: openProjectContainer
 
+    property alias fileUrl: filePath.text
+    property url url
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
     color: "#ccc"
@@ -119,7 +120,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        fileModel.url = model.url
+                        openProjectContainer.url = model.url
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
                     }
@@ -186,7 +187,7 @@ Rectangle {
 
                 onClicked: {
                     if (fileDialog.fileUrl.toString() !== "") {
-                        fileModel.url = fileDialog.fileUrl
+                        openProjectContainer.url = fileDialog.fileUrl
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
                         addToTheProjectList(fileDialog.fileUrl.toString())
