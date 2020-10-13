@@ -1,0 +1,304 @@
+#include "SGFileTabModel.h"
+#include <QDebug>
+/*******************************************************************
+ * class SGFileTabItem
+ ******************************************************************/
+
+SGFileTabItem::SGFileTabItem(const QString &filename, const QUrl &filepath, const QString &filetype, const QString id) :
+    id_(id),
+    filename_(filename),
+    filepath_(filepath),
+    filetype_(filetype)
+{
+}
+
+QString SGFileTabItem::filename() const
+{
+    return filename_;
+}
+
+QUrl SGFileTabItem::filepath() const
+{
+    return filepath_;
+}
+
+QString SGFileTabItem::filetype() const
+{
+    return filetype_;
+}
+
+QString SGFileTabItem::id() const
+{
+    return id_;
+}
+
+bool SGFileTabItem::setFilename(const QString &filename)
+{
+    if (filename_ != filename) {
+        filename_ = filename;
+        return true;
+    }
+    return false;
+}
+
+bool SGFileTabItem::setFilepath(const QUrl &filepath)
+{
+    if (filepath_ != filepath) {
+        filepath_ = filepath;
+        return true;
+    }
+    return false;
+}
+
+bool SGFileTabItem::setFiletype(const QString &filetype)
+{
+    if (filetype_ != filetype) {
+        filetype_ = filetype;
+        return true;
+    }
+    return false;
+}
+
+/*******************************************************************
+ * class SGFileTabModel
+ ******************************************************************/
+
+SGFileTabModel::SGFileTabModel(QObject *parent) : QAbstractListModel(parent)
+{
+    currentIndex_ = 0;
+    currentId_ = -1;
+}
+
+SGFileTabModel::~SGFileTabModel()
+{
+    clear(false);
+}
+
+// OVERRIDES BEGIN
+
+QHash<int, QByteArray> SGFileTabModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles.insert(FilenameRole, "filename");
+    roles.insert(FilepathRole, "filepath");
+    roles.insert(FiletypeRole, "filetype");
+    roles.insert(IdRole, "id");
+    return roles;
+}
+
+QVariant SGFileTabModel::data(const QModelIndex &index, int role) const
+{
+    int row = index.row();
+    if (row < 0 || row >= data_.size()) {
+        qWarning() << "Trying to access to out of range index in file tab list";
+        return QVariant();
+    }
+
+    SGFileTabItem* tab = data_.at(row);
+
+    switch (role) {
+    case FilenameRole:
+        return tab->filename();
+    case FilepathRole:
+        return tab->filepath();
+    case FiletypeRole:
+        return tab->filetype();
+    case IdRole:
+        return tab->id();
+    default:
+        return QVariant();
+    }
+}
+
+bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    int row = index.row();
+    if (row < 0 || row >= data_.size()) {
+        qWarning() << "Trying to access to out of range index in file tab list";
+        return false;
+    }
+
+    SGFileTabItem* tab = data_.at(row);
+    bool success;
+
+    switch (role) {
+    case FilenameRole:
+        success = tab->setFilename(value.toString());
+        break;
+    case FilepathRole:
+        success = tab->setFilepath(value.toUrl());
+        break;
+    case FiletypeRole:
+        success = tab->setFiletype(value.toString());
+        break;
+    case IdRole:
+        qWarning() << "Cannot set id of tab item";
+        return false;
+    default:
+        return false;
+    }
+
+    if (success) {
+        emit dataChanged(index, index, {role});
+        return true;
+    }
+    return false;
+}
+
+int SGFileTabModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return data_.count();
+}
+
+Qt::ItemFlags SGFileTabModel::flags(const QModelIndex &index) const
+{
+    if (!index.isValid()) {
+        return Qt::NoItemFlags;
+    }
+    return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+}
+
+// OVERRIDES END
+
+// CUSTOM FUNCTIONS BEGIN
+
+bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const QString &filetype, const QString &id)
+{
+    if (hasTab(id)) {
+        setCurrentId(id);
+        return false;
+    }
+
+    beginInsertRows(QModelIndex(), data_.count(), data_.count());
+    data_.append(new SGFileTabItem(filename, filepath, filetype, id));
+    tabIds_.insert(id);
+    endInsertRows();
+
+    setCurrentIndex(data_.count() - 1);
+    emit countChanged();
+    return true;
+}
+
+bool SGFileTabModel::closeTab(const QString &id)
+{
+    if (!hasTab(id)) {
+        return false;
+    }
+    int index = 0;
+
+    for (; index < data_.count(); index++) {
+        if (id == data_.at(index)->id()) {
+            break;
+        }
+    }
+
+    return closeTabAt(index);
+}
+
+bool SGFileTabModel::closeTabAt(const int index)
+{
+    if (index < 0 || index >= data_.count()) {
+        return false;
+    }
+
+    const QString id = data_[index]->id();
+    beginRemoveRows(QModelIndex(), index, index);
+    delete data_[index];
+    data_.removeAt(index);
+    tabIds_.remove(id);
+    endRemoveRows();
+
+    // Set the current index
+    if (index == currentIndex_) {
+        // This handles the case where the closed tab is the current tab
+        if (data_.count() == 0) {
+            setCurrentIndex(0);
+            return true;
+        }
+
+        if (index >= data_.count()) {
+            // Handle the case were last tab was removed
+            setCurrentIndex(data_.count() - 1);
+        } else {
+            setCurrentIndex(currentIndex_);
+        }
+    } else if (index < currentIndex_) {
+        setCurrentIndex(currentIndex_ - 1);
+    }
+
+    emit countChanged();
+    return true;
+}
+
+
+bool SGFileTabModel::hasTab(const QString &id) const
+{
+    return tabIds_.contains(id);
+}
+
+void SGFileTabModel::clear(bool emitSignals)
+{
+    if (emitSignals) {
+        beginResetModel();
+    }
+
+    qDeleteAll(data_.begin(), data_.end());
+    data_.clear();
+
+    if (emitSignals) {
+        endResetModel();
+    }
+}
+
+int SGFileTabModel::count() const
+{
+    return data_.count();
+}
+
+int SGFileTabModel::currentIndex() const
+{
+    return currentIndex_;
+}
+
+QString SGFileTabModel::currentId() const
+{
+    return currentId_;
+}
+
+void SGFileTabModel::setCurrentIndex(const int index)
+{
+    // Here we want to emit that the current index has changed if:
+    //  1. The actual index value changes
+    //  2. The id at the current index changes
+    if (currentIndex_ != index) {
+        currentIndex_ = index;
+        currentId_ = data_[index]->id();
+        emit currentIndexChanged();
+    } else if (data_.count() == 0) {
+        currentId_ = -1;
+        emit currentIndexChanged();
+    } else if (currentId_ != data_[currentIndex_]->id()) {
+        currentId_ = data_[index]->id();
+        emit currentIndexChanged();
+    }
+}
+
+void SGFileTabModel::setCurrentId(const QString &id)
+{
+    if (currentId_ != id) {
+        int i = 0;
+        for (; i < data_.count(); i++) {
+            if (data_.at(i)->id() == id) {
+                break;
+            }
+        }
+
+        if (i < data_.count()) {
+            setCurrentIndex(i);
+        }
+    }
+}
+
+// CUSTOM FUNCTIONS END
+

@@ -85,7 +85,7 @@ Item {
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
                 webEngine.runJavaScript("setContainerHeight(%1)".replace("%1", parent.height), function result(result) {
-                    console.info(result)
+
                 });
                 fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)

@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.1 as QtLabsSettings
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
@@ -18,14 +19,18 @@ FocusScope {
     property int spacing: 10
     property variant warningDialog: null
 
+    property string currentOpn
+    property string currentVerboseName
+    property string currentClassId
+    property string currentFirmwareUrl
+    property string currentFirmwareMd5
+
     clip: true
 
     Component.onCompleted: {
         if (jlinkExePath.length === 0) {
             jlinkExePath = searchJLinkExePath()
         }
-
-        prtModel.opnListModel.populate();
     }
 
     QtLabsSettings.Settings {
@@ -69,19 +74,14 @@ FocusScope {
         DSM.State {
             id: stateDownload
 
-            DSM.SignalTransition {
-                targetState: stateCheckDevice
-                signal: prtModel.downloadFirmwareFinished
-                guard: errorString.length === 0
-            }
+            property string bootloaderUrl
+            property string bootloaderMd5
 
-            DSM.SignalTransition {
-                targetState: stateError
-                signal: prtModel.downloadFirmwareFinished
-                guard: errorString.length > 0
-                onTriggered: {
-                    wizard.subtextNote = errorString
-                }
+            initialState: stateGetBootloaderUrl
+
+            onEntered: {
+                stateDownload.bootloaderUrl = ""
+                stateDownload.bootloaderMd5 = ""
             }
 
             DSM.SignalTransition {
@@ -89,8 +89,58 @@ FocusScope {
                 signal: breakBtn.clicked
             }
 
-            onEntered: {
-                prtModel.downloadBinaries(wizard.platformIndex)
+            DSM.State {
+                id: stateGetBootloaderUrl
+
+                onEntered: {
+                    prtModel.requestBootloaderUrl()
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateGetBinaries
+                    signal: prtModel.bootloaderUrlRequestFinished
+                    guard: errorString.length === 0
+                    onTriggered: {
+                        stateDownload.bootloaderUrl = url
+                        stateDownload.bootloaderMd5 = md5
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateError
+                    signal: prtModel.bootloaderUrlRequestFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
+            }
+
+            DSM.State {
+                id: stateGetBinaries
+
+                onEntered: {
+                    prtModel.downloadBinaries(
+                                stateDownload.bootloaderUrl,
+                                stateDownload.bootloaderMd5,
+                                wizard.currentFirmwareUrl,
+                                wizard.currentFirmwareMd5)
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateCheckDevice
+                    signal: prtModel.downloadFirmwareFinished
+                    guard: errorString.length === 0
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateError
+                    signal: prtModel.downloadFirmwareFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
             }
         }
 
@@ -102,6 +152,12 @@ FocusScope {
             DSM.SignalTransition {
                 targetState: stateSettings
                 signal: breakBtn.clicked
+            }
+
+            DSM.SignalTransition {
+                targetState: stateWaitForDevice
+                signal: prtModel.deviceCountChanged
+                guard: prtModel.deviceCount !== 1
             }
 
             DSM.State {
@@ -155,6 +211,12 @@ FocusScope {
                     }
                 }
 
+                onExited: {
+                    if (warningDialog !== null) {
+                        warningDialog.reject()
+                    }
+                }
+
                 DSM.SignalTransition {
                     targetState: stateWaitForJLink
                     signal: stateMechine.deviceFirmwareValid
@@ -163,15 +225,6 @@ FocusScope {
                 DSM.SignalTransition {
                     targetState: stateWaitForDevice
                     signal: stateMechine.deviceFirmwareInvalid
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateWaitForDevice
-                    signal: prtModel.deviceCountChanged
-                    guard: warningDialog !== null && prtModel.deviceCount === 0
-                    onTriggered: {
-                        warningDialog.reject()
-                    }
                 }
             }
 
@@ -316,23 +369,69 @@ FocusScope {
         DSM.State {
             id: stateRegistration
 
+            property string currentPlatformId
+            property int currentBoardCount
+
+            initialState: stateNotifyCloudService
+
             onEntered: {
-                prtModel.registerPlatform()
-                wizard.subtextNote = ""
+                stateRegistration.currentPlatformId = CommonCpp.SGUtilsCpp.generateUuid()
+                stateRegistration.currentBoardCount = -1
             }
 
-            DSM.SignalTransition {
-                targetState: stateLoopSucceed
-                signal: prtModel.registerPlatformFinished
-                guard: errorString.length === 0
+            DSM.State {
+                id: stateNotifyCloudService
+
+                onEntered: {
+                    wizard.subtextNote = "contacting cloud service"
+                    prtModel.notifyServiceAboutRegistration(
+                                wizard.currentClassId,
+                                stateRegistration.currentPlatformId)
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateWriteRegistrationData
+                    signal: prtModel.notifyServiceFinished
+                    guard: boardCount > 0 && errorString.length === 0
+                    onTriggered: {
+                        stateRegistration.currentBoardCount = boardCount
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: prtModel.notifyServiceFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
             }
 
-            DSM.SignalTransition {
-                targetState: stateLoopFailed
-                signal: prtModel.registerPlatformFinished
-                guard: errorString.length > 0
-                onTriggered: {
-                    wizard.subtextNote = errorString
+            DSM.State {
+                id: stateWriteRegistrationData
+
+                onEntered: {
+                    wizard.subtextNote = "writing to device"
+                    prtModel.writeRegistrationData(
+                                wizard.currentClassId,
+                                stateRegistration.currentPlatformId,
+                                stateRegistration.currentBoardCount)
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopSucceed
+                    signal: prtModel.writeRegistrationDataFinished
+                    guard: errorString.length === 0
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: prtModel.writeRegistrationDataFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
                 }
             }
         }
@@ -472,21 +571,97 @@ FocusScope {
                     topMargin: wizard.spacing
                 }
 
-                text: "Platform OPN"
+                text: "Platform"
                 fontSizeMultiplier: 2.0
             }
 
-            OpnView {
-                id: opnView
+            Item {
+                id: searchWrapper
+                height: searchEdit.height
                 width: settingsPage.width
                 anchors {
                     top: platformTitle.bottom
                     topMargin: wizard.spacing
-                    bottom: parent.bottom
-
                 }
 
-                prtModel: wizard.prtModel
+                SGWidgets.SGTextFieldEditor {
+                    id: searchEdit
+                    itemWidth: parent.width - searchButton.width - 10
+
+                    label: "Orderable Part Number"
+                    textFieldLeftIconSource: "qrc:/sgimages/zoom.svg"
+                    placeholderText: "OPN..."
+
+                    Keys.onEnterPressed: {
+                        findPlatform(searchEdit.text)
+                    }
+
+                    Keys.onReturnPressed: {
+                        findPlatform(searchEdit.text)
+                    }
+
+                    onTextChanged: {
+                        clearSearchState()
+                    }
+
+                    textFieldBusyIndicatorRunning: enabled === false
+
+                    function clearSearchState() {
+                        searchEdit.setIsUnknown()
+                        wizard.currentOpn = ""
+                        wizard.currentVerboseName = ""
+                        wizard.currentClassId = ""
+                        wizard.currentFirmwareUrl = ""
+                        wizard.currentFirmwareMd5 = ""
+                    }
+                }
+
+                SGWidgets.SGButton {
+                    id: searchButton
+                    y: searchEdit.itemY + (searchEdit.item.height - height) / 2
+                    anchors {
+                        right: parent.right
+                    }
+
+                    enabled: searchEdit.enabled
+                    text: "Set"
+                    onClicked: {
+                        findPlatform(searchEdit.text)
+                    }
+                }
+            }
+
+            GridLayout {
+                anchors {
+                    top: searchWrapper.bottom
+                }
+
+                rowSpacing: 4
+                columnSpacing: 4
+                columns: 2
+
+                SGWidgets.SGText {
+                    text: "OPN:"
+                    Layout.alignment: Qt.AlignBottom | Qt.AlignRight
+                }
+
+                SGWidgets.SGText {
+                    text: wizard.currentOpn
+                    fontSizeMultiplier: 1.2
+                    Layout.alignment: Qt.AlignBottom
+                    font.bold: true
+                }
+
+                SGWidgets.SGText {
+                    text: "Title:"
+                    Layout.alignment: Qt.AlignBottom | Qt.AlignRight
+                }
+
+                SGWidgets.SGText {
+                    text: wizard.currentVerboseName
+                    fontSizeMultiplier: 1.2
+                    Layout.alignment: Qt.AlignBottom
+                }
             }
         }
 
@@ -685,7 +860,6 @@ FocusScope {
     }
 
     function validateSettings() {
-
         var errorList = []
 
         var error = jlinkExePathEdit.inputValidationErrorMsg()
@@ -693,8 +867,9 @@ FocusScope {
             errorList.push(error)
         }
 
-        if (opnView.checkedOpnIndex < 0) {
-            error = "OPN not chosen"
+        if (wizard.currentClassId.length === 0) {
+            searchEdit.setIsInvalid("OPN not set")
+            error = "OPN not set"
             errorList.push(error)
         }
 
@@ -713,7 +888,6 @@ FocusScope {
 
         } else {
             jLinkConnector.exePath = wizard.jlinkExePath
-            wizard.platformIndex = opnView.checkedOpnIndex
 
             stateMechine.settingsValid()
         }
@@ -784,5 +958,131 @@ FocusScope {
         }
 
         return ""
+    }
+
+
+    Timer {
+        id: findPlatformDelayTimer
+        repeat: false
+        interval: 2000
+
+        property string opn
+
+        onTriggered: {
+            doFindPlatform(opn)
+        }
+    }
+
+    function findPlatform(opn) {
+        searchEdit.enabled = false
+        searchEdit.clearSearchState()
+        findPlatformDelayTimer.opn = opn
+        findPlatformDelayTimer.restart()
+    }
+
+    function doFindPlatform(opn) {
+
+        var endpoint = "plats/"+opn.toUpperCase()
+
+        console.log("endpoint", endpoint)
+
+        var deferred = prtModel.restClient.get(endpoint)
+
+        deferred.finishedSuccessfully.connect(function(status, data) {
+            //when OPN is not found, empty array is returned
+
+            console.log(Logger.prtCategory,"platform info:", status, data)
+
+            searchEdit.clearSearchState()
+
+            try {
+                var response = JSON.parse(data)
+            } catch(error) {
+                console.log(Logger.prtCategory, "cannot parse reply from server")
+
+                searchEdit.setIsInvalid("Cannot validate OPN. Reply not valid.")
+                searchEdit.enabled = true
+                return "Cannot validate OPN. Reply not valid."
+            }
+
+            if (Array.isArray(response)) {
+                searchEdit.setIsInvalid("OPN not found.")
+            } else {
+                var isValid = validateResponse(response)
+                if (isValid) {
+                    setLatestFirmware(response["firmware"])
+
+                    wizard.currentOpn = response["opn"]
+                    wizard.currentVerboseName = response["verbose_name"]
+                    wizard.currentClassId = response["class_id"]
+
+                    searchEdit.setIsValid()
+                } else {
+                    searchEdit.setIsInvalid("Cannot validate OPN. Reply not valid.")
+                }
+            }
+
+            searchEdit.enabled = true
+        })
+
+        deferred.finishedWithError.connect(function(status ,errorString) {
+            console.error(Logger.prtCategory, status, errorString)
+
+            searchEdit.enabled = true
+            searchEdit.setIsInvalid("Cannot validate OPN. Request failed. status: "+ status)
+        })
+    }
+
+
+    function setLatestFirmware(firmwareList) {
+        var latestFirmwareIndex = 0
+        var latestFirmwareTimestamp = new Date(firmwareList[latestFirmwareIndex]["timestamp"])
+
+        for (var i = 1; i < firmwareList.length; ++i) {
+            var timestamp = new Date(firmwareList[i]["timestamp"])
+
+            if (latestFirmwareTimestamp < timestamp) {
+                latestFirmwareIndex = i
+                latestFirmwareTimestamp = timestamp
+            }
+        }
+
+        wizard.currentFirmwareUrl = firmwareList[latestFirmwareIndex]["file"]
+        wizard.currentFirmwareMd5 = firmwareList[latestFirmwareIndex]["md5"]
+    }
+
+    function validateResponse(response) {
+        if (response.hasOwnProperty("class_id") === false
+                || response.hasOwnProperty("opn") === false
+                || response.hasOwnProperty("firmware") === false
+                || response.hasOwnProperty("verbose_name") === false)
+        {
+            console.error(Logger.prtCategory, "one of class_id, opn, firmware, verbose_name is missing")
+            return false
+        }
+
+        var firmwareList = response["firmware"]
+        if (Array.isArray(firmwareList) === false) {
+            console.error(Logger.prtCategory, "firmware key is not an array")
+            return false
+        }
+
+        if (firmwareList.length === 0) {
+            console.error(Logger.prtCategory, "firmware list is empty")
+            return false
+        }
+
+        for (var i = 0; i < firmwareList.length; ++i) {
+            if (firmwareList[i].hasOwnProperty("file") === false
+                    || firmwareList[i].hasOwnProperty("md5") === false
+                    || firmwareList[i].hasOwnProperty("timestamp") === false
+                    || firmwareList[i].hasOwnProperty("version") === false)
+            {
+                console.error(Logger.prtCategory, "firmware key is not valid")
+                return false
+            }
+        }
+
+        return true
     }
 }
