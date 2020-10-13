@@ -472,6 +472,12 @@ void StorageManager::requestDownloadPlatformFiles(
         downloadList << item;
     }
 
+    if (downloadList.isEmpty()) {
+        qCWarning(logCategoryHcsStorage()) << "requested files not valid";
+        emit downloadPlatformFilesFinished(clientId, "requested files not valid");
+        return;
+    }
+
     DownloadRequest *request = new DownloadRequest();
     request->clientId = clientId;
     request->type = RequestType::FileDownload;
