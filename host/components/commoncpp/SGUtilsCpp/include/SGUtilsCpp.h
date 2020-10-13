@@ -1,5 +1,4 @@
-#ifndef SGUTILSCPP_H
-#define SGUTILSCPP_H
+#pragma once
 
 #include <QObject>
 #include <QUrl>
@@ -28,9 +27,9 @@ public:
     Q_INVOKABLE QString joinFilePath(const QString &path, const QString &fileName);
     Q_INVOKABLE QString formattedDataSize(qint64 bytes, int precision = 1);
     Q_INVOKABLE QString formatDateTimeWithOffsetFromUtc(const QDateTime &dateTime, const QString &format=QString("yyyy-MM-dd hh:mm:ss.zzz t"));
+    Q_INVOKABLE static QString generateUuid();
+    Q_INVOKABLE static bool validateJson(const QByteArray &json, const QByteArray &schema);
 
 private:
     const QStringList fileSizePrefixList_;
 };
-
-#endif  // SGUTILSCPP_H
