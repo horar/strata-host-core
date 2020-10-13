@@ -183,6 +183,10 @@ public:
      */
     Q_INVOKABLE void startWatchingPath(const QString &path);
 
+    /**
+     * @brief startSave Starts a thread to save the qrc file.
+     */
+    Q_INVOKABLE void startSave();
 
     /***
      * SIGNALS
@@ -235,7 +239,6 @@ private:
     bool readQrcFile();
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
-    void startSave();
     void save();
 
     SGQrcTreeNode *root_;
@@ -244,5 +247,5 @@ private:
     QDomDocument qrcDoc_;
     QHash<QString, SGQrcTreeNode*> uidMap_;
     QSet<QString> qrcItems_;
-    QFileSystemWatcher fsWatcher_;
+    QFileSystemWatcher* fsWatcher_;
 };

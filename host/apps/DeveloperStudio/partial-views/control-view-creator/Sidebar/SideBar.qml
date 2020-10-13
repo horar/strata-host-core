@@ -84,6 +84,7 @@ Rectangle {
                             }
                         }
                         treeModel.insertChild(path, -1, true, treeView.rootIndex);
+                        treeModel.startSave();
                     }
                 }
             }

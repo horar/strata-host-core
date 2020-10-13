@@ -177,9 +177,12 @@ Item {
 
         onFileDeleted: {
             if (model && model.uid === uid) {
-                openFilesModel.closeTab(model.uid)
+                if (!model.isDir) {
+                    openFilesModel.closeTab(model.uid)
+                }
                 treeModel.removeFromQrc(styleData.index)
                 treeModel.removeRows(model.row, 1, styleData.index.parent)
+                treeModel.startSave();
             }
         }
 
@@ -192,6 +195,7 @@ Item {
                     }
                 }
                 treeModel.insertChild(path, -1, true, styleData.index);
+                treeModel.startSave();
             }
         }
 
