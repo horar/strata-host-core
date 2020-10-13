@@ -24,8 +24,10 @@
 #include "SDSModel.h"
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
+#include "SGQrcTreeModel.h"
+#include "SGQrcTreeNode.h"
+#include "SGFileTabModel.h"
 #include "SGNewControlView.h"
-#include "SGQrcListModel.h"
 #include "HcsNode.h"
 #include "RunGuard.h"
 
@@ -108,8 +110,9 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<DownloadDocumentListModel>("tech.strata.DownloadDocumentListModel", 1, 0, "DownloadDocumentListModel", "You can't instantiate DownloadDocumentListModel in QML");
     qmlRegisterUncreatableType<DocumentListModel>("tech.strata.DocumentListModel", 1, 0, "DocumentListModel", "You can't instantiate DocumentListModel in QML");
     qmlRegisterUncreatableType<ClassDocuments>("tech.strata.ClassDocuments", 1, 0, "ClassDocuments", "You can't instantiate ClassDocuments in QML");
-    qmlRegisterUncreatableType<QrcItem>("tech.strata.QrcItem",1,0,"QrcItem", "You can't instantiate QrcItem in QML");
-    qmlRegisterType<SGQrcListModel>("tech.strata.SGQrcListModel", 1, 0, "SGQrcListModel");
+    qmlRegisterType<SGFileTabModel>("tech.strata.SGFileTabModel", 1, 0, "SGFileTabModel");
+    qmlRegisterUncreatableType<SGQrcTreeNode, 1>("tech.strata.SGQrcTreeModel",1,0,"SGTreeNode", "You can't instantiate SGTreeNode in QML");
+    qmlRegisterType<SGQrcTreeModel>("tech.strata.SGQrcTreeModel", 1, 0, "SGQrcTreeModel");
     qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
