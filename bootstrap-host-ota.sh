@@ -1,15 +1,20 @@
 #!/usr/bin/env sh
+
+#
+# Simple build script for all 'host' targets configured for OTA release (MacOS)
+#
 # Copyright (c) 2019-20 Lubomir Carik (Lubomir.Carik@onsemi.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
+#
 
 function usage {
     echo "Syntax:"
     echo "     [-i=BUILD_ID] [-c] [-h]"
     echo "Where:"
     echo "     [-i | --buildid]: For build id"
-    echo "     [-c | --cleanup]: To leave only installer"
+    echo "     [-c | --cleanup]: To clean build folder before build"
     echo "     [-h | --help]: For this help"
     echo "For example:"
     echo "     ./bootstrap-host-ota.sh -i=999 --cleanup"
@@ -166,10 +171,18 @@ echo " Updating Git submodules.."
 echo "======================================================================="
 echo git submodule update --init --recursive
 
+if [ $BUILD_CLEANUP != 0 ] ; then
+    if [ -d $BUILD_DIR ] ; then
+        echo "-----------------------------------------------------------------------------"
+        echo " Cleaning build directory"
+        echo "-----------------------------------------------------------------------------"
+        rm -rf $BUILD_DIR;
+    fi
+fi
+
 echo "-----------------------------------------------------------------------------"
 echo " Create a build folder.."
 echo "-----------------------------------------------------------------------------"
-#if [ -d $BUILD_DIR ] ; then rm -rf $BUILD_DIR; fi
 if [ ! -d $BUILD_DIR ] ; then mkdir -pv $BUILD_DIR; fi
 
 echo "======================================================================="
@@ -336,23 +349,23 @@ if [ $? != 0 ] ; then
     exit 3
 fi
 
-#echo "======================================================================="
-#echo " Preparing online installer $STRATA_ONLINE_BINARY.."
-#echo "======================================================================="
+echo "======================================================================="
+echo " Preparing online installer $STRATA_ONLINE_BINARY.."
+echo "======================================================================="
 
-#binarycreator \
-#    --verbose \
-#    --online-only \
-#    -c $STRATA_CONFIG_XML \
-#    -p $PACKAGES_DIR \
-#    $STRATA_ONLINE
+binarycreator \
+    --verbose \
+    --online-only \
+    -c $STRATA_CONFIG_XML \
+    -p $PACKAGES_DIR \
+    $STRATA_ONLINE
 
-#if [ $? != 0 ] ; then
-#    echo "======================================================================="
-#    echo " Failed to create online installer $STRATA_ONLINE_BINARY!"
-#    echo "======================================================================="
-#    exit 3
-#fi
+if [ $? != 0 ] ; then
+    echo "======================================================================="
+    echo " Failed to create online installer $STRATA_ONLINE_BINARY!"
+    echo "======================================================================="
+    exit 3
+fi
 
 echo "======================================================================="
 echo " Preparing online repository $STRATA_ONLINE_REPOSITORY.."
@@ -371,13 +384,6 @@ if [ $? != 0 ] ; then
     echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY!"
     echo "======================================================================="
     exit 3
-fi
-
-if [ $BUILD_CLEANUP != 0 ] ; then
-    echo "-----------------------------------------------------------------------------"
-    echo " Cleaning build directory"
-    echo "-----------------------------------------------------------------------------"
-    # TODO
 fi
 
 echo "======================================================================="

@@ -1,6 +1,7 @@
 @echo off
+
 REM
-REM Simple build script for all 'host' targets
+REM Simple build script for all 'host' targets configured for OTA release (Windows)
 REM
 REM Copyright (c) 2019-2020 Lubomir Carik (Lubomir.Carik@onsemi.com)
 REM
@@ -177,14 +178,21 @@ echo " Updating Git submodules.."
 echo "======================================================================="
 echo git submodule update --init --recursive
 
-echo "-----------------------------------------------------------------------------"
-echo " Create a build folder.."
-echo "-----------------------------------------------------------------------------"
-
 REM in case not called from where is the script located, change working directory
 cd %~dp0
 
-REM if exist %BUILD_DIR% rd /s /q %BUILD_DIR%
+if %BUILD_CLEANUP% EQU 1 (
+    if exist %BUILD_DIR% (
+        echo "-----------------------------------------------------------------------------"
+        echo " Cleaning build directory"
+        echo "-----------------------------------------------------------------------------"
+        rd /s /q %BUILD_DIR%
+    )
+)
+
+echo "-----------------------------------------------------------------------------"
+echo " Create a build folder.."
+echo "-----------------------------------------------------------------------------"
 if not exist %BUILD_DIR% md %BUILD_DIR%
 
 echo "======================================================================="
@@ -536,41 +544,41 @@ IF %ERRORLEVEL% NEQ 0 (
     Exit /B 3
 )
 
-REM echo "======================================================================="
-REM echo " Preparing online installer %STRATA_ONLINE_BINARY%.."
-REM echo "======================================================================="
-REM
-REM binarycreator ^
-REM     --verbose ^
-REM     --online-only ^
-REM     -c %STRATA_CONFIG_XML% ^
-REM     -p %PACKAGES_DIR% ^
-REM     -p %PACKAGES_WIN_DIR% ^
-REM     %STRATA_ONLINE%
-REM
-REM IF %ERRORLEVEL% NEQ 0 (
-REM     echo "======================================================================="
-REM     echo " Failed to create online installer %STRATA_ONLINE_BINARY%!"
-REM     echo "======================================================================="
-REM     Exit /B 3
-REM )
-REM
-REM echo "-----------------------------------------------------------------------------"
-REM echo "Signing the online installer %STRATA_ONLINE_BINARY%"
-REM echo "-----------------------------------------------------------------------------"
-REM signtool sign ^
-REM     /f %SIGNING_CERT% ^
-REM     /p %SIGNING_PASS% ^
-REM     /tr %SIGNING_TIMESTAMP_SERVER% ^
-REM     /td %SIGNING_TIMESTAMP_ALG% ^
-REM     %STRATA_ONLINE_BINARY%
-REM
-REM IF %ERRORLEVEL% NEQ 0 (
-REM     echo "======================================================================="
-REM     echo " Failed to sign the online installer %STRATA_ONLINE_BINARY%!"
-REM     echo "======================================================================="
-REM     Exit /B 3
-REM )
+echo "======================================================================="
+echo " Preparing online installer %STRATA_ONLINE_BINARY%.."
+echo "======================================================================="
+
+binarycreator ^
+    --verbose ^
+    --online-only ^
+    -c %STRATA_CONFIG_XML% ^
+    -p %PACKAGES_DIR% ^
+    -p %PACKAGES_WIN_DIR% ^
+    %STRATA_ONLINE%
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to create online installer %STRATA_ONLINE_BINARY%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "-----------------------------------------------------------------------------"
+echo "Signing the online installer %STRATA_ONLINE_BINARY%"
+echo "-----------------------------------------------------------------------------"
+signtool sign ^
+    /f %SIGNING_CERT% ^
+    /p %SIGNING_PASS% ^
+    /tr %SIGNING_TIMESTAMP_SERVER% ^
+    /td %SIGNING_TIMESTAMP_ALG% ^
+    %STRATA_ONLINE_BINARY%
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to sign the online installer %STRATA_ONLINE_BINARY%!"
+    echo "======================================================================="
+    Exit /B 3
+)
 
 echo "======================================================================="
 echo " Preparing online repository %STRATA_ONLINE_REPOSITORY%.."
@@ -591,18 +599,6 @@ IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
     Exit /B 3
 )
-
-if %BUILD_CLEANUP% EQU 1 (
-    echo "-----------------------------------------------------------------------------"
-    echo " Cleaning build directory"
-    echo "-----------------------------------------------------------------------------"
-    for /F "delims=" %%i in ('dir /b') do (
-        if NOT "%%i"=="%STRATA_OFFLINE_BINARY%" if NOT "%%i"=="%STRATA_ONLINE_BINARY%" if NOT "%%i"=="%STRATA_ONLINE_REPO_ROOT%" (
-            rmdir "%%i" /s/q || del "%%i" /s/q
-        )
-    )
-)
-
 
 echo "======================================================================="
 echo " OTA build finished"
@@ -666,7 +662,7 @@ echo "Syntax:"
 echo "     [-i=BUILD_ID] [-c] [-h]"
 echo "Where:"
 echo "     [-i | --buildid]: For build id"
-echo "     [-c | --cleanup]: To leave only installer"
+echo "     [-c | --cleanup]: To clean build folder before build"
 echo "     [-h | --help]: For this help"
 echo "For example:"
 echo "     bootstrap-host-ota.bat -i=999 --cleanup"
