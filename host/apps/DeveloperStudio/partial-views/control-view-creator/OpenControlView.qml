@@ -5,11 +5,10 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
-
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
-import "qrc:/partial-views/general"
 
+import "qrc:/partial-views/general"
 
 Rectangle {
     id: openProjectContainer
@@ -74,26 +73,7 @@ Rectangle {
             }
         }
     }
-    SGNotificationToast {
-        id: alertMessage
-        width: parent.width/1.5
-        height: 40
-        interval : 0
-        anchors {
-            top: recentProjColumn.top
-            topMargin: 44
-            horizontalCenter: parent.horizontalCenter
-        }
-        z:3
-        color : "red"
-        text : "This project does not exist anymore. Removing it from your recent projects..."
-        MouseArea {
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: alertMessage
-            onClicked: alertMessage.visible = false
-        }
-    }
+
 
     ColumnLayout {
         id:recentProjColumn
@@ -114,6 +94,23 @@ Rectangle {
             color: "#333"
             Layout.preferredHeight: 1
             Layout.fillWidth: true
+        }
+
+        SGNotificationToast {
+            id: alertMessage
+            Layout.preferredWidth: parent.width/1.5
+            Layout.preferredHeight: 35
+            interval : 0
+            z:3
+            color : "red"
+            text : "This project does not exist anymore. Removing it from your recent projects..."
+            visible: false
+            MouseArea {
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: alertMessage
+                onClicked: alertMessage.visible = false
+            }
         }
 
         SGText {
