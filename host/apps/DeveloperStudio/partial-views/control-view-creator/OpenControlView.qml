@@ -21,7 +21,8 @@ Rectangle {
     color: "#ccc"
     onVisibleChanged: {
         if(!openProjectContainer.visible) {
-            alertMessage.visible = false
+           // alertMessage.visible = false
+            alertMessage.hide()
         }
     }
 
