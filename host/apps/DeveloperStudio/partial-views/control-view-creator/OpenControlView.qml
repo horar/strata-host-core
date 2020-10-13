@@ -5,7 +5,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
-import tech.strata.SGQrcListModel 1.0
+
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
 import "qrc:/partial-views/general"
@@ -14,6 +14,8 @@ import "qrc:/partial-views/general"
 Rectangle {
     id: openProjectContainer
 
+    property alias fileUrl: filePath.text
+    property url url
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
     color: "#ccc"
@@ -175,7 +177,7 @@ Rectangle {
                     MenuItem {
                         text: "Remove Projects From Recent Project"
                         onTriggered: {
-                            removeFromProjectList(fileModel.url.toString())
+                            removeFromProjectList(editor.treeModel.url.toString())
                         }
                     }
                     MenuItem {
@@ -196,14 +198,14 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: {
-                        fileModel.url = model.url
+                        editor.treeModel.url = model.url
                         if(mouse.button === Qt.RightButton) {
                             removeProjectMenu.popup()
                         }
                         else  {
-                            if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(fileModel.url))) {
+                            if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(editor.treeModel.url))) {
                                 alertMessage.visible = true
-                                removeFromProjectList(fileModel.url.toString())
+                                removeFromProjectList(editor.treeModel.url.toString())
                             }
                             else {
                                 viewStack.currentIndex = editUseStrip.offset
@@ -274,7 +276,7 @@ Rectangle {
 
                 onClicked: {
                     if (fileDialog.fileUrl.toString() !== "") {
-                        fileModel.url = fileDialog.fileUrl
+                        openProjectContainer.url = fileDialog.fileUrl
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
                         addToTheProjectList(fileDialog.fileUrl.toString())
