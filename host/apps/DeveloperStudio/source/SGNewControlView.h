@@ -14,7 +14,7 @@ class SGNewControlView: public QObject
 
 public:
     SGNewControlView(QObject *parent=nullptr);
-    Q_INVOKABLE QString createNewProject(const QString &filepath, const QString &originPath);
+    Q_INVOKABLE QUrl createNewProject(const QUrl &filepath, const QString &originPath);
 
 private:
     bool copyFiles(QDir &oldDir, QDir &newDir, bool resolve_conflict);
