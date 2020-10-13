@@ -8,6 +8,7 @@ import QtWebChannel 1.0
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.commoncpp 1.0
 
 Item {
     id: fileContainerRoot
@@ -23,22 +24,22 @@ Item {
     }
 
     function openFile(fileUrl) {
-        var request = new XMLHttpRequest();
-        request.open("GET", fileUrl, false);
-        request.send(null);
-        return request.responseText;
+        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(fileUrl));
     }
 
     function saveFile(fileUrl, text) {
-        var request = new XMLHttpRequest();
-        request.open("PUT", fileUrl, false);
-        request.send(text);
-        return request.status;
+        return SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text);
     }
 
     Connections{
         target: saveButton
         onClicked: saveFile(model.filepath,fileText)
+    }
+
+    Keys.onPressed: {
+        if (event.matches(StandardKey.Save)) {
+            saveFile(model.filepath, fileText)
+        }
     }
 
     WebChannel {
