@@ -93,6 +93,7 @@ SGStrataPopup {
                     var user = {
                         username: NavigationControl.context.user_id
                     }
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.close_account(user)
                     confirmDeletePopup.close()
                     spinnerDialog.open()
@@ -113,7 +114,7 @@ SGStrataPopup {
             focus: true
             closePolicy: Popup.NoAutoClose
 
-            contentItem: ConnectionStatus { }
+            contentItem: ConnectionStatus { id: connectionStatus }
 
             background: Rectangle {
                 color: "white"
@@ -137,6 +138,7 @@ SGStrataPopup {
                 }
 
                 if (guestUser === false) {
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.get_profile(NavigationControl.context.user_id)
                 }
             }
@@ -173,6 +175,7 @@ SGStrataPopup {
                     spinnerDialog.open()
                     firstNameColumn.editable = false;
                     lastNameColumn.editable = false;
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
                     resetHeight();
                 }
@@ -229,6 +232,7 @@ SGStrataPopup {
                     spinnerDialog.open()
                     companyColumn.editable = false
                     jobTitleColumn.editable = false
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
                     resetHeight();
                 }
@@ -321,6 +325,7 @@ SGStrataPopup {
                         timezone = Math.floor(timezone)
                     }
                     var login_info = { user: NavigationControl.context.user_id, password: currentPasswordField.text, timezone: timezone }
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.login(login_info)
                     currentPasswordRow.editable = false
                     newPasswordRow.editable = false
@@ -534,6 +539,7 @@ SGStrataPopup {
                         let data = {
                             "password": passwordField.text
                         };
+                        connectionStatus.currentId = LoginUtil.getNextId()
                         LoginUtil.update_profile(NavigationControl.context.user_id, data)
                     } else {
                         passwordControls.expandAnimation.start()
