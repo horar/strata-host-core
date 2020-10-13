@@ -158,9 +158,12 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
     rapidjson::ParseResult result = jsonDoc.Parse(json.data());
     if (result.IsError()) {
         qCCritical(logCategoryUtils).nospace().noquote()
+                << "Json is not valid: " << endl << json;
+
+        qCCritical(logCategoryUtils).nospace().noquote()
                 << "JSON parse error at offset " << result.Offset()
-                << ": " << rapidjson::GetParseError_En(result.Code())
-                << " Json is not valid: " << json;
+                << ": " << rapidjson::GetParseError_En(result.Code());
+
         return false;
     }
 
@@ -169,9 +172,12 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
     result = schemaDoc.Parse(schema.data());
     if (result.IsError()) {
         qCCritical(logCategoryUtils).nospace().noquote()
+                << "Schema is not valid: " << endl << schema;
+
+        qCCritical(logCategoryUtils).nospace().noquote()
                 << "JSON parse error at offset " << result.Offset()
-                << ": " << rapidjson::GetParseError_En(result.Code())
-                << " Schema is not valid: " << schema;
+                << ": " << rapidjson::GetParseError_En(result.Code());
+
         return false;
     }
 
