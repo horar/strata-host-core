@@ -195,7 +195,7 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: {
-                        editor.treeModel.url = model.url
+                        openProjectContainer.url = model.url
                         if(mouse.button === Qt.RightButton) {
                             removeProjectMenu.popup()
                         }

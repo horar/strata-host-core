@@ -166,7 +166,7 @@ Rectangle {
 
                 onClicked: {
                     if (fileSelector.fileUrl.toString() !== "") {
-                        editor.treeModel.url = sdsModel.newControlView.createNewProject(fileSelector.fileUrl, templateButtonGroup.checkedButton.path);
+                        openProjectContainer.url = sdsModel.newControlView.createNewProject(fileSelector.fileUrl, templateButtonGroup.checkedButton.path);
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
                         openProjectContainer.addToTheProjectList(editor.treeModel.url.toString())
