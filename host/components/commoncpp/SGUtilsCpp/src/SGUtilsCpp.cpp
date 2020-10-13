@@ -32,6 +32,34 @@ bool SGUtilsCpp::isFile(const QString &file)
     return info.isFile();
 }
 
+bool SGUtilsCpp::createFile(const QString &filepath)
+{
+    QFile file(filepath);
+    if (file.exists()) {
+        file.close();
+        return false;
+    }
+
+    bool success = file.open(QIODevice::WriteOnly);
+    file.close();
+    return success;
+}
+
+bool SGUtilsCpp::removeFile(const QString &filepath)
+{
+    return QFile::remove(filepath);
+}
+
+bool SGUtilsCpp::copyFile(const QString &fromPath, const QString &toPath)
+{
+    return QFile::copy(fromPath, toPath);
+}
+
+QString SGUtilsCpp::fileSuffix(const QString &filename)
+{
+    return QFileInfo(filename).suffix();
+}
+
 bool SGUtilsCpp::isExecutable(const QString &file)
 {
     QFileInfo info(file);
@@ -54,6 +82,15 @@ QString SGUtilsCpp::dirName(const QString &path)
 {
     QDir dir(path);
     return dir.dirName();
+}
+
+QString SGUtilsCpp::parentDirectoryPath(const QString &filepath)
+{
+    QFileInfo fi(filepath);
+    if (fi.isDir()) {
+        return fi.absolutePath();
+    }
+    return fi.dir().absolutePath();
 }
 
 QUrl SGUtilsCpp::pathToUrl(const QString &path, const QString &scheme)
@@ -82,8 +119,11 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
     return file.commit();
 }
 
-bool SGUtilsCpp::fileIsChildOfDir(const QString &filePath, const QString &dirPath)
+bool SGUtilsCpp::fileIsChildOfDir(const QString &filePath, QString dirPath)
 {
+    if (dirPath.length() > 0 && dirPath[dirPath.length() - 1] != QDir::separator()) {
+        dirPath.append(QDir::separator());
+    }
     if (filePath.startsWith(dirPath)) {
         return true;
     } else {
