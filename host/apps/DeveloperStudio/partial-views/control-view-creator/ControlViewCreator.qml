@@ -8,7 +8,8 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
-    property string currentFileUrl: ""
+
+    property url currentFileUrl: ""
 
     SGUserSettings {
         id: sgUserSettings
