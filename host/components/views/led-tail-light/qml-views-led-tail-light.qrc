@@ -8,9 +8,6 @@
         <file>control-views/PowerControl.qml</file>
         <file>control-views/MiscControl.qml</file>
         <file>control-views/SAMOPTControl.qml</file>
-        <file>control-views/control-Images/Blinker.png</file>
-        <file>control-views/control-Images/Brake.png</file>
-        <file>control-views/control-Images/flasher.png</file>
         <file>control-views/car-Images/base.jpg</file>
         <file>control-views/car-Images/brakes.png</file>
         <file>control-views/car-Images/headlights.png</file>
