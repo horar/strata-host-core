@@ -16,6 +16,7 @@ RowLayout {
     signal editingFinished(string text)
 
     property alias text: infoText.text
+    property alias infoBoxObject: infoText
     property alias textColor: infoText.textColor
     property alias textPadding: infoText.textPadding
     property alias invalidTextColor: infoText.invalidTextColor

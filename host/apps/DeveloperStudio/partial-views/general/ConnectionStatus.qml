@@ -6,8 +6,13 @@ import tech.strata.signals 1.0
 
 ColumnLayout {
     spacing: 5
+
     property alias text: connectionStatus.text
     property alias headerText: searchingText.text
+    property int currentId: -1
+
+    onCurrentIdChanged: text = ""
+
     Text {
         id: searchingText
         color: "#888"
@@ -47,18 +52,21 @@ ColumnLayout {
         target: Signals
 
         onConnectionStatus: {
-            switch(status) {
-            case 0:
-                connectionStatus.text = "Building Request"
-                break;
-            case 1:
-                connectionStatus.text = "Waiting on Server Response"
-                break;
-            case 2:
-                connectionStatus.text = "Request Received From Server"
-                break;
-            case 3:
-                connectionStatus.text = "Processing Request"
+            if(currentId === requestId){
+                switch(status) {
+                case XMLHttpRequest.UNSENT:
+                    connectionStatus.text = "Building Request..."
+                    break;
+                case XMLHttpRequest.OPENED:
+                    connectionStatus.text = "Waiting on Server Response..."
+                    break;
+                case XMLHttpRequest.HEADERS_RECEIVED:
+                    connectionStatus.text = "Request Received From Server..."
+                    break;
+                case XMLHttpRequest.LOADING:
+                    connectionStatus.text = "Processing Request..."
+                    break;
+                }
             }
         }
     }
