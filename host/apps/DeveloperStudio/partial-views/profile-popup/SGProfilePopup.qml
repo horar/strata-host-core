@@ -143,28 +143,6 @@ SGStrataPopup {
                 }
             }
 
-            Popup {
-                id: passReqsPopup
-
-                x: newPasswordRow.x
-                y: newPasswordRow.y + passwordField.height + 5
-                width: newPasswordRow.Layout.preferredWidth
-                height: passReqs.height
-
-                visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid
-                padding: 0
-                background: Item {}
-                closePolicy: Popup.NoAutoClose
-
-                PasswordRequirements {
-                    id: passReqs
-                    width: passReqsPopup.width
-                    onClicked: {
-                        passwordField.focus = confirmPasswordField.focus = false
-                    }
-                }
-            }
-
             SGNotificationToast {
                  id: alertRect
 
@@ -299,6 +277,28 @@ SGStrataPopup {
                 placeHolderText: "Title"
                 validationCheck: true
                 showValidIcon: false
+            }
+
+            Popup {
+                id: passReqsPopup
+
+                x: newPasswordRow.x
+                y: newPasswordRow.y + passwordField.height + 5
+                width: newPasswordRow.Layout.preferredWidth
+                height: passReqs.height
+
+                visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid && newPasswordRow.editable
+                padding: 0
+                background: Item {}
+                closePolicy: Popup.NoAutoClose
+
+                PasswordRequirements {
+                    id: passReqs
+                    width: passReqsPopup.width
+                    onClicked: {
+                        passwordField.focus = confirmPasswordField.focus = false
+                    }
+                }
             }
 
             ProfileSectionHeader {
