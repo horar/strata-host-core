@@ -25,7 +25,7 @@ function login(login_info){
         "version": Rest.versionNumber(),
     }
 
-    Rest.xhr("post", "login", data, login_result, login_error, SignalsModule.Signals, headers)
+    Rest.xhr("post", "login", data, login_result, login_error, headers)
 }
 
 /*
@@ -70,7 +70,7 @@ function login_error(error)
   Login: Clear token on logout
 */
 function logout() {
-    Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_error)//, SignalsModule.Signals)
+    Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_error)
     Rest.jwt = ""
     Rest.session = ""
     if (settings.rememberMe) {
@@ -96,7 +96,7 @@ function logout_error(error){
 function close_session() {
     if (Rest.session !== '' && Rest.jwt !== ''){
         var headers = {"app": "strata"}
-        Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, undefined, headers)
+        Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, headers)
     }
 }
 
@@ -122,7 +122,7 @@ function register(registration_info){
         "title": registration_info.title,
         "company": registration_info.company
     };
-    Rest.xhr("post", "signup", data, register_result, register_error, SignalsModule.Signals)
+    Rest.xhr("post", "signup", data, register_result, register_error, null)
 }
 
 /*
@@ -154,7 +154,7 @@ function register_error(error)
 */
 function password_reset_request(request_info){
     var data = {"username":request_info.username};
-    Rest.xhr("post", "resetPasswordRequest", data, password_reset_result, password_reset_error, SignalsModule.Signals)
+    Rest.xhr("post", "resetPasswordRequest", data, password_reset_result, password_reset_error)
 }
 
 /*
@@ -189,7 +189,7 @@ function password_reset_error(error)
 */
 function close_account(request_info) {
     var data = {"username":request_info.username};
-    Rest.xhr("post", "closeAccount", data, close_account_result, close_account_result, SignalsModule.Signals);
+    Rest.xhr("post", "closeAccount", data, close_account_result, close_account_result);
 }
 
 /*
@@ -213,7 +213,7 @@ function close_account_result(response) {
 */
 function get_profile(username) {
     var data = {"username": username};
-    Rest.xhr("post", "profile", data, get_profile_result, get_profile_result_failed, SignalsModule.Signals)
+    Rest.xhr("post", "profile", data, get_profile_result, get_profile_result_failed)
 }
 
 /*
@@ -239,9 +239,9 @@ function update_profile(username, updated_properties) {
     data._id = username;
 
     if (updated_properties.hasOwnProperty("password")) {
-        Rest.xhr("post", "profileUpdate", data, change_password_result, change_password_result, SignalsModule.Signals)
+       Rest.xhr("post", "profileUpdate", data, change_password_result, change_password_result)
     } else {
-        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result, SignalsModule.Signals)
+       Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result)
     }
 }
 
@@ -274,7 +274,7 @@ function validate_token()
 {
     if (Rest.jwt !== ""){
         var headers = {"app": "strata"}
-        Rest.xhr("get", "session/init", "", validation_result, validation_result, undefined, headers)
+        Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
     } else {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "No JWT to validate")
     }
@@ -300,4 +300,7 @@ function set_token (token) {
     Rest.jwt = token
 }
 
+function getNextId(){
+   return Rest.getNextRequestId();
+}
 
