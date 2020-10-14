@@ -31,11 +31,6 @@ Item {
         return SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text);
     }
 
-    Connections{
-        target: saveButton
-        onClicked: saveFile(model.filepath,fileText)
-    }
-
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
             saveFile(model.filepath, fileText)
@@ -51,6 +46,7 @@ Item {
         objectName: "fileChannel"
 
         signal setValue(string value);
+        signal setContainerHeight(string height);
 
         function setHtml(value) {
             setValue(value)
@@ -74,14 +70,17 @@ Item {
         settings.javascriptEnabled: true
         settings.javascriptCanAccessClipboard: true
         settings.pluginsEnabled: true
+        settings.showScrollBars: false
 
         anchors.fill: parent
 
+        onHeightChanged: {
+            channelObject.setContainerHeight(height.toString())
+        }
+
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                webEngine.runJavaScript("setContainerHeight(%1)".replace("%1", parent.height), function result(result) {
-
-                });
+                channelObject.setContainerHeight(height.toString())
                 fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
             }

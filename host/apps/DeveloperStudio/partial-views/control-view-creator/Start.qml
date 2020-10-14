@@ -35,14 +35,14 @@ Rectangle {
             SGButton {
                 text: "Open Control View Project"
                 onClicked: {
-                    viewStack.currentIndex = 1
+                    toolBarListView.currentIndex = toolBarListView.openTab
                 }
             }
 
             SGButton {
                 text: "Start New Control View Project"
                 onClicked: {
-                    viewStack.currentIndex = 2
+                    toolBarListView.currentIndex = toolBarListView.newTab
                 }
             }
         }

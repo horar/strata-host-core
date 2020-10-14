@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
@@ -17,62 +18,177 @@ Rectangle {
         user: NavigationControl.context.user_id
     }
 
-    ColumnLayout {
+    RowLayout {
         anchors {
             fill: parent
         }
         spacing:  0
 
         Rectangle {
-            id: topBar
-            Layout.preferredHeight: 45
-            Layout.fillWidth: true
-            Layout.maximumWidth: parent.width
-            color: "#666"
-            visible: viewStack.currentIndex >= editUseStrip.offset
+            id: tool
+            Layout.fillHeight: true
+            Layout.preferredWidth: 70
+            Layout.maximumWidth: 70
+            Layout.alignment: Qt.AlignTop
+            color: "#444"
 
-            RowLayout {
-                height: parent.height
-                width: Math.min(implicitWidth, parent.width-5)
-                x: 2.5
-                spacing: 10
+            ListView {
+                id: toolBarListView
 
-                SGButton {
-                    text: "Open Control View Project"
-                    onClicked: {
+                anchors.fill: parent
+
+                spacing: 5
+                orientation: Qt.Vertical
+                currentIndex: -1
+
+                property int openTab: 0
+                property int newTab: 1
+                property int editTab: 2
+                property int viewTab: 3
+                property bool recompiling: false
+
+                onCurrentIndexChanged: {
+                    switch (currentIndex) {
+                    case openTab:
                         viewStack.currentIndex = 1
-                    }
-                }
-
-                SGButton {
-                    text: "New Control View Project"
-                    onClicked: {
+                        break;
+                    case newTab:
                         viewStack.currentIndex = 2
-                    }
-                }
-
-                SGButtonStrip {
-                    id: editUseStrip
-                    model: ["Edit", "Use Control View"]
-                    checkedIndices: 0
-                    onClicked: {
-                        if (currentFileUrl !== editor.treeModel.url) {
-                            recompileControlViewQrc()
+                        break;
+                    case editTab:
+                        viewStack.currentIndex = 3
+                        break;
+                    case viewTab:
+                        if (currentFileUrl != editor.treeModel.url) {
+                            toolBarListView.recompiling = true
+                            recompileControlViewQrc();
                             currentFileUrl = editor.treeModel.url
+                        } else {
+                            viewStack.currentIndex = 4
                         }
-                        viewStack.currentIndex = index + offset
-                    }
 
-                    property int offset: 3 // number of views in stack before Editor/ControlViewContainer
-                }
-
-                SGButton {
-                    text: "Recompile/Reload Control View"
-
-                    onClicked: {
-                        recompileControlViewQrc()
+                        break;
+                    default:
+                        viewStack.currentIndex = 0
+                        break;
                     }
                 }
+
+                model: [
+                    { imageSource: "qrc:/sgimages/folder-open-solid.svg", imageText: "Open" },
+                    { imageSource: "qrc:/sgimages/folder-plus.svg", imageText: "New" },
+                    { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit" },
+                    { imageSource: "qrc:/sgimages/eye.svg", imageText: "View" },
+                ]
+
+                delegate: SGSideNavItem {
+                    iconLeftMargin: index === toolBarListView.editTab ? 7 : 0
+                }
+
+                footer: Item {
+                    implicitHeight: divider.height + recompileNavButton.height
+                    implicitWidth: toolBarListView.width
+
+                    Rectangle {
+                        id: divider
+                        height: 1
+                        width: toolBarListView.width
+                        color: "lightgrey"
+                        anchors.top: parent.top
+                    }
+
+                    BusyIndicator {
+                        id: buildingIndicator
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: 30
+                        width: 30
+                        visible: toolBarListView.recompiling
+                        running: visible
+
+                        contentItem: Item {
+                            implicitWidth: 30
+                            implicitHeight: 30
+
+                            Item {
+                                id: item
+                                x: parent.width / 2 - 15
+                                y: parent.height / 2 - 15
+                                width: 30
+                                height: 30
+
+                                RotationAnimator {
+                                    target: item
+                                    running: buildingIndicator.visible && buildingIndicator.running
+                                    from: 0
+                                    to: 360
+                                    loops: Animation.Infinite
+                                    duration: 1250
+                                }
+
+                                Repeater {
+                                    id: repeater
+                                    model: 6
+
+                                    Rectangle {
+                                        x: item.width / 2 - width / 2
+                                        y: item.height / 2 - height / 2
+                                        implicitWidth: 6
+                                        implicitHeight: 6
+                                        radius: 5
+                                        color: "#33b13b"
+                                        transform: [
+                                            Translate {
+                                                y: -Math.min(item.width, item.height) * 0.5 + 3
+                                            },
+                                            Rotation {
+                                                angle: index / repeater.count * 360
+                                                origin.x: 3
+                                                origin.y: 3
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    SGSideNavItem {
+                        id: recompileNavButton
+                        iconText: "Build"
+                        iconSource: "qrc:/sgimages/bolt.svg"
+                        enabled: editor.treeModel.url.toString() !== "" && !toolBarListView.recompiling
+                        anchors.top: divider.bottom
+                        visible: !toolBarListView.recompiling
+
+                        function onClicked() {
+                            toolBarListView.recompiling = true;
+                            recompileControlViewQrc();
+                        }
+
+                        Connections {
+                            target: sdsModel.resourceLoader
+
+                            onFinishedRecompiling: {
+                                if (filepath !== '') {
+                                    loadDebugView(filepath)
+                                } else {
+                                    NavigationControl.removeView(controlViewContainer)
+                                    let error_str = sdsModel.resourceLoader.getLastLoggedError()
+                                    sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
+                                }
+
+                                toolBarListView.recompiling = false
+
+                                if (toolBarListView.currentIndex === toolBarListView.viewTab) {
+                                    viewStack.currentIndex = 4
+                                }
+                            }
+                        }
+                    }
+                }
+
+                footerPositioning: ListView.OverlayFooter
             }
         }
 
@@ -80,12 +196,6 @@ Rectangle {
             id: viewStack
             Layout.fillHeight: true
             Layout.fillWidth: true
-
-            onCurrentIndexChanged: {
-                if (currentIndex !== editUseStrip.offset && currentIndex !== (editUseStrip.offset + 1)) {
-                    editUseStrip.checkedIndices = 0
-                }
-            }
 
             Start {
                 id: startContainer
@@ -131,14 +241,7 @@ Rectangle {
 
     function recompileControlViewQrc () {
         if (editor.treeModel.url !== '') {
-            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
-            if (compiledRccFile !== '') {
-                loadDebugView(compiledRccFile)
-            } else {
-                NavigationControl.removeView(controlViewContainer)
-                let error_str = sdsModel.resourceLoader.getLastLoggedError()
-                sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
-            }
+            sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
         }
     }
 

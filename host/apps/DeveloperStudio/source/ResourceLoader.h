@@ -85,9 +85,12 @@ public:
 
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 
-    Q_INVOKABLE QString recompileControlViewQrc(QString qrcFilePath);
+    Q_INVOKABLE void recompileControlViewQrc(QString qrcFilePath);
 
     Q_INVOKABLE QString getLastLoggedError();
+
+signals:
+    void finishedRecompiling(QString filepath);
 
 private slots:
     /**
@@ -101,7 +104,7 @@ private slots:
     bool deleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent);
 
     void onOutputRead();
-
+    void recompileFinished(int exitCode, QProcess::ExitStatus exitStatus);
 private:
     void loadCoreResources();
     QString getQResourcePrefix(const QString &class_id, const QString &version);
@@ -110,9 +113,10 @@ private:
 
     static const QStringList coreResources_;
 
-    QProcess rccCompilerProcess_;
+    QProcess *rccCompilerProcess_ = nullptr;
 
     QString lastLoggedError = "";
+    QString lastCompiledRccResource = "";
     void clearLastLoggedError();
     void setLastLoggedError(QString &error_str);
 };
