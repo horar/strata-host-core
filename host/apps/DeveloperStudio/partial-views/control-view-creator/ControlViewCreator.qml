@@ -45,6 +45,7 @@ Rectangle {
                 property int newTab: 1
                 property int editTab: 2
                 property int viewTab: 3
+                property bool recompiling: false
 
                 onCurrentIndexChanged: {
                     switch (currentIndex) {
@@ -59,6 +60,7 @@ Rectangle {
                         break;
                     case viewTab:
                         if (currentFileUrl != editor.treeModel.url) {
+                            toolBarListView.recompiling = true
                             recompileControlViewQrc();
                             currentFileUrl = editor.treeModel.url
                         } else {
@@ -95,17 +97,72 @@ Rectangle {
                         anchors.top: parent.top
                     }
 
+                    BusyIndicator {
+                        id: buildingIndicator
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: 30
+                        width: 30
+                        visible: toolBarListView.recompiling
+                        running: visible
+
+                        contentItem: Item {
+                            implicitWidth: 30
+                            implicitHeight: 30
+
+                            Item {
+                                id: item
+                                x: parent.width / 2 - 15
+                                y: parent.height / 2 - 15
+                                width: 30
+                                height: 30
+
+                                RotationAnimator {
+                                    target: item
+                                    running: buildingIndicator.visible && buildingIndicator.running
+                                    from: 0
+                                    to: 360
+                                    loops: Animation.Infinite
+                                    duration: 1250
+                                }
+
+                                Repeater {
+                                    id: repeater
+                                    model: 6
+
+                                    Rectangle {
+                                        x: item.width / 2 - width / 2
+                                        y: item.height / 2 - height / 2
+                                        implicitWidth: 6
+                                        implicitHeight: 6
+                                        radius: 5
+                                        color: "#33b13b"
+                                        transform: [
+                                            Translate {
+                                                y: -Math.min(item.width, item.height) * 0.5 + 3
+                                            },
+                                            Rotation {
+                                                angle: index / repeater.count * 360
+                                                origin.x: 3
+                                                origin.y: 3
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     SGSideNavItem {
                         id: recompileNavButton
                         iconText: "Build"
                         iconSource: "qrc:/sgimages/bolt.svg"
-                        enabled: editor.treeModel.url.toString() !== "" && !recompiling
+                        enabled: editor.treeModel.url.toString() !== "" && !toolBarListView.recompiling
                         anchors.top: divider.bottom
-
-                        property bool recompiling: false
+                        visible: !toolBarListView.recompiling
 
                         function onClicked() {
-                            recompiling = true;
+                            toolBarListView.recompiling = true;
                             recompileControlViewQrc();
                         }
 
@@ -121,7 +178,7 @@ Rectangle {
                                     sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
                                 }
 
-                                recompileNavButton.recompiling = false
+                                toolBarListView.recompiling = false
 
                                 if (toolBarListView.currentIndex === toolBarListView.viewTab) {
                                     viewStack.currentIndex = 4
