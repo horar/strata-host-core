@@ -552,6 +552,47 @@ Item {
                                           show: function () { CorePlatformInterface.show(this) }
                                       })
 
+//20201002YI
+    property var start_periodic_mapena : ({
+                                       "cmd" : "start_periodic",
+                                       "payload": {
+                                           "function":"pxnBRCMAPENCommand",
+                                           "run_count":-1,
+                                           "interval":100
+                                       },
+
+                                       update: function (function_a,run_count_a,interval_a) {
+                                           this.set(function_a,run_count_a,interval_a)
+                                           this.send(this)
+                                           },
+                                       set: function (function_a,run_count_a,interval_a) {
+                                           this.payload.function = function_a
+                                           this.payload.run_count = run_count_a
+                                           this.payload.interval = interval_a
+                                       },
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
+
+//20201002YI
+    property var stop_periodic_mapena : ({
+                                      "cmd" : "stop_periodic",
+                                      "payload": {
+                                          "function":"pxnBRCMAPENCommand"
+                                      },
+
+                                      update: function () {
+                                          this.set()
+                                          this.send()
+                                      },
+
+                                      set: function () {
+                                      },
+
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
 
     property bool boost_enable_state: false
     property bool buck1_enable_state: false

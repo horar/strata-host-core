@@ -37,6 +37,7 @@ Item {
                 controlContainer.currentIndex = 0
                 controldemo.handlar_stop_control()
                 platformInterface.pxn_datasend_all.update(0)
+                platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)   // 20201002 YI
                 platformInterface.auto_addr_sw_block = false
                 platformInterface.clear_intensity_slider_led1 = true
                 platformInterface.clear_intensity_slider_led2 = true
@@ -55,6 +56,9 @@ Item {
                 platformInterface.clear_intensity_slider_led2 = false
                 platformInterface.clear_intensity_slider_led3 = false
                 platformInterface.clear_demo_setup = true
+                //platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
+                platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)   // 20201002 YI
+
             }
         }
 
@@ -62,6 +66,7 @@ Item {
             id: diagpxnButton
             text: qsTr("Pixel Diagnostic information")
             onClicked: {
+                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
                 controlContainer.currentIndex = 2
                 controldemo.handlar_stop_control()
                 platformInterface.clear_intensity_slider_led1 = false
@@ -75,6 +80,7 @@ Item {
             id: setupButton
             text: qsTr("Boost and Buck IC setup")
             onClicked: {
+                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
                 controlContainer.currentIndex = 3
                 controldemo.handlar_stop_control()
                 platformInterface.pxn_datasend_all.update(0)
@@ -89,6 +95,7 @@ Item {
             id: diagButton
             text: qsTr("Buck Boost Diagnostic information")
             onClicked: {
+                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
                 controlContainer.currentIndex = 4
                 controldemo.handlar_stop_control()
                 platformInterface.pxn_datasend_all.update(0)
