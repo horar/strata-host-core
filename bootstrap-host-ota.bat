@@ -22,6 +22,10 @@ REM echo "======================================================================
 set BUILD_ID=1
 set BUILD_CLEANUP=0
 set SKIP_TESTS=0
+set USE_PROD_CONFIG=0
+set USE_QA_CONFIG=0
+set USE_DEV_CONFIG=0
+set USE_DOCKER_CONFIG=0
 set BOOTSTRAP_USAGE=0
 set "BOOTSTRAP_ARGS_LIST=%*"
 call :parse_loop
@@ -72,6 +76,18 @@ set HCS_BINARY_DIR=%PKG_STRATA_HCS%\%HCS_BINARY%
 set STRATA_DEPLOYMENT_DIR=..\deployment\Strata
 set STRATA_RESOURCES_DIR=..\host\resources\qtifw
 set STRATA_HCS_CONFIG_DIR=..\host\assets\config\hcs
+
+set STRATA_HCS_CONFIG_FILE_PROD=hcs_prod.config
+set STRATA_HCS_CONFIG_FILE_QA=hcs_qa.config
+set STRATA_HCS_CONFIG_FILE_DEV=hcs_dev.config
+set STRATA_HCS_CONFIG_FILE_DOCKER=hcs_docker.config
+set STRATA_HCS_CONFIG_FILE=%STRATA_HCS_CONFIG_FILE_QA%
+
+if %USE_PROD_CONFIG% EQU 1 ( set STRATA_HCS_CONFIG_FILE=%STRATA_HCS_CONFIG_FILE_PROD%)
+if %USE_QA_CONFIG% EQU 1 ( set STRATA_HCS_CONFIG_FILE=%STRATA_HCS_CONFIG_FILE_QA%)
+if %USE_DEV_CONFIG% EQU 1 ( set STRATA_HCS_CONFIG_FILE=%STRATA_HCS_CONFIG_FILE_DEV%)
+if %USE_DOCKER_CONFIG% EQU 1 ( set STRATA_HCS_CONFIG_FILE=%STRATA_HCS_CONFIG_FILE_DOCKER%)
+
 set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
@@ -251,12 +267,12 @@ if %SKIP_TESTS% EQU 0 (
 
     ctest
 
-	IF %ERRORLEVEL% NEQ 0 (
-		echo "======================================================================="
-		echo " Unit tests failed!"
-		echo "======================================================================="
-		Exit /B 6
-	)
+    IF %ERRORLEVEL% NEQ 0 (
+        echo "======================================================================="
+        echo " Unit tests failed!"
+        echo "======================================================================="
+        Exit /B 6
+    )
 )
 
 echo "======================================================================="
@@ -267,7 +283,7 @@ REM copy various license files
 xcopy %STRATA_DEPLOYMENT_DIR%\dependencies\strata %PKG_STRATA_DS% /E /Y
 
 REM copy HCS config file
-copy %STRATA_HCS_CONFIG_DIR%\hcs_prod.config %PKG_STRATA_HCS%\hcs.config
+copy %STRATA_HCS_CONFIG_DIR%\%STRATA_HCS_CONFIG_FILE% %PKG_STRATA_HCS%\hcs.config
 
 REM echo "Copying Qt Core\Components resources to %PKG_STRATA_COMPONENTS%"
 REM xcopy bin\component-*.rcc %PKG_STRATA_COMPONENTS% /Y
@@ -667,6 +683,41 @@ if /I "%1"=="--buildid" (
     set BUILD_ID=%2
     set __local_ARG_FOUND=1
 )
+if /I "%1"=="-f" (
+    if "%2"=="PROD" (
+        set USE_PROD_CONFIG=1
+        set __local_ARG_FOUND=1
+    )
+    if "%2"=="QA" (
+        set USE_QA_CONFIG=1
+        set __local_ARG_FOUND=1
+    )
+    if "%2"=="DEV" (
+        set USE_DEV_CONFIG=1
+        set __local_ARG_FOUND=1
+    )
+    if "%2"=="DOCKER" (
+        set USE_DOCKER_CONFIG=1
+        set __local_ARG_FOUND=1
+    )
+)
+if /I "%1"=="--config" (
+    if "%2"=="PROD" (
+        set USE_PROD_CONFIG=1
+        set __local_ARG_FOUND=1
+    )
+    if "%2"=="QA" (
+        set USE_QA_CONFIG=1
+        set __local_ARG_FOUND=1
+    )
+    if "%2"=="DEV" (
+        set USE_DEV_CONFIG=1
+        set __local_ARG_FOUND=1
+    )
+    if "%2"=="DOCKER" (
+        set USE_DOCKER_CONFIG=1
+    )
+)
 
 if "%__local_ARG_FOUND%" NEQ "1" (
     if "%2"=="" (
@@ -681,14 +732,15 @@ exit /B 0
 
 :usage
 echo "Syntax:"
-echo "     [-i=BUILD_ID] [-c] [-h]"
+echo "     [-i=<BUILD_ID>] [-f=PROD|QA|DEV|DOCKER] [-c] [-s] [-h]"
 echo "Where:"
 echo "     [-i | --buildid]: For build id"
 echo "     [-c | --cleanup]: To clean build folder before build"
 echo "     [-s | --skiptests]: To skip tests after build"
+echo "     [-f | --config]: To use selected HCS configuration: PROD|QA|DEV|DOCKER (Default: QA)"
 echo "     [-h | --help]: For this help"
 echo "For example:"
-echo "     bootstrap-host-ota.bat -i=999 --cleanup -s"
+echo "     bootstrap-host-ota.bat -i=999 -f=PROD --cleanup -s"
 exit /B 0
 
 endlocal

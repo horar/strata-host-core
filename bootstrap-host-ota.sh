@@ -9,16 +9,17 @@
 # or copy at http://opensource.org/licenses/MIT)
 #
 
-function usage {
+usage() {
     echo "Syntax:"
-    echo "     [-i=BUILD_ID] [-c] [-h]"
+    echo "     [-i=<BUILD_ID>] [-f=PROD|QA|DEV|DOCKER] [-c] [-s] [-h]"
     echo "Where:"
-    echo "     [-i | --buildid]: For build id"
+    echo "     [-i | --buildid]: For build id (Default: 1)"
     echo "     [-c | --cleanup]: To clean build folder before build"
     echo "     [-s | --skiptests]: To skip tests after build"
+    echo "     [-f | --config]: To use selected HCS configuration: PROD|QA|DEV|DOCKER (Default: QA)"
     echo "     [-h | --help]: For this help"
     echo "For example:"
-    echo "     ./bootstrap-host-ota.sh -i=999 --cleanup -s"
+    echo "     ./bootstrap-host-ota.sh -i=999 -f=PROD --cleanup -s"
     exit 0
 }
 
@@ -29,6 +30,10 @@ function usage {
 BUILD_ID=1
 BUILD_CLEANUP=0
 SKIP_TESTS=0
+USE_PROD_CONFIG=0
+USE_QA_CONFIG=0
+USE_DEV_CONFIG=0
+USE_DOCKER_CONFIG=0
 BOOTSTRAP_USAGE=0
 
 for i in "$@"
@@ -36,6 +41,15 @@ do
 case $i in
     -i=*|--buildid=*)
     BUILD_ID="${i#*=}"
+    shift # past argument=value
+    ;;
+    -f=*|--config=*)
+    SELECTED_CONFIG="${i#*=}"
+    if [ "${SELECTED_CONFIG}" = "PROD" ] ; then USE_PROD_CONFIG=1;
+    elif [ "${SELECTED_CONFIG}" = "QA" ] ; then USE_QA_CONFIG=1;
+    elif [ "${SELECTED_CONFIG}" = "DEV" ] ; then USE_DEV_CONFIG=1;
+    elif [ "${SELECTED_CONFIG}" = "DOCKER" ] ; then USE_DOCKER_CONFIG=1;
+    else BOOTSTRAP_USAGE=1; fi
     shift # past argument=value
     ;;
     -c|--cleanup)
@@ -65,8 +79,9 @@ echo "======================================================================="
 
 BUILD_DIR=build-host-ota
 PACKAGES_DIR=packages
+export BUILD_ID
 
-PKG_STRATA=$PACKAGES_DIR/com.onsemi.strata/data
+#PKG_STRATA=$PACKAGES_DIR/com.onsemi.strata/data
 PKG_STRATA_COMPONENTS=$PACKAGES_DIR/com.onsemi.strata.components/data
 PKG_STRATA_COMPONENTS_COMMON=$PKG_STRATA_COMPONENTS/imports/tech/strata/commoncpp
 PKG_STRATA_COMPONENTS_VIEWS=$PKG_STRATA_COMPONENTS/views
@@ -80,6 +95,18 @@ HCS_BINARY_DIR=$PKG_STRATA_HCS/$HCS_BINARY
 STRATA_DEPLOYMENT_DIR=../deployment/Strata
 STRATA_RESOURCES_DIR=../host/resources/qtifw
 STRATA_HCS_CONFIG_DIR=../host/assets/config/hcs
+
+STRATA_HCS_CONFIG_FILE_PROD=hcs_prod.config
+STRATA_HCS_CONFIG_FILE_QA=hcs_qa.config
+STRATA_HCS_CONFIG_FILE_DEV=hcs_dev.config
+STRATA_HCS_CONFIG_FILE_DOCKER=hcs_docker.config
+STRATA_HCS_CONFIG_FILE=$STRATA_HCS_CONFIG_FILE_QA
+
+if [ $USE_PROD_CONFIG != 0 ] ; then STRATA_HCS_CONFIG_FILE=$STRATA_HCS_CONFIG_FILE_PROD;
+elif [ $USE_QA_CONFIG != 0 ] ; then STRATA_HCS_CONFIG_FILE=$STRATA_HCS_CONFIG_FILE_QA;
+elif [ $USE_DEV_CONFIG != 0 ] ; then STRATA_HCS_CONFIG_FILE=$STRATA_HCS_CONFIG_FILE_DEV;
+elif [ $USE_DOCKER_CONFIG != 0 ] ; then STRATA_HCS_CONFIG_FILE=$STRATA_HCS_CONFIG_FILE_DOCKER; fi
+
 STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config.xml
 MQTT_LIB=QtMqtt
 COMMON_CPP_LIB="libcomponent-commoncpp.so"
@@ -239,7 +266,7 @@ if [ ! -f "$HCS_BINARY_DIR" ] ; then
     exit 2
 fi
 
-if [ $SKIP_TESTS == 0 ] ; then
+if [ $SKIP_TESTS -eq 0 ] ; then
     echo "======================================================================="
     echo " Starting Strata unit tests.."
     echo "======================================================================="
@@ -269,7 +296,7 @@ if [ $? != 0 ] ; then
 fi
 
 # copy HCS config file
-cp -fv $STRATA_HCS_CONFIG_DIR/hcs_prod.config $PKG_STRATA_HCS/hcs.config
+cp -fv $STRATA_HCS_CONFIG_DIR/$STRATA_HCS_CONFIG_FILE $PKG_STRATA_HCS/hcs.config
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
