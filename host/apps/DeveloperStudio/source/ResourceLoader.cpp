@@ -30,6 +30,7 @@ ResourceLoader::~ResourceLoader()
         itr.next();
         delete itr.value();
     }
+    delete rccCompilerProcess_;
 }
 
 void ResourceLoader::requestDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent) {
@@ -324,15 +325,21 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 
     // Set and launch rcc compiler process
     const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
-    rccCompilerProcess_.setProgram(rccExecutablePath);
-    rccCompilerProcess_.setArguments(arguments);
-    connect(&rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
-    connect(&rccCompilerProcess_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
-    rccCompilerProcess_.start();
+
+    if (rccCompilerProcess_ != nullptr) {
+        delete rccCompilerProcess_;
+    }
+    rccCompilerProcess_ = new QProcess();
+    rccCompilerProcess_->setProgram(rccExecutablePath);
+    rccCompilerProcess_->setArguments(arguments);
+    connect(rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
+    connect(rccCompilerProcess_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
+
+    rccCompilerProcess_->start();
 }
 
 void ResourceLoader::onOutputRead() {
-    QString error_str = rccCompilerProcess_.readAllStandardError();
+    QString error_str = rccCompilerProcess_->readAllStandardError();
     qCCritical(logCategoryStrataDevStudio) << error_str;
     setLastLoggedError(error_str);
 }

@@ -130,7 +130,7 @@ private:
 
     static const QStringList coreResources_;
 
-    QProcess rccCompilerProcess_;
+    QProcess *rccCompilerProcess_ = nullptr;
 
     QString lastLoggedError = "";
     QString lastCompiledRccResource = "";
