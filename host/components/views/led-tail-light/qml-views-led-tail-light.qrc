@@ -1,0 +1,34 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Control.qml</file>
+        <file>control-views/LEDControl.qml</file>
+        <file>control-views/CarDemoControl.qml</file>
+        <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/CustomizeRGBSlider.qml</file>
+        <file>control-views/PowerControl.qml</file>
+        <file>control-views/MiscControl.qml</file>
+        <file>control-views/SAMOPTControl.qml</file>
+        <file>control-views/car-Images/base.jpg</file>
+        <file>control-views/car-Images/brakes.png</file>
+        <file>control-views/car-Images/headlights.png</file>
+        <file>control-views/car-Images/left.png</file>
+        <file>control-views/car-Images/markers.png</file>
+        <file>control-views/car-Images/reverse.png</file>
+        <file>control-views/car-Images/right.png</file>
+        <file>control-views/car-Images/running.png</file>
+        <file>control-views/car-icon/brake.svg</file>
+        <file>control-views/car-icon/drive.svg</file>
+        <file>control-views/car-icon/hazard.svg</file>
+        <file>control-views/car-icon/left-signal.svg</file>
+        <file>control-views/car-icon/no-brake.svg</file>
+        <file>control-views/car-icon/no-hazard.svg</file>
+        <file>control-views/car-icon/no-signal.svg</file>
+        <file>control-views/car-icon/reverse.svg</file>
+        <file>control-views/car-icon/right-signal.svg</file>
+        <file>control-views/NotificationBadge.qml</file>
+        <file>control-views/car-icon/sun_moon_off.png</file>
+        <file>control-views/car-icon/sun_moon_on.png</file>
+        <file>control-views/car-icon/sun_pressed.png</file>
+        <file>control-views/car-icon/moon_pressed.png</file>
+    </qresource>
+</RCC>
