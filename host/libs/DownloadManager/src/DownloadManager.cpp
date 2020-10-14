@@ -10,7 +10,10 @@
 #include <QDir>
 #include <QRandomGenerator>
 #include <QTimer>
+#include <chrono>
 
+
+using namespace std::literals::chrono_literals;
 
 namespace strata {
 
@@ -50,7 +53,7 @@ QString DownloadManager::download(
     qCDebug(logCategoryDownloadManager) << "new download request" << groupId;
 
     if (itemList.isEmpty()) {
-        QTimer::singleShot(1, [this, groupId]() {
+        QTimer::singleShot(1ms, [this, groupId]() {
             emit groupDownloadFinished(groupId, "Nothing to download");
         });
 
@@ -75,7 +78,7 @@ QString DownloadManager::download(
     }
 
     //to make sure response is always asynchronious
-    QTimer::singleShot(1, [this, oneValidRequest]() {
+    QTimer::singleShot(1ms, [this, oneValidRequest]() {
         if (oneValidRequest) {
             for (int i = 0; i < maxDownloadCount_; ++i) {
                 startNextDownload();
