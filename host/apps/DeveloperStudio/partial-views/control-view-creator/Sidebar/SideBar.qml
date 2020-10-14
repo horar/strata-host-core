@@ -77,7 +77,7 @@ Rectangle {
 
                 rowDelegate: Rectangle {
                     height: 25
-                    color: styleData.selected ? "#CCCCCC" : "transparent"
+                    color: styleData.selected ? "#ccc" : "transparent"
                     focus: styleData.selected
                     onFocusChanged: {
                         forceActiveFocus();

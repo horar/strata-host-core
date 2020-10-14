@@ -66,22 +66,19 @@ Rectangle {
         hoverEnabled: true
         enabled: parent.enabled
 
-        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.OpenHandCursor
+        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
 
-        onEntered: {
-            if (iconTextGroup.enabled && !buttonContainer.ListView.isCurrentItem) {
-                tabIcon.iconColor = Qt.darker(tabIcon.iconColor, 1.25)
-            }
-        }
-
-        onExited: {
-            if (iconTextGroup.enabled) {
+        onContainsMouseChanged: {
+            if (containsMouse && iconTextGroup.enabled && !buttonContainer.ListView.isCurrentItem) {
+                tabIcon.iconColor = Qt.darker(tabIcon.iconColor, 1.4)
+            } else if (iconTextGroup.enabled) {
                 tabIcon.iconColor = "white"
             }
         }
 
         onClicked: {
             parent.onClicked()
+            tabIcon.iconColor = "white"
         }
     }
 }
