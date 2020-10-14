@@ -21,6 +21,7 @@ REM echo "======================================================================
 
 set BUILD_ID=1
 set BUILD_CLEANUP=0
+set SKIP_TESTS=0
 set BOOTSTRAP_USAGE=0
 set "BOOTSTRAP_ARGS_LIST=%*"
 call :parse_loop
@@ -49,7 +50,6 @@ set PATH="C:\Program Files\CMake\bin";%PATH%
 
 echo Setting up 'x64 Native Tools Command Prompt for VS 2017'
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
-REM call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=amd64
 
 set BUILD_DIR=build-host-ota
 set PACKAGES_DIR=packages
@@ -208,7 +208,7 @@ cmake -G "NMake Makefiles JOM" ^
     -DWINDOWS_INSTALLER_BUILD:BOOL=1 ^
     -DAPPS_TOOLBOX=off ^
     -DAPPS_UTILS=off ^
-    -DBUILD_TESTING=off ^
+    -DBUILD_TESTING=on ^
     ..\host
 
 IF %ERRORLEVEL% NEQ 0 (
@@ -222,7 +222,6 @@ echo "======================================================================="
 echo " Compiling.."
 echo "======================================================================="
 cmake --build . -- -j %NUMBER_OF_PROCESSORS%
-REM cmake --build . --config Debug
 
 IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
@@ -243,6 +242,21 @@ if not exist "%HCS_BINARY_DIR%" (
     echo " Missing %HCS_BINARY%, build probably failed"
     echo "======================================================================="
     Exit /B 2
+)
+
+if %SKIP_TESTS% EQU 0 (
+    echo "======================================================================="
+    echo " Starting Strata unit tests.."
+    echo "======================================================================="
+
+    ctest
+
+	IF %ERRORLEVEL% NEQ 0 (
+		echo "======================================================================="
+		echo " Unit tests failed!"
+		echo "======================================================================="
+		Exit /B 6
+	)
 )
 
 echo "======================================================================="
@@ -629,6 +643,14 @@ if /I "%1"=="--cleanup" (
     set BUILD_CLEANUP=1
     set __local_ARG_FOUND=1
 )
+if /I "%1"=="-s" (
+    set SKIP_TESTS=1
+    set __local_ARG_FOUND=1
+)
+if /I "%1"=="--skiptests" (
+    set SKIP_TESTS=1
+    set __local_ARG_FOUND=1
+)
 if /I "%1"=="-h" (
     set BOOTSTRAP_USAGE=1
     set __local_ARG_FOUND=1
@@ -663,9 +685,10 @@ echo "     [-i=BUILD_ID] [-c] [-h]"
 echo "Where:"
 echo "     [-i | --buildid]: For build id"
 echo "     [-c | --cleanup]: To clean build folder before build"
+echo "     [-s | --skiptests]: To skip tests after build"
 echo "     [-h | --help]: For this help"
 echo "For example:"
-echo "     bootstrap-host-ota.bat -i=999 --cleanup"
+echo "     bootstrap-host-ota.bat -i=999 --cleanup -s"
 exit /B 0
 
 endlocal

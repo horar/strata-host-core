@@ -15,9 +15,10 @@ function usage {
     echo "Where:"
     echo "     [-i | --buildid]: For build id"
     echo "     [-c | --cleanup]: To clean build folder before build"
+    echo "     [-s | --skiptests]: To skip tests after build"
     echo "     [-h | --help]: For this help"
     echo "For example:"
-    echo "     ./bootstrap-host-ota.sh -i=999 --cleanup"
+    echo "     ./bootstrap-host-ota.sh -i=999 --cleanup -s"
     exit 0
 }
 
@@ -27,6 +28,7 @@ function usage {
 
 BUILD_ID=1
 BUILD_CLEANUP=0
+SKIP_TESTS=0
 BOOTSTRAP_USAGE=0
 
 for i in "$@"
@@ -38,6 +40,10 @@ case $i in
     ;;
     -c|--cleanup)
     BUILD_CLEANUP=1
+    shift # past argument with no value
+    ;;
+    -s|--skiptests)
+    SKIP_TESTS=1
     shift # past argument with no value
     ;;
     -h|--help)
@@ -197,7 +203,7 @@ cmake \
     -DCMAKE_BUILD_TYPE=OTA \
     -DAPPS_TOOLBOX=off \
     -DAPPS_UTILS=off \
-    -DBUILD_TESTING=off \
+    -DBUILD_TESTING=on \
     ../host
 
 if [ $? != 0 ] ; then
@@ -211,7 +217,6 @@ echo "======================================================================="
 echo " Compiling.."
 echo "======================================================================="
 cmake --build . -- -j $(sysctl -n hw.ncpu)
-# cmake --build . --config Debug
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
@@ -232,6 +237,21 @@ if [ ! -f "$HCS_BINARY_DIR" ] ; then
     echo " Missing $HCS_BINARY, build probably failed"
     echo "======================================================================="
     exit 2
+fi
+
+if [ $SKIP_TESTS == 0 ] ; then
+    echo "======================================================================="
+    echo " Starting Strata unit tests.."
+    echo "======================================================================="
+
+    ctest
+
+    if [ $? != 0 ] ; then
+        echo "======================================================================="
+        echo " Unit tests failed!"
+        echo "======================================================================="
+        exit 6
+    fi
 fi
 
 echo "======================================================================="
