@@ -3,7 +3,6 @@
         <file>template-views/basic/Control.qml</file>
         <file>template-views/basic/PlatformInterface.qml</file>
         <file>template-views/basic/qml.qrc</file>
-        <file>template-views/basic/sample.rcc</file>
         <file>template-views/template/CMakeLists.txt</file>
         <file>template-views/template/Control.qml</file>
         <file>template-views/template/qml-views-template.qrc</file>
