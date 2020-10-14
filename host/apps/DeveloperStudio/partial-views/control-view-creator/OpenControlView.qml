@@ -120,7 +120,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        fileModel.url = model.url
+                        openProjectContainer.url = model.url
                         toolBarListView.currentIndex = toolBarListView.editTab
                     }
                 }
@@ -186,7 +186,7 @@ Rectangle {
 
                 onClicked: {
                     if (fileDialog.fileUrl.toString() !== "") {
-                        fileModel.url = fileDialog.fileUrl
+                        openProjectContainer.url = fileDialog.fileUrl
                         toolBarListView.currentIndex = toolBarListView.editTab
                         addToTheProjectList(fileDialog.fileUrl.toString())
                         filePath.text = "Select a .QRC file..."

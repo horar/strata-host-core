@@ -31,11 +31,6 @@ Item {
         return SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text);
     }
 
-    Connections{
-        target: saveButton
-        onClicked: saveFile(model.filepath,fileText)
-    }
-
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
             saveFile(model.filepath, fileText)
