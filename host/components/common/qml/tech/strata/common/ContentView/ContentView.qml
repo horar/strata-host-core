@@ -17,16 +17,15 @@ Rectangle {
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
     onTotalDocumentsChanged: {
         if (classDocuments.pdfListModel.count > 0) {
-             pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
-             empty.hasDownloads = true
+            pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
         } else if (classDocuments.datasheetListModel.count > 0) {
             pdfViewer.url = classDocuments.datasheetListModel.getFirstUri()
-            empty.hasDownloads = true
-        } else if (classDocuments.downloadDocumentListModel.count > 0){
-            empty.hasDownloads = true
-            pdfViewer.url = ""
         } else {
             pdfViewer.url = ""
+        }
+
+        if (classDocuments.downloadDocumentListModel.count > 0){
+            empty.hasDownloads = true
         }
 
         if (totalDocuments > 0) {
