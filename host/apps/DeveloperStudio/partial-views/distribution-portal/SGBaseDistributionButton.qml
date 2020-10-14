@@ -7,6 +7,7 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/constants.js" as Constants
+import "qrc:/js/navigation_control.js" as NavigationControl
 Row {
     id: row
     height: textSize.height * 2
@@ -185,24 +186,15 @@ Row {
         }
     }
 
-    Settings {
-        id: providerSettings
-        category: "Distributor"
-        property string jsonString: ''
-    }
 
     Component.onCompleted: {
         // This is needed to create the model
         loadModel();
-        if (providerSettings.jsonString !== "") {
-            const userSettings = JSON.parse(providerSettings.jsonString)
-            if (userSettings.hasOwnProperty(user_id)) {
-                const savedIndex = userSettings[user_id]
-                const index = savedIndex["index"]
+        if (NavigationControl.userSettings.index !== 0) {
+                const index = NavigationControl.userSettings.index;
                 providerUrl = sgBaseRepeater.model.get(index).url
                 providerName = sgBaseRepeater.model.get(index).name
                 return
-            }
         }
         setIndex(0)
     }
@@ -210,18 +202,12 @@ Row {
     function setIndex(index) {
         providerUrl = sgBaseRepeater.model.get(index).url
         providerName = sgBaseRepeater.model.get(index).name
-        const savedIndex = {}
-        savedIndex["index"] = index
-
-        let savedSettings
-        if (providerSettings.jsonString !== "") {
-            savedSettings = JSON.parse(providerSettings.jsonString)
-        } else {
-            savedSettings = {}
-        }
-
-        savedSettings[user_id] = savedIndex
-        providerSettings.jsonString = JSON.stringify(savedSettings)
+        NavigationControl.userSettings.writeFile("settings.json",
+                                                 { index: index,
+                                                   autoOpenView: NavigationControl.userSettings.autoOpenView,
+                                                   switchToActive: NavigationControl.userSettings.switchToActive,
+                                                   notifyOnFirmwareUpdate: NavigationControl.userSettings.notifyOnFirmwareUpdate
+                                                 });
     }
 
     function loadModel(){

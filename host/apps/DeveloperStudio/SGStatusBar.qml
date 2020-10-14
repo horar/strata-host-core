@@ -44,6 +44,7 @@ Rectangle {
         NavigationControl.userSettings.autoOpenView = settings.autoOpenView
         NavigationControl.userSettings.switchToActive = settings.switchToActive
         NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+        NavigationControl.userSettings.index = settings.index !== undefined ? settings.index : 0
 
     }
 
@@ -339,6 +340,8 @@ Rectangle {
         property bool autoOpenView: false
         property bool switchToActive: false
         property bool notifyOnFirmwareUpdate: false
+
+        property int index: 0
     }
 
     function showAboutWindow(){
