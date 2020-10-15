@@ -14,11 +14,9 @@
     <WizardDefaultHeight>480</WizardDefaultHeight>
     <StartMenuDir>ON Semiconductor</StartMenuDir>
     <TargetDir>@ApplicationsDirX64@/ON Semiconductor/Strata</TargetDir>
-    <RepositorySettingsPageVisible>true</RepositorySettingsPageVisible>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
-    <RemoveTargetDir>false</RemoveTargetDir>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
-    <CreateLocalRepository>false</CreateLocalRepository>
     <InstallActionColumnVisible>true</InstallActionColumnVisible>
+    <DisableAuthorizationFallback>true</DisableAuthorizationFallback>
     <ControlScript>installscript.qs</ControlScript>
 </Installer>
