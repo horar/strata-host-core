@@ -239,6 +239,12 @@ if [ $? != 0 ] ; then
     exit 4
 fi
 
+EXTERN_LOCATION=$(cmake -LA -N . | grep EXTERN_INSTALL_DIR_PATH)
+EXTERN_LOCATION="${EXTERN_LOCATION#*=}"
+if [ "${EXTERN_LOCATION}" = "" ] ; then EXTERN_LOCATION=3p; fi
+
+echo "Detected EXTERN_INSTALL_DIR_PATH is: ${EXTERN_LOCATION}"
+
 echo "======================================================================="
 echo " Compiling.."
 echo "======================================================================="
@@ -319,7 +325,7 @@ if [ $? != 0 ] ; then
 fi
 
 echo "Copying ${MQTT_LIB} to ${PKG_STRATA_COMPONENTS_COMMON}"
-cp -fv 3p/qtmqtt-*/lib/${MQTT_LIB} "${PKG_STRATA_COMPONENTS_COMMON}"
+cp -fv "${EXTERN_LOCATION}"/qtmqtt-*/lib/${MQTT_LIB} "${PKG_STRATA_COMPONENTS_COMMON}"
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
