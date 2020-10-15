@@ -125,7 +125,7 @@ ColumnLayout {
 
     Text {
         text: {
-            if (activeVersion !== null) {
+            if (activeVersion !== null && activeVersion.version !== "") {
                 return activeVersion.version;
             } else {
                 return "Not installed";
