@@ -10,7 +10,10 @@
 #include <QDir>
 #include <QRandomGenerator>
 #include <QTimer>
+#include <chrono>
 
+
+using namespace std::literals::chrono_literals;
 
 namespace strata {
 
@@ -45,13 +48,23 @@ QString DownloadManager::download(
         const QList<DownloadRequestItem> &itemList,
         const Settings &settings)
 {
+    QString groupId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+
+    qCDebug(logCategoryDownloadManager) << "new download request" << groupId;
+
+    if (itemList.isEmpty()) {
+        QTimer::singleShot(1ms, [this, groupId]() {
+            emit groupDownloadFinished(groupId, "Nothing to download");
+        });
+
+       return groupId;
+    }
+
     DownloadGroup *group = new DownloadGroup;
-    group->id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    group->id = groupId;
     group->settings = settings;
     groupHash_.insert(group->id, group);
     bool oneValidRequest = false;
-
-    qCDebug(logCategoryDownloadManager) << "new download request" << group->id;
 
     for (const auto& requestItem : itemList) {
         InternalDownloadRequest *internalRequest = new InternalDownloadRequest();
@@ -65,7 +78,7 @@ QString DownloadManager::download(
     }
 
     //to make sure response is always asynchronious
-    QTimer::singleShot(1, [this, oneValidRequest]() {
+    QTimer::singleShot(1ms, [this, oneValidRequest]() {
         if (oneValidRequest) {
             for (int i = 0; i < maxDownloadCount_; ++i) {
                 startNextDownload();
@@ -78,7 +91,7 @@ QString DownloadManager::download(
     return group->id;
 }
 
-bool DownloadManager::verifyFileChecksum(
+bool DownloadManager::verifyFileHash(
         const QString &filePath,
         const QString &checksum,
         const QCryptographicHash::Algorithm &method)
@@ -266,8 +279,8 @@ void DownloadManager::networkReplyFinishedHandler()
             }
 
             if (internalRequest->md5.isEmpty() == false) {
-                if (verifyFileChecksum(internalRequest->savedFile.fileName(), internalRequest->md5) == false) {
-                    errorString = "checksum verification failed";
+                if (verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5) == false) {
+                    errorString = "hash verification failed";
                 }
             }
         }
@@ -319,7 +332,7 @@ bool DownloadManager::postNextDownloadRequest(InternalDownloadRequest *internalR
     if (QFileInfo::exists(internalRequest->savedFile.fileName())) {
         if (group->settings.keepOriginalName) {
             if (internalRequest->md5.length() > 0
-                    && verifyFileChecksum(internalRequest->savedFile.fileName(), internalRequest->md5))
+                    && verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5))
             {
                 //md5 matches => no need to download it again => skip it
                 prepareResponse(internalRequest);
@@ -460,7 +473,7 @@ void DownloadManager::prepareResponse(InternalDownloadRequest *internalRequest, 
 
     internalRequest->savedFile.close();
 
-    if (errorString.isEmpty()) {
+    if (errorString.isEmpty() && internalRequest->state != InternalDownloadRequest::DownloadState::FinishedWithError) {
         internalRequest->state = InternalDownloadRequest::DownloadState::Finished;
     } else {
         qCWarning(logCategoryDownloadManager)
