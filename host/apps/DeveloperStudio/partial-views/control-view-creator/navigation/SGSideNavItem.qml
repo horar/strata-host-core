@@ -5,15 +5,14 @@ import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: buttonContainer
-    width: parent.width
-    height: 70
-    color: ListView.isCurrentItem ? "#33b13b" : "transparent"
+
+    color: toolBarListView.currentIndex === modelIndex ? "#33b13b" : "transparent"
     enabled: {
-        if (index === toolBarListView.editTab
-                || index === toolBarListView.viewTab) {
+        if (modelIndex === toolBarListView.editTab
+                || modelIndex === toolBarListView.viewTab) {
             if (editor.treeModel.url.toString() === "") {
                 return false;
-            } else if (toolBarListView.currentIndex === toolBarListView.viewTab && index === toolBarListView.viewTab && viewStack.currentIndex !== 4) {
+            } else if (toolBarListView.currentIndex === toolBarListView.viewTab && modelIndex === toolBarListView.viewTab && viewStack.currentIndex !== 4) {
                 return false;
             }
         }
@@ -23,9 +22,10 @@ Rectangle {
     property alias iconText: imageText.text
     property alias iconSource: tabIcon.source
     property int iconLeftMargin: 0
+    property int modelIndex
 
     function onClicked() {
-        toolBarListView.currentIndex = index
+        toolBarListView.currentIndex = modelIndex
     }
 
     ColumnLayout {
@@ -69,7 +69,7 @@ Rectangle {
         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         onContainsMouseChanged: {
-            if (containsMouse && iconTextGroup.enabled && !buttonContainer.ListView.isCurrentItem) {
+            if (containsMouse && iconTextGroup.enabled && modelIndex !== toolBarListView.currentIndex) {
                 tabIcon.iconColor = Qt.darker(tabIcon.iconColor, 1.4)
             } else if (iconTextGroup.enabled) {
                 tabIcon.iconColor = "white"

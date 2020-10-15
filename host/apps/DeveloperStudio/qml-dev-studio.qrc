@@ -149,6 +149,7 @@
         <file>partial-views/control-view-creator/Editor/TextEditorContainer.qml</file>
         <file>partial-views/control-view-creator/Editor/ImageContainer.qml</file>
         <file>partial-views/control-view-creator/Editor/UnsupportedFileType.qml</file>
-        <file>partial-views/control-view-creator/SGSideNavItem.qml</file>
+        <file>partial-views/control-view-creator/navigation/SGSideNavItem.qml</file>
+        <file>partial-views/control-view-creator/navigation/SideNavFooter.qml</file>
     </qresource>
 </RCC>
