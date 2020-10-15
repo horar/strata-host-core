@@ -81,7 +81,6 @@ BUILD_DIR=build-host-ota
 PACKAGES_DIR=packages
 export BUILD_ID
 
-#PKG_STRATA=$PACKAGES_DIR/com.onsemi.strata/data
 PKG_STRATA_COMPONENTS=$PACKAGES_DIR/com.onsemi.strata.components/data
 PKG_STRATA_COMPONENTS_COMMON=$PKG_STRATA_COMPONENTS/imports/tech/strata/commoncpp
 PKG_STRATA_COMPONENTS_VIEWS=$PKG_STRATA_COMPONENTS/views

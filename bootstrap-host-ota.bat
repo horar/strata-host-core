@@ -59,7 +59,6 @@ set BUILD_DIR=build-host-ota
 set PACKAGES_DIR=packages
 set PACKAGES_WIN_DIR=packages_win
 
-set PKG_STRATA=%PACKAGES_DIR%\com.onsemi.strata\data
 set PKG_STRATA_COMPONENTS=%PACKAGES_DIR%\com.onsemi.strata.components\data
 set PKG_STRATA_COMPONENTS_COMMON=%PKG_STRATA_COMPONENTS%\imports\tech\strata\commoncpp
 set PKG_STRATA_COMPONENTS_VIEWS=%PKG_STRATA_COMPONENTS%\views
