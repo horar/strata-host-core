@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.logger 1.0 as Logger
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -93,7 +94,7 @@ ColumnLayout {
         latestVersion = platformStack.controlViewContainer.controlViewList.get(latestVersionIdx);
 
         if (objectIsEmpty(latestVersion)) {
-            console.error("Could not find any control views on server for class id:", platformStack.class_id)
+            console.warn(Logger.devStudioCategory, "Could not find any control views on server for class id:", platformStack.class_id)
             return true;
         }
 
