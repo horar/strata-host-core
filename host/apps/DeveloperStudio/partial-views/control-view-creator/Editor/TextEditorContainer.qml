@@ -34,8 +34,9 @@ Item {
     Connections {
         target: saveButton
         onClicked: {
-            if (openFilesModel.currentId === model.id)
-            saveFile(model.filepath,fileText)
+            if (openFilesModel.currentId === model.id) {
+                saveFile(model.filepath,fileText)
+            }
         }
     }
 
