@@ -39,6 +39,12 @@ Item {
         }
     }
 
+    Keys.onPressed: {
+        if (event.matches(StandardKey.Save)) {
+            saveFile(model.filepath, fileText)
+        }
+    }
+
     WebChannel {
         id: channel
         registeredObjects: [channelObject]
