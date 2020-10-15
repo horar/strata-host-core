@@ -360,6 +360,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
 
         QJsonObject jsonPlatform(value.toObject());
         jsonPlatform.insert("image", url.toString());
+        jsonPlatform.insert("timestamp", platDoc->platformSelector().timestamp);
 
         QJsonArray parts_list;
 
