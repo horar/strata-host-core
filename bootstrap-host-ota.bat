@@ -329,9 +329,16 @@ windeployqt "%SDS_BINARY_DIR%" ^
     --no-system-d3d-compiler ^
     --qmldir ..\host\apps\DeveloperStudio ^
     --qmldir ..\host\components ^
+    --dir %PKG_STRATA_QT%\qml ^
     --libdir %PKG_STRATA_QT% ^
     --plugindir %PKG_STRATA_QT%\plugins ^
     --verbose 1
+
+echo "Sanitizing QtWebEngine location to %PKG_STRATA_QT%"
+move "%PKG_STRATA_QT%\qml\QtWebEngineProcess.exe" "%PKG_STRATA_QT%"
+move "%PKG_STRATA_QT%\qml\translations" "%PKG_STRATA_QT%"
+move "%PKG_STRATA_QT%\qml\resources" "%PKG_STRATA_QT%"
+
 
 IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
