@@ -29,8 +29,6 @@ function Controller()
     console.log("Is isSilent set: " + isSilent);
     console.log("Is startSDS set: " + startSDS);
 
-    installer.uninstallationFinished.connect(Controller.prototype.UninstallationFinished);
-
     if (isSilent == true) {
         installer.installationFinished.connect(Controller.prototype.InstallationPerformed);
         installer.uninstallationFinished.connect(Controller.prototype.InstallationPerformed);
@@ -200,83 +198,6 @@ Controller.prototype.InstallationPerformed = function ()
             console.log("InstallationPerformed clicking next button");
             gui.clickButton(buttons.NextButton, 2000);    // timer to avoid double clicking
         }
-    }
-}
-
-Controller.prototype.UninstallationFinished = function()
-{
-    console.log("UninstallationFinished entered");
-
-    if (installer.status != QInstaller.Success) {
-        return;
-    }
-
-    if (installer.fileExists(installer.value("TargetDir")) == false) {
-        return;
-    }
-
-    var requires_admin_rights = false;
-    var target_dir = installer.value("TargetDir") + "/";
-    var delete_dir_cmd = "rd";
-    var delete_file_cmd = "del";
-    if (systemInfo.productType == "windows") {
-        target_dir = target_dir.split("/").join("\\");
-    } else {
-        delete_dir_cmd = "rm";
-        delete_file_cmd = "rm";
-    }
-
-    var tempFile = target_dir + "tempFile.XXX";
-    installer.execute("cmd", ["/c", "echo > ", tempFile]);
-    if (installer.fileExists(tempFile) == true) {
-        console.log("tempFile created: " + tempFile + ", no need to elevate with admin rights");
-        console.log(installer.execute("cmd", ["/c", "del", tempFile]));
-    } else {
-        console.log("tempFile not created: " + tempFile + ", elevating with admin rights");
-        if (systemInfo.productType == "windows") {
-            requires_admin_rights = true;
-            installer.gainAdminRights();
-        }
-    }
-
-    if (installer.fileExists(target_dir + installer.value("MaintenanceToolName") + ".ini") == true) {
-        installer.execute("cmd", ["/c", delete_file_cmd, target_dir + installer.value("MaintenanceToolName") + ".ini"]);
-    }
-
-    if (installer.fileExists(target_dir + installer.value("MaintenanceToolName") + ".dat") == true) {
-        installer.execute("cmd", ["/c", delete_file_cmd, target_dir + installer.value("MaintenanceToolName") + ".dat"]);
-    }
-
-    if (installer.fileExists(target_dir + "network.xml") == true) {
-        installer.execute("cmd", ["/c", delete_file_cmd, target_dir + "network.xml"]);
-    }
-
-    if (installer.fileExists(target_dir + "installer.dat") == true) {
-        installer.execute("cmd", ["/c", delete_file_cmd, target_dir + "installer.dat"]);
-    }
-
-    if (installer.fileExists(target_dir + "InstallationLog.txt") == true) {
-        installer.execute("cmd", ["/c", delete_file_cmd, target_dir + "InstallationLog.txt"]);
-    }
-
-    if (installer.fileExists(target_dir + "installerResources") == true) {
-        installer.execute("cmd", ["/c", delete_dir_cmd, target_dir + "installerResources"]);
-    }
-
-    if ((systemInfo.productType == "windows") && (installer.fileExists(target_dir + "desktop.ini") == true)) {
-        installer.execute("cmd", ["/c", delete_file_cmd, target_dir + "desktop.ini"]);
-    }
-
-    if ((systemInfo.productType == "osx") && (installer.fileExists(target_dir + ".DS_Store") == true)) {
-        installer.execute("cmd", ["/c", delete_file_cmd, target_dir + ".DS_Store"]);
-    }
-
-    if ((systemInfo.productType == "osx") && (installer.fileExists(target_dir) == true)) {
-        installer.execute("cmd", ["/c", delete_dir_cmd, target_dir]);
-    }
-
-    if (requires_admin_rights == true) {
-        installer.dropAdminRights();
     }
 }
 
