@@ -164,7 +164,7 @@ Item {
                                 SGIcon {
                                     id: unsavedChangesIcon
                                     source: "qrc:/sgimages/asterisk.svg"
-                                    height: tabText.paintedHeight
+                                    height: tabText.paintedHeight * .75
                                     width: height
                                     implicitWidth: height
                                     iconColor: "white"
