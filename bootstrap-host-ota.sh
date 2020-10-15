@@ -239,12 +239,6 @@ if [ $? != 0 ] ; then
     exit 4
 fi
 
-EXTERN_LOCATION=$(cmake -LA -N . | grep EXTERN_INSTALL_DIR_PATH)
-EXTERN_LOCATION="${EXTERN_LOCATION#*=}"
-if [ "${EXTERN_LOCATION}" = "" ] ; then EXTERN_LOCATION=3p; fi
-
-echo "Detected EXTERN_INSTALL_DIR_PATH is: ${EXTERN_LOCATION}"
-
 echo "======================================================================="
 echo " Compiling.."
 echo "======================================================================="
@@ -325,17 +319,18 @@ if [ $? != 0 ] ; then
 fi
 
 echo "Copying ${MQTT_LIB} to ${PKG_STRATA_COMPONENTS_COMMON}"
-cp -fv "${EXTERN_LOCATION}"/qtmqtt-*/lib/${MQTT_LIB} "${PKG_STRATA_COMPONENTS_COMMON}"
+MQTT_LIB_DIR_ACTUAL=$(otool -L "${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_LIB}" | grep ${MQTT_LIB} | sed -e 's/^[ 	\t]*//;s/ (compatibility.*//')
+
+cp -fv "${MQTT_LIB_DIR_ACTUAL}" "${PKG_STRATA_COMPONENTS_COMMON}"
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to copy ${MQTT_LIB} to ${PKG_STRATA_COMPONENTS_COMMON}!"
+    echo " Failed to copy ${MQTT_LIB_DIR_ACTUAL} to ${PKG_STRATA_COMPONENTS_COMMON}!"
     echo "======================================================================="
     exit 2
 fi
 
 echo "Performing install_name_tool on ${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_LIB}"
-MQTT_LIB_DIR_ACTUAL=$(otool -L "${PKG_STRATA_COMPONENTS_COMMON}/${COMMON_CPP_LIB}" | grep ${MQTT_LIB} | sed -e 's/^[ 	\t]*//;s/ (compatibility.*//')
 # Link commoncpp to QtMqtt
 echo "Changing ${MQTT_LIB_DIR_ACTUAL} to @loader_path/${MQTT_LIB}"
 install_name_tool \
