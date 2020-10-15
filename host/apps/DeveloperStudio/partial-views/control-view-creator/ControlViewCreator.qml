@@ -154,6 +154,17 @@ Rectangle {
                     }
 
                     SGSideNavItem {
+                        iconText: "Logs"
+                        iconSource: "qrc:/sgimages/bolt.svg"  // Todo: pick something better
+                        function onClicked() {
+                            logs.visible = !logs.visible;
+                        }
+                        anchors.bottom: divider.bottom
+
+                        // Todo: ensure disabled when on "open project"/"new project" views
+                    }
+
+                    SGSideNavItem {
                         id: recompileNavButton
                         iconText: "Build"
                         iconSource: "qrc:/sgimages/bolt.svg"
@@ -192,48 +203,75 @@ Rectangle {
             }
         }
 
-        StackLayout {
-            id: viewStack
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+        ColumnLayout {
+            id: viewsLogsColumn
+            spacing: 0
 
-            Start {
-                id: startContainer
+            StackLayout {
+                id: viewStack
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-            }
 
-            OpenControlView {
-                id: openProjectContainer
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
+                Start {
+                    id: startContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
 
-            NewControlView {
-                id: newControlViewContainer
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
+                OpenControlView {
+                    id: openProjectContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
 
-            Editor {
-                id: editor
-                Layout.fillHeight: true
-                Layout.fillWidth: true
+                NewControlView {
+                    id: newControlViewContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
+                Editor {
+                    id: editor
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
+                Rectangle {
+                    id: controlViewContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "lightcyan"
+
+                    SGText {
+                        anchors {
+                            centerIn: parent
+                        }
+                        fontSizeMultiplier: 2
+                        text: "Control view from RCC loaded here"
+                        opacity: .25
+                    }
+                }
             }
 
             Rectangle {
-                id: controlViewContainer
-                Layout.fillHeight: true
+                id: logs
+                color: "#ccc"
+                Layout.preferredHeight: 300 // Todo: make grab handle divider so user can scale up/down
                 Layout.fillWidth: true
-                color: "lightcyan"
+                visible: false // Todo: ensure visible == false when on "open project"/"new project" views
 
-                SGText {
+                Rectangle {
+                    // divider
+                    height: 2
+                    width: parent.width
+                    color: "grey"
+                }
+
+                Text {
+                    text: "Console Logs Go Here"
                     anchors {
                         centerIn: parent
                     }
-                    fontSizeMultiplier: 2
-                    text: "Control view from RCC loaded here"
-                    opacity: .25
                 }
             }
         }
