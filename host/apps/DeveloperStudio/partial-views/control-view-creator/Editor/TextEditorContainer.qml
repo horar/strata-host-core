@@ -31,9 +31,12 @@ Item {
         return SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text);
     }
 
-    Connections{
+    Connections {
         target: saveButton
-        onClicked: saveFile(model.filepath,fileText)
+        onClicked: {
+            if (openFilesModel.currentId === model.id)
+            saveFile(model.filepath,fileText)
+        }
     }
 
     WebChannel {
