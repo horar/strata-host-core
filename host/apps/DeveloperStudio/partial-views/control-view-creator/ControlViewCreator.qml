@@ -6,12 +6,22 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
+import "qrc:/js/constants.js" as Constants
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
 
     property url currentFileUrl: ""
+    property var debugPlatform: ({
+      deviceId: Constants.NULL_DEVICE_ID,
+      classId: ""
+    })
+
+    onDebugPlatformChanged: {
+        recompileControlViewQrc();
+    }
 
     SGUserSettings {
         id: sgUserSettings
@@ -183,7 +193,16 @@ Rectangle {
         }
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer);
+
+        Help.setClassId(controlViewCreatorRoot.deviceId)
+        NavigationControl.context.class_id = controlViewCreatorRoot.debugPlatform.classId
+        NavigationControl.context.device_id = controlViewCreatorRoot.debugPlatform.deviceId
+
+        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer, NavigationControl.context);
+
+        delete NavigationControl.context.class_id;
+        delete NavigationControl.context.device_id;
+
         if (obj === null) {
             let error_str = sdsModel.resourceLoader.getLastLoggedError()
             sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
