@@ -99,17 +99,17 @@ Rectangle {
                 }
 
                 SGSideNavItem {
+                    id: logsToggle
                     Layout.fillWidth: true
                     Layout.preferredHeight: 70
                     iconText: "Logs"
-                    iconSource: "qrc:/sgimages/bolt.svg"  // Todo: pick something better
+                    iconSource: "qrc:/sgimages/bars.svg"
                     color: logs.visible ? "#33b13b" : "transparent"
+                    enabled: editor.treeModel.url.toString() !== ""
 
                     function onClicked() {
                         logs.visible = !logs.visible;
                     }
-
-                    // Todo: ensure disabled when on "open project"/"new project" views
                 }
 
                 /*****************************************
