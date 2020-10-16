@@ -15,6 +15,7 @@ TextField {
     property bool darkMode: false
     property bool showCursorPosition: false
     property bool passwordMode: false
+    property bool busyIndicatorRunning: false
 
     /* properties for suggestion list */
     property variant suggestionListModel
@@ -108,6 +109,17 @@ TextField {
             width: height
             height: parent.height - 2*10
             iconColor: "darkgray"
+            opacity: busyIndicatorRunning ? 0 : 1
+            Behavior on opacity { OpacityAnimator { duration: 250} }
+        }
+
+        BusyIndicator {
+            id: busyIndicator
+            anchors.centerIn: leftIconItem
+            height: parent.height - 4
+            width: height
+
+            running: busyIndicatorRunning
         }
 
         Row {

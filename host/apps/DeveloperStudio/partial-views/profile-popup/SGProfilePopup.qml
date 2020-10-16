@@ -6,10 +6,10 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
 
-import 'qrc:/partial-views'
-import 'qrc:/partial-views/login/registration'
-import "qrc:/partial-views/general/"
-import 'qrc:/partial-views/login'
+import '../'
+import '../login/registration'
+import "../general"
+import '../login'
 import 'qrc:/js/login_utilities.js' as LoginUtil
 import 'qrc:/js/navigation_control.js' as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -93,6 +93,7 @@ SGStrataPopup {
                     var user = {
                         username: NavigationControl.context.user_id
                     }
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.close_account(user)
                     confirmDeletePopup.close()
                     spinnerDialog.open()
@@ -113,7 +114,7 @@ SGStrataPopup {
             focus: true
             closePolicy: Popup.NoAutoClose
 
-            contentItem: ConnectionStatus { }
+            contentItem: ConnectionStatus { id: connectionStatus }
 
             background: Rectangle {
                 color: "white"
@@ -137,29 +138,8 @@ SGStrataPopup {
                 }
 
                 if (guestUser === false) {
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.get_profile(NavigationControl.context.user_id)
-                }
-            }
-
-            Popup {
-                id: passReqsPopup
-
-                x: newPasswordRow.x
-                y: newPasswordRow.y + passwordField.height + 5
-                width: newPasswordRow.Layout.preferredWidth
-                height: passReqs.height
-
-                visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid
-                padding: 0
-                background: Item {}
-                closePolicy: Popup.NoAutoClose
-
-                PasswordRequirements {
-                    id: passReqs
-                    width: passReqsPopup.width
-                    onClicked: {
-                        passwordField.focus = confirmPasswordField.focus = false
-                    }
                 }
             }
 
@@ -195,7 +175,9 @@ SGStrataPopup {
                     spinnerDialog.open()
                     firstNameColumn.editable = false;
                     lastNameColumn.editable = false;
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                    resetHeight();
                 }
                 onCanceled: {
                     firstNameColumn.textField.text = ""
@@ -250,7 +232,9 @@ SGStrataPopup {
                     spinnerDialog.open()
                     companyColumn.editable = false
                     jobTitleColumn.editable = false
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                    resetHeight();
                 }
                 onCanceled: {
                     companyColumn.textField.text = ""
@@ -281,13 +265,9 @@ SGStrataPopup {
                 placeHolderText: "Company"
             }
 
-            SGText {
+            SubSectionLabel {
                 id: titleText
                 text: "Title"
-                color: "grey"
-
-                Layout.columnSpan: 1
-                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             }
 
             SGTextValidationSwitch {
@@ -297,6 +277,28 @@ SGStrataPopup {
                 placeHolderText: "Title"
                 validationCheck: true
                 showValidIcon: false
+            }
+
+            Popup {
+                id: passReqsPopup
+
+                x: newPasswordRow.x
+                y: newPasswordRow.y + passwordField.height + 5
+                width: newPasswordRow.Layout.preferredWidth
+                height: passReqs.height
+
+                visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid && newPasswordRow.editable
+                padding: 0
+                background: Item {}
+                closePolicy: Popup.NoAutoClose
+
+                PasswordRequirements {
+                    id: passReqs
+                    width: passReqsPopup.width
+                    onClicked: {
+                        passwordField.focus = confirmPasswordField.focus = false
+                    }
+                }
             }
 
             ProfileSectionHeader {
@@ -323,6 +325,7 @@ SGStrataPopup {
                         timezone = Math.floor(timezone)
                     }
                     var login_info = { user: NavigationControl.context.user_id, password: currentPasswordField.text, timezone: timezone }
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.login(login_info)
                     currentPasswordRow.editable = false
                     newPasswordRow.editable = false
@@ -536,6 +539,7 @@ SGStrataPopup {
                         let data = {
                             "password": passwordField.text
                         };
+                        connectionStatus.currentId = LoginUtil.getNextId()
                         LoginUtil.update_profile(NavigationControl.context.user_id, data)
                     } else {
                         passwordControls.expandAnimation.start()
@@ -572,7 +576,26 @@ SGStrataPopup {
                 onProfileUpdateResult: {
                     if (result === "Success") {
                         // Get the user's new profile
-                        LoginUtil.get_profile(NavigationControl.context.user_id)
+                        for (const [key, value] of Object.entries(updatedProperties)) {
+                            switch (key) {
+                            case "firstname":
+                                NavigationControl.context.first_name = value
+                                authSettings.setValue("first_name", value)
+                                root.headerText = value[0].toUpperCase() + value.slice(1) + "'s Profile"
+                                root.firstName = value
+                                break;
+                            case "lastname":
+                                NavigationControl.context.last_name = value
+                                authSettings.setValue("last_name", value)
+                                root.lastName = value
+                                break;
+                            case "title":
+                                root.jobTitle = value
+                                break;
+                            default:
+                                break;
+                            }
+                        }
 
                         alertRect.text = "Successfully updated your account information!"
                         alertRect.color = "#57d445"
@@ -661,11 +684,13 @@ SGStrataPopup {
         if (!firstNameColumn.editable) {
             firstNameColumn.textField.text = ""
             lastNameColumn.textField.text = ""
+            basicInfoControls.resetHeight()
         }
 
         if (!companyColumn.editable) {
             companyColumn.textField.text = ""
             jobTitleColumn.textField.text = ""
+            companyControls.resetHeight()
         }
 
         if (!currentPasswordRow.editable) {

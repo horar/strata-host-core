@@ -14,6 +14,8 @@ Backup::Backup(const device::DevicePtr& device) :
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<CmdStartBackupFirmware>(device_));
 
+    currentCommand_ = commandList_.end();
+
     postCommandHandler_ = std::bind(&Backup::setTotalChunks, this, std::placeholders::_1, std::placeholders::_2);
 }
 
