@@ -13,7 +13,6 @@
 DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
     : QObject(parent),
       coreInterface_(coreInterface)
-
 {
             qCDebug(logCategoryDocumentManager) << "core interface";
     /*
@@ -22,11 +21,11 @@ DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
     */
     coreInterface->registerDataSourceHandler("document_progress",
                                              std::bind(&DocumentManager::documentProgressHandler,
-                                                       this, std::placeholders::_1));
+                                             this, std::placeholders::_1));
 
     coreInterface->registerDataSourceHandler("document",
                                              std::bind(&DocumentManager::loadDocumentHandler,
-                                                       this, std::placeholders::_1));
+                                             this, std::placeholders::_1));
     init();
 }
 
