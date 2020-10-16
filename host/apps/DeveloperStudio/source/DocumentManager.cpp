@@ -13,19 +13,20 @@
 DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
     : QObject(parent),
       coreInterface_(coreInterface)
+
 {
-    qCDebug(logCategoryDocumentManager) << "core interface";
+            qCDebug(logCategoryDocumentManager) << "core interface";
     /*
         Register document handler with CoreInterface
         This will also send a command to Nimbus
     */
     coreInterface->registerDataSourceHandler("document_progress",
-                                            std::bind(&DocumentManager::documentProgressHandler,
-                                            this, std::placeholders::_1));
+                                             std::bind(&DocumentManager::documentProgressHandler,
+                                                       this, std::placeholders::_1));
 
     coreInterface->registerDataSourceHandler("document",
-                                            std::bind(&DocumentManager::loadDocumentHandler,
-                                            this, std::placeholders::_1));
+                                             std::bind(&DocumentManager::loadDocumentHandler,
+                                                       this, std::placeholders::_1));
     init();
 }
 
@@ -37,8 +38,11 @@ DocumentManager::~DocumentManager ()
 ClassDocuments *DocumentManager::getClassDocuments(const QString &classId)
 {
     if (classes_.contains(classId) == false) {
-        ClassDocuments* classDocs = new ClassDocuments(classId, coreInterface_, this);
+         ClassDocuments* classDocs  = new ClassDocuments(classId, coreInterface_, this);
         classes_[classId] = classDocs;
+    }
+    else if (classes_[classId]->errorString() != ""){
+        classes_[classId]->loadPlatformDocuments();
     }
 
     return classes_[classId];

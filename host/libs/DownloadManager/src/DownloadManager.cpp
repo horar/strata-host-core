@@ -272,9 +272,7 @@ void DownloadManager::networkReplyFinishedHandler()
             }
         }
     } else {
-
         errorString = "Network Error: " + reply->errorString();
-        qDebug() << "errorString" << errorString;
     }
 
     prepareResponse(internalRequest, errorString);
@@ -494,9 +492,9 @@ void DownloadManager::prepareResponse(InternalDownloadRequest *internalRequest, 
     resolveGroupProgress(internalRequest->groupId, filesFailed, filesCompleted, filesTotal);
 
     qCDebug(logCategoryDownloadManager) << internalRequest->groupId
-                                        << "failed=" << filesFailed
-                                        << "completed=" << filesCompleted
-                                        << "total=" << filesTotal;
+             << "failed=" << filesFailed
+             << "completed=" << filesCompleted
+             << "total=" << filesTotal;
 
     if (group->settings.notifyGroupDownloadProgress) {
         emit groupDownloadProgress(internalRequest->groupId, filesCompleted, filesTotal);
