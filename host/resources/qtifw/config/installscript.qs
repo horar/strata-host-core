@@ -268,7 +268,7 @@ Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
                 desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "true");
             } else {
                 desktopCheckBox.setEnabled(false);
-                desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "false");
+                desktopCheckBox.setChecked(false);
             }
         }
         var startMenuCheckBox = widget.findChild("startMenuCheckBox");

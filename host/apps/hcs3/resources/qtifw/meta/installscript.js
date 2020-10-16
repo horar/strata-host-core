@@ -52,8 +52,10 @@ Component.prototype.createOperations = function()
             console.log(e);
         }
 
-        component.addOperation("Mkdir", programDataShortcut)
-        component.addOperation("Move", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config", programDataShortcut + "\\hcs.config");
+        component.addOperation("Mkdir", programDataShortcut);
+        // Do not use Move, because it will fail with error if file was deleted
+        component.addOperation("Copy", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config", programDataShortcut + "\\hcs.config");
+        component.addOperation("Delete", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config");
     }
 }
 
