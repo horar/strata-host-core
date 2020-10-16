@@ -193,11 +193,6 @@ echo " Actual/local branch list.."
 echo "-----------------------------------------------------------------------------"
 git branch
 
-echo "======================================================================="
-echo " Updating Git submodules.."
-echo "======================================================================="
-echo git submodule update --init --recursive
-
 REM in case not called from where is the script located, change working directory
 cd %~dp0
 

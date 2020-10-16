@@ -45,11 +45,17 @@ case $i in
     ;;
     -f=*|--config=*)
     SELECTED_CONFIG="${i#*=}"
-    if [ "${SELECTED_CONFIG}" = "PROD" ] ; then USE_PROD_CONFIG=1;
-    elif [ "${SELECTED_CONFIG}" = "QA" ] ; then USE_QA_CONFIG=1;
-    elif [ "${SELECTED_CONFIG}" = "DEV" ] ; then USE_DEV_CONFIG=1;
-    elif [ "${SELECTED_CONFIG}" = "DOCKER" ] ; then USE_DOCKER_CONFIG=1;
-    else BOOTSTRAP_USAGE=1; fi
+    if [ "${SELECTED_CONFIG}" = "PROD" ] ; then
+        USE_PROD_CONFIG=1
+    elif [ "${SELECTED_CONFIG}" = "QA" ] ; then
+        USE_QA_CONFIG=1
+    elif [ "${SELECTED_CONFIG}" = "DEV" ] ; then
+        USE_DEV_CONFIG=1
+    elif [ "${SELECTED_CONFIG}" = "DOCKER" ] ; then
+        USE_DOCKER_CONFIG=1
+    else
+        BOOTSTRAP_USAGE=1
+    fi
     shift # past argument=value
     ;;
     -c|--cleanup)
@@ -203,11 +209,6 @@ echo " Actual/local branch list.."
 echo "-----------------------------------------------------------------------------"
 git branch
 
-echo "======================================================================="
-echo " Updating Git submodules.."
-echo "======================================================================="
-echo git submodule update --init --recursive
-
 if [ $BUILD_CLEANUP != 0 ] ; then
     if [ -d $BUILD_DIR ] ; then
         echo "-----------------------------------------------------------------------------"
@@ -296,13 +297,6 @@ cp -Rfv $STRATA_DEPLOYMENT_DIR/dependencies/strata/ $PKG_STRATA_DS/
 if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to copy license files to $PKG_STRATA_DS!"
-    echo "======================================================================="
-    exit 2
-fi
-
-if [ $? != 0 ] ; then
-    echo "======================================================================="
-    echo " Failed to copy config file to $PKG_STRATA_HCS/hcs.config!"
     echo "======================================================================="
     exit 2
 fi
