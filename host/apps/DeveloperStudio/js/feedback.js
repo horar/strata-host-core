@@ -16,9 +16,8 @@ function feedbackInfo(feedback_info){
     }
 
     var data = {"email": feedback_info.email, "name": feedback_info.name, "comment" : feedback_info.comment };
-    Rest.xhr("post", "feedbacks", data, feedback_result,feedback_error, SignalsModule.Signals, headers);
+    Rest.xhr("post", "feedbacks", data, feedback_result, feedback_error, headers);
 }
-
 
 function feedback_result(response) {
     console.log(LoggerModule.Logger.devStudioFeedbackCategory, "Feedback successfully sent")
@@ -32,4 +31,8 @@ function feedback_error(response) {
     } else {
         SignalsModule.Signals.feedbackResult("Feedback service error")
     }
+}
+
+function getNextId(){
+   return Rest.getNextRequestId();
 }
