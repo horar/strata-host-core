@@ -46,8 +46,7 @@ Component.prototype.createOperations = function()
         var target_dir = installer.value("TargetDir").split("/").join("\\");
         var strata_mt_shortcut_dst = installer.value("StartMenuDir").split("/").join("\\") + "\\Strata Maintenance Tool.lnk";
         component.addOperation("CreateShortcut", target_dir + "\\Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
-                                "workingDirectory=" + target_dir, "iconPath=%SystemRoot%\\system32\\SHELL32.dll",
-                                "iconId=2", "description=Open Maintenance Tool");
+                                "workingDirectory=" + target_dir, "description=Open Maintenance Tool");
         console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
     }
 
