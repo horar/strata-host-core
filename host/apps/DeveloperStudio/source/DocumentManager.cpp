@@ -14,7 +14,7 @@ DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
     : QObject(parent),
       coreInterface_(coreInterface)
 {
-     qCDebug(logCategoryDocumentManager) << "core interface";
+    qCDebug(logCategoryDocumentManager) << "core interface";
     /*
         Register document handler with CoreInterface
         This will also send a command to Nimbus
