@@ -334,18 +334,20 @@ windeployqt "%SDS_BINARY_DIR%" ^
     --plugindir %PKG_STRATA_QT%\plugins ^
     --verbose 1
 
-echo "Sanitizing QtWebEngine location to %PKG_STRATA_QT%"
-move "%PKG_STRATA_QT%\qml\QtWebEngineProcess.exe" "%PKG_STRATA_QT%"
-move "%PKG_STRATA_QT%\qml\translations" "%PKG_STRATA_QT%"
-move "%PKG_STRATA_QT%\qml\resources" "%PKG_STRATA_QT%"
-
-
 IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
     echo " Failed to windeployqt %SDS_BINARY%!"
     echo "======================================================================="
     Exit /B 3
 )
+
+echo "-----------------------------------------------------------------------------"
+echo "Sanitizing QtWebEngine location to %PKG_STRATA_QT%"
+echo "-----------------------------------------------------------------------------"
+
+move "%PKG_STRATA_QT%\qml\QtWebEngineProcess.exe" "%PKG_STRATA_QT%"
+move "%PKG_STRATA_QT%\qml\translations" "%PKG_STRATA_QT%"
+move "%PKG_STRATA_QT%\qml\resources" "%PKG_STRATA_QT%"
 
 echo "-----------------------------------------------------------------------------"
 echo " Preparing %HCS_BINARY% dependencies.."
