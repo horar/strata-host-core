@@ -3,10 +3,10 @@
 # Add documents from the "documents" dir to Couchbase.
 # Tries to download one document, ends with exit code != 0 in case of failure.
 # Usage: ./cb_add_docs.sh <COUCHBASE_ENDPOINT> <SYNC_GATEWAY_ENDPOINT>
-# ./cb_add_docs.sh "http://127.0.0.1:8093/query/service" "http://127.0.0.1:8093/query/service"
+# ./cb_add_docs.sh "http://127.0.0.1:8091" "http://127.0.0.1:8093/query/service"
 
 if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "Error: Couchbase server and Sync Gateway endpoints not supplied.\nInvoke as: ./cb_add_docs.sh <COUCHBASE_ENDPOINT> <SYNC_GATEWAY_ENDPOINT>"
+    echo "Error: Couchbase server and Sync Gateway endpoints not supplied. Invoke as: ./cb_add_docs.sh <COUCHBASE_ENDPOINT> <SYNC_GATEWAY_ENDPOINT>"
     exit 1
 fi
 

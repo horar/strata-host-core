@@ -13,16 +13,16 @@ if test "$?" != "0"; then
     exit 1
 fi
 
-echo "Bringing up Couchbase containers...\n"
+echo "Bringing up Couchbase containers..."
 
 ./scripts/up.sh
 couchbase_sg_docker_ps=$(docker-compose ps -q couchbase)
 
 if test "$?" != "0" || test "$couchbase_sg_docker_ps" == ""; then
-    echo "\nError bringing up Couchbase containers, aborting."
+    echo "Error bringing up Couchbase containers, aborting."
     exit 1
 else
-    echo "\nCouchbase containers up, waiting for services to start (this can take up to 30 seconds)..."
+    echo "Couchbase containers up, waiting for services to start (this can take up to 30 seconds)..."
 fi
 
 curl_retries_counter=0
@@ -35,16 +35,14 @@ while test "$res" != "0" && test "$curl_retries_counter" -lt "$curl_retries_max"
     sleep 1
 done
 
-if test "$res" == "0"; then
-    echo "\nCouchbase services successfully connected!"
-else
-    echo "\nError: Couchbase services not connected, timed out."
+if test "$res" != "0"; then
+    echo "Error: Couchbase services not connected, timed out."
     curl $COUCHBASE_ENDPOINT
     exit 1
 fi
 
 # Couchbase setup
-echo "\nRunning Couchbase setup... "
+echo "Setting up Couchbase server and Sync Gateway for Strata... "
 ./scripts/cb_setup.sh $COUCHBASE_ENDPOINT
 
 curl_retries_counter=0
@@ -56,21 +54,19 @@ while test "$res" != "0" && test "$curl_retries_counter" -lt "$curl_retries_max"
     sleep 1
 done
 
-if test "$res" == "0"; then
-    echo "\nCouchbase services successfully setup!"
-else
-    echo "\nError: Couchbase setup not successful, timed out."
+if test "$res" != "0"; then
+    echo "Error: Couchbase setup not successful, timed out."
     curl $SYNC_GATEWAY_ENDPOINT
     exit 1
 fi
 
 # Couchbase add docs
-echo "\nRunning Couchbase add docs... "
+echo "Adding documents to Couchbase server... "
 ./scripts/cb_add_docs.sh $COUCHBASE_ENDPOINT $SYNC_GATEWAY_ENDPOINT
 
-if test "$?" == "0"; then
-    echo "\nCouchbase successfully added docs!"
-else
-    echo "\nError: Couchbase did not successfully add docs."
+if test "$?" != "0"; then
+    echo "Error: Couchbase did not successfully add docs."
     exit 1
 fi
+
+echo "Couchbase services successfully connected!"

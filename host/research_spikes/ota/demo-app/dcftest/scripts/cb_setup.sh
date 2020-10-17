@@ -2,10 +2,10 @@
 
 # Sets parameters for the Couchbase server.
 # Usage: ./cb_setup.sh <COUCHBASE_ENDPOINT>
-# ./cb_setup.sh "http://127.0.0.1:8093/query/service"
+# ./cb_setup.sh "http://127.0.0.1:8091"
 
 if [ -z "$1" ]; then
-    echo "Error: Couchbase server endpoint not supplied.\nInvoke as: ./cb_add_docs.sh <COUCHBASE_ENDPOINT>"
+    echo "Error: Couchbase server endpoint not supplied. Invoke as: ./cb_add_docs.sh <COUCHBASE_ENDPOINT>"
     exit 1
 fi
 
