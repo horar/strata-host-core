@@ -44,6 +44,8 @@ public slots:
 signals:
     void hcsConnectedChanged();
     void notifyQmlError(QString notifyQmlError);
+    void notifyQmlConsole(QString notifyQmlConsole);
+    void notifyQmlWarning(QString notifyQmlWarning);
 
 private slots:
     void startedProcess();

@@ -6,6 +6,7 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
+import "./Console"
 
 Rectangle {
     id: controlViewCreatorRoot
@@ -109,6 +110,7 @@ Rectangle {
 
                     function onClicked() {
                         logs.visible = !logs.visible;
+                        cvc_console.createLogs("debug","Opened new Log");
                     }
                 }
 
@@ -183,22 +185,38 @@ Rectangle {
 
             Rectangle {
                 id: logs
-                color: "#ccc"
+                color: "#eee"
                 Layout.preferredHeight: 300 // Todo: make grab handle divider so user can scale up/down
                 Layout.fillWidth: true
                 visible: false // Todo: ensure visible == false when on "open project"/"new project" views
 
                 Rectangle {
                     // divider
-                    height: 2
+                    id: divider
+                    height: consoleText.height
                     width: parent.width
-                    color: "grey"
+                    color: "#444"
+
+                    SGText {
+                        id: consoleText
+                        text: "Console Output"
+                        fontSizeMultiplier: 1.4
+                        Layout.alignment: Qt.AlignLeft
+                        alternativeColorEnabled: true
+                        leftPadding: 10
+                        topPadding: 5
+                        bottomPadding: 5
+                    }
+
                 }
 
-                Text {
-                    text: "Console Logs Go Here"
+                ConsoleLogger {
+                    id: cvc_console
                     anchors {
-                        centerIn: parent
+                        top:divider.bottom
+                        left: logs.left
+                        right: logs.right
+                        bottom: logs.bottom
                     }
                 }
             }
