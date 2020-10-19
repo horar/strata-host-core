@@ -27,7 +27,7 @@ Item {
     function saveFile() {
         const path = SGUtilsCpp.urlToLocalFile(model.filepath);
         treeModel.stopWatchingPath(path);
-        const result = SGUtilsCpp.atomicWrite(path, channelObject.fileText);
+        const success = SGUtilsCpp.atomicWrite(path, channelObject.fileText);
         treeModel.startWatchingPath(path);
 
         if (success) {
