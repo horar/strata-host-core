@@ -30,6 +30,7 @@ ResourceLoader::~ResourceLoader()
         itr.next();
         delete itr.value();
     }
+    delete rccCompilerProcess_;
 }
 
 void ResourceLoader::requestDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent) {
@@ -260,7 +261,7 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
     }
 }
 
-QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
+void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 #ifdef QT_RCC_EXECUTABLE
     const QString rccExecutablePath = QT_RCC_EXECUTABLE;
 #else // Triggers if Release build -- in Release builds, for now this will not work unless RCC compiler executable is manually placed in the application directory
@@ -288,14 +289,16 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
         QString error_str = "Could not find RCC executable at " + rccExecutablePath;
         qCWarning(logCategoryStrataDevStudio) << error_str;
         setLastLoggedError(error_str);
-        return QString();
+        emit finishedRecompiling(QString());
+        return;
     }
 
     if (!qrcFile.exists()) {
         QString error_str = "Could not find QRC file at " + qrcFilePath;
         qCWarning(logCategoryStrataDevStudio) << error_str;
         setLastLoggedError(error_str);
-        return QString();
+        emit finishedRecompiling(QString());
+        return;
     }
 
     QFileInfo qrcFileInfo = QFileInfo(qrcFile);
@@ -308,7 +311,8 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
             QString error_str = "Could not delete directory at " + compiledRccFile;
             qCWarning(logCategoryStrataDevStudio) << error_str;
             setLastLoggedError(error_str);
-            return QString();
+            emit finishedRecompiling(QString());
+            return;
         }
     }
 
@@ -317,27 +321,39 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 
     // Split qrcFile base name and add ".rcc" extension
     compiledRccFile += qrcFileInfo.baseName() + ".rcc";
+    lastCompiledRccResource = compiledRccFile;
 
     // Set and launch rcc compiler process
     const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
-    rccCompilerProcess_.setProgram(rccExecutablePath);
-    rccCompilerProcess_.setArguments(arguments);
-    connect(&rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
-    rccCompilerProcess_.start();
-    rccCompilerProcess_.waitForFinished();
 
-    if (lastLoggedError != "") {
-        return QString();
+    if (rccCompilerProcess_ != nullptr) {
+        delete rccCompilerProcess_;
     }
+    rccCompilerProcess_ = new QProcess();
+    rccCompilerProcess_->setProgram(rccExecutablePath);
+    rccCompilerProcess_->setArguments(arguments);
+    connect(rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
+    connect(rccCompilerProcess_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
 
-    qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << compiledRccFile;
-    return compiledRccFile;
+    rccCompilerProcess_->start();
 }
 
 void ResourceLoader::onOutputRead() {
-    QString error_str = rccCompilerProcess_.readAllStandardError();
+    QString error_str = rccCompilerProcess_->readAllStandardError();
     qCCritical(logCategoryStrataDevStudio) << error_str;
     setLastLoggedError(error_str);
+}
+
+void ResourceLoader::recompileFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    Q_UNUSED(exitCode);
+
+    if (exitStatus == QProcess::CrashExit || lastLoggedError != "") {
+        emit finishedRecompiling(QString());
+    } else {
+        qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << lastCompiledRccResource;
+        emit finishedRecompiling(lastCompiledRccResource);
+    }
 }
 
 void ResourceLoader::clearLastLoggedError() {

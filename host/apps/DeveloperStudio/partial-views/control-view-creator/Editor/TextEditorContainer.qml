@@ -37,15 +37,6 @@ Item {
         });
     }
 
-    Connections {
-        target: saveButton
-        onClicked: {
-            if (openFilesModel.currentId === model.id) {
-                saveFile();
-            }
-        }
-    }
-
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
             saveFile()
@@ -63,6 +54,7 @@ Item {
         WebChannel.id: "valueLink"
 
         signal setValue(string value);
+        signal setContainerHeight(string height);
 
         function setHtml(value) {
             setValue(value)
@@ -91,31 +83,19 @@ Item {
         settings.javascriptEnabled: true
         settings.javascriptCanAccessClipboard: true
         settings.pluginsEnabled: true
+        settings.showScrollBars: false
 
         anchors.fill: parent
 
-        onLoadingChanged: {
-            if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                webEngine.runJavaScript("setContainerHeight(%1)".replace("%1", parent.height), function result(result) {
-
-                });
-                channelObject.setHtml(openFile(model.filepath))
-            }
+        onHeightChanged: {
+            channelObject.setContainerHeight(height.toString())
         }
 
-        onJavaScriptConsoleMessage: {
-            switch (level) {
-            case WebEngineView.InfoMessageLevel:
-                console.info(sourceID, "-", lineNumber, "-", message)
-                break;
-            case WebEngineView.WarningMessageLevel:
-                console.warn(sourceID, "-", lineNumber, "-", message);
-                break;
-            case WebEngineView.ErrorMessageLevel:
-                console.error(sourceID, "-", lineNumber, "-", message);
-                break;
-            default:
-                break;
+        onLoadingChanged: {
+            if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
+                channelObject.setContainerHeight(height.toString())
+                let fileText = openFile(model.filepath)
+                channelObject.setHtml(fileText)
             }
         }
 
