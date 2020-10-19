@@ -16,10 +16,18 @@ Item {
 
     SGQrcTreeModel {
         id: treeModel
-        url: openProjectContainer.url
 
         onModelAboutToBeReset: {
             openFilesModel.clear()
+            parsingErrorRect.errorMessage = ""
+            parsingErrorRect.visible = false
+
+        }
+
+        onErrorParsing: {
+            parsingErrorRect.errorMessage = error;
+            parsingErrorRect.visible = true
+            openProjectContainer.url = ""
         }
     }
 
@@ -147,11 +155,37 @@ Item {
                 }
             }
 
+            Rectangle {
+                id: parsingErrorRect
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "#666"
+                visible: false
+
+                property string errorMessage: ""
+
+                SGText {
+                    id: errorText
+
+                    anchors {
+                        centerIn: parent
+                    }
+
+                    color: "white"
+                    font.bold: true
+                    fontSizeMultiplier: 2
+                    text: "Error: " + parsingErrorRect.errorMessage
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
             StackLayout {
                 id: fileStack
-                Layout.fillHeight: true
+                Layout.fillHeight: visible
                 Layout.fillWidth: true
                 currentIndex: openFilesModel.currentIndex
+                visible: !parsingErrorRect.visible
 
                 Repeater {
                     id: fileEditorRepeater
@@ -159,6 +193,9 @@ Item {
 
                     delegate: Component {
                         Loader {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
                             source: switch(model.filetype) {
                                 case "svg":
                                 case "jpg":

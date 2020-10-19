@@ -33,6 +33,12 @@ Rectangle {
         loadSettings()
     }
 
+    onUrlChanged: {
+        if (url.toString() !== "") {
+            editor.treeModel.url = url
+        }
+    }
+
     function saveSettings() {
         sgUserSettings.writeFile(configFileName, previousFileURL);
     }
