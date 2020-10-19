@@ -17,41 +17,56 @@ Item {
 
     property int modelIndex: index
     property string file: model.filename
-    property string fileText
+    property int savedVersionId
+    property int currentVersionId
 
-    Component.onCompleted: {
-        channel.registerObject("valueLink", channelObject)
+    function openFile() {
+        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
     }
 
-    function openFile(fileUrl) {
-        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(fileUrl));
+    function saveFile() {
+        webEngine.runJavaScript('getValue()', function (fileText) {
+            let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), fileText);
+
+            if (success) {
+                savedVersionId = currentVersionId;
+                model.unsavedChanges = false;
+            } else {
+                console.error("Unable to save file", model.filepath)
+            }
+        });
     }
 
-    function saveFile(fileUrl, text) {
-        return SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text);
-    }
-
-    Connections{
-        target: saveButton
-        onClicked: saveFile(model.filepath,fileText)
+    Keys.onPressed: {
+        if (event.matches(StandardKey.Save)) {
+            saveFile()
+        }
     }
 
     WebChannel {
         id: channel
+        registeredObjects: [channelObject]
     }
 
     QtObject {
         id: channelObject
         objectName: "fileChannel"
+        WebChannel.id: "valueLink"
 
         signal setValue(string value);
+        signal setContainerHeight(string height);
 
         function setHtml(value) {
             setValue(value)
         }
 
-        function setFileText(value) {
-            fileText = value;
+        function setVersionId(version) {
+            // If this is the first change, then we have just initialized the editor
+            if (!savedVersionId) {
+                savedVersionId = version
+            }
+            currentVersionId = version
+            model.unsavedChanges = (savedVersionId !== version)
         }
     }
 
@@ -68,15 +83,18 @@ Item {
         settings.javascriptEnabled: true
         settings.javascriptCanAccessClipboard: true
         settings.pluginsEnabled: true
+        settings.showScrollBars: false
 
         anchors.fill: parent
 
+        onHeightChanged: {
+            channelObject.setContainerHeight(height.toString())
+        }
+
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                webEngine.runJavaScript("setContainerHeight(%1)".replace("%1", parent.height), function result(result) {
-
-                });
-                fileText = openFile(model.filepath)
+                channelObject.setContainerHeight(height.toString())
+                let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
             }
         }

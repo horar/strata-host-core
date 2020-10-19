@@ -2,11 +2,15 @@
 
 #include "ResourcePath.h"
 #include "logging/LoggingQtCategories.h"
+#include "SGVersionUtils.h"
 
 #include <QDirIterator>
 #include <QResource>
 #include <QFileInfo>
 #include <QTimer>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
 
 const QStringList ResourceLoader::coreResources_{
     QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
@@ -26,6 +30,7 @@ ResourceLoader::~ResourceLoader()
         itr.next();
         delete itr.value();
     }
+    delete rccCompilerProcess_;
 }
 
 void ResourceLoader::requestDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent) {
@@ -66,6 +71,7 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
     if (itr != viewsRegistered_.end() && itr.value()->filepath == resourceInfo.fileName()) {
         ResourceItem *info = itr.value();
         info->filepath = "";
+        info->gitTaggedVersion = "";
         info->version = "";
     }
     return true;
@@ -100,7 +106,19 @@ bool ResourceLoader::registerControlViewResource(const QString &rccPath, const Q
     }
 
     if (registerResource(rccPath, getQResourcePrefix(class_id, version))) {
-        ResourceItem *info = new ResourceItem(rccPath, version);
+        // `gitTaggedVersion` is created at build time. It incorporates the git tag version into the rcc file.
+        // The reason we store both is to double check that the metadata version shipped from OTA is the same as the
+        //      version that is created at build time.
+
+        QString gitTaggedVersion = getVersionJson(class_id, version);
+        ResourceItem *info = new ResourceItem(rccPath, version, gitTaggedVersion);
+
+        if (version != "static" && !SGVersionUtils::equalTo(version, gitTaggedVersion)) {
+            // TODO: Handle the case where gitTaggedVersion is different from the OTA version
+            qCWarning(logCategoryResourceLoader) << "Build version is different from OTA version for" << class_id << "- built in version:"
+                                                 << gitTaggedVersion << ", OTA version:" << version;
+        }
+
         viewsRegistered_.insert(class_id, info);
         return true;
     } else {
@@ -194,6 +212,47 @@ QString ResourceLoader::getVersionRegistered(const QString &class_id) {
     }
 }
 
+QString ResourceLoader::getGitTaggedVersion(const QString &class_id)
+{
+    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
+    if (itr != viewsRegistered_.end()) {
+        return itr.value()->gitTaggedVersion;
+    } else {
+        return NULL;
+    }
+}
+
+QString ResourceLoader::getVersionJson(const QString &class_id, const QString &version)
+{
+    QString filepath = ":" + getQResourcePrefix(class_id, version) + "/version.json";
+    QFile versionJsonFile(filepath);
+
+    qDebug(logCategoryResourceLoader) << "Looking in" << filepath << "for version.json";
+    if (!versionJsonFile.exists()) {
+        qCCritical(logCategoryResourceLoader) << "Could not find version.json." << filepath << "does not exist.";
+        return QString();
+    }
+
+    if (!versionJsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCCritical(logCategoryResourceLoader) << "Could not open version.json for" << class_id << "version" << version;
+        return QString();
+    }
+
+    QString fileText = versionJsonFile.readAll();
+    versionJsonFile.close();
+    QJsonDocument doc = QJsonDocument::fromJson(fileText.toUtf8());
+    QJsonObject docObj = doc.object();
+
+    if (!docObj.contains(QString("version"))) {
+        qCWarning(logCategoryResourceLoader) << "version.json does not have 'version' key.";
+        return QString();
+    }
+    QJsonValue versionJson = docObj.value(QString("version"));
+
+    qCInfo(logCategoryResourceLoader) << "Found version of " << versionJson.toString() << "for class id" << class_id;
+    return versionJson.toString();
+}
+
 QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QString &version) {
     if (class_id.isEmpty()) {
         return "/";
@@ -202,7 +261,7 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
     }
 }
 
-QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
+void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 #ifdef QT_RCC_EXECUTABLE
     const QString rccExecutablePath = QT_RCC_EXECUTABLE;
 #else // Triggers if Release build -- in Release builds, for now this will not work unless RCC compiler executable is manually placed in the application directory
@@ -230,14 +289,16 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
         QString error_str = "Could not find RCC executable at " + rccExecutablePath;
         qCWarning(logCategoryStrataDevStudio) << error_str;
         setLastLoggedError(error_str);
-        return QString();
+        emit finishedRecompiling(QString());
+        return;
     }
 
     if (!qrcFile.exists()) {
         QString error_str = "Could not find QRC file at " + qrcFilePath;
         qCWarning(logCategoryStrataDevStudio) << error_str;
         setLastLoggedError(error_str);
-        return QString();
+        emit finishedRecompiling(QString());
+        return;
     }
 
     QFileInfo qrcFileInfo = QFileInfo(qrcFile);
@@ -250,7 +311,8 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
             QString error_str = "Could not delete directory at " + compiledRccFile;
             qCWarning(logCategoryStrataDevStudio) << error_str;
             setLastLoggedError(error_str);
-            return QString();
+            emit finishedRecompiling(QString());
+            return;
         }
     }
 
@@ -259,27 +321,39 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 
     // Split qrcFile base name and add ".rcc" extension
     compiledRccFile += qrcFileInfo.baseName() + ".rcc";
+    lastCompiledRccResource = compiledRccFile;
 
     // Set and launch rcc compiler process
     const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
-    rccCompilerProcess_.setProgram(rccExecutablePath);
-    rccCompilerProcess_.setArguments(arguments);
-    connect(&rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
-    rccCompilerProcess_.start();
-    rccCompilerProcess_.waitForFinished();
 
-    if (lastLoggedError != "") {
-        return QString();
+    if (rccCompilerProcess_ != nullptr) {
+        delete rccCompilerProcess_;
     }
+    rccCompilerProcess_ = new QProcess();
+    rccCompilerProcess_->setProgram(rccExecutablePath);
+    rccCompilerProcess_->setArguments(arguments);
+    connect(rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
+    connect(rccCompilerProcess_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
 
-    qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << compiledRccFile;
-    return compiledRccFile;
+    rccCompilerProcess_->start();
 }
 
 void ResourceLoader::onOutputRead() {
-    QString error_str = rccCompilerProcess_.readAllStandardError();
+    QString error_str = rccCompilerProcess_->readAllStandardError();
     qCCritical(logCategoryStrataDevStudio) << error_str;
     setLastLoggedError(error_str);
+}
+
+void ResourceLoader::recompileFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    Q_UNUSED(exitCode);
+
+    if (exitStatus == QProcess::CrashExit || lastLoggedError != "") {
+        emit finishedRecompiling(QString());
+    } else {
+        qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << lastCompiledRccResource;
+        emit finishedRecompiling(lastCompiledRccResource);
+    }
 }
 
 void ResourceLoader::clearLastLoggedError() {

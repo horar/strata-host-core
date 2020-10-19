@@ -13,15 +13,18 @@
 struct ResourceItem {
     ResourceItem(
             const QString &filepath,
-            const QString &version
+            const QString &version,
+            const QString &gitTaggedVersion
             )
     {
         this->filepath = filepath;
         this->version = version;
+        this->gitTaggedVersion = gitTaggedVersion;
     }
 
     QString filepath;
     QString version;
+    QString gitTaggedVersion;
 };
 
 class ResourceLoader : public QObject
@@ -81,13 +84,23 @@ public:
      */
     Q_INVOKABLE QString getVersionRegistered(const QString &class_id);
 
+    /**
+     * @brief getGitTaggedVersion Gets the built in version for the class_id
+     * @param class_id The class_id of the platform
+     * @return Returns the git tagged version for the class_id
+     */
+    Q_INVOKABLE QString getGitTaggedVersion(const QString &class_id);
+
     Q_INVOKABLE QString getStaticResourcesString();
 
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 
-    Q_INVOKABLE QString recompileControlViewQrc(QString qrcFilePath);
+    Q_INVOKABLE void recompileControlViewQrc(QString qrcFilePath);
 
     Q_INVOKABLE QString getLastLoggedError();
+
+signals:
+    void finishedRecompiling(QString filepath);
 
 private slots:
     /**
@@ -101,18 +114,26 @@ private slots:
     bool deleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent);
 
     void onOutputRead();
-
+    void recompileFinished(int exitCode, QProcess::ExitStatus exitStatus);
 private:
     void loadCoreResources();
     QString getQResourcePrefix(const QString &class_id, const QString &version);
+    /**
+     * @brief getVersionJson Gets the version of the control view according to the version.json
+     * @param class_id The class_id of the platform
+     * @param version The version of the control view from OTA. This can be left blank if the control view is a local one.
+     * @return Returns the version from the version.json associated with this control view. If the file could not be found, then it returns an empty string.
+     */
+    QString getVersionJson(const QString &class_id, const QString &version = "");
 
     QHash<QString, ResourceItem*> viewsRegistered_;
 
     static const QStringList coreResources_;
 
-    QProcess rccCompilerProcess_;
+    QProcess *rccCompilerProcess_ = nullptr;
 
     QString lastLoggedError = "";
+    QString lastCompiledRccResource = "";
     void clearLastLoggedError();
     void setLastLoggedError(QString &error_str);
 };
