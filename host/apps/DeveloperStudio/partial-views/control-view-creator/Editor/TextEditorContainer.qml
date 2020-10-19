@@ -17,32 +17,38 @@ Item {
 
     property int modelIndex: index
     property string file: model.filename
-    property string fileText: ""
     property int savedVersionId
     property int currentVersionId
 
-    function openFile(fileUrl) {
-        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(fileUrl));
+    function openFile() {
+        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
     }
 
-    function saveFile(fileUrl, text) {
-        savedVersionId = currentVersionId;
-        model.unsavedChanges = false;
-        return SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text);
+    function saveFile() {
+        webEngine.runJavaScript('getValue()', function (fileText) {
+            let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), fileText);
+
+            if (success) {
+                savedVersionId = currentVersionId;
+                model.unsavedChanges = false;
+            } else {
+                console.error("Unable to save file", model.filepath)
+            }
+        });
     }
 
     Connections {
         target: saveButton
         onClicked: {
             if (openFilesModel.currentId === model.id) {
-                saveFile(model.filepath,fileText)
+                saveFile();
             }
         }
     }
 
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
-            saveFile(model.filepath, fileText)
+            saveFile()
         }
     }
 
@@ -60,10 +66,6 @@ Item {
 
         function setHtml(value) {
             setValue(value)
-        }
-
-        function setFileText(value) {
-            fileText = value;
         }
 
         function setVersionId(version) {
@@ -97,8 +99,7 @@ Item {
                 webEngine.runJavaScript("setContainerHeight(%1)".replace("%1", parent.height), function result(result) {
 
                 });
-                fileText = openFile(model.filepath)
-                channelObject.setHtml(fileText)
+                channelObject.setHtml(openFile(model.filepath))
             }
         }
 

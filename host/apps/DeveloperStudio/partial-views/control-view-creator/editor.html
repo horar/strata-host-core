@@ -32,7 +32,6 @@
             });
 
             editor.getModel().onDidChangeContent((event) => {
-                link.setFileText(editor.getValue());
                 link.setVersionId(editor.getModel().getAlternativeVersionId());
             });
         });
