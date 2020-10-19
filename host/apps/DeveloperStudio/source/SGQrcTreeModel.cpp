@@ -462,7 +462,6 @@ void SGQrcTreeModel::startPopulating(const QByteArray &fileText)
         recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems_, 0);
     }
 
-    recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems_, 0);
     endResetModel();
     emit rootChanged();
 }
@@ -515,7 +514,7 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
     int errorLine;
     int errorColumn;
 
-    if (!qrcDoc_.setContent(&qrcFile, &errorMessage, &errorLine, &errorColumn)) {
+    if (!qrcDoc_.setContent(fileText, &errorMessage, &errorLine, &errorColumn)) {
         qCCritical(logCategoryControlViewCreator) << "Failed to parse qrc file." << errorMessage << "-" << QString::number(errorLine) + ":" + QString::number(errorColumn);
         emit errorParsing("Invalid qrc file format.");
         return false;

@@ -18,25 +18,21 @@ Rectangle {
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
     color: "#ccc"
+
     onVisibleChanged: {
         if(!openProjectContainer.visible) {
             alertMessage.visible = false
         }
     }
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: alertMessage.visible = false
-    }
-
-    Component.onCompleted:  {
-        loadSettings()
-    }
-
     onUrlChanged: {
         if (url.toString() !== "") {
             editor.treeModel.url = url
         }
+    }
+
+    Component.onCompleted:  {
+        loadSettings()
     }
 
     function saveSettings() {
@@ -80,6 +76,10 @@ Rectangle {
         }
     }
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked: alertMessage.visible = false
+    }
 
     ColumnLayout {
         id:recentProjColumn
