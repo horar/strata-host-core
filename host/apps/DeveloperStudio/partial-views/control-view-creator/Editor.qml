@@ -16,7 +16,6 @@ Item {
 
     SGQrcTreeModel {
         id: treeModel
-        url: openProjectContainer.url
 
         onModelAboutToBeReset: {
             openFilesModel.clear()
@@ -28,6 +27,7 @@ Item {
         onErrorParsing: {
             parsingErrorRect.errorMessage = error;
             parsingErrorRect.visible = true
+            openProjectContainer.url = ""
         }
     }
 

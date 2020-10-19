@@ -515,7 +515,8 @@ void SGQrcTreeModel::createModel()
     beginResetModel();
 
     clear(false);
-    if (readQrcFile()) {
+
+    if (url_.toString().length() > 0 && readQrcFile()) {
         QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
         QString uid = QUuid::createUuid().toString();
         root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
