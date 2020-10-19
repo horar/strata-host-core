@@ -15,16 +15,19 @@ public:
     QString filename() const;
     QUrl filepath() const;
     QString filetype() const;
+    bool unsavedChanges() const;
 
     QString id() const;
     bool setFilename(const QString &filename);
     bool setFilepath(const QUrl &filepath);
     bool setFiletype(const QString &filetype);
+    bool setUnsavedChanges(const bool &unsaved);
 private:
     QString id_;
     QString filename_;
     QUrl filepath_;
     QString filetype_;
+    bool unsavedChanges_;
 };
 
 class SGFileTabModel : public QAbstractListModel
@@ -41,7 +44,8 @@ public:
         FilenameRole = Qt::UserRole + 1,
         FilepathRole = Qt::UserRole + 2,
         FiletypeRole = Qt::UserRole + 3,
-        IdRole = Qt::UserRole + 4
+        IdRole = Qt::UserRole + 4,
+        UnsavedChangesRole = Qt::UserRole + 5
     };
 
     // OVERRIDES

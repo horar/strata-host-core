@@ -17,33 +17,41 @@ Item {
 
     property int modelIndex: index
     property string file: model.filename
-    property string fileText
+    property int savedVersionId
+    property int currentVersionId
 
-    Component.onCompleted: {
-        channel.registerObject("valueLink", channelObject)
+    function openFile() {
+        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
     }
 
-    function openFile(fileUrl) {
-        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(fileUrl));
-    }
+    function saveFile() {
+        webEngine.runJavaScript('getValue()', function (fileText) {
+            let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), fileText);
 
-    function saveFile(fileUrl, text) {
-        return SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text);
+            if (success) {
+                savedVersionId = currentVersionId;
+                model.unsavedChanges = false;
+            } else {
+                console.error("Unable to save file", model.filepath)
+            }
+        });
     }
 
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
-            saveFile(model.filepath, fileText)
+            saveFile()
         }
     }
 
     WebChannel {
         id: channel
+        registeredObjects: [channelObject]
     }
 
     QtObject {
         id: channelObject
         objectName: "fileChannel"
+        WebChannel.id: "valueLink"
 
         signal setValue(string value);
         signal setContainerHeight(string height);
@@ -52,8 +60,13 @@ Item {
             setValue(value)
         }
 
-        function setFileText(value) {
-            fileText = value;
+        function setVersionId(version) {
+            // If this is the first change, then we have just initialized the editor
+            if (!savedVersionId) {
+                savedVersionId = version
+            }
+            currentVersionId = version
+            model.unsavedChanges = (savedVersionId !== version)
         }
     }
 
@@ -81,7 +94,7 @@ Item {
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
                 channelObject.setContainerHeight(height.toString())
-                fileText = openFile(model.filepath)
+                let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
             }
         }

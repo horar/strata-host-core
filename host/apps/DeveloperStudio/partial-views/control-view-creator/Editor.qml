@@ -102,6 +102,7 @@ Item {
                                 width: height
                                 implicitWidth: height
                                 visible: fileTab.hovered
+                                iconColor: "black"
                                 anchors {
                                     left: tabText.right
                                     leftMargin: 4
@@ -122,6 +123,24 @@ Item {
                                         openFilesModel.closeTabAt(index);
                                     }
                                 }
+                            }
+
+                            SGIcon {
+                                id: unsavedChangesIcon
+                                source: "qrc:/sgimages/asterisk.svg"
+                                height: tabText.paintedHeight * .75
+                                width: height
+                                implicitWidth: height
+                                iconColor: "black"
+                                visible: !closeFileIcon.visible && model.unsavedChanges
+                                anchors {
+                                    left: tabText.right
+                                    leftMargin: 4
+                                    right: parent.right
+                                    verticalCenter: parent.verticalCenter
+                                    rightMargin: 2
+                                }
+                                verticalAlignment: Qt.AlignVCenter
                             }
                         }
                     }
