@@ -2,8 +2,13 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.12
 import QtQuick.Dialogs 1.2
+import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
+import tech.strata.fonts 1.0
+
+import "qrc:/partial-views/general"
 
 Rectangle {
     id: openProjectContainer
@@ -13,6 +18,16 @@ Rectangle {
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
     color: "#ccc"
+    onVisibleChanged: {
+        if(!openProjectContainer.visible) {
+            alertMessage.visible = false
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: alertMessage.visible = false
+    }
 
     Component.onCompleted:  {
         loadSettings()
@@ -49,13 +64,25 @@ Rectangle {
             previousFileURL.projects.pop()
             listModelForUrl.remove(listModelForUrl.count - 1)
         }
-
         previousFileURL.projects.unshift(fileUrl)
         listModelForUrl.insert(0,{ url: fileUrl })
         saveSettings()
     }
 
+    function removeFromProjectList(fileUrl) {
+        for (var i = 0; i < previousFileURL.projects.length; ++i) {
+            if(previousFileURL.projects[i] === fileUrl) {
+                listModelForUrl.remove(i)
+                previousFileURL.projects.splice(i,1)
+                saveSettings()
+                return
+            }
+        }
+    }
+
+
     ColumnLayout {
+        id:recentProjColumn
         anchors {
             fill: parent
             margins: 20
@@ -73,6 +100,23 @@ Rectangle {
             color: "#333"
             Layout.preferredHeight: 1
             Layout.fillWidth: true
+        }
+
+        SGNotificationToast {
+            id: alertMessage
+            Layout.preferredWidth: parent.width/1.5
+            Layout.preferredHeight: 35
+            interval : 0
+            z:3
+            color : "red"
+            text : "This project does not exist anymore. Removing it from your recent projects..."
+            visible: false
+            MouseArea {
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: alertMessage
+                onClicked: alertMessage.visible = false
+            }
         }
 
         SGText {
@@ -93,19 +137,19 @@ Rectangle {
             highlightFollowsCurrentItem: true
             spacing: 10
             delegate:  Rectangle {
-                id: rectangle
-                color: "white"
+                id: projectUrlContainer
                 width: openProjectContainer.width - 40
                 height: 40
+                color: removeProjectMenu.opened  ? "lightgray" : "white"
 
                 RowLayout {
                     anchors {
-                        fill: rectangle
+                        fill: projectUrlContainer
                         margins: 5
                     }
 
                     SGIcon {
-                        Layout.preferredHeight: rectangle.height*.5
+                        Layout.preferredHeight: projectUrlContainer.height*.5
                         Layout.preferredWidth: Layout.preferredHeight
                         source: "qrc:/sgimages/file-blank.svg"
                     }
@@ -121,18 +165,58 @@ Rectangle {
                     }
                 }
 
+                Menu {
+                    id: removeProjectMenu
+                    width: {
+                        var result = 0;
+                        var padding = 0;
+                        for (var i = 0; i < count; ++i) {
+                            var item = itemAt(i);
+                            result = Math.max(item.contentItem.implicitWidth, result);
+                            padding = Math.max(item.padding, padding);
+                        }
+                        return result + padding * 2;
+                    }
+                    MenuItem {
+                        text: "Remove Projects From Recent Project"
+                        onTriggered: {
+                            removeFromProjectList(model.url.toString())
+                        }
+                    }
+                    MenuItem {
+                        text: "Clear Recent Project List"
+                        onTriggered: {
+                            previousFileURL.projects = []
+                            listModelForUrl.clear()
+                            saveSettings()
+
+                        }
+                    }
+                }
+
                 MouseArea {
                     id: urlMouseArea
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: {
-                        openProjectContainer.url = model.url
-                        toolBarListView.currentIndex = toolBarListView.editTab
+                        if(mouse.button === Qt.RightButton) {
+                            removeProjectMenu.popup()
+                        }
+                        else  {
+                            if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(model.url))) {
+                                alertMessage.visible = true
+                                removeFromProjectList(model.url.toString())
+                            }
+                            else {
+                                openProjectContainer.url = model.url
+                                toolBarListView.currentIndex = toolBarListView.editTab
+                            }
+                        }
                     }
                 }
             }
         }
-
 
         SGAlignedLabel {
             Layout.topMargin: 20
