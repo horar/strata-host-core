@@ -113,7 +113,6 @@ Rectangle {
                         cvc_console.createLogs("debug","Opened new Log");
                     }
                 }
-
                 /*****************************************
                   Additional items go below here, but above filler
                 *****************************************/
@@ -124,6 +123,19 @@ Rectangle {
                     Layout.fillWidth: true
                 }
 
+                SideNavFooter {
+                    id: footer
+                    Layout.preferredHeight: 70
+                    Layout.minimumHeight: footer.implicitHeight
+                    Layout.fillWidth: true
+                }
+
+            }
+        }
+
+        ColumnLayout {
+            id: viewsLogsColumn
+            spacing: 0
         StackLayout {
             id: viewStack
             Layout.fillHeight: true
@@ -134,17 +146,6 @@ Rectangle {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }
-
-            StackLayout {
-                id: viewStack
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-
-                Start {
-                    id: startContainer
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                }
 
                 OpenControlView {
                     id: openProjectContainer
@@ -248,3 +249,4 @@ Rectangle {
         }
     }
 }
+
