@@ -227,7 +227,7 @@ if(APPLE)
                 else()
                     message(STATUS "Found OpenSSL@1.1 installation through Homebrew.")
                 endif()
-                set(SSL_LIB_PATH_MACOS "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib" CACHE STRING "Directory containing OpenSSL libraries" FORCE)
+                set(SSL_LIB_PATH_MACOS "${HOMEBREW_PREFIX}/opt/openssl@1.1" CACHE STRING "Directory containing OpenSSL" FORCE)
             endif()
         else()
             message(FATAL_ERROR "Homebrew must be installed to continue compilation.")
@@ -250,8 +250,8 @@ if(NOT LIB_INSTALLED)
             CMAKE_ARGS "${CMAKE_ARGS}"
                 -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
                 -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-                -DSSL_LIB="${SSL_LIB_PATH_MACOS}/libssl.1.1.dylib"
-                -DCRYPTO_LIB="${SSL_LIB_PATH_MACOS}/libcrypto.1.1.dylib"
+                -DSSL_LIB="$<$<NOT:$<CONFIG:OTA>>:${SSL_LIB_PATH_MACOS}/lib/>libssl.1.1.dylib"
+                -DCRYPTO_LIB="$<$<NOT:$<CONFIG:OTA>>:${SSL_LIB_PATH_MACOS}/lib/>libcrypto.1.1.dylib"
 
             INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
             COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
