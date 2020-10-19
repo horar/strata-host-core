@@ -53,11 +53,15 @@ Item {
         }
 
         onUndoClicked: {
-            channelObject.undo()
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.undo()
+            }
         }
 
         onRedoClicked: {
-            channelObject.redo()
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.redo()
+            }
         }
     }
 
