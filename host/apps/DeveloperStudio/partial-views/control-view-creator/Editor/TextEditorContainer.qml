@@ -43,6 +43,24 @@ Item {
         }
     }
 
+    Connections {
+        target: editor.editorToolBar
+
+        onSaveClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                saveFile()
+            }
+        }
+
+        onUndoClicked: {
+            channelObject.undo()
+        }
+
+        onRedoClicked: {
+            channelObject.redo()
+        }
+    }
+
     WebChannel {
         id: channel
         registeredObjects: [channelObject]
@@ -55,6 +73,8 @@ Item {
 
         signal setValue(string value);
         signal setContainerHeight(string height);
+        signal undo();
+        signal redo();
 
         function setHtml(value) {
             setValue(value)

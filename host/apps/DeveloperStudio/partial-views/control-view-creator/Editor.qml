@@ -9,10 +9,12 @@ import tech.strata.SGFileTabModel 1.0
 
 import "Editor/"
 import "Sidebar/"
+import "qrc:/js/platform_selection.js" as PlatformSelection
 
 Item {
     id: editorRoot
     property alias treeModel: treeModel
+    property alias editorToolBar: editorToolBar
 
     SGQrcTreeModel {
         id: treeModel
@@ -25,6 +27,27 @@ Item {
 
     SGFileTabModel {
         id: openFilesModel
+    }
+
+    SGSortFilterProxyModel {
+        id: connectedPlatforms
+
+        sourceModel: []
+        sortEnabled: false
+        invokeCustomFilter: true
+        invokeCustomLessThan: false
+
+        function filterAcceptsRow(index) {
+            return sourceModel.get(index).connected;
+        }
+    }
+
+    Connections {
+        target: mainWindow
+
+        onInitialized: {
+            connectedPlatforms.sourceModel = PlatformSelection.platformSelectorModel
+        }
     }
 
     RowLayout {
@@ -41,6 +64,109 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
             spacing: 0
+
+            RowLayout {
+                id: editorToolBar
+                Layout.fillWidth: true
+                Layout.preferredHeight: 26
+                Layout.maximumHeight: 26
+
+                spacing: 0
+
+                property color buttonColor: "#777"
+
+                signal saveClicked()
+                signal undoClicked()
+                signal redoClicked()
+
+                SGComboBox {
+                    Layout.fillHeight: true
+                    Layout.topMargin: 0
+                    Layout.preferredWidth: 350
+
+                    model: connectedPlatforms
+                    placeholderText: "Select a platform to connect to..."
+                    textRole: "verbose_name"
+                    boxColor: editorToolBar.buttonColor
+                    textColor: "white"
+
+                    onCurrentIndexChanged: {
+                        let platform = connectedPlatforms.get(currentIndex);
+                        controlViewCreatorRoot.debugPlatform = {
+                            deviceId: platform.device_id,
+                            classId: platform.class_id
+                        };
+                    }
+                }
+
+                Rectangle {
+                    id: filler
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: editorToolBar.buttonColor
+                }
+
+                Repeater {
+                    id: mainButtons
+
+                    model: [
+                        { buttonType: "save", iconSource: "qrc:/sgimages/save.svg" },
+                        { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg" },
+                        { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg" }
+                    ]
+
+                    delegate: SGButton {
+                        Layout.fillHeight: true
+                        Layout.preferredWidth: height
+
+                        color: editorToolBar.buttonColor
+                        iconColor: "white"
+                        iconSize: 24
+                        roundedLeft: false
+                        roundedRight: false
+                        roundedTop: false
+                        roundedBottom: false
+
+                        SGIcon {
+                            id: icon
+                            anchors.fill: parent
+                            anchors.margins: 4
+                            iconColor: "white"
+                            source: modelData.iconSource
+                            fillMode: Image.PreserveAspectFit
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            onPressed: {
+                                icon.iconColor = Qt.darker(icon.iconColor, 1.5)
+                            }
+
+                            onReleased: {
+                                icon.iconColor = "white"
+                            }
+
+                            onClicked: {
+                                switch (modelData.buttonType) {
+                                case "save":
+                                    editorToolBar.saveClicked()
+                                    break;
+                                case "undo":
+                                    editorToolBar.undoClicked()
+                                    break;
+                                case "redo":
+                                    editorToolBar.redoClicked()
+                                    break;
+                                default:
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             ScrollView {
                 Layout.preferredHeight: 45

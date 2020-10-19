@@ -175,7 +175,7 @@ Rectangle {
     }
 
     function recompileControlViewQrc () {
-        if (editor.treeModel.url !== '') {
+        if (editor.treeModel.url.toString() !== '') {
             sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
         }
     }
