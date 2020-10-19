@@ -188,18 +188,17 @@ Rectangle {
                     }
                 }
 
-
                 MouseArea {
                     id: urlMouseArea
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: {
-                        openProjectContainer.url = model.url
                         if(mouse.button === Qt.RightButton) {
                             removeProjectMenu.popup()
                         }
                         else  {
+                            openProjectContainer.url = model.url
                             if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(editor.treeModel.url))) {
                                 alertMessage.visible = true
                                 removeFromProjectList(editor.treeModel.url.toString())
@@ -212,7 +211,6 @@ Rectangle {
                 }
             }
         }
-
 
         SGAlignedLabel {
             Layout.topMargin: 20
