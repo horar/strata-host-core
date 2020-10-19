@@ -46,6 +46,11 @@ Rectangle{
             Layout.alignment: Qt.AlignHCenter
         }
 
+        RecentlyReleased {
+            Layout.columnSpan: 3
+            Layout.alignment: Qt.AlignHCenter
+        }
+
         FilterColumn {
             id: leftFilters
             model: Filters.categoryFilterModel

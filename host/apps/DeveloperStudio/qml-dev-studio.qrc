@@ -96,5 +96,6 @@
         <file>partial-views/general/SGNotificationToast.qml</file>
         <file>partial-views/status-bar/SGSettingsPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsCheckbox.qml</file>
+        <file>partial-views/platform-selector/RecentlyReleased.qml</file>
     </qresource>
 </RCC>
