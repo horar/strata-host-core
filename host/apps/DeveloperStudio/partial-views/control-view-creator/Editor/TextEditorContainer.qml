@@ -19,6 +19,7 @@ Item {
     property string file: model.filename
     property int savedVersionId
     property int currentVersionId
+    property bool externalChanges: false
 
     function openFile() {
         return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
@@ -50,6 +51,7 @@ Item {
         onFileChanged: {
             if (model.filepath === path) {
                 channelObject.fileText = openFile(model.filepath)
+                externalChanges = true
                 channelObject.setHtml(channelObject.fileText);
             }
         }
@@ -79,6 +81,12 @@ Item {
             if (!savedVersionId) {
                 savedVersionId = version
             }
+
+            if (externalChanges) {
+                savedVersionId = version
+                externalChanges = false
+            }
+
             currentVersionId = version
             model.unsavedChanges = (savedVersionId !== version)
         }
