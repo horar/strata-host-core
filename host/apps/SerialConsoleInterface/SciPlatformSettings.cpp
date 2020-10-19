@@ -116,7 +116,7 @@ void SciPlatformSettings::loadData()
         return;
     }
 
-    for (const QJsonValue &board : doc.array()) {
+    for (const QJsonValueRef board : doc.array()) {
         if (settingsList_.length() > maxCount_) {
             break;
         }

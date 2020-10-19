@@ -18,7 +18,8 @@ QString &ResourcePath::coreResourcePath()
 #ifdef Q_OS_MACOS
     QDir applicationDir(QCoreApplication::applicationDirPath());
     applicationDir.cdUp();
-    applicationDir.cd(QStringLiteral("Resources"));
+    applicationDir.cdUp();
+    applicationDir.cdUp();
 
     coreResourcePath_ = applicationDir.path();
 #else
