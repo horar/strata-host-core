@@ -378,5 +378,11 @@ Module {
             Parameter { name: "dateTime"; type: "QDateTime" }
         }
         Method { name: "generateUuid"; type: "string" }
+        Method {
+            name: "validateJson"
+            type: "bool"
+            Parameter { name: "json"; type: "QByteArray" }
+            Parameter { name: "schema"; type: "QByteArray" }
+        }
     }
 }
