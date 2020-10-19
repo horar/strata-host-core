@@ -25,16 +25,14 @@ Item {
     }
 
     function saveFile() {
-        webEngine.runJavaScript('getValue()', function (fileText) {
-            let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), fileText);
+        let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), channelObject.fileText);
 
-            if (success) {
-                savedVersionId = currentVersionId;
-                model.unsavedChanges = false;
-            } else {
-                console.error("Unable to save file", model.filepath)
-            }
-        });
+        if (success) {
+            savedVersionId = currentVersionId;
+            model.unsavedChanges = false;
+        } else {
+            console.error("Unable to save file", model.filepath)
+        }
     }
 
     Keys.onPressed: {
@@ -68,6 +66,8 @@ Item {
         id: channelObject
         objectName: "fileChannel"
         WebChannel.id: "valueLink"
+
+        property string fileText: ""
 
         signal setValue(string value);
         signal setContainerHeight(string height);
@@ -112,6 +112,7 @@ Item {
                 channelObject.setContainerHeight(height.toString())
                 let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
+                channelObject.fileText = fileText
             }
         }
 
