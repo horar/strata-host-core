@@ -18,8 +18,17 @@ add_executable(${PROJECT_NAME} WIN32
 )
 
 target_link_libraries(${PROJECT_NAME}
-    ${PROJECT_NAME}Lib
+    PRIVATE ${PROJECT_NAME}Lib
 )
+
+if(APPLE)
+    set(OPENSSL_ROOT_DIR ${SSL_LIB_PATH_MACOS})
+    find_package(OpenSSL 1.1 REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        OpenSSL::SSL
+        OpenSSL::Crypto
+    )
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
@@ -84,7 +93,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
 
 target_include_directories(${PROJECT_NAME}Lib
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
-    PRIVATE $<IF:$<CONFIG:Release>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
+    PRIVATE $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
 )
 
 if(WIN32)
