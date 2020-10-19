@@ -174,7 +174,7 @@ Rectangle {
                     MenuItem {
                         text: "Remove Projects From Recent Project"
                         onTriggered: {
-                            removeFromProjectList(editor.treeModel.url.toString())
+                            removeFromProjectList(model.url.toString())
                         }
                     }
                     MenuItem {
@@ -198,12 +198,12 @@ Rectangle {
                             removeProjectMenu.popup()
                         }
                         else  {
-                            openProjectContainer.url = model.url
-                            if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(editor.treeModel.url))) {
+                            if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(model.url))) {
                                 alertMessage.visible = true
-                                removeFromProjectList(editor.treeModel.url.toString())
+                                removeFromProjectList(model.url.toString())
                             }
                             else {
+                                openProjectContainer.url = model.url
                                 toolBarListView.currentIndex = toolBarListView.editTab
                             }
                         }
