@@ -81,27 +81,24 @@ SGWidgets.SGMainWindow {
         }
     }
 
-    SGConfirmationPopup {
+    ConfirmClosePopup {
         id: confirmClosePopup
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
 
         titleText: "You have unsaved changes in " + unsavedFileCount + " files."
         popupText: "Your changes will be lost if you choose to not save them."
-        acceptButtonText: "Save all"
-        cancelButtonText: "Don't save"
-        acceptButtonColor: SGColorsJS.STRATA_GREEN
-        acceptButtonHoverColor: Qt.darker(SGColorsJS.STRATA_GREEN, 1.25)
+        saveButtonText: "Save all"
         closePolicy: Popup.NoAutoClose
 
         property int unsavedFileCount
 
-        onCancelled: {
+        onClosed: {
             controlViewCreator.openFilesModel.closeAll()
             mainWindow.close()
         }
 
-        onAccepted: {
+        onSaved: {
             controlViewCreator.openFilesModel.saveAll()
             mainWindow.close()
         }

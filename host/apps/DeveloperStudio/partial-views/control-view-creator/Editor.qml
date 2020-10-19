@@ -188,27 +188,24 @@ Item {
                 }
             }
             
-            SGConfirmationPopup {
+            ConfirmClosePopup {
                 id: confirmClosePopup
                 x: fileTabRepeater.width / 2 - width / 2
                 y: fileTabRepeater.y + height
 
                 titleText: "Do you want to save the changes made to " + filename + "?"
                 popupText: "Your changes will be lost if you choose to not save them."
-                acceptButtonText: "Save"
-                cancelButtonText: "Don't save"
-                acceptButtonColor: SGColorsJS.STRATA_GREEN
-                acceptButtonHoverColor: Qt.darker(SGColorsJS.STRATA_GREEN, 1.25)
+
                 closePolicy: Popup.NoAutoClose
 
                 property string filename: ""
                 property int index
 
-                onCancelled: {
+                onClosed: {
                     openFilesModel.closeTabAt(index)
                 }
 
-                onAccepted: {
+                onSaved: {
                     openFilesModel.saveFileAt(index)
                     openFilesModel.closeTabAt(index)
                 }
