@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
 
@@ -8,14 +9,14 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 
 RowLayout {
     Layout.fillWidth: true
-    Layout.preferredHeight: 200
+    Layout.preferredHeight: 100
 
     SGSortFilterProxyModel {
         id: sortedModel
         sortEnabled: true
         invokeCustomLessThan: true
         sortAscending: false
-        sourceModel: PlatformSelection.platformSelectorModel
+        sourceModel: PlatformSelection.platformSelectorModel.platformListStatus === "loaded" ? PlatformSelection.platformSelectorModel : null
 
         readonly property string timeFormat: "yyyy-MM-ddThh:mm:ss.zzzZ"
 
@@ -30,22 +31,30 @@ RowLayout {
         }
     }
 
-    Repeater {
-        id: mostRecentRepeater
-        model: sortedModel
+    SGSortFilterProxyModel {
+        id: lengthModel
+        sourceModel: PlatformSelection.platformSelectorModel.platformListStatus === "loaded" ? sortedModel : null
+        invokeCustomFilter: true
 
         property int topN: 3
 
+        function filterAcceptsRow(index) {
+            return index < topN
+        }
+    }
+
+    Repeater {
+        id: mostRecentRepeater
+        model: lengthModel
+
         delegate: ColumnLayout {
-            visible: index < mostRecentRepeater.topN
-            Layout.preferredWidth: 250
+            Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignHCenter
 
             Text {
                 id: name
                 Layout.fillWidth: true
-                Layout.preferredHeight: 100
                 Layout.alignment: Qt.AlignHCenter
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
@@ -58,7 +67,7 @@ RowLayout {
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignHCenter
                 horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WrapAnywhere
+                elide: Text.ElideRight
                 text: model.timestamp
             }
         }
