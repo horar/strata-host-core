@@ -1,9 +1,11 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "navigation"
 
 Rectangle {
     id: controlViewCreatorRoot
@@ -17,61 +19,100 @@ Rectangle {
         user: NavigationControl.context.user_id
     }
 
-    ColumnLayout {
+    RowLayout {
         anchors {
             fill: parent
         }
         spacing:  0
 
         Rectangle {
-            id: topBar
-            Layout.preferredHeight: 45
-            Layout.fillWidth: true
-            Layout.maximumWidth: parent.width
-            color: "#666"
-            visible: viewStack.currentIndex >= editUseStrip.offset
+            id: tool
+            Layout.fillHeight: true
+            Layout.preferredWidth: 70
+            Layout.maximumWidth: 70
+            Layout.alignment: Qt.AlignTop
+            color: "#444"
 
-            RowLayout {
-                height: parent.height
-                width: Math.min(implicitWidth, parent.width-5)
-                x: 2.5
-                spacing: 10
+            ColumnLayout {
+                id: toolBarListView
 
-                SGButton {
-                    text: "Open Control View Project"
-                    onClicked: {
+                anchors.fill: parent
+                spacing: 5
+
+                property int currentIndex: -1
+                property int openTab: 0
+                property int newTab: 1
+                property int editTab: 2
+                property int viewTab: 3
+                property bool recompiling: false
+
+                onCurrentIndexChanged: {
+                    switch (currentIndex) {
+                    case openTab:
                         viewStack.currentIndex = 1
-                    }
-                }
-
-                SGButton {
-                    text: "New Control View Project"
-                    onClicked: {
+                        break;
+                    case newTab:
                         viewStack.currentIndex = 2
-                    }
-                }
-
-                SGButtonStrip {
-                    id: editUseStrip
-                    model: ["Edit", "Use Control View"]
-                    checkedIndices: 0
-                    onClicked: {
-                        if (currentFileUrl !== editor.treeModel.url) {
-                            recompileControlViewQrc()
+                        break;
+                    case editTab:
+                        viewStack.currentIndex = 3
+                        break;
+                    case viewTab:
+                        if (currentFileUrl != editor.treeModel.url) {
+                            toolBarListView.recompiling = true
+                            recompileControlViewQrc();
                             currentFileUrl = editor.treeModel.url
+                        } else {
+                            viewStack.currentIndex = 4
                         }
-                        viewStack.currentIndex = index + offset
-                    }
 
-                    property int offset: 3 // number of views in stack before Editor/ControlViewContainer
+                        break;
+                    default:
+                        viewStack.currentIndex = 0
+                        break;
+                    }
                 }
 
-                SGButton {
-                    text: "Recompile/Reload Control View"
+                /*****************************************
+                  Main Navigation Items
+                    * Open Project
+                    * New Project
+                    * Editor
+                    * View
+                *****************************************/
+                Repeater {
+                    id: mainNavItems
 
-                    onClicked: {
-                        recompileControlViewQrc()
+                    model: [
+                        { imageSource: "qrc:/sgimages/folder-open-solid.svg", imageText: "Open" },
+                        { imageSource: "qrc:/sgimages/folder-plus.svg", imageText: "New" },
+                        { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit" },
+                        { imageSource: "qrc:/sgimages/eye.svg", imageText: "View" },
+                    ]
+
+                    delegate: SGSideNavItem {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 70
+                        modelIndex: index
+                        iconLeftMargin: index === toolBarListView.editTab ? 7 : 0
                     }
+                }
+
+                /*****************************************
+                  Additional items go below here, but above filler
+                *****************************************/
+
+                Item {
+                    id: filler
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                }
+
+                SideNavFooter {
+                    id: footer
+                    Layout.preferredHeight: 70
+                    Layout.minimumHeight: footer.implicitHeight
+                    Layout.fillWidth: true
                 }
             }
         }
@@ -80,12 +121,6 @@ Rectangle {
             id: viewStack
             Layout.fillHeight: true
             Layout.fillWidth: true
-
-            onCurrentIndexChanged: {
-                if (currentIndex !== editUseStrip.offset && currentIndex !== (editUseStrip.offset + 1)) {
-                    editUseStrip.checkedIndices = 0
-                }
-            }
 
             Start {
                 id: startContainer
@@ -131,14 +166,7 @@ Rectangle {
 
     function recompileControlViewQrc () {
         if (editor.treeModel.url !== '') {
-            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
-            if (compiledRccFile !== '') {
-                loadDebugView(compiledRccFile)
-            } else {
-                NavigationControl.removeView(controlViewContainer)
-                let error_str = sdsModel.resourceLoader.getLastLoggedError()
-                sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
-            }
+            sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
         }
     }
 
