@@ -163,6 +163,11 @@ QString SGUtilsCpp::joinFilePath(const QString &path, const QString &fileName)
     return dir.filePath(fileName);
 }
 
+bool SGUtilsCpp::exists(const QString &filepath)
+{
+    return QFileInfo::exists(filepath);
+}
+
 QString SGUtilsCpp::formattedDataSize(qint64 bytes, int precision)
 {
     if (bytes == 0) {

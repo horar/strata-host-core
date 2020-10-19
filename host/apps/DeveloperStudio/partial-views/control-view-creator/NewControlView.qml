@@ -168,7 +168,7 @@ Rectangle {
                     if (fileSelector.fileUrl.toString() !== "") {
                         openProjectContainer.url = sdsModel.newControlView.createNewProject(fileSelector.fileUrl, templateButtonGroup.checkedButton.path);
                         toolBarListView.currentIndex = toolBarListView.editTab;
-                        openProjectContainer.addToTheProjectList(editor.treeModel.url.toString())
+                        openProjectContainer.addToTheProjectList(fileSelector.fileUrl)
                     }
                 }
             }
