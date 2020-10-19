@@ -23,13 +23,13 @@ SGStrataPopup {
             autoOpenView: autoOpen.checked,
             switchToActive: switchTo.checked,
             notifyOnFirmwareUpdate: firmwareUpdates.checked,
-            index: NavigationControl.userSettings.index
+            selectedDistributionPortal: NavigationControl.userSettings.selectedDistributionPortal
         }
         NavigationControl.userSettings.writeFile("settings.json", settings)
         NavigationControl.userSettings.autoOpenView = settings.autoOpenView
         NavigationControl.userSettings.switchToActive = settings.switchToActive
         NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
-        NavigationControl.userSettings.index = settings.index
+        NavigationControl.userSettings.selectedDistributionPortal = settings.selectedDistributionPortal
     }
 
     ColumnLayout {
