@@ -115,29 +115,29 @@ Item {
                         { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg" }
                     ]
 
-                    delegate: SGButton {
+                    delegate: Button {
                         Layout.fillHeight: true
                         Layout.preferredWidth: height
 
-                        color: editorToolBar.buttonColor
-                        iconColor: "white"
-                        iconSize: 24
-                        roundedLeft: false
-                        roundedRight: false
-                        roundedTop: false
-                        roundedBottom: false
+                        enabled: openFilesModel.count > 0
+
+                        background: Rectangle {
+                            radius: 0
+                            color: editorToolBar.buttonColor
+                        }
 
                         SGIcon {
                             id: icon
                             anchors.fill: parent
                             anchors.margins: 4
-                            iconColor: "white"
+                            iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
                             source: modelData.iconSource
                             fillMode: Image.PreserveAspectFit
                         }
 
                         MouseArea {
                             anchors.fill: parent
+                            enabled: parent.enabled
                             hoverEnabled: true
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onPressed: {
