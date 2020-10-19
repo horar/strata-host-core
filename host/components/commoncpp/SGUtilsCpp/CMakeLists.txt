@@ -21,9 +21,9 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC
-    Qt5::Core
-    strata::QtLogger
+    PUBLIC Qt5::Core
+    PRIVATE strata::QtLogger
+    PRIVATE rapidjson::rapidjson
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

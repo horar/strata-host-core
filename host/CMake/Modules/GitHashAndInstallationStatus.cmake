@@ -1,6 +1,6 @@
 macro(get_git_hash_and_installation_status GIT_REPO_PATH LIB_INSTALLATION_PATH)
     if(${ARGC} GREATER 2)
-        set(REF ${ARGV2})
+        set(REF "remotes/origin/${ARGV2}")
     else()
         set(REF "HEAD")
     endif()
