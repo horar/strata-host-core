@@ -7,14 +7,15 @@ import tech.strata.commoncpp 1.0
 import "qrc:/js/platform_selection.js" as PlatformSelection
 
 RowLayout {
-    height: 200
+    Layout.fillWidth: true
+    Layout.preferredHeight: 200
 
     SGSortFilterProxyModel {
         id: sortedModel
         sortEnabled: true
         invokeCustomLessThan: true
         sortAscending: false
-        sourceModel: []
+        sourceModel: PlatformSelection.platformSelectorModel
 
         readonly property string timeFormat: "yyyy-MM-ddThh:mm:ss.zzzZ"
 
@@ -30,13 +31,23 @@ RowLayout {
     }
 
     Repeater {
+        id: mostRecentRepeater
         model: sortedModel
 
+        property int topN: 3
+
         delegate: ColumnLayout {
+            visible: index < mostRecentRepeater.topN
+            Layout.preferredWidth: 250
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignHCenter
+
             Text {
                 id: name
                 Layout.fillWidth: true
                 Layout.preferredHeight: 100
+                Layout.alignment: Qt.AlignHCenter
+                horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
                 text: model.verbose_name
             }
@@ -45,17 +56,11 @@ RowLayout {
                 id: timestamp
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.alignment: Qt.AlignHCenter
+                horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WrapAnywhere
                 text: model.timestamp
             }
-        }
-    }
-
-    Connections {
-        target: mainWindow
-
-        onInitialized: {
-            sortedModel.sourceModel = PlatformSelection.platformSelectorModel
         }
     }
 }
