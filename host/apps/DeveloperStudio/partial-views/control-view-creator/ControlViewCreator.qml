@@ -124,18 +124,16 @@ Rectangle {
                     Layout.fillWidth: true
                 }
 
-                SideNavFooter {
-                    id: footer
-                    Layout.preferredHeight: 70
-                    Layout.minimumHeight: footer.implicitHeight
-                    Layout.fillWidth: true
-                }
-            }
-        }
+        StackLayout {
+            id: viewStack
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
-        ColumnLayout {
-            id: viewsLogsColumn
-            spacing: 0
+            Start {
+                id: startContainer
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+            }
 
             StackLayout {
                 id: viewStack
