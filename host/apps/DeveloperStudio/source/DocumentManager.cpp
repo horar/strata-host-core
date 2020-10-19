@@ -20,12 +20,12 @@ DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
         This will also send a command to Nimbus
     */
     coreInterface->registerDataSourceHandler("document_progress",
-                                             std::bind(&DocumentManager::documentProgressHandler,
-                                             this, std::placeholders::_1));
+                                            std::bind(&DocumentManager::documentProgressHandler,
+                                            this, std::placeholders::_1));
 
     coreInterface->registerDataSourceHandler("document",
-                                             std::bind(&DocumentManager::loadDocumentHandler,
-                                             this, std::placeholders::_1));
+                                            std::bind(&DocumentManager::loadDocumentHandler,
+                                            this, std::placeholders::_1));
     init();
 }
 
