@@ -171,6 +171,8 @@ Item {
                         label: "<b>Watch Dog OFF</b>"
                         Layout.alignment: Qt.AlignCenter
                         Layout.topMargin:  10
+                        checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
+                        uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
                          checked:  platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")  // ?
 
                             onToggled: {
