@@ -78,6 +78,14 @@ Rectangle{
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40
         width: 40
+        Accessible.role: Accessible.Button
+        Accessible.name: "Help Icon"
+        Accessible.description: "Help tour button."
+        Accessible.onPressAction: clickAction()
+
+        function clickAction() {
+            Help.startHelpTour("selectorHelp", "strataMain")
+        }
 
         MouseArea {
             id: helpMouse
@@ -87,9 +95,7 @@ Rectangle{
             }
             cursorShape: Qt.PointingHandCursor
 
-            onClicked: {
-                Help.startHelpTour("selectorHelp", "strataMain")
-            }
+            onClicked: helpIcon.clickAction()
         }
     }
 
@@ -105,5 +111,4 @@ Rectangle{
             salesPopup.open()
         }
     }
-
 }

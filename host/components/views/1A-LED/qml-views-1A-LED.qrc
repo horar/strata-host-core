@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/1A-LED">
+    <qresource prefix="/">
         <file>Control.qml</file>
         <file>control-views/BasicControl.qml</file>
         <file>control-views/PlatformInterface.qml</file>

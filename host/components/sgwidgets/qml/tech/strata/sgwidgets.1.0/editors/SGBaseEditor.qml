@@ -37,6 +37,25 @@ FocusScope {
         return ""
     }
 
+    /* Use these to manually set state.
+       This is useful when state depends on async events, for example response from server.
+     */
+    function setIsUnknown() {
+        validStatus = SGBaseEditor.Unknown
+        errorText = ""
+    }
+
+    function setIsValid() {
+        validStatus = SGBaseEditor.Valid
+        errorText = ""
+    }
+
+    function setIsInvalid(error) {
+        validStatus = SGBaseEditor.Invalid
+        errorText = error
+    }
+
+
     enum ValidStatus {
         Unknown,
         Valid,
@@ -79,16 +98,15 @@ FocusScope {
             }
         }
 
-        validStatus = SGBaseEditor.Unknown
-        errorText = ""
+        setIsUnknown()
     }
 
     function callInputValidationErrorMsg() {
-        errorText = inputValidationErrorMsg()
-        if (errorText.length > 0) {
-            validStatus = SGBaseEditor.Invalid
-        } else if (errorText.length === 0) {
-            validStatus = SGBaseEditor.Valid
+        var error = inputValidationErrorMsg()
+        if (error.length > 0) {
+            setIsInvalid(error)
+        } else if (error.length === 0) {
+            setIsValid()
         }
     }
 

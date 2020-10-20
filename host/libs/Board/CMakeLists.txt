@@ -42,27 +42,34 @@ set_target_properties(${DEVICE} PROPERTIES
 
 # DeviceOperations
 add_library(${DEVICE_OPERATIONS}
-    Device/DeviceOperations/src/DeviceOperations.cpp
     Device/src/logging/LoggingQtCategories.cpp
-    Device/DeviceOperations/src/DeviceCommands/BaseDeviceCommand.cpp
-    Device/DeviceOperations/src/DeviceCommands/CmdGetFirmwareInfo.cpp
-    Device/DeviceOperations/src/DeviceCommands/CmdRequestPlatformId.cpp
-    Device/DeviceOperations/src/DeviceCommands/CmdStartBootloader.cpp
-    Device/DeviceOperations/src/DeviceCommands/CmdFlash.cpp
-    Device/DeviceOperations/src/DeviceCommands/CmdBackupFirmware.cpp
-    Device/DeviceOperations/src/DeviceCommands/CmdStartApplication.cpp
 
-    #AUTOMOC wont find header if it is in different directory
-    Device/DeviceOperations.h
-    Device/DeviceOperations/include/DeviceOperationsFinished.h
+    Device/Operations/Commands/src/BaseDeviceCommand.cpp
+    Device/Operations/Commands/src/CmdGetFirmwareInfo.cpp
+    Device/Operations/Commands/src/CmdRequestPlatformId.cpp
+    Device/Operations/Commands/src/CmdStartBootloader.cpp
+    Device/Operations/Commands/src/CmdStartFlash.cpp
+    Device/Operations/Commands/src/CmdFlash.cpp
+    Device/Operations/Commands/src/CmdStartBackupFirmware.cpp
+    Device/Operations/Commands/src/CmdBackupFirmware.cpp
+    Device/Operations/Commands/src/CmdStartApplication.cpp
+
+    Device/Operations/BaseDeviceOperation.h
+    Device/Operations/src/BaseDeviceOperation.cpp
+    Device/Operations/src/Identify.cpp
+    Device/Operations/src/StartBootloader.cpp
+    Device/Operations/src/Flash.cpp
+    Device/Operations/src/Backup.cpp
+    Device/Operations/src/StartApplication.cpp
 )
 add_library(strata::${DEVICE_OPERATIONS} ALIAS ${DEVICE_OPERATIONS})
 
 target_include_directories(${DEVICE_OPERATIONS}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Device/DeviceOperations/include
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Device/Operations/include
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/src
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/DeviceOperations/src
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/Operations
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/Operations/src
 )
 
 target_link_libraries(${DEVICE_OPERATIONS}

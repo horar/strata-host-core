@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/subGHz">
+    <qresource prefix="/">
         <file>sgwidgets/fonts/Inconsolata.otf</file>
         <file>sgwidgets/fonts/sgicons.ttf</file>
         <file>sgwidgets/images/sliderHandle.svg</file>
@@ -57,5 +57,13 @@
         <file>PlatformInterface.qml</file>
         <file>views/basic-partial-views/Sensor.qml</file>
         <file>views/basic-partial-views/SignalStrengthIndicator.qml</file>
+        <file>views/advanced-partial-views/Overview.qml</file>
+        <file>views/advanced-partial-views/Port.qml</file>
+        <file>views/advanced-partial-views/PortInfo.qml</file>
+        <file>views/advanced-partial-views/PortInfoMini.qml</file>
+        <file>views/advanced-partial-views/PortSettings.qml</file>
+        <file>views/advanced-partial-views/PortStatBox.qml</file>
+        <file>views/advanced-partial-views/PortStatBoxMini.qml</file>
+        <file>views/advanced-partial-views/SystemSettings.qml</file>
     </qresource>
 </RCC>

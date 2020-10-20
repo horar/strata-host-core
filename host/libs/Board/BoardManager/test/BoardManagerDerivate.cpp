@@ -1,11 +1,9 @@
 #include "BoardManagerDerivate.h"
-#include "Device/DeviceOperations.h"
 #include "DeviceMock.h"
 #include "QtTest.h"
 
 using strata::BoardManager;
 using strata::device::Device;
-using strata::device::DeviceOperations;
 using strata::device::DevicePtr;
 
 BoardManagerDerivate::BoardManagerDerivate() : BoardManager()
@@ -83,10 +81,10 @@ void BoardManagerDerivate::checkNewSerialDevices()
     // empty, disable the BoardManager functionality working with serial ports
 }
 
-void BoardManagerDerivate::handleOperationFinished(strata::device::DeviceOperation operation,
+void BoardManagerDerivate::handleOperationFinished(strata::device::operation::Type opType,
                                                    int data)
 {
-    BoardManager::handleOperationFinished(operation, data);
+    BoardManager::handleOperationFinished(opType, data);
 }
 
 void BoardManagerDerivate::handleOperationError(QString message)

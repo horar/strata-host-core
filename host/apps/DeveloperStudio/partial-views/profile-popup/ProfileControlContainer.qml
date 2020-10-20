@@ -19,6 +19,7 @@ Rectangle {
     property variant allFieldsvalid
     property var animationTargets: []
     property bool editing: false
+    property bool guestUser: mainGrid.guestUser
 
     signal saved()
     signal canceled()
@@ -65,7 +66,12 @@ Rectangle {
            rightMargin: root.editing ? 5 : 0
        }
 
-       text: root.editing ? "Save" : "Edit"
+       text: {
+           if (root.guestUser === true) {
+                return ""
+           }
+           return root.editing ? "Save" : "Edit"
+       }
        color: "#33b13b"
 
        MouseArea {
@@ -81,11 +87,11 @@ Rectangle {
                    if (allFieldsValid()) {
                        root.saved()
                        root.editing = false
-                       hideAnimation.start()
+                       alertRect.hide()
                    } else {
-                       alertText.text = errorAlertText
+                       alertRect.text = errorAlertText
                        alertRect.color = "red"
-                       alertAnimation.start()
+                       alertRect.show()
                    }
                }
            }
@@ -140,10 +146,12 @@ Rectangle {
     function expandAnimationFinished() {
         animationTargets.forEach((target) => {
             target.textField.text = target.plainText.text
-            target.editable = true
+            if (root.guestUser === false) {
+                target.editable = true
+                animationTargets[0].textField.focus = true
+            }
         });
 
-        animationTargets[0].textField.focus = true
     }
 
     function hideAnimationStarted() {

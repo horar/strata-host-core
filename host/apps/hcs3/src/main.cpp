@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         cacheDir.append(QString("/%1").arg(parser.value(QStringLiteral("c"))).toUpper());
         qDebug() << "Cache location:" << cacheDir;
 
-        for (const auto folder : {QStringLiteral("db"), QStringLiteral("documents")}) {
+        for (const auto& folder : {QStringLiteral("db"), QStringLiteral("documents")}) {
             QDir dir(QString("%1/%2").arg(cacheDir).arg(folder));
             qInfo() << "Removing" << dir.path() << ":" << dir.removeRecursively();
         }

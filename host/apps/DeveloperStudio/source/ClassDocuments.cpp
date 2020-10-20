@@ -54,6 +54,11 @@ bool ClassDocuments::loading() const
     return loading_;
 }
 
+bool ClassDocuments::initialized() const
+{
+    return initialized_;
+}
+
 int ClassDocuments::loadingProgressPercentage() const
 {
     return loadingProgressPercentage_;
@@ -93,6 +98,7 @@ void ClassDocuments::populateModels(QJsonObject data)
         clearDocuments();
         setErrorString(data["error"].toString());
         setLoading(false);
+        setInitialized(true);
         return;
     }
 
@@ -115,6 +121,13 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString category = datasheetObject.value("category").toString();
         QString uri = datasheetObject.value("datasheet").toString();
         QString name = datasheetObject.value("name").toString();
+
+        if (uri.length() == 0
+                || name.length() == 0)
+        {
+            qCWarning(logCategoryDocumentManager) << "Datasheet has missing data";
+            continue;
+        }
 
         DocumentItem *di = new DocumentItem(uri, name, category);
         datasheetList.append(di);
@@ -180,9 +193,6 @@ void ClassDocuments::populateModels(QJsonObject data)
             continue;
         }
 
-        QJsonDocument doc(documentObject);
-        QString strJson(doc.toJson(QJsonDocument::Compact));
-
         QString uri = documentObject["uri"].toString();
         QString name = documentObject["name"].toString();
         QString md5 = documentObject["md5"].toString();
@@ -208,9 +218,6 @@ void ClassDocuments::populateModels(QJsonObject data)
             continue;
         }
 
-        QJsonDocument doc(documentObject);
-        QString strJson(doc.toJson(QJsonDocument::Compact));
-
         QString uri = documentObject["uri"].toString();
         QString name = documentObject["name"].toString();
         QString md5 = documentObject["md5"].toString();
@@ -229,6 +236,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     controlViewModel_.populateModel(controlViewList);
 
     setLoading(false);
+    setInitialized(true);
 }
 
 void ClassDocuments::clearDocuments()
@@ -251,6 +259,14 @@ void ClassDocuments::setLoading(bool loading)
     if (loading_ != loading) {
         loading_ = loading;
         emit loadingChanged();
+    }
+}
+
+void ClassDocuments::setInitialized(bool initialized)
+{
+    if (initialized_ != initialized) {
+        initialized_ = initialized;
+        emit initializedChanged();
     }
 }
 
@@ -287,6 +303,8 @@ void ClassDocuments::populateDatasheetList(const QString &path, QList<DocumentIt
 
             DocumentItem *di = new DocumentItem(datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
             list.append(di);
+        } else {
+            qCWarning(logCategoryDocumentManager) << "Skipping datasheet with missing information:" << datasheetLine;
         }
     }
 

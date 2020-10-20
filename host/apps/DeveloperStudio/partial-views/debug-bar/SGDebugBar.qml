@@ -1,16 +1,17 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
-import tech.strata.commoncpp 1.0
 
+import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
-import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
+import "qrc:/js/platform_selection.js" as PlatformSelection
 
 Item {
     id: root
@@ -52,11 +53,24 @@ Item {
                     model: viewFolderModel
                     textRole: "fileName"
 
+                    onCurrentIndexChanged: {
+                        // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
+                        if (currentText === "") {
+                            let fileName = viewFolderModel.get(currentIndex, "fileName");
+                            if (fileName !== undefined) {
+                                displayText = viewFolderModel.get(currentIndex, "fileName").replace("views-", "").slice(0, -4)
+                            }
+                        } else {
+                            displayText = currentText.replace("views-", "").slice(0, -4)
+                        }
+                    }
+
                     FolderListModel {
                         id: viewFolderModel
-                        showDirs: true
-                        showFiles: false
-                        folder: "qrc:///views/"
+                        showDirs: false
+                        showFiles: true
+                        nameFilters: "views-*.rcc"
+                        folder: sdsModel.resourceLoader.getStaticResourcesUrl()
 
                         onCountChanged: {
                             viewCombobox.currentIndex = viewFolderModel.count - 1
@@ -66,7 +80,7 @@ Item {
                             if (viewFolderModel.status === FolderListModel.Ready) {
                                 // [LC] - this FolderListModel is from Lab; a side effects in 5.12
                                 //      - if 'folder' url doesn't exists the it loads app folder content
-                                comboboxRow.visible = (viewFolderModel.folder.toString() === "qrc:///views/")
+                                comboboxRow.visible = (viewFolderModel.folder.toString() === sdsModel.resourceLoader.getStaticResourcesUrl().toString())
                             }
                         }
                     }
@@ -75,9 +89,11 @@ Item {
                         id: viewButtonDelegate
 
                         Button {
+                            id: selectButton
                             width: viewCombobox.width
                             height: 20
-                            text: model.fileName
+                            // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
+                            text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
                             hoverEnabled: true
                             background: Rectangle {
                                 color: hovered ? "white" : "lightgrey"
@@ -85,31 +101,37 @@ Item {
 
                             onClicked: {
                                 if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                                 }
-                                const uuids = Object.keys(UuidMap.uuid_map)
-                                for (const uuid of uuids) {
-                                    if (UuidMap.uuid_map[uuid] === model.fileName) {
-                                        let data = {
-                                            "class_id": uuid,
-                                            "name": model.fileName,
-                                            "device_id": Constants.DEBUG_DEVICE_ID,
-                                            "firmware_version": "",
-                                            "view": "control",
-                                            "connected": true,
-                                            "available": {
-                                                "control": true,
-                                                "documents": true,
-                                                "unlisted": false,
-                                                "order": false
-                                            }
-                                        }
 
-                                        NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT, data)
-                                                    viewCombobox.currentIndex = index
-                                        break
+                                let name = selectButton.text;
+                                let class_id;
+                                for (let key of Object.keys(UuidMap.uuid_map)) {
+                                    if (UuidMap.uuid_map[key] === name) {
+                                        class_id = key;
+                                        break;
                                     }
                                 }
+
+                                let data = {
+                                    "device_id": Constants.DEBUG_DEVICE_ID,
+                                    "class_id": class_id,
+                                    "name": name,
+                                    "index": null,
+                                    "view": "control",
+                                    "connected": true,
+                                    "available": {
+                                        "control": true,
+                                        "documents": true,
+                                        "unlisted": false,
+                                        "order": false
+                                    },
+                                    "firmware_version": ""
+                                }
+                                let repeaterCount = platformViewRepeater.count
+                                PlatformSelection.openPlatformView(data)
+                                viewCombobox.currentIndex = index
+                                platformViewRepeater.itemAt(repeaterCount).platformDocumentsInitialized = true
                             }
                         }
                     }
@@ -130,17 +152,14 @@ Item {
 
             Button {
                 text: "Reset Window Size"
-                onClicked: {
-                    mainWindow.height = 900
-                    mainWindow.width = 1200
-                }
+                onClicked: mainWindow.resetWindowSize()
             }
 
             Button {
                 text: "Login as Guest"
                 onClicked: {
                     if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                     }
                 }
             }
@@ -150,7 +169,7 @@ Item {
                 text: "Always Login as Guest"
                 onCheckedChanged: {
                     if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE && sdsModel.hcsConnected) {
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                     }
                 }
 
@@ -165,7 +184,7 @@ Item {
                     onHcsConnectedChanged: {
                         if (sdsModel.hcsConnected && alwaysLogin.checked) {
                             NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
-                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                         }
                     }
                 }
@@ -174,12 +193,12 @@ Item {
             Button {
                 id: serverChange
                 onClicked: {
-                    if (Rest.url !== Rest.productionAuthServer) {
-                        Rest.url = Rest.productionAuthServer
+                    if (Rest.url !== Constants.PRODUCTION_AUTH_SERVER) {
+                        Rest.url = Constants.PRODUCTION_AUTH_SERVER
                     } else {
                         Rest.url = root.testAuthServer
                     }
-                    Authenticator.signals.serverChanged()
+                    Signals.serverChanged()
                 }
 
                 Component.onCompleted: {
@@ -187,7 +206,7 @@ Item {
                 }
 
                 function setButtonText () {
-                    if (Rest.url !== Rest.productionAuthServer) {
+                    if (Rest.url !== Constants.PRODUCTION_AUTH_SERVER) {
                         text = "Switch to Prod Auth Server"
                     } else {
                         text = "Switch to Test Auth Server"
@@ -195,7 +214,7 @@ Item {
                 }
 
                 Connections {
-                    target: Authenticator.signals
+                    target: Signals
                     onServerChanged: {
                         serverChange.setButtonText()
                     }
@@ -254,5 +273,50 @@ Item {
         onClicked: {
             commandBar.visible = true
         }
+    }
+
+    SGQmlErrorListButton {
+        id: qmlErrorListButton
+
+        visible: qmlErrorModel.count !== 0
+        text: qsTr("%1 QML warnings").arg(qmlErrorModel.count)
+
+        onCheckedChanged: {
+            if (checked) {
+                qmlErrorListPopUp.open()
+                stopAnimation()
+            } else {
+                qmlErrorListPopUp.close()
+                startAnimation()
+            }
+        }
+
+        ListModel {
+            id: qmlErrorModel
+        }
+
+        Connections {
+            target: sdsModel
+            onNotifyQmlError: {
+                qmlErrorModel.append({"data" : notifyQmlError})
+            }
+        }
+    }
+
+    SGQmlErrorListPopUp {
+        id: qmlErrorListPopUp
+
+        topMargin: 32
+        leftMargin: 32
+        topPadding: errorListDetailsChecked ? undefined : 1
+        bottomPadding: errorListDetailsChecked ? undefined : 1
+
+        anchors.centerIn: errorListDetailsChecked ? ApplicationWindow.overlay : undefined
+        opacity: errorListDetailsChecked ? 0.9 : 0.7
+
+        title: qmlErrorListButton.text
+
+
+        qmlErrorListModel: qmlErrorModel
     }
 }

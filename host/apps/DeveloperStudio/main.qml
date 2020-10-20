@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "js/navigation_control.js" as NavigationControl
-import "js/uuid_map.js" as UuidMap
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
@@ -26,6 +25,12 @@ SGWidgets.SGMainWindow {
     title: Qt.application.displayName
 
     signal initialized()
+
+    function resetWindowSize()
+    {
+        mainWindow.width = 1200
+        mainWindow.height = 900
+    }
 
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")

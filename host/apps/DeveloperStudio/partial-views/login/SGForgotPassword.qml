@@ -2,9 +2,11 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import "qrc:/partial-views"
+import "qrc:/partial-views/general/"
 import "qrc:/js/login_utilities.js" as Password
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.signals 1.0
 
 SGStrataPopup {
     id: root
@@ -16,7 +18,7 @@ SGStrataPopup {
 
     onClosed: {
         emailField.text = ""
-        alertRect.Layout.preferredHeight = 0
+        alertRect.hide()
     }
 
     onVisibleChanged: {
@@ -36,46 +38,11 @@ SGStrataPopup {
             columns: 2
             width: parent.width
 
-            Rectangle {
+            SGNotificationToast {
                 id: alertRect
                 Layout.columnSpan: 2
                 Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: fieldGrid.width * 0.75
-                Layout.preferredHeight: 0
-                color: "red"
-                visible: Layout.preferredHeight > 0
-                clip: true
-
-                SGIcon {
-                    id: alertIcon
-                    source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
-                    anchors {
-                        left: alertRect.left
-                        verticalCenter: alertRect.verticalCenter
-                        leftMargin: alertRect.height/2 - height/2
-                    }
-                    height: 30
-                    width: 30
-                    iconColor: "white"
-                }
-
-                Text {
-                    id: alertText
-                    font {
-                        pixelSize: 10
-                        family: Fonts.franklinGothicBold
-                    }
-                    wrapMode: Label.WordWrap
-                    anchors {
-                        left: alertIcon.right
-                        right: alertRect.right
-                        rightMargin: 5
-                        verticalCenter: alertRect.verticalCenter
-                    }
-                    horizontalAlignment:Text.AlignHCenter
-                    text: ""
-                    color: "white"
-                }
+                Layout.preferredWidth: fieldGrid.width
             }
 
             Text {
@@ -102,7 +69,7 @@ SGStrataPopup {
 
                 Keys.onPressed: {
                     if (alertRect.height !==0) {
-                        hideAlertAnimation.start()
+                        alertRect.hide()
                     }
                 }
             }
@@ -138,14 +105,18 @@ SGStrataPopup {
                         }
                     }
 
-                    Keys.onReturnPressed:{
+                    Keys.onReturnPressed: pressAction()
+                    Accessible.onPressAction: pressAction()
+
+                    function pressAction() {
                         submitButton.clicked()
                     }
 
                     onClicked: {
                         var reset_info = {username:emailField.text}
+                        submitStatus.currentId = Password.getNextId()
                         Password.password_reset_request(reset_info)
-                        hideAlertAnimation.start()
+                        alertRect.hide()
                         fieldGrid.visible = false
                     }
 
@@ -184,41 +155,24 @@ SGStrataPopup {
         }
     }
 
-    NumberAnimation{
-        id: alertAnimation
-        target: alertRect
-        property: "Layout.preferredHeight"
-        to: submitButton.height + 10
-        duration: 200
-    }
-
-    NumberAnimation{
-        id: hideAlertAnimation
-        target: alertRect
-        property: "Layout.preferredHeight"
-        to: 0
-        duration: 200
-        onStarted: alertText.text = ""
-    }
-
     Connections {
-        target: Password.signals
+        target: Signals
         onResetResult: {
             submitStatus.text = ""
             fieldGrid.visible = true
             if (result === "Reset Requested") {
                 alertRect.color = "#0ec40c"
-                alertText.text = "Email with password reset instructions is being sent to " + emailField.text
+                alertRect.text = "Email with password reset instructions is being sent to " + emailField.text
                 root.resetForm()
             } else {
                 if (result === "No Connection") {
-                    alertText.text = "Connection to registration server failed"
+                    alertRect.text = "Connection to registration server failed"
                 } else {
-                    alertText.text = "No user found with email " + emailField.text
+                    alertRect.text = "No user found with email " + emailField.text
                 }
                 alertRect.color = "red"
             }
-            alertAnimation.start()
+            alertRect.show()
         }
     }
 

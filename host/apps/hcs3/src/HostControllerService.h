@@ -61,7 +61,7 @@ signals:
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
-    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5);
+    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
     void versionInfoRequested(QByteArray clientId);
 
 public slots:
@@ -112,11 +112,19 @@ public slots:
             const QString &filePath,
             const QString &errorString);
 
+    void sendControlViewDownloadProgressMessage(
+            const QByteArray &clientId,
+            const QString &partialUri,
+            const QString &filePath,
+            qint64 bytesReceived,
+            qint64 bytesTotal);
+
     void sendVersionInfoMessage(
             const QByteArray &clientId,
             const QString &currentVersion,
             const QString &latestVersion,
             const QString &errorString);
+
 
 private:
     void handleMessage(const PlatformMessage& msg);
@@ -160,7 +168,7 @@ private:
     FirmwareUpdateController updateController_;
     ComponentVersionInfo componentVersionInfo_;
 
-    HCS_Dispatcher dispatcher_;
+    std::shared_ptr<HCS_Dispatcher> dispatcher_;
     std::thread dispatcherThread_;
 
     typedef std::function<void(const rapidjson::Value* )> NotificationHandler;

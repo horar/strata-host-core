@@ -1,6 +1,8 @@
 .import tech.strata.logger 1.0 as LoggerModule
 .import "qrc:/js/navigation_control.js" as NavigationControl
 
+// Use caution when updating this file; older platform control_views rely on the original API
+
 var device_id
 
 function init() {
@@ -63,6 +65,17 @@ function send (command) {
 
 function show (command) {
     console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "show: ", JSON.stringify(command));
+}
+
+function injectDebugNotification(notification) {
+    let message = {
+        "notification": notification
+    }
+    let wrapper = {
+        "device_id": device_id,
+        "message": JSON.stringify(message)
+    }
+    data_source_handler(JSON.stringify(wrapper))
 }
 
 init()

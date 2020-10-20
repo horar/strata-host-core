@@ -12,10 +12,10 @@ ClientsController::ClientsController()
 
 ClientsController::~ClientsController()
 {
-    events_manager_.stop();
+    stop();
 }
 
-bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value& config)
+bool ClientsController::initialize(std::shared_ptr<HCS_Dispatcher> dispatcher, rapidjson::Value& config)
 {
     using namespace strata::events_mgr;
 
@@ -53,6 +53,14 @@ bool ClientsController::sendMessage(const QByteArray& clientId, const QString& m
 
     client_connector_->setDealerID(clientId.toStdString());
     return client_connector_->send(message.toStdString());
+}
+
+void ClientsController::stop()
+{
+    if(events_manager_.isRunning()) {
+        events_manager_.stop();
+        qCInfo(logCategoryHcs) << "Clients controller stoped.";
+    }
 }
 
 void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int)

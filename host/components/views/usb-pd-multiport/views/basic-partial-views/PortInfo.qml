@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
-import "qrc:/views/usb-pd-multiport/sgwidgets"
+import "../../sgwidgets"
 
 Rectangle {
     id: root
@@ -76,7 +76,7 @@ Rectangle {
                     opacity: .5
                 }
 
-                icon.source:"qrc:/views/usb-pd-multiport/views/images/graphIcon.svg"
+                icon.source:"../images/graphIcon.svg"
                 icon.width: parent.width -20
                 icon.height: parent.width - 20
                 icon.color: root.portConnected ? "darkgrey" : "lightgrey"

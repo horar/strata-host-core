@@ -8,10 +8,10 @@
 
 #include <Device/Device.h>
 
-namespace strata::device {
+namespace strata::device::operation {
 
-class DeviceOperations;
-enum class DeviceOperation: int;
+class BaseDeviceOperation;
+enum class Type : int;
 
 }
 
@@ -41,6 +41,13 @@ class Flasher : public QObject
          * \param fileName path to firmware (or bootloader) file
          */
         Flasher(const device::DevicePtr& device, const QString& fileName);
+        /*!
+         * Flasher constructor.
+         * \param device device which will be used by Flasher
+         * \param fileName path to firmware (or bootloader) file
+         * \param fileMD5 MD5 checksum of file which will be flashed
+         */
+        Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5);
 
         /*!
          * Flasher destructor.
@@ -61,9 +68,8 @@ class Flasher : public QObject
 
         /*!
          * Flash bootloader.
-         * \param startApplication if set to true start application after flashing
          */
-        void flashBootloader(bool startApplication = true);
+        void flashBootloader();
 
         /*!
          * Cancel flash firmware operation.
@@ -92,22 +98,22 @@ class Flasher : public QObject
 
         /*!
          * This signal is emitted during firmware flashing.
-         * \param chunk chunk number which was flashed
-         * \param total total count of firmware chunks
+         * \param chunk chunk number which was flashed (1 - N)
+         * \param total total count of firmware chunks (N)
          */
         void flashFirmwareProgress(int chunk, int total);
 
         /*!
          * This signal is emitted during firmware backup.
-         * \param chunk chunk number which was backed up
-         * \param total total count of firmware chunks
+         * \param chunk chunk number which was backed up (1 - N)
+         * \param total total count of firmware chunks (N)
          */
         void backupFirmwareProgress(int chunk, int total);
 
         /*!
          * This signal is emitted during bootloader flashing.
-         * \param chunk chunk number which was flashed
-         * \param total total count of bootloader chunks
+         * \param chunk chunk number which was flashed (1 - N)
+         * \param total total count of bootloader chunks (N)
          */
         void flashBootloaderProgress(int chunk, int total);
 
@@ -117,20 +123,24 @@ class Flasher : public QObject
         void devicePropertiesChanged();
 
     private slots:
-        void handleOperationFinished(device::DeviceOperation operation, int data);
+        void handleOperationFinished(device::operation::Type opType, int data);
         void handleOperationError(QString errStr);
 
     private:
         void flash(bool flashFirmware, bool startApplication);
-        void handleFlash(int lastFlashedChunk);
-        void handleBackup(int chunkNumber);
+        void startFlash();
+        void manageFlash(int lastFlashedChunk);
+        void startBackup();
+        void manageBackup(int chunkNumber);
         void finish(Result result);
+        void connectHandlers(device::operation::BaseDeviceOperation* operation);
 
         device::DevicePtr device_;
 
         QFile binaryFile_;
+        QString fileMD5_;
 
-        std::unique_ptr<device::DeviceOperations> operation_;
+        std::unique_ptr<device::operation::BaseDeviceOperation> operation_;
 
         int chunkNumber_;
         int chunkCount_;

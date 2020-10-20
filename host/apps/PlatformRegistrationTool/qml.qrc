@@ -4,7 +4,6 @@
         <file>main.qml</file>
         <file>PrtMain.qml</file>
         <file>LoginScreen.qml</file>
-        <file>OpnView.qml</file>
         <file>PrtAboutWindow.qml</file>
         <file>ProgramDeviceWizard.qml</file>
         <file>UserMenuButton.qml</file>

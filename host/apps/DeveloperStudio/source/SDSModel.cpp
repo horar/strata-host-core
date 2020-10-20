@@ -1,5 +1,6 @@
 #include "SDSModel.h"
 #include "DocumentManager.h"
+#include "ResourceLoader.h"
 #include "HcsNode.h"
 #include <PlatformInterface/core/CoreInterface.h>
 
@@ -18,6 +19,7 @@
 SDSModel::SDSModel(QObject *parent)
     : QObject(parent), remoteHcsNode_{nullptr}
 {
+    resourceLoader_ = new ResourceLoader(this);
     coreInterface_ = new CoreInterface(this);
     documentManager_ = new DocumentManager(coreInterface_, this);
 }
@@ -26,6 +28,7 @@ SDSModel::~SDSModel()
 {
     delete documentManager_;
     delete coreInterface_;
+    delete resourceLoader_;
 }
 
 void SDSModel::init(const QString &appDirPath)
@@ -160,8 +163,18 @@ CoreInterface *SDSModel::coreInterface() const
     return coreInterface_;
 }
 
+ResourceLoader *SDSModel::resourceLoader() const
+{
+    return resourceLoader_;
+}
+
 void SDSModel::shutdownService()
 {
+    if (externalHcsConnected_) {
+        qCDebug(logCategoryStrataDevStudio) << "connected to externally started HCS; skipping shutdown request";
+        return;
+    }
+
     remoteHcsNode_->shutdownService();
 }
 
@@ -185,6 +198,7 @@ void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
     {
         // LC: todo; there was another HCS instance; new one is going down
         qCDebug(logCategoryStrataDevStudio) << "Quitting - another HCS instance was running";
+        externalHcsConnected_ = true;
         return;
     }
 

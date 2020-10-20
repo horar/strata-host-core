@@ -160,6 +160,10 @@ FocusScope {
         return text
     }
 
+    function clearScrollback() {
+        logModel.clear();
+    }
+
     CommonCPP.SGSortFilterProxyModel {
         id: logModelProxy
         sourceModel: logModel
@@ -296,6 +300,17 @@ FocusScope {
                     property: "checked"
                     value: automaticScroll
                 }
+            }
+
+            SGWidgets.SGIconButton {
+                id: clearScrollbackButton
+                hintText: qsTr("Clear scrollback")
+                icon.source: "qrc:/sgimages/broom.svg"
+                iconSize: defaultIconSize
+                backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
+                onClicked: clearScrollback()
             }
         }
     }

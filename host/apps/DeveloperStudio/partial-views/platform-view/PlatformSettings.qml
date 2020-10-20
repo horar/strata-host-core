@@ -13,6 +13,8 @@ Rectangle {
         fill: parent
     }
 
+    property alias softwareManagement: softwareManagement
+
     ColumnLayout {
         id: mainColumn
         anchors {
@@ -21,10 +23,13 @@ Rectangle {
         }
         spacing: 30
 
-        // Todo: to be implemented in CS-831, CS-832
-//        SoftwareManagement { }
+        SoftwareManagement {
+            id: softwareManagement
+        }
 
-        FirmwareManagement { }
+        FirmwareManagement {
+            id: firmwareManagement
+        }
 
         // Todo: determine notification UX, to be implemented in CS-880 - re-use warningPop?
 //        CheckBox {

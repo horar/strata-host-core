@@ -28,7 +28,7 @@ public:
      * @param config
      * @return returns true when succceeded otherwise false
      */
-    bool initialize(HCS_Dispatcher* dispatcher, rapidjson::Value& config);
+    bool initialize(std::shared_ptr<HCS_Dispatcher> dispatcher, rapidjson::Value& config);
 
     /**
      * Sends message to client by given clientId
@@ -38,11 +38,16 @@ public:
      */
     bool sendMessage(const QByteArray& clientId, const QString& message);
 
+    /**
+     * Stops the clients controller
+     */
+    void stop();
+
 private:
     void onDescriptorHandle(strata::events_mgr::EvEventBase*, int);
 
 private:
-    HCS_Dispatcher* dispatcher_{nullptr};
+    std::shared_ptr<HCS_Dispatcher> dispatcher_;
 
     std::unique_ptr<strata::connector::Connector> client_connector_ ;  //router
 

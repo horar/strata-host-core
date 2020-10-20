@@ -3,27 +3,23 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import tech.strata.sgwidgets 1.0
 
-SGAlignedLabel {
-    id: root
-    target: radioButton
-    color: buttonContainer ? buttonContainer.textColor : "black"
+
+RadioButton {
+    id: radioButton
+    implicitWidth: indicator.width
+    implicitHeight: indicator.height
     objectName: "RadioButton"
-    alignment: buttonContainer ? buttonContainer.alignment : SGAlignedLabel.SideRightCenter
-    fontSizeMultiplier: buttonContainer ? buttonContainer.fontSizeMultiplier : 1
     opacity: enabled ? 1.0 : 0.3
+    layer.enabled: true
 
     property Item buttonContainer: null
-    property real radioSize: buttonContainer ? buttonContainer.radioSize : 20 * fontSizeMultiplier
+    property real radioSize: buttonContainer ? buttonContainer.radioSize : 20 * label.fontSizeMultiplier
     property color radioColor: buttonContainer ? buttonContainer.radioColor : "black"
     property int index
 
-    property alias checked: radioButton.checked
-    property alias button: radioButton
-    property alias pressed: radioButton.pressed
-
-    signal clicked()
-    signal toggled()
-    signal released()
+    property alias fontSizeMultiplier: label.fontSizeMultiplier
+    property alias color: label.color
+    property alias alignment: label.alignment
 
     onCheckedChanged: {
         if (checked && buttonContainer) {
@@ -31,25 +27,22 @@ SGAlignedLabel {
         }
     }
 
-    RadioButton {
-        id: radioButton
+    indicator: SGAlignedLabel {
+        id: label
+        target: outerRadio
+        text: radioButton.text
+        color: buttonContainer ? buttonContainer.textColor : "black"
+        alignment: buttonContainer ? buttonContainer.alignment : SGAlignedLabel.SideRightCenter
+        fontSizeMultiplier: buttonContainer ? buttonContainer.fontSizeMultiplier : 1
 
-        implicitWidth: indicator.width
-        implicitHeight: indicator.height
-        ButtonGroup.group: root.ButtonGroup.group
-
-        onClicked: root.clicked()
-        onToggled: root.toggled()
-        onReleased: root.released()
-
-        indicator: Rectangle {
+        Rectangle {
             id: outerRadio
-            implicitWidth: root.radioSize
+            implicitWidth: radioButton.radioSize
             implicitHeight: implicitWidth
             radius: width/2
             color: "transparent"
             border.width: 1
-            border.color: root.radioColor
+            border.color: radioButton.radioColor
 
             Rectangle {
                 id: innerRadio
@@ -60,11 +53,11 @@ SGAlignedLabel {
                     verticalCenter: outerRadio.verticalCenter
                 }
                 radius: width / 2
-                opacity: enabled ? 1.0 : 0.3
-                color: root.radioColor
+                color: radioButton.radioColor
                 visible: radioButton.checked
             }
         }
     }
 }
+
 

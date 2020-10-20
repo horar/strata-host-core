@@ -208,6 +208,10 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadPlatformFilesFinished(payload);
     } else if (type == "firmware_update") {
         emit firmwareProgress(payload);
+    } else if (type == "download_view_finished") {
+        emit downloadViewFinished(payload);
+    } else if (type == "control_view_download_progress") {
+        emit downloadControlViewProgress(payload);
     } else if (type == "version_info") {
         emit versionInfoReceived(payload);
     } else {

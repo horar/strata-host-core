@@ -13,10 +13,10 @@
 #include <QSysInfo>
 #include <QSslSocket>
 
+#include <PlatformInterface/core/CoreInterface.h>
+
 #include "Version.h"
 #include "StrataDeveloperStudioTimestamp.h"
-
-#include <PlatformInterface/core/CoreInterface.h>
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
@@ -27,6 +27,9 @@
 #include "CoreUpdate.h"
 
 #include "HcsNode.h"
+#include "RunGuard.h"
+
+#include "AppUi.h"
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {
@@ -92,14 +95,18 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
-    ResourceLoader resourceLoader;
+    RunGuard appGuard{"tech.strata.sds"};
+    if (appGuard.tryToRun() == false) {
+        qCCritical(logCategoryStrataDevStudio) << QStringLiteral("Another instance of Developer Studio is already running.");
+        return EXIT_FAILURE;
+    }
 
+    qmlRegisterUncreatableType<ResourceLoader>("tech.strata.ResourceLoader", 1, 0, "ResourceLoader", "You can't instantiate ResourceLoader in QML");
     qmlRegisterUncreatableType<CoreInterface>("tech.strata.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.strata.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
     qmlRegisterUncreatableType<DownloadDocumentListModel>("tech.strata.DownloadDocumentListModel", 1, 0, "DownloadDocumentListModel", "You can't instantiate DownloadDocumentListModel in QML");
     qmlRegisterUncreatableType<DocumentListModel>("tech.strata.DocumentListModel", 1, 0, "DocumentListModel", "You can't instantiate DocumentListModel in QML");
     qmlRegisterUncreatableType<ClassDocuments>("tech.strata.ClassDocuments", 1, 0, "ClassDocuments", "You can't instantiate ClassDocuments in QML");
-
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
@@ -125,25 +132,33 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty ("coreUpdate", coreUpdate.get());
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty()) {
-        qCCritical(logCategoryStrataDevStudio) << "engine failed to load 'main' qml file; quitting...";
-        engine.load(QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
-        if (engine.rootObjects().isEmpty()) {
-            qCCritical(logCategoryStrataDevStudio) << "hell froze - engine fails to load error dialog; aborting...";
-            return EXIT_FAILURE;
-        }
+    AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+    QObject::connect(
+        &ui, &AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
+        Qt::QueuedConnection);
 
-        return app.exec();
-    }
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
+                     [&sdsModel](const QList<QQmlError> &warnings) {
+                         QStringList msg;
+                         foreach (const QQmlError &error, warnings) {
+                             msg << error.toString();
+                         }
+                         emit sdsModel->notifyQmlError(msg.join(QStringLiteral("\n")));
+                     });
 
     // Starting services this build?
     // [prasanth] : Important note: Start HCS before launching the UI
     // So the service callback works properly
 #ifdef START_SERVICES
-    bool started = sdsModel->startHcs();
-    qCDebug(logCategoryStrataDevStudio) << "hcs started=" << started;
+    QObject::connect(
+        &ui, &AppUi::uiLoaded, &app,
+        [&sdsModel]() {
+            bool started = sdsModel->startHcs();
+            qCDebug(logCategoryHcs) << "hcs started =" << started;
+        },
+        Qt::QueuedConnection);
 #endif
+    ui.loadUrl(QUrl(QStringLiteral("qrc:/main.qml")));
 
     int appResult = app.exec();
     // LC: process remaining events i.e. submit remaining events (created by external close request)
@@ -155,7 +170,7 @@ int main(int argc, char *argv[])
     sdsModel->killHcsSilently = true;
 
     bool killed = sdsModel->killHcs();
-    qCDebug(logCategoryStrataDevStudio) << "hcs killed=" << killed;
+    qCDebug(logCategoryHcs) << "hcs killed =" << killed;
 #endif
 
     return appResult;

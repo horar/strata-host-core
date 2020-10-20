@@ -2,30 +2,29 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.3
 import Qt.labs.settings 1.1
 import tech.strata.commoncpp 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/constants.js" as Constants
 
 Window {
     id: root
-
     width: 600
-    height: 400
-    x: Screen.width / 2 - width / 2
-    y: Screen.height / 2 - height / 2
+    height: mainColumn.implicitHeight + 20
+    maximumWidth: width
+    maximumHeight: height
+    minimumWidth: width
+    minimumHeight: height
+    title: "Local platform list manipulation"
 
-    title: "Local platform list selection"
-
-    Column {
+    ColumnLayout {
         id: mainColumn
-
-        width: root.width
-        y: root.height / 2 - height / 2
-        spacing: 10
-        padding: 10
+        spacing: 5
+        anchors.centerIn: parent
 
         Rectangle {
             id: alertRect
@@ -87,7 +86,7 @@ Window {
         NumberAnimation{
             id: alertAnimation
             target: alertRect
-            property: "height"
+            property: "Layout.preferredHeight"
             to: 40
             duration: 100
 
@@ -99,22 +98,108 @@ Window {
         NumberAnimation{
             id: hideAlertAnimation
             target: alertRect
-            property: "height"
+            property: "Layout.preferredHeight"
             to: 0
             duration: 100
             onStarted: alertText.text = ""
         }
 
-        Row {
-            id: loadRow
+        SGText {
+            text: "Local platform list"
+            fontSizeMultiplier: 1.6
+            Layout.alignment: Qt.AlignLeft
 
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 5
+            font {
+                family: Fonts.franklinGothicBook
+            }
+        }
+
+        ColumnLayout {
+            Layout.alignment: Qt.AlignHCenter
+
+            Row {
+                id: loadRow
+
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 1
+
+                Button {
+                    id: loadButton
+
+                    text: "Load local platform list"
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onContainsMouseChanged: {
+                            parent.highlighted = containsMouse
+                        }
+
+                        onClicked: {
+                            fileDialog.open()
+                        }
+                    }
+
+                    FileDialog {
+                        id: fileDialog
+
+                        title: "Platform List Controls"
+                        folder: shortcuts.home
+                        selectExisting: true
+                        selectMultiple: false
+                        nameFilters: ["JSON files (*.json)"]
+
+                        onAccepted: {
+                            let path = SGUtilsCpp.urlToLocalFile(fileDialog.fileUrl);
+                            let platforms = PlatformSelection.getLocalPlatformList(path)
+
+                            // if we get a valid JSON file with a platform list, then either append or replace
+                            if (platforms.length > 0) {
+                                alertText.text = "Successfully added a local platform list."
+                                alertRect.color = "#57d445"
+                                alertAnimation.start()
+
+                                // Option 0 is append, 1 is replace
+                                if (loadOptionComboBox.currentText === "Append") {
+                                    PlatformSelection.setLocalPlatformList(platforms);
+                                    console.info("Appending a local platform list.")
+                                } else if (loadOptionComboBox.currentText === "Replace") {
+                                    PlatformSelection.setLocalPlatformList([]);
+                                    PlatformSelection.platformSelectorModel.clear();
+                                    PlatformSelection.setLocalPlatformList(platforms);
+                                    console.info("Replacing dynamic platform list with a local one.")
+                                }
+                            } else {
+                                alertText.text = "Local platform list file has invalid JSON."
+                                alertRect.color = "red"
+                                alertAnimation.start()
+                            }
+                        }
+                    }
+                }
+
+                SGComboBox {
+                    id: loadOptionComboBox
+
+                    height: loadButton.height
+
+                    model: ["Append", "Replace"]
+                    currentIndex: localPlatformSettings.value("mode", "append") === "append" ? 0 : 1
+                    dividers: true
+
+                    onCurrentIndexChanged: {
+                        localPlatformSettings.setValue("mode", currentIndex === 0 ? "append" : "replace")
+                    }
+                }
+            }
 
             Button {
-                id: loadButton
+                id: removeButton
 
-                text: "Load local platform list"
+                Layout.alignment: Qt.AlignHCenter
+                text: "Remove local platform list"
 
                 MouseArea {
                     anchors.fill: parent
@@ -126,103 +211,116 @@ Window {
                     }
 
                     onClicked: {
-                        fileDialog.open()
+                        mainColumn.removeLocalPlatformList()
                     }
                 }
+            }
 
-                FileDialog {
-                    id: fileDialog
+            Button {
+                id: resetButton
 
-                    title: "Platform List Controls"
-                    folder: shortcuts.home
-                    selectExisting: true
-                    selectMultiple: false
-                    nameFilters: ["JSON files (*.json)"]
+                width: removeButton.width
+                Layout.alignment: Qt.AlignHCenter
+                text: "Reset platform list"
 
-                    onAccepted: {
-                        let path = SGUtilsCpp.urlToLocalFile(fileDialog.fileUrl);
-                        let platforms = PlatformSelection.getLocalPlatformList(path)
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
 
-                        // if we get a valid JSON file with a platform list, then either append or replace
-                        if (platforms.length > 0) {
-                            alertText.text = "Successfully added a local platform list."
-                            alertRect.color = "#57d445"
-                            alertAnimation.start()
+                    onContainsMouseChanged: {
+                        parent.highlighted = containsMouse
+                    }
 
-                            // Option 0 is append, 1 is replace
-                            if (loadOptionComboBox.currentText === "Append") {
-                                PlatformSelection.setLocalPlatformList(platforms);
-                                console.info("Appending a local platform list.")
-                            } else if (loadOptionComboBox.currentText === "Replace") {
-                                PlatformSelection.setLocalPlatformList([]);
-                                PlatformSelection.platformSelectorModel.clear();
-                                PlatformSelection.setLocalPlatformList(platforms);
-                                console.info("Replacing dynamic platform list with a local one.")
-                            }
-                        } else {
-                            alertText.text = "Local platform list file has invalid JSON."
-                            alertRect.color = "red"
-                            alertAnimation.start()
+                    onClicked: {
+                        mainColumn.removeLocalPlatformList()
+                        PlatformSelection.getPlatformList()
+                    }
+                }
+            }
+        }
+
+        SGText {
+            text: `Manipulate "available" flags`
+            fontSizeMultiplier: 1.6
+            Layout.alignment: Qt.AlignLeft
+            Layout.topMargin: 20
+            font {
+                family: Fonts.franklinGothicBook
+            }
+        }
+
+        ColumnLayout {
+            Layout.alignment: Qt.AlignHCenter
+
+            Repeater {
+                id: repeat
+                model: ['documents', 'order', 'control', 'unlisted']
+                delegate: RowLayout{
+                    id: row
+                    spacing: 5
+                    SGButtonStrip {
+                        model: [true, false]
+                        checkedIndices: 0
+                        onClicked: {
+                            mainColumn.manipulateFlags(model[index],modelData)
                         }
                     }
-                }
+                    SGText {
+                        text: modelData
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                   }
             }
 
-            SGComboBox {
-                id: loadOptionComboBox
+            SGButton {
+                id: reset
+                Layout.alignment: Qt.AlignLeft
+                Layout.preferredWidth: 200
+                enabled: false
+                text: "Reset flags"
+                onPressed: {
+                    for (var i = 0; i < repeat.count; i++){
+                        const item = repeat.itemAt(i).childAt(0,0)
+                        item.checkedIndices = 0
+                    }
 
-                height: loadButton.height
-
-                model: ["Append", "Replace"]
-                currentIndex: localPlatformSettings.value("mode", "append") === "append" ? 0 : 1
-                dividers: true
-
-                onCurrentIndexChanged: {
-                    localPlatformSettings.setValue("mode", currentIndex === 0 ? "append" : "replace")
-                }
-            }
-        }
-
-        Button {
-            id: removeButton
-
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Remove local platform list"
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-
-                onContainsMouseChanged: {
-                    parent.highlighted = containsMouse
-                }
-
-                onClicked: {
-                    mainColumn.removeLocalPlatformList()
-                }
-            }
-        }
-
-        Button {
-            id: resetButton
-
-            width: removeButton.width
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Reset platform list"
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-
-                onContainsMouseChanged: {
-                    parent.highlighted = containsMouse
-                }
-
-                onClicked: {
-                    mainColumn.removeLocalPlatformList()
+                    reset.enabled = false
                     PlatformSelection.getPlatformList()
+                }
+            }
+        }
+
+        SGAlignedLabel {
+            text: "Inject connected class_id:"
+            Layout.topMargin: 20
+            fontSizeMultiplier: 1.5
+            target: injectPlatform
+
+            RowLayout {
+                id: injectPlatform
+
+                Button {
+                    text: "Inject"
+                    onClicked: {
+                        let list = {
+                            "list": [
+                                {
+                                    "class_id": class_id.text,
+                                    "device_id": Constants.DEBUG_DEVICE_ID,
+                                    "firmware_version":"1.0.1"
+                                }
+                            ],
+                            "type":"connected_platforms"
+                        }
+
+                        PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                    }
+                }
+
+                TextField {
+                    id: class_id
+                    Layout.preferredWidth: 400
                 }
             }
         }
@@ -235,6 +333,20 @@ Window {
         function removeLocalPlatformList() {
             PlatformSelection.setLocalPlatformList([])
             localPlatformSettings.setValue("path", "")
+        }
+
+        function manipulateFlags(bool,flag){
+            for(var i = 0; i < PlatformSelection.platformSelectorModel.count ; i+=1){
+                const platformItem = PlatformSelection.platformSelectorModel.get(i)
+                const available = PlatformSelection.classMap[platformItem.class_id].original_listing.available
+                available[flag] = bool
+                PlatformSelection.classMap[platformItem.class_id].original_listing.available = available
+                const platform = PlatformSelection.classMap[platformItem.class_id].original_listing
+                PlatformSelection.platformSelectorModel.set(i, platform);
+            }
+            if(!reset.enabled){
+                reset.enabled = true
+            }
         }
     }
 }

@@ -47,6 +47,7 @@ Item {
      property alias index: toolTipPopup.index
      property alias description: toolTipPopup.description
      property alias fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
+     property alias toolTipPopup: toolTipPopup
 
      property real globalOpacity: .5
 

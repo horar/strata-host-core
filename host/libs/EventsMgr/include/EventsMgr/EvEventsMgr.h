@@ -45,6 +45,11 @@ public:
     bool startInThread();
 
     /**
+     * Returns true if the dispatch loop thread is running
+     */
+    bool isRunning();
+
+    /**
      * Stops thread with dispatch loop
      */
     void stop();

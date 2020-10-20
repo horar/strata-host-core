@@ -55,7 +55,7 @@ Item {
 
             Image{
                 id:signalStrengthImage
-                source:"qrc:/views/meshNetwork/images/wifiIcon.svg"
+                source:"../../images/wifiIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -94,7 +94,7 @@ Item {
 
             Image{
                 id:ambientLightImage
-                source:"qrc:/views/meshNetwork/images/ambientLightIcon.svg"
+                source:"../../images/ambientLightIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -133,7 +133,7 @@ Item {
 
             Image{
                 id:batteryChargeImage
-                source:"qrc:/views/meshNetwork/images/batteryChargeIcon.svg"
+                source:"../../images/batteryChargeIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -172,7 +172,7 @@ Item {
 
             Image{
                 id:temperatureImage
-                source:"qrc:/views/meshNetwork/images/temperatureIcon.svg"
+                source:"../../images/temperatureIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -191,47 +191,47 @@ Item {
             }
         }
 
-        Button{
-            id:meshButton
-            height:parent.height
-            width:height
-            visible:true
+//        Button{
+//            id:meshButton
+//            height:parent.height
+//            width:height
+//            visible:true
 
-            background: Rectangle {
-                    color:"transparent"
-                    radius: height/10
-                }
+//            background: Rectangle {
+//                    color:"transparent"
+//                    radius: height/10
+//                }
 
-            onPressedChanged: {
-                if (pressed){
+//            onPressedChanged: {
+//                if (pressed){
 
-                    console.log("asking for network configuration");
-                    sensorRow.clearAllText();
-                    sensorRowRoot.showMesh();
-                    platformInterface.get_network.update();
-                    }
-            }
+//                    console.log("asking for network configuration");
+//                    sensorRow.clearAllText();
+//                    sensorRowRoot.showMesh();
+//                    platformInterface.get_network.update();
+//                    }
+//            }
 
-            Image{
-                id:meshImage
-                source:"qrc:/views/meshNetwork/images/meshIcon.svg"
-                fillMode: Image.PreserveAspectFit
-                height:parent.height
-                anchors.horizontalCenter: parent.horizontalCenter
-                mipmap:true
-                opacity:meshButton.pressed ? .75 : .2
-            }
+//            Image{
+//                id:meshImage
+//                source:"../../images/meshIcon.svg"
+//                fillMode: Image.PreserveAspectFit
+//                height:parent.height
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                mipmap:true
+//                opacity:meshButton.pressed ? .75 : .2
+//            }
 
-            Text{
-                id:meshButtonLabel
-                anchors.top: meshButton.bottom
-                anchors.horizontalCenter: meshButton.horizontalCenter
-                anchors.topMargin: 10
-                text: "Node connections"
-                font.pixelSize: 18
-                visible: meshButton.hovered
-            }
-        }
+//            Text{
+//                id:meshButtonLabel
+//                anchors.top: meshButton.bottom
+//                anchors.horizontalCenter: meshButton.horizontalCenter
+//                anchors.topMargin: 10
+//                text: "Node connections"
+//                font.pixelSize: 18
+//                visible: meshButton.hovered
+//            }
+//        }
 
         Button{
             id:clearButton
@@ -251,7 +251,7 @@ Item {
 
             Image{
                 id:clearImage
-                source: "qrc:/views/meshNetwork/images/clearIcon.svg"
+                source: "../../images/clearIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter

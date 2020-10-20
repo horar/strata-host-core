@@ -166,18 +166,26 @@ Item {
                             }
 
                             text: {
+                                /*
+                                    the first regexp is looking for HTML RichText
+                                    the second regexp is looking for spaces after string
+                                    the third regexp is looking for spaces before string
+                                    the fourth regexp is looking for tabs throughout the string
+                                */
+                                const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
                                 if (model.status === DownloadDocumentListModel.Selected
                                         || model.status === DownloadDocumentListModel.NotSelected)
                                 {
-                                    return model.prettyName
+                                    return model.prettyName.replace(htmlTags, "");
                                 }
 
-                                return model.downloadFilename
+                                return model.downloadFilename.replace(htmlTags, "");
                             }
                             alternativeColorEnabled: true
                             fontSizeMultiplier: delegate.enlarge ? 1.1 : 1.0
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             elide: Text.ElideNone
+                            textFormat: Text.PlainText
                             maximumLineCount: 2
                         }
 

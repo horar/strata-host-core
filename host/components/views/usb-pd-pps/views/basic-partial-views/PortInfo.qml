@@ -1,7 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
-import "qrc:/views/usb-pd/sgwidgets"
 
 Rectangle {
     id: root
@@ -73,13 +72,13 @@ Rectangle {
                 }
 
                 //testing replacing the image with an icon to improve touch response
-                icon.source:"qrc:/views/usb-pd/views/images/graphIcon.svg"
+                icon.source:"../images/graphIcon.svg"
                 icon.width: parent.width -20
                 icon.height: parent.width - 20
                 icon.color: root.portConnected ? "darkgrey" : "lightgrey"
 //                Image{
 //                    id:graphIcon
-//                     source: "qrc:/views/usb-pd/views/images/graphIcon.svg"
+//                     source: "../images/graphIcon.svg"
 //                    anchors{
 //                        top:parent.top
 //                        topMargin:10

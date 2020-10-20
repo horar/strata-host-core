@@ -78,7 +78,6 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<Authenticator>("tech.strata.prt.authenticator", 1, 0, "Authenticator", "can not instantiate Authenticator in qml");
     qmlRegisterUncreatableType<RestClient>("tech.strata.prt.restclient", 1, 0, "RestClient", "can not instantiate RestClient in qml");
     qmlRegisterUncreatableType<Deferred>("tech.strata.prt.restclient", 1, 0, "Deferred", "can not instantiate Deferred in qml");
-    qmlRegisterUncreatableType<OpnListModel>("tech.strata.prt.opnListModel", 1, 0, "OpnListModel", "can not instantiate OpnListModel in qml");
 
     qmlRegisterUncreatableType<strata::FlasherConnector>("tech.strata.flasherConnector", 1, 0, "FlasherConnector", "can not instantiate FlasherConnector in qml");
     qRegisterMetaType<strata::FlasherConnector::Operation>();

@@ -18,6 +18,8 @@ https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+
   * PSSQLite module
 2. Python3
   * pyzmq module
+  * uiautomation module
+  * requests module
 3. JLink software
 
 # Usage 

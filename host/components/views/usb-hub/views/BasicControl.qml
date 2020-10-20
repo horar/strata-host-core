@@ -2,7 +2,7 @@ import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.3
 import "../sgwidgets"
-import "../views/basic-partial-views"
+import "basic-partial-views"
 
 Item {
     id: root

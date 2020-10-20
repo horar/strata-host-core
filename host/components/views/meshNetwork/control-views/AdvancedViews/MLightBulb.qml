@@ -8,7 +8,7 @@ import tech.strata.sgwidgets 1.0
 
 Image{
     id:lightBulbOff
-    source: "qrc:/views/meshNetwork/images/lightBulbOff.svg"
+    source: "../../images/lightBulbOff.svg"
     height:parent.height * .25
     fillMode: Image.PreserveAspectFit
     mipmap:true
@@ -19,7 +19,7 @@ Image{
     Image{
         id:lightBulbOn
         anchors.fill:lightBulbOff
-        source: "qrc:/views/meshNetwork/images/lightBulbOn.svg"
+        source: "../../images/lightBulbOn.svg"
         height:parent.height * .25
         fillMode: Image.PreserveAspectFit
         mipmap:true

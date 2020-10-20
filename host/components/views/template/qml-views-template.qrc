@@ -1,11 +1,10 @@
 <RCC>
-    <qresource prefix="/views/template">
+    <qresource prefix="/">
         <file>Control.qml</file>
         <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicControl.qml</file>
         <file>control-views/DebugMenu.qml</file>
         <file>control-views/PlatformInterface.qml</file>
-        <file>control-views/question-circle-solid.svg</file>
         <file>control-views/UserSettingsControl.qml</file>
     </qresource>
 </RCC>

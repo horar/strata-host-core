@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/XDFN-LDO">
+    <qresource prefix="/">
         <file>AdvancedControl.qml</file>
         <file>BasicControl.qml</file>
         <file>Control.qml</file>

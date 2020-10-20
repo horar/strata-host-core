@@ -3,8 +3,8 @@ import QtGraphicalEffects 1.0
 import QtQuick.Dialogs 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
-import "qrc:/views/led/sgwidgets"
-import "qrc:/views/led/views/basic-partial-views"
+import "../sgwidgets"
+import "basic-partial-views"
 
 Rectangle {
     id: root
