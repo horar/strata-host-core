@@ -70,7 +70,10 @@ Item {
                     onSgSwitch_labelChanged: {
                         sgSwitch_wd.label = sgSwitch_label
                     }
-                    sgSwitch_wd.checked: sgSwitch_off
+                    property var sgSwitch_off: intensitycontrol.sgSwitch_off
+                    onSgSwitch_offChanged: {
+                        sgSwitch_wd.checked = sgSwitch_off
+                    }
 
                     Text {
                         id: text4

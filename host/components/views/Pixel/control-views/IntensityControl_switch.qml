@@ -173,17 +173,17 @@ Item {
                         Layout.topMargin:  10
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
-                         checked:  platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")  // ?
+                        checked:  platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")  // ?
 
-                            onToggled: {
-                                if(checked) {
-                                    sgSwitch_wd.label = "<b>Watch Dog ON</b>"
-                                    platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)
-                                } else {
-                                    sgSwitch_wd.label = "<b>Watch Dog OFF</b>"
-                                    platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")
-                                }
+                        onToggled: {
+                            if(checked) {
+                                sgSwitch_wd.label = "<b>Watch Dog ON</b>"
+                                platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)
+                            } else {
+                                sgSwitch_wd.label = "<b>Watch Dog OFF</b>"
+                                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")
                             }
+                        }
                     }
                 }
             }
