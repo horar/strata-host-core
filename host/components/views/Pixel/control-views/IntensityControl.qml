@@ -57,6 +57,7 @@ Item {
                 }
             }
 
+
             SGAccordionItem {
                 id: led4
                 title: "<b></b>"
