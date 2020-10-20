@@ -19,6 +19,8 @@ Item {
     }
 
     Component.onCompleted: {
+        platformInterface.request_platform_id_command.update()
+        platformInterface.get_firmware_info_command.update()
         Help.registerTarget(navTabs, "Using these three tabs, you can view basic controls, advanced controls or the SGUserSettings demo.", 0, "controlHelp")
     }
 
