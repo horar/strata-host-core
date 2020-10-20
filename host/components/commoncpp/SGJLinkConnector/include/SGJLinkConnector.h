@@ -12,6 +12,7 @@ class SGJLinkConnector : public QObject
     Q_DISABLE_COPY(SGJLinkConnector)
 
     Q_PROPERTY(QString exePath READ exePath WRITE setExePath NOTIFY exePathChanged)
+    Q_PROPERTY(bool eraseBeforeProgram READ eraseBeforeProgram WRITE setEraseBeforeProgram NOTIFY eraseBeforeProgramChanged)
 
 public:
     explicit SGJLinkConnector(QObject *parent = nullptr);
@@ -25,15 +26,18 @@ public:
     Q_ENUM(ProcessType)
 
     Q_INVOKABLE bool checkConnectionRequested();
-    Q_INVOKABLE bool flashBoardRequested(const QString &binaryPath, bool eraseFirst = false);
+    Q_INVOKABLE bool flashBoardRequested(const QString &binaryPath);
 
-    QString exePath();
+    QString exePath() const;
     void setExePath(const QString &exePath);
+    bool eraseBeforeProgram() const;
+    void setEraseBeforeProgram(bool eraseBeforeProgram);
 
 signals:
     void checkConnectionProcessFinished(bool exitedNormally, bool connected);
     void flashBoardProcessFinished(bool exitedNormally);
     void exePathChanged();
+    void eraseBeforeProgramChanged();
 
 private slots:
     void finishedHandler(int exitCode, QProcess::ExitStatus exitStatus);
@@ -44,6 +48,7 @@ private:
     QPointer<QFile> configFile_;
     QString exePath_;
     ProcessType activeProcessType_;
+    bool eraseBeforeProgram_ = false;
 
     bool processRequest(const QString &cmd, ProcessType type);
     void finishProcess(bool exitedNormally);

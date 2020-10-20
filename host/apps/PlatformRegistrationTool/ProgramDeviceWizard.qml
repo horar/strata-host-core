@@ -311,7 +311,7 @@ FocusScope {
                 id: stateProgramBootloader
 
                 onEntered: {
-                    var run = jLinkConnector.flashBoardRequested(wizard.prtModel.bootloaderFilepath, true)
+                    var run = jLinkConnector.flashBoardRequested(wizard.prtModel.bootloaderFilepath)
 
                     if (run === false) {
                         stateMechine.jlinkProcessFailed()
@@ -527,6 +527,7 @@ FocusScope {
 
     CommonCpp.SGJLinkConnector {
         id: jLinkConnector
+        eraseBeforeProgram: true
     }
 
     Item {

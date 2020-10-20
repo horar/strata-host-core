@@ -30,11 +30,11 @@ bool SGJLinkConnector::checkConnectionRequested()
     return processRequest(cmd, PROCESS_CHECK_CONNECTION);
 }
 
-bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath, bool eraseFirst)
+bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath)
 {
     qCInfo(logCategoryJLink)
             << "binaryPath=" <<binaryPath
-            << "eraseFirst=" << eraseFirst;
+            << "eraseBeforeProgram=" << eraseBeforeProgram_;
 
     QString cmd;
     cmd += QString("exitonerror 1\n");
@@ -42,7 +42,7 @@ bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath, bool erase
     cmd += QString("si %1\n").arg("SWD");
     cmd += QString("speed %1\n").arg("4000");
 
-    if (eraseFirst) {
+    if (eraseBeforeProgram_) {
         cmd += QString("erase\n");
     }
 
@@ -55,7 +55,7 @@ bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath, bool erase
     return processRequest(cmd, PROCESS_FLASH);
 }
 
-QString SGJLinkConnector::exePath()
+QString SGJLinkConnector::exePath() const
 {
     return exePath_;
 }
@@ -65,6 +65,19 @@ void SGJLinkConnector::setExePath(const QString &exePath)
     if (exePath_ != exePath) {
         exePath_ = exePath;
         emit exePathChanged();
+    }
+}
+
+bool SGJLinkConnector::eraseBeforeProgram() const
+{
+    return eraseBeforeProgram_;
+}
+
+void SGJLinkConnector::setEraseBeforeProgram(bool eraseBeforeProgram)
+{
+    if (eraseBeforeProgram_ != eraseBeforeProgram) {
+        eraseBeforeProgram_ = eraseBeforeProgram;
+        emit eraseBeforeProgramChanged();
     }
 }
 

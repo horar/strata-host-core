@@ -42,6 +42,7 @@ bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString
 
     if (QFile::exists(jlinkExePath)) { 
         jlinkConnector_.setExePath(jlinkExePath);
+        jlinkConnector_.setEraseBeforeProgram(true);
         // check if there is a JLinkConnected. need to connect the signals to get the result, this
         // is async process!
         if (!jlinkConnector_.checkConnectionRequested()) {
@@ -194,7 +195,7 @@ void PlatformIdentificationTest::flashPlatform(const QString& binaryFileName) {
     std::cout << "flashing platform..." << std::endl;
 
     // Use SGJLinkConnector to flash a the platform
-    jlinkConnector_.flashBoardRequested(binaryFileName, true);
+    jlinkConnector_.flashBoardRequested(binaryFileName);
 }
 
 void PlatformIdentificationTest::printSummary() {
