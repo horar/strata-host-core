@@ -128,7 +128,6 @@ Controller.prototype.WelcomePageCallback = function ()
 Controller.prototype.TargetDirectoryPageCallback = function ()
 {
     console.log("TargetDirectoryPageCallback entered");
-    installer.setValue("RemoveTargetDir","false");
     if (isSilent == true) {
         gui.clickButton(buttons.NextButton);
     }
@@ -151,7 +150,6 @@ Controller.prototype.ComponentSelectionPageCallback = function ()
 Controller.prototype.LicenseAgreementPageCallback = function ()
 {
     console.log("LicenseAgreementPageCallback entered");
-    installer.setValue("RemoveTargetDir","true");
     if (isSilent == true) {
         var widget = gui.currentPageWidget();
         if (widget != null) {
@@ -223,12 +221,14 @@ Controller.prototype.FinishedPageCallback = function ()
                                     + "Thank you for using ON Semiconductor. If you have any questions or in need of support, please contact your local sales representative.\n\n"
                                     + "Copyright " + (new Date().getFullYear()) + "\n\n"
                                     );
-        if ((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true)) {
+        if (((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true)) && (installer.status == QInstaller.Success)) {
             var runItCheckBox = widget.findChild("RunItCheckBox");
             if ((runItCheckBox != null) && isComponentInstalled("com.onsemi.strata.devstudio") == true) {
                 runItCheckBox.setChecked(startSDS);
             }
         }
+        if ((installer.isInstaller() == true) && (installer.status != QInstaller.Success))
+            installer.setValue("TargetDir", "");    // prohibit writing log into destination directory
     }
 
     if (isSilent == true) {
