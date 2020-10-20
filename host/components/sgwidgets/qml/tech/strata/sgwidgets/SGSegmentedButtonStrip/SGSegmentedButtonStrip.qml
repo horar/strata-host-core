@@ -28,6 +28,7 @@ Item {
     property bool initialized_: false
 
     property int index: 0
+
     onIndexChanged: {
         if (exclusive && initialized_) {
             segmentedButtons.children[0].children[index].checked = true
@@ -69,8 +70,8 @@ Item {
         property bool masterEnabled: enabled
         property bool masterHoverEnabled: hoverEnabled
 
-        Component.onCompleted: {
-            if (exclusive === false){
+        onLoaded: {
+            if (exclusive === false) {
                 for (var child_id1 in segmentedButtons.children[0].children) {
                     segmentedButtons.children[0].children[child_id1].checkedChanged.connect(checked)
                 }
@@ -83,12 +84,14 @@ Item {
         }
 
         function checked () {
-            for (var child_id in segmentedButtons.children[0].children) {
-                if (segmentedButtons.children[0].children[child_id].checked){
-                    root.nothingChecked = false
-                    break
-                } else if (child_id === "" + (segmentedButtons.children[0].children.length - 1)) { // if last child is reached and not checked, nothingChecked = true
-                    root.nothingChecked = true
+            if (segmentedButtons.children.count > 0) {
+                for (var child_id in segmentedButtons.children[0].children) {
+                    if (segmentedButtons.children[0].children[child_id].checked){
+                        root.nothingChecked = false
+                        break
+                    } else if (child_id === "" + (segmentedButtons.children[0].children.length - 1)) { // if last child is reached and not checked, nothingChecked = true
+                        root.nothingChecked = true
+                    }
                 }
             }
         }
