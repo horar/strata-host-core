@@ -9,6 +9,8 @@ Item {
     width: parent.width
     height: parent.height
 
+    property alias sgSwitch_wd: sgSwitch_wd  // YI
+
     property bool check_auto_addr_led_state: platformInterface.auto_addr_led_state
     onCheck_auto_addr_led_stateChanged: {
         if (check_auto_addr_led_state === true){
@@ -32,6 +34,11 @@ Item {
             sgSwitch_auto_addr.label = "<b>All LED OFF</b>"
             platformInterface.pxn_autoaddr.update(0)
 
+            platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // YI
+            sgSwitch_wd.label = "<b>Watch Dog OFF</b>"  // YI
+            sgSwitch_wd.checked = false // YI
+            sgSwitch_wd.enabled = false  // YI
+
             // turn off buck 1,2 and 3 by turn off boost
             // buck1,2 and 3 are separeterly state indicator and led control command
             platformInterface.boost_enable_state = false
@@ -40,6 +47,12 @@ Item {
 
         }else {
             sgSwitch_auto_addr.label = "<b>All LED ON </b>"
+
+            sgSwitch_wd.enabled = true  // YI
+            sgSwitch_wd.label = "<b>Watch Dog OFF</b>"  // YI
+            sgSwitch_wd.checked = false  // YI
+            platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // YI
+            //platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)
 
             if (platformInterface.buck1_enable_state === true){
                 platformInterface.buck1_enable_state === false
@@ -116,12 +129,13 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: 10
                 anchors.horizontalCenter: parent.horizontalCenter
-                RowLayout{
-
+                GridLayout{  // YI Change from RowLayout to GridLayout
                     width: parent.width/4
                     height:parent.height/4
-                    spacing: 2
+                    //spacing: 2  // YI
                     anchors.horizontalCenter: parent.horizontalCenter
+                    columns: 2  // YI
+                    rows: 2  // YI
 
                     SGSwitch {
                         id: sgSwitch_auto_addr
@@ -151,6 +165,23 @@ Item {
                             anchors.centerIn: parent
                             lightSize: 50
                         }
+                    }
+                    SGSwitch {  // YI
+                        id: sgSwitch_wd //Watchdog Status
+                        label: "<b>Watch Dog OFF</b>"
+                        Layout.alignment: Qt.AlignCenter
+                        Layout.topMargin:  10
+                         checked:  platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")  // ?
+
+                            onToggled: {
+                                if(checked) {
+                                    sgSwitch_wd.label = "<b>Watch Dog ON</b>"
+                                    platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)
+                                } else {
+                                    sgSwitch_wd.label = "<b>Watch Dog OFF</b>"
+                                    platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")
+                                }
+                            }
                     }
                 }
             }

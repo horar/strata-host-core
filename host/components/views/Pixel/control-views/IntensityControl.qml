@@ -6,6 +6,12 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: intensitycontrol
+    property string sgSwitch_label: "<b>Watch Dog Off</b>"  // YI
+    property bool sgSwitch_off: false // default value the switch is off
+    onSgSwitch_labelChanged: {
+        intensityControl_switch.sgSwitch_wd.label = sgSwitch_label
+        console.info(sgSwitch_label)
+    }
 
     SGAccordion {
         id: accordion
@@ -60,8 +66,11 @@ Item {
                 title: "<b></b>"
                 open: true
                 contents: IntensityControl_switch {
+                    id: intensityControl_switch
                     height: text4.contentHeight +200
                     width: parent.width
+                    sgSwitch_wd.label: sgSwitch_label  // YI
+                    sgSwitch_wd.checked: sgSwitch_off
 
                     Text {
                         id: text4

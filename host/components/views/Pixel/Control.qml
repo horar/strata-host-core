@@ -34,15 +34,20 @@ Item {
             id: controlButton2
             text: qsTr("Pixel Control")
             onClicked: {
+                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201014 YI
                 controlContainer.currentIndex = 0
                 controldemo.handlar_stop_control()
                 platformInterface.pxn_datasend_all.update(0)
-                platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)   // 20201002 YI
+                //platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)   // 20201002 YI
                 platformInterface.auto_addr_sw_block = false
                 platformInterface.clear_intensity_slider_led1 = true
                 platformInterface.clear_intensity_slider_led2 = true
                 platformInterface.clear_intensity_slider_led3 = true
                 platformInterface.clear_demo_setup = false
+
+                intensitycontrol.sgSwitch_off = false
+                intensitycontrol.sgSwitch_label = "<b>Watch Dog OFF</b>"  // YI
+
             }
         }
 
@@ -58,7 +63,6 @@ Item {
                 platformInterface.clear_demo_setup = true
                 //platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
                 platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)   // 20201002 YI
-
             }
         }
 
