@@ -211,6 +211,10 @@ FocusScope {
             DSM.State {
                 id: stateWaitForDevice
 
+                onEntered: {
+                    wizard.subtextNote = ""
+                }
+
                 DSM.SignalTransition {
                     targetState: stateCheckFirmware
                     signal: prtModel.deviceCountChanged
