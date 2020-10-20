@@ -150,15 +150,28 @@ Rectangle {
                 id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "lightcyan"
+                color: "white"
 
-                SGText {
-                    anchors {
-                        centerIn: parent
+                Loader {
+                    id: controlViewLoader
+                    anchors.fill: parent
+                    asynchronous: true
+
+                    onStatusChanged: {
+                        if (status === Loader.Ready) {
+                            toolBarListView.recompiling = false
+                            if (toolBarListView.currentIndex === toolBarListView.viewTab
+                                    || source === NavigationControl.screens.LOAD_ERROR) {
+                                viewStack.currentIndex = 4
+                            }
+                        } else if (status === Loader.Error) {
+                            toolBarListView.recompiling = false
+                            console.error("Error while loading control view")
+                            setSource(NavigationControl.screens.LOAD_ERROR,
+                                      { "error_message": "Failed to load control view" }
+                            );
+                        }
                     }
-                    fontSizeMultiplier: 2
-                    text: "Control view from RCC loaded here"
-                    opacity: .25
                 }
             }
         }
@@ -171,7 +184,7 @@ Rectangle {
     }
 
     function loadDebugView (compiledRccFile) {
-        NavigationControl.removeView(controlViewContainer)
+        controlViewLoader.setSource("")
 
         let uniquePrefix = new Date().getTime().valueOf()
         uniquePrefix = "/" + uniquePrefix
@@ -183,11 +196,6 @@ Rectangle {
         }
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer);
-        if (obj === null) {
-            let error_str = sdsModel.resourceLoader.getLastLoggedError()
-            sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
-            console.error("Could not load view: " + error_str)
-        }
+        controlViewLoader.setSource(qml_control)
     }
 }
