@@ -59,6 +59,7 @@ set BUILD_DIR=build-host-ota
 set PACKAGES_DIR=packages
 set PACKAGES_WIN_DIR=packages_win
 
+set PKG_STRATA=%PACKAGES_DIR%\com.onsemi.strata\data
 set PKG_STRATA_COMPONENTS=%PACKAGES_DIR%\com.onsemi.strata.components\data
 set PKG_STRATA_COMPONENTS_COMMON=%PKG_STRATA_COMPONENTS%\imports\tech\strata\commoncpp
 set PKG_STRATA_COMPONENTS_VIEWS=%PKG_STRATA_COMPONENTS%\views
@@ -280,7 +281,9 @@ echo " Preparing necessary files.."
 echo "======================================================================="
 
 REM copy various license files
-xcopy %STRATA_DEPLOYMENT_DIR%\dependencies\strata %PKG_STRATA_DS% /E /Y
+if not exist %PKG_STRATA% md %PKG_STRATA%
+
+xcopy %STRATA_DEPLOYMENT_DIR%\dependencies\strata %PKG_STRATA% /E /Y
 
 REM echo "Copying Qt Core\Components resources to %PKG_STRATA_COMPONENTS%"
 REM xcopy bin\component-*.rcc %PKG_STRATA_COMPONENTS% /Y
