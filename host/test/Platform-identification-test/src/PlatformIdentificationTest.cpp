@@ -16,7 +16,7 @@ PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     connect(this, &PlatformIdentificationTest::setState, this, &PlatformIdentificationTest::stateChangedHandler);
 
     connect(&jlinkConnector_, &SGJLinkConnector::checkConnectionProcessFinished, this, &PlatformIdentificationTest::checkJLinkDeviceConnectionHandler);
-    connect(&jlinkConnector_, &SGJLinkConnector::flashBoardProcessFinished, this, &PlatformIdentificationTest::flashCompletedHandler);
+    connect(&jlinkConnector_, &SGJLinkConnector::programBoardProcessFinished, this, &PlatformIdentificationTest::flashCompletedHandler);
 
     testTimeout_.setInterval(TEST_TIMEOUT);
     testTimeout_.setSingleShot(true);
@@ -195,7 +195,7 @@ void PlatformIdentificationTest::flashPlatform(const QString& binaryFileName) {
     std::cout << "flashing platform..." << std::endl;
 
     // Use SGJLinkConnector to flash a the platform
-    jlinkConnector_.flashBoardRequested(binaryFileName);
+    jlinkConnector_.programBoardRequested(binaryFileName);
 }
 
 void PlatformIdentificationTest::printSummary() {

@@ -21,12 +21,12 @@ public:
     enum ProcessType {
         PROCESS_NO_PROCESS,
         PROCESS_CHECK_CONNECTION,
-        PROCESS_FLASH,
+        PROCESS_PROGRAM,
     };
     Q_ENUM(ProcessType)
 
     Q_INVOKABLE bool checkConnectionRequested();
-    Q_INVOKABLE bool flashBoardRequested(const QString &binaryPath);
+    Q_INVOKABLE bool programBoardRequested(const QString &binaryPath);
 
     QString exePath() const;
     void setExePath(const QString &exePath);
@@ -35,7 +35,7 @@ public:
 
 signals:
     void checkConnectionProcessFinished(bool exitedNormally, bool connected);
-    void flashBoardProcessFinished(bool exitedNormally);
+    void programBoardProcessFinished(bool exitedNormally);
     void exePathChanged();
     void eraseBeforeProgramChanged();
 

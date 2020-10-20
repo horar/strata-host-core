@@ -83,28 +83,25 @@ Module {
             values: {
                 "PROCESS_NO_PROCESS": 0,
                 "PROCESS_CHECK_CONNECTION": 1,
-                "PROCESS_FLASH": 2
+                "PROCESS_PROGRAM": 2
             }
         }
         Property { name: "exePath"; type: "string" }
+        Property { name: "eraseBeforeProgram"; type: "bool" }
         Signal {
             name: "checkConnectionProcessFinished"
             Parameter { name: "exitedNormally"; type: "bool" }
             Parameter { name: "connected"; type: "bool" }
         }
         Signal {
-            name: "flashBoardProcessFinished"
+            name: "programBoardProcessFinished"
             Parameter { name: "exitedNormally"; type: "bool" }
         }
+        Signal { name: "deviceChanged" }
+        Signal { name: "speedChanged" }
         Method { name: "checkConnectionRequested"; type: "bool" }
         Method {
-            name: "flashBoardRequested"
-            type: "bool"
-            Parameter { name: "binaryPath"; type: "string" }
-            Parameter { name: "eraseFirst"; type: "bool" }
-        }
-        Method {
-            name: "flashBoardRequested"
+            name: "programBoardRequested"
             type: "bool"
             Parameter { name: "binaryPath"; type: "string" }
         }

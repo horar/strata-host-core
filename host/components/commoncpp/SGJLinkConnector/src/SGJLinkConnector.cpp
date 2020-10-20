@@ -30,7 +30,7 @@ bool SGJLinkConnector::checkConnectionRequested()
     return processRequest(cmd, PROCESS_CHECK_CONNECTION);
 }
 
-bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath)
+bool SGJLinkConnector::programBoardRequested(const QString &binaryPath)
 {
     qCInfo(logCategoryJLink)
             << "binaryPath=" <<binaryPath
@@ -52,7 +52,7 @@ bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath)
     cmd += QString("go\n");
     cmd += QString("exit\n");
 
-    return processRequest(cmd, PROCESS_FLASH);
+    return processRequest(cmd, PROCESS_PROGRAM);
 }
 
 QString SGJLinkConnector::exePath() const
@@ -189,8 +189,8 @@ void SGJLinkConnector::finishProcess(bool exitedNormally)
     if (type == PROCESS_CHECK_CONNECTION) {
         bool isConnected = parseStatusOutput(output);
         emit checkConnectionProcessFinished(exitedNormally, isConnected);
-    } else if(type == PROCESS_FLASH) {
-        emit flashBoardProcessFinished(exitedNormally);
+    } else if(type == PROCESS_PROGRAM) {
+        emit programBoardProcessFinished(exitedNormally);
     }
 }
 
