@@ -35,19 +35,19 @@ Item {
         setState()
     }
 
+    Connections {
+        target: Filters.utility
+        onCategoryFiltersChanged: {
+            setState()
+        }
+    }
+
     function setState() {
         for (let i = 0; i < Filters.categoryFilters.length; i++) {
             if (Filters.categoryFilters[i] === model.filterName) {
                 root.pressed = true
                 break
             }
-        }
-    }
-
-    Connections {
-        target: Filters.utility
-        onCategoryFiltersChanged: {
-            setState()
         }
     }
 

@@ -111,11 +111,9 @@ Rectangle {
                         }
                     }
 
-                    platformSelectorListView.listview.currentIndex = platformSelectorListView.model.count-1 // go to end of list so next selection appears at top of view
-                    let originalIndex = sortedModel.mapIndexToSource(index)
-                    platformSelectorListView.listview.currentIndex = platformSelectorListView.model.mapIndexFromSource(originalIndex)
-
-//                    platformSelectorListView.filterText = model.verbose_name  // filter for only this platform by name
+                    PlatformSelection.platformSelectorModel.currentIndex = platformSelectorListView.listview.count-1 // go to end of list so next selection appears at top of view
+                    let originalIndex = sortedModel.mapIndexToSource(index) // get base model index
+                    PlatformSelection.platformSelectorModel.currentIndex = platformSelectorListView.model.mapIndexFromSource(originalIndex)
                 }
 
                 Rectangle {
