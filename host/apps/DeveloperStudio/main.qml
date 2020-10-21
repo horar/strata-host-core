@@ -88,21 +88,19 @@ SGWidgets.SGMainWindow {
 
         titleText: "You have unsaved changes in " + unsavedFileCount + " files."
         popupText: "Your changes will be lost if you choose to not save them."
-        saveButtonText: "Save all"
-        closePolicy: Popup.NoAutoClose
+        acceptButtonText: "Save all"
 
         property int unsavedFileCount
 
-        onClosed: {
-            controlViewCreator.openFilesModel.closeAll()
-            mainWindow.close()
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                controlViewCreator.openFilesModel.closeAll()
+                mainWindow.close()
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                controlViewCreator.openFilesModel.saveAll()
+                mainWindow.close()
+            }
         }
-
-        onSaved: {
-            controlViewCreator.openFilesModel.saveAll()
-            mainWindow.close()
-        }
-
     }
 
     ColumnLayout {

@@ -18,29 +18,28 @@ Rectangle {
 
         titleText: "You have unsaved changes in " + unsavedFileCount + " files."
         popupText: "Your changes will be lost if you choose to not save them."
-        saveButtonText: "Save all"
-        closePolicy: Popup.NoAutoClose
+        acceptButtonText: "Save all"
 
         property int unsavedFileCount
 
-        onClosed: {
-            editor.openFilesModel.closeAll()
-            openProjectContainer.url = sdsModel.newControlView.createNewProject(
-                        fileSelector.fileUrl,
-                        templateButtonGroup.checkedButton.path
-            );
-            toolBarListView.currentIndex = toolBarListView.editTab;
-            openProjectContainer.addToTheProjectList(editor.treeModel.url.toString())
-        }
-
-        onSaved: {
-            editor.openFilesModel.saveAll()
-            openProjectContainer.url = sdsModel.newControlView.createNewProject(
-                        fileSelector.fileUrl,
-                        templateButtonGroup.checkedButton.path
-            );
-            toolBarListView.currentIndex = toolBarListView.editTab;
-            openProjectContainer.addToTheProjectList(editor.treeModel.url.toString())
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                editor.openFilesModel.closeAll()
+                openProjectContainer.url = sdsModel.newControlView.createNewProject(
+                            fileSelector.fileUrl,
+                            templateButtonGroup.checkedButton.path
+                );
+                toolBarListView.currentIndex = toolBarListView.editTab;
+                openProjectContainer.addToTheProjectList(editor.treeModel.url.toString())
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                editor.openFilesModel.saveAll()
+                openProjectContainer.url = sdsModel.newControlView.createNewProject(
+                            fileSelector.fileUrl,
+                            templateButtonGroup.checkedButton.path
+                );
+                toolBarListView.currentIndex = toolBarListView.editTab;
+                openProjectContainer.addToTheProjectList(editor.treeModel.url.toString())
+            }
         }
     }
 

@@ -89,33 +89,31 @@ Rectangle {
 
         titleText: "You have unsaved changes in " + unsavedFileCount + " files."
         popupText: "Your changes will be lost if you choose to not save them."
-        saveButtonText: "Save all"
-        closePolicy: Popup.NoAutoClose
+        acceptButtonText: "Save all"
 
         property int unsavedFileCount
         property url newFileUrl
         property bool addToProjectList: false
 
-        onClosed: {
-            editor.openFilesModel.closeAll()
-            openProjectContainer.url = newFileUrl
-            toolBarListView.currentIndex = toolBarListView.editTab
-            if (addToProjectList) {
-                addToTheProjectList(fileDialog.fileUrl.toString())
-                filePath.text = "Select a .QRC file..."
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                editor.openFilesModel.closeAll()
+                openProjectContainer.url = newFileUrl
+                toolBarListView.currentIndex = toolBarListView.editTab
+                if (addToProjectList) {
+                    addToTheProjectList(fileDialog.fileUrl.toString())
+                    filePath.text = "Select a .QRC file..."
+                }
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                editor.openFilesModel.saveAll()
+                openProjectContainer.url = newFileUrl
+                toolBarListView.currentIndex = toolBarListView.editTab
+                if (addToProjectList) {
+                    addToTheProjectList(fileDialog.fileUrl.toString())
+                    filePath.text = "Select a .QRC file..."
+                }
             }
         }
-
-        onSaved: {
-            editor.openFilesModel.saveAll()
-            openProjectContainer.url = newFileUrl
-            toolBarListView.currentIndex = toolBarListView.editTab
-            if (addToProjectList) {
-                addToTheProjectList(fileDialog.fileUrl.toString())
-                filePath.text = "Select a .QRC file..."
-            }
-        }
-
     }
 
     ColumnLayout {

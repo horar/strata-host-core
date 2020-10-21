@@ -196,18 +196,16 @@ Item {
                 titleText: "Do you want to save the changes made to " + filename + "?"
                 popupText: "Your changes will be lost if you choose to not save them."
 
-                closePolicy: Popup.NoAutoClose
-
                 property string filename: ""
                 property int index
 
-                onClosed: {
-                    openFilesModel.closeTabAt(index)
-                }
-
-                onSaved: {
-                    openFilesModel.saveFileAt(index)
-                    openFilesModel.closeTabAt(index)
+                onPopupClosed: {
+                    if (closeReason === confirmClosePopup.closeFilesReason) {
+                        openFilesModel.closeTabAt(index)
+                    } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                        openFilesModel.saveFileAt(index)
+                        openFilesModel.closeTabAt(index)
+                    }
                 }
             }
 
