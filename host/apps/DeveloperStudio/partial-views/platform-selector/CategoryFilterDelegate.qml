@@ -20,6 +20,7 @@ Item {
             return 0
         }
     }
+    objectName: "filterButton"
 
     property real fullWidth: (icon.width/2) + textBackground.width
     property real minimizedWidth: icon.width
@@ -31,11 +32,22 @@ Item {
 
     Component.onCompleted: {
         // Restore previously set filters
+        setState()
+    }
+
+    function setState() {
         for (let i = 0; i < Filters.categoryFilters.length; i++) {
             if (Filters.categoryFilters[i] === model.filterName) {
                 root.pressed = true
                 break
             }
+        }
+    }
+
+    Connections {
+        target: Filters.utility
+        onCategoryFiltersChanged: {
+            setState()
         }
     }
 
