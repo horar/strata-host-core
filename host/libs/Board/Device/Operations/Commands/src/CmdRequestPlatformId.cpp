@@ -3,7 +3,10 @@
 
 #include <CommandValidator.h>
 
+#include <cstring>
+
 namespace strata::device::command {
+
 
 CmdRequestPlatformId::CmdRequestPlatformId(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("request_platform_id")) { }
@@ -23,6 +26,17 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
             classId = payload[JSON_CLASS_ID].GetString();
         }
         setDeviceProperties(name, platformId, classId, nullptr, nullptr);
+
+        Device::ApiVersion apiVersion = device_->apiVersion();
+        if (apiVersion == Device::ApiVersion::Unknown || apiVersion == Device::ApiVersion::v1_0) {
+            if (std::strcmp(name, CSTR_NAME_BOOTLOADER) == 0) {
+                setDeviceBootloaderMode(true);
+            }
+            if (payload.HasMember(JSON_PLATF_ID_VER)) {
+                setDeviceApiVersion(Device::ApiVersion::v1_0);
+            }
+        }
+
         result_ = CommandResult::Done;
         return true;
     } else {
