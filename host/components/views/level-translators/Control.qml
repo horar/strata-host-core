@@ -20,7 +20,9 @@ Item {
     BasicControl {
         id: basic
         visible: true
-
+    }
+    Component.onCompleted: {
+        platformInterface.startup_command.update()
     }
 
     SGIcon {

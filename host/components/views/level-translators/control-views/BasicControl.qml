@@ -13,6 +13,30 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    property var startup: platformInterface.startup
+    onStartupChanged: {
+        enable3.checked = startup.oe_i2c
+        enable2.checked = startup.oe_spi
+        enable1.checked = startup.oe_ub
+        tr0.checked = startup.tr_0
+        tr1.checked = startup.tr_1
+        tr2.checked = startup.tr_2
+        tr3.checked = startup.tr_3
+
+    }
+
+    property var adc: platformInterface.adc
+    onAdcChanged: {
+        vcca3.text = adc.vcca_i2c.toFixed(2)
+        vccb3.text  = adc.vccb_i2c.toFixed(2)
+
+        vcca2.text = adc.vcca_spi.toFixed(2)
+        vccb2.text  = adc.vccb_spi.toFixed(2)
+
+        vcca.text = adc.vcca_ub.toFixed(2)
+        vccb.text  = adc.vccb_ub.toFixed(2)
+    }
+
     MouseArea {
         id: containMouseArea
         anchors.fill: parent
@@ -99,6 +123,9 @@ Item {
                                             id: enable1
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
+                                            onToggled: {
+                                                platformInterface.oe_ub_command.update(checked)
+                                            }
                                         }
                                     }
 
@@ -182,6 +209,9 @@ Item {
                                                     id: tr0
                                                     checkedLabel: "Transmit"
                                                     uncheckedLabel: "Recieve"
+                                                    onToggled: {
+                                                        platformInterface.tr_0_command.update(checked)
+                                                    }
                                                 }
                                             }
                                         }
@@ -201,6 +231,9 @@ Item {
                                                     id: tr1
                                                     checkedLabel: "Transmit"
                                                     uncheckedLabel: "Recieve"
+                                                    onToggled: {
+                                                        platformInterface.tr_1_command.update(checked)
+                                                    }
 
                                                 }
                                             }
@@ -228,6 +261,9 @@ Item {
                                                     id: tr2
                                                     checkedLabel: "Transmit"
                                                     uncheckedLabel: "Recieve"
+                                                    onToggled: {
+                                                        platformInterface.tr_2_command.update(checked)
+                                                    }
                                                 }
                                             }
                                         }
@@ -247,6 +283,9 @@ Item {
                                                     id: tr3
                                                     checkedLabel: "Transmit"
                                                     uncheckedLabel: "Recieve"
+                                                    onToggled: {
+                                                        platformInterface.tr_3_command.update(checked)
+                                                    }
                                                 }
                                             }
                                         }
@@ -314,6 +353,9 @@ Item {
                                             id: enable2
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
+                                            onToggled: {
+                                                platformInterface.oe_spi_command.update(checked)
+                                            }
                                         }
                                     }
                                 }
@@ -448,6 +490,9 @@ Item {
                                             id: enable3
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
+                                            onToggled: {
+                                                platformInterface.oe_i2c_command.update(checked)
+                                            }
                                         }
                                     }
                                 }
@@ -476,6 +521,7 @@ Item {
                                                     width: 125 * ratioCalc
                                                     unit: "<b>V</b>"
                                                     text: "1.50"
+
 
 
                                                 }
