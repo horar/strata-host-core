@@ -17,11 +17,21 @@ Rectangle {
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
     onTotalDocumentsChanged: {
         if (classDocuments.pdfListModel.count > 0) {
-             pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri();
+            pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
         } else if (classDocuments.datasheetListModel.count > 0) {
-            pdfViewer.url = classDocuments.datasheetListModel.getFirstUri();
+            pdfViewer.url = classDocuments.datasheetListModel.getFirstUri()
         } else {
             pdfViewer.url = ""
+        }
+
+        if (classDocuments.downloadDocumentListModel.count > 0){
+            empty.hasDownloads = true
+        }
+
+        if (totalDocuments > 0) {
+            navigationSidebar.state = "open"
+        } else {
+            navigationSidebar.state = "close"
         }
     }
 
@@ -80,6 +90,13 @@ Rectangle {
                         visible: true
                         width: 300
                     }
+                },
+                State {
+                    name: "close"
+                    PropertyChanges {
+                        target: navigationSidebar
+                        visible: false
+                    }
                 }
             ]
 
@@ -101,15 +118,22 @@ Rectangle {
                 exclusive: false
 
                 accordionItems: Column {
-
                     SGAccordionItem {
                         id: pdfAccordion
                         title: "Platform Documents"
                         contents: Documents {
                             model: classDocuments.pdfListModel
                         }
-                        open: true
+                        open: pdfAccordion.visible
                         visible: classDocuments.pdfListModel.count > 0
+
+                        onOpenChanged: {
+                            if(open){
+                                pdfAccordion.openContent.start();
+                            } else {
+                                pdfAccordion.closeContent.start();
+                            }
+                        }
                     }
 
                     SGAccordionItem {
@@ -118,7 +142,16 @@ Rectangle {
                         contents: Datasheets {
                             model: classDocuments.datasheetListModel
                         }
+                        open: !pdfAccordion.visible && datasheetAccordion.visible
                         visible: classDocuments.datasheetListModel.count > 0
+
+                        onOpenChanged: {
+                            if(open){
+                                datasheetAccordion.openContent.start();
+                            } else {
+                                datasheetAccordion.closeContent.start();
+                            }
+                        }
                     }
 
                     SGAccordionItem {
@@ -128,7 +161,16 @@ Rectangle {
                             model: classDocuments.downloadDocumentListModel
 
                         }
+                        open: !pdfAccordion.visible && !datasheetAccordion.visible && downloadAccordion.visible
                         visible: classDocuments.downloadDocumentListModel.count > 0
+
+                        onOpenChanged: {
+                            if(open){
+                                downloadAccordion.openContent.start();
+                            } else {
+                                downloadAccordion.closeContent.start();
+                            }
+                        }
                     }
                 }
             }
@@ -174,7 +216,7 @@ Rectangle {
                 }
                 onClicked: {
                     if (navigationSidebar.state === "open") {
-                        navigationSidebar.state = "" // "" is default closed state
+                        navigationSidebar.state = "close"
                     } else {
                         navigationSidebar.state = "open"
                     }
@@ -196,6 +238,17 @@ Rectangle {
 
             url: ""
         }
+
+        EmptyDocuments {
+            id: empty
+            visible: pdfViewer.url === "" && loading.visible === false
+            anchors {
+                left: sidebarControl.right
+                right: contentContainer.right
+                top: contentContainer.top
+                bottom: contentContainer.bottom
+            }
+        }
     }
 
     Item {
@@ -205,14 +258,6 @@ Rectangle {
         }
 
         visible: loadingText.text.length
-
-        onVisibleChanged: {
-            if (!visible) {
-                navigationSidebar.state = "open"
-            } else {
-                navigationSidebar.state = "" // "" is default closed state
-            }
-        }
 
         Rectangle {
             color: "#222"

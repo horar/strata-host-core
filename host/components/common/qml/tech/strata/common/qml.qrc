@@ -2,5 +2,6 @@
     <qresource prefix="/tech/strata/common">
         <file>qmldir</file>
         <file>Logger.qml</file>
+        <file>PlatformInterface.qml</file>
     </qresource>
 </RCC>

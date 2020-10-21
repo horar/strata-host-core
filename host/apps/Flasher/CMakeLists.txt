@@ -3,6 +3,7 @@ project(flasher-cli
     LANGUAGES CXX
 )
 
+set(PROJECT_WIN32_ICO resources/icons/app/flasher-logo.ico)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -25,9 +26,9 @@ generate_app_version(GITTAG_PREFIX "${PROJECT_NAME}_" MACBUNDLE OFF)
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::SerialPort
-    QtLogger
-    Flasher
-    Device
+    strata::QtLogger
+    strata::Flasher
+    strata::Device
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

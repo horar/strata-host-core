@@ -3,6 +3,7 @@
         <file>arrow-list-bottom.svg</file>
         <file>ban.svg</file>
         <file>bolt.svg</file>
+        <file>broom.svg</file>
         <file>check.svg</file>
         <file>chevron-left.svg</file>
         <file>chevron-right.svg</file>
@@ -38,5 +39,17 @@
         <file>user.svg</file>
         <file>on-logo-green.svg</file>
         <file>zoom.svg</file>
+        <file>asterisk.svg</file>
+        <file>bars.svg</file>
+        <file>check-circle.svg</file>
+        <file>chevron-up.svg</file>
+        <file>connected.svg</file>
+        <file>disconnected.svg</file>
+        <file>download.svg</file>
+        <file>exclamation-circle.svg</file>
+        <file>folder-open-solid.svg</file>
+        <file>sliders-h.svg</file>
+        <file>sliders-v.svg</file>
+        <file>list.svg</file>
     </qresource>
 </RCC>

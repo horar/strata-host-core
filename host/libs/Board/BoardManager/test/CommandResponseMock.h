@@ -46,7 +46,7 @@ R"({
     "payload":{"return_value":false,"return_string":"command not found"}
 })";
 
-const QByteArray get_firmware_info_request = R"({"cmd":"get_firmware_info"})";
+const QByteArray get_firmware_info_request = R"({"cmd":"get_firmware_info","payload":{}})";
 
 const QByteArray get_firmware_info_response =
 R"({
@@ -67,7 +67,8 @@ R"({
 
 const QByteArray request_platform_id_request =
 R"({
-    "cmd":"request_platform_id"
+    "cmd":"request_platform_id",
+    "payload":{}
 })";
 
 const QByteArray request_platform_id_response =
@@ -99,19 +100,19 @@ R"({
     }
 })";
 
-const QByteArray update_firmware_request = R"({"cmd":"update_firmware"})";
+const QByteArray start_bootloader_request = R"({"cmd":"start_bootloader","payload":{}})";
 
-const QByteArray update_firmware_response =
+const QByteArray start_bootloader_response =
 R"({
     "notification":{
-        "value":"update_firmware",
+        "value":"start_bootloader",
         "payload":{
             "status":"ok"
         }
     }
 })";
 
-const QByteArray start_application_request = R"({"cmd":"start_application"})";
+const QByteArray start_application_request = R"({"cmd":"start_application","payload":{}})";
 
 const QByteArray start_application_response =
 R"({

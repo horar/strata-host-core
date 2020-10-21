@@ -7,6 +7,7 @@ Item {
     id: prtMain
 
     property int currentPage: PrtMain.LoginPage
+    property alias prtModel: prtModel
 
     enum LoginStatus {
         LoginPage,
@@ -71,6 +72,7 @@ Item {
 
         ProgramDeviceWizard {
             focus: true
+            prtModel: prtMain.prtModel
         }
     }
 }

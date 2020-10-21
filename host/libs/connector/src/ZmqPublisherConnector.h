@@ -1,9 +1,10 @@
-#ifndef ZmqPublisherConnector_H
-#define ZmqPublisherConnector_H
+#pragma once
 
 #include <set>
 #include "ZmqConnector.h"
 
+namespace strata::connector
+{
 class ZmqPublisherConnector : public ZmqConnector
 {
 public:
@@ -27,4 +28,4 @@ private:
     std::set<std::string> mSubscribers_;
 };
 
-#endif  // ZmqPublisherConnector_H
+}  // namespace strata::connector

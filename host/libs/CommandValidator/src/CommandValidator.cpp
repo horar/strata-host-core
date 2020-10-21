@@ -1,542 +1,333 @@
 #include "CommandValidator.h"
 
-#include <iostream>
+#include "logging/LoggingQtCategories.h"
+
 #include <rapidjson/writer.h>
 #include <rapidjson/error/en.h>
 
 // define the schemas
 
+const rapidjson::SchemaDocument CommandValidator::cmdSchema_(
+    CommandValidator::parseSchema(
+        R"(
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"type": "object",
+			"properties": {
+				"cmd":     { "type": "string" },
+				"payload": { "type": "object" }
+			},
+			"required": [ "cmd" ]
+		})"
+    )
+);
+
+const rapidjson::SchemaDocument CommandValidator::ackSchema_(
+    CommandValidator::parseSchema(
+        R"(
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"type": "object",
+			"properties": {
+				"ack": {
+					"type": "string"
+				},
+				"payload": {
+					"type": "object",
+					"properties": {
+						"return_value":  { "type": "boolean" },
+						"return_string": { "type": "string" }
+					},
+					"required": [ "return_value", "return_string" ]
+				}
+			},
+			"required": [ "ack", "payload" ]
+		})"
+    )
+);
+
+const rapidjson::SchemaDocument CommandValidator::notificationSchema_(
+    CommandValidator::parseSchema(
+        R"(
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"type": "object",
+			"properties": {
+				"notification": {
+					"type": "object",
+					"properties": {
+						"value":   { "type": "string" },
+						"payload": { "type": "object" }
+					},
+					"required": [ "value", "payload" ]
+				}
+			},
+			"required": [ "notification" ]
+		})"
+    )
+);
+
+// notification with status in payload
+const rapidjson::SchemaDocument CommandValidator::notifPayloadStatusSchema_(
+    CommandValidator::parseSchema(
+        R"(
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"type": "object",
+			"properties": {
+				"status": { "type": "string" }
+			},
+			"required": [ "status" ]
+		})"
+    )
+);
+
 // this support platform id v2 only.
-const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
+const rapidjson::SchemaDocument CommandValidator::reqPlatformId_nps_(
     CommandValidator::parseSchema(
         R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-                "notification": {
-                    "type": "object",
-                    "properties": {
-                        "value": {
-                            "pattern": "^platform_id$"
-                        },
-                        "payload": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string"
-                                },
-                                "verbose_name": {
-                                    "type": "string"
-                                },
-                                "platform_id": {
-                                    "type": "string"
-                                },
-                                "class_id": {
-                                    "type": "string"
-                                },
-                                "count": {
-                                    "type": [
-                                        "string",
-                                        "integer"
-                                    ]
-                                },
-                                "platform_id_version": {
-                                    "type": "string"
-                                }
-                            },
-                            "required": [
-                                "name",
-                                "platform_id",
-                                "class_id",
-                                "count",
-                                "platform_id_version"
-                            ]
-                        }
-                    },
-                    "required": [
-                        "value",
-                        "payload"
-                    ]
-                }
-            },
-            "required": [
-                "notification"
-            ]
-        })"
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"type": "object",
+			"oneOf": [
+				{
+					"properties": {
+						"name":                { "type": "string" },
+						"verbose_name":        { "type": "string" },
+						"platform_id":         { "type": "string" },
+						"class_id":            { "type": "string" },
+						"count":               { "type": [ "string", "integer" ] },
+						"platform_id_version": { "type": "string" }
+					},
+					"required": [ "name", "platform_id", "class_id", "count", "platform_id_version" ]
+				},
+				{
+					"properties": {
+						"name":            { "type": "string" },
+						"controller_type": { "type": "integer" },
+						"platform_id":     { "type": "string" },
+						"class_id":        { "type": "string" },
+						"board_count":     { "type": "integer" }
+					},
+					"required": [ "name", "controller_type", "platform_id", "class_id", "board_count" ],
+					"additionalProperties": false
+				},
+				{
+					"properties": {
+						"name":                   { "type": "string" },
+						"controller_type":        { "type": "integer" },
+						"platform_id":            { "type": "string" },
+						"class_id":               { "type": "string" },
+						"board_count":            { "type": "integer" },
+						"fw_class_id":            { "type": "string"},
+						"controller_platform_id": { "type": "string" },
+						"controller_class_id":    { "type": "string" },
+						"controller_board_count": { "type": "integer" }
+					},
+					"required": [
+						"name", "controller_type", "platform_id", "class_id", "board_count", "fw_class_id",
+						"controller_platform_id", "controller_class_id", "controller_board_count"
+					]
+				},
+				{
+					"properties": {
+						"name":                   { "type": "string" },
+						"controller_type":        { "type": "integer" },
+						"fw_class_id":            { "type": "string"},
+						"controller_platform_id": { "type": "string" },
+						"controller_class_id":    { "type": "string" },
+						"controller_board_count": { "type": "integer" }
+					},
+					"required": [
+						"name", "controller_type", "fw_class_id", "controller_platform_id",
+						"controller_class_id", "controller_board_count"
+					],
+					"additionalProperties": false
+				}
+			]
+		})"
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::ackSchema(
+const rapidjson::SchemaDocument CommandValidator::getFirmwareInfo_nps_(
     CommandValidator::parseSchema(
         R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-                "ack": {
-                "type": "string"
-                },
-                "payload": {
-                "type": "object",
-                "properties": {
-                    "return_value": {
-                    "type": "boolean"
-                    },
-                    "return_string": {
-                    "type": "string"
-                    }
-                },
-                "required": [
-                    "return_value",
-                    "return_string"
-                ]
-                }
-            },
-            "required": [
-                "ack",
-                "payload"
-            ]
-        })"
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"type": "object",
+			"properties": {
+				"bootloader": {
+					"oneOf": [
+						{
+							"type": "object",
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"version": { "type": "string" },
+								"date":    { "type": "string" }
+							},
+							"required": [ "version", "date" ]
+						}
+					]
+				},
+				"application": {
+					"oneOf": [
+						{
+							"type": "object",
+							"additionalProperties": false
+						},
+						{
+							"type": "object",
+							"properties": {
+								"version": { "type": "string" },
+								"date":    { "type": "string" }
+							},
+							"required": [ "version", "date" ]
+						}
+					]
+				}
+			},
+			"required": [ "bootloader", "application" ]
+		})"
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::cmdSchema(
+const rapidjson::SchemaDocument CommandValidator::startBackupFirmware_nps_(
     CommandValidator::parseSchema(
         R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-                "cmd": {
-                "type": "string"
-                },
-                "payload": {
-                "type": "object"
-                }
-            },
-            "required": [
-                "cmd"
-            ]
-        })"
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"oneOf": [
+				{
+					"type": "object",
+					"properties": {
+						"size":   { "type": "number" },
+						"chunks": { "type": "number" }
+					},
+					"required": [ "size", "chunks" ]
+				},
+				{
+					"type": "object",
+					"properties": {
+						"status": { "type": "string" }
+					},
+					"required": [ "status" ]
+				}
+			]
+		})"
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::notificationSchema(
-    CommandValidator::parseSchema(
+const rapidjson::SchemaDocument CommandValidator::backupFirmware_nps_(
+   CommandValidator::parseSchema(
         R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-            "notification": {
-                "type": "object",
-                "properties": {
-                "value": {
-                    "type": "string"
-                },
-                "payload": {
-                    "type": "object"
-                }
-                },
-                "required": [
-                "value",
-                "payload"
-                ]
-            }
-            },
-            "required": [
-            "notification"
-            ]
-        })"
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"type": "object",
+			"properties": {
+				"chunk": {
+					"type": "object",
+					"properties": {
+						"number": { "type": "number" },
+						"size":   { "type": "number" },
+						"crc":    { "type": "number" },
+						"data":   { "type": "string" }
+					},
+					"required": [ "number", "size", "crc", "data" ]
+				}
+			},
+			"required": [ "chunk" ]
+		})"
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::setPlatformIdResSchema(
+const rapidjson::SchemaDocument CommandValidator::strataCommandSchema_(
     CommandValidator::parseSchema(
         R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-                "notification": {
-                "type": "object",
-                "properties": {
-                    "value": {
-                    "type": "string",
-                    "pattern":"^set_platform_id$"
-                    },
-                    "payload": {
-                    "type": "object",
-                    "properties": {
-                        "status": {
-                        "type": "string"
-                        }
-                    },
-                    "required": [
-                        "status"
-                    ]
-                    }
-                },
-                "required": [
-                    "value",
-                    "payload"
-                ]
-                }
-            },
-            "required": [
-                "notification"
-            ]
-        })"
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"type": "object",
+			"oneOf": [
+				{
+					"properties": {
+						"cmd":     { "type": "string" },
+						"payload": { "type": "object" }
+					},
+					"required": [ "cmd" ]
+				},
+				{
+					"properties": {
+						"notification": {
+							"type": "object",
+							"properties": {
+								"value":   { "type": "string" },
+								"payload": { "type": "object" }
+							},
+							"required": [ "value", "payload" ]
+						}
+					},
+					"required": [ "notification" ]
+				},
+				{
+					"properties": {
+						"ack": { "type": "string" },
+						"payload": {
+							"type": "object",
+							"properties": {
+								"return_value":  { "type": "boolean" },
+								"return_string": { "type": "string" }
+							},
+							"required": [ "return_value", "return_string" ]
+						}
+					},
+					"required": [ "ack", "payload" ]
+				}
+			]
+		})"
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::updateFWResSchema(
-    CommandValidator::parseSchema(
-        R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-            "notification": {
-                "type": "object",
-                "properties": {
-                "value": {
-                    "type": "string",
-                    "pattern": "^update_firmware$"
-                },
-                "payload": {
-                    "type": "object",
-                    "properties": {
-                    "status": {
-                        "type": "string"
-                    }
-                    },
-                    "required": [
-                    "status"
-                    ]
-                }
-                },
-                "required": [
-                "value",
-                "payload"
-                ]
-            }
-            },
-            "required": [
-            "notification"
-            ]
-        })"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::flashFWResSchema(
-    CommandValidator::parseSchema(
-        R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-            "notification": {
-                "type": "object",
-                "properties": {
-                "value": {
-                    "type": "string",
-                    "pattern": "^flash_firmware$"
-                },
-                "payload": {
-                    "type": "object",
-                    "properties": {
-                    "status": {
-                        "type": "string"
-                    }
-                    },
-                    "required": [
-                    "status"
-                    ]
-                }
-                },
-                "required": [
-                "value",
-                "payload"
-                ]
-            }
-            },
-            "required": [
-            "notification"
-            ]
-        })"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
-    CommandValidator::parseSchema(
-        R"(
-        {
-          "$schema": "http://json-schema.org/draft-04/schema#",
-          "type": "object",
-          "properties": {
-            "notification": {
-            "type": "object",
-              "properties": {
-                "value": {
-                  "type": "string",
-                  "pattern": "^backup_firmware$"
-                },
-                "payload": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "chunk": {
-                          "type": "object",
-                          "properties": {
-                            "number": {"type": "number"},
-                            "total": {"type": "number"},
-                            "size": {"type": "number"},
-                            "crc": {"type": "number"},
-                            "data": {"type": "string"}
-                          },
-                          "required": ["number", "total", "size", "crc", "data"]
-                        }
-                      },
-                      "required": ["chunk"]
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "status": {"type": "string"}
-                      },
-                      "required": ["status"]
-                    }
-                  ]
-                }
-              },
-              "required": ["value", "payload"]
-            }
-          },
-          "required": ["notification"]
-        })"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::startAppResSchema(
-    CommandValidator::parseSchema(
-        R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-            "notification": {
-                "type": "object",
-                "properties": {
-                "value": {
-                    "type": "string",
-                    "pattern": "^start_application$"
-                },
-                "payload": {
-                    "type": "object",
-                    "properties": {
-                    "status": {
-                        "type": "string"
-                    }
-                    },
-                    "required": [
-                    "status"
-                    ]
-                }
-                },
-                "required": [
-                "value",
-                "payload"
-                ]
-            }
-            },
-            "required": [
-            "notification"
-            ]
-        })"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::getFWInfoResSchema(
-    CommandValidator::parseSchema(
-        R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "properties": {
-            "notification": {
-                "type": "object",
-                "properties": {
-                "value": {
-                    "type": "string",
-                    "pattern": "^get_firmware_info$"
-                },
-                "payload": {
-                    "type": "object",
-                    "properties": {
-                    "bootloader": {
-                        "oneOf": [
-                            {
-                                "type": "object",
-                                "additionalProperties": false
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "version": {
-                                        "type": "string"
-                                    },
-                                    "date": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "version",
-                                    "date"
-                                ]
-                            }
-                        ]
-                    },
-                    "application": {
-                        "oneOf": [
-                            {
-                                "type": "object",
-                                "additionalProperties": false
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "version": {
-                                        "type": "string"
-                                    },
-                                    "date": {
-                                        "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "version",
-                                    "date"
-                                ]
-                            }
-                        ]
-                    }
-                    },
-                    "required": [
-                    "bootloader",
-                    "application"
-                    ]
-                }
-                },
-                "required": [
-                "value",
-                "payload"
-                ]
-            }
-            },
-            "required": [
-            "notification"
-            ]
-        })"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::strataCommandSchema(
-    CommandValidator::parseSchema(
-        R"(
-        {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-            "type": "object",
-            "oneOf": [
-                {
-                "properties": {
-                    "cmd": {
-                    "type": "string"
-                    },
-                    "payload": {
-                    "type": "object"
-                    }
-                },
-                "required": [
-                    "cmd"
-                ]
-                },
-                {
-                "properties": {
-                    "notification": {
-                    "type": "object",
-                    "properties": {
-                        "value": {
-                        "type": "string"
-                        },
-                        "payload": {
-                        "type": "object"
-                        }
-                    },
-                    "required": [
-                        "value",
-                        "payload"
-                    ]
-                    }
-                },
-                "required": [
-                    "notification"
-                ]
-                },
-                {
-                "properties": {
-                    "ack": {
-                    "type": "string"
-                    },
-                    "payload": {
-                    "type": "object",
-                    "properties": {
-                        "return_value": {
-                        "type": "boolean"
-                        },
-                        "return_string": {
-                        "type": "string"
-                        }
-                    },
-                    "required": [
-                        "return_value",
-                        "return_string"
-                    ]
-                    }
-                },
-                "required": [
-                    "ack",
-                    "payload"
-                ]
-                }
-            ]
-        })"
-    )
-);
-
-const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument&> CommandValidator::schemas = {
-    {JsonType::reqPlatIdRes, requestPlatformIdResSchema},
-    {JsonType::setPlatIdRes, setPlatformIdResSchema},
-    {JsonType::ack, ackSchema},
-    {JsonType::notification, notificationSchema},
-    {JsonType::getFwInfoRes, getFWInfoResSchema},
-    {JsonType::flashFwRes, flashFWResSchema},
-    {JsonType::backupFwRes, backupFWResSchema},
-    {JsonType::updateFwRes, updateFWResSchema},
-    {JsonType::startAppRes, startAppResSchema},
-    {JsonType::strataCmd, strataCommandSchema},
-    {JsonType::cmd, cmdSchema}
+const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument&> CommandValidator::schemas_ = {
+    {JsonType::cmd, cmdSchema_},
+    {JsonType::ack, ackSchema_},
+    {JsonType::notification, notificationSchema_},
+    {JsonType::reqPlatformIdNotif, reqPlatformId_nps_},
+    {JsonType::setPlatformIdNotif, notifPayloadStatusSchema_},
+    {JsonType::getFirmwareInfoNotif, getFirmwareInfo_nps_},
+    {JsonType::startBootloaderNotif, notifPayloadStatusSchema_},
+    {JsonType::startApplicationNotif, notifPayloadStatusSchema_},
+    {JsonType::startFlashFirmwareNotif, notifPayloadStatusSchema_},
+    {JsonType::flashFirmwareNotif, notifPayloadStatusSchema_},
+    {JsonType::startBackupFirmwareNotif, startBackupFirmware_nps_},
+    {JsonType::backupFirmwareNotif, backupFirmware_nps_},
+    {JsonType::startFlashBootloaderNotif, notifPayloadStatusSchema_},
+    {JsonType::flashBootloaderNotif, notifPayloadStatusSchema_},
+    {JsonType::strataCommand, strataCommandSchema_}
 };
 
-rapidjson::SchemaDocument CommandValidator::parseSchema(const std::string &schema, bool *isOk) {
+const std::map<const CommandValidator::JsonType, const char*> CommandValidator::notifications_ = {
+    {JsonType::reqPlatformIdNotif, "platform_id"},
+    {JsonType::setPlatformIdNotif, "set_platform_id"},
+    {JsonType::getFirmwareInfoNotif, "get_firmware_info"},
+    {JsonType::startBootloaderNotif, "start_bootloader"},
+    {JsonType::startApplicationNotif, "start_application"},
+    {JsonType::startFlashFirmwareNotif, "start_flash_firmware"},
+    {JsonType::flashFirmwareNotif, "flash_firmware"},
+    {JsonType::startBackupFirmwareNotif, "start_backup_firmware"},
+    {JsonType::backupFirmwareNotif, "backup_firmware"},
+    {JsonType::startFlashBootloaderNotif, "start_flash_bootloader"},
+    {JsonType::flashBootloaderNotif, "flash_bootloader"},
+};
+
+rapidjson::SchemaDocument CommandValidator::parseSchema(const QByteArray &schema, bool *isOk) {
     bool ok = true;
     rapidjson::Document sd;
-    rapidjson::ParseResult result = sd.Parse(schema.c_str());
+    rapidjson::ParseResult result = sd.Parse(schema.data());
     if (result.IsError()) {
-        // TODO: use logger from CS-440
-        std::cerr << "JSON parse error at offset " << result.Offset() << ": " << rapidjson::GetParseError_En(result.Code())
-                  << " Invalid JSON schema: '" << schema << "'" << std::endl;
+        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
+            << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON schema: '" << schema << "'";
         ok = false;
     }
 
@@ -546,38 +337,38 @@ rapidjson::SchemaDocument CommandValidator::parseSchema(const std::string &schem
     return rapidjson::SchemaDocument(sd);
 }
 
-bool CommandValidator::validateDocWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Document &doc) {
+bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json) {
     rapidjson::SchemaValidator validator(schema);
 
-    if (doc.Accept(validator) == false) {
+    if (json.Accept(validator) == false) {
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 
-        doc.Accept(writer);
-        std::string command = buffer.GetString();
+        json.Accept(writer);
+        QByteArray text(buffer.GetString(), static_cast<int>(buffer.GetSize()));
 
         buffer.Clear();
         writer.Reset(buffer);
 
         validator.GetError().Accept(writer);
-        // TODO: use logger from CS-440
-        std::cerr << "Command '" << command << "' is not valid by required schema: " << buffer.GetString() << std::endl;
+
+        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
         return false;
     }
 
     return true;
 }
 
-bool CommandValidator::validate(const std::string &command, const JsonType type, rapidjson::Document &doc) {
-    if (parseJson(command, doc) == false) {
+bool CommandValidator::validate(const QByteArray &command, const JsonType type, rapidjson::Document &doc) {
+    if (parseJsonCommand(command, doc) == false) {
         return false;
     }
 
     return validate(type, doc);
 }
 
-bool CommandValidator::validate(const std::string &command, const std::string& schema, rapidjson::Document &doc) {
-    if (parseJson(command, doc) == false) {
+bool CommandValidator::validate(const QByteArray &command, const QByteArray& schema, rapidjson::Document &doc) {
+    if (parseJsonCommand(command, doc) == false) {
         return false;
     }
 
@@ -587,30 +378,56 @@ bool CommandValidator::validate(const std::string &command, const std::string& s
         return false;
     }
 
-    return validateDocWithSchema(schemaDoc, doc);
+    return validateJsonWithSchema(schemaDoc, doc);
 }
 
 bool CommandValidator::validate(const JsonType type, const rapidjson::Document &doc) {
-  const auto it = schemas.find(type);
-  if (it == schemas.end()) {
-      // TODO: use logger from CS-440
-      std::cerr << "Unknown schema." << std::endl;
+  const auto it = schemas_.find(type);
+  if (it == schemas_.end()) {
+      qCCritical(logCategoryCommandValidator).nospace() << "Unknown schema (" << static_cast<int>(type) << ").";
       return false;
   }
 
-  return validateDocWithSchema(it->second, doc);
+  return validateJsonWithSchema(it->second, doc);
 }
 
-bool CommandValidator::isValidJson(const std::string &command) {
-    return (rapidjson::Document().Parse(command.c_str()).HasParseError() == false);
+bool CommandValidator::validateNotification(const JsonType type, const rapidjson::Document &doc) {
+    const auto notifIt = notifications_.find(type);
+    const auto schemaIt = schemas_.find(type);
+    if (notifIt == notifications_.end() || schemaIt == schemas_.end()) {
+        qCCritical(logCategoryCommandValidator).nospace() << "Unknown notification (" << static_cast<int>(type) << ").";
+        return false;
+    }
+
+    if (validate(JsonType::notification, doc) == false) {
+        return false;
+    }
+
+    const rapidjson::Value& notification = doc["notification"];
+    const rapidjson::Value& value = notification["value"];
+    const rapidjson::Value& payload = notification["payload"];
+    if (notifIt->second != value) {
+        return false;
+    }
+
+    return validateJsonWithSchema(schemaIt->second, payload);
 }
 
-bool CommandValidator::parseJson(const std::string &command, rapidjson::Document &doc) {
-    rapidjson::ParseResult result = doc.Parse(command.c_str());
+bool CommandValidator::isValidJson(const QByteArray &command) {
+    return (rapidjson::Document().Parse(command.data()).HasParseError() == false);
+}
+
+bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Document &doc) {
+    rapidjson::ParseResult result = doc.Parse(command.data());
     if (result.IsError()) {
-        // TODO: use logger from CS-440
-        std::cerr << "JSON parse error at offset " << result.Offset() << ": " << rapidjson::GetParseError_En(result.Code())
-                  << " Invalid JSON: '" << command << "'" << std::endl;
+        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
+            << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON: '" << command << "'";
+        return false;
+    }
+    if (doc.IsObject() == false) {
+        // JSON can contain only a value (e.g. "abc").
+        // We require object as a JSON content (Strata JSON commands starts with '{' and ends with '}')
+        qCCritical(logCategoryCommandValidator).nospace().noquote() << "Content of JSON is not an object: '" << command << "'.";
         return false;
     }
     return true;

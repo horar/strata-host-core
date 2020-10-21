@@ -57,10 +57,20 @@ Item {
 
                          font.bold: delegate.checked ? false : true
                          horizontalAlignment: Text.AlignHCenter
-                         text: model.dirname
+                         text: {
+                             /*
+                                 the first regexp is looking for HTML RichText
+                                 the second regexp is looking for spaces after string
+                                 the third regexp is looking for spaces before string
+                                 the fourth regexp is looking for tabs throughout the string
+                             */
+                             const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
+                             return model.dirname.replace(htmlTags,"");
+                         }
                          alternativeColorEnabled: delegate.checked === false
                          fontSizeMultiplier: 1.1
                          wrapMode: Text.Wrap
+                         textFormat: Text.PlainText
                      }
 
                      Rectangle {

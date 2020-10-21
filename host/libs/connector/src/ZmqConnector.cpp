@@ -4,6 +4,9 @@
 #include <sstream>
 #include <zhelpers.hpp>
 
+namespace strata::connector
+{
+
 ZmqConnector::ZmqConnector(int type)
     : Connector(), context_(new zmq::context_t()), socket_(new zmq::socket_t(*context_, type))
 {
@@ -133,3 +136,5 @@ bool ZmqConnector::send(const std::string& message)
 
     return true;
 }
+
+}  // namespace strata::connector

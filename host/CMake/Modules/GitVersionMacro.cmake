@@ -100,7 +100,7 @@ macro(generate_app_version)
         add_custom_command(TARGET ${PROJECT_NAME}_version POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${CMAKE_CURRENT_BINARY_DIR}/Info.plist
-                ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>/${PROJECT_DESCRIPTION}.app/Contents/MacOS/Info.plist
+                ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>/${PROJECT_DESCRIPTION}.app/Contents/Info.plist
                 COMMENT "Copying OS X Info.plist" VERBATIM
         )
     endif()

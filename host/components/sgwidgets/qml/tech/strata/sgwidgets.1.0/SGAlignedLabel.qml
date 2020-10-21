@@ -34,6 +34,9 @@ Item {
     property alias horizontalAlignment: label.horizontalAlignment
     property alias contentHeight: label.contentHeight
     property alias contentWidth: label.contentWidth
+    property alias clickable: labelMouseArea.enabled // Default: False (modify to enable/disable click on the text)
+
+    signal clicked()
 
     enum Alignment {
         CornerTopLeft,
@@ -100,6 +103,14 @@ Item {
             case SGAlignedLabel.SideTopRight:
                 return Text.AlignLeft
             }
+        }
+
+        MouseArea{
+            id: labelMouseArea
+            anchors.fill: parent
+            enabled: false
+            visible: enabled
+            onClicked: root.clicked()
         }
     }
 

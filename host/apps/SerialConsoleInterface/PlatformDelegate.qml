@@ -345,7 +345,7 @@ FocusScope {
                     SGWidgets.SGIconButton {
                         text: "Clear"
                         hintText: prettifyHintText("Clear scrollback", clearShortcut.nativeText)
-                        icon.source: "qrc:/images/broom.svg"
+                        icon.source: "qrc:/sgimages/broom.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: mainPage.clearScrollback()
                     }

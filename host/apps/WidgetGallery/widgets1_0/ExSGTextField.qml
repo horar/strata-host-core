@@ -84,6 +84,28 @@ Item {
                 }
             }
         }
+
+        Column {
+            SGWidgets.SGText {
+                text: "With busy indicator"
+                fontSizeMultiplier: 1.3
+            }
+
+            Row {
+                spacing: 10
+                SGWidgets.SGTextField {
+                    id: textFieldWithBusyInd
+                    leftIconSource: "qrc:/sgimages/zoom.svg"
+                }
+
+                SGWidgets.SGButton {
+                    text: "On/Off"
+                    onClicked: {
+                        textFieldWithBusyInd.busyIndicatorRunning = !textFieldWithBusyInd.busyIndicatorRunning
+                    }
+                }
+            }
+        }
     }
 
     SGWidgets.SGCheckBox {

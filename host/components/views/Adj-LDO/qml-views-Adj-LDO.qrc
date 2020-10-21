@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/Adj-LDO">
+    <qresource prefix="/">
         <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/AdvancedControl.qml</file>

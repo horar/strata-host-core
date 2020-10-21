@@ -37,7 +37,6 @@ std::vector<QByteArray> CommandResponseMock::replacePlaceholders(
 
     // find and resolve placeholders
     for (auto response : responses) {
-        std::smatch match;
         QString responseString(response);
 
         QRegularExpressionMatchIterator rxIterator =
@@ -85,9 +84,9 @@ std::vector<QByteArray> CommandResponseMock::getResponses(QByteArray request)
             } else {
                 retVal.push_back(test_commands::request_platform_id_response);
             }
-        } else if (0 == cmd.compare("update_firmware")) {
+        } else if (0 == cmd.compare("start_bootloader")) {
             isBootloader_ = true;
-            retVal.push_back(test_commands::update_firmware_response);
+            retVal.push_back(test_commands::start_bootloader_response);
         } else if (0 == cmd.compare("start_application")) {
             isBootloader_ = false;
             retVal.push_back(test_commands::start_application_response);

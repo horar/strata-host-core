@@ -16,7 +16,6 @@
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
-#include "LoggingAdapter.h"
 #include "BoardController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
@@ -26,7 +25,7 @@
 
 struct PlatformMessage;
 
-class HCS_Client;
+class Client;
 class StorageManager;
 
 namespace strata {
@@ -63,7 +62,7 @@ signals:
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
-    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5);
+    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
 
 public slots:
     void onAboutToQuit();
@@ -101,6 +100,7 @@ public slots:
     void sendPlatformDocumentsMessage(
             const QByteArray &clientId,
             const QString &classId,
+            const QJsonArray &datasheetList,
             const QJsonArray &documentList,
             const QJsonArray &firmwareList,
             const QJsonArray &controlViewList,
@@ -111,6 +111,14 @@ public slots:
             const QString &partialUri,
             const QString &filePath,
             const QString &errorString);
+
+    void sendControlViewDownloadProgressMessage(
+            const QByteArray &clientId,
+            const QString &partialUri,
+            const QString &filePath,
+            qint64 bytesReceived,
+            qint64 bytesTotal);
+
 
 private:
     void handleMessage(const PlatformMessage& msg);
@@ -126,7 +134,7 @@ private:
     //handlers for client (UI)
     void onCmdHCSStatus(const rapidjson::Value* );
     void onCmdUnregisterClient(const rapidjson::Value* );
-    void onCmdPlatformSelect(const rapidjson::Value* );
+    void onCmdLoadDocuments(const rapidjson::Value* );
 
     //handlers for hcs::cmd
     void onCmdHostUnregister(const rapidjson::Value* );
@@ -138,23 +146,21 @@ private:
     void platformConnected(const int deviceId, const QString &classId);
     void platformDisconnected(const int deviceId);
 
-    HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
+    Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
-    HCS_Client* getClientById(const QByteArray& client_id);
+    Client* getClientById(const QByteArray& client_id);
 
     bool parseConfig(const QString& config);
 
     BoardController boardsController_;
     ClientsController clients_;     //UI or other clients
     Database db_;
-    LoggingAdapter dbLogAdapter_;
-    LoggingAdapter clientsLogAdapter_;
     QNetworkAccessManager networkManager_;
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
 
-    HCS_Dispatcher dispatcher_;
+    std::shared_ptr<HCS_Dispatcher> dispatcher_;
     std::thread dispatcherThread_;
 
     typedef std::function<void(const rapidjson::Value* )> NotificationHandler;
@@ -162,8 +168,8 @@ private:
     std::map<std::string, NotificationHandler> clientCmdHandler_;
     std::map<std::string, NotificationHandler> hostCmdHandler_;
 
-    std::list<HCS_Client*> clientList_;
-    HCS_Client* current_client_;
+    std::list<Client*> clientList_;
+    Client* current_client_;
 
     rapidjson::Document config_;
 };

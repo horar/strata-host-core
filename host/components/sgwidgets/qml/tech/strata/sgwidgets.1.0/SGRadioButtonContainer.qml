@@ -50,6 +50,7 @@ GridLayout {
             buttonList[i].parent = root
             buttonList[i].buttonContainer = root
             buttonList[i].index = i
+            buttonList[i].autoExclusive = Qt.binding(()=>{return buttonGroup.exclusive})
             buttonGroup.addButton(buttonList[i].button)
             if (buttonList[i].checked) {
                currentIndex = i

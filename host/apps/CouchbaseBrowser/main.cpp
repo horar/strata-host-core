@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
     QGuiApplication app(argc, argv);
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
 
     loadResources();
 

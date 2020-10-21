@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/zigbee">
+    <qresource prefix="/">
         <file>Control.qml</file>
         <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicControl.qml</file>
@@ -23,6 +23,6 @@
         <file>images/room_lightsOn.jpg</file>
         <file>images/zigbee-logo.png</file>
         <file>images/ON-logo.svg</file>
-        <file>images/room_doorOpenLightsOff.png</file>
+        <file>images/room_doorOpenLightsOff.jpg</file>
     </qresource>
 </RCC>

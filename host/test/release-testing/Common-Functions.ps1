@@ -7,35 +7,35 @@ Version:        1.0
 Creation Date:  03/17/2020
 #>
 
-# Check if python and pyzmq are installed
-function Assert-PythonAndPyzmq {
-    # Determine the python command based on OS. OSX will execute Python 2 by default and here we need to use Python 3.
+# Check if python and pip are installed and install dependencies specified in requirements.txt
+function Assert-PythonAndRequirements {
+    # Determine the python and pip command based on OS. OSX will execute Python 2 by default and here we need to use Python 3.
     # on Win, Python 3 is not in the path by default, as a result we'll need to use 'python3' for OSX and 'python' for Win
     If ($Env:OS -Eq "Windows_NT") {
         $Global:PythonExec = 'python'
+        $Global:PipExec = 'pip'
     } Else {
         $Global:PythonExec = 'python3'
+        $Global:PipExec = 'pip3'
     }
-
-    # Attempt to run Python and import PyZMQ, display error if operation fails
-    Try {
-        If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
-            If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Write-Host -ForegroundColor Red "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
-                Exit-TestScript -1
-            }
-        } Else {
-            Exit-TestScript -1 "Error: Python not found.`nAborting."
-        }
-    } Catch [System.Management.Automation.CommandNotFoundException] {
-        Exit-TestScript -1 "Error: Python not found.`nAborting."
-    }
-
+    
     # Verify Python being run is Python 3
     $PythonVersion = Invoke-Expression "${PythonExec} -c 'import sys; print(sys.version_info[0])'"
     If ($PythonVersion -Ne 3) {
         Exit-TestScript -1 "Error: Python 3 is required, visit https://www.python.org/downloads/ to download.`nAborting."
     }
+
+    # Attempt to run pip and install dependencies
+    Try {
+        If ((Start-Process $PipExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
+            Start-Process $PipExec -NoNewWindow -Wait -ArgumentList "install -r $PSScriptRoot\requirements.txt"
+        } Else {
+            Exit-TestScript -1 "Error: Pip not found.`nAborting."
+        }
+        
+    } Catch [System.Management.Automation.CommandNotFoundException] {
+        Exit-TestScript -1 "Error: Pip not found.`nAborting."
+    }   
 }
 
 # Check if both SDS and HCS are found where expected
@@ -66,6 +66,7 @@ function Assert-PythonScripts {
     If (!(Test-Path $PythonPlatformIdentificationTest)) {
         Exit-TestScript -1 "Error: cannot find Python script at $PythonPlatformIdentificationTest.`nAborting."
     }
+
 }
 
 # Check if PS module 'PSSQLite' is installed
@@ -170,13 +171,23 @@ function Start-HCSAndWait {
     Set-Location $TestRoot
 }
 
+function Backup-Strata_INI {
+     # If it exists, delete "Strata Developer Studio_BACKUP.ini"
+     If (Test-Path "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
+        Remove-Item -Path "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini" -Force
+    }
+
+    # If it exists, rename current "Strata Developer Studio.ini"
+    If (Test-Path "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" -PathType Leaf) {
+        Rename-Item "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini"
+    }
+}
 function Restore-Strata_INI {
     # Delete temporary .ini file and restore original
-    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $HCSAppDataDir)
-    If (Test-Path -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini") {
-        Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
-        If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini") {
-            Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
+    If (Test-Path -Path "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini") {
+        Remove-Item -Path "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini"
+        If (Test-Path "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini") {
+            Rename-Item "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini" "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini"
         }
     }
 }
@@ -212,6 +223,8 @@ function Show-TestSummary {
     Show-TestResult -TestName "Test-TokenAndViewsDownload" -TestResults $TokenAndViewsDownloadResults
 
     Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
+
+    Show-TestResult -TestName "Test-GUI" -TestResults $GUIResults
 
     If ($EnablePlatformIdentificationTest -eq $true) { 
         Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults

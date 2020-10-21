@@ -1,26 +1,21 @@
 #include "ClientsController.h"
 
 #include "Dispatcher.h"
+#include "logging/LoggingQtCategories.h"
 
 #include <Connector.h>
 #include <rapidjson/document.h>
 
 ClientsController::ClientsController()
 {
-
 }
 
 ClientsController::~ClientsController()
 {
-    events_manager_.stop();
+    stop();
 }
 
-void ClientsController::setLogAdapter(LoggingAdapter* adapter)
-{
-    logAdapter_ = adapter;
-}
-
-bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value& config)
+bool ClientsController::initialize(std::shared_ptr<HCS_Dispatcher> dispatcher, rapidjson::Value& config)
 {
     using namespace strata::events_mgr;
 
@@ -28,7 +23,8 @@ bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value&
         return false;
     }
 
-    client_connector_.reset(ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::ROUTER));
+    using Connector = strata::connector::Connector;
+    client_connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
 
     // opening the client socket to connect with UI
     if (client_connector_->open(config["subscriber_address"].GetString()) == false) {
@@ -57,6 +53,14 @@ bool ClientsController::sendMessage(const QByteArray& clientId, const QString& m
 
     client_connector_->setDealerID(clientId.toStdString());
     return client_connector_->send(message.toStdString());
+}
+
+void ClientsController::stop()
+{
+    if(events_manager_.isRunning()) {
+        events_manager_.stop();
+        qCInfo(logCategoryHcs) << "Clients controller stoped.";
+    }
 }
 
 void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int)

@@ -89,7 +89,11 @@ FocusScope {
 
     Column {
         id: contentColumn
-        anchors.centerIn: parent
+        anchors {
+            top: parent.top
+            topMargin: Math.floor(parent.height * 0.3)
+            horizontalCenter: parent.horizontalCenter
+        }
 
         spacing: 10
 
@@ -110,6 +114,16 @@ FocusScope {
             passwordMode: true
             hasHelperText: false
             enabled: usernameEdit.enabled
+        }
+
+        SGWidgets.SGCheckBox {
+            id: autoLoginCheckbox
+            text: "Auto login"
+            leftPadding: 0
+
+            Component.onCompleted: {
+                checked = prtModel.authenticator.xAccessToken.byteLength > 0
+            }
         }
 
         Item {
@@ -200,6 +214,6 @@ FocusScope {
             return
         }
 
-        prtModel.authenticator.login(usernameEdit.text, passwordEdit.text);
+        prtModel.authenticator.login(usernameEdit.text, passwordEdit.text, autoLoginCheckbox.checked);
     }
 }

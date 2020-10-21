@@ -61,7 +61,7 @@ Item {
                         "get_platform_id",
                         "set_platform_id",
                         "request_platform_id",
-                        "update_firmware",
+                        "start_bootloader",
                         "flash_firmware",
                         "backup_firmware",
                         "start_application"]

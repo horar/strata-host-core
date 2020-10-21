@@ -37,17 +37,23 @@ void Authenticator::renewSession()
         }
 
         emit renewSessionFinished(isOk);
-        writeSettings();
+        writeSettings(true);
     });
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
         qCInfo(logCategoryPrtAuth) << "session renew failed" << username_ << status << errorString;
 
+        setSessionId(QByteArray());
+        setXAccessToken(QByteArray());
+
         emit renewSessionFinished(false);
     });
 }
 
-void Authenticator::login(const QString &username, const QString &password)
+void Authenticator::login(
+        const QString &username,
+        const QString &password,
+        bool storeXAccessToken)
 {
     QJsonDocument doc;
     QJsonObject data;
@@ -62,7 +68,7 @@ void Authenticator::login(const QString &username, const QString &password)
                 QVariantMap(),
                 doc.toJson(QJsonDocument::Compact));
 
-    connect(deferred, &Deferred::finishedSuccessfully, [this] (int status, QByteArray data) {
+    connect(deferred, &Deferred::finishedSuccessfully, [this, storeXAccessToken] (int status, QByteArray data) {
         Q_UNUSED(status)
 
         bool isOk = parseLoginReply(data);
@@ -74,11 +80,14 @@ void Authenticator::login(const QString &username, const QString &password)
             emit loginFinished(isOk, "Cannot parse reply.");
         }
 
-        writeSettings();
+        writeSettings(storeXAccessToken);
     });
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
         qCInfo(logCategoryPrtAuth) << "login failed" << status << errorString;
+
+        setSessionId(QByteArray());
+        setXAccessToken(QByteArray());
 
         QString newErrorString = errorString;
         if (status >= 400 && status < 500) {
@@ -104,6 +113,7 @@ void Authenticator::logout()
 
         setSessionId(QByteArray());
         setXAccessToken(QByteArray());
+        writeSettings();
     });
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
@@ -112,6 +122,7 @@ void Authenticator::logout()
 
         setSessionId(QByteArray());
         setXAccessToken(QByteArray());
+        writeSettings();
     });
 }
 
@@ -140,12 +151,18 @@ QString Authenticator::lastname() const
     return lastname_;
 }
 
-void Authenticator::writeSettings()
+void Authenticator::writeSettings(bool storeXAccessToken)
 {
     QSettings settings;
 
     settings.beginGroup("authentication");
-    settings.setValue("x-access-token", xAccessToken_);
+
+    if (storeXAccessToken) {
+        settings.setValue("x-access-token", xAccessToken_);
+    } else {
+        settings.setValue("x-access-token", "");
+    }
+
     settings.setValue("username", username_);
     settings.setValue("firstname", firstname_);
     settings.setValue("lastname", lastname_);

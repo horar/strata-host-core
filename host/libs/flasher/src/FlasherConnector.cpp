@@ -7,8 +7,19 @@
 namespace strata {
 
 FlasherConnector::FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent) :
-    QObject(parent), device_(device), filePath_(firmwarePath),
-    tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))), action_(Action::None) { }
+    FlasherConnector(device, firmwarePath, QString(), parent) { }
+
+FlasherConnector::FlasherConnector(const device::DevicePtr& device,
+                                   const QString& firmwarePath,
+                                   const QString& firmwareMD5,
+                                   QObject* parent) :
+    QObject(parent),
+    device_(device),
+    filePath_(firmwarePath),
+    newFirmwareMD5_(firmwareMD5),
+    tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))),
+    action_(Action::None)
+{ }
 
 FlasherConnector::~FlasherConnector() { }
 
@@ -73,15 +84,15 @@ void FlasherConnector::setFirmwarePath(const QString& firmwarePath) {
 void FlasherConnector::flashFirmware(bool flashOld) {
     const QString& firmwarePath = (flashOld) ? tmpBackupFile_.fileName() : filePath_;
     qCDebug(logCategoryFlasherConnector).noquote().nospace() << "Starting to flash firmware from file '" << firmwarePath <<"'.";
-    flasher_ = std::make_unique<Flasher>(device_, firmwarePath);
+    (flashOld)
+        ? flasher_ = std::make_unique<Flasher>(device_, firmwarePath)
+        : flasher_ = std::make_unique<Flasher>(device_, firmwarePath, newFirmwareMD5_);
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
-    if (flashOld) {
-        connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::restoreProgress);
-    } else {
-        connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::flashProgress);
-    }
+    (flashOld)
+        ? connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress)
+        : connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::flashProgress);
     connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
@@ -89,7 +100,7 @@ void FlasherConnector::flashFirmware(bool flashOld) {
         startOperation();
     }
 
-    flasher_->flash();
+    flasher_->flashFirmware();
 }
 
 void FlasherConnector::backupFirmware(bool backupOld) {
@@ -100,7 +111,7 @@ void FlasherConnector::backupFirmware(bool backupOld) {
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
-    connect(flasher_.get(), &Flasher::backupProgress, this, &FlasherConnector::backupProgress);
+    connect(flasher_.get(), &Flasher::backupFirmwareProgress, this, &FlasherConnector::backupProgress);
     connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
@@ -108,7 +119,7 @@ void FlasherConnector::backupFirmware(bool backupOld) {
         startOperation();
     }
 
-    flasher_->backup(startApp);
+    flasher_->backupFirmware(startApp);
 }
 
 void FlasherConnector::startOperation() {

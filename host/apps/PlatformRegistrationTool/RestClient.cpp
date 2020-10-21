@@ -87,7 +87,6 @@ void RestClient::replyFinished()
     if (reply->error() == QNetworkReply::NoError) {
         deferred->callSuccess(statusCode, data);
     } else {
-        qCCritical(logCategoryPrtRestClient) << "error:" << reply->error() << reply->errorString();
         deferred->callError(statusCode, reply->errorString());
     }
 

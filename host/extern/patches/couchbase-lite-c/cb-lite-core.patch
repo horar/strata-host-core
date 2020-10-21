@@ -25,34 +25,48 @@ index c1015735..cfcf61e2 100644
      // Timeout for disconnecting if no PONG response received
      static constexpr auto kPongTimeout  = chrono::seconds(10);
 diff --git a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
-index 87899c4f..8f54e3c4 100644
+index b9ff9bcc..c4550386 100644
 --- a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
 +++ b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
-@@ -244,10 +244,10 @@ namespace litecore::net {
+@@ -243,13 +243,7 @@ namespace litecore::net {
+ #ifdef __APPLE__
+         // Apple platforms always have an mDNS/Bonjour hostname.
          string hostName;
-     #if TARGET_OS_OSX
-         // On macOS, we can get it from SystemConfiguration (not available on iOS)
+-    #if TARGET_OS_OSX
+-        // On macOS, we can get it from SystemConfiguration (not available on iOS)
 -        if (CFStringRef cfName = SCDynamicStoreCopyLocalHostName(NULL); cfName) {
 -            nsstring_slice strsl(cfName);
 -            hostName = string(strsl);
 -        }
-+        // if (CFStringRef cfName = SCDynamicStoreCopyLocalHostName(NULL); cfName) {
-+        //     nsstring_slice strsl(cfName);
-+        //     hostName = string(strsl);
-+        // }
-     #else
+-    #else
++    #if !TARGET_OS_OSX
          // From <http://stackoverflow.com/a/16902907/98077>.
          // On iOS, gethostname() returns the mDNS/Bonjour hostname (without the ".local")
+         char baseHostName[256];
+diff --git a/vendor/couchbase-lite-core/Crypto/PublicKey.hh b/vendor/couchbase-lite-core/Crypto/PublicKey.hh
+index de513642..8909d8fc 100644
+--- a/vendor/couchbase-lite-core/Crypto/PublicKey.hh
++++ b/vendor/couchbase-lite-core/Crypto/PublicKey.hh
+@@ -147,9 +147,6 @@ namespace litecore { namespace crypto {
+     };
+ 
+ 
+-#ifdef __APPLE__                // TODO: Implement subclasses for other platforms
+-    #define PERSISTENT_PRIVATE_KEY_AVAILABLE
+-#endif
+ 
+ #ifdef PERSISTENT_PRIVATE_KEY_AVAILABLE
+ 
 diff --git a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh b/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
-index 31c1f5ab..5fb88da2 100644
+index a4e51654..407aeffb 100644
 --- a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
 +++ b/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
-@@ -26,7 +26,7 @@ namespace c4Internal {
-     public:
+@@ -27,7 +27,7 @@ namespace c4Internal {
  
-         // Maximum number of retries before a one-shot replication gives up
+         // Default maximum number of retry attempts before replications give up.
+         // These can be overridden by setting the option `kC4ReplicatorOptionMaxRetries`.
 -        static constexpr unsigned kMaxOneShotRetryCount = 2;
 +        static constexpr unsigned kMaxOneShotRetryCount = 0;
+         static constexpr unsigned kMaxContinuousRetryCount = UINT_MAX;
  
-         // Longest possible retry delay, in seconds (only a continuous replication will reach this.)
-         // But a call to c4repl_retry() will also trigger a retry.
+         // Longest possible retry delay, in seconds. The delay doubles on each failed retry

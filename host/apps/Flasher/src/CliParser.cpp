@@ -7,9 +7,11 @@ namespace strata {
 CliParser::CliParser(const QStringList &args) :
     args_(args),
     listOption_({QStringLiteral("l"), QStringLiteral("list")}, QStringLiteral("List of connected boards (serial devices).")),
-    flashOption_({QStringLiteral("f"), QStringLiteral("flash")},
+    flashFirmwareOption_({QStringLiteral("f"), QStringLiteral("flash")},
                  QStringLiteral("Flash firmware from <file> to board specified by 'device' option."), QStringLiteral("file")),
-    backupOption_({QStringLiteral("b"), QStringLiteral("backup")},
+    flashBootloaderOption_({QStringLiteral("flashbootloader")},
+                 QStringLiteral("Flash bootloader from <file> to board specified by 'device' option."), QStringLiteral("file")),
+    backupFirmwareOption_({QStringLiteral("b"), QStringLiteral("backup")},
                  QStringLiteral("Backup firmware from board specified by 'device' option to <file>."), QStringLiteral("file")),
     deviceOption_({QStringLiteral("d"), QStringLiteral("device")}, QStringLiteral("Board number from 'list' option."), QStringLiteral("number"))
 {
@@ -17,8 +19,9 @@ CliParser::CliParser(const QStringList &args) :
     parser_.addHelpOption();
     parser_.addVersionOption();
     parser_.addOption(listOption_);
-    parser_.addOption(flashOption_);
-    parser_.addOption(backupOption_);
+    parser_.addOption(flashFirmwareOption_);
+    parser_.addOption(flashBootloaderOption_);
+    parser_.addOption(backupFirmwareOption_);
     parser_.addOption(deviceOption_);
 }
 
@@ -54,18 +57,25 @@ CommandShPtr CliParser::parse() {
         }
     }
 
-    if (parser_.isSet(flashOption_)) {
+    if (parser_.isSet(flashFirmwareOption_)) {
         if (hasDeviceOption == false) {
             return std::make_unique<WrongCommand>(QStringLiteral("Flash firmware: No device specified by 'device' option."));
         }
-        return std::make_unique<FirmwareCommand>(parser_.value(flashOption_), deviceNumber, true);
+        return std::make_unique<FlasherCommand>(parser_.value(flashFirmwareOption_), deviceNumber, FlasherCommand::CmdType::FlashFirmware);
     }
 
-    if (parser_.isSet(backupOption_)) {
+    if (parser_.isSet(flashBootloaderOption_)) {
+        if (hasDeviceOption == false) {
+            return std::make_unique<WrongCommand>(QStringLiteral("Flash bootloader: No device specified by 'device' option."));
+        }
+        return std::make_unique<FlasherCommand>(parser_.value(flashBootloaderOption_), deviceNumber, FlasherCommand::CmdType::FlashBootloader);
+    }
+
+    if (parser_.isSet(backupFirmwareOption_)) {
         if (hasDeviceOption == false) {
             return std::make_unique<WrongCommand>(QStringLiteral("Backup firmware: No device specified by 'device' option."));
         }
-        return std::make_unique<FirmwareCommand>(parser_.value(backupOption_), deviceNumber, false);
+        return std::make_unique<FlasherCommand>(parser_.value(backupFirmwareOption_), deviceNumber, FlasherCommand::CmdType::BackupFirmware);
     }
 
     if (hasDeviceOption) {

@@ -8,9 +8,8 @@ import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
 import Qt.labs.settings 1.1 as QtLabsSettings
 
-Item {
+FocusScope {
     id: logViewerMain
-    focus: true
 
     property bool fileLoaded: false
     property bool messageWrapEnabled: true
@@ -161,6 +160,10 @@ Item {
         return text
     }
 
+    function clearScrollback() {
+        logModel.clear();
+    }
+
     CommonCPP.SGSortFilterProxyModel {
         id: logModelProxy
         sourceModel: logModel
@@ -298,6 +301,17 @@ Item {
                     value: automaticScroll
                 }
             }
+
+            SGWidgets.SGIconButton {
+                id: clearScrollbackButton
+                hintText: qsTr("Clear scrollback")
+                icon.source: "qrc:/sgimages/broom.svg"
+                iconSize: defaultIconSize
+                backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
+                onClicked: clearScrollback()
+            }
         }
     }
 
@@ -322,7 +336,7 @@ Item {
                 if (searchInput.text === ""){
                     searchingMode = false
                     primaryLogView.height = contentView.height
-                    secondaryLogView.currentIndex = -1
+                    secondaryLogView.currentIndex = 0
                 }
             }
         }
@@ -704,6 +718,7 @@ Item {
                     Layout.fillHeight: true
                     model: logModel
                     visible: fileLoaded
+                    focus: true
 
                     timestampColumnVisible: checkBoxTs.checked
                     pidColumnVisible: checkBoxPid.checked
@@ -718,13 +733,16 @@ Item {
                     startAnimation: secondaryLogView.activeFocus
                     timestampSimpleFormat: logViewerMain.timestampSimpleFormat
                     automaticScroll: logViewerMain.automaticScroll
+
+                    KeyNavigation.tab: searchInput
+                    KeyNavigation.backtab: secondaryLogView
+                    KeyNavigation.priority: KeyNavigation.BeforeItem
                 }
 
                 Rectangle {
                     height: parent.height - primaryLogView.height
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.leftMargin: sidePanelShown ? 4 : 0
                     Layout.minimumHeight: parent.height/4
                     border.color: SGWidgets.SGColorsJS.TANGO_BUTTER1
                     border.width: 2
@@ -733,7 +751,6 @@ Item {
                     LogListView {
                         id: secondaryLogView
                         anchors.fill: parent
-                        anchors.leftMargin: sidePanelShown ? -2 : 2
                         anchors.margins: 2
                         model: logModelProxy
 
@@ -755,6 +772,16 @@ Item {
                             primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
                             primaryLogView.currentIndex = sourceIndex
                         }
+
+                        onActiveFocusChanged: {
+                            if (secondaryLogView.activeFocus) {
+                                currentItemChanged(secondaryLogView.currentIndex)
+                            }
+                        }
+
+                        KeyNavigation.tab: primaryLogView
+                        KeyNavigation.backtab: searchInput
+                        KeyNavigation.priority: KeyNavigation.BeforeItem
                     }
                 }
             }
@@ -924,24 +951,6 @@ Item {
         }
         if (event.key === Qt.Key_Escape) {
             listViewSide.maybeRemoveIndex = -1
-        }
-    }
-
-    Keys.onTabPressed: {
-        if (searchInput.activeFocus === true) {
-            if (secondaryLogView.currentIndex === -1) {
-                secondaryLogView.currentIndex = 0
-            }
-        }
-
-        if (primaryLogView.activeFocus === true) {
-            if (secondaryLogView.currentIndex === -1) {
-                secondaryLogView.currentIndex = 0
-            }
-        }
-
-        if (searchResultCount !== 0 && searchingMode) {
-            secondaryLogView.forceActiveFocus()
         }
     }
 }

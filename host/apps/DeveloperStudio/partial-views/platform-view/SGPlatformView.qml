@@ -5,8 +5,6 @@ import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/platform_selection.js" as PlatformSelection
-import "qrc:/js/help_layout_manager.js" as Help
 
 StackLayout {
     id: platformStack
@@ -15,85 +13,58 @@ StackLayout {
         switch (model.view) {
         case "collateral":
             return 1
+        case "settings":
+            return 2
         default: // case "control":
             return 0
         }
     }
 
-    property alias controlContainer: controlContainer
-    property alias collateralContainer: collateralContainer
-
+    property var device_id: model.device_id // var type so Constants.DEVICE_IDs are not coerced to 32 bit signed ints
+    property string class_id: model.class_id
+    property string firmware_version: model.firmware_version
     property bool connected: model.connected
-    property bool controlLoaded: false
+    property string name: model.name
+    property alias controlViewContainer: controlViewContainer
+
+    property bool platformDocumentsInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).initialized;
+    property bool platformStackInitialized: false
+    property bool userSettingsInitialized: false
+    property bool fullyInitialized: platformStackInitialized &&
+                                    userSettingsInitialized &&
+                                    platformDocumentsInitialized
+
+    onFullyInitializedChanged: {
+        initialize()
+    }
 
     onConnectedChanged: {
-        if (connected && model.available.control) {
-            loadControl()
-        } else {
-            removeControl()
-        }
+        initialize()
     }
 
     Component.onCompleted: {
-        if (model.connected && model.available.control) {
-            loadControl()  // load control
-        }
+        platformStackInitialized = true
     }
 
     Component.onDestruction: {
-        removeControl()
+        controlViewContainer.removeControl()
     }
 
-    function setArray(index, value) {
-        if (myArray[index]!== value) {
-            myArray[index] = value
-            myArrayChanged() //emit signal
-        }
-    }
-
-    function loadControl () {
-        if (controlLoaded === false){
-            Help.setClassId(model.device_id)
-            sgUserSettings.classId = model.class_id
-            let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")
-            NavigationControl.context.class_id = model.class_id
-            NavigationControl.context.device_id = model.device_id
-            NavigationControl.context.sgUserSettings = sgUserSettings
-
-            let control = NavigationControl.createView(qml_control, controlContainer)
-            delete NavigationControl.context.class_id
-            delete NavigationControl.context.device_id
-            delete NavigationControl.context.sgUserSettings
-            if (control === null) {
-                NavigationControl.createView(NavigationControl.screens.LOAD_ERROR, controlContainer)
-            }
-
-            controlLoaded = true
-        }
-    }
-
-    function removeControl () {
-        if (controlLoaded) {
-            NavigationControl.removeView(controlContainer)
-            controlLoaded = false
-        }
-    }
-
-    Item {
-        id: controlStackContainer
-        Layout.fillHeight: true
-        Layout.fillWidth: true
-
-        Item {
-            id: controlContainer
-            anchors {
-                fill: parent
+    function initialize () {
+        // guarantee control view loads after platformStack & sgUserSettings etc
+        if (fullyInitialized) {
+            if (connected && model.available.control) {
+                controlViewContainer.initialize()
+            } else {
+                controlViewContainer.removeControl()
             }
         }
+    }
 
-        DisconnectedOverlay {
-            visible: model.connected === false
-        }
+    ControlViewContainer {
+         id: controlViewContainer
+         Layout.fillHeight: true
+         Layout.fillWidth: true
     }
 
     Item {
@@ -106,8 +77,26 @@ StackLayout {
         }
     }
 
+    Item {
+        id: settingsContainer
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+
+        property int stackIndex: 2 // must be updated if platformStack order is modified
+
+        // Commented out to remove OTA features from release v2.5.0
+//        PlatformSettings {
+//            id: platformSettings
+//        }
+    }
+
     SGUserSettings {
         id: sgUserSettings
-        classId: model.class_id
+        classId: platformStack.class_id
+        user: NavigationControl.context.user_id
+
+        Component.onCompleted: {
+            platformStack.userSettingsInitialized = true
+        }
     }
 }

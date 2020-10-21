@@ -1,6 +1,8 @@
-
 #include "ZmqDealerConnector.h"
 #include <zmq.hpp>
+
+namespace strata::connector
+{
 
 ZmqDealerConnector::ZmqDealerConnector() : ZmqConnector(ZMQ_DEALER)
 {
@@ -32,3 +34,5 @@ bool ZmqDealerConnector::open(const std::string& ip_address)
 
     return false;
 }
+
+}  // namespace strata::connector

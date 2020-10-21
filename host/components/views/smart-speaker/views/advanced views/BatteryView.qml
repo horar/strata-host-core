@@ -12,16 +12,16 @@ Rectangle {
     property color accentColor:"#86724C"
     property int telemetryTextWidth:175
 
-    property int theStateOfHealth: platformInterface.battery_status.state_of_health
-    property int theRunTime: platformInterface.battery_status.total_run_time
-    property int theAmbientTemperature: platformInterface.battery_status.ambient_temp
-    property int theBatteryTemperature: platformInterface.battery_status.battery_temp
+    property int theStateOfHealth: platformInterface.battery_status_inf.state_of_health
+    property int theRunTime: platformInterface.battery_status_inf.total_run_time
+    property int theAmbientTemperature: platformInterface.battery_status_inf.ambient_temp
+    property int theBatteryTemperature: platformInterface.battery_status_inf.battery_temp
     property string theChargeMode: platformInterface.charger_status.charge_mode
     property string thePowerMode: platformInterface.charger_status.audio_power_mode
-    property int theTimeToEmpty:platformInterface.battery_status.time_to_empty
-    property int theTimeToFull:platformInterface.battery_status.time_to_full
-    property int theBatteryPercentage:platformInterface.battery_status.rsoc
-    property bool batteryIsMissing: platformInterface.battery_status.no_battery_indicator
+    property int theTimeToEmpty:platformInterface.battery_status_inf.time_to_empty
+    property int theTimeToFull:platformInterface.battery_status_inf.time_to_full
+    property int theBatteryPercentage:platformInterface.battery_status_inf.rsoc
+    property bool batteryIsMissing: platformInterface.battery_status_fre.no_battery_indicator
 
 
     Text{

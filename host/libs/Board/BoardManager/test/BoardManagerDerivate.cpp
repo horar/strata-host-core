@@ -1,11 +1,9 @@
 #include "BoardManagerDerivate.h"
-#include "Device/DeviceOperations.h"
 #include "DeviceMock.h"
 #include "QtTest.h"
 
 using strata::BoardManager;
 using strata::device::Device;
-using strata::device::DeviceOperations;
 using strata::device::DevicePtr;
 
 BoardManagerDerivate::BoardManagerDerivate() : BoardManager()
@@ -46,15 +44,15 @@ void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString de
                         removed);  // uses serialPortsList_ (needs old value from previous run)
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
-        for (auto deviceId : removed) {
-            if (closeDevice(deviceId)) {  // modifies openedDevices_
-                deleted.emplace_back(deviceId);
+        for (auto removedDeviceId : removed) {
+            if (closeDevice(removedDeviceId)) {  // modifies openedDevices_
+                deleted.emplace_back(removedDeviceId);
             }
         }
 
-        for (auto deviceId : added) {
-            if (addDevice(deviceId, false)) {  // modifies openedDevices_, uses serialIdToName_
-                opened.emplace_back(deviceId);
+        for (auto addedDeviceId : added) {
+            if (addDevice(addedDeviceId, false)) {  // modifies openedDevices_, uses serialIdToName_
+                opened.emplace_back(addedDeviceId);
             }
         }
 
@@ -62,11 +60,11 @@ void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString de
     }
 
     if (deleted.empty() == false || opened.empty() == false) {
-        for (auto deviceId : deleted) {
-            emit boardDisconnected(deviceId);
+        for (auto deletedDeviceId : deleted) {
+            emit boardDisconnected(deletedDeviceId);
         }
-        for (auto deviceId : opened) {
-            emit boardConnected(deviceId);
+        for (auto openedDeviceId : opened) {
+            emit boardConnected(openedDeviceId);
         }
         emit readyDeviceIdsChanged();
     }
@@ -83,10 +81,10 @@ void BoardManagerDerivate::checkNewSerialDevices()
     // empty, disable the BoardManager functionality working with serial ports
 }
 
-void BoardManagerDerivate::handleOperationFinished(strata::device::DeviceOperation operation,
+void BoardManagerDerivate::handleOperationFinished(strata::device::operation::Type opType,
                                                    int data)
 {
-    BoardManager::handleOperationFinished(operation, data);
+    BoardManager::handleOperationFinished(opType, data);
 }
 
 void BoardManagerDerivate::handleOperationError(QString message)

@@ -2,8 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.0
 
-import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
-
 // This is an example debug menu that shows how you can test your UI by injecting
 // spoofed notifications to simulate a connected platform board.
 //
@@ -18,6 +16,7 @@ Rectangle {
         color: "#fff"
     }
 
+    // Re-usable notification template
     property var notification: {
         "value": "",
         "payload": {},
@@ -26,7 +25,7 @@ Rectangle {
             this.reset()
         },
         "send": function () {
-            CorePlatformInterface.data_source_handler(JSON.stringify(this))
+            platformInterface.injectDebugNotification(this)
         },
         "reset": function () {
             this.value = ""
@@ -43,6 +42,7 @@ Rectangle {
 
         Column {
             width: parent.width
+            spacing: 1
 
             Rectangle {
                 id: header
@@ -66,6 +66,7 @@ Rectangle {
                     onClicked: root.visible = false
                     anchors {
                         right: header.right
+                        verticalCenter: header.verticalCenter
                     }
                 }
             }

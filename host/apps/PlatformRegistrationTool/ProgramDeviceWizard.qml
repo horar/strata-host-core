@@ -1,39 +1,60 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.1 as QtLabsSettings
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
 import tech.strata.flasherConnector 1.0
+import QtQml.StateMachine 1.12 as DSM
 
 FocusScope {
     id: wizard
 
-    property string firmwareBinaryPath
-    property string bootloaderBinaryPath
+    property QtObject prtModel
+    property int platformIndex: -1
     property string jlinkExePath
-
+    property string subtextNote
     property int spacing: 10
-    property bool closeButtonVisible: false
-    property bool requestCancelOnClose: false
-    property int processingStatus: ProgramDeviceWizard.SetupProgramming
+    property variant warningDialog: null
 
-    enum ProcessingStatus {
-        SetupProgramming,
-        WaitingForDevice,
-        WaitingForJLink,
-        ProgrammingWithJlink,
-        ProgrammingWithFlasher,
-        ProgrammingSucceed,
-        ProgrammingFailed
-    }
+    property string currentOpn
+    property string currentVerboseName
+    property string currentClassId
+    property string currentFirmwareUrl
+    property string currentFirmwareMd5
+
+    property string platsEndpointReplySchema: '{
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "opn": {"type": "string"},
+            "class_id": {"type": "string"},
+            "verbose_name": {"type": "string"},
+
+            "firmware": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "file": {"type": "string"},
+                        "filename": {"type": "string"},
+                        "filesize": {"type": "integer"},
+                        "md5": {"type": "string"},
+                        "timestamp": {"type": "string"},
+                        "version": {"type": "string"}
+                    },
+                    "required": ["file","md5", "timestamp","version"]
+                }
+            }
+        },
+        "required": ["opn","class_id", "verbose_name","firmware"]
+    }'
 
     clip: true
 
     Component.onCompleted: {
-        stackView.push(initPageComponent)
-
         if (jlinkExePath.length === 0) {
             jlinkExePath = searchJLinkExePath()
         }
@@ -43,8 +64,6 @@ FocusScope {
         id: settings
         category: "app"
 
-        property alias bootloaderBinaryPath: wizard.bootloaderBinaryPath
-        property alias firmwareBinaryPath: wizard.firmwareBinaryPath
         property alias jlinkExePath: wizard.jlinkExePath
     }
 
@@ -53,10 +72,435 @@ FocusScope {
         color: "#eeeeee"
     }
 
-    property color baseColor: "#303030"
-    property int arrowTailLength: 2*state4Label.width
+    DSM.StateMachine {
+        id: stateMechine
 
-    Item {
+        signal settingsValid()
+        signal deviceCountValid()
+        signal deviceCountInvalid()
+        signal deviceFirmwareValid()
+        signal deviceFirmwareInvalid()
+        signal jlinkProcessFailed()
+
+        running: true
+        initialState: stateSettings
+
+        DSM.State {
+            id: stateSettings
+
+            onEntered: {
+                prtModel.clearBinaries();
+            }
+
+            DSM.SignalTransition {
+                targetState: stateDownload
+                signal: stateMechine.settingsValid
+            }
+        }
+
+        DSM.State {
+            id: stateDownload
+
+            property string bootloaderUrl
+            property string bootloaderMd5
+
+            initialState: stateGetBootloaderUrl
+
+            onEntered: {
+                stateDownload.bootloaderUrl = ""
+                stateDownload.bootloaderMd5 = ""
+            }
+
+            DSM.SignalTransition {
+                targetState: stateSettings
+                signal: breakBtn.clicked
+            }
+
+            DSM.State {
+                id: stateGetBootloaderUrl
+
+                onEntered: {
+                    prtModel.requestBootloaderUrl()
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateGetBinaries
+                    signal: prtModel.bootloaderUrlRequestFinished
+                    guard: errorString.length === 0
+                    onTriggered: {
+                        stateDownload.bootloaderUrl = url
+                        stateDownload.bootloaderMd5 = md5
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateError
+                    signal: prtModel.bootloaderUrlRequestFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
+            }
+
+            DSM.State {
+                id: stateGetBinaries
+
+                onEntered: {
+                    prtModel.downloadBinaries(
+                                stateDownload.bootloaderUrl,
+                                stateDownload.bootloaderMd5,
+                                wizard.currentFirmwareUrl,
+                                wizard.currentFirmwareMd5)
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateCheckDevice
+                    signal: prtModel.downloadFirmwareFinished
+                    guard: errorString.length === 0
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateError
+                    signal: prtModel.downloadFirmwareFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
+            }
+        }
+
+        DSM.State {
+            id: stateCheckDevice
+
+            initialState: stateCheckDeviceCount
+
+            DSM.SignalTransition {
+                targetState: stateSettings
+                signal: breakBtn.clicked
+            }
+
+            DSM.SignalTransition {
+                targetState: stateWaitForDevice
+                signal: prtModel.deviceCountChanged
+                guard: prtModel.deviceCount !== 1
+            }
+
+            DSM.State {
+                id: stateCheckDeviceCount
+                onEntered: {
+                    if (prtModel.deviceCount === 1) {
+                        stateMechine.deviceCountValid()
+                    } else {
+                        stateMechine.deviceCountInvalid()
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateCheckFirmware
+                    signal: stateMechine.deviceCountValid
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateWaitForDevice
+                    signal: stateMechine.deviceCountInvalid
+                }
+            }
+
+            DSM.State {
+                id: stateWaitForDevice
+
+                onEntered: {
+                    wizard.subtextNote = ""
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateCheckFirmware
+                    signal: prtModel.deviceCountChanged
+                    guard: prtModel.deviceCount === 1
+                }
+            }
+
+            DSM.State {
+                id: stateCheckFirmware
+
+                onEntered: {
+                    if (prtModel.deviceFirmwareVersion().length > 0) {
+                        //device already has firmware
+                        showFirmwareWarning(
+                                    prtModel.deviceFirmwareVersion(),
+                                    prtModel.deviceFirmwareVerboseName(),
+                                    function() {
+                                        stateMechine.deviceFirmwareValid()
+                                    },
+                                    function() {
+                                        stateMechine.deviceFirmwareInvalid()
+                                    })
+                    } else {
+                        stateMechine.deviceFirmwareValid()
+                    }
+                }
+
+                onExited: {
+                    if (warningDialog !== null) {
+                        warningDialog.reject()
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateWaitForJLink
+                    signal: stateMechine.deviceFirmwareValid
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateWaitForDevice
+                    signal: stateMechine.deviceFirmwareInvalid
+                }
+            }
+
+            DSM.State {
+                id: stateWaitForJLink
+
+                initialState: stateCheckJLinkConnection
+
+                DSM.State {
+                    id: stateCheckJLinkConnection
+
+                    onEntered: {
+                        var run = jLinkConnector.checkConnectionRequested()
+                        if (run === false) {
+                            stateMechine.jlinkProcessFailed()
+                        }
+                    }
+
+                    DSM.SignalTransition {
+                        targetState: stateProgram
+                        signal: jLinkConnector.checkConnectionProcessFinished
+                        guard: exitedNormally && connected
+                    }
+
+                    DSM.SignalTransition {
+                        targetState: stateCallJlinkCheckWithDelay
+                        signal: stateMechine.jlinkProcessFailed
+                    }
+
+                    DSM.SignalTransition {
+                        targetState: stateCallJlinkCheckWithDelay
+                        signal: jLinkConnector.checkConnectionProcessFinished
+                        guard: exitedNormally === false || connected === false
+                    }
+                }
+
+                DSM.State {
+                    id: stateCallJlinkCheckWithDelay
+                    DSM.TimeoutTransition {
+                        targetState: stateCheckJLinkConnection
+                        timeout: 2000
+                    }
+                }
+            }
+        }
+
+        DSM.State {
+            id: stateProgram
+
+            initialState: stateProgramBootloader
+
+            DSM.State {
+                id: stateProgramBootloader
+
+                onEntered: {
+                    var run = jLinkConnector.flashBoardRequested(wizard.prtModel.bootloaderFilepath, true)
+
+                    if (run === false) {
+                        stateMechine.jlinkProcessFailed()
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: stateMechine.jlinkProcessFailed
+                    onTriggered: {
+                        wizard.subtextNote = "JLink process failed"
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateProgramFirmware
+                    signal: jLinkConnector.flashBoardProcessFinished
+                    guard: exitedNormally
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: jLinkConnector.flashBoardProcessFinished
+                    guard: exitedNormally === false
+                    onTriggered: {
+                        wizard.subtextNote = "JLink process failed"
+                    }
+                }
+            }
+
+            DSM.State {
+                id: stateProgramFirmware
+
+                onEntered: {
+                    prtModel.programDevice();
+                }
+
+                /* Seems like DSM casts class enum arguments to simple int,
+                   so "===" doesnt work */
+                DSM.SignalTransition {
+                    signal: prtModel.flasherOperationStateChanged
+                    onTriggered: {
+                        if (operation == FlasherConnector.Preparation ) {
+                            if (state == FlasherConnector.Started) {
+                                wizard.subtextNote = "Preparations"
+                            } else if (state == FlasherConnector.Failed) {
+                                wizard.subtextNote = errorString
+                            }
+                        } else if (operation == FlasherConnector.Flash) {
+                            if (state == FlasherConnector.Started) {
+                                wizard.subtextNote = "Programming"
+                            } else if (state === FlasherConnector.Failed) {
+                                wizard.subtextNote = errorString
+                            }
+                        } else if (operation == FlasherConnector.BackupBeforeFlash
+                                   || operation == FlasherConnector.RestoreFromBackup) {
+                            console.warn(Logger.prtCategory, "unsupported operation", operation, state)
+                        } else {
+                            console.warn(Logger.prtCategory, "unknown operation", operation, state)
+                        }
+                    }
+                }
+
+                DSM.SignalTransition {
+                    signal: prtModel.flasherProgress
+                    onTriggered: {
+                        wizard.subtextNote = Math.floor((chunk / total) * 100) +"% completed"
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateRegistration
+                    signal: prtModel.flasherFinished
+                    guard: result == FlasherConnector.Success
+
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: prtModel.flasherFinished
+                    guard: result == FlasherConnector.Unsuccess || result == FlasherConnector.Failure
+                }
+            }
+        }
+
+        DSM.State {
+            id: stateRegistration
+
+            property string currentPlatformId
+            property int currentBoardCount
+
+            initialState: stateNotifyCloudService
+
+            onEntered: {
+                stateRegistration.currentPlatformId = CommonCpp.SGUtilsCpp.generateUuid()
+                stateRegistration.currentBoardCount = -1
+            }
+
+            DSM.State {
+                id: stateNotifyCloudService
+
+                onEntered: {
+                    wizard.subtextNote = "contacting cloud service"
+                    prtModel.notifyServiceAboutRegistration(
+                                wizard.currentClassId,
+                                stateRegistration.currentPlatformId)
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateWriteRegistrationData
+                    signal: prtModel.notifyServiceFinished
+                    guard: boardCount > 0 && errorString.length === 0
+                    onTriggered: {
+                        stateRegistration.currentBoardCount = boardCount
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: prtModel.notifyServiceFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
+            }
+
+            DSM.State {
+                id: stateWriteRegistrationData
+
+                onEntered: {
+                    wizard.subtextNote = "writing to device"
+                    prtModel.writeRegistrationData(
+                                wizard.currentClassId,
+                                stateRegistration.currentPlatformId,
+                                stateRegistration.currentBoardCount)
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopSucceed
+                    signal: prtModel.writeRegistrationDataFinished
+                    guard: errorString.length === 0
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: prtModel.writeRegistrationDataFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
+            }
+        }
+
+        DSM.State {
+            id: stateError
+
+            DSM.SignalTransition {
+                targetState: stateSettings
+                signal: breakBtn.clicked
+            }
+        }
+
+        DSM.State {
+            id: stateLoopFailed
+
+            DSM.SignalTransition {
+                targetState: stateWaitForDevice
+                signal: continueBtn.clicked
+            }
+        }
+
+        DSM.State {
+            id: stateLoopSucceed
+
+            DSM.SignalTransition {
+                targetState: stateSettings
+                signal: breakBtn.clicked
+            }
+
+            DSM.SignalTransition {
+                targetState: stateCheckDevice
+                signal: prtModel.boardDisconnected
+            }
+        }
+    }
+
+    Workflow {
         id: workflow
         anchors {
             top: parent.top
@@ -64,176 +508,12 @@ FocusScope {
             horizontalCenter: parent.horizontalCenter
         }
 
-        width: childrenRect.width
-        height: childrenRect.height
-
-        focus: false
-
-        FeedbackArrow {
-            id: feedbackArrow
-            width: state4.x - state2.x + 2*padding + wingWidth + 4
-            height: 40
-            x: state2.x - padding + Math.round(state2.width/2) - wingWidth - 2
-
-            padding: 2
-            color: baseColor
-        }
-
-        WorkflowNode {
-            id: state1
-            anchors {
-                horizontalCenter: label1.horizontalCenter
-                top: feedbackArrow.bottom
-            }
-
-            source: "qrc:/sgimages/cog.svg"
-            color: baseColor
-            iconColor: baseColor
-            highlight: processingStatus === ProgramDeviceWizard.SetupProgramming
-        }
-
-        Arrow {
-            id: arrow2
-            anchors {
-                left: state1.right
-                verticalCenter: state1.verticalCenter
-            }
-
-            color: baseColor
-            tailLength: arrowTailLength
-        }
-
-        WorkflowNode {
-            id: state2
-            anchors {
-                verticalCenter: state1.verticalCenter
-                left: arrow2.right
-            }
-
-            source: "qrc:/sgimages/plug.svg"
-            color: baseColor
-            iconColor: baseColor
-            highlight: processingStatus === ProgramDeviceWizard.WaitingForDevice
-                       || processingStatus === ProgramDeviceWizard.WaitingForJLink
-        }
-
-        Arrow {
-            id: arrow3
-            anchors {
-                left: state2.right
-                verticalCenter: state1.verticalCenter
-            }
-
-            color: baseColor
-            tailLength: arrowTailLength
-        }
-
-        WorkflowNode {
-            id: state3
-            anchors {
-                verticalCenter: state1.verticalCenter
-                left: arrow3.right
-            }
-
-            source: "qrc:/sgimages/bolt.svg"
-            color: baseColor
-            iconColor: baseColor
-            highlight: processingStatus === ProgramDeviceWizard.ProgrammingWithJlink
-                       || processingStatus === ProgramDeviceWizard.ProgrammingWithFlasher
-        }
-
-        Arrow {
-            id: arrow4
-            anchors {
-                left: state3.right
-                verticalCenter: state1.verticalCenter
-            }
-
-            color: baseColor
-            tailLength: arrowTailLength
-        }
-
-        WorkflowNode {
-            id: state4
-            anchors {
-                left: arrow4.right
-                verticalCenter: state1.verticalCenter
-            }
-
-            source: "qrc:/sgimages/check.svg"
-            color: baseColor
-            iconColor: baseColor
-            highlight: processingStatus === ProgramDeviceWizard.ProgrammingSucceed
-                       || processingStatus === ProgramDeviceWizard.ProgrammingFailed
-        }
-
-        Arrow {
-            id: arrow5
-            anchors {
-                left: state4.right
-                verticalCenter: state1.verticalCenter
-            }
-
-            color: baseColor
-            tailLength: Math.round(arrowTailLength/2)
-        }
-
-        WorkflowNodeText {
-            anchors {
-                left: arrow5.right
-                verticalCenter: state1.verticalCenter
-            }
-
-            color: baseColor
-            text: "End"
-            standalone: true
-        }
-
-        WorkflowNodeText {
-            id: label1
-            anchors {
-                left: parent.left
-                top: state1.bottom
-            }
-
-            text: "Settings"
-            color: baseColor
-            highlight: state1.highlight
-        }
-
-        WorkflowNodeText {
-            anchors {
-                horizontalCenter: state2.horizontalCenter
-                top: state2.bottom
-            }
-
-            text: "Connect New\nDevice"
-            color: baseColor
-            highlight: state2.highlight
-        }
-
-        WorkflowNodeText {
-            anchors {
-                horizontalCenter: state3.horizontalCenter
-                top: state3.bottom
-            }
-
-            text: "Programming"
-            color: baseColor
-            highlight: state3.highlight
-        }
-
-        WorkflowNodeText {
-            id: state4Label
-            anchors {
-                horizontalCenter: state4.horizontalCenter
-                top: state4.bottom
-            }
-
-            text: "Done"
-            color: baseColor
-            highlight: state4.highlight
-        }
+        nodeSettingsHighlight: stateSettings.active
+        nodeDownloadHighlight: stateDownload.active
+        nodeDeviceCheckHighlight: stateCheckDevice.active
+        nodeProgramHighlight: stateProgram.active
+        nodeRegistrationHighlight: stateRegistration.active
+        nodeDoneHighlight: stateLoopSucceed.active || stateLoopFailed.active || stateError.active
     }
 
     UserMenuButton {
@@ -245,380 +525,186 @@ FocusScope {
         }
     }
 
-    StackView {
-        id: stackView
-        anchors {
-            top: workflow.bottom
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
-        }
-
-        focus: true
-    }
-
     CommonCpp.SGJLinkConnector {
         id: jLinkConnector
     }
 
-    Component {
-        id: initPageComponent
+    Item {
+        id: content
+        anchors {
+            top: workflow.bottom
+            bottom: footer.top
+            left: parent.left
+            right: parent.right
+            margins: 12
+        }
 
-        FocusScope {
+        Item {
             id: settingsPage
+            anchors.fill: parent
 
-            Column {
-                id: content
-                width: parent.width - 24
+            enabled: stateSettings.active
+            opacity: stateSettings.active ? 1 : 0
+            Behavior on opacity { OpacityAnimator { duration: 200}}
+
+            SGWidgets.SGText {
+                id: jLinkTitle
                 anchors {
                     top: parent.top
-                    topMargin: 12
-                    horizontalCenter: parent.horizontalCenter
-                }
-                spacing: wizard.spacing
-
-                SGWidgets.SGText {
-                    id: bootloaderHeader
-
-                    text: "Bootloader"
-                    fontSizeMultiplier: 2.0
                 }
 
-                SGWidgets.SGFileSelector {
-                    id: jlinkExePathEdit
-                    width: content.width
+                text: "J-Link"
+                fontSizeMultiplier: 2.0
+            }
 
-                    focus: true
-                    label: "SEGGER J-Link Commander executable (JLink.exe)"
-                    placeholderText: "Enter path..."
-                    inputValidation: true
+            SGWidgets.SGFileSelector {
+                id: jlinkExePathEdit
+                width: settingsPage.width
+                anchors {
+                    top: jLinkTitle.bottom
+                    topMargin: wizard.spacing
+                }
 
-                    Binding {
-                        target: jlinkExePathEdit
-                        property: "filePath"
-                        value: wizard.jlinkExePath
+                focus: true
+                label: "SEGGER J-Link Commander executable (JLink.exe)"
+                placeholderText: "Enter path..."
+                inputValidation: true
+                dialogLabel: "Select JLink Commander executable"
+                dialogSelectExisting: true
+
+                Binding {
+                    target: jlinkExePathEdit
+                    property: "filePath"
+                    value: wizard.jlinkExePath
+                }
+
+                onFilePathChanged: {
+                    wizard.jlinkExePath = filePath
+                }
+
+                function inputValidationErrorMsg() {
+                    if (filePath.length === 0) {
+                        return qsTr("JLink Commander is required")
+                    } else if (!CommonCpp.SGUtilsCpp.isFile(filePath)) {
+                        return qsTr("JLink Commander is not a valid file")
+                    } else if(!CommonCpp.SGUtilsCpp.isExecutable(filePath)) {
+                        return qsTr("JLink Commander is not executable")
                     }
 
-                    onFilePathChanged: {
-                        wizard.jlinkExePath = filePath
+                    return ""
+                }
+            }
+
+            SGWidgets.SGText {
+                id: platformTitle
+                anchors {
+                    top: jlinkExePathEdit.bottom
+                    topMargin: wizard.spacing
+                }
+
+                text: "Platform"
+                fontSizeMultiplier: 2.0
+            }
+
+            Item {
+                id: searchWrapper
+                height: searchEdit.height
+                width: settingsPage.width
+                anchors {
+                    top: platformTitle.bottom
+                    topMargin: wizard.spacing
+                }
+
+                SGWidgets.SGTextFieldEditor {
+                    id: searchEdit
+                    itemWidth: parent.width - searchButton.width - 10
+
+                    label: "Orderable Part Number"
+                    textFieldLeftIconSource: "qrc:/sgimages/zoom.svg"
+                    placeholderText: "OPN..."
+
+                    Keys.onEnterPressed: {
+                        findPlatform(searchEdit.text)
                     }
 
-                    dialogLabel: "Select JLink Commander executable"
-                    dialogSelectExisting: true
+                    Keys.onReturnPressed: {
+                        findPlatform(searchEdit.text)
+                    }
 
-                    function inputValidationErrorMsg() {
-                        if (filePath.length === 0) {
-                            return qsTr("JLink Commander is required")
-                        } else if (!CommonCpp.SGUtilsCpp.isFile(filePath)) {
-                            return qsTr("JLink Commander is not a valid file")
-                        } else if(!CommonCpp.SGUtilsCpp.isExecutable(filePath)) {
-                            return qsTr("JLink Commander is not executable")
-                        }
+                    onTextChanged: {
+                        clearSearchState()
+                    }
 
-                        return ""
+                    textFieldBusyIndicatorRunning: enabled === false
+
+                    function clearSearchState() {
+                        searchEdit.setIsUnknown()
+                        wizard.currentOpn = ""
+                        wizard.currentVerboseName = ""
+                        wizard.currentClassId = ""
+                        wizard.currentFirmwareUrl = ""
+                        wizard.currentFirmwareMd5 = ""
                     }
                 }
 
-                SGWidgets.SGFileSelector {
-                    id: bootloaderPathEdit
-                    width: content.width
-
-                    label: "Bootloader data file"
-                    placeholderText: "Enter path..."
-                    inputValidation: true
-                    filePath: wizard.bootloaderBinaryPath
-                    onFilePathChanged: {
-                        wizard.bootloaderBinaryPath = filePath
+                SGWidgets.SGButton {
+                    id: searchButton
+                    y: searchEdit.itemY + (searchEdit.item.height - height) / 2
+                    anchors {
+                        right: parent.right
                     }
 
-                    dialogLabel: "Select Bootloader Binary"
-                    dialogSelectExisting: true
-                    dialogNameFilters: ["Binary files (*.bin)","All files (*)"]
-
-                    function inputValidationErrorMsg() {
-                        if (filePath.length === 0) {
-                            return qsTr("Bootloader data file is required")
-                        } else if (!CommonCpp.SGUtilsCpp.isFile(filePath)) {
-                            return qsTr("Bootloader data file path does not refer to a file")
-                        }
-
-                        return ""
-                    }
-                }
-
-
-                SGWidgets.SGText {
-                    id: firmwareHeader
-
-                    text: "Firmware"
-                    fontSizeMultiplier: 2.0
-                }
-
-                SGWidgets.SGFileSelector {
-                    id: firmwarePathEdit
-                    width: content.width
-                    label: "Firmware data file"
-                    placeholderText: "Enter path..."
-                    inputValidation: true
-                    filePath: wizard.firmwareBinaryPath
-                    onFilePathChanged: {
-                        wizard.firmwareBinaryPath = filePath
-                    }
-
-                    dialogLabel: "Select Firmware Binary"
-                    dialogSelectExisting: true
-                    dialogNameFilters: ["Binary files (*.bin)","All files (*)"]
-
-                    function inputValidationErrorMsg() {
-                        if (filePath.length === 0) {
-                            return qsTr("Firmware data file is required")
-                        } else if (!CommonCpp.SGUtilsCpp.isFile(filePath)) {
-                            return qsTr("Firmware data file path does not refer to a file")
-                        }
-
-                        return ""
+                    enabled: searchEdit.enabled
+                    text: "Set"
+                    onClicked: {
+                        findPlatform(searchEdit.text)
                     }
                 }
             }
 
-            Row {
-                id: footer
+            GridLayout {
                 anchors {
-                    bottom: parent.bottom
-                    bottomMargin: 10
-                    horizontalCenter: parent.horizontalCenter
+                    top: searchWrapper.bottom
                 }
 
-                spacing: 20
+                rowSpacing: 4
+                columnSpacing: 4
+                columns: 2
 
-                SGWidgets.SGButton {
-                    text: qsTr("Close")
-                    onClicked: {
-                        if(requestCancelOnClose) {
-                            cancelRequested()
-                        }
-                    }
-                    focusPolicy: Qt.NoFocus
-                    visible: closeButtonVisible
+                SGWidgets.SGText {
+                    text: "OPN:"
+                    Layout.alignment: Qt.AlignBottom | Qt.AlignRight
                 }
 
-                SGWidgets.SGButton {
-                    text: qsTr("Begin")
-                    icon.source: "qrc:/sgimages/chip-flash.svg"
-                    focusPolicy: Qt.NoFocus
+                SGWidgets.SGText {
+                    text: wizard.currentOpn
+                    fontSizeMultiplier: 1.2
+                    Layout.alignment: Qt.AlignBottom
+                    font.bold: true
+                }
 
-                    onClicked: {
-                        var errorList = []
+                SGWidgets.SGText {
+                    text: "Title:"
+                    Layout.alignment: Qt.AlignBottom | Qt.AlignRight
+                }
 
-                        var error = bootloaderPathEdit.inputValidationErrorMsg()
-                        if (error.length) {
-                            errorList.push(error)
-                        }
-
-                        error = jlinkExePathEdit.inputValidationErrorMsg()
-                        if (error.length) {
-                            errorList.push(error)
-                        }
-
-                        error = firmwarePathEdit.inputValidationErrorMsg()
-                        if (error.length) {
-                            errorList.push(error)
-                        }
-
-                        if (errorList.length) {
-                            SGWidgets.SGDialogJS.showMessageDialog(
-                                        wizard,
-                                        SGWidgets.SGMessageDialog.Error,
-                                        qsTr("Validation Failed"),
-                                        SGWidgets.SGUtilsJS.generateHtmlUnorderedList(errorList))
-
-                        } else {
-                            jLinkConnector.exePath = wizard.jlinkExePath
-
-                            processingStatus = ProgramDeviceWizard.WaitingForDevice
-                            stackView.push(processPageComponent)
-                        }
-                    }
+                SGWidgets.SGText {
+                    text: wizard.currentVerboseName
+                    fontSizeMultiplier: 1.2
+                    Layout.alignment: Qt.AlignBottom
                 }
             }
         }
-    }
 
-    Component {
-        id: processPageComponent
-
-        FocusScope {
+        Item {
             id: processPage
+            anchors.fill: parent
 
             property int verticalSpacing: 8
-            property string subtextNote
-            property variant warningDialog: null
 
-            Connections {
-                target: prtModel
-
-                onBoardReady: {
-                    callTryProgramDevice()
-                }
-
-                onBoardDisconnected: {
-                    callTryProgramDevice()
-                }
-
-                onFlasherProgress: {
-                    if (operation === FlasherConnector.Preparation ) {
-                        if (state === FlasherConnector.Started) {
-                            subtextNote = "Preparations"
-                        } else if (state === FlasherConnector.Failed) {
-                            subtextNote = errorString
-                        }
-                    } else if (operation === FlasherConnector.Flash) {
-                        if (state === FlasherConnector.Started) {
-                            subtextNote = "Programming"
-                        } else if (state === FlasherConnector.Failed) {
-                            subtextNote = errorString
-                        }
-                    } else if ( FlasherConnector.BackupBeforeFlash
-                               || operation === FlasherConnector.RestoreFromBackup) {
-                        console.warn(Logger.sciCategory, "unsupported state")
-                    } else {
-                        console.warn(Logger.sciCategory, "unknown state")
-                    }
-                }
-
-                onFlasherFinished: {
-                    if (result === FlasherConnector.Success) {
-                        processingStatus = ProgramDeviceWizard.ProgrammingSucceed
-                    } else if (result === FlasherConnector.Unsuccess
-                               || result === FlasherConnector.Failure) {
-                        processingStatus = ProgramDeviceWizard.ProgrammingFailed
-                    }
-                }
-            }
-
-            Timer {
-                id: jLinkCheckTimer
-                interval: 1000
-                repeat: false
-                onTriggered: {
-                    tryProgramDevice()
-                }
-            }
-
-            Connections {
-                target: jLinkConnector
-
-                onFlashBoardProcessFinished: {
-                    console.log(Logger.prtCategory, "JLink flash finished with exitedNormally=", exitedNormally)
-                    if (exitedNormally) {
-                        var errorString = prtModel.programDevice(firmwareBinaryPath);
-                        if (errorString.length === 0) {
-                            processingStatus = ProgramDeviceWizard.ProgrammingWithFlasher
-                        } else {
-                            processingStatus = ProgramDeviceWizard.ProgrammingFailed
-                            subtextNote = errorString
-                        }
-                    } else {
-                        processingStatus = ProgramDeviceWizard.ProgrammingFailed
-                        subtextNote = "Bootloader programming error"
-                    }
-                }
-
-                onCheckConnectionProcessFinished: {
-                    console.log(Logger.prtCategory, "JLink check connection finished with exitedNormally=", exitedNormally, "connected=", connected)
-                    if (exitedNormally && connected) {
-
-                        if (prtModel.deviceFirmwareVersion().length > 0) {
-                            //device already has firmware
-                            showFirmwareWarning(false, prtModel.deviceFirmwareVersion(), prtModel.deviceFirmwareVerboseName())
-                            return
-                        }
-
-                        doProgramDeviceJlink()
-                    } else {
-                        jLinkCheckTimer.restart()
-                    }
-                }
-            }
-
-            function callTryProgramDevice() {
-                if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
-                    processingStatus = ProgramDeviceWizard.WaitingForDevice
-                }
-
-                tryProgramDevice()
-            }
-
-            function tryProgramDevice() {
-                if (warningDialog !== null) {
-                    warningDialog.reject()
-                }
-
-                if (processingStatus !== ProgramDeviceWizard.WaitingForDevice
-                        && processingStatus !== ProgramDeviceWizard.WaitingForJLink) {
-
-                    return
-                }
-
-                if (prtModel.deviceCount === 0 || prtModel.deviceCount > 1) {
-                    processingStatus = ProgramDeviceWizard.WaitingForDevice
-                    return
-                }
-
-                processingStatus = ProgramDeviceWizard.WaitingForJLink
-
-                var run = jLinkConnector.checkConnectionRequested();
-                if (run === false) {
-                    jLinkCheckTimer.restart();
-                }
-            }
-
-            function showFirmwareWarning(isBootloader, version, name) {
-                var msg = "Connected device already has a "
-                var title = "Device already with "
-
-                if (isBootloader) {
-                    msg += "bootloader of version " + version
-                    title += "bootloader"
-                } else {
-                    msg += "firmware " + name
-                    msg += " of version " + version
-                    title += "firmware"
-                }
-
-                msg += "\n"
-                msg += "\n"
-                msg += "Do you want to program it anyway ?"
-
-                warningDialog = SGWidgets.SGDialogJS.showConfirmationDialog(
-                            wizard,
-                            title,
-                            msg,
-                            "Program it",
-                            function() {
-                                doProgramDeviceJlink()
-                            },
-                            "Cancel",
-                            function() {
-                                processingStatus = ProgramDeviceWizard.WaitingForDevice
-                            },
-                            SGWidgets.SGMessageDialog.Warning,
-                            )
-            }
-
-            function doProgramDeviceJlink() {
-                var run = jLinkConnector.flashBoardRequested(wizard.bootloaderBinaryPath, true)
-                if (run) {
-                    processingStatus = ProgramDeviceWizard.ProgrammingWithJlink
-                    processPage.subtextNote = "Programming"
-                } else {
-                    jLinkCheckTimer.restart()
-                }
-            }
-
-            Component.onCompleted: {
-                tryProgramDevice()
-            }
+            enabled: stateSettings.active === false
+            opacity: stateSettings.active ? 0 : 1
+            Behavior on opacity { OpacityAnimator { duration: 200}}
 
             SGWidgets.SGText {
                 id: statusText
@@ -630,18 +716,22 @@ FocusScope {
 
                 fontSizeMultiplier: 2.0
                 text: {
-                    if (processingStatus === ProgramDeviceWizard.WaitingForDevice) {
+                    if (stateDownload.active) {
+                        return "Downloading..."
+                    } else if (stateWaitForDevice.active) {
                         return "Waiting for device to connect"
-                    } else if (processingStatus === ProgramDeviceWizard.WaitingForJLink) {
+                    } else if (stateWaitForJLink.active) {
                         return "Waiting for JLink connection"
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithJlink) {
+                    } else if (stateProgramBootloader.active) {
                         return "Programming bootloader..."
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithFlasher) {
+                    } else if (stateProgramFirmware.active) {
                         return "Programming firmware..."
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
-                        return "Programming successful"
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
-                        return "Programming failed"
+                    } else if (stateRegistration.active) {
+                        return "Registering..."
+                    } else if (stateLoopSucceed.active) {
+                        return "Platfrom Registered Successfully"
+                    } else if (stateLoopFailed.active || stateError.active) {
+                        return "Platform Registration Failed"
                     }
 
                     return ""
@@ -650,10 +740,8 @@ FocusScope {
 
             Item {
                 id: statusIndicator
-
                 width: 100
                 height: 100
-
                 anchors {
                     top: statusText.bottom
                     topMargin: processPage.verticalSpacing
@@ -662,13 +750,23 @@ FocusScope {
 
                 visible: busyIndicator.running || iconIndicator.status === Image.Ready
 
+                /* QtBug-85860: When "running" property is changed too fast,
+                    BusyIndicator stays hidden, even though "running" property is "true".*/
+                property bool runBusyIndicator: stateDownload.active ||  stateProgram.active  ||  stateRegistration.active
+                onRunBusyIndicatorChanged: fixRunIndicatorTimer.start()
+
+                Timer {
+                    id: fixRunIndicatorTimer
+                    interval: 1
+                    onTriggered:  {
+                        busyIndicator.running = statusIndicator.runBusyIndicator
+                    }
+                }
+
                 BusyIndicator {
                     id: busyIndicator
                     width: parent.width
                     height: parent.height
-
-                    running: processingStatus === ProgramDeviceWizard.ProgrammingWithJlink
-                             || processingStatus === ProgramDeviceWizard.ProgrammingWithFlasher
                 }
 
                 SGWidgets.SGIcon {
@@ -677,9 +775,9 @@ FocusScope {
                     height: width
 
                     source: {
-                        if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
+                        if (stateLoopSucceed.active) {
                             return "qrc:/sgimages/check.svg"
-                        } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
+                        } else if (stateLoopFailed.active || stateError.active) {
                             return "qrc:/sgimages/times-circle.svg"
                         }
 
@@ -687,9 +785,9 @@ FocusScope {
                     }
 
                     iconColor: {
-                        if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
+                        if (stateLoopSucceed.active) {
                             return SGWidgets.SGColorsJS.STRATA_GREEN
-                        } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
+                        } else if (stateLoopFailed.active || stateError.active) {
                             return SGWidgets.SGColorsJS.TANGO_SCARLETRED2
                         }
 
@@ -708,35 +806,34 @@ FocusScope {
 
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-
                 fontSizeMultiplier: 1.2
                 font.italic: true
                 text: {
-                    if (processingStatus === ProgramDeviceWizard.WaitingForDevice
-                            || processingStatus === ProgramDeviceWizard.WaitingForJLink) {
-
+                    if (stateCheckDevice.active) {
                         var msg = "Only single device with MCU EFM32GG380F1024 can be connected while programming\n"
 
                         if (prtModel.deviceCount > 1) {
                             msg += "Multiple devices detected !"
                         }
                         return msg
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithJlink
-                               || processingStatus === ProgramDeviceWizard.ProgrammingWithFlasher) {
-                        msg = processPage.subtextNote
+                    } else if (stateProgram.active || stateRegistration.active) {
+                        msg = wizard.subtextNote
                         msg += "\n\n"
-                        msg += "Do not unplug the device until process is complete"
+                        msg += "Do not unplug the device"
                         return msg
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
+                    } else if (stateLoopSucceed.active) {
                         msg = "You can unplug the device now\n\n"
                         msg += "To program another device, simply plug it in and\n"
                         msg += "process will start automatically\n\n"
                         msg += "or press End."
                         return msg
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
-                        msg = processPage.subtextNote
+                    } else if (stateLoopFailed.active) {
+                        msg = wizard.subtextNote
                         msg += "\n\n"
                         msg += "Unplug the device and press Continue"
+                        return msg
+                    } else if (stateError.active) {
+                        msg = wizard.subtextNote
                         return msg
                     }
 
@@ -756,63 +853,99 @@ FocusScope {
                 fillMode: Image.PreserveAspectFit
                 sourceSize: Qt.size(width, height)
                 smooth: true
-                visible: processingStatus === ProgramDeviceWizard.WaitingForDevice
-                         || processingStatus === ProgramDeviceWizard.WaitingForJLink
-            }
-
-            Row {
-                anchors {
-                    bottom: parent.bottom
-                    bottomMargin: 10
-                    horizontalCenter: parent.horizontalCenter
-                }
-
-                spacing: wizard.spacing
-
-                SGWidgets.SGButton {
-                    id: cancelBtn
-
-                    text: qsTr("End")
-                    visible: processingStatus === ProgramDeviceWizard.ProgrammingSucceed
-
-                    onClicked: {
-                        if (requestCancelOnClose) {
-                            cancelRequested()
-                            return
-                        }
-
-                        processingStatus = ProgramDeviceWizard.SetupProgramming
-                        stackView.pop(stackView.initialItem)
-                    }
-                }
-
-                SGWidgets.SGButton {
-                    id: backBtn
-
-                    text: qsTr("Back")
-                    visible: processingStatus === ProgramDeviceWizard.WaitingForDevice
-                             || processingStatus === ProgramDeviceWizard.WaitingForJLink
-
-                    onClicked: {
-                        processingStatus = ProgramDeviceWizard.SetupProgramming
-                        stackView.pop(stackView.initialItem)
-                    }
-                }
-
-                SGWidgets.SGButton {
-                    id: confirmErrorBtn
-
-                    text: qsTr("Continue")
-                    visible: processingStatus === ProgramDeviceWizard.ProgrammingFailed
-
-                    onClicked: {
-                        processingStatus = ProgramDeviceWizard.WaitingForDevice
-                    }
-                }
+                visible: stateCheckDevice.active
             }
         }
     }
 
+    Row {
+        id: footer
+        anchors {
+            bottom: parent.bottom
+            margins: 12
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        spacing: wizard.spacing
+
+        SGWidgets.SGButton {
+            text: "Begin"
+            icon.source: "qrc:/sgimages/chip-flash.svg"
+            visible: stateSettings.active
+            onClicked: {
+                validateSettings()
+            }
+        }
+
+        SGWidgets.SGButton {
+            id: breakBtn
+            text: "End"
+            visible: stateDownload.active || stateCheckDevice.active || stateLoopSucceed.active || stateError.active
+        }
+
+        SGWidgets.SGButton {
+            id: continueBtn
+            text: "Continue"
+            visible: stateLoopFailed.active
+        }
+    }
+
+    function validateSettings() {
+        var errorList = []
+
+        var error = jlinkExePathEdit.inputValidationErrorMsg()
+        if (error.length) {
+            errorList.push(error)
+        }
+
+        if (wizard.currentClassId.length === 0) {
+            searchEdit.setIsInvalid("OPN not set")
+            error = "OPN not set"
+            errorList.push(error)
+        }
+
+        if (errorList.length === 1) {
+            var errorString = errorList[0]
+        } else {
+            errorString = SGWidgets.SGUtilsJS.generateHtmlUnorderedList(errorList)
+        }
+
+        if (errorList.length) {
+            SGWidgets.SGDialogJS.showMessageDialog(
+                        wizard,
+                        SGWidgets.SGMessageDialog.Error,
+                        qsTr("Settings Validation Failed"),
+                        errorString)
+
+        } else {
+            jLinkConnector.exePath = wizard.jlinkExePath
+
+            stateMechine.settingsValid()
+        }
+    }
+
+    function showFirmwareWarning(version, name, callback, callbackError) {
+        var title = "Device already with firmware"
+        var msg = "Connected device already has firmware " + name + " of version " + version
+        msg += "\n"
+        msg += "\n"
+        msg += "Do you want to program it anyway ?"
+
+        warningDialog = SGWidgets.SGDialogJS.showConfirmationDialog(
+                    wizard,
+                    title,
+                    msg,
+                    "Program it",
+                    function() {
+                        callback()
+                    },
+                    "Cancel",
+                    function() {
+                        callbackError()
+                    },
+                    SGWidgets.SGMessageDialog.Warning,
+                    )
+    }
 
     function resolveAbsoluteFileUrl(path) {
         return CommonCpp.SGUtilsCpp.pathToUrl(
@@ -856,5 +989,96 @@ FocusScope {
         }
 
         return ""
+    }
+
+
+    Timer {
+        id: findPlatformDelayTimer
+        repeat: false
+        interval: 2000
+
+        property string opn
+
+        onTriggered: {
+            doFindPlatform(opn)
+        }
+    }
+
+    function findPlatform(opn) {
+        searchEdit.enabled = false
+        searchEdit.clearSearchState()
+        findPlatformDelayTimer.opn = opn
+        findPlatformDelayTimer.restart()
+    }
+
+    function doFindPlatform(opn) {
+
+        var endpoint = "plats/"+opn.toUpperCase()
+
+        console.log("endpoint", endpoint)
+
+        var deferred = prtModel.restClient.get(endpoint)
+
+        deferred.finishedSuccessfully.connect(function(status, data) {
+            //when OPN is not found, empty array is returned
+
+            console.log(Logger.prtCategory,"platform info:", status, data)
+
+            searchEdit.clearSearchState()
+
+            try {
+                var response = JSON.parse(data)
+            } catch(error) {
+                console.log(Logger.prtCategory, "cannot parse reply from server")
+
+                searchEdit.setIsInvalid("Cannot validate OPN. Reply not valid.")
+                searchEdit.enabled = true
+                return "Cannot validate OPN. Reply not valid."
+            }
+
+            if (Array.isArray(response)) {
+                searchEdit.setIsInvalid("OPN not found.")
+            } else {
+                var isValid = CommonCpp.SGUtilsCpp.validateJson(data, wizard.platsEndpointReplySchema)
+                if (isValid) {
+                    setLatestFirmware(response["firmware"])
+
+                    wizard.currentOpn = response["opn"]
+                    wizard.currentVerboseName = response["verbose_name"]
+                    wizard.currentClassId = response["class_id"]
+
+                    searchEdit.setIsValid()
+                } else {
+                    searchEdit.setIsInvalid("Cannot validate OPN. Reply not valid.")
+                }
+            }
+
+            searchEdit.enabled = true
+        })
+
+        deferred.finishedWithError.connect(function(status ,errorString) {
+            console.error(Logger.prtCategory, status, errorString)
+
+            searchEdit.enabled = true
+            searchEdit.setIsInvalid("Cannot validate OPN. Request failed. status: "+ status)
+        })
+    }
+
+
+    function setLatestFirmware(firmwareList) {
+        var latestFirmwareIndex = 0
+        var latestFirmwareTimestamp = new Date(firmwareList[latestFirmwareIndex]["timestamp"])
+
+        for (var i = 1; i < firmwareList.length; ++i) {
+            var timestamp = new Date(firmwareList[i]["timestamp"])
+
+            if (latestFirmwareTimestamp < timestamp) {
+                latestFirmwareIndex = i
+                latestFirmwareTimestamp = timestamp
+            }
+        }
+
+        wizard.currentFirmwareUrl = firmwareList[latestFirmwareIndex]["file"]
+        wizard.currentFirmwareMd5 = firmwareList[latestFirmwareIndex]["md5"]
     }
 }

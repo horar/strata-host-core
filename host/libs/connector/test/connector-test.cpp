@@ -2,10 +2,12 @@
 
 #include <zhelpers.hpp>
 
+#include <chrono>
 #include <memory>
 #include <thread>
-#include <chrono>
 
+using strata::connector::Connector;
+using strata::connector::ReadMode;
 
 TEST_F(ConnectorTest, RouDea_BlockingRead_10)
 {
@@ -165,7 +167,7 @@ bool ConnectorTest::nonBlockingReadPolling(std::unique_ptr<Connector> &connector
 void ConnectorTest::dealerMain(const std::string &identity, ReadMode read_mode)
 {
     std::unique_ptr<Connector> dealerConnector(
-                ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::DEALER));
+                Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER));
     dealerConnector->setDealerID(identity);
     ASSERT_TRUE(dealerConnector->open(ADDRESS));
     for (uint32_t i = 0; i < LOOP_COUNTER; i++) {
@@ -190,7 +192,7 @@ void ConnectorTest::dealerMain(const std::string &identity, ReadMode read_mode)
 void ConnectorTest::routerMain(ReadMode read_mode)
 {
     std::unique_ptr<Connector> routerConnector(
-                ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::ROUTER));
+                Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER));
 
     routerConnector->setDealerID("B");
     ASSERT_TRUE(routerConnector->open(ADDRESS));
@@ -212,7 +214,7 @@ void ConnectorTest::routerMain(ReadMode read_mode)
 void ConnectorTest::subscriberMain(const std::string &identity, ReadMode read_mode)
 {
     std::unique_ptr<Connector> subscriberConnector(
-                ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::SUBSCRIBER));
+                Connector::getConnector(Connector::CONNECTOR_TYPE::SUBSCRIBER));
 
     subscriberConnector->setDealerID(identity);
     ASSERT_TRUE(subscriberConnector->open(ADDRESS));
@@ -244,7 +246,7 @@ void ConnectorTest::subscriberMain(const std::string &identity, ReadMode read_mo
 void ConnectorTest::subscriberEmptyMain(const int32_t identities, ReadMode read_mode)
 {
     std::unique_ptr<Connector> subscriberConnector(
-                ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::SUBSCRIBER));
+                Connector::getConnector(Connector::CONNECTOR_TYPE::SUBSCRIBER));
 
     subscriberConnector->setDealerID("");
     ASSERT_TRUE(subscriberConnector->open(ADDRESS));
@@ -292,7 +294,7 @@ void ConnectorTest::subscriberEmptyMain(const int32_t identities, ReadMode read_
 void ConnectorTest::publisherMain(const std::vector<std::string> &identities)
 {
     std::unique_ptr<Connector> publisherConnector(
-                ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::PUBLISHER));
+                Connector::getConnector(Connector::CONNECTOR_TYPE::PUBLISHER));
 
     for (const std::string& identity : identities) {
         publisherConnector->addSubscriber(identity);
@@ -308,7 +310,7 @@ void ConnectorTest::publisherMain(const std::vector<std::string> &identities)
 void ConnectorTest::responseMain(ReadMode read_mode)
 {
     std::unique_ptr<Connector> responseConnector(
-                ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::RESPONSE));
+                Connector::getConnector(Connector::CONNECTOR_TYPE::RESPONSE));
 
     ASSERT_TRUE(responseConnector->open(ADDRESS));
 
@@ -332,7 +334,7 @@ void ConnectorTest::responseMain(ReadMode read_mode)
 void ConnectorTest::requestMain(ReadMode read_mode)
 {
     std::unique_ptr<Connector> requestConnector(
-                ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::REQUEST));
+                Connector::getConnector(Connector::CONNECTOR_TYPE::REQUEST));
 
     ASSERT_TRUE(requestConnector->open(ADDRESS));
 

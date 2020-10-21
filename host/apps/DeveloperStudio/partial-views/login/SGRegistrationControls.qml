@@ -3,9 +3,11 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import "qrc:/partial-views"
 import "qrc:/partial-views/login/registration"
+import "qrc:/partial-views/general/"
 import "qrc:/js/login_utilities.js" as Registration
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.signals 1.0
 
 Item {
     id: root
@@ -13,7 +15,7 @@ Item {
     Layout.fillWidth: true
 
     property bool connecting: registrationStatus.visible
-    property bool animationsRunning: alertAnimation.running || hideAlertAnimation.running
+    property bool animationsRunning: alertRect.running
 
     onVisibleChanged: {
         if (visible) {
@@ -27,45 +29,9 @@ Item {
         spacing: 20
         width: parent.width
 
-        Rectangle {
+        SGNotificationToast {
             id: alertRect
-            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: fieldGrid.width * 0.75
-            Layout.preferredHeight: 0
-            color: "red"
-            visible: Layout.preferredHeight > 0
-            clip: true
-
-            SGIcon {
-                id: alertIcon
-                source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/images/icons/exclamation-circle-solid.svg" : "qrc:/images/icons/check-circle-solid.svg"
-                anchors {
-                    left: alertRect.left
-                    verticalCenter: alertRect.verticalCenter
-                    leftMargin: alertRect.height/2 - height/2
-                }
-                height: 30
-                width: 30
-                iconColor: "white"
-            }
-
-            Text {
-                id: alertText
-                font {
-                    pixelSize: 10
-                    family: Fonts.franklinGothicBold
-                }
-                wrapMode: Label.WordWrap
-                anchors {
-                    left: alertIcon.right
-                    right: alertRect.right
-                    rightMargin: 5
-                    verticalCenter: alertRect.verticalCenter
-                }
-                horizontalAlignment:Text.AlignHCenter
-                text: ""
-                color: "white"
-            }
         }
 
         RowLayout {
@@ -122,7 +88,7 @@ Item {
 
             SGIcon {
                 id: showPasswordIcon
-                source: passwordField.echoMode === TextInput.Password ? "qrc:/images/icons/eye-solid.svg" : "qrc:/images/icons/eye-slash-solid.svg"
+                source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
                 iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
                 anchors {
                     verticalCenter: passwordField.verticalCenter
@@ -180,7 +146,7 @@ Item {
                         anchors.centerIn: parent
                         iconColor: "#777"
                         visible: policyCheck.checked
-                        source: "qrc:/images/icons/check-solid.svg"
+                        source: "qrc:/sgimages/check.svg"
                     }
 
                     Rectangle {
@@ -251,12 +217,16 @@ Item {
                     }
                 }
 
-                Keys.onReturnPressed:{
+                Keys.onReturnPressed: pressRegisterButton()
+                Accessible.onPressAction: pressRegisterButton()
+
+                function pressRegisterButton() {
                     registerButton.clicked()
+
                 }
 
                 onClicked: {
-                    hideAlertAnimation.start()
+                    alertRect.hide()
                     fieldGrid.visible = false
                     var register_info = {
                         firstname: firstNameField.text,
@@ -267,6 +237,7 @@ Item {
                         username:emailField.text,
                         password:passwordField.text
                     }
+                    registrationStatus.currentId = Registration.getNextId()
                     Registration.register(register_info)
                 }
 
@@ -344,44 +315,26 @@ Item {
         anchors.centerIn: parent
     }
 
-
-    NumberAnimation{
-        id: alertAnimation
-        target: alertRect
-        property: "Layout.preferredHeight"
-        to: registerButton.height + 10
-        duration: 100
-    }
-
-    NumberAnimation{
-        id: hideAlertAnimation
-        target: alertRect
-        property: "Layout.preferredHeight"
-        to: 0
-        duration: 100
-        onStarted: alertText.text = ""
-    }
-
     Connections {
-        target: Registration.signals
+        target: Signals
         onRegistrationResult: {
             registrationStatus.text = ""
             fieldGrid.visible = true
             if (result === "Registered") {
                 alertRect.color = "#57d445"
-                alertText.text = "Account successfully registered to " + emailField.text + "!"
+                alertRect.text = "Account successfully registered to " + emailField.text + "!"
                 root.resetForm()
             } else {
                 alertRect.color = "red"
                 if (result === "No Connection") {
-                    alertText.text = "Connection to registration server failed"
+                    alertRect.text = "Connection to registration server failed"
                 } else if (result === "Account already exists for this email address") {
-                    alertText.text = "Account already exists for this email address"
+                    alertRect.text = "Account already exists for this email address"
                 } else {
-                    alertText.text = "Registration server did not create user account"
+                    alertRect.text = "Registration server did not create user account"
                 }
             }
-            alertAnimation.start()
+            alertRect.show()
         }
     }
 

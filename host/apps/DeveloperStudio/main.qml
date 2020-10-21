@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "js/navigation_control.js" as NavigationControl
-import "js/uuid_map.js" as UuidMap
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
@@ -26,6 +25,12 @@ SGWidgets.SGMainWindow {
 
     signal initialized()
 
+    function resetWindowSize()
+    {
+        mainWindow.width = 1200
+        mainWindow.height = 900
+    }
+
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(statusBarContainer, stackContainer)
@@ -46,6 +51,10 @@ SGWidgets.SGMainWindow {
         NavigationControl.removeView(statusBarContainer)
         NavigationControl.removeView(mainContainer)
         platformViewModel.clear()
+
+        if (SessionUtils.settings.rememberMe === false) {
+            SessionUtils.settings.clear()
+        }
     }
 
     Connections {
@@ -72,7 +81,6 @@ SGWidgets.SGMainWindow {
             Layout.fillWidth: true
 
             property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
-            property bool showDebug: false;  // for linking debug in status bar to the debug bar
         }
 
         StackLayout {

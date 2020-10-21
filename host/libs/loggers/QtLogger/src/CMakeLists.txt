@@ -7,6 +7,7 @@ add_library(${PROJECT_NAME} STATIC
     QtLoggerSetup.cpp
     LoggingQtCategories.cpp
 )
+add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON

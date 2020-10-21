@@ -54,22 +54,13 @@ Item {
      }
 
     property var request_usb_power_notification:{
-         "port":1,
-         "device":"none",                      //or "non-PD" or "none" if disconnected
          "advertised_maximum_current":3.00, // amps - maximum available current for the negotiated voltage
          "negotiated_current":0.0,              // amps - current specified by the device, will be lower than "target_maximum_current"
          "negotiated_voltage":0.0,            // volts - advertised and negotiated voltage
-         "input_voltage":0.0,                 // volts
-         "output_voltage":0.0,                 // volts - actual measured output voltage
-         "input_current":0.0,                  // amps
-         "output_current":0.0,                 // amps
-         "temperature":0.0,                      // degrees C
-         "maximum_power":0.0                     // in watts
-
+         "vbus_voltage":0.0,                 // volts
      }
 
     property var usb_pd_advertised_voltages_notification:{
-        "port":0,                            // The port number that this applies to
         "maximum_power":45,                  // watts
         "number_of_settings":7,              // 1-7
         "settings":[]                        // each setting object includes
@@ -92,20 +83,21 @@ Item {
          "audio_power":5,
     }
 
+    property var battery_status_fre:{
+        "no_battery_indicator":true,      /* or false*/
+        "battery_voltage":4.2,
+        "battery_current":1.2,      /* can be positive or negative; negative means charging */
+        "battery_power": 3.8
+    }
 
-
-    property var battery_status:{
+    property var battery_status_inf:{
         "ambient_temp":25,       /* degrees C */
         "battery_temp":35,         /* degrees C */
         "state_of_health":100,     /* 0-100 */
         "time_to_empty":150,     /* minutes, does not show a real value until 10% change has occurred */
         "time_to_full":20,            /* minutes */
         "rsoc":75,                       /* percent */
-        "total_run_time":350,     /* minutes */
-        "no_battery_indicator":true,      /* or false*/
-        "battery_voltage":4.2,
-        "battery_current":1.2,      /* can be positive or negative; negative means charging */
-        "battery_power": 3.8
+        "total_run_time":350     /* minutes */
     }
 
     property var charger_status:{
@@ -144,8 +136,7 @@ Item {
     }
 
     property var audio_amp_voltage:{
-        "usb_volts":12,                             //depending on amp type
-        "battery_volts":14,                         //can be 5.5 to 14V depending on the ONA10
+        "voltage":12,                             //can be 0.5V increments 5.5 to 14V, or PD voltage
         "type":"usb"                            //or battery
     }
 
@@ -163,6 +154,11 @@ Item {
 
     property var fet_bypass:{
         "state":true,
+    }
+
+    property var wake_word:{
+        "type":"alexa",              // or “voicespot”
+        "command":"play",            // or “pause", other commands TBD, does nothing for alexa
     }
 
     // --------------------------------------------------------------------------------------------
@@ -422,17 +418,15 @@ Item {
     property var set_audio_amp_voltage:({
                  "cmd":"set_audio_amp_voltage",
                  "payload":{
-                  "usb_volts":12,
-                  "battery_volts":5.5,
+                  "voltage":12,
                   "type":"usb"
                   },
-                 update: function(usb,battery,type){
-                   this.set(usb,battery,type)
+                 update: function(voltage,type){
+                   this.set(voltage,type)
                    CorePlatformInterface.send(this)
                  },
-                 set: function(inUSB,inBattery,inType){
-                     this.payload.usb_volts = inUSB;
-                      this.payload.battery_volts = inBattery;
+                 set: function(inVoltage,inType){
+                     this.payload.voltage = inVoltage;
                       this.payload.type = inType;
                   },
                  send: function(){

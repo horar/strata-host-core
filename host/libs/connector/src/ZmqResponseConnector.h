@@ -1,8 +1,9 @@
-#ifndef ZmqResponseConnector_H
-#define ZmqResponseConnector_H
+#pragma once
 
 #include "ZmqConnector.h"
 
+namespace strata::connector
+{
 class ZmqResponseConnector : public ZmqConnector
 {
 public:
@@ -12,4 +13,4 @@ public:
     bool open(const std::string& ip_address) override;
 };
 
-#endif  // ZmqResponseConnector_H
+}  // namespace strata::connector

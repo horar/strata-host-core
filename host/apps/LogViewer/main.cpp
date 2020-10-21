@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/lv-logo.png"));
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategoryLogViewer) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     QQmlApplicationEngine engine;

@@ -17,7 +17,7 @@ Item {
     property string view: model.view
     property string name: model.name
     property string class_id: model.class_id
-    property string device_id: model.device_id
+    property var device_id: model.device_id
     property bool connected: model.connected
     property var available: model.available
     property int index: model.index
@@ -74,16 +74,25 @@ Item {
             buttonData = {
                 "text": "Documents",
                 "view": "collateral",
-                "icon": "qrc:/images/icons/file.svg",
+                "icon": "qrc:/sgimages/file-blank.svg",
                 "selected": false
             }
             buttonModel.append(buttonData)
         }
 
+        // Commented out to remove OTA features from release v2.5.0
+//        buttonData = {
+//            "text": "Settings",
+//            "view": "settings",
+//            "icon": "qrc:/sgimages/cog.svg",
+//            "selected": false
+//        }
+//        buttonModel.append(buttonData)
+
         buttonData = {
             "text": "Close Platform",
             "view": "close",
-            "icon": "qrc:/images/icons/times.svg",
+            "icon": "qrc:/sgimages/times.svg",
             "selected": false
         }
         buttonModel.append(buttonData)
@@ -92,7 +101,7 @@ Item {
     function setControlIcon () {
         for (let i = 0; i < buttonModel.count; i++) {
             if (buttonModel.get(i).view === "control") {
-                buttonModel.get(i).icon = (connected ? "qrc:/images/icons/sliders-h.svg" : "qrc:/images/icons/disconnected.svg")
+                buttonModel.get(i).icon = (connected ? "qrc:/sgimages/sliders-h.svg" : "qrc:/sgimages/disconnected.svg")
                 if (buttonModel.get(i).selected) {
                     selectedButtonIcon = buttonModel.get(i).icon
                 }
@@ -174,7 +183,7 @@ Item {
 
                 source: {
                     if (mouseMenu.containsMouse || dropDownPopup.visible) {
-                        return "qrc:/images/icons/angle-down.svg"
+                        return "qrc:/sgimages/chevron-down.svg"
                     } else {
                         return selectedButtonIcon
                     }

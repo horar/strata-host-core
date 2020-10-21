@@ -1,7 +1,8 @@
 
 #include "Database.h"
 #include "Dispatcher.h"
-#include "LoggingAdapter.h"
+
+#include "logging/LoggingQtCategories.h"
 
 #include <couchbaselitecpp/SGCouchBaseLite.h>
 #include <couchbaselitecpp/SGFleece.h>
@@ -11,41 +12,26 @@
 
 using namespace Strata;
 
-Database::Database(const std::string dbPath, QObject *parent)
-    : QObject(parent),
-      sgDatabasePath_{std::move(dbPath)}
-{
+Database::Database(QObject *parent)
+    : QObject(parent){
 }
 
 Database::~Database()
 {
-    if (sg_replicator_) {
-        sg_replicator_->stop();
-    }
-
-    delete sg_replicator_;
-    delete url_endpoint_;
-    delete sg_replicator_configuration_;
-    delete basic_authenticator_;
-
-    delete sg_database_;
+    stop();
 }
 
-void Database::setLogAdapter(LoggingAdapter* adapter)
-{
-    logAdapter_ = adapter;
-}
-
-bool Database::open(const std::string& db_name)
+bool Database::open(std::string_view db_path, const std::string& db_name)
 {
     if (sg_database_ != nullptr) {
         return false;
     }
 
+    sgDatabasePath_ = db_path;
+    qCDebug(logCategoryHcsDb) << "DB location set to:" << QString::fromStdString(sgDatabasePath_);
+
     if (sgDatabasePath_.empty()) {
-        if (logAdapter_) {
-            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlCritical, "Missing writable DB location path");
-        }
+        qCCritical(logCategoryHcsDb) << "Missing writable DB location path";
         return false;
     }
 
@@ -56,13 +42,13 @@ bool Database::open(const std::string& db_name)
     if (db_directory.cd(QString("db/%1").arg(QString::fromStdString(db_name)))
     && !db_directory.exists(QStringLiteral("db.sqlite3"))) {
         if (db_directory.removeRecursively()) {
-            if (logAdapter_) {
-                logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo,
-                "DB directories exist but DB file does not -- successfully deleted directory " + db_directory.absolutePath().toStdString());
-            }
-        } else if (logAdapter_) {
-            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning,
-            "DB directories exist but DB file does not -- unable to delete directory " + db_directory.absolutePath().toStdString());
+            qCInfo(logCategoryHcsDb)
+                << "DB directories exist but DB file does not -- successfully deleted directory "
+                << db_directory.absolutePath();
+        } else {
+            qCWarning(logCategoryHcsDb)
+                << "DB directories exist but DB file does not -- unable to delete directory "
+                << db_directory.absolutePath();
         }
     }
 
@@ -70,10 +56,7 @@ bool Database::open(const std::string& db_name)
     sg_database_ = new SGDatabase(db_name, sgDatabasePath_);
     SGDatabaseReturnStatus ret = sg_database_->open();
     if (ret != SGDatabaseReturnStatus::kNoError) {
-        if (logAdapter_) {
-            std::string logText = "Failed to open database err:" + std::to_string(static_cast<int>(ret));
-            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, logText);
-        }
+        qCWarning(logCategoryHcsDb) << "Failed to open database err:" << QString::number(static_cast<int>(ret));
         return false;
     }
 
@@ -115,6 +98,7 @@ void Database::updateChannels()
     bool wasRunning = isRunning_;
     if (isRunning_) {
         sg_replicator_->stop();
+        sg_replicator_->join();
     }
 
     std::vector<std::string> myChannels;
@@ -124,16 +108,18 @@ void Database::updateChannels()
     sg_replicator_configuration_->setChannels(myChannels);
 
     if (wasRunning) {
-        if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
-            if (logAdapter_) {
-                logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "Replicator start failed!");
-            }
+        if (auto ret = sg_replicator_->start(); ret != SGReplicatorReturnStatus::kNoError) {
+            qCWarning(logCategoryHcsDb) << "Replicator start failed! (code:" << QString::number(static_cast<int>(ret)) << ")";
         }
     }
 }
 
 bool Database::getDocument(const std::string& doc_id, std::string& result)
 {
+    if (sg_database_ == nullptr) {
+        return false;
+    }
+
     SGDocument doc(sg_database_, doc_id);
     if (!doc.exist()) {
         return false;
@@ -141,6 +127,26 @@ bool Database::getDocument(const std::string& doc_id, std::string& result)
 
     result = doc.getBody();
     return true;
+}
+
+void Database::stop()
+{
+    if(sg_replicator_ != nullptr) {
+        delete sg_replicator_;      // destructor will call stop and join
+        sg_replicator_ = nullptr;
+        qCDebug(logCategoryHcsDb) << "Replicator stoped.";
+    }
+
+    // delete also these in case we would like to reinit replication through initReplicator()
+    delete url_endpoint_; url_endpoint_ = nullptr;
+    delete sg_replicator_configuration_; sg_replicator_configuration_ = nullptr;
+    delete basic_authenticator_; basic_authenticator_ = nullptr;
+    isRunning_ = false;
+
+    if(sg_database_ != nullptr) {
+        delete sg_database_; sg_database_ = nullptr;
+        qCDebug(logCategoryHcsDb) << "Database closed.";
+    }
 }
 
 bool Database::initReplicator(const std::string& replUrl, const std::string& username, const std::string& password)
@@ -151,9 +157,7 @@ bool Database::initReplicator(const std::string& replUrl, const std::string& use
 
     url_endpoint_ = new SGURLEndpoint(replUrl);
     if (url_endpoint_->init() == false) {
-        if (logAdapter_) {
-            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlInfo, "Replicator endpoint URL is failed!");
-        }
+        qCWarning(logCategoryHcsDb) << "Replicator endpoint URL is failed!";
         return false;
     }
 
@@ -176,10 +180,8 @@ bool Database::initReplicator(const std::string& replUrl, const std::string& use
 
     sg_replicator_->addDocumentEndedListener(std::bind(&Database::onDocumentEnd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 
-    if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
-        if (logAdapter_) {
-            logAdapter_->Log(LoggingAdapter::LogLevel::eLvlWarning, "Replicator start failed!");
-        }
+    if (const auto ret = sg_replicator_->start(); ret != SGReplicatorReturnStatus::kNoError) {
+        qCWarning(logCategoryHcsDb) << "Replicator start failed! (code:" << "Replicator start failed! (code:" << QString::number(static_cast<int>(ret));
 
         delete sg_replicator_; sg_replicator_ = nullptr;
         delete sg_replicator_configuration_; sg_replicator_configuration_ = nullptr;

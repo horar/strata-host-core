@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/hello-strata">
+    <qresource prefix="/">
         <file>control-views/DACAndPWMToLEDControl.qml</file>
         <file>control-views/LEDDriverControl.qml</file>
         <file>control-views/LightSensorControl.qml</file>

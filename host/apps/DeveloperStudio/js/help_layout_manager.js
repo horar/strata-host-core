@@ -1,5 +1,7 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
+.import "constants.js" as Constants
+.import "utilities.js" as Utility
 .import QtQuick 2.0 as QtQuickModule
 .import tech.strata.logger 1.0 as LoggerModule
 
@@ -45,11 +47,8 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
     let tourTargetList = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
 
-    let component = Qt.createComponent("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml");
-    if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioHelpCategory, "Cannot createComponent ", component.errorString());
-    }
-    let tourStop = component.createObject(window);
+    
+    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
     tourStop.index = index
     tourStop.description = targetDescription
     let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": tourStop}
@@ -205,7 +204,7 @@ function destroyHelp() {
     for (let i=views.length-1; i>=0; i--) {
         killView(i)
     }
-    current_device_id = ""
+    current_device_id = Constants.NULL_DEVICE_ID
 }
 
 function killView(index) {

@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
     qCDebug(logCategoryFlasherCli).noquote() << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     strata::CliParser parser(QCoreApplication::arguments());

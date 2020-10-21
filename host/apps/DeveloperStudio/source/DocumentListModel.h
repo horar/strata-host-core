@@ -45,6 +45,7 @@ public:
     void clear(bool emitSignals=true);
 
     Q_INVOKABLE QString getFirstUri();
+    Q_INVOKABLE QString dirname(int index);
 
 
 signals:

@@ -44,7 +44,8 @@ int main(int argc, char *argv[])
     });
     parser.addOption({
         {QStringLiteral("c")},
-        QObject::tr("Clear cache data of Host Controller Service.")
+        QObject::tr("Clear cache data of Host Controller Service for <stage>."),
+        QObject::tr("stage")
     });
     parser.addVersionOption();
     parser.addHelpOption();
@@ -58,14 +59,15 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
 
-        const QString cacheDir{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+        QString cacheDir{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
         if (cacheDir.isEmpty()) {
             qWarning() << "Folder with application cached data either not accessible or not found!!";
             return EXIT_FAILURE;
         }
+        cacheDir.append(QString("/%1").arg(parser.value(QStringLiteral("c"))).toUpper());
         qDebug() << "Cache location:" << cacheDir;
 
-        for (const auto folder : {QStringLiteral("db"), QStringLiteral("documents")}) {
+        for (const auto& folder : {QStringLiteral("db"), QStringLiteral("documents")}) {
             QDir dir(QString("%1/%2").arg(cacheDir).arg(folder));
             qInfo() << "Removing" << dir.path() << ":" << dir.removeRecursively();
         }
@@ -73,8 +75,8 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    const QtLoggerSetup loggerInitialization(app);
-    cbLoggerSetup(loggerInitialization.getQtLogCallback());
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
+    strata::loggers::cbLoggerSetup(loggerInitialization.getQtLogCallback());
 
     qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
     qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
@@ -87,7 +89,7 @@ int main(int argc, char *argv[])
 
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
-        return EXIT_FAILURE;
+        return EXIT_FAILURE + 1; // LC: todo..
     }
 
 #if defined(Q_OS_WIN)
@@ -103,7 +105,7 @@ int main(int argc, char *argv[])
     SignalHandlers sh(&app);
 #endif
 
-    QScopedPointer<HostControllerService> hcs(new HostControllerService);
+    std::unique_ptr<HostControllerService> hcs{std::make_unique<HostControllerService>()};
 
     const QString config{parser.value(QStringLiteral("f"))};
     if (hcs->initialize(config) == false) {

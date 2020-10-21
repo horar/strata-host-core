@@ -17,11 +17,12 @@ add_library(${PROJECT_NAME}
     # with Q_OBJECT macro.
     include/PlatformInterface/core/CoreInterface.h
 )
+add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
-    PUBLIC HostControllerClient
-    PRIVATE QtLogger
+    PUBLIC strata::HostControllerClient
+    PRIVATE strata::QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}

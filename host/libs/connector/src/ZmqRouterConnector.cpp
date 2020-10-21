@@ -1,7 +1,8 @@
-
 #include "ZmqRouterConnector.h"
 #include <zhelpers.hpp>
 
+namespace strata::connector
+{
 ZmqRouterConnector::ZmqRouterConnector() : ZmqConnector(ZMQ_ROUTER)
 {
     CONNECTOR_DEBUG_LOG("Creating ZMQ %s connector object\n", "ZMQ_ROUTER");
@@ -80,3 +81,5 @@ bool ZmqRouterConnector::send(const std::string& message)
 
     return true;
 }
+
+}  // namespace strata::connector

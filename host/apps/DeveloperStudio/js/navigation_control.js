@@ -1,6 +1,7 @@
 .pragma library
 .import QtQuick 2.0 as QtQuickModule
-.import "uuid_map.js" as UuidMap
+.import "constants.js" as Constants
+.import "utilities.js" as Utility
 
 .import tech.strata.logger 1.0 as LoggerModule
 
@@ -51,7 +52,7 @@ var events = {
     SWITCH_VIEW_EVENT:              8,
     CONNECTION_LOST_EVENT:          9,
     CONNECTION_ESTABLISHED_EVENT:   10,
-    PROMPT_SPLASH_SCREEN_EVENT:     11,
+    PROMPT_SPLASH_SCREEN_EVENT:     11
 }
 
 /*
@@ -82,51 +83,20 @@ function init(status_bar_container, stack_container)
 }
 
 /*
-    Retrieve the qml file in the templated file structure
+    Retrieve the qml file in the RCC templated file structure
 */
-var PREFIX = "qrc:/views/"
-function getQMLFile(class_id, filename) {
+function getQMLFile(filename, class_id, version = "") {
+    // Build the file name - ./<class_id>/<version>/filename.qml
 
-    // eventually dirname should === class_id and this UUIDmap will be unnecessary
-    var dir_name = UuidMap.uuid_map[class_id]
-    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, class_id + "-" + filename + "qml file requested.")
-
-    // Build the file name - ./view/<class_id>/filename.qml
     if (filename.search(".qml") < 0){
-        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "adding extension to filename: ", filename)
         filename = filename + ".qml"
     }
+    let prefix = "qrc:/" + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/")
+    var rcc_filepath = prefix + filename;
 
-    var qml_file_name = PREFIX + dir_name + "/" + filename
-    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
+    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", rcc_filepath)
 
-    loadViewVersion(PREFIX + dir_name)
-
-    return qml_file_name
-}
-
-/*
-   Load version.json from view and log module version
-*/
-function loadViewVersion(filePath)
-{
-    var request = new XMLHttpRequest();
-    var version_file_name = filePath + "/version.json"
-    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "view version file: " + version_file_name)
-    request.open("GET", version_file_name);
-    request.onreadystatechange = function onVersionRequestFinished() {
-        if (request.readyState === XMLHttpRequest.DONE) {
-            if (request.status !== 200) {
-                console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "can't load version info: " + request.statusText + " [" + request.status + "]")
-                return
-            }
-            var response = JSON.parse(request.responseText)
-            var versionString = response.version ? response.version : "??"
-            console.info(LoggerModule.Logger.devStudioNavigationControlCategory, "Loaded '" + filePath + "' in version " + versionString)
-        }
-    }
-    request.send();
-    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "view version request sent")
+    return rcc_filepath
 }
 
 /*
@@ -143,15 +113,7 @@ function createView(name, parent)
     catch(err){
         console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
     }
-
-    var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
-    if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Cannot createComponent():", component.errorString(), "parameters:", JSON.stringify(context));
-        context.error_message = component.errorString()
-        return null
-    }
-
-    var object = component.createObject(parent,context)
+        var object = Utility.createObject(name,parent,context);
     if (object === null) {
         console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     } else {
@@ -326,6 +288,7 @@ function updateState(event, data)
 
             case events.PLATFORM_CONNECTED_EVENT:
                 console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id, "device_id:", data.device_id)
+
                 let view_index = -1
                 let connected_view
 
@@ -337,7 +300,7 @@ function updateState(event, data)
                         if (connected_view.device_id === data.device_id) {
                             view_index = j
                             break
-                        } else if (connected_view.device_id === ""){
+                        } else if (connected_view.device_id === Constants.NULL_DEVICE_ID){
                             view_index = j
                         }
                     }
@@ -346,6 +309,7 @@ function updateState(event, data)
                 if (view_index !== -1) {
                     connected_view = platform_view_model_.get(view_index)
                     connected_view.device_id = data.device_id
+                    connected_view.firmware_version = data.firmware_version
                     connected_view.connected = true
                 }
                 break;
@@ -357,6 +321,7 @@ function updateState(event, data)
                     let disconnected_view = platform_view_model_.get(k)
                     if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
                         disconnected_view.connected = false
+                        disconnected_view.firmware_version = ""
                         break
                     }
                 }

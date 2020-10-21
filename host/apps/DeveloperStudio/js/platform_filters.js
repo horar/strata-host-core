@@ -121,7 +121,7 @@ var mapping = {
                 inUse: false
             },
             "subcategory-interface-usbc": {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/usb.svg",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/usb_type_c.svg",
                 text: "USB Type-C",
                 type: "category",
                 inUse: false

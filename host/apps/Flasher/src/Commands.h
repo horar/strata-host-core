@@ -54,17 +54,22 @@ public:
 
 class Flasher;
 
-class FirmwareCommand : public Command {
+class FlasherCommand : public Command {
     Q_OBJECT
 public:
-    FirmwareCommand(const QString &fileName, int deviceNumber, bool flash);
-    ~FirmwareCommand() override;
+    enum class CmdType {
+        FlashFirmware,
+        FlashBootloader,
+        BackupFirmware
+    };
+    FlasherCommand(const QString &fileName, int deviceNumber, CmdType command);
+    ~FlasherCommand() override;
     void process() override;
 private:
     std::unique_ptr<Flasher> flasher_;
     const QString fileName_;
     const int deviceNumber_;
-    const bool flash_;
+    const CmdType command_;
 };
 
 }  // namespace

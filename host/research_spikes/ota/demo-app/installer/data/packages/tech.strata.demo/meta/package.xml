@@ -1,0 +1,12 @@
+<?xml version="2.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Demo-app</DisplayName>
+    <Description>Install this demo app.</Description>
+    <Version>1.0.1.0</Version>
+    <ReleaseDate>2019-01-21</ReleaseDate>
+    <Licenses>
+        <License name="GNU Public License v3" file="license_gpl-3.0.txt"/>
+    </Licenses>
+    <Checkable>false</Checkable>
+    <ForcedInstallation>true</ForcedInstallation>
+</Package>

@@ -17,7 +17,6 @@ namespace Strata {
 };
 
 class HCS_Dispatcher;
-class LoggingAdapter;
 
 class Database final: public QObject
 {
@@ -25,18 +24,17 @@ class Database final: public QObject
     Q_DISABLE_COPY(Database)
 
 public:
-    Database(const std::string dbPath, QObject *parent = nullptr);
+    Database(QObject *parent = nullptr);
     ~Database();
-
-    void setLogAdapter(LoggingAdapter* adapter);
 
     /**
      * Opens the database
+     * @param db_path
      * @param db_name
      * @return returns true when succeeded, otherwise false
      * NOTE: add a path to the DB.
      */
-    bool open(const std::string& db_name);
+    bool open(std::string_view db_path, const std::string &db_name);
 
     /**
      * Initializes and starts the DB replicator
@@ -69,6 +67,11 @@ public:
      */
     bool getDocument(const std::string& doc_id, std::string& result);
 
+    /**
+     * Stop the replication operations and close the database
+     */
+    void stop();
+
 signals:
     void documentUpdated(QString documentId);
 
@@ -90,8 +93,6 @@ private:
     const unsigned int REPLICATOR_RECONNECTION_INTERVAL = 15;
 
     Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
-
-    LoggingAdapter* logAdapter_{nullptr};
 
     std::set<std::string> channels_;
 };

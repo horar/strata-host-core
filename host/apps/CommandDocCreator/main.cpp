@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 
     QtWebEngine::initialize();
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategoryCdc) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     loadResources();

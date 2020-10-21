@@ -1,5 +1,4 @@
 import QtQuick 2.9
-//import "qrc:/views/usb-pd-multiport/sgwidgets"
 
 Rectangle {
     id: root

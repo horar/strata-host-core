@@ -1,8 +1,10 @@
 #ifndef COMMANDVALIDATOR_H
 #define COMMANDVALIDATOR_H
 
-#include <string>
+#include <QByteArray>
+
 #include <map>
+
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
 
@@ -13,36 +15,39 @@ class CommandValidator
 {
 public:
     enum class JsonType {
-        reqPlatIdRes,
-        setPlatIdRes,
+        cmd,
         ack,
         notification,
-        getFwInfoRes,
-        flashFwRes,
-        backupFwRes,
-        updateFwRes,
-        startAppRes,
-        strataCmd,
-        cmd
+        reqPlatformIdNotif,
+        setPlatformIdNotif,
+        getFirmwareInfoNotif,
+        startBootloaderNotif,
+        startApplicationNotif,
+        startFlashFirmwareNotif,
+        flashFirmwareNotif,
+        startBackupFirmwareNotif,
+        backupFirmwareNotif,
+        startFlashBootloaderNotif,
+        flashBootloaderNotif,
+        strataCommand
     };
 
 private:
     // Basic commands
-    static const rapidjson::SchemaDocument requestPlatformIdResSchema;
-    static const rapidjson::SchemaDocument setPlatformIdResSchema;
-    static const rapidjson::SchemaDocument ackSchema;
-    static const rapidjson::SchemaDocument notificationSchema;
-    static const rapidjson::SchemaDocument getFWInfoResSchema;
-    static const rapidjson::SchemaDocument flashFWResSchema;
-    static const rapidjson::SchemaDocument backupFWResSchema;
-    static const rapidjson::SchemaDocument updateFWResSchema;
-    static const rapidjson::SchemaDocument startAppResSchema;
-    static const rapidjson::SchemaDocument strataCommandSchema;
-    static const rapidjson::SchemaDocument cmdSchema;
+    static const rapidjson::SchemaDocument cmdSchema_;
+    static const rapidjson::SchemaDocument ackSchema_;
+    static const rapidjson::SchemaDocument notificationSchema_;
+    static const rapidjson::SchemaDocument notifPayloadStatusSchema_;
+    static const rapidjson::SchemaDocument reqPlatformId_nps_;  // nps = notification payload schema
+    static const rapidjson::SchemaDocument getFirmwareInfo_nps_;
+    static const rapidjson::SchemaDocument startBackupFirmware_nps_;
+    static const rapidjson::SchemaDocument backupFirmware_nps_;
+    static const rapidjson::SchemaDocument strataCommandSchema_;
 
-    static const std::map<const JsonType, const rapidjson::SchemaDocument&> schemas;
+    static const std::map<const JsonType, const rapidjson::SchemaDocument&> schemas_;
+    static const std::map<const JsonType, const char*> notifications_;
 
-    static rapidjson::SchemaDocument parseSchema(const std::string &schema, bool *isOK = nullptr);
+    static rapidjson::SchemaDocument parseSchema(const QByteArray &schema, bool *isOk = nullptr);
 
 public:
     /**
@@ -53,7 +58,7 @@ public:
      * @param doc[out] The rapidjson::Document where command will be parsed.
      * @return True if the the command is valid, False otherwise.
      */
-    static bool validate(const std::string &command, const JsonType type, rapidjson::Document &doc);
+    static bool validate(const QByteArray &command, const JsonType type, rapidjson::Document &doc);
 
     /**
      * Validate the command.
@@ -63,7 +68,7 @@ public:
      * @param doc[out] The rapidjson::Document where command will be parsed.
      * @return True if the the command is valid, False otherwise.
      */
-    static bool validate(const std::string &command, const std::string& schema, rapidjson::Document &doc);
+    static bool validate(const QByteArray &command, const QByteArray& schema, rapidjson::Document &doc);
 
     /**
      * Validate the command.
@@ -74,11 +79,19 @@ public:
     static bool validate(const JsonType type, const rapidjson::Document &doc);
 
     /**
+     * Validate the notification.
+     * @param type[in] Type of JSON notification (value from enum CommandValidator::JsonType).
+     * @param doc[in] The rapidjson::Document contatining JSON command.
+     * @return True if the the notification is valid, False otherwise.
+     */
+    static bool validateNotification(const JsonType type, const rapidjson::Document &doc);
+
+    /**
      * Check if the command is valid JSON.
      * @param command[in] The string containing JSON command.
      * @return true if the the command is valid, false otherwise.
      */
-    static bool isValidJson(const std::string &command);
+    static bool isValidJson(const QByteArray &command);
 
     /**
      * Parse the command to JSON document.
@@ -87,7 +100,7 @@ public:
      * @param doc[out] The rapidjson::Document where command will be parsed.
      * @return true if the the command is valid JSON, false otherwise.
      */
-    static bool parseJson(const std::string &command, rapidjson::Document &doc);
+    static bool parseJsonCommand(const QByteArray &command, rapidjson::Document &doc);
 
 
 private:
@@ -96,7 +109,7 @@ private:
      *
      * @return true if the the command is valid, false otherwise.
      */
-    static bool validateDocWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Document &doc);
+    static bool validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json);
 
 
 };

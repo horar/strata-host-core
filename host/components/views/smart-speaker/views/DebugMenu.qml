@@ -65,12 +65,20 @@ Rectangle {
                 text: "volume"
                 onClicked: {
 
-                    CorePlatformInterface.data_source_handler('{
+                    let notification = {
+                        "notification": {
                                        "value":"volume",
                                        "payload": {
-                                            "master":"'+ (Math.random()*84 - 42) +'"
+                                            "master":(Math.random()*84 - 42)
                                             }
-                                        }')
+                                        }
+                    }
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
 
                 }
             }
@@ -81,76 +89,164 @@ Rectangle {
                 text: "EQ"
                 onClicked: {
 
-                    CorePlatformInterface.data_source_handler('{
+                    let notification = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":1,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
-                    CorePlatformInterface.data_source_handler('{
+                                        }
+                    }
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
+
+                    let notification2 = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":2,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
-                    CorePlatformInterface.data_source_handler('{
+                                        }
+                    }
+                    let wrapper2 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification2)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper2))
+
+
+                    let notification3 = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":3,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
-                    CorePlatformInterface.data_source_handler('{
+                                        }
+                    }
+                    let wrapper3 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification3)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper3))
+
+
+                    let notification4 = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":4,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
-                    CorePlatformInterface.data_source_handler('{
+                                        }
+                    }
+                    let wrapper4 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification4)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper4))
+
+
+                    let notification5 = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":5,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
-                    CorePlatformInterface.data_source_handler('{
+                                        }
+                    }
+                    let wrapper5 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification5)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper5))
+
+
+                    let notification6 = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":6,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
-                    CorePlatformInterface.data_source_handler('{
+                                        }
+                    }
+                    let wrapper6 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification6)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper6))
+
+
+
+                    let notification7 = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":7,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
-                    CorePlatformInterface.data_source_handler('{
+                                        }
+                    }
+                    let wrapper7 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification7)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper7))
+
+
+                    let notification8 = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":8,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
-                    CorePlatformInterface.data_source_handler('{
+                                        }
+                    }
+                    let wrapper8 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification8)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper8))
+
+
+                    let notification9 = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":9,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
-                    CorePlatformInterface.data_source_handler('{
+                                        }
+                    }
+                    let wrapper9 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification9)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper9))
+
+                    let notification10 = {
+                        "notification": {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":10,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
-                                        }')
+                                        }
+                    }
+                    let wrapper10 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification10)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper10))
+
                 }
             }
 
@@ -161,58 +257,61 @@ Rectangle {
 
                 onClicked: {
 
-                    CorePlatformInterface.data_source_handler('{
+                    let notification = {
+                        "notification": {
                         "value":"request_usb_power_notification",
                         "payload":{
-                            "port":1,
-                            "device":"none",
-                            "advertised_maximum_current": "'+ (Math.random() *10) +'",
-                            "negotiated_current": "'+ (Math.random() *10) +'",
-                            "negotiated_voltage":"'+ (Math.random() *10) +'",
-                            "input_voltage":"'+ (Math.random() *10) +'",
-                            "output_voltage":"'+ (Math.random() *10) +'",
-                            "input_current":"'+ (Math.random() *10) +'",
-                            "output_current":"'+ (Math.random() *10) +'",
-                            "temperature":"'+ (Math.random() *10) +'",
-                            "maximum_power":"'+ (Math.random() *10) +'"
-                                   }
-                                 }')
-
-                    CorePlatformInterface.data_source_handler('{
-                        "value":"request_usb_power_notification",
-                        "payload":{
-                            "ambient_temp":"'+ (Math.random() *100) +'",
-                            "battery_temp":"'+ (Math.random() *100) +'",
-                            "state_of_health":"'+ (Math.random() *100) +'",
-                            "time_to_empty":"'+ (Math.random() *150) +'",
-                            "time_to_full":"'+ (Math.random() *150) +'",
-                            "rsoc":"'+ (Math.random() *100) +'",
-                            "total_run_time":"'+ (Math.random() *500) +'",
-                            "no_battery_indicator":true,
-                            "battery_voltage":"'+ (Math.random() *5) +'",
-                            "battery_current":"'+ (Math.random() *20)-10 +'",
-                            "battery_power": "'+ (Math.random() *5) +'",
+                            "advertised_maximum_current": (Math.random() *10),
+                            "negotiated_current": (Math.random() *10),
+                            "negotiated_voltage":(Math.random() *10),
+                            "vbus_voltage":(Math.random() *10)
+                            }
                         }
-                        }')
+                    }
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
 
-                    CorePlatformInterface.data_source_handler('{
+
+                    let notification2 = {
+                        "notification": {
+                        "value":"battery_status_fre",
+                        "payload":{
+                            "no_battery_indicator":true,
+                            "battery_voltage":(Math.random() *5),
+                            "battery_current":(Math.random() *20)-10,
+                            "battery_power": (Math.random() *5),
+                        }
+                        }
+                    }
+                    let wrapper2 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification2)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper2))
+
+
+
+                    let notification3 = {
+                        "notification": {
                         "value":"audio_power",
                         "payload":{
-                            "audio_current":"'+ (Math.random() *5) +'",
-                            "audio_voltage":"'+ (Math.random() *30) +'",
-                            "audio_power":"'+ (Math.random() *20) +'"
+                            "audio_current":(Math.random() *5),
+                            "audio_voltage":(Math.random() *30),
+                            "audio_power":(Math.random() *20)
                             }
-                        }')
+                        }
+                    }
+                    let wrapper3 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification3)
+                    }
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper3))
                 }
             }
 
-
-
-
-            property var bluetooth_pairing:{
-                "value":"not paired",    //or "paired"
-                "id":"device1"            // device identifier, if paired.
-            }
 
             Button {
                 id: button2
@@ -224,24 +323,43 @@ Rectangle {
                     var device3 = makeRandomDeviceName(5);
                     var device4 = makeRandomDeviceName(5);
                     var device5 = makeRandomDeviceName(5);
-                    CorePlatformInterface.data_source_handler('{
+                    let notification = {
+                        "notification": {
                         "value":"bluetooth_devices",
                         "payload":{
                                     "count":5,
-                                    "devices":["'+device1+'",
-                                                "'+device2+'",
-                                                "'+device3+'",
-                                                "'+device4+'",
-                                                "'+device5+'"]
+                                    "devices":[device1,
+                                                device2,
+                                                device3,
+                                                device4,
+                                                device5]
                                    }
-                                 }')
-                    CorePlatformInterface.data_source_handler('{
+                                 }
+                    }
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
+
+                    let notification2 = {
+                        "notification": {
                         "value":"bluetooth_pairing",
                         "payload":{
                                     "value":"paired",
-                                    "id":"'+device3+'"
+                                    "id":device3
                                    }
-                                 }')
+                                 }
+                    }
+                    let wrapper2 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification2)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper2))
+
+
                 }
             }
 
@@ -253,34 +371,42 @@ Rectangle {
                 height: 20
                 text: "sourceCap"
                 onClicked: {
-                    CorePlatformInterface.data_source_handler('{
+                    let notification = {
+                        "notification": {
                         "value":"usb_pd_advertised_voltages_notification",
                         "payload":{
-                                    "port":1,
                                     "maximum_power":60,
                                     "number_of_settings": 7,
                                     "settings":[{"voltage":5,
-                                                "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                                "maximum_current":(Math.random() *10).toFixed(0)
                                                 },
                                                 {"voltage":7,
-                                                "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                                "maximum_current":(Math.random() *10).toFixed(0)
                                                 },
                                                 {"voltage":8,
-                                                "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                                "maximum_current":(Math.random() *10).toFixed(0)
                                                 },
                                                 {"voltage":9,
-                                                "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                                "maximum_current":(Math.random() *10).toFixed(0)
                                                 },
                                                 {"voltage":12,
-                                                "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                                "maximum_current":(Math.random() *10).toFixed(0)
                                                 },
                                                 {"voltage":15,
-                                                "maximum_current":'+ (Math.random() *10).toFixed(0) +'
+                                                "maximum_current":(Math.random() *10).toFixed(0)
                                                 },
                                                 {"voltage":20,
-                                                "maximum_current":'+ (Math.random() *10).toFixed(0) +'}]
+                                                "maximum_current":(Math.random() *10).toFixed(0)}]
                                    }
-                                 }')
+                                 }
+                    }
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
+
                 }
             }
 
@@ -320,23 +446,47 @@ Rectangle {
                     var theBatteryCurrent = (Math.random() *20)-10;
                     var theBatteryPower = (Math.random() *5);
 
-
-                    CorePlatformInterface.data_source_handler('{
-                        "value":"battery_status",
-                        "payload":{
-                            "ambient_temp":'+ theAmbientTemp +',
-                            "battery_temp":'+ theBatteryTemp +',
-                            "state_of_health":'+ theStateOfHealth +',
-                            "time_to_empty":'+ theTimeToEmpty +',
-                            "time_to_full":'+ theTimeToFull +',
-                            "rsoc":'+ theBatteryPercent +',
-                            "total_run_time":'+ theRunTime +',
-                            "no_battery_indicator":'+hasBattery+',
-                            "battery_voltage":'+ theBatteryVoltage +',
-                            "battery_current":'+ theBatteryCurrent +',
-                            "battery_power": '+theBatteryPower  +'
+                    let notification = {
+                        "notification": {
+                            "value":"battery_status_fre",
+                            "payload":{
+                                "no_battery_indicator":hasBattery,
+                                "battery_voltage": theBatteryVoltage ,
+                                "battery_current": theBatteryCurrent,
+                                "battery_power": theBatteryPower
                             }
-                        }')
+                        }
+                    }
+
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
+
+                    let notification2 = {
+                        "notification": {
+                            "value":"battery_status_inf",
+                            "payload":{
+                                "ambient_temp":theAmbientTemp,
+                                "battery_temp":theBatteryTemp,
+                                "state_of_health":theStateOfHealth,
+                                "time_to_empty":theTimeToEmpty,
+                                "time_to_full":theTimeToFull,
+                                "rsoc":theBatteryPercent,
+                                "total_run_time":theRunTime
+                            }
+                        }
+                    }
+
+                    let wrapper2 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification2)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper2))
+                    console.log("sending battery status notification",JSON.stringify(wrapper2))
 
                     hasBattery = !hasBattery;
                 }
@@ -347,17 +497,26 @@ Rectangle {
                 height: 20
                 text: "usb"
 
-                property var connected: "disconnected";
+                 property var connected: "disconnected";
 
                 onClicked: {
 
-                    CorePlatformInterface.data_source_handler('{
+                    let notification ={
+                        "notification": {
                         "value":"usb_pd_port_connect",
                         "payload":{
                             "port_id":1,
-                            "connection_state":"'+connected+'"
+                            "connection_state":connected
                             }
-                            }')
+                         }
+                    }
+
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
 
                     if (connected === "disconnected")
                         connected = "connected"
@@ -380,12 +539,21 @@ Rectangle {
 
                 onClicked: {
 
-                    CorePlatformInterface.data_source_handler('{
+                    let notification = {
+                        "notification": {
                         "value":"thermal_protection_temp",
                         "payload":{
-                            "value":'+ theThermalTemp +'
+                            "value":theThermalTemp
                             }
-                        }')
+                        }
+                    }
+
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
 
                     var theFloatVoltage = (Math.random() *4);
                     var thePrechargeCurrent = Math.round((Math.random() *12))*50+200;
@@ -393,20 +561,29 @@ Rectangle {
                     var theIbusLimit = Math.round((Math.random() *58))*50+100;
                     var theFastChargeCurrent = Math.round((Math.random() *56))*50+200;
 
-                    CorePlatformInterface.data_source_handler('{
+                    let notification2 = {
+                        "notification": {
                         "value":"charger_status",
                         "payload":{
-                            "float_voltage":'+ theFloatVoltage +',
-                            "charge_mode":"'+ theChargeMode +'",
-                            "precharge_current":'+ thePrechargeCurrent +',
-                            "termination_current":'+ theTerminationCurrent +',
-                            "bus_current":'+ theIbusLimit +',
-                            "fast_current":'+ theFastChargeCurrent +',
-                            "vbus_ovp":'+ theVbusOVP +',
-                            "audio_power_mode":"'+theAudioPowerMode+'"
+                            "float_voltage":theFloatVoltage,
+                            "charge_mode":theChargeMode ,
+                            "precharge_current":thePrechargeCurrent,
+                            "termination_current":theTerminationCurrent,
+                            "bus_current":theIbusLimit,
+                            "fast_current":theFastChargeCurrent,
+                            "vbus_ovp":theVbusOVP,
+                            "audio_power_mode":theAudioPowerMode
 
                             }
-                        }')
+                        }
+                    }
+
+                    let wrapper2 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification2)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper2))
 
                     if (theChargeMode === "fast")
                         theChargeMode = "top off"
@@ -448,23 +625,40 @@ Rectangle {
                     var theV = Math.round((Math.random() *100));
 
 
-                    CorePlatformInterface.data_source_handler('{
+                    let notification = {
+                        "notification": {
                         "value":"led_state",
                         "payload":{
-                            "lower_on":'+ theLower +',
-                            "upper_on":'+ theUpper +',
-                            "H":'+ theH +',
-                            "V":'+ theV +'
+                            "lower_on":theLower,
+                            "upper_on":theUpper,
+                            "H":theH,
+                            "V":theV
                             }
-                        }')
+                        }
+                        }
+
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
 
 
-                    CorePlatformInterface.data_source_handler('{
+                    let notification2 = {
+                        "notification": {
                         "value":"touch_button_state",
                         "payload":{
-                            "state":'+ theTouch +'
+                            "state":theTouch
                             }
-                        }')
+                        }
+                    }
+                    let wrapper2 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification2)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper2))
 
                     theUpper = !theUpper;
                     theLower = !theLower;
@@ -494,33 +688,42 @@ Rectangle {
                     var V7 = Math.round((Math.random() *20));
                     var A7 = Math.round((Math.random() *7.5));
 
-                    CorePlatformInterface.data_source_handler('{
+                    let notification = {
+                        "notification": {
                         "value":"usb_pd_advertised_voltages_notification",
                         "payload":{
                             "port":0,
                             "maximum_power":72,
                             "number_of_settings":7,
-                            "settings":[{"voltage":'+ V1 +',
-                                        "maximum_current":'+ A1 +'},
-                                        {"voltage":'+ V2 +',
-                                        "maximum_current":'+ A2 +'},
-                                        {"voltage":'+ V3 +',
-                                        "maximum_current":'+ A3 +'},
-                                        {"voltage":'+ V4 +',
-                                        "maximum_current":'+ A4 +'},
-                                        {"voltage":'+ V5 +',
-                                        "maximum_current":'+ A5 +'},
-                                        {"voltage":'+ V6 +',
-                                        "maximum_current":'+ A6 +'},
-                                        {"voltage":'+ V7 +',
-                                        "maximum_current":'+ A7 +'}]
+                            "settings":[{"voltage": V1,
+                                        "maximum_current":A1},
+                                        {"voltage":V2,
+                                        "maximum_current":A2},
+                                        {"voltage":V3,
+                                        "maximum_current":A3},
+                                        {"voltage":V4,
+                                        "maximum_current":A4},
+                                        {"voltage":V5,
+                                        "maximum_current":A5},
+                                        {"voltage":V6,
+                                        "maximum_current":A6},
+                                        {"voltage":V7,
+                                        "maximum_current":A7}]
                             }
-                        }')
+                        }
+                    }
+
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
 
                 }
             }
 
-        }
+        }   //column
     }
 
     Rectangle {

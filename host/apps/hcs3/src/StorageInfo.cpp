@@ -25,7 +25,7 @@ StorageInfo::FolderSize scanFolder(const QFileInfo& folderInfo)
 }
 
 
-StorageInfo::StorageInfo(QObject */*parent*/, QString cacheDir) : cacheDir_(std::move(cacheDir))
+StorageInfo::StorageInfo(QObject * /*parent*/, QString cacheDir) : cacheDir_(std::move(cacheDir))
 {
     qCDebug(logCategoryHcsStorageCache) << "Cache location:" << cacheDir_.absolutePath();
 }

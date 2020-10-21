@@ -34,8 +34,7 @@ function Test-TokenAndViewsDownload {
     Write-Separator
 
     # Define some derived paths used in this script
-    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $HCSAppDataDir)
-    Set-Variable "PlatformSelector_dir" "$HCSAppDataDir\documents\platform_selector"
+    Set-Variable "PlatformSelector_dir" "$HCSAppDataDir\PROD\documents\platform_selector"
 
     # Attempt to acquire token information from server
     Write-Host "TEST 1: Token/authentication server testing (using endpoint $SDSLoginServer)"
@@ -57,22 +56,15 @@ function Test-TokenAndViewsDownload {
         $TestPass++
     }
 
-    # If it exists, delete "Strata Developer Studio_BACKUP.ini"
-    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
-        Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -Force
-    }
-
-    # If it exists, rename current "Strata Developer Studio.ini"
-    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio.ini" -PathType Leaf) {
-        Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio.ini" "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini"
-    }
+   
+    Backup-Strata_INI
 
     # Format new token string using obtained token
     $server_response_Json = ConvertFrom-Json $server_response.Content
-    $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDSServer"
+    $token_string = "[Login]`nrememberMe=true`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDSServer"
 
     # Write to "Strata Developer Studio.ini"
-    Set-Content "$AppData_OnSemi_dir\Strata Developer Studio.ini" $token_string
+    Set-Content "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" $token_string
 
     # Delete AppData/Roaming/hcs/documents/platform_selector directory if it exists
     If (Test-Path $PlatformSelector_dir -PathType Any) {

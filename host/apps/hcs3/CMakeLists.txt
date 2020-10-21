@@ -18,8 +18,17 @@ add_executable(${PROJECT_NAME} WIN32
 )
 
 target_link_libraries(${PROJECT_NAME}
-    ${PROJECT_NAME}Lib
+    PRIVATE ${PROJECT_NAME}Lib
 )
+
+if(APPLE)
+    set(OPENSSL_ROOT_DIR ${SSL_LIB_PATH_MACOS})
+    find_package(OpenSSL 1.1 REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        OpenSSL::SSL
+        OpenSSL::Crypto
+    )
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
@@ -36,13 +45,12 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
     src/BoardController.cpp
     src/Dispatcher.cpp
-    src/HCS_Client.cpp
+    src/Client.cpp
     src/ClientsController.cpp
     src/Database.cpp
     src/StorageManager.cpp
     src/StorageInfo.cpp
     src/PlatformDocument.cpp
-    src/LoggingAdapter.cpp
     src/FirmwareUpdateController.cpp
     src/FirmwareUpdater.cpp
 
@@ -73,17 +81,71 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Concurrent
     Qt5::RemoteObjects
 
-    BoardManager
-    FlasherConnector
-    connector
-    EventsMgr
-    DownloadManager
+    strata::BoardManager
+    strata::FlasherConnector
+    strata::connector
+    strata::EventsMgr
+    strata::DownloadManager
     strata::CouchbaseLiteCPP
-    QtLogger
-    CbLogger
+    strata::QtLogger
+    strata::CbLogger
 )
 
 target_include_directories(${PROJECT_NAME}Lib
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
-    PRIVATE $<IF:$<CONFIG:Release>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
+    PRIVATE $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
+)
+
+if(WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMENT "Deploying dependant 3rd party ZMQ library..."
+        VERBATIM
+    )
+
+    get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
+    get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
+    get_filename_component(QT_SSL_LIBRARY_DIR "${QT_LIBRARY_DIR}/../../../Tools/OpenSSL/Win_x64//bin" ABSOLUTE)
+    if(EXISTS ${QT_SSL_LIBRARY_DIR})
+        message(STATUS "OpenSSL DLL's will be copyed from ${QT_SSL_LIBRARY_DIR}")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${QT_SSL_LIBRARY_DIR}/libcrypto-1_1-x64.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${QT_SSL_LIBRARY_DIR}/libssl-1_1-x64.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            COMMENT "Deploying dependant 3rd party Qt OpenSSL libraries..."
+            VERBATIM
+        )
+    else()
+        message(WARNING "Please install OpenSSL coming with your Qt installer (can't find OpenSSL DLL's in '${QT_SSL_LIBRARY_DIR}'")
+    endif()
+endif()
+
+
+# deploy desired config file into side-by-side to compiled binary
+set(HCS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/assets/config/hcs)
+
+if(NOT APPS_CORESW_HCS_CONFIG)
+    set(APPS_CORESW_HCS_CONFIG hcs_qa.config CACHE STRING "Desired HCS configuration file." FORCE)
+    message(STATUS "Defaulting 'APPS_CORESW_HCS_CONFIG' to ${APPS_CORESW_HCS_CONFIG}.")
+endif()
+file(GLOB APPS_CORESW_HCS_CONFIG_CHOICES
+    RELATIVE ${HCS_CONFIG_LOCATION}
+    ${HCS_CONFIG_LOCATION}/*.config
+)
+set_property(CACHE APPS_CORESW_HCS_CONFIG PROPERTY STRINGS ${APPS_CORESW_HCS_CONFIG_CHOICES})
+if(NOT APPS_CORESW_HCS_CONFIG IN_LIST APPS_CORESW_HCS_CONFIG_CHOICES)
+    message(FATAL_ERROR "Specify 'APPS_CORESW_HCS_CONFIG'. Must be one of ${APPS_CORESW_HCS_CONFIG_CHOICES}")
+endif()
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${HCS_CONFIG_LOCATION}/${APPS_CORESW_HCS_CONFIG}
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/hcs.config
+    COMMENT "Deploying 'hcs.config'..."
+    VERBATIM
 )

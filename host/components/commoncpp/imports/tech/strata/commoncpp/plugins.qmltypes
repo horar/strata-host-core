@@ -119,10 +119,14 @@ Module {
         Property { name: "xMax"; type: "double" }
         Property { name: "yMin"; type: "double" }
         Property { name: "yMax"; type: "double" }
+        Property { name: "yRightMin"; type: "double" }
+        Property { name: "yRightMax"; type: "double" }
         Property { name: "xTitle"; type: "string" }
         Property { name: "xTitlePixelSize"; type: "int" }
         Property { name: "yTitle"; type: "string" }
         Property { name: "yTitlePixelSize"; type: "int" }
+        Property { name: "yRightTitle"; type: "string" }
+        Property { name: "yRightTitlePixelSize"; type: "int" }
         Property { name: "title"; type: "string" }
         Property { name: "titlePixelSize"; type: "int" }
         Property { name: "xLogarithmic"; type: "bool" }
@@ -131,6 +135,13 @@ Module {
         Property { name: "foregroundColor"; type: "QColor" }
         Property { name: "autoUpdate"; type: "bool" }
         Property { name: "count"; type: "int"; isReadonly: true }
+        Property { name: "xGrid"; type: "bool"}
+        Property { name: "yGrid"; type: "bool"}
+        Property { name: "xMinorGrid"; type: "bool"}
+        Property { name: "yMinorGrid"; type: "bool"}
+        Property { name: "gridColor"; type: "QColor"}
+        Property { name: "yRightVisible"; type: "bool"}
+        Property { name: "yAxisLeft"; type: "bool"}
         Method { name: "initialize" }
         Method { name: "update" }
         Method {
@@ -139,6 +150,10 @@ Module {
         }
         Method {
             name: "shiftYAxis"
+            Parameter { name: "offset"; type: "double" }
+        }
+        Method {
+            name: "shiftYAxisRight"
             Parameter { name: "offset"; type: "double" }
         }
         Method { name: "autoScaleXAxis" }
@@ -167,7 +182,17 @@ Module {
             Parameter { name: "point"; type: "QPointF" }
         }
         Method {
+            name: "mapToValueYRight"
+            type: "QPointF"
+            Parameter { name: "point"; type: "QPointF" }
+        }
+        Method {
             name: "mapToPosition"
+            type: "QPointF"
+            Parameter { name: "point"; type: "QPointF" }
+        }
+        Method {
+            name: "mapToPositionYRight"
             type: "QPointF"
             Parameter { name: "point"; type: "QPointF" }
         }
@@ -351,6 +376,13 @@ Module {
             name: "formatDateTimeWithOffsetFromUtc"
             type: "string"
             Parameter { name: "dateTime"; type: "QDateTime" }
+        }
+        Method { name: "generateUuid"; type: "string" }
+        Method {
+            name: "validateJson"
+            type: "bool"
+            Parameter { name: "json"; type: "QByteArray" }
+            Parameter { name: "schema"; type: "QByteArray" }
         }
     }
 }

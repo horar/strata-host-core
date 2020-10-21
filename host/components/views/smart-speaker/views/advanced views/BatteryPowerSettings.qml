@@ -11,9 +11,12 @@ Rectangle {
 
     property color backgroundColor: "#D1DFFB"
     property color accentColor:"#86724C"
-    property int   labelWidth: 150      //to keep labels aligned right
+    property int   labelWidth: 130      //to keep labels aligned right
 
-    property bool batteryIsMissing: platformInterface.battery_status.no_battery_indicator
+    property bool batteryIsMissing: platformInterface.battery_status_fre.no_battery_indicator
+    onBatteryIsMissingChanged: {
+        console.log("battery missing status is now", batteryIsMissing);
+    }
 
     Rectangle{
         id:notConnectedScrim
@@ -67,7 +70,7 @@ Rectangle {
 
         onUserSet: {
             //the first parameter is usb volts, which will be ignored
-            platformInterface.set_audio_amp_voltage.update(0,value,"battery")
+            platformInterface.set_audio_amp_voltage.update(value,"battery")
         }
     }
     Text{
@@ -79,6 +82,7 @@ Rectangle {
         font.pixelSize: 15
         text:"V"
         color: "grey"
+        visible:!batteryIsMissing
     }
 
     Text{
@@ -127,7 +131,7 @@ Rectangle {
         id: sinkCapSegmentedButton
         labelLeft: false
         anchors.left: sinkCapLabel.right
-        anchors.leftMargin: 10
+        anchors.leftMargin: 5
         anchors.verticalCenter: sinkCapLabel.verticalCenter
         textColor: "black"
         activeTextColor: "black"

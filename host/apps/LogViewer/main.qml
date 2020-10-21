@@ -41,6 +41,7 @@ SGWidgets.SGMainWindow {
             topMargin: 5
             bottomMargin: statusBarHeight + 5
         }
+        focus: true
     }
 
     function showAboutWindow() {

@@ -1,6 +1,5 @@
 if(APPS_UTILS)
     # TODO (LC): why here??
-    add_subdirectory(serial_test)
     add_subdirectory(hcc_test)
     # temporarily disabled
     #add_subdirectory(platform_mgr_test)

@@ -1,5 +1,4 @@
 import QtQuick 2.9
-import "qrc:/views/usb-pd-multiport/views/basic-partial-views"
 
 AnimatedImage {
     id: root

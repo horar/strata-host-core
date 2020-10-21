@@ -14,6 +14,8 @@
 
 #include <spdlog/spdlog.h>
 
+namespace strata::loggers
+{
 void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     const QString formattedMsg{qFormatLogMessage(type, context, msg)};
@@ -71,7 +73,7 @@ QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
 
 QtLoggerSetup::~QtLoggerSetup()
 {
-    qCInfo(logCategoryQtLogger) << "...Qt logging finished";
+    qCDebug(logCategoryQtLogger) << "...Qt logging finished";
 }
 
 QtMessageHandler QtLoggerSetup::getQtLogCallback() const
@@ -163,12 +165,14 @@ void QtLoggerSetup::setupQtLog()
 
     qInstallMessageHandler(qtLogCallback);
 
-    qCInfo(logCategoryQtLogger) << "Qt logging initiated...";
+    qCDebug(logCategoryQtLogger) << "Qt logging initiated...";
 
-    qCInfo(logCategoryQtLogger) << "Application setup:";
-    qCInfo(logCategoryQtLogger) << "\tini:" << settings.fileName();
+    qCDebug(logCategoryQtLogger) << "Application setup:";
+    qCDebug(logCategoryQtLogger) << "\tini:" << settings.fileName();
     qCDebug(logCategoryQtLogger) << "\tformat:" << settings.format();
     qCDebug(logCategoryQtLogger) << "\taccess" << settings.status();
     qCDebug(logCategoryQtLogger) << "\tlogging category filte rules:" << filterRules;
     qCDebug(logCategoryQtLogger) << "\tlogger message pattern:" << messagePattern;
 }
+
+}  // namespace starta::loggers

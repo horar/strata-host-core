@@ -34,16 +34,54 @@ Rectangle {
         color:"grey"
     }
 
+    Rectangle{
+        id:segmentedBox
+        anchors.left:parent.left
+        anchors.leftMargin: 10
+        anchors.top: underlineRect.bottom
+        anchors.topMargin: 28
+        anchors.right:parent.right
+        anchors.rightMargin: 10
+        anchors.bottom:parent.bottom
+        anchors.bottomMargin: 10
+        color:"transparent"
+        border.color:"black"
+        border.width: 2
+        radius:3
+
+        Rectangle{
+            id:topLineEraser
+            anchors.left:parent.left
+            anchors.leftMargin:40
+            anchors.right:parent.right
+            anchors.rightMargin: 40
+            anchors.top:parent.top
+            height:parent.border.width
+            color:backgroundColor
+
+        }
+    }
+
+    Text{
+        id:usbOrBatteryLabel
+        anchors.left:parent.left
+        anchors.top: underlineRect.bottom
+        anchors.topMargin: 20
+        horizontalAlignment: Text.AlignRight
+        width:125
+        font.pixelSize: 18
+        text:"Path:"
+    }
     SGSegmentedButtonStrip {
         id: usbOrBatteryPowerSegmentedButton
         labelLeft: false
-        anchors.top: underlineRect.bottom
-        anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: usbOrBatteryLabel.right
+        anchors.leftMargin: 10
+        anchors.verticalCenter: usbOrBatteryLabel.verticalCenter
         textColor: "#444"
         activeTextColor: "white"
         radius: buttonHeight/2
-        buttonHeight: 40
+        buttonHeight: 30
         exclusive: true
         buttonImplicitWidth: 100
         hoverEnabled:false
@@ -96,8 +134,11 @@ Rectangle {
             top: usbOrBatteryPowerSegmentedButton.bottom
             topMargin: 10
             bottom: parent.bottom
+            bottomMargin: 15
             right: parent.right
+            rightMargin: 20
             left: parent.left
+            leftMargin: 20
         }
 
         onCurrentIndexChanged: {

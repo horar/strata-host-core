@@ -40,6 +40,14 @@ void StorageManager::setDatabase(Database* db)
     connect(db_, &Database::documentUpdated, this, &StorageManager::updatePlatformDoc);
 }
 
+void StorageManager::setBaseFolder(const QString& baseFolder)
+{
+    baseFolder_ = baseFolder;
+
+    StorageInfo info(nullptr, baseFolder_);
+    info.calculateSize();
+}
+
 void StorageManager::setBaseUrl(const QUrl &url)
 {
     if (baseUrl_.isEmpty() == false) {
@@ -52,12 +60,6 @@ void StorageManager::setBaseUrl(const QUrl &url)
     }
 
     baseUrl_ = url;
-
-    baseFolder_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    Q_ASSERT(baseFolder_.isEmpty() == false);
-
-    StorageInfo info(nullptr, baseFolder_);
-    info.calculateSize();
 
     connect(downloadManager_, &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
     connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
@@ -99,6 +101,8 @@ void StorageManager::singleDownloadProgressHandler(const QString &groupId, const
 
     if (request->type == RequestType::FileDownload) {
         emit downloadPlatformSingleFileProgress(request->clientId, filePath, bytesReceived, bytesTotal);
+    } else if (request->type == RequestType::ControlViewDownload) {
+        emit downloadControlViewProgress(request->clientId, downloadControlViewUris_[groupId], filePath, bytesReceived, bytesTotal);
     }
 }
 
@@ -164,7 +168,7 @@ void StorageManager::handlePlatformListResponse(const QByteArray &clientId, cons
 
 void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadRequest *requestItem, const QString &errorString)
 {
-    QJsonArray documentList, firmwareList, controlViewList;
+    QJsonArray documentList, datasheetList, firmwareList, controlViewList;
     QString  finalErrorString = errorString;
 
     PlatformDocument *platDoc = fetchPlatformDoc(requestItem->classId);
@@ -194,9 +198,30 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
             documentList.append(object);
         }
 
+        //add datasheet documents
+        QList<PlatformDatasheetItem> datasheetDownloadList = platDoc->getDatasheetList();
+        for (const auto &item : datasheetDownloadList) {
+            QJsonObject object;
+            object.insert("category", item.category);
+            object.insert("datasheet", item.datasheet);
+            object.insert("name", item.name);
+            object.insert("opn", item.opn);
+            object.insert("subcategory", item.subcategory);
+
+            datasheetList.append(object);
+        }
+
+        // If the datasheetDownloadList is empty, then we download datasheet.csv
+        // This is to handle older platforms that don't have the datasheets property
+        bool downloadDatasheetCSV = datasheetDownloadList.isEmpty();
+
         //add downloadable documents
         QList<PlatformFileItem> downloadList = platDoc->getDownloadList();
         for (const auto &item : downloadList) {
+            if (downloadDatasheetCSV == false && item.name == "datasheet") {
+                continue;
+            }
+
             QJsonObject object;
             object.insert("category", "download");
             object.insert("name", item.name);
@@ -225,10 +250,11 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
         //control views
         QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
         for (const auto &item : controlViewItems) {
-            QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views");
-            if (downloadManager_->verifyFileChecksum(filePath, item.md5) == false) {
+            QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views" + (requestItem->classId.isEmpty() ? "" : "/" + requestItem->classId));
+            if (downloadManager_->verifyFileHash(filePath, item.md5) == false) {
                 filePath.clear();
             }
+
             QJsonObject object {
                 {"uri", item.partialUri},
                 {"md5", item.md5},
@@ -245,6 +271,7 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
 
     emit platformDocumentsResponseRequested(requestItem->clientId,
                                             requestItem->classId,
+                                            datasheetList,
                                             documentList,
                                             firmwareList,
                                             controlViewList,
@@ -304,8 +331,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     QJsonArray jsonPlatformListResponse;
     QList<DownloadManager::DownloadRequestItem> downloadList;
 
-    QString pathPrefix = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    pathPrefix.append("/documents/platform_selector/");
+    const QString pathPrefix{QString("%1/documents/platform_selector/").arg(baseFolder_)};
 
     for (const QJsonValueRef value : jsonPlatformList) {
         QString classId = value.toObject().value("class_id").toString();
@@ -334,7 +360,15 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
 
         QJsonObject jsonPlatform(value.toObject());
         jsonPlatform.insert("image", url.toString());
+        jsonPlatform.insert("timestamp", platDoc->platformSelector().timestamp);
 
+        QJsonArray parts_list;
+
+        for (PlatformDatasheetItem i : platDoc->getDatasheetList()) {
+            parts_list.append(i.opn);
+        }
+
+        jsonPlatform.insert("parts_list", parts_list);
         jsonPlatformListResponse.append(jsonPlatform);
     }
 
@@ -354,7 +388,7 @@ void StorageManager::requestPlatformDocuments(
     PlatformDocument* platDoc = fetchPlatformDoc(classId);
 
     if (platDoc == nullptr){
-        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), QJsonArray(), "Failed to fetch platform data");
+        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), QJsonArray(), QJsonArray(), "Failed to fetch platform data");
         qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
         return;
     }
@@ -424,6 +458,7 @@ void StorageManager::requestDownloadPlatformFiles(
 
     QList<DownloadManager::DownloadRequestItem> downloadList;
     QDir dir(destinationDir);
+
     QList<PlatformFileItem> downloadableFileList = platDoc->getDownloadList();
     for (const auto &fileItem : downloadableFileList) {
         if (partialUriList.indexOf(fileItem.partialUri) < 0) {
@@ -436,6 +471,12 @@ void StorageManager::requestDownloadPlatformFiles(
         item.md5 = fileItem.md5;
 
         downloadList << item;
+    }
+
+    if (downloadList.isEmpty()) {
+        qCWarning(logCategoryHcsStorage()) << "requested files not valid";
+        emit downloadPlatformFilesFinished(clientId, "requested files not valid");
+        return;
     }
 
     DownloadRequest *request = new DownloadRequest();
@@ -453,11 +494,15 @@ void StorageManager::requestDownloadPlatformFiles(
     downloadRequests_.insert(request->groupId, request);
 }
 
-void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5)
+void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5, const QString &class_id)
 {
     DownloadManager::DownloadRequestItem item;
     item.url = baseUrl_.resolved(partialUri);
-    item.filePath = createFilePathFromItem(partialUri, "documents/control_views");
+    QString prefix = "documents/control_views";
+    if (!class_id.isEmpty()) {
+        prefix += "/" + class_id;
+    }
+    item.filePath = createFilePathFromItem(partialUri, prefix);
     item.md5 = md5;
 
     QList<DownloadManager::DownloadRequestItem> downloadList({item});
@@ -467,6 +512,7 @@ void StorageManager::requestDownloadControlView(const QByteArray &clientId, cons
     request->type = RequestType::ControlViewDownload;
 
     DownloadManager::Settings settings;
+    settings.notifySingleDownloadProgress = true;
     settings.keepOriginalName = true;
 
     request->groupId = downloadManager_->download(downloadList, settings);

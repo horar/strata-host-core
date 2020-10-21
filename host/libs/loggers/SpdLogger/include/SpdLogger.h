@@ -1,12 +1,10 @@
 #pragma once
 
-#if defined(_WIN32)
-#include <spdlog/sinks/msvc_sink.h>
-#else
-#include <spdlog/sinks/stdout_color_sinks.h>
-#endif
 #include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
+namespace strata::loggers
+{
 /**
  * @brief The spdlog logging setup
  */
@@ -32,12 +30,10 @@ public:
                const size_t maxFileSize = 1024 * 1024 * 5, const size_t maxNoFiles = 5);
 
 private:
-#if defined(_WIN32)
-    std::shared_ptr<spdlog::sinks::msvc_sink_mt> console_sink_;
-#else
-    std::shared_ptr<spdlog::sinks::ansicolor_stdout_sink_mt> console_sink_;
-#endif
+    std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink_;
     std::shared_ptr<spdlog::sinks::rotating_file_sink_mt> file_sink_;
     std::shared_ptr<spdlog::logger> logger_;
     std::string logCategory_{"strata.logger.spdlog"};
 };
+
+}  // namespace strata::loggers

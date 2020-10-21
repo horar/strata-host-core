@@ -45,7 +45,7 @@ Item {
 
     SGIcon {
         id: closer
-        source: "qrc:/images/icons/times.svg"
+        source: "qrc:/sgimages/times.svg"
         anchors {
             top: root.top
             right: root.right
