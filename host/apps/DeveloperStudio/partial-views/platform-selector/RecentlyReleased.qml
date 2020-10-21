@@ -49,8 +49,9 @@ Rectangle {
 
             function filterAcceptsRow(index) {
                 // ensure visible platforms are not 'unlisted'
+                // ensure visible platforms are not "coming soon" (match logic in PlatformImage.qml)
                 let item = sourceModel.get(index)
-                return item.available.unlisted === false
+                return item.available.unlisted === false && (item.available.order || item.available.documents)
             }
         }
 
