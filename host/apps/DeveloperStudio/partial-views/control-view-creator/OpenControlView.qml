@@ -158,7 +158,7 @@ Rectangle {
                         Layout.fillWidth:true
                         text: model.url
                         elide:Text.ElideRight
-                        horizontalAlignment: Text.AlignVCenter
+                        verticalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
                         maximumLineCount: 1
                         color:  urlMouseArea.containsMouse ?  "#bbb" : "black"
@@ -246,21 +246,37 @@ Rectangle {
                 }
 
                 Rectangle {
+                    id: filePathContainer
                     Layout.preferredWidth: 600
                     Layout.preferredHeight: 40
                     color: "#eee"
                     border.color: "#333"
                     border.width: 1
 
-                    TextInput {
-                        id: filePath
+                    ScrollView {
                         anchors {
+                            fill: parent
                             verticalCenter: parent.verticalCenter
-                            left: parent.left
-                            leftMargin: 10
                         }
-                        text: "Select a .QRC file..."
-                        color: "#333"
+                        leftPadding: 10
+                        rightPadding: 5
+                        contentHeight: filePathContainer.height
+
+                        clip: true
+                        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+                        Text {
+                            id: filePath
+                            anchors {
+                                fill: parent
+                                verticalCenter: parent.verticalCenter
+                            }
+                            height: filePathContainer.height
+                            text: "Select a .QRC file..."
+                            color: "#333"
+                            verticalAlignment: Text.AlignVCenter
+                        }
                     }
                 }
             }

@@ -136,21 +136,37 @@ Rectangle {
                 }
 
                 Rectangle {
+                    id: fileOutputContainer
                     Layout.preferredWidth: 600
                     Layout.preferredHeight: 40
                     color: "#eee"
                     border.color: "#333"
                     border.width: 1
 
-                    TextInput {
-                        id: fileOutput
+                    ScrollView {
                         anchors {
+                            fill: parent
                             verticalCenter: parent.verticalCenter
-                            left: parent.left
-                            leftMargin: 10
                         }
-                        text:  fileSelector.folder.toString();
-                        color: "#333"
+                        leftPadding: 10
+                        rightPadding: 5
+                        contentHeight: fileOutputContainer.height
+
+                        clip: true
+                        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+                        Text {
+                            id: fileOutput
+                            anchors {
+                                fill: parent
+                                verticalCenter: parent.verticalCenter
+                            }
+                            height: fileOutputContainer.height
+                            text: fileSelector.folder.toString()
+                            color: "#333"
+                            verticalAlignment: Text.AlignVCenter
+                        }
                     }
                 }
             }
