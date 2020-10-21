@@ -46,7 +46,7 @@ Item {
                 platformInterface.clear_demo_setup = false
 
                 intensitycontrol.sgSwitch_off = false
-                intensitycontrol.sgSwitch_label = "<b>Watch Dog OFF</b>"  // YI
+                intensitycontrol.sgSwitch_label = "<b>Watch Dog<br>OFF</b>"  // YI
 
             }
         }

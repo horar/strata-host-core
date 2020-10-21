@@ -35,7 +35,7 @@ Item {
             platformInterface.pxn_autoaddr.update(0)
 
             platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // YI
-            sgSwitch_wd.label = "<b>Watch Dog OFF</b>"  // YI
+            sgSwitch_wd.label = "<b>Watch Dog <br> OFF</b>"  // YI
             sgSwitch_wd.checked = false // YI
             sgSwitch_wd.enabled = false  // YI
 
@@ -49,7 +49,7 @@ Item {
             sgSwitch_auto_addr.label = "<b>All LED ON </b>"
 
             sgSwitch_wd.enabled = true  // YI
-            sgSwitch_wd.label = "<b>Watch Dog OFF</b>"  // YI
+            sgSwitch_wd.label = "<b>Watch Dog <br> OFF</b>"  // YI
             sgSwitch_wd.checked = false  // YI
             platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // YI
             //platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)
@@ -168,22 +168,23 @@ Item {
                     }
                     SGSwitch {  // YI
                         id: sgSwitch_wd //Watchdog Status
-                        label: "<b>Watch Dog OFF</b>"
+                        label: "<b>Watch Dog<br>OFF</b>"
                         Layout.alignment: Qt.AlignCenter
                         Layout.topMargin:  10
                         checkedLabel: "On"       // Default: "" (if not entered, label will not appear)
                         uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear)
-                        checked:  platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")  // ?
+                        //checked:  platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")  // ?
 
-                        onToggled: {
-                            if(checked) {
-                                sgSwitch_wd.label = "<b>Watch Dog ON</b>"
-                                platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)
-                            } else {
-                                sgSwitch_wd.label = "<b>Watch Dog OFF</b>"
-                                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")
+                            onToggled: {
+                                if(checked) {
+                                    sgSwitch_wd.label = "<b>Watch Dog <br> ON</b>"
+                                    platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)
+                                } else {
+                                    sgSwitch_wd.label = "<b>Watch Dog <br> OFF</b>"
+                                    platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")
+                                }
                             }
-                        }
+
                     }
                 }
             }
