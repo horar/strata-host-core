@@ -87,6 +87,7 @@ BUILD_DIR=build-host-ota
 PACKAGES_DIR=packages
 export BUILD_ID
 
+PKG_STRATA=$PACKAGES_DIR/com.onsemi.strata/data
 PKG_STRATA_COMPONENTS=$PACKAGES_DIR/com.onsemi.strata.components/data
 PKG_STRATA_COMPONENTS_COMMON=$PKG_STRATA_COMPONENTS/imports/tech/strata/commoncpp
 PKG_STRATA_COMPONENTS_VIEWS=$PKG_STRATA_COMPONENTS/views
@@ -292,11 +293,13 @@ echo " Preparing necessary files.."
 echo "======================================================================="
 
 # copy various license files
-cp -Rfv $STRATA_DEPLOYMENT_DIR/dependencies/strata/ $PKG_STRATA_DS/
+if [ ! -d $PKG_STRATA ] ; then mkdir -pv $PKG_STRATA; fi
+
+cp -Rfv $STRATA_DEPLOYMENT_DIR/dependencies/strata/ $PKG_STRATA/
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to copy license files to $PKG_STRATA_DS!"
+    echo " Failed to copy license files to $PKG_STRATA!"
     echo "======================================================================="
     exit 2
 fi
