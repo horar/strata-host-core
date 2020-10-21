@@ -31,6 +31,7 @@ Item {
     property int animationDuration: 500
     property bool automaticScroll: true
     property bool timestampSimpleFormat: false
+    property int indexAtCoords: logListView.indexAt(contentX, contentY)
 
     signal currentItemChanged(int index)
 
@@ -358,7 +359,6 @@ Item {
         boundsBehavior: Flickable.DragAndOvershootBounds
         highlightMoveDuration: 0
         highlightMoveVelocity: -1
-
         clip: true
 
         ScrollBar.vertical: ScrollBar {
@@ -465,8 +465,7 @@ Item {
                     anchors.fill: parent
                     onPressed:  {
                         logViewWrapper.forceActiveFocus()
-                        logListView.currentIndex = index
-                        currentItemChanged(index)
+                        currentIndex = index
                     }
                 }
             }
@@ -596,15 +595,11 @@ Item {
         }
     }
 
-    property var currentPosition: logListView.indexAt(contentX, contentY)
-
     Keys.onPressed: {
         if (event.key === Qt.Key_Up && currentIndex > 0){
             currentIndex = currentIndex - 1
-            currentItemChanged(currentIndex)
         } else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
             currentIndex = currentIndex + 1
-            currentItemChanged(currentIndex)
         }
         else if (event.key === Qt.Key_Left) {
             contentX = contentX - logListView.width
@@ -615,22 +610,20 @@ Item {
         else if (event.key === Qt.Key_PageDown) {
             contentY = contentY + logListView.height
 
-            if (currentIndex < currentPosition) {
-                currentIndex = currentPosition
+            if (currentIndex < indexAtCoords) {
+                currentIndex = indexAtCoords
             } else {
                 currentIndex = logListView.count - 1
             }
-            currentItemChanged(currentIndex)
         }
         else if (event.key === Qt.Key_PageUp) {
             contentY = contentY - logListView.height
 
-            if ((currentIndex > currentPosition) && (currentPosition > 0)) {
-                currentIndex = currentPosition
+            if ((currentIndex > indexAtCoords) && (indexAtCoords > 0)) {
+                currentIndex = indexAtCoords
             } else {
                 currentIndex = 0
             }
-            currentItemChanged(currentIndex)
         }
         else if (event.key === Qt.Key_Home) {
             logListView.positionViewAtBeginning()
