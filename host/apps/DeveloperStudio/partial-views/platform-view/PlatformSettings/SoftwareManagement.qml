@@ -98,7 +98,7 @@ ColumnLayout {
             return true;
         }
 
-        if (SGVersionUtils.greaterThan(latestVersion.version, activeVersion.version)) {
+        if (activeVersion.version === "" || SGVersionUtils.greaterThan(latestVersion.version, activeVersion.version)) {
             return false;
         }
         return true;
