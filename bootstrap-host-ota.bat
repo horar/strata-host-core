@@ -59,15 +59,23 @@ set BUILD_DIR=build-host-ota
 set PACKAGES_DIR=packages
 set PACKAGES_WIN_DIR=packages_win
 
-set PKG_STRATA=%PACKAGES_DIR%\com.onsemi.strata\data
-set PKG_STRATA_COMPONENTS=%PACKAGES_DIR%\com.onsemi.strata.components\data
+set MODULE_STRATA=com.onsemi.strata
+set MODULE_STRATA_COMPONENTS=com.onsemi.strata.components
+set MODULE_STRATA_DS=com.onsemi.strata.devstudio
+set MODULE_STRATA_HCS=com.onsemi.strata.hcs
+set MODULE_STRATA_QT=com.onsemi.strata.qt
+set MODULE_STRATA_VC_REDIST=com.onsemi.strata.utils.common.vcredist
+set MODULE_STRATA_FTDI=com.onsemi.strata.utils.ftdi
+
+set PKG_STRATA=%PACKAGES_DIR%\%MODULE_STRATA%\data
+set PKG_STRATA_COMPONENTS=%PACKAGES_DIR%\%MODULE_STRATA_COMPONENTS%\data
 set PKG_STRATA_COMPONENTS_COMMON=%PKG_STRATA_COMPONENTS%\imports\tech\strata\commoncpp
 set PKG_STRATA_COMPONENTS_VIEWS=%PKG_STRATA_COMPONENTS%\views
-set PKG_STRATA_DS=%PACKAGES_DIR%\com.onsemi.strata.devstudio\data
-set PKG_STRATA_HCS=%PACKAGES_DIR%\com.onsemi.strata.hcs\data
-set PKG_STRATA_QT=%PACKAGES_DIR%\com.onsemi.strata.qt\data
-set PKG_STRATA_VC_REDIST=%PACKAGES_WIN_DIR%\com.onsemi.strata.utils.common.vcredist\data
-set PKG_STRATA_FTDI=%PACKAGES_WIN_DIR%\com.onsemi.strata.utils.ftdi\data
+set PKG_STRATA_DS=%PACKAGES_DIR%\%MODULE_STRATA_DS%\data
+set PKG_STRATA_HCS=%PACKAGES_DIR%\%MODULE_STRATA_HCS%\data
+set PKG_STRATA_QT=%PACKAGES_DIR%\%MODULE_STRATA_QT%\data
+set PKG_STRATA_VC_REDIST=%PACKAGES_WIN_DIR%\%MODULE_STRATA_VC_REDIST%\data
+set PKG_STRATA_FTDI=%PACKAGES_WIN_DIR%\%MODULE_STRATA_FTDI%\data
 
 set SDS_BINARY=Strata Developer Studio.exe
 set HCS_BINARY=hcs.exe
@@ -113,8 +121,7 @@ set STRATA_OFFLINE=strata-setup-offline
 set STRATA_ONLINE=strata-setup-online
 set STRATA_OFFLINE_BINARY=%STRATA_OFFLINE%.exe
 set STRATA_ONLINE_BINARY=%STRATA_ONLINE%.exe
-set STRATA_ONLINE_REPO_ROOT=pub
-set STRATA_ONLINE_REPOSITORY=%STRATA_ONLINE_REPO_ROOT%\repository\demo
+set STRATA_ONLINE_REPOSITORY=public\repository\demo
 
 echo -----------------------------------------------------------------------------
 echo  Build env. setup:
@@ -623,25 +630,108 @@ echo =======================================================================
 echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%..
 echo =======================================================================
 
-if exist %STRATA_ONLINE_REPO_ROOT% rd /s /q %STRATA_ONLINE_REPO_ROOT%
+if exist %STRATA_ONLINE_REPOSITORY% rd /s /q %STRATA_ONLINE_REPOSITORY%
+if not exist %STRATA_ONLINE_REPOSITORY% md %STRATA_ONLINE_REPOSITORY%
 
-repogen ^
-    --update-new-components ^
-    --verbose ^
-    -p %PACKAGES_DIR% ^
-    -p %PACKAGES_WIN_DIR% ^
-    %STRATA_ONLINE_REPOSITORY%
+echo -----------------------------------------------------------------------------
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\Updates.xml..
+echo -----------------------------------------------------------------------------
 
+echo ^<Updates^>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo  ^<ApplicationName^>{AnyApplication}^</ApplicationName^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo  ^<ApplicationVersion^>1.0.0^</ApplicationVersion^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo  ^<Checksum^>true^</Checksum^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo  ^<RepositoryUpdate^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo   ^<Repository action="add" url="%MODULE_STRATA%" displayname="Module %MODULE_STRATA% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo   ^<Repository action="add" url="%MODULE_STRATA_COMPONENTS%" displayname="Module %MODULE_STRATA_COMPONENTS% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo   ^<Repository action="add" url="%MODULE_STRATA_DS%" displayname="Module %MODULE_STRATA_DS% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo   ^<Repository action="add" url="%MODULE_STRATA_HCS%" displayname="Module %MODULE_STRATA_HCS% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo   ^<Repository action="add" url="%MODULE_STRATA_QT%" displayname="Module %MODULE_STRATA_QT% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo   ^<Repository action="add" url="%MODULE_STRATA_VC_REDIST%" displayname="Module %MODULE_STRATA_VC_REDIST% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo   ^<Repository action="add" url="%MODULE_STRATA_FTDI%" displayname="Module %MODULE_STRATA_FTDI% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo  ^</RepositoryUpdate^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+echo ^</Updates^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+
+echo -----------------------------------------------------------------------------
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA%..
+echo -----------------------------------------------------------------------------
+repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA% %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA%
 IF %ERRORLEVEL% NEQ 0 (
-    echo "======================================================================="
-    echo " Failed to create online repository %STRATA_ONLINE_REPOSITORY%!"
-    echo "======================================================================="
+    echo =======================================================================
+    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA%!
+    echo =======================================================================
     Exit /B 3
 )
 
-echo "======================================================================="
-echo " OTA build finished"
-echo "======================================================================="
+echo -----------------------------------------------------------------------------
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_COMPONENTS%..
+echo -----------------------------------------------------------------------------
+repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA_COMPONENTS% %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_COMPONENTS%
+IF %ERRORLEVEL% NEQ 0 (
+    echo =======================================================================
+    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_COMPONENTS%!
+    echo =======================================================================
+    Exit /B 3
+)
+
+echo -----------------------------------------------------------------------------
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_DS%..
+echo -----------------------------------------------------------------------------
+repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA_DS% %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_DS%
+IF %ERRORLEVEL% NEQ 0 (
+    echo =======================================================================
+    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_DS%!
+    echo =======================================================================
+    Exit /B 3
+)
+
+echo -----------------------------------------------------------------------------
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_HCS%..
+echo -----------------------------------------------------------------------------
+repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA_HCS% %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_HCS%
+IF %ERRORLEVEL% NEQ 0 (
+    echo =======================================================================
+    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_HCS%!
+    echo =======================================================================
+    Exit /B 3
+)
+
+echo -----------------------------------------------------------------------------
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_QT%..
+echo -----------------------------------------------------------------------------
+repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA_QT% %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_QT%
+IF %ERRORLEVEL% NEQ 0 (
+    echo =======================================================================
+    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_QT%!
+    echo =======================================================================
+    Exit /B 3
+)
+
+echo -----------------------------------------------------------------------------
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_VC_REDIST%..
+echo -----------------------------------------------------------------------------
+repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA_VC_REDIST% %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_VC_REDIST%
+IF %ERRORLEVEL% NEQ 0 (
+    echo =======================================================================
+    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_VC_REDIST%!
+    echo =======================================================================
+    Exit /B 3
+)
+
+echo -----------------------------------------------------------------------------
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_FTDI%..
+echo -----------------------------------------------------------------------------
+repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA_FTDI% %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_FTDI%
+IF %ERRORLEVEL% NEQ 0 (
+    echo =======================================================================
+    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_FTDI%!
+    echo =======================================================================
+    Exit /B 3
+)
+
+echo =======================================================================
+echo  OTA build finished
+echo =======================================================================
 
 exit /B 0
 
