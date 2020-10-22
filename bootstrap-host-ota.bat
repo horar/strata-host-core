@@ -637,20 +637,22 @@ echo ---------------------------------------------------------------------------
 echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\Updates.xml..
 echo -----------------------------------------------------------------------------
 
-echo ^<Updates^>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo  ^<ApplicationName^>{AnyApplication}^</ApplicationName^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo  ^<ApplicationVersion^>1.0.0^</ApplicationVersion^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo  ^<Checksum^>true^</Checksum^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo  ^<RepositoryUpdate^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo   ^<Repository action="add" url="%MODULE_STRATA%" displayname="Module %MODULE_STRATA% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo   ^<Repository action="add" url="%MODULE_STRATA_COMPONENTS%" displayname="Module %MODULE_STRATA_COMPONENTS% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo   ^<Repository action="add" url="%MODULE_STRATA_DS%" displayname="Module %MODULE_STRATA_DS% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo   ^<Repository action="add" url="%MODULE_STRATA_HCS%" displayname="Module %MODULE_STRATA_HCS% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo   ^<Repository action="add" url="%MODULE_STRATA_QT%" displayname="Module %MODULE_STRATA_QT% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo   ^<Repository action="add" url="%MODULE_STRATA_VC_REDIST%" displayname="Module %MODULE_STRATA_VC_REDIST% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo   ^<Repository action="add" url="%MODULE_STRATA_FTDI%" displayname="Module %MODULE_STRATA_FTDI% online repository"/^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo  ^</RepositoryUpdate^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-echo ^</Updates^>>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+(
+echo ^<Updates^>
+echo  ^<ApplicationName^>{AnyApplication}^</ApplicationName^>
+echo  ^<ApplicationVersion^>1.0.0^</ApplicationVersion^>
+echo  ^<Checksum^>true^</Checksum^>
+echo  ^<RepositoryUpdate^>
+echo   ^<Repository action="add" url="%MODULE_STRATA%" displayname="Module %MODULE_STRATA% online repository"/^>
+echo   ^<Repository action="add" url="%MODULE_STRATA_COMPONENTS%" displayname="Module %MODULE_STRATA_COMPONENTS% online repository"/^>
+echo   ^<Repository action="add" url="%MODULE_STRATA_DS%" displayname="Module %MODULE_STRATA_DS% online repository"/^>
+echo   ^<Repository action="add" url="%MODULE_STRATA_HCS%" displayname="Module %MODULE_STRATA_HCS% online repository"/^>
+echo   ^<Repository action="add" url="%MODULE_STRATA_QT%" displayname="Module %MODULE_STRATA_QT% online repository"/^>
+echo   ^<Repository action="add" url="%MODULE_STRATA_VC_REDIST%" displayname="Module %MODULE_STRATA_VC_REDIST% online repository"/^>
+echo   ^<Repository action="add" url="%MODULE_STRATA_FTDI%" displayname="Module %MODULE_STRATA_FTDI% online repository"/^>
+echo  ^</RepositoryUpdate^>
+echo ^</Updates^>
+)> %STRATA_ONLINE_REPOSITORY%\Updates.xml
 
 echo -----------------------------------------------------------------------------
 echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA%..
