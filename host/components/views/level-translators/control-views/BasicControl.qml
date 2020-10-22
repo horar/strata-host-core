@@ -332,116 +332,96 @@ Item {
                                     topMargin: 7
                                 }
                             }
-                            GridLayout{
+
+                            ColumnLayout{
+                                width: parent.width
+                                height: parent.height - line1.height - firstHeading.contentHeight
                                 anchors {
                                     top: line1.bottom
                                     topMargin: 10
                                     left: parent.left
-                                    leftMargin: 30
+                                    //leftMargin: 30
                                     right: parent.right
                                     bottom: parent.bottom
                                 }
-                                columnSpacing: 40
-                                rows: 2
-                                columns: 4
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    SGAlignedLabel {
-                                        id:  enable1Label
-                                        target: enable1
-                                        text: "Enable"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
+                                    color: "transparent"
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGAlignedLabel {
+                                                id:  enable1Label
+                                                target: enable1
+                                                text: "Enable"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.centerIn: parent
 
-                                        SGSwitch {
-                                            id: enable1
-                                            checkedLabel: "On"
-                                            uncheckedLabel: "Off"
-                                            onToggled: {
-                                                platformInterface.oe_ub_command.update(checked)
+                                                SGSwitch {
+                                                    id: enable1
+                                                    checkedLabel: "On"
+                                                    uncheckedLabel: "Off"
+                                                    onToggled: {
+                                                        platformInterface.oe_ub_command.update(checked)
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGAlignedLabel {
+                                                id: vccaLabel
+                                                target: vcca
+                                                font.bold: true
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "VCCA"
+                                                anchors.centerIn: parent
+                                                SGInfoBox {
+                                                    id: vcca
+                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                    boxColor: "lightgrey"
+                                                    boxFont.family: Fonts.digitalseven
+                                                    height:  35 * ratioCalc
+                                                    width: 125 * ratioCalc
+                                                    unit: "<b>V</b>"
+                                                    text: "1.50"
+
+
+                                                }
                                             }
                                         }
-                                    }
 
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    SGAlignedLabel {
-                                        id: vccaLabel
-                                        target: vcca
-                                        font.bold: true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        text: "VCCA"
-                                        anchors.centerIn: parent
-                                        SGInfoBox {
-                                            id: vcca
-                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                            boxColor: "lightgrey"
-                                            boxFont.family: Fonts.digitalseven
-                                            height:  35 * ratioCalc
-                                            width: 125 * ratioCalc
-                                            unit: "<b>V</b>"
-                                            text: "1.50"
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGAlignedLabel {
+                                                id: vccbLabel
+                                                target: vccb
+                                                font.bold: true
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "VCCB"
+                                                anchors.centerIn: parent
+                                                SGInfoBox {
+                                                    id: vccb
+                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                    boxColor: "lightgrey"
+                                                    boxFont.family: Fonts.digitalseven
+                                                    height:  35 * ratioCalc
+                                                    width: 125 * ratioCalc
+                                                    unit: "<b>V</b>"
+                                                    text: "2.50"
 
 
-                                        }
-                                    }
-                                }
-
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    SGAlignedLabel {
-                                        id: vccbLabel
-                                        target: vccb
-                                        font.bold: true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        text: "VCCB"
-                                        anchors.centerIn: parent
-                                        SGInfoBox {
-                                            id: vccb
-                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                            boxColor: "lightgrey"
-                                            boxFont.family: Fonts.digitalseven
-                                            height:  35 * ratioCalc
-                                            width: 125 * ratioCalc
-                                            unit: "<b>V</b>"
-                                            text: "2.50"
-
-
-                                        }
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                }
-
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-
-                                    SGAlignedLabel {
-                                        id:  tr0Label
-                                        target: tr0
-                                        text: "T/R#0"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
-
-                                        SGSwitch {
-                                            id: tr0
-                                            checkedLabel: "Transmit"
-                                            uncheckedLabel: "Recieve"
-                                            onToggled: {
-                                                platformInterface.tr_0_command.update(checked)
+                                                }
                                             }
                                         }
                                     }
@@ -449,72 +429,289 @@ Item {
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    SGAlignedLabel {
-                                        id:  tr1Label
-                                        target: tr1
-                                        text: "T/R#1"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
+                                    color: "transparent"
+                                    GridLayout{
+                                        anchors.fill: parent
+                                        columns: 4
+                                        columnSpacing: -30
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
 
-                                        SGSwitch {
-                                            id: tr1
-                                            checkedLabel: "Transmit"
-                                            uncheckedLabel: "Recieve"
-                                            onToggled: {
-                                                platformInterface.tr_1_command.update(checked)
+                                            SGAlignedLabel {
+                                                id:  tr0Label
+                                                target: tr0
+                                                text: "T/R#0"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.centerIn: parent
+
+                                                SGSwitch {
+                                                    id: tr0
+                                                    checkedLabel: "Transmit"
+                                                    uncheckedLabel: "Recieve"
+                                                    onToggled: {
+                                                        platformInterface.tr_0_command.update(checked)
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
-                                }
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGAlignedLabel {
+                                                id:  tr1Label
+                                                target: tr1
+                                                text: "T/R#1"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.centerIn: parent
 
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-
-                                    SGAlignedLabel {
-                                        id:  tr2Label
-                                        target: tr2
-                                        text: "T/R#2"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
-
-                                        SGSwitch {
-                                            id: tr2
-                                            checkedLabel: "Transmit"
-                                            uncheckedLabel: "Recieve"
-                                            onToggled: {
-                                                platformInterface.tr_2_command.update(checked)
+                                                SGSwitch {
+                                                    id: tr1
+                                                    checkedLabel: "Transmit"
+                                                    uncheckedLabel: "Recieve"
+                                                    onToggled: {
+                                                        platformInterface.tr_1_command.update(checked)
+                                                    }
+                                                }
                                             }
                                         }
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    SGAlignedLabel {
-                                        id:  tr3Label
-                                        target: tr3
-                                        text: "T/R#3"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
 
-                                        SGSwitch {
-                                            id: tr3
-                                            checkedLabel: "Transmit"
-                                            uncheckedLabel: "Recieve"
-                                            onToggled: {
-                                                platformInterface.tr_3_command.update(checked)
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+
+                                            SGAlignedLabel {
+                                                id:  tr2Label
+                                                target: tr2
+                                                text: "T/R#2"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.centerIn: parent
+
+                                                SGSwitch {
+                                                    id: tr2
+                                                    checkedLabel: "Transmit"
+                                                    uncheckedLabel: "Recieve"
+                                                    onToggled: {
+                                                        platformInterface.tr_2_command.update(checked)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGAlignedLabel {
+                                                id:  tr3Label
+                                                target: tr3
+                                                text: "T/R#3"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                alignment: SGAlignedLabel.SideTopLeft
+                                                anchors.centerIn: parent
+
+                                                SGSwitch {
+                                                    id: tr3
+                                                    checkedLabel: "Transmit"
+                                                    uncheckedLabel: "Recieve"
+                                                    onToggled: {
+                                                        platformInterface.tr_3_command.update(checked)
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+
+                            //                            GridLayout{
+                            //                                anchors {
+                            //                                    top: line1.bottom
+                            //                                    topMargin: 10
+                            //                                    left: parent.left
+                            //                                    leftMargin: 30
+                            //                                    right: parent.right
+                            //                                    bottom: parent.bottom
+                            //                                }
+                            //                                columnSpacing: 40
+                            //                                rows: 2
+                            //                                columns: 4
+                            //                                Rectangle {
+                            //                                    Layout.fillHeight: true
+                            //                                    Layout.fillWidth: true
+                            //                                    SGAlignedLabel {
+                            //                                        id:  enable1Label
+                            //                                        target: enable1
+                            //                                        text: "Enable"
+                            //                                        fontSizeMultiplier: ratioCalc * 1.2
+                            //                                        font.bold : true
+                            //                                        alignment: SGAlignedLabel.SideTopLeft
+                            //                                        anchors.centerIn: parent
+
+                            //                                        SGSwitch {
+                            //                                            id: enable1
+                            //                                            checkedLabel: "On"
+                            //                                            uncheckedLabel: "Off"
+                            //                                            onToggled: {
+                            //                                                platformInterface.oe_ub_command.update(checked)
+                            //                                            }
+                            //                                        }
+                            //                                    }
+
+                            //                                }
+                            //                                Rectangle {
+                            //                                    Layout.fillHeight: true
+                            //                                    Layout.fillWidth: true
+                            //                                    SGAlignedLabel {
+                            //                                        id: vccaLabel
+                            //                                        target: vcca
+                            //                                        font.bold: true
+                            //                                        alignment: SGAlignedLabel.SideTopLeft
+                            //                                        fontSizeMultiplier: ratioCalc * 1.2
+                            //                                        text: "VCCA"
+                            //                                        anchors.centerIn: parent
+                            //                                        SGInfoBox {
+                            //                                            id: vcca
+                            //                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                            //                                            boxColor: "lightgrey"
+                            //                                            boxFont.family: Fonts.digitalseven
+                            //                                            height:  35 * ratioCalc
+                            //                                            width: 125 * ratioCalc
+                            //                                            unit: "<b>V</b>"
+                            //                                            text: "1.50"
+
+
+                            //                                        }
+                            //                                    }
+                            //                                }
+
+                            //                                Rectangle {
+                            //                                    Layout.fillHeight: true
+                            //                                    Layout.fillWidth: true
+                            //                                    SGAlignedLabel {
+                            //                                        id: vccbLabel
+                            //                                        target: vccb
+                            //                                        font.bold: true
+                            //                                        alignment: SGAlignedLabel.SideTopLeft
+                            //                                        fontSizeMultiplier: ratioCalc * 1.2
+                            //                                        text: "VCCB"
+                            //                                        anchors.centerIn: parent
+                            //                                        SGInfoBox {
+                            //                                            id: vccb
+                            //                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                            //                                            boxColor: "lightgrey"
+                            //                                            boxFont.family: Fonts.digitalseven
+                            //                                            height:  35 * ratioCalc
+                            //                                            width: 125 * ratioCalc
+                            //                                            unit: "<b>V</b>"
+                            //                                            text: "2.50"
+
+
+                            //                                        }
+                            //                                    }
+                            //                                }
+                            //                                Rectangle {
+                            //                                    Layout.fillHeight: true
+                            //                                    Layout.fillWidth: true
+                            //                                }
+
+                            //                                Rectangle {
+                            //                                    Layout.fillHeight: true
+                            //                                    Layout.fillWidth: true
+
+                            //                                    SGAlignedLabel {
+                            //                                        id:  tr0Label
+                            //                                        target: tr0
+                            //                                        text: "T/R#0"
+                            //                                        fontSizeMultiplier: ratioCalc * 1.2
+                            //                                        font.bold : true
+                            //                                        alignment: SGAlignedLabel.SideTopLeft
+                            //                                        anchors.centerIn: parent
+
+                            //                                        SGSwitch {
+                            //                                            id: tr0
+                            //                                            checkedLabel: "Transmit"
+                            //                                            uncheckedLabel: "Recieve"
+                            //                                            onToggled: {
+                            //                                                platformInterface.tr_0_command.update(checked)
+                            //                                            }
+                            //                                        }
+                            //                                    }
+                            //                                }
+                            //                                Rectangle {
+                            //                                    Layout.fillHeight: true
+                            //                                    Layout.fillWidth: true
+                            //                                    SGAlignedLabel {
+                            //                                        id:  tr1Label
+                            //                                        target: tr1
+                            //                                        text: "T/R#1"
+                            //                                        fontSizeMultiplier: ratioCalc * 1.2
+                            //                                        font.bold : true
+                            //                                        alignment: SGAlignedLabel.SideTopLeft
+                            //                                        anchors.centerIn: parent
+
+                            //                                        SGSwitch {
+                            //                                            id: tr1
+                            //                                            checkedLabel: "Transmit"
+                            //                                            uncheckedLabel: "Recieve"
+                            //                                            onToggled: {
+                            //                                                platformInterface.tr_1_command.update(checked)
+                            //                                            }
+                            //                                        }
+                            //                                    }
+                            //                                }
+
+                            //                                Rectangle {
+                            //                                    Layout.fillHeight: true
+                            //                                    Layout.fillWidth: true
+
+                            //                                    SGAlignedLabel {
+                            //                                        id:  tr2Label
+                            //                                        target: tr2
+                            //                                        text: "T/R#2"
+                            //                                        fontSizeMultiplier: ratioCalc * 1.2
+                            //                                        font.bold : true
+                            //                                        alignment: SGAlignedLabel.SideTopLeft
+                            //                                        anchors.centerIn: parent
+
+                            //                                        SGSwitch {
+                            //                                            id: tr2
+                            //                                            checkedLabel: "Transmit"
+                            //                                            uncheckedLabel: "Recieve"
+                            //                                            onToggled: {
+                            //                                                platformInterface.tr_2_command.update(checked)
+                            //                                            }
+                            //                                        }
+                            //                                    }
+                            //                                }
+                            //                                Rectangle {
+                            //                                    Layout.fillHeight: true
+                            //                                    Layout.fillWidth: true
+                            //                                    SGAlignedLabel {
+                            //                                        id:  tr3Label
+                            //                                        target: tr3
+                            //                                        text: "T/R#3"
+                            //                                        fontSizeMultiplier: ratioCalc * 1.2
+                            //                                        font.bold : true
+                            //                                        alignment: SGAlignedLabel.SideTopLeft
+                            //                                        anchors.centerIn: parent
+
+                            //                                        SGSwitch {
+                            //                                            id: tr3
+                            //                                            checkedLabel: "Transmit"
+                            //                                            uncheckedLabel: "Recieve"
+                            //                                            onToggled: {
+                            //                                                platformInterface.tr_3_command.update(checked)
+                            //                                            }
+                            //                                        }
+                            //                                    }
+                            //                                }
+                            //                            }
                         }
                     }
                 }
