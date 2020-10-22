@@ -13,6 +13,7 @@ Rectangle {
 
     ConfirmClosePopup {
         id: confirmClosePopup
+        parent: controlViewCreatorRoot
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
 
@@ -40,6 +41,7 @@ Rectangle {
                 toolBarListView.currentIndex = toolBarListView.editTab;
                 openProjectContainer.addToTheProjectList(editor.treeModel.url.toString())
             }
+            controlViewCreatorRoot.isConfirmCloseOpen = false
         }
     }
 
@@ -199,9 +201,10 @@ Rectangle {
                 onClicked: {
                     if (fileSelector.fileUrl.toString() !== "") {
                         let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
-                        if (unsavedFileCount > 0) {
+                        if (unsavedFileCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
                             confirmClosePopup.unsavedFileCount = unsavedFileCount
                             confirmClosePopup.open()
+                            controlViewCreatorRoot.isConfirmCloseOpen = true
                         } else {
                             if (fileSelector.fileUrl.toString() !== "") {
                                 openProjectContainer.url = sdsModel.newControlView.createNewProject(

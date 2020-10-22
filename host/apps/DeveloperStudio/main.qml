@@ -25,6 +25,7 @@ SGWidgets.SGMainWindow {
     title: Qt.application.displayName
 
     signal initialized()
+    signal attemptedToCloseOnUnsavedChanges(int unsavedCount)
 
     function resetWindowSize()
     {
@@ -43,14 +44,12 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
-        let unsavedCount = controlViewCreator.checkForUnsavedFiles()
+        let unsavedCount = controlViewCreator.checkForUnsavedFiles();
         if (unsavedCount > 0) {
             close.accepted = false
-            confirmClosePopup.unsavedFileCount = unsavedCount
-            confirmClosePopup.open()
-            return
+            mainWindow.attemptedToCloseOnUnsavedChanges(unsavedCount)
+            return;
         }
-
 
         SessionUtils.close_session()
 
@@ -77,28 +76,6 @@ SGWidgets.SGMainWindow {
                 PlatformSelection.logout()
                 SessionUtils.initialized = false
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
-            }
-        }
-    }
-
-    ConfirmClosePopup {
-        id: confirmClosePopup
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-
-        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
-        popupText: "Your changes will be lost if you choose to not save them."
-        acceptButtonText: "Save all"
-
-        property int unsavedFileCount
-
-        onPopupClosed: {
-            if (closeReason === confirmClosePopup.closeFilesReason) {
-                controlViewCreator.openFilesModel.closeAll()
-                mainWindow.close()
-            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                controlViewCreator.openFilesModel.saveAll()
-                mainWindow.close()
             }
         }
     }

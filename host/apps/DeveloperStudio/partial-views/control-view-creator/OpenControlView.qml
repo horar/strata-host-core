@@ -84,6 +84,7 @@ Rectangle {
 
     ConfirmClosePopup {
         id: confirmClosePopup
+        parent: controlViewCreatorRoot
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
 
@@ -113,6 +114,7 @@ Rectangle {
                     filePath.text = "Select a .QRC file..."
                 }
             }
+            controlViewCreatorRoot.isConfirmCloseOpen = false
         }
     }
 
@@ -245,11 +247,14 @@ Rectangle {
                             }
                             else {
                                 let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
-                                if (unsavedFileCount > 0 && openProjectContainer.url.toString() !== model.url) {
+                                if (unsavedFileCount > 0
+                                        && openProjectContainer.url.toString() !== model.url
+                                        && !controlViewCreatorRoot.isConfirmCloseOpen) {
                                     confirmClosePopup.unsavedFileCount = unsavedFileCount
                                     confirmClosePopup.newFileUrl = model.url
                                     confirmClosePopup.addToProjectList = false
                                     confirmClosePopup.open()
+                                    controlViewCreatorRoot.isConfirmCloseOpen = true
                                 } else {
                                     openProjectContainer.url = model.url
                                     toolBarListView.currentIndex = toolBarListView.editTab
@@ -321,11 +326,14 @@ Rectangle {
                 onClicked: {
                     if (fileDialog.fileUrl.toString() !== "") {
                         let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
-                        if (unsavedFileCount > 0 && openProjectContainer.url !== fileDialog.fileUrl) {
+                        if (unsavedFileCount > 0
+                                && openProjectContainer.url !== fileDialog.fileUrl
+                                && !controlViewCreatorRoot.isConfirmCloseOpen) {
                             confirmClosePopup.unsavedFileCount = unsavedFileCount
                             confirmClosePopup.newFileUrl = fileDialog.fileUrl
                             confirmClosePopup.addToProjectList = false
                             confirmClosePopup.open()
+                            controlViewCreatorRoot.isConfirmCloseOpen = true
                         } else {
                             openProjectContainer.url = fileDialog.fileUrl
                             toolBarListView.currentIndex = toolBarListView.editTab

@@ -130,10 +130,11 @@ Item {
                                     }
 
                                     onClicked: {
-                                        if (model.unsavedChanges) {
+                                        if (model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
                                             confirmClosePopup.filename = model.filename
                                             confirmClosePopup.index = index
                                             confirmClosePopup.open()
+                                            controlViewCreatorRoot.isConfirmCloseOpen = true
                                         } else {
                                             openFilesModel.closeTabAt(index);
                                         }
@@ -190,8 +191,9 @@ Item {
             
             ConfirmClosePopup {
                 id: confirmClosePopup
-                x: fileTabRepeater.width / 2 - width / 2
-                y: fileTabRepeater.y + height
+                parent: controlViewCreatorRoot
+                x: (parent.width - width) / 2
+                y: (parent.height - height) / 2
 
                 titleText: "Do you want to save the changes made to " + filename + "?"
                 popupText: "Your changes will be lost if you choose to not save them."
@@ -206,6 +208,7 @@ Item {
                         openFilesModel.saveFileAt(index)
                         openFilesModel.closeTabAt(index)
                     }
+                    controlViewCreatorRoot.isConfirmCloseOpen = false
                 }
             }
 

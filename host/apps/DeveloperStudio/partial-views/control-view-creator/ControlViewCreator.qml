@@ -11,13 +11,39 @@ Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
 
+    property bool isConfirmCloseOpen: false
     property url currentFileUrl: ""
     property alias openFilesModel: editor.openFilesModel
+    property alias confirmClosePopup: confirmClosePopup
 
     SGUserSettings {
         id: sgUserSettings
         classId: "controlViewCreator"
         user: NavigationControl.context.user_id
+    }
+
+    ConfirmClosePopup {
+        id: confirmClosePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        parent: mainWindow.contentItem
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+
+        property int unsavedFileCount
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                controlViewCreator.openFilesModel.closeAll()
+                mainWindow.close()
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                controlViewCreator.openFilesModel.saveAll()
+                mainWindow.close()
+            }
+            isConfirmCloseOpen = false
+        }
     }
 
     RowLayout {
@@ -161,6 +187,18 @@ Rectangle {
                     text: "Control view from RCC loaded here"
                     opacity: .25
                 }
+            }
+        }
+    }
+
+    Connections {
+        target: mainWindow
+
+        onAttemptedToCloseOnUnsavedChanges: {
+            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                confirmClosePopup.unsavedFileCount = unsavedCount;
+                confirmClosePopup.open();
+                controlViewCreatorRoot.isConfirmCloseOpen = true;
             }
         }
     }
