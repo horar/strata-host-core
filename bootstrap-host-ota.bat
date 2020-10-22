@@ -634,11 +634,40 @@ if exist %STRATA_ONLINE_REPOSITORY% rd /s /q %STRATA_ONLINE_REPOSITORY%
 if not exist %STRATA_ONLINE_REPOSITORY% md %STRATA_ONLINE_REPOSITORY%
 
 echo -----------------------------------------------------------------------------
-echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\Updates.xml..
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%..
+echo -----------------------------------------------------------------------------
+repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA% %STRATA_ONLINE_REPOSITORY%
+IF %ERRORLEVEL% NEQ 0 (
+    echo =======================================================================
+    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%!
+    echo =======================================================================
+    Exit /B 3
+)
+
+echo -----------------------------------------------------------------------------
+echo  Updating online repository %STRATA_ONLINE_REPOSITORY%\Updates.xml..
 echo -----------------------------------------------------------------------------
 
+if not exist %STRATA_ONLINE_REPOSITORY%\Updates.xml (
+    echo =======================================================================
+    echo  Missing %STRATA_ONLINE_REPOSITORY%\Updates.xml, repogen probably failed
+    echo =======================================================================
+    Exit /B 2
+)
+
+SetLocal DisableDelayedExpansion
+Set "SrcFile=%STRATA_ONLINE_REPOSITORY%\Updates.xml"
+Copy /Y "%SrcFile%" "%SrcFile%.bak">Nul 2>&1||Exit /B
+(   Set "Line="
+    For /F "UseBackQ Delims=" %%A In ("%SrcFile%.bak") Do (
+        SetLocal EnableDelayedExpansion
+        If Defined Line Echo !Line!
+        EndLocal
+        Set "Line=%%A"))>"%SrcFile%"
+del "%SrcFile%.bak"
+EndLocal
+
 (
-echo ^<Updates^>
 echo  ^<RepositoryUpdate^>
 echo   ^<Repository action="add" url="%MODULE_STRATA%" displayname="Module %MODULE_STRATA% online repository"/^>
 echo   ^<Repository action="add" url="%MODULE_STRATA_COMPONENTS%" displayname="Module %MODULE_STRATA_COMPONENTS% online repository"/^>
@@ -649,18 +678,7 @@ echo   ^<Repository action="add" url="%MODULE_STRATA_VC_REDIST%" displayname="Mo
 echo   ^<Repository action="add" url="%MODULE_STRATA_FTDI%" displayname="Module %MODULE_STRATA_FTDI% online repository"/^>
 echo  ^</RepositoryUpdate^>
 echo ^</Updates^>
-)> %STRATA_ONLINE_REPOSITORY%\Updates.xml
-
-echo -----------------------------------------------------------------------------
-echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA%..
-echo -----------------------------------------------------------------------------
-repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA% %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA%
-IF %ERRORLEVEL% NEQ 0 (
-    echo =======================================================================
-    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA%!
-    echo =======================================================================
-    Exit /B 3
-)
+)>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
 
 echo -----------------------------------------------------------------------------
 echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%MODULE_STRATA_COMPONENTS%..

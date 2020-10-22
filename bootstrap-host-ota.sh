@@ -426,28 +426,38 @@ if [ -d $STRATA_ONLINE_REPOSITORY ] ; then rm -rf $STRATA_ONLINE_REPOSITORY; fi
 if [ ! -d $STRATA_ONLINE_REPOSITORY ] ; then mkdir -pv $STRATA_ONLINE_REPOSITORY; fi
 
 echo "-----------------------------------------------------------------------------"
-echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/Updates.xml.."
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY.."
+echo "-----------------------------------------------------------------------------"
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA $STRATA_ONLINE_REPOSITORY
+if [ $? != 0 ] ; then
+    echo "======================================================================="
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY!"
+    echo "======================================================================="
+    exit 3
+fi
+
+echo "-----------------------------------------------------------------------------"
+echo " Updating online repository $STRATA_ONLINE_REPOSITORY/Updates.xml.."
 echo "-----------------------------------------------------------------------------"
 
-echo "<Updates>
- <RepositoryUpdate>
+if [ ! -f "$STRATA_ONLINE_REPOSITORY/Updates.xml" ] ; then
+    echo "======================================================================="
+    echo " Missing $STRATA_ONLINE_REPOSITORY/Updates.xml, repogen probably failed"
+    echo "======================================================================="
+    exit 2
+fi
+
+cp $STRATA_ONLINE_REPOSITORY/Updates.xml $STRATA_ONLINE_REPOSITORY/Updates.xml.bak
+sed '$ d' $STRATA_ONLINE_REPOSITORY/Updates.xml.bak > $STRATA_ONLINE_REPOSITORY/Updates.xml
+rm -f $STRATA_ONLINE_REPOSITORY/Updates.xml.bak
+
+echo " <RepositoryUpdate>
   <Repository action=\"add\" url=\"$MODULE_STRATA\" displayname=\"Module $MODULE_STRATA online repository\"/>
   <Repository action=\"add\" url=\"$MODULE_STRATA_COMPONENTS\" displayname=\"Module $MODULE_STRATA_COMPONENTS online repository\"/>
   <Repository action=\"add\" url=\"$MODULE_STRATA_DS\" displayname=\"Module $MODULE_STRATA_DS online repository\"/>
   <Repository action=\"add\" url=\"$MODULE_STRATA_HCS\" displayname=\"Module $MODULE_STRATA_HCS online repository\"/>
  </RepositoryUpdate>
-</Updates>" > $STRATA_ONLINE_REPOSITORY/Updates.xml
-
-echo "-----------------------------------------------------------------------------"
-echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA.."
-echo "-----------------------------------------------------------------------------"
-repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA
-if [ $? != 0 ] ; then
-    echo "======================================================================="
-    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA!"
-    echo "======================================================================="
-    exit 3
-fi
+</Updates>" >> $STRATA_ONLINE_REPOSITORY/Updates.xml
 
 echo "-----------------------------------------------------------------------------"
 echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_COMPONENTS.."
