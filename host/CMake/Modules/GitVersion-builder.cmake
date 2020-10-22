@@ -81,6 +81,14 @@ function(process_config_file PROJECT_NAME INPUT_DIR WORKING_DIR DEPLOYMENT_DIR C
     )
 endfunction()
 
+function(process_resource_file PROJECT_NAME INPUT_DIR WORKING_DIR DEPLOYMENT_DIR RESOURCE_FILENAME)
+    message(STATUS "Processing ${PROJECT_NAME} ${RESOURCE_FILENAME} file...")
+
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${INPUT_DIR}/${RESOURCE_FILENAME} ${DEPLOYMENT_DIR}/${RESOURCE_FILENAME}
+    )
+endfunction()
+
 if(EXISTS ${PROJECT_DIR}/resources/qtifw/packages/meta/package.xml.in AND CMAKE_BUILD_TYPE STREQUAL "OTA")
     process_config_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta/ ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta package.xml)
 else()
@@ -94,6 +102,56 @@ else()
     endif()
 endif()
 
-if(EXISTS ${PROJECT_DIR}/resources/qtifw/meta/package.xml.in AND CMAKE_BUILD_TYPE STREQUAL "OTA")
-    process_config_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta/ ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta package.xml)
+if(CMAKE_BUILD_TYPE STREQUAL "OTA")
+    if(EXISTS ${PROJECT_DIR}/resources/qtifw/meta/package.xml.in)
+        process_config_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta/ ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta package.xml)
+    endif()
+
+    file(GLOB files "${PROJECT_DIR}/resources/qtifw/packages/meta/*license*")
+    foreach(file ${files})
+        get_filename_component(filename ${file} NAME)
+        process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    endforeach()
+
+    file(GLOB files "${PROJECT_DIR}/resources/qtifw/packages/meta/*.js")
+    foreach(file ${files})
+        get_filename_component(filename ${file} NAME)
+        process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    endforeach()
+
+    file(GLOB files "${PROJECT_DIR}/resources/qtifw/packages/meta/*.qs")
+    foreach(file ${files})
+        get_filename_component(filename ${file} NAME)
+        process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    endforeach()
+
+    file(GLOB files "${PROJECT_DIR}/resources/qtifw/packages/meta/*.ui")
+    foreach(file ${files})
+        get_filename_component(filename ${file} NAME)
+        process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    endforeach()
+
+    file(GLOB files "${PROJECT_DIR}/resources/qtifw/meta/*license*")
+    foreach(file ${files})
+        get_filename_component(filename ${file} NAME)
+        process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    endforeach()
+
+    file(GLOB files "${PROJECT_DIR}/resources/qtifw/meta/*.js")
+    foreach(file ${files})
+        get_filename_component(filename ${file} NAME)
+        process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    endforeach()
+
+    file(GLOB files "${PROJECT_DIR}/resources/qtifw/meta/*.qs")
+    foreach(file ${files})
+        get_filename_component(filename ${file} NAME)
+        process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    endforeach()
+
+    file(GLOB files "${PROJECT_DIR}/resources/qtifw/meta/*.ui")
+    foreach(file ${files})
+        get_filename_component(filename ${file} NAME)
+        process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    endforeach()
 endif()
