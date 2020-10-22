@@ -39,13 +39,7 @@ Rectangle {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
-        NavigationControl.userSettings = sgUserSettings
-        const settings = NavigationControl.userSettings.readFile("settings.json")
-        NavigationControl.userSettings.autoOpenView = settings.autoOpenView
-        NavigationControl.userSettings.switchToActive = settings.switchToActive
-        NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
-        NavigationControl.userSettings.selectedDistributionPortal = settings.selectedDistributionPortal !== undefined ? settings.selectedDistributionPortal : 0
-
+        loadUserSettings()
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -292,6 +286,15 @@ Rectangle {
                     width: profileMenu.width
                 }
 
+                SGMenuItem {
+                    text: qsTr("Settings")
+                    onClicked: {
+                        profileMenu.close()
+                        settingsLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
                 Rectangle {
                     id: menuDivider
                     color: "white"
@@ -332,6 +335,12 @@ Rectangle {
         active: false
     }
 
+    Loader {
+        id: settingsLoader
+        source: "qrc:/partial-views/SGSettingsPopup.qml"
+        active: false
+    }
+
     SGUserSettings {
         id: sgUserSettings
         classId: "general-settings"
@@ -346,5 +355,14 @@ Rectangle {
 
     function showAboutWindow(){
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
+    }
+
+    function loadUserSettings() {
+        NavigationControl.userSettings = sgUserSettings
+        const settings = NavigationControl.userSettings.readFile("settings.json")
+        NavigationControl.userSettings.autoOpenView = settings.autoOpenView
+        NavigationControl.userSettings.switchToActive = settings.switchToActive
+        NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+        NavigationControl.userSettings.selectedDistributionPortal = settings.selectedDistributionPortal
     }
 }

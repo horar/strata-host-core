@@ -190,7 +190,7 @@ Row {
     Component.onCompleted: {
         // This is needed to create the model
         loadModel();
-        if (NavigationControl.userSettings.index !== 0) {
+        if (NavigationControl.userSettings.selectedDistributionPortal !== 0) {
                 const selectedDistributionPortal = NavigationControl.userSettings.selectedDistributionPortal;
                 providerUrl = sgBaseRepeater.model.get(selectedDistributionPortal).url
                 providerName = sgBaseRepeater.model.get(selectedDistributionPortal).name
@@ -202,18 +202,25 @@ Row {
     function setIndex(index) {
         providerUrl = sgBaseRepeater.model.get(index).url
         providerName = sgBaseRepeater.model.get(index).name
-        NavigationControl.userSettings.writeFile("settings.json",
-                                                 { selectedDistributionPortal: index,
-                                                   autoOpenView: NavigationControl.userSettings.autoOpenView,
-                                                   switchToActive: NavigationControl.userSettings.switchToActive,
-                                                   notifyOnFirmwareUpdate: NavigationControl.userSettings.notifyOnFirmwareUpdate
-                                                 });
+        saveUserSettings(index)
+
     }
 
     function loadModel(){
         providers.forEach(function (child){
             sgBaseRepeater.model.append(child)
         })
+    }
+
+    function saveUserSettings(index) {
+        NavigationControl.userSettings.writeFile("settings.json",
+            {
+              selectedDistributionPortal: index,
+              autoOpenView: NavigationControl.userSettings.autoOpenView,
+              switchToActive: NavigationControl.userSettings.switchToActive,
+              notifyOnFirmwareUpdate: NavigationControl.userSettings.notifyOnFirmwareUpdate
+            }
+        );
     }
 
     TextMetrics {

@@ -6,33 +6,24 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 SGStrataPopup {
     id: root
     modal: true
-    visible: false
+    visible: true
     headerText: "General Settings"
     closePolicy: Popup.CloseOnEscape
     focus: true
     horizontalPadding: 20
     bottomPadding: 20
 
-    height: parent.height/2
-    width: parent.width/2
-    x: parent.width/2 - root.width/2
-    y: parent.height/2 - root.height/2
+    width: 400
+    height: 300
+    x: container.width/2 - root.width/2
+    y: container.parent.windowHeight/2 - root.height/2
 
     onClosed: {
-        const settings = {
-            autoOpenView: autoOpen.checked,
-            switchToActive: switchTo.checked,
-            notifyOnFirmwareUpdate: firmwareUpdates.checked,
-            selectedDistributionPortal: NavigationControl.userSettings.selectedDistributionPortal
-        }
-        NavigationControl.userSettings.writeFile("settings.json", settings)
-        NavigationControl.userSettings.autoOpenView = settings.autoOpenView
-        NavigationControl.userSettings.switchToActive = settings.switchToActive
-        NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
-        NavigationControl.userSettings.selectedDistributionPortal = settings.selectedDistributionPortal
+        saveUserSettings()
+        parent.active = false
     }
 
-    ColumnLayout {
+   contentItem:  ColumnLayout {
         id: column
         ColumnLayout {
             Layout.alignment: Qt.AlignLeft
@@ -74,4 +65,18 @@ SGStrataPopup {
             }
         }
     }
+
+   function saveUserSettings() {
+       const settings = {
+           autoOpenView: autoOpen.checked,
+           switchToActive: switchTo.checked,
+           notifyOnFirmwareUpdate: firmwareUpdates.checked,
+           selectedDistributionPortal: NavigationControl.userSettings.selectedDistributionPortal
+       }
+       NavigationControl.userSettings.writeFile("settings.json", settings)
+       NavigationControl.userSettings.autoOpenView = settings.autoOpenView
+       NavigationControl.userSettings.switchToActive = settings.switchToActive
+       NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+       NavigationControl.userSettings.selectedDistributionPortal = settings.selectedDistributionPortal
+   }
 }

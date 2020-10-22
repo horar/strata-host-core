@@ -314,11 +314,18 @@ function updateState(event, data)
                     connected_view.connected = true
 
                     if (userSettings.switchToActive) {
-                        updateState(events.SWITCH_VIEW_EVENT, {"index": view_index})
+                        updateState(events.SWITCH_VIEW_EVENT, {"index": view_index + 1})
                     }
                 }
 
                 if (userSettings.autoOpenView) {
+                    if(!data.name && !data.available){
+                        data.name = "Unknown Platform"
+                        data.available = {
+                            "control": true
+                        }
+                    }
+
                     updateState(events.OPEN_PLATFORM_VIEW_EVENT, data)
                 }
 
