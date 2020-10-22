@@ -72,7 +72,7 @@ REM 	..\host
 echo "======================================================================="
 echo " Compiling.."
 echo "======================================================================="
-cmake --build .
+cmake --build . -- -j %NUMBER_OF_PROCESSORS%
 REM cmake --build . --config Debug
 
 
