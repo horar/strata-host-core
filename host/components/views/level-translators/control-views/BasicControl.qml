@@ -22,7 +22,6 @@ Item {
         tr1.checked = startup.tr_1
         tr2.checked = startup.tr_2
         tr3.checked = startup.tr_3
-
     }
 
     property var adc: platformInterface.adc
@@ -58,384 +57,15 @@ Item {
             topPadding: 7
         }
         Rectangle {
-            Layout.fillWidth: true
+            Layout.preferredWidth: parent.width/1.5
             Layout.preferredHeight: parent.height - platformName.contentHeight - 40
             Layout.alignment: Qt.AlignCenter
-            RowLayout {
+            ColumnLayout {
                 anchors.fill:parent
                 Rectangle{
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: parent.height/5
                     Layout.fillWidth: true
                     color: "red"
-                    ColumnLayout {
-                        anchors.fill: parent
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            Text {
-                                id: firstHeading
-                                text: "Uni/Bi FXL4TD245"
-                                font.bold: true
-                                font.pixelSize: ratioCalc * 20
-                                color: "#696969"
-                                anchors {
-                                    left: parent.left
-                                    leftMargin: 10
-                                    top: parent.top
-                                }
-                            }
-
-                            Rectangle {
-                                id: line1
-                                height: 1.5
-                                Layout.alignment: Qt.AlignCenter
-                                width: parent.width
-                                border.color: "lightgray"
-                                radius: 1.5
-                                anchors {
-                                    top: firstHeading.bottom
-                                    topMargin: 7
-                                }
-                            }
-                            ColumnLayout{
-                                anchors {
-                                    top: line1.bottom
-                                    topMargin: 10
-                                    left: parent.left
-                                    right: parent.right
-                                    bottom: parent.bottom
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-
-                                    SGAlignedLabel {
-                                        id:  enable1Label
-                                        target: enable1
-                                        text: "Enable"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
-
-                                        SGSwitch {
-                                            id: enable1
-                                            checkedLabel: "On"
-                                            uncheckedLabel: "Off"
-                                            onToggled: {
-                                                platformInterface.oe_ub_command.update(checked)
-                                            }
-                                        }
-                                    }
-
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    RowLayout{
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: vccaLabel
-                                                target: vcca
-                                                font.bold: true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                text: "VCCA"
-                                                anchors.centerIn: parent
-                                                SGInfoBox {
-                                                    id: vcca
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxColor: "lightgrey"
-                                                    boxFont.family: Fonts.digitalseven
-                                                    height:  35 * ratioCalc
-                                                    width: 125 * ratioCalc
-                                                    unit: "<b>V</b>"
-                                                    text: "1.50"
-
-
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: vccbLabel
-                                                target: vccb
-                                                font.bold: true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                text: "VCCB"
-                                                anchors.centerIn: parent
-                                                SGInfoBox {
-                                                    id: vccb
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxColor: "lightgrey"
-                                                    boxFont.family: Fonts.digitalseven
-                                                    height:  35 * ratioCalc
-                                                    width: 125 * ratioCalc
-                                                    unit: "<b>V</b>"
-                                                    text: "2.50"
-
-
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    RowLayout{
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id:  tr0Label
-                                                target: tr0
-                                                text: "T/R#0"
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                font.bold : true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.centerIn: parent
-
-                                                SGSwitch {
-                                                    id: tr0
-                                                    checkedLabel: "Transmit"
-                                                    uncheckedLabel: "Recieve"
-                                                    onToggled: {
-                                                        platformInterface.tr_0_command.update(checked)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id:  tr1Label
-                                                target: tr1
-                                                text: "T/R#1"
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                font.bold : true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.centerIn: parent
-
-                                                SGSwitch {
-                                                    id: tr1
-                                                    checkedLabel: "Transmit"
-                                                    uncheckedLabel: "Recieve"
-                                                    onToggled: {
-                                                        platformInterface.tr_1_command.update(checked)
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    RowLayout{
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id:  tr2Label
-                                                target: tr2
-                                                text: "T/R#2"
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                font.bold : true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.centerIn: parent
-
-                                                SGSwitch {
-                                                    id: tr2
-                                                    checkedLabel: "Transmit"
-                                                    uncheckedLabel: "Recieve"
-                                                    onToggled: {
-                                                        platformInterface.tr_2_command.update(checked)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id:  tr3Label
-                                                target: tr3
-                                                text: "T/R#3"
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                font.bold : true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.centerIn: parent
-
-                                                SGSwitch {
-                                                    id: tr3
-                                                    checkedLabel: "Transmit"
-                                                    uncheckedLabel: "Recieve"
-                                                    onToggled: {
-                                                        platformInterface.tr_3_command.update(checked)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                }
-                Rectangle{
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    ColumnLayout {
-                        anchors.fill: parent
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            Text {
-                                id: secondHeading
-                                text: "SPI FXLA104"
-                                font.bold: true
-                                font.pixelSize: ratioCalc * 20
-                                color: "#696969"
-                                anchors {
-                                    left: parent.left
-                                    leftMargin: 10
-                                    top: parent.top
-                                }
-                            }
-
-                            Rectangle {
-                                id: line2
-                                height: 1.5
-                                Layout.alignment: Qt.AlignCenter
-                                width: parent.width
-                                border.color: "lightgray"
-                                radius: 1.5
-                                anchors {
-                                    top: secondHeading.bottom
-                                    topMargin: 7
-                                }
-                            }
-                            ColumnLayout{
-                                anchors {
-                                    top: line2.bottom
-                                    topMargin: 10
-                                    left: parent.left
-                                    right: parent.right
-                                    bottom: parent.bottom
-                                }
-                                Rectangle{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    SGAlignedLabel {
-                                        id:  enable2Label
-                                        target: enable2
-                                        text: "Enable"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
-
-                                        SGSwitch {
-                                            id: enable2
-                                            checkedLabel: "On"
-                                            uncheckedLabel: "Off"
-                                            onToggled: {
-                                                platformInterface.oe_spi_command.update(checked)
-                                            }
-                                        }
-                                    }
-                                }
-                                Rectangle{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    RowLayout{
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: vcca2Label
-                                                target: vcca2
-                                                font.bold: true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                text: "VCCA"
-                                                anchors.centerIn: parent
-                                                SGInfoBox {
-                                                    id: vcca2
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxColor: "lightgrey"
-                                                    boxFont.family: Fonts.digitalseven
-                                                    height:  35 * ratioCalc
-                                                    width: 125 * ratioCalc
-                                                    unit: "<b>V</b>"
-                                                    text: "1.20"
-
-
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: vccb2Label
-                                                target: vccb2
-                                                font.bold: true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                text: "VCCB"
-                                                anchors.centerIn: parent
-                                                SGInfoBox {
-                                                    id: vccb2
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxColor: "lightgrey"
-                                                    boxFont.family: Fonts.digitalseven
-                                                    height:  35 * ratioCalc
-                                                    width: 125 * ratioCalc
-                                                    unit: "<b>V</b>"
-                                                    text: "3.00"
-
-
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }
-                                Rectangle{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-
-                                }
-                                Rectangle{
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-
-                                }
-                            }
-                        }
-                    }
-
-                }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    color: "green"
                     ColumnLayout {
                         anchors.fill: parent
                         Rectangle {
@@ -466,7 +96,7 @@ Item {
                                     topMargin: 7
                                 }
                             }
-                            ColumnLayout{
+                            RowLayout {
                                 anchors {
                                     top: line3.bottom
                                     topMargin: 10
@@ -499,57 +129,117 @@ Item {
                                 Rectangle{
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    RowLayout{
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: vcca3Label
-                                                target: vcca3
-                                                font.bold: true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                text: "VCCA"
-                                                anchors.centerIn: parent
-                                                SGInfoBox {
-                                                    id: vcca3
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxColor: "lightgrey"
-                                                    boxFont.family: Fonts.digitalseven
-                                                    height:  35 * ratioCalc
-                                                    width: 125 * ratioCalc
-                                                    unit: "<b>V</b>"
-                                                    text: "1.50"
+                                    SGAlignedLabel {
+                                        id: vcca3Label
+                                        target: vcca3
+                                        font.bold: true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        text: "VCCA"
+                                        anchors.centerIn: parent
+                                        SGInfoBox {
+                                            id: vcca3
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            height:  35 * ratioCalc
+                                            width: 125 * ratioCalc
+                                            unit: "<b>V</b>"
+                                            text: "1.50"
 
 
 
-                                                }
-                                            }
                                         }
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: vccb3Label
-                                                target: vccb3
-                                                font.bold: true
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                text: "VCCB"
-                                                anchors.centerIn: parent
-                                                SGInfoBox {
-                                                    id: vccb3
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxColor: "lightgrey"
-                                                    boxFont.family: Fonts.digitalseven
-                                                    height:  35 * ratioCalc
-                                                    width: 125 * ratioCalc
-                                                    unit: "<b>V</b>"
-                                                    text: "1.26"
+                                    }
+                                }
 
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id: vccb3Label
+                                        target: vccb3
+                                        font.bold: true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        text: "VCCB"
+                                        anchors.centerIn: parent
+                                        SGInfoBox {
+                                            id: vccb3
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            height:  35 * ratioCalc
+                                            width: 125 * ratioCalc
+                                            unit: "<b>V</b>"
+                                            text: "1.26"
 
-                                                }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Rectangle{
+                    Layout.preferredHeight: parent.height/5
+                    Layout.fillWidth: true
+                    ColumnLayout {
+                        anchors.fill: parent
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            Text {
+                                id: secondHeading
+                                text: "SPI FXLA104"
+                                font.bold: true
+                                font.pixelSize: ratioCalc * 20
+                                color: "#696969"
+                                anchors {
+                                    left: parent.left
+                                    leftMargin: 10
+                                    top: parent.top
+                                }
+                            }
+
+                            Rectangle {
+                                id: line2
+                                height: 1.5
+                                Layout.alignment: Qt.AlignCenter
+                                width: parent.width
+                                border.color: "lightgray"
+                                radius: 1.5
+                                anchors {
+                                    top: secondHeading.bottom
+                                    topMargin: 7
+                                }
+                            }
+                            RowLayout{
+                                anchors {
+                                    top: line2.bottom
+                                    topMargin: 10
+                                    left: parent.left
+                                    right: parent.right
+                                    bottom: parent.bottom
+                                }
+                                Rectangle{
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id:  enable2Label
+                                        target: enable2
+                                        text: "Enable"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        font.bold : true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.centerIn: parent
+
+                                        SGSwitch {
+                                            id: enable2
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            onToggled: {
+                                                platformInterface.oe_spi_command.update(checked)
                                             }
                                         }
                                     }
@@ -557,13 +247,273 @@ Item {
                                 Rectangle{
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id: vcca2Label
+                                        target: vcca2
+                                        font.bold: true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        text: "VCCA"
+                                        anchors.centerIn: parent
+                                        SGInfoBox {
+                                            id: vcca2
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            height:  35 * ratioCalc
+                                            width: 125 * ratioCalc
+                                            unit: "<b>V</b>"
+                                            text: "1.20"
+
+
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id: vccb2Label
+                                        target: vccb2
+                                        font.bold: true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        text: "VCCB"
+                                        anchors.centerIn: parent
+                                        SGInfoBox {
+                                            id: vccb2
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            height:  35 * ratioCalc
+                                            width: 125 * ratioCalc
+                                            unit: "<b>V</b>"
+                                            text: "3.00"
+
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Rectangle{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    color: "red"
+                    ColumnLayout {
+                        anchors.fill: parent
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            Text {
+                                id: firstHeading
+                                text: "Uni/Bi FXL4TD245"
+                                font.bold: true
+                                font.pixelSize: ratioCalc * 20
+                                color: "#696969"
+                                anchors {
+                                    left: parent.left
+                                    leftMargin: 10
+                                    top: parent.top
+                                }
+                            }
+
+                            Rectangle {
+                                id: line1
+                                height: 1.5
+                                Layout.alignment: Qt.AlignCenter
+                                width: parent.width
+                                border.color: "lightgray"
+                                radius: 1.5
+                                anchors {
+                                    top: firstHeading.bottom
+                                    topMargin: 7
+                                }
+                            }
+                            GridLayout{
+                                anchors {
+                                    top: line1.bottom
+                                    topMargin: 10
+                                    left: parent.left
+                                    leftMargin: 30
+                                    right: parent.right
+                                    bottom: parent.bottom
+                                }
+                                columnSpacing: 40
+                                rows: 2
+                                columns: 4
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id:  enable1Label
+                                        target: enable1
+                                        text: "Enable"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        font.bold : true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.centerIn: parent
+
+                                        SGSwitch {
+                                            id: enable1
+                                            checkedLabel: "On"
+                                            uncheckedLabel: "Off"
+                                            onToggled: {
+                                                platformInterface.oe_ub_command.update(checked)
+                                            }
+                                        }
+                                    }
 
                                 }
-                                Rectangle{
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id: vccaLabel
+                                        target: vcca
+                                        font.bold: true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        text: "VCCA"
+                                        anchors.centerIn: parent
+                                        SGInfoBox {
+                                            id: vcca
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            height:  35 * ratioCalc
+                                            width: 125 * ratioCalc
+                                            unit: "<b>V</b>"
+                                            text: "1.50"
+
+
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id: vccbLabel
+                                        target: vccb
+                                        font.bold: true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        text: "VCCB"
+                                        anchors.centerIn: parent
+                                        SGInfoBox {
+                                            id: vccb
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                            boxColor: "lightgrey"
+                                            boxFont.family: Fonts.digitalseven
+                                            height:  35 * ratioCalc
+                                            width: 125 * ratioCalc
+                                            unit: "<b>V</b>"
+                                            text: "2.50"
+
+
+                                        }
+                                    }
+                                }
+                                Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                 }
 
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+
+                                    SGAlignedLabel {
+                                        id:  tr0Label
+                                        target: tr0
+                                        text: "T/R#0"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        font.bold : true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.centerIn: parent
+
+                                        SGSwitch {
+                                            id: tr0
+                                            checkedLabel: "Transmit"
+                                            uncheckedLabel: "Recieve"
+                                            onToggled: {
+                                                platformInterface.tr_0_command.update(checked)
+                                            }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id:  tr1Label
+                                        target: tr1
+                                        text: "T/R#1"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        font.bold : true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.centerIn: parent
+
+                                        SGSwitch {
+                                            id: tr1
+                                            checkedLabel: "Transmit"
+                                            uncheckedLabel: "Recieve"
+                                            onToggled: {
+                                                platformInterface.tr_1_command.update(checked)
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+
+                                    SGAlignedLabel {
+                                        id:  tr2Label
+                                        target: tr2
+                                        text: "T/R#2"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        font.bold : true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.centerIn: parent
+
+                                        SGSwitch {
+                                            id: tr2
+                                            checkedLabel: "Transmit"
+                                            uncheckedLabel: "Recieve"
+                                            onToggled: {
+                                                platformInterface.tr_2_command.update(checked)
+                                            }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id:  tr3Label
+                                        target: tr3
+                                        text: "T/R#3"
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        font.bold : true
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.centerIn: parent
+
+                                        SGSwitch {
+                                            id: tr3
+                                            checkedLabel: "Transmit"
+                                            uncheckedLabel: "Recieve"
+                                            onToggled: {
+                                                platformInterface.tr_3_command.update(checked)
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
