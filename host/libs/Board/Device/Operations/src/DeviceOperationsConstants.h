@@ -37,10 +37,14 @@ constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
 constexpr const char* const JSON_RESEND_CHUNK = "resend_chunk";
 constexpr const char* const JSON_MD5 = "md5";
-
-const QString QSTR_BOOTLOADER("Bootloader");
+constexpr const char* const JSON_API_VERSION = "api_version";
+constexpr const char* const JSON_ACTIVE = "active";
+constexpr const char* const JSON_PLATF_ID_VER = "platform_id_version";
 
 constexpr const char* const CSTR_NO_FIRMWARE = "no_firmware";
+constexpr const char* const CSTR_API_2_0 = "2.0";
+constexpr const char* const CSTR_BOOTLOADER = "bootloader";
+constexpr const char* const CSTR_NAME_BOOTLOADER = "Bootloader";
 
 }  // namespace
 

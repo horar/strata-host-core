@@ -62,7 +62,7 @@ endif()
 option(COMPILER_QTMSGCTX "Provides additional information about a log message (Qt) in non-debug builds" OFF)
 add_feature_info(COMPILER_QTMSGCTX COMPILER_QTMSGCTX "Provides additional information about a log message (Qt) in non-debug builds")
 if(COMPILER_QTMSGCTX)
-    add_compile_definitions($<$<CONFIG:Release>:QT_MESSAGELOGCONTEXT>)
+    add_compile_definitions($<$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>:QT_MESSAGELOGCONTEXT>)
 endif()
 
 if(WIN32)
