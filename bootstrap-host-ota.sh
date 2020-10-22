@@ -430,9 +430,6 @@ echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/Updates.xml.."
 echo "-----------------------------------------------------------------------------"
 
 echo "<Updates>
- <ApplicationName>{AnyApplication}</ApplicationName>
- <ApplicationVersion>1.0.0</ApplicationVersion>
- <Checksum>true</Checksum>
  <RepositoryUpdate>
   <Repository action=\"add\" url=\"$MODULE_STRATA\" displayname=\"Module $MODULE_STRATA online repository\"/>
   <Repository action=\"add\" url=\"$MODULE_STRATA_COMPONENTS\" displayname=\"Module $MODULE_STRATA_COMPONENTS online repository\"/>

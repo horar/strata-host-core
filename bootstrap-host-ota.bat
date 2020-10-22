@@ -639,9 +639,6 @@ echo ---------------------------------------------------------------------------
 
 (
 echo ^<Updates^>
-echo  ^<ApplicationName^>{AnyApplication}^</ApplicationName^>
-echo  ^<ApplicationVersion^>1.0.0^</ApplicationVersion^>
-echo  ^<Checksum^>true^</Checksum^>
 echo  ^<RepositoryUpdate^>
 echo   ^<Repository action="add" url="%MODULE_STRATA%" displayname="Module %MODULE_STRATA% online repository"/^>
 echo   ^<Repository action="add" url="%MODULE_STRATA_COMPONENTS%" displayname="Module %MODULE_STRATA_COMPONENTS% online repository"/^>
