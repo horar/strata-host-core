@@ -138,6 +138,12 @@ PlatformInterface {
                                                    show: function () { platformInterface.show(this) }
                                                })
 
+    // @command: update_periodic
+    // @description: core commands that sends a command to update the periodic handler
+    //    The funtion is <periodic_command_name> has the same format as value of cmd but it points to a periodic command.
+    //    The run_count sets how many times must be the periodic command executed. The value -1 means forever.
+    //    The interval represents the time between the periodic command subsequent executions. The value is in milliseconds.
+
     property var update_periodic_command : ({
                                                 "cmd" : "update_periodic",
                                                 "payload": {
@@ -157,7 +163,12 @@ PlatformInterface {
                                                 },
                                                     send: function () { platformInterface.send(this) },
                                                     show: function () { platformInterface.show(this) }
+
                                                 })
+
+    // @command: stop_periodic
+    // @description: core commands that sends a command to stop the periodic handler
+    //    The funtion is <periodic_command_name> has the same format as value of cmd but it points to a periodic command.
 
     property var stop_periodic_command : ({
                                               "cmd" : "stop_periodic",

@@ -9,7 +9,7 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: root
-    height: 350
+    height: 290
     width: 350
     border {
         width: 1
