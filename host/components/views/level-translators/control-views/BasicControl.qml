@@ -13,6 +13,83 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    Component.onCompleted: {
+        Help.registerTarget(enable3, "Enable or disable the I2C FXMA2102 level shifter. The IO pins will be high impedance when disabled.", 0, "levelShiftersHelp")
+        Help.registerTarget(vcca_vccbI2c, "Monitors VCCA and VCCB voltages of the I2C FXMA2102 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 1, "levelShiftersHelp")
+        Help.registerTarget(enable2, "Enable or disable the SPI FXLA104 level shifter. The IO pins will be high impedance when disabled.", 2, "levelShiftersHelp")
+        Help.registerTarget(vcca_vccbSpi, "Monitors VCCA and VCCB voltages of the SPI FXLA104 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 3, "levelShiftersHelp")
+        Help.registerTarget(enable1, "Enable or disable UB (Uni/Bi Directional) FXL4TD245 level shifter. The IO pins will be high impedance when disabled.", 4, "levelShiftersHelp")
+        Help.registerTarget(vcca_vccbUni, "Monitors VCCA and VCCB voltages of the UB (Uni/Bi Directional) FXL4TD245 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 5, "levelShiftersHelp")
+        Help.registerTarget(controlContainerForHelp,"Transmit and receive inputs. Transmit will send data from A to B (left to right on the PCB) and receive will send data from B to A (right to left on PCB).", 6, "levelShiftersHelp")
+
+
+    }
+
+    Item {
+        id: vcca_vccbI2c
+        property point topLeft
+        property point bottomRight
+        width:  (vcca3.width) * 3
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = vcca3.mapToItem(root, 0,  0)
+            bottomRight = vccb3.mapToItem(root, vccb3.width, vccb3.height)
+        }
+    }
+    Item {
+        id: vcca_vccbSpi
+        property point topLeft
+        property point bottomRight
+        width:  (vcca2.width) * 3
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = vcca2.mapToItem(root, 0,  0)
+            bottomRight = vccb2.mapToItem(root, vccb2.width, vccb2.height)
+        }
+    }
+    Item {
+        id: vcca_vccbUni
+        property point topLeft
+        property point bottomRight
+        width:  (vcca.width) * 3
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = vcca.mapToItem(root, 0,  0)
+            bottomRight = vccb.mapToItem(root, vccb.width, vccb.height)
+        }
+    }
+
+
+
+
+    onWidthChanged: {
+        vcca_vccbI2c.update()
+        vcca_vccbSpi.update()
+        vcca_vccbUni.update()
+    }
+    onHeightChanged: {
+        vcca_vccbI2c.update()
+        vcca_vccbSpi.update()
+        vcca_vccbUni.update()
+    }
+
+    Connections {
+        target: Help.utility
+        onTour_runningChanged:{
+            vcca_vccbI2c.update()
+            vcca_vccbSpi.update()
+            vcca_vccbUni.update()
+        }
+    }
+
+
+
     property var startup: platformInterface.startup
     onStartupChanged: {
         enable3.checked = startup.oe_i2c
@@ -184,6 +261,7 @@ Item {
                 Rectangle{
                     Layout.preferredHeight: parent.height/5
                     Layout.fillWidth: true
+
                     ColumnLayout {
                         anchors.fill: parent
                         Rectangle {
@@ -302,6 +380,16 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "red"
+
+                    Item {
+                        id: controlContainerForHelp
+                        width: parent.width/1.2
+                        height: parent.height/12
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 45
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+
                     ColumnLayout {
                         anchors.fill: parent
                         Rectangle {
@@ -435,6 +523,7 @@ Item {
                                         columns: 4
                                         columnSpacing: -30
                                         Rectangle {
+                                            id: trContainer
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
 

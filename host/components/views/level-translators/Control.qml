@@ -44,7 +44,7 @@ Item {
                 fill: helpIcon
             }
             onClicked: {
-                Help.startHelpTour("currentSenseHelp")
+                Help.startHelpTour("levelShiftersHelp")
             }
             hoverEnabled: true
         }
