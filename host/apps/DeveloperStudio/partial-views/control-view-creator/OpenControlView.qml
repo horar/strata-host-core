@@ -8,7 +8,7 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
 
-import "qrc:/partial-views/general"
+import "../general"
 
 Rectangle {
     id: openProjectContainer
@@ -20,13 +20,8 @@ Rectangle {
     color: "#ccc"
     onVisibleChanged: {
         if(!openProjectContainer.visible) {
-            alertMessage.visible = false
+            alertMessage.Layout.preferredHeight = 0
         }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: alertMessage.visible = false
     }
 
     Component.onCompleted:  {
@@ -104,19 +99,10 @@ Rectangle {
 
         SGNotificationToast {
             id: alertMessage
-            Layout.preferredWidth: parent.width/1.5
-            Layout.preferredHeight: 35
-            interval : 0
-            z:3
-            color : "red"
-            text : "This project does not exist anymore. Removing it from your recent projects..."
-            visible: false
-            MouseArea {
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: alertMessage
-                onClicked: alertMessage.visible = false
-            }
+            Layout.preferredWidth: parent.width * 0.7
+            interval: 5000
+            z: 100
+            color: "red"
         }
 
         SGText {
@@ -205,7 +191,12 @@ Rectangle {
                         }
                         else  {
                             if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(model.url))) {
-                                alertMessage.visible = true
+                                if (alertMessage.visible) {
+                                    alertMessage.Layout.preferredHeight = 0
+                                }
+
+                                alertMessage.text = "This project does not exist anymore. Removing it from your recent projects..."
+                                alertMessage.show()
                                 removeFromProjectList(model.url.toString())
                             }
                             else {
@@ -252,31 +243,22 @@ Rectangle {
                     color: "#eee"
                     border.color: "#333"
                     border.width: 1
+                    clip: true
 
-                    ScrollView {
+                    TextInput {
+                        id: filePath
+
                         anchors {
+                            leftMargin: 10
+                            rightMargin: 5
                             fill: parent
                             verticalCenter: parent.verticalCenter
                         }
-                        leftPadding: 10
-                        rightPadding: 5
-                        contentHeight: filePathContainer.height
-
-                        clip: true
-                        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-
-                        Text {
-                            id: filePath
-                            anchors {
-                                fill: parent
-                                verticalCenter: parent.verticalCenter
-                            }
-                            height: filePathContainer.height
-                            text: "Select a .QRC file..."
-                            color: "#333"
-                            verticalAlignment: Text.AlignVCenter
-                        }
+                        height: parent.height
+                        text: "Select a .QRC file..."
+                        color: "#333"
+                        verticalAlignment: Text.AlignVCenter
+                        selectByMouse: true
                     }
                 }
             }
@@ -291,10 +273,26 @@ Rectangle {
                 text: "Open Project"
 
                 onClicked: {
-                    if (fileDialog.fileUrl.toString() !== "") {
-                        openProjectContainer.url = fileDialog.fileUrl
+                    if (filePath.text !== "" && filePath.text !== "Select a .QRC file...") {
+                        let path = filePath.text;
+                        if (path.startsWith("file:///")) {
+                            // type is url
+                            path = SGUtilsCpp.urlToLocalFile(path);
+                        }
+
+                        if (!SGUtilsCpp.exists(path)) {
+                            console.warn("Tried to open non-existent project")
+                            if (alertMessage.visible) {
+                                alertMessage.Layout.preferredHeight = 0
+                            }
+                            alertMessage.text = "Cannot open project. Qrc file does not exist."
+                            alertMessage.show()
+                            return;
+                        }
+
+                        openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
                         toolBarListView.currentIndex = toolBarListView.editTab
-                        addToTheProjectList(fileDialog.fileUrl.toString())
+                        addToTheProjectList(openProjectContainer.url)
                         filePath.text = "Select a .QRC file..."
                     }
                 }
