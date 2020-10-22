@@ -90,6 +90,7 @@ var uuid_map = {
     "bcd30065-a324-4a2c-8b55-05752c4eb76a": "FuelGauge-Monitor",
     "36c48ce4-3794-4ba7-a9f4-07fc6e45a8aa" : "hello-strata-rsl10",
     "4a1c2e5f-d0b0-4970-8c93-70a9234d195c": "led-tail-light", // STR-NCV7685-AUTO-LED-GEVB
-    "ecd43c02-3e7c-4d5e-9231-aabc149c8772": "led-tail-light"  // STR-NCV7684-AUTO-LED-GEVB
+    "ecd43c02-3e7c-4d5e-9231-aabc149c8772": "led-tail-light",  // STR-NCV7684-AUTO-LED-GEVB
+    "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators"
 
 }
