@@ -252,7 +252,7 @@ Item {
       Unregister and delete all resources that are not the new installed one
     */
     function cleanUpResources() {
-        // Remove any static resources if available'
+        // Remove any static resources if available
 
         if (UuidMap.uuid_map.hasOwnProperty(platformStack.class_id)) {
             let name = UuidMap.uuid_map[platformStack.class_id];
@@ -290,7 +290,7 @@ Item {
             versionsInstalled[user_id] = {};
         }
 
-        if (!versionsInstalled.hasOwnProperty("version") || !SGVersionUtils.equalTo(versionsInstalled[user_id].version, version)) {
+        if (!versionsInstalled[user_id].hasOwnProperty("version") || !SGVersionUtils.equalTo(versionsInstalled[user_id].version, version)) {
             // Only write to file if the version doesn't exist or the versions are different
             versionsInstalled[user_id].version = version;
             versionsInstalled[user_id].path = pathToRcc;
