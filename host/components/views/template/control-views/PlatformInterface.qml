@@ -111,32 +111,6 @@ PlatformInterface {
                                               show: function () { platformInterface.show(this) }
                                           })
 
-    // @command: request_platform_id
-    // @description: core commands that sends platform id of the connected platform
-    //
-    property var request_platform_id_command : ({
-                                                    "cmd" : "request_platform_id",
-                                                    "payload": { },
-                                                    update: function () {
-                                                        this.send(this)
-                                                    },
-                                                    send: function () { platformInterface.send(this) },
-                                                    show: function () { platformInterface.show(this) }
-                                                })
-
-    // @command: get_firmware_info
-    // @description: core commands that sends firmware info of the connected platform
-    //
-    property var get_firmware_info_command : ({
-                                                  "cmd" : "get_firmware_info",
-                                                  "payload": { },
-                                                  update: function () {
-                                                      this.send(this)
-                                                  },
-                                                  send: function () { platformInterface.send(this) },
-                                                  show: function () { platformInterface.show(this) }
-                                              })
-
     // @command: start_periodic
     // @description: core commands that sends a command to start a periodic handler
     //    The funtion is <periodic_command_name> has the same format as value of cmd but it points to a periodic command.
