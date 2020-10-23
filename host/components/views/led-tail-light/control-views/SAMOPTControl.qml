@@ -13,19 +13,33 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
-    Component.onCompleted: {
-        Help.registerTarget(enableCRC, "Toggles the cyclic redundancy check (CRC) to prevent data corruption on I2C communication lines. A CRC byte is calculated inserted into I2C read and write communications and verified by master and slave devices. The CRC configuration is as follows:\n\n1) The CRC polynomial is 0x2F (x⁸+x⁵+x³+x²+x+1)\n2) The initial XOR is 0xFF\n3) The final XOR is 0x00\n4) Reflect and data and remainder are disabled\n\nThis design will by default search for a device with I2C CRC disabled and 7-bit I2C slave address of 0x60 - if no LED driver is found the user must enter a valid I2C configuration to enable the user interface.", 0, "samoptHelp")
-        Help.registerTarget(current7bit, "The current 7-bit I2C slave address used to communicate with the LED driver.", 1, "samoptHelp")
-        Help.registerTarget(filterHelpContainer2, "Sets a new 7-bit I2C slave address. Click Apply I2C Address to change. The value entered will be coerced to a valid I2C slave address between 0x60 and 0x7F. The Current 7-bit I2C Address will be updated with the new address if successfully applied. The firmware will by default search for a device with I2C CRC disabled and 7-bit I2C slave address of 0x60. The user will be required to enter a valid I2C configuration to enable the user interface if the default search failed.", 2, "samoptHelp")
-        Help.registerTarget( i2cStandalone, "Changes the LED driver mode between SAM and I2C. I2C mode adheres to the LED register settings configured on the LED Control tab. SAM mode adheres to the settings on this tab in the SAM_CONF_1/2 controls.", 3, "samoptHelp")
-        Help.registerTarget(samConfig, "Toggles between SAM configurations SAM_CONF_1 and SAM_CONF_2 when Mode (I2CFLAG) control is set to SAM mode.", 4, "samoptHelp")
-        Help.registerTarget(vDDVoltageDisconnect, "Removes the VDD supply to the LED driver. This will put the LED driver into SAM mode automatically. A popup will appear that requires the user to reconnect VDD. The previously set LED driver Mode (I2CFLAG) will be enabled.", 5, "samoptHelp")
-        Help.registerTarget(filterHelpContainer1, "Sets the on or off state of each individual LED channel when Mode (I2CFLAG) control is set to SAM mode. Use the SAM Configuration control to toggle between the two SAM configurations. The hard-coded registers will be read during board boot and these controls will be updated accordingly.", 6, "samoptHelp")
-        Help.registerTarget(zapButton, "Click to OTP the LED driver using the SAM configuration on this tab. A popup warning will appear with Cancel or Continue commands to confirm desire to OTP. An additional warning will appear if the LED driver had been previously OTP'ed with a configuration other than default register values.", 7, "samoptHelp")
-        Help.registerTarget(diag, "Generic diagnostic error when any LED channel is in an error mode.", 8, "samoptHelp")
-        Help.registerTarget(samOpenLoadDiagnostic, "Sets the diagnostic state of the LED driver in SAM mode. This control will be disabled unless diagRange is on.\n\nNo Diagnostic = No open load detection is performed\n\nAuto Retry = During open load fault, 1) DIAG pin is pulled low, 2) low current is imposed on faulty channel only, 3) other channels turned off. If fault is recovered DIAG is released and normal operation continues.\n\nDiagnostic Only = During open load fault, the DIAG pin is pulled low with no change to current regulation. DIAG is released when the fault is recovered.", 9, "samoptHelp")
-    }
+    property var helpTourCount: 0
 
+    Connections{
+        target: helpMouse
+        onClicked: {
+            if(visible) {
+                if(helpTourCount === 0) {
+                    console.info("sam test")
+                    Help.registerTarget(enableCRC, "Toggles the cyclic redundancy check (CRC) to prevent data corruption on I2C communication lines. A CRC byte is calculated inserted into I2C read and write communications and verified by master and slave devices. The CRC configuration is as follows:\n\n1) The CRC polynomial is 0x2F (x⁸+x⁵+x³+x²+x+1)\n2) The initial XOR is 0xFF\n3) The final XOR is 0x00\n4) Reflect and data and remainder are disabled\n\nThis design will by default search for a device with I2C CRC disabled and 7-bit I2C slave address of 0x60 - if no LED driver is found the user must enter a valid I2C configuration to enable the user interface.", 0, "samoptHelp")
+                    Help.registerTarget(current7bit, "The current 7-bit I2C slave address used to communicate with the LED driver.", 1, "samoptHelp")
+                    Help.registerTarget(filterHelpContainer2, "Sets a new 7-bit I2C slave address. Click Apply I2C Address to change. The value entered will be coerced to a valid I2C slave address between 0x60 and 0x7F. The Current 7-bit I2C Address will be updated with the new address if successfully applied. The firmware will by default search for a device with I2C CRC disabled and 7-bit I2C slave address of 0x60. The user will be required to enter a valid I2C configuration to enable the user interface if the default search failed.", 2, "samoptHelp")
+                    Help.registerTarget( i2cStandalone, "Changes the LED driver mode between SAM and I2C. I2C mode adheres to the LED register settings configured on the LED Control tab. SAM mode adheres to the settings on this tab in the SAM_CONF_1/2 controls.", 3, "samoptHelp")
+                    Help.registerTarget(samConfig, "Toggles between SAM configurations SAM_CONF_1 and SAM_CONF_2 when Mode (I2CFLAG) control is set to SAM mode.", 4, "samoptHelp")
+                    Help.registerTarget(vDDVoltageDisconnect, "Removes the VDD supply to the LED driver. This will put the LED driver into SAM mode automatically. A popup will appear that requires the user to reconnect VDD. The previously set LED driver Mode (I2CFLAG) will be enabled.", 5, "samoptHelp")
+                    Help.registerTarget(filterHelpContainer1, "Sets the on or off state of each individual LED channel when Mode (I2CFLAG) control is set to SAM mode. Use the SAM Configuration control to toggle between the two SAM configurations. The hard-coded registers will be read during board boot and these controls will be updated accordingly.", 6, "samoptHelp")
+                    Help.registerTarget(zapButton, "Click to OTP the LED driver using the SAM configuration on this tab. A popup warning will appear with Cancel or Continue commands to confirm desire to OTP. An additional warning will appear if the LED driver had been previously OTP'ed with a configuration other than default register values.", 7, "samoptHelp")
+                    Help.registerTarget(diag, "Generic diagnostic error when any LED channel is in an error mode.", 8, "samoptHelp")
+                    Help.registerTarget(samOpenLoadDiagnostic, "Sets the diagnostic state of the LED driver in SAM mode. This control will be disabled unless diagRange is on.\n\nNo Diagnostic = No open load detection is performed\n\nAuto Retry = During open load fault, 1) DIAG pin is pulled low, 2) low current is imposed on faulty channel only, 3) other channels turned off. If fault is recovered DIAG is released and normal operation continues.\n\nDiagnostic Only = During open load fault, the DIAG pin is pulled low with no change to current regulation. DIAG is released when the fault is recovered.", 9, "samoptHelp")
+                    Help.startHelpTour("samoptHelp")
+                    helpTourCount++;
+                }
+                else  {
+                    Help.startHelpTour("samoptHelp")
+                }
+            }
+        }
+    }
     Item {
         id: filterHelpContainer1
         property point topLeft

@@ -539,18 +539,18 @@ Item {
         MouseArea {
             id: helpMouse
             anchors.fill: helpIcon
-            onClicked: {
-                if(carDemoMode.visible)
-                    Help.startHelpTour("carDemoHelp")
-                if(ledControl.visible)
-                    Help.startHelpTour("ledDriverHelp")
-                if(powerControl.visible)
-                    Help.startHelpTour("powerControlHelp")
-                if(sAMOPTControl.visible)
-                    Help.startHelpTour("samoptHelp")
-                if(miscControl.visible)
-                    Help.startHelpTour("miscHelp")
-            }
+//            onClicked: {
+//                if(carDemoMode.visible)
+//                    Help.startHelpTour("carDemoHelp")
+//                if(ledControl.visible)
+//                    Help.startHelpTour("ledDriverHelp")
+//                if(powerControl.visible)
+//                    Help.startHelpTour("powerControlHelp")
+//                if(sAMOPTControl.visible)
+//                    Help.startHelpTour("samoptHelp")
+//                if(miscControl.visible)
+//                    Help.startHelpTour("miscHelp")
+//            }
             hoverEnabled: true
         }
     }
