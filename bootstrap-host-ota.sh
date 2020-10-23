@@ -452,7 +452,6 @@ sed '$ d' $STRATA_ONLINE_REPOSITORY/Updates.xml.bak > $STRATA_ONLINE_REPOSITORY/
 rm -f $STRATA_ONLINE_REPOSITORY/Updates.xml.bak
 
 echo " <RepositoryUpdate>
-  <Repository action=\"add\" url=\"$MODULE_STRATA\" displayname=\"Module $MODULE_STRATA online repository\"/>
   <Repository action=\"add\" url=\"$MODULE_STRATA_COMPONENTS\" displayname=\"Module $MODULE_STRATA_COMPONENTS online repository\"/>
   <Repository action=\"add\" url=\"$MODULE_STRATA_DS\" displayname=\"Module $MODULE_STRATA_DS online repository\"/>
   <Repository action=\"add\" url=\"$MODULE_STRATA_HCS\" displayname=\"Module $MODULE_STRATA_HCS online repository\"/>

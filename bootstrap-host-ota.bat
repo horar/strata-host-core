@@ -669,7 +669,6 @@ EndLocal
 
 (
 echo  ^<RepositoryUpdate^>
-echo   ^<Repository action="add" url="%MODULE_STRATA%" displayname="Module %MODULE_STRATA% online repository"/^>
 echo   ^<Repository action="add" url="%MODULE_STRATA_COMPONENTS%" displayname="Module %MODULE_STRATA_COMPONENTS% online repository"/^>
 echo   ^<Repository action="add" url="%MODULE_STRATA_DS%" displayname="Module %MODULE_STRATA_DS% online repository"/^>
 echo   ^<Repository action="add" url="%MODULE_STRATA_HCS%" displayname="Module %MODULE_STRATA_HCS% online repository"/^>
