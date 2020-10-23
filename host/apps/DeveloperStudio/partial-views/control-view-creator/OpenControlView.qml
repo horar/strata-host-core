@@ -55,9 +55,10 @@ Rectangle {
         }
 
         openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
+        console.info(openProjectContainer.url);
         toolBarListView.currentIndex = toolBarListView.editTab
         if (addToProjectList) {
-            addToTheProjectList(openProjectContainer.url)
+            addToTheProjectList(openProjectContainer.url.toString())
         }
         return true;
     }
@@ -200,7 +201,7 @@ Rectangle {
 
                     SGText {
                         Layout.fillWidth:true
-                        text: model.url
+                        text: model.url.toString()
                         elide:Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
