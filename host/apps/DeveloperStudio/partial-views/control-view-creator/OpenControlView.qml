@@ -10,6 +10,8 @@ import tech.strata.fonts 1.0
 
 import "../general"
 
+import "../"
+
 Rectangle {
     id: openProjectContainer
 
@@ -32,6 +34,31 @@ Rectangle {
         if (url.toString() !== "") {
             editor.treeModel.url = url
         }
+    }
+
+    function openProject(filepath, addToProjectList) {
+        let path = filepath.trim();
+        if (path.startsWith("file:///")) {
+            // type is url
+            path = SGUtilsCpp.urlToLocalFile(path);
+        }
+
+        if (!SGUtilsCpp.exists(path)) {
+            console.warn("Tried to open non-existent project")
+            if (alertMessage.visible) {
+                alertMessage.Layout.preferredHeight = 0
+            }
+            alertMessage.text = "Cannot open project. Qrc file does not exist."
+            alertMessage.show()
+            return false;
+        }
+
+        openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
+        toolBarListView.currentIndex = toolBarListView.editTab
+        if (addToProjectList) {
+            addToTheProjectList(openProjectContainer.url)
+        }
+        return true;
     }
 
     function saveSettings() {
@@ -75,6 +102,36 @@ Rectangle {
         }
     }
 
+    ConfirmClosePopup {
+        id: confirmClosePopup
+        parent: controlViewCreatorRoot
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+
+        property int unsavedFileCount
+        property url newUrl
+        property bool addToProjectList: false
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                editor.openFilesModel.closeAll()
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                editor.openFilesModel.saveAll()
+            }
+
+            controlViewCreatorRoot.isConfirmCloseOpen = false
+
+            if (closeReason !== confirmClosePopup.cancelCloseReason) {
+                if (openProject(addToProjectList ? filePath.text : newUrl.toString(), addToProjectList)) {
+                    filePath.text = "Select a .QRC file..."
+                }
+            }
+        }
+    }
 
     ColumnLayout {
         id:recentProjColumn
@@ -200,10 +257,23 @@ Rectangle {
                                 removeFromProjectList(model.url.toString())
                             }
                             else {
-                                openProjectContainer.url = model.url
-                                toolBarListView.currentIndex = toolBarListView.editTab
+                                let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+                                if (unsavedFileCount > 0
+                                        && openProjectContainer.url.toString() !== model.url) {
+                                    if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                                        confirmClosePopup.unsavedFileCount = unsavedFileCount
+                                        confirmClosePopup.newUrl = model.url
+                                        confirmClosePopup.addToProjectList = false
+                                        confirmClosePopup.open()
+                                        controlViewCreatorRoot.isConfirmCloseOpen = true
+                                    }
+                                } else {
+                                    openProjectContainer.url = model.url
+                                    toolBarListView.currentIndex = toolBarListView.editTab
+                                }
                             }
                         }
+                        
                     }
                 }
             }
@@ -274,26 +344,20 @@ Rectangle {
 
                 onClicked: {
                     if (filePath.text !== "" && filePath.text !== "Select a .QRC file...") {
-                        let path = filePath.text;
-                        if (path.startsWith("file:///")) {
-                            // type is url
-                            path = SGUtilsCpp.urlToLocalFile(path);
-                        }
-
-                        if (!SGUtilsCpp.exists(path)) {
-                            console.warn("Tried to open non-existent project")
-                            if (alertMessage.visible) {
-                                alertMessage.Layout.preferredHeight = 0
+                        let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+                        if (unsavedFileCount > 0
+                                && openProjectContainer.url !== fileDialog.fileUrl) {
+                            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                                confirmClosePopup.unsavedFileCount = unsavedFileCount
+                                confirmClosePopup.addToProjectList = true
+                                confirmClosePopup.open()
+                                controlViewCreatorRoot.isConfirmCloseOpen = true
                             }
-                            alertMessage.text = "Cannot open project. Qrc file does not exist."
-                            alertMessage.show()
-                            return;
+                        } else {
+                            if (openProject(filePath.text, true)) {
+                                filePath.text = "Select a .QRC file..."
+                            }
                         }
-
-                        openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
-                        toolBarListView.currentIndex = toolBarListView.editTab
-                        addToTheProjectList(openProjectContainer.url)
-                        filePath.text = "Select a .QRC file..."
                     }
                 }
             }

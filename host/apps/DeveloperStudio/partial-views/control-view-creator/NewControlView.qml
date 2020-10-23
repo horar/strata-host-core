@@ -20,6 +20,62 @@ Rectangle {
        }
     }
 
+    function createControlView(filepath) {
+        let path = filepath.trim();
+        if (path.startsWith("file:///")) {
+            // type is url
+            path = SGUtilsCpp.urlToLocalFile(path);
+        }
+
+        if (!SGUtilsCpp.exists(path)) {
+            console.warn("Tried to open non-existent project")
+            if (alertMessage.visible) {
+                alertMessage.Layout.preferredHeight = 0
+            }
+            alertMessage.text = "Cannot create project. Destination folder does not exist"
+            alertMessage.show()
+            return false;
+        }
+
+        const qrcUrl = sdsModel.newControlView.createNewProject(
+                    SGUtilsCpp.pathToUrl(path),
+                    templateButtonGroup.checkedButton.path
+        );
+        openProjectContainer.url = qrcUrl
+        toolBarListView.currentIndex = toolBarListView.editTab
+        openProjectContainer.addToTheProjectList(qrcUrl.toString())
+        return true;
+    }
+
+    ConfirmClosePopup {
+        id: confirmClosePopup
+        parent: controlViewCreatorRoot
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+
+        property int unsavedFileCount
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                editor.openFilesModel.closeAll()
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                editor.openFilesModel.saveAll()
+            }
+
+            controlViewCreatorRoot.isConfirmCloseOpen = false
+
+            if (closeReason !== confirmClosePopup.cancelCloseReason) {
+                if (createControlView(fileOutput.text)) {
+                    fileOutput.text = "Select a folder for your project..."
+                }
+            }
+        }
+    }
+
     ColumnLayout {
         anchors {
             fill: parent
@@ -190,30 +246,18 @@ Rectangle {
 
                 onClicked: {
                     if (fileOutput.text !== "" && fileOutput.text !== "Select a folder for your project...") {
-                        let path = fileOutput.text.trim();
-                        if (path.startsWith("file:///")) {
-                            // type is url
-                            path = SGUtilsCpp.urlToLocalFile(path);
-                        }
-
-                        if (!SGUtilsCpp.exists(path)) {
-                            console.warn("Tried to open non-existent project")
-                            if (alertMessage.visible) {
-                                alertMessage.Layout.preferredHeight = 0
+                        let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+                        if (unsavedFileCount > 0) {
+                            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                                confirmClosePopup.unsavedFileCount = unsavedFileCount
+                                confirmClosePopup.open()
+                                controlViewCreatorRoot.isConfirmCloseOpen = true
                             }
-                            alertMessage.text = "Cannot create project. Destination folder does not exist"
-                            alertMessage.show()
-                            return;
+                        } else {
+                            if (createControlView(fileOutput.text)) {
+                                fileOutput.text = "Select a folder for your project..."
+                            }
                         }
-
-                        const qrcUrl = sdsModel.newControlView.createNewProject(
-                                    SGUtilsCpp.pathToUrl(path),
-                                    templateButtonGroup.checkedButton.path
-                        );
-                        openProjectContainer.url = qrcUrl
-                        toolBarListView.currentIndex = toolBarListView.editTab
-                        openProjectContainer.addToTheProjectList(qrcUrl.toString())
-                        fileOutput.text = "Select a folder for your project..."
                     }
                 }
             }
