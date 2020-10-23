@@ -68,6 +68,7 @@ var platform_view_model_ = null
 var stack_container_ = null
 var platform_list = {}
 var userSettings = {}
+var firmwareIsOutOfDate = false
 
 /*
   Navigation initialized with parent containers

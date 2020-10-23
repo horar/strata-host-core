@@ -14,12 +14,8 @@ Rectangle {
         fill: parent
     }
 
-    onDestroyed:{
-        NavigationControl.userSettings.notifyOnFirmwareUpdate = notifyCheck.checked
-        NavigationControl.userSettings.writeFile("settings.json");
-    }
-
     property alias softwareManagement: softwareManagement
+    property alias firmwareManagement: firmwareManagement
 
     ColumnLayout {
         id: mainColumn
@@ -37,16 +33,15 @@ Rectangle {
             id: firmwareManagement
         }
 
-        // Todo: determine notification UX, to be implemented in CS-880 - re-use warningPop?
-//        CheckBox {
-//            id: reminderCheck
-//            text: "Notify me when newer versions of firmware or controls are available"
-//        }
-
         SGCheckBox {
             id: notifyCheck
             text: "Notify on firmware updates"
             checked: NavigationControl.userSettings.notifyOnFirmwareUpdate
+            Layout.alignment: Qt.AlignLeft
+            leftPadding: 0
+            onCheckedChanged: {
+                saveSettings()
+            }
         }
 
         Item {
@@ -72,5 +67,17 @@ Rectangle {
                 warningPop.close()
             }
         }
+    }
+
+    function saveSettings() {
+        NavigationControl.userSettings.writeFile("settings.json",
+            {
+              selectedDistributionPortal: NavigationControl.userSettings.selectedDistributionPortal,
+              autoOpenView: NavigationControl.userSettings.autoOpenView,
+              switchToActive: NavigationControl.userSettings.switchToActive,
+              notifyOnFirmwareUpdate: notifyCheck.checked
+            }
+        );
+        NavigationControl.userSettings.notifyOnFirmwareUpdate = notifyCheck.checked
     }
 }

@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.0
 import "qrc:/partial-views"
 import "qrc:/partial-views/platform-selector"
 import "qrc:/partial-views/distribution-portal"
+import "./partial-views/general/"
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/help_layout_manager.js" as Help
@@ -40,6 +41,16 @@ Rectangle{
         columns: 3
         rows: 2
         rowSpacing: 30
+
+        SGNotificationToast {
+            id: firmwareUpDate
+            Layout.preferredWidth: container.width / 2
+            Layout.preferredHeight: 40
+            Layout.columnSpan: 3
+            text: "There is an update to this control view firmware"
+            color: "#57d445"
+            visible: NavigationControl.userSettings.notifyOnFirmwareUpdate && NavigationControl.firmwareIsOutOfDate //This will be the firmware version is not upToDate
+        }
 
         UserAndLogoContainer {
             Layout.columnSpan: 3

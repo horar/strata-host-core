@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 ColumnLayout {
     id: firmwareColumn
@@ -18,9 +19,11 @@ ColumnLayout {
 
     property var firmwareListModel: null
     property int firmwareCount: firmwareListModel.count
+    property string currentVersion: ""
 
     onFirmwareCountChanged: {
         matchVersion()
+        checkForNewerVersion(currentVersion, firmwareListModel)
     }
 
     Connections {
@@ -36,9 +39,13 @@ ColumnLayout {
         target: platformStack
         onConnectedChanged: {
             matchVersion()
+            checkForNewerVersion(currentVersion, firmwareListModel)
+
         }
         onFirmware_versionChanged: {
             matchVersion()
+            checkForNewerVersion(currentVersion, firmwareListModel)
+
         }
     }
 
@@ -46,9 +53,27 @@ ColumnLayout {
         for (let i = 0; i < firmwareListModel.count; i++) {
             let version = firmwareListModel.version(i)
             if (version === platformStack.firmware_version) {
+                currentVersion = version
                 firmwareListModel.setInstalled(i, true)
             } else {
                 firmwareListModel.setInstalled(i, false)
+            }
+        }
+    }
+
+    function checkForNewerVersion(installedVersion, differentFirmware) {
+        const splitInstalledVersion = installedVersion.split(".")
+        for (let i = 0; i < differentFirmware.count; i++){
+            if(installedVersion !== differentFirmware[i].version){
+                const differentVersion = differentFirmware[i].version
+                const splitDifferentVersion = differentVersion.split(".")
+                for(let j = 0; j < splitInstalledVersion.length; j ++){
+                    if(splitInstalledVersion[j] < splitDifferentVersion[i]){
+                        NavigationControl.firmwareIsOutOfDate = true;
+                    }
+                }
+            } else {
+                console.log("Version is the same or lower")
             }
         }
     }
