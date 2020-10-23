@@ -21,7 +21,10 @@ Item {
     property int currentVersionId
 
     function openFile() {
-        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+        let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+
+        // Before returning the fileText, replace tabs with 4 spaces
+        return fileText.replace(/\t/g, '    ')
     }
 
     function saveFile() {
