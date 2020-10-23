@@ -7,6 +7,7 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/constants.js" as Constants
+import "qrc:/js/navigation_control.js" as NavigationControl
 Row {
     id: row
     height: textSize.height * 2
@@ -185,24 +186,15 @@ Row {
         }
     }
 
-    Settings {
-        id: providerSettings
-        category: "Distributor"
-        property string jsonString: ''
-    }
 
     Component.onCompleted: {
         // This is needed to create the model
         loadModel();
-        if (providerSettings.jsonString !== "") {
-            const userSettings = JSON.parse(providerSettings.jsonString)
-            if (userSettings.hasOwnProperty(user_id)) {
-                const savedIndex = userSettings[user_id]
-                const index = savedIndex["index"]
-                providerUrl = sgBaseRepeater.model.get(index).url
-                providerName = sgBaseRepeater.model.get(index).name
+        if (NavigationControl.userSettings.selectedDistributionPortal !== 0) {
+                const selectedDistributionPortal = NavigationControl.userSettings.selectedDistributionPortal;
+                providerUrl = sgBaseRepeater.model.get(selectedDistributionPortal).url
+                providerName = sgBaseRepeater.model.get(selectedDistributionPortal).name
                 return
-            }
         }
         setIndex(0)
     }
@@ -210,24 +202,25 @@ Row {
     function setIndex(index) {
         providerUrl = sgBaseRepeater.model.get(index).url
         providerName = sgBaseRepeater.model.get(index).name
-        const savedIndex = {}
-        savedIndex["index"] = index
+        saveUserSettings(index)
 
-        let savedSettings
-        if (providerSettings.jsonString !== "") {
-            savedSettings = JSON.parse(providerSettings.jsonString)
-        } else {
-            savedSettings = {}
-        }
-
-        savedSettings[user_id] = savedIndex
-        providerSettings.jsonString = JSON.stringify(savedSettings)
     }
 
     function loadModel(){
         providers.forEach(function (child){
             sgBaseRepeater.model.append(child)
         })
+    }
+
+    function saveUserSettings(index) {
+        NavigationControl.userSettings.writeFile("settings.json",
+            {
+              selectedDistributionPortal: index,
+              autoOpenView: NavigationControl.userSettings.autoOpenView,
+              switchToActive: NavigationControl.userSettings.switchToActive,
+              notifyOnFirmwareUpdate: NavigationControl.userSettings.notifyOnFirmwareUpdate
+            }
+        );
     }
 
     TextMetrics {

@@ -335,7 +335,6 @@ function openPlatformView(platform) {
 function disconnectPlatform(platform) {
     let class_id_string = String(platform.class_id)
     let selector_listing = getDeviceListing(class_id_string, platform.device_id)
-    console.log(selector_listing);
     selector_listing.connected = false
 
     if (selector_listing.view_open === false) {

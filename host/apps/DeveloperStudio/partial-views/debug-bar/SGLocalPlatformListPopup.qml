@@ -10,7 +10,6 @@ import tech.strata.fonts 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/constants.js" as Constants
-import "qrc:/js/uuid_map.js" as Uuid
 
 Window {
     id: root
