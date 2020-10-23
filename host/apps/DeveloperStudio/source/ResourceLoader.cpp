@@ -33,16 +33,16 @@ ResourceLoader::~ResourceLoader()
     }
 }
 
-void ResourceLoader::requestDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem) {
+void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem) {
     if (removeFromSystem) {
         qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
     } else {
         qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
     }
-    QTimer::singleShot(100, this, [this, class_id, rccPath, version, parent, removeFromSystem]{ deleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
+    QTimer::singleShot(100, this, [this, class_id, rccPath, version, parent, removeFromSystem]{ unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
 }
 
-bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem) {
+bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem) {
     if (rccPath.isEmpty() || class_id.isEmpty() || version.isEmpty()) {
         return false;
     }
@@ -167,7 +167,7 @@ void ResourceLoader::unregisterAllViews(QObject *parent)
         itr.next();
         ResourceItem* item = itr.value();
 
-        requestDeleteViewResource(itr.key(), item->filepath, item->version, parent, false);
+        requestUnregisterDeleteViewResource(itr.key(), item->filepath, item->version, parent, false);
     }
     viewsRegistered_.clear();
 }

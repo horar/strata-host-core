@@ -257,11 +257,11 @@ Item {
         if (UuidMap.uuid_map.hasOwnProperty(platformStack.class_id)) {
             let name = UuidMap.uuid_map[platformStack.class_id];
             let RCCpath = sdsModel.resourceLoader.getStaticResourcesString() + "/views-" + name + ".rcc"
-            sdsModel.resourceLoader.requestDeleteViewResource(platformStack.class_id, RCCpath, controlViewContainer.staticVersion, controlContainer);
+            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, RCCpath, controlViewContainer.staticVersion, controlContainer);
         }
 
         for (let i = 0; i < otaVersionsToRemove.length; i++) {
-            sdsModel.resourceLoader.requestDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlContainer);
+            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlContainer);
         }
 
         otaVersionsToRemove = []
