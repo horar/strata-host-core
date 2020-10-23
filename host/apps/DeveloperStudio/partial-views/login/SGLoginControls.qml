@@ -226,6 +226,7 @@ Item {
                         timezone = Math.floor(timezone)
                     }
                     var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
+                    connectionStatus.currentId = Authenticator.getNextId()
                     Authenticator.login(login_info)
                 }
 

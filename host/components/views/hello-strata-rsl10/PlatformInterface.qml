@@ -219,6 +219,10 @@ Item {
     property string i2c_light_ui_gain: "1" //
     property real i2c_light_ui_sensitivity: 100
 
+    property var light_sensor: {
+        "available":false
+    }
+
     // Notification for control state
     property var light_ctl_value: {
         "status": false,

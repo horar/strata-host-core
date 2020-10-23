@@ -251,7 +251,7 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
         QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
         for (const auto &item : controlViewItems) {
             QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views" + (requestItem->classId.isEmpty() ? "" : "/" + requestItem->classId));
-            if (downloadManager_->verifyFileChecksum(filePath, item.md5) == false) {
+            if (downloadManager_->verifyFileHash(filePath, item.md5) == false) {
                 filePath.clear();
             }
 
@@ -360,6 +360,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
 
         QJsonObject jsonPlatform(value.toObject());
         jsonPlatform.insert("image", url.toString());
+        jsonPlatform.insert("timestamp", platDoc->platformSelector().timestamp);
 
         QJsonArray parts_list;
 
@@ -470,6 +471,12 @@ void StorageManager::requestDownloadPlatformFiles(
         item.md5 = fileItem.md5;
 
         downloadList << item;
+    }
+
+    if (downloadList.isEmpty()) {
+        qCWarning(logCategoryHcsStorage()) << "requested files not valid";
+        emit downloadPlatformFilesFinished(clientId, "requested files not valid");
+        return;
     }
 
     DownloadRequest *request = new DownloadRequest();

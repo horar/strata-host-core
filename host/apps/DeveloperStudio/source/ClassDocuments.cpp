@@ -122,6 +122,13 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString uri = datasheetObject.value("datasheet").toString();
         QString name = datasheetObject.value("name").toString();
 
+        if (uri.length() == 0
+                || name.length() == 0)
+        {
+            qCWarning(logCategoryDocumentManager) << "Datasheet has missing data";
+            continue;
+        }
+
         DocumentItem *di = new DocumentItem(uri, name, category);
         datasheetList.append(di);
 
@@ -296,6 +303,8 @@ void ClassDocuments::populateDatasheetList(const QString &path, QList<DocumentIt
 
             DocumentItem *di = new DocumentItem(datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
             list.append(di);
+        } else {
+            qCWarning(logCategoryDocumentManager) << "Skipping datasheet with missing information:" << datasheetLine;
         }
     }
 

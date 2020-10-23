@@ -93,6 +93,7 @@ SGStrataPopup {
                     var user = {
                         username: NavigationControl.context.user_id
                     }
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.close_account(user)
                     confirmDeletePopup.close()
                     spinnerDialog.open()
@@ -113,7 +114,7 @@ SGStrataPopup {
             focus: true
             closePolicy: Popup.NoAutoClose
 
-            contentItem: ConnectionStatus { }
+            contentItem: ConnectionStatus { id: connectionStatus }
 
             background: Rectangle {
                 color: "white"
@@ -137,29 +138,8 @@ SGStrataPopup {
                 }
 
                 if (guestUser === false) {
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.get_profile(NavigationControl.context.user_id)
-                }
-            }
-
-            Popup {
-                id: passReqsPopup
-
-                x: newPasswordRow.x
-                y: newPasswordRow.y + passwordField.height + 5
-                width: newPasswordRow.Layout.preferredWidth
-                height: passReqs.height
-
-                visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid
-                padding: 0
-                background: Item {}
-                closePolicy: Popup.NoAutoClose
-
-                PasswordRequirements {
-                    id: passReqs
-                    width: passReqsPopup.width
-                    onClicked: {
-                        passwordField.focus = confirmPasswordField.focus = false
-                    }
                 }
             }
 
@@ -195,6 +175,7 @@ SGStrataPopup {
                     spinnerDialog.open()
                     firstNameColumn.editable = false;
                     lastNameColumn.editable = false;
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
                     resetHeight();
                 }
@@ -251,6 +232,7 @@ SGStrataPopup {
                     spinnerDialog.open()
                     companyColumn.editable = false
                     jobTitleColumn.editable = false
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
                     resetHeight();
                 }
@@ -297,6 +279,28 @@ SGStrataPopup {
                 showValidIcon: false
             }
 
+            Popup {
+                id: passReqsPopup
+
+                x: newPasswordRow.x
+                y: newPasswordRow.y + passwordField.height + 5
+                width: newPasswordRow.Layout.preferredWidth
+                height: passReqs.height
+
+                visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid && newPasswordRow.editable
+                padding: 0
+                background: Item {}
+                closePolicy: Popup.NoAutoClose
+
+                PasswordRequirements {
+                    id: passReqs
+                    width: passReqsPopup.width
+                    onClicked: {
+                        passwordField.focus = confirmPasswordField.focus = false
+                    }
+                }
+            }
+
             ProfileSectionHeader {
                 text: "Password"
             }
@@ -321,6 +325,7 @@ SGStrataPopup {
                         timezone = Math.floor(timezone)
                     }
                     var login_info = { user: NavigationControl.context.user_id, password: currentPasswordField.text, timezone: timezone }
+                    connectionStatus.currentId = LoginUtil.getNextId()
                     LoginUtil.login(login_info)
                     currentPasswordRow.editable = false
                     newPasswordRow.editable = false
@@ -534,6 +539,7 @@ SGStrataPopup {
                         let data = {
                             "password": passwordField.text
                         };
+                        connectionStatus.currentId = LoginUtil.getNextId()
                         LoginUtil.update_profile(NavigationControl.context.user_id, data)
                     } else {
                         passwordControls.expandAnimation.start()

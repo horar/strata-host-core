@@ -26,6 +26,7 @@ Rectangle {
     property color headerClosedColor: accordionHeaderClosedColor
     property alias dividerColor: divider.color
     property alias closeContent: closeContent
+    property alias openContent: openContent
 
     onOpenChanged: {
         if (open && exclusive && root.parent) {

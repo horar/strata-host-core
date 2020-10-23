@@ -40,7 +40,9 @@ ClassDocuments *DocumentManager::getClassDocuments(const QString &classId)
         ClassDocuments* classDocs = new ClassDocuments(classId, coreInterface_, this);
         classes_[classId] = classDocs;
     }
-
+    else if (classes_[classId]->errorString() != ""){
+        classes_[classId]->loadPlatformDocuments();
+    }
     return classes_[classId];
 }
 
