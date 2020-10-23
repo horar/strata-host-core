@@ -8,7 +8,9 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
 
-import "qrc:/partial-views/general"
+import "../general"
+
+import "../"
 
 Rectangle {
     id: openProjectContainer
@@ -21,8 +23,12 @@ Rectangle {
 
     onVisibleChanged: {
         if(!openProjectContainer.visible) {
-            alertMessage.visible = false
+            alertMessage.Layout.preferredHeight = 0
         }
+    }
+
+    Component.onCompleted:  {
+        loadSettings()
     }
 
     onUrlChanged: {
@@ -31,8 +37,29 @@ Rectangle {
         }
     }
 
-    Component.onCompleted:  {
-        loadSettings()
+    function openProject(filepath, addToProjectList) {
+        let path = filepath.trim();
+        if (path.startsWith("file:///")) {
+            // type is url
+            path = SGUtilsCpp.urlToLocalFile(path);
+        }
+
+        if (!SGUtilsCpp.exists(path)) {
+            console.warn("Tried to open non-existent project")
+            if (alertMessage.visible) {
+                alertMessage.Layout.preferredHeight = 0
+            }
+            alertMessage.text = "Cannot open project. Qrc file does not exist."
+            alertMessage.show()
+            return false;
+        }
+
+        openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
+        toolBarListView.currentIndex = toolBarListView.editTab
+        if (addToProjectList) {
+            addToTheProjectList(openProjectContainer.url)
+        }
+        return true;
     }
 
     function saveSettings() {
@@ -76,9 +103,35 @@ Rectangle {
         }
     }
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: alertMessage.visible = false
+    ConfirmClosePopup {
+        id: confirmClosePopup
+        parent: controlViewCreatorRoot
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+
+        property int unsavedFileCount
+        property url newUrl
+        property bool addToProjectList: false
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                editor.openFilesModel.closeAll()
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                editor.openFilesModel.saveAll()
+            }
+
+            controlViewCreatorRoot.isConfirmCloseOpen = false
+
+            if (closeReason !== confirmClosePopup.cancelCloseReason) {
+                if (openProject(addToProjectList ? filePath.text : newUrl.toString(), addToProjectList)) {
+                    filePath.text = "Select a .QRC file..."
+                }
+            }
+        }
     }
 
     ColumnLayout {
@@ -104,19 +157,10 @@ Rectangle {
 
         SGNotificationToast {
             id: alertMessage
-            Layout.preferredWidth: parent.width/1.5
-            Layout.preferredHeight: 35
-            interval : 0
-            z:3
-            color : "red"
-            text : "This project does not exist anymore. Removing it from your recent projects..."
-            visible: false
-            MouseArea {
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: alertMessage
-                onClicked: alertMessage.visible = false
-            }
+            Layout.preferredWidth: parent.width * 0.7
+            interval: 0
+            z: 100
+            color: "red"
         }
 
         SGText {
@@ -158,7 +202,7 @@ Rectangle {
                         Layout.fillWidth:true
                         text: model.url
                         elide:Text.ElideRight
-                        horizontalAlignment: Text.AlignVCenter
+                        verticalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
                         maximumLineCount: 1
                         color:  urlMouseArea.containsMouse ?  "#bbb" : "black"
@@ -205,14 +249,32 @@ Rectangle {
                         }
                         else  {
                             if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(model.url))) {
-                                alertMessage.visible = true
+                                if (alertMessage.visible) {
+                                    alertMessage.Layout.preferredHeight = 0
+                                }
+
+                                alertMessage.text = "This project does not exist anymore. Removing it from your recent projects..."
+                                alertMessage.show()
                                 removeFromProjectList(model.url.toString())
                             }
                             else {
-                                openProjectContainer.url = model.url
-                                toolBarListView.currentIndex = toolBarListView.editTab
+                                let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+                                if (unsavedFileCount > 0
+                                        && openProjectContainer.url.toString() !== model.url) {
+                                    if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                                        confirmClosePopup.unsavedFileCount = unsavedFileCount
+                                        confirmClosePopup.newUrl = model.url
+                                        confirmClosePopup.addToProjectList = false
+                                        confirmClosePopup.open()
+                                        controlViewCreatorRoot.isConfirmCloseOpen = true
+                                    }
+                                } else {
+                                    openProjectContainer.url = model.url
+                                    toolBarListView.currentIndex = toolBarListView.editTab
+                                }
                             }
                         }
+                        
                     }
                 }
             }
@@ -246,21 +308,28 @@ Rectangle {
                 }
 
                 Rectangle {
+                    id: filePathContainer
                     Layout.preferredWidth: 600
                     Layout.preferredHeight: 40
                     color: "#eee"
                     border.color: "#333"
                     border.width: 1
+                    clip: true
 
                     TextInput {
                         id: filePath
+
                         anchors {
-                            verticalCenter: parent.verticalCenter
-                            left: parent.left
                             leftMargin: 10
+                            rightMargin: 5
+                            fill: parent
+                            verticalCenter: parent.verticalCenter
                         }
+                        height: parent.height
                         text: "Select a .QRC file..."
                         color: "#333"
+                        verticalAlignment: Text.AlignVCenter
+                        selectByMouse: true
                     }
                 }
             }
@@ -275,11 +344,21 @@ Rectangle {
                 text: "Open Project"
 
                 onClicked: {
-                    if (fileDialog.fileUrl.toString() !== "") {
-                        openProjectContainer.url = fileDialog.fileUrl
-                        toolBarListView.currentIndex = toolBarListView.editTab
-                        addToTheProjectList(fileDialog.fileUrl.toString())
-                        filePath.text = "Select a .QRC file..."
+                    if (filePath.text !== "" && filePath.text !== "Select a .QRC file...") {
+                        let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+                        if (unsavedFileCount > 0
+                                && openProjectContainer.url !== fileDialog.fileUrl) {
+                            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                                confirmClosePopup.unsavedFileCount = unsavedFileCount
+                                confirmClosePopup.addToProjectList = true
+                                confirmClosePopup.open()
+                                controlViewCreatorRoot.isConfirmCloseOpen = true
+                            }
+                        } else {
+                            if (openProject(filePath.text, true)) {
+                                filePath.text = "Select a .QRC file..."
+                            }
+                        }
                     }
                 }
             }

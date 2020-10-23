@@ -174,7 +174,7 @@ private:
     void startSave();
     void save();
 
-    SGQrcTreeNode *root_;
+    SGQrcTreeNode *root_ = nullptr;
     QUrl url_;
     QUrl projectDir_;
     QDomDocument qrcDoc_;
