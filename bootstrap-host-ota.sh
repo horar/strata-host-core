@@ -87,10 +87,14 @@ BUILD_DIR=build-host-ota
 PACKAGES_DIR=packages
 export BUILD_ID
 
+STRATA_COMPONENTS=components
+STRATA_DS=devstudio
+STRATA_HCS=hcs
+
 MODULE_STRATA=com.onsemi.strata
-MODULE_STRATA_COMPONENTS=com.onsemi.strata.components
-MODULE_STRATA_DS=com.onsemi.strata.devstudio
-MODULE_STRATA_HCS=com.onsemi.strata.hcs
+MODULE_STRATA_COMPONENTS=$MODULE_STRATA.$STRATA_COMPONENTS
+MODULE_STRATA_DS=$MODULE_STRATA.$STRATA_DS
+MODULE_STRATA_HCS=$MODULE_STRATA.$STRATA_HCS
 
 PKG_STRATA=$PACKAGES_DIR/$MODULE_STRATA/data
 PKG_STRATA_COMPONENTS=$PACKAGES_DIR/$MODULE_STRATA_COMPONENTS/data
@@ -452,41 +456,41 @@ sed '$ d' $STRATA_ONLINE_REPOSITORY/Updates.xml.bak > $STRATA_ONLINE_REPOSITORY/
 rm -f $STRATA_ONLINE_REPOSITORY/Updates.xml.bak
 
 echo " <RepositoryUpdate>
-  <Repository action=\"add\" url=\"$MODULE_STRATA_COMPONENTS\" displayname=\"Module $MODULE_STRATA_COMPONENTS online repository\"/>
-  <Repository action=\"add\" url=\"$MODULE_STRATA_DS\" displayname=\"Module $MODULE_STRATA_DS online repository\"/>
-  <Repository action=\"add\" url=\"$MODULE_STRATA_HCS\" displayname=\"Module $MODULE_STRATA_HCS online repository\"/>
+  <Repository action=\"add\" url=\"modules/${STRATA_COMPONENTS}\" displayname=\"Module $MODULE_STRATA_COMPONENTS\"/>
+  <Repository action=\"add\" url=\"modules/${STRATA_DS}\" displayname=\"Module $MODULE_STRATA_DS\"/>
+  <Repository action=\"add\" url=\"modules/${STRATA_HCS}\" displayname=\"Module $MODULE_STRATA_HCS\"/>
  </RepositoryUpdate>
 </Updates>" >> $STRATA_ONLINE_REPOSITORY/Updates.xml
 
 echo "-----------------------------------------------------------------------------"
-echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_COMPONENTS.."
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_COMPONENTS.."
 echo "-----------------------------------------------------------------------------"
-repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_COMPONENTS $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_COMPONENTS
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_COMPONENTS $STRATA_ONLINE_REPOSITORY/modules/$STRATA_COMPONENTS
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_COMPONENTS!"
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_COMPONENTS!"
     echo "======================================================================="
     exit 3
 fi
 
 echo "-----------------------------------------------------------------------------"
-echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_DS.."
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_DS.."
 echo "-----------------------------------------------------------------------------"
-repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_DS $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_DS
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_DS $STRATA_ONLINE_REPOSITORY/modules/$STRATA_DS
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_DS!"
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_DS!"
     echo "======================================================================="
     exit 3
 fi
 
 echo "-----------------------------------------------------------------------------"
-echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_HCS.."
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_HCS.."
 echo "-----------------------------------------------------------------------------"
-repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_HCS $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_HCS
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_HCS $STRATA_ONLINE_REPOSITORY/modules/$STRATA_HCS
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/$MODULE_STRATA_HCS!"
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_HCS!"
     echo "======================================================================="
     exit 3
 fi
