@@ -594,6 +594,49 @@ Item {
                                   })
 
 
+//    //20201023YI
+//        property var start_periodic_diagread : ({
+//                                           "cmd" : "start_periodic_diagread",
+//                                           "payload": {
+//                                               "function":"pxn_diag_clear",
+//                                               "run_count":-1,
+//                                               "interval":500
+//                                           },
+
+//                                           update: function (function_a,run_count_a,interval_a) {
+//                                               this.set(function_a,run_count_a,interval_a)
+//                                               this.send(this)
+//                                               },
+//                                           set: function (function_a,run_count_a,interval_a) {
+//                                               this.payload.function = function_a
+//                                               this.payload.run_count = run_count_a
+//                                               this.payload.interval = interval_a
+//                                           },
+//                                               send: function () { CorePlatformInterface.send(this) },
+//                                               show: function () { CorePlatformInterface.show(this) }
+//                                           })
+
+//    //20201023YI
+//        property var stop_periodic_diagread : ({
+//                                          "cmd" : "stop_periodic_diagread",
+//                                          "payload": {
+//                                              "function":"pxn_diag_clear"
+//                                          },
+
+//                                          update: function () {
+//                                              this.set()
+//                                              this.send()
+//                                          },
+
+//                                          set: function () {
+//                                          },
+
+//                                          send: function () { CorePlatformInterface.send(this) },
+//                                          show: function () { CorePlatformInterface.show(this) }
+//                                      })
+
+
+
     property bool boost_enable_state: false
     property bool buck1_enable_state: false
     property bool buck2_enable_state: false

@@ -35,6 +35,7 @@ Item {
             text: qsTr("Pixel Control")
             onClicked: {
                 platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201014 YI
+                //platformInterface.stop_periodic_diagread.update("pxn_diag_clear")   // 20201023 YI
                 controlContainer.currentIndex = 0
                 controldemo.handlar_stop_control()
                 platformInterface.pxn_datasend_all.update(0)
@@ -63,6 +64,7 @@ Item {
                 platformInterface.clear_demo_setup = true
                 //platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
                 platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)   // 20201002 YI
+                //platformInterface.start_periodic_diagread.update("pxn_diag_clear", -1, 500)   // 20201023 YI
             }
         }
 
@@ -70,7 +72,9 @@ Item {
             id: diagpxnButton
             text: qsTr("Pixel Diagnostic information")
             onClicked: {
-                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
+                //platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
+                //platformInterface.stop_periodic_diagread.update("pxn_diag_clear")   // 20201023 YI
+                platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)   // 20201022 YI
                 controlContainer.currentIndex = 2
                 controldemo.handlar_stop_control()
                 platformInterface.clear_intensity_slider_led1 = false
@@ -84,7 +88,9 @@ Item {
             id: setupButton
             text: qsTr("Boost and Buck IC setup")
             onClicked: {
-                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
+                //platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
+                platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)   // 20201022 YI
+                //platformInterface.stop_periodic_diagread.update("pxn_diag_clear")   // 20201023 YI
                 controlContainer.currentIndex = 3
                 controldemo.handlar_stop_control()
                 platformInterface.pxn_datasend_all.update(0)
@@ -99,7 +105,9 @@ Item {
             id: diagButton
             text: qsTr("Buck Boost Diagnostic information")
             onClicked: {
-                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
+                //platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")   // 20201002 YI
+                platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)   // 20201022 YI
+                //platformInterface.stop_periodic_diagread.update("pxn_diag_clear")   // 20201023 YI
                 controlContainer.currentIndex = 4
                 controldemo.handlar_stop_control()
                 platformInterface.pxn_datasend_all.update(0)
