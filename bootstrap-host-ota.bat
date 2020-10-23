@@ -854,13 +854,13 @@ exit /B 0
 
 :usage
 echo Syntax:
-echo      [-i=<BUILD_ID>] [-f=PROD|QA|DEV|DOCKER] [-c] [-s] [-h]
+echo      [-i=^<BUILD_ID^>] [-f=PROD^|QA^|DEV^|DOCKER] [-c] [-s] [-h]
 echo Where:
-echo      [-i | --buildid]: For build id
-echo      [-c | --cleanup]: To clean build folder before build
-echo      [-s | --skiptests]: To skip tests after build
-echo      [-f | --config]: To use selected HCS configuration: PROD|QA|DEV|DOCKER (Default: QA)
-echo      [-h | --help]: For this help
+echo      [-i ^| --buildid]: For build id
+echo      [-c ^| --cleanup]: To clean build folder before build
+echo      [-s ^| --skiptests]: To skip tests after build
+echo      [-f ^| --config]: To use selected HCS configuration: PROD^|QA^|DEV^|DOCKER (Default: QA)
+echo      [-h ^| --help]: For this help
 echo For example:
 echo      bootstrap-host-ota.bat -i=999 -f=PROD --cleanup -s
 exit /B 0
