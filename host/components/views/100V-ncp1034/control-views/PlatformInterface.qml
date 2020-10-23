@@ -20,28 +20,28 @@ Item {
 
     //
     property var control_states : {
-        "buck_enabled": true, //true or false (boolean)
-        "ldo_enabled": true,  //true or false (boolean)
-        "dac_enabled": true,  //true or false (boolean)
-        "rt_mode": 0,         //0 (100kHz) or 1 (adjustable) (integer)
-        "ss_set": 2,          //1 = 1ms, 2 = 5.5ms, 3 = 11ms, 4 = 15.5ms (integer)
-        "vout_set": 12.0,     //float in range 5 - 24
+        "buck_enabled": false,  //true or false (boolean)
+        "ldo_enabled": false,   //true or false (boolean)
+        "dac_enabled": false,   //true or false (boolean)
+        "rt_mode": 0,           //0 (100kHz) or 1 (adjustable) (integer)
+        "ss_set": 0,            //0 = 1ms, 1 = 5.5ms, 2 = 11ms, 3 = 15.5ms (integer)
+        "vout_set": 12.00,      //float in range 5 - 24
     }
 
     property var pg_vin: {
-        "value": true
+        "value": false
     }
 
     property var pg_vout: {
-        "value": true
+        "value": false
     }
 
     property var pg_vcc: {
-        "value": true
+        "value": false
     }
 
     property var temp_alert: {
-        "value": true
+        "value": false
     }
 
     property var periodic_telemetry: {
@@ -54,14 +54,14 @@ Item {
         "pin": 12.00,       //Input power [W] (float 2 decimals)
         "pout": 12.00,      //Output power [W] (float 2 decimals)
         "eff": 90.0,        //Buck efficiency [%] (float 1 decimal)
-        "pvcc": 0.000,      //LDO output power [W] (float 3 decimals)
-        "ploss_vcc": 0.000, //LDO power loss [W] (float 3 decimals)
+        "pvcc": 0.00,      //LDO output power [mW] (float 3 decimals)
+        "ploss_vcc": 0.00, //LDO power loss [mW] (float 3 decimals)
         "board_temp": 23.0, //Board temperature [degC] (float 1 decimal)
         "ldo_temp": 23.0    //LDO temperature [degC] (float 1 decimals)
     }
 
 
-    // -------------------------------------------------------------------
+    // ------------------------------------------------------------------
     // Outgoing Commands
     //
     // Define and document platform commands here.
@@ -121,6 +121,7 @@ Item {
                                    send: function () { CorePlatformInterface.send(this) },
                                    show: function () { CorePlatformInterface.show(this) }
                                })
+
     property var enable_dac : ({
                                    "cmd" : "enable_dac",
                                    "payload": {
@@ -137,6 +138,7 @@ Item {
                                    send: function () { CorePlatformInterface.send(this) },
                                    show: function () { CorePlatformInterface.show(this) }
                                })
+
     property var set_rt_mode : ({
                                     "cmd" : "set_rt_mode",
                                     "payload": {
@@ -153,6 +155,7 @@ Item {
                                     send: function () { CorePlatformInterface.send(this) },
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
+
     property var set_ss : ({
                                "cmd" : "set_ss",
                                "payload": {

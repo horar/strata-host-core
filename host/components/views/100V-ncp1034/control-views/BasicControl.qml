@@ -29,7 +29,7 @@ Item {
             setSwitchFreq.checked = true
         else   setSwitchFreq.checked = false
 
-        if(control_states.ss_set === 1){
+        /*if(control_states.ss_set === 1){
             softStart.currentIndex = 0
         }
         if(control_states.ss_set === 2){
@@ -40,13 +40,13 @@ Item {
         }
         if(control_states.ss_set === 4){
             softStart.currentIndex = 3
-        }
+        }*/
+
+        softStart.currentIndex = control_states.ss_set
 
         outputVolslider.value = control_states.vout_set.toFixed(2)
 
     }
-
-
 
     ColumnLayout {
         anchors.fill :parent
@@ -132,14 +132,11 @@ Item {
                                                     onToggled: {
                                                         platformInterface.enable_buck.update(checked)
                                                     }
-
                                                 }
                                             }
                                         }
-
                                     }
                                 }
-
 
                                 Item {
                                     Layout.fillWidth: true
@@ -169,12 +166,9 @@ Item {
                                                 }
                                                 else  platformInterface.set_rt_mode.update(1)
                                             }
-
-
                                         }
                                     }
                                 }
-
 
                                 Item {
                                     Layout.fillWidth: true
@@ -197,7 +191,6 @@ Item {
                                             onCurrentIndexChanged: {
                                                 platformInterface.set_ss.update(currentIndex+1)
                                             }
-
                                         }
                                     }
                                 }
@@ -220,7 +213,7 @@ Item {
                                             width: outputVolContainer.width/1.1
                                             inputBoxWidth: outputVolContainer.width/6
                                             textColor: "black"
-                                            stepSize: 0.50
+                                            stepSize: 0.01
                                             from: 5.00
                                             to: 24.00
                                             live: false
@@ -239,14 +232,12 @@ Item {
                                             onValueChanged: {
                                                 inputBox.text = value
                                             }
-
-
                                         }
                                     }
                                 }
-
                             }
                         }
+
                         Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -255,7 +246,7 @@ Item {
                                 Text {
                                     id: manualText
                                     font.bold: true
-                                    text: "Advance Settings"
+                                    text: "Advanced Settings"
                                     font.pixelSize: ratioCalc * 20
                                     Layout.topMargin: 10
                                     color: "#696969"
@@ -296,12 +287,10 @@ Item {
                                             onToggled: {
                                                 platformInterface.enable_dac.update(checked)
                                             }
-
-
                                         }
                                     }
-
                                 }
+
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
@@ -324,11 +313,10 @@ Item {
                                             handleColor: "white"            // Default: "white"
                                             grooveColor: "#ccc"             // Default: "#ccc"
                                             grooveFillColor: "#0cf"         // Default: "#0cf"
-
-
                                         }
                                     }
                                 }
+
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
@@ -382,16 +370,14 @@ Item {
                                             onToggled: {
                                                 platformInterface.enable_ldo.update(checked)
                                             }
-
-
                                         }
                                     }
                                 }
                             }
-
                         }
                     }
                 }
+
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -471,6 +457,7 @@ Item {
                                                                 }
                                                             }
                                                         }
+
                                                         Item {
 
                                                             Layout.fillWidth: true
@@ -496,7 +483,7 @@ Item {
                                                                     boxColor: "lightgrey"
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
-                                                                    text: "12"
+                                                                    text: "12.00"
                                                                     property var periodic_telemetry_vcc: platformInterface.periodic_telemetry.vcc
                                                                     onPeriodic_telemetry_vccChanged: {
                                                                         vccVoltage.text = periodic_telemetry_vcc.toFixed(2)
@@ -504,6 +491,7 @@ Item {
                                                                 }
                                                             }
                                                         }
+
                                                         Item {
 
                                                             Layout.fillWidth: true
@@ -529,7 +517,7 @@ Item {
                                                                     boxColor: "lightgrey"
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
-                                                                    text: "80"
+                                                                    text: "60.00"
 
 
                                                                     property var periodic_telemetry_vin: platformInterface.periodic_telemetry.vin
@@ -539,9 +527,9 @@ Item {
                                                                 }
                                                             }
                                                         }
-
                                                     }
                                                 }
+
                                                 Item {
                                                     Layout.fillWidth: true
                                                     Layout.fillHeight: true
@@ -571,15 +559,15 @@ Item {
                                                                     boxColor: "lightgrey"
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
-                                                                    text: "900"
+                                                                    text: "1.000"
                                                                     property var periodic_telemetry_iout: platformInterface.periodic_telemetry.iout
                                                                     onPeriodic_telemetry_ioutChanged: {
                                                                         outputCurrent.text = periodic_telemetry_iout.toFixed(3)
                                                                     }
-
                                                                 }
                                                             }
                                                         }
+
                                                         Item {
                                                             Layout.fillWidth: true
                                                             Layout.fillHeight: true
@@ -598,13 +586,13 @@ Item {
 
                                                                 SGInfoBox {
                                                                     id: vccCurrent
-                                                                    unit: "A"
+                                                                    unit: "mA"
                                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                                     width: 100 * ratioCalc
                                                                     boxColor: "lightgrey"
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
-                                                                    text: "200"
+                                                                    text: "5.00"
                                                                     property var periodic_telemetry_icc: platformInterface.periodic_telemetry.icc
                                                                     onPeriodic_telemetry_iccChanged: {
                                                                         vccCurrent.text = periodic_telemetry_icc.toFixed(2)
@@ -612,6 +600,7 @@ Item {
                                                                 }
                                                             }
                                                         }
+
                                                         Item {
                                                             Layout.fillWidth: true
                                                             Layout.fillHeight: true
@@ -636,26 +625,19 @@ Item {
                                                                     boxColor: "lightgrey"
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
-                                                                    text: "500"
+                                                                    text: "0.200"
                                                                     property var periodic_telemetry_iin: platformInterface.periodic_telemetry.iin
                                                                     onPeriodic_telemetry_iinChanged: {
                                                                         inputCurrent.text = periodic_telemetry_iin.toFixed(3)
                                                                     }
-
                                                                 }
                                                             }
                                                         }
-
                                                     }
                                                 }
-
                                             }
-
-
                                         }
-
                                     }
-
                                 }
 
                                 Rectangle{
@@ -694,15 +676,12 @@ Item {
                                                 title: "Status List"
                                                 anchors.centerIn: parent
                                             }
-
                                         }
-
                                     }
                                 }
-
-
                             }
                         }
+
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -766,13 +745,10 @@ Item {
                                                     onPeriodic_telemetry_pinChanged: {
                                                         inputpowerGauge.value = periodic_telemetry_pin.toFixed(2)
                                                     }
-
-
-
                                                 }
                                             }
-
                                         }
+
                                         Rectangle {
                                             id: buckOutputPowerGaugeContainer
 
@@ -806,8 +782,6 @@ Item {
                                                     onPeriodic_telemetry_poutChanged: {
                                                         buckOutputPowerGauge.value = periodic_telemetry_pout.toFixed(2)
                                                     }
-
-
                                                 }
                                             }
                                         }
@@ -884,8 +858,6 @@ Item {
                                                     onPeriodic_telemetry_ldo_tempChanged: {
                                                         ldoTemp.value = periodic_telemetry_ldo_temp
                                                     }
-
-
                                                 }
                                             }
                                         }
@@ -924,20 +896,14 @@ Item {
                                                     onPeriodic_telemetry_board_tempChanged: {
                                                         boardTemp.value = periodic_telemetry_board_temp
                                                     }
-
-
                                                 }
                                             }
                                         }
-
-
-
                                     }
-
                                 }
-
                             }
                         }
+
                         Item {
                             Layout.fillWidth: true
                             Layout.preferredHeight: parent.height/6
@@ -947,7 +913,7 @@ Item {
                                 Text {
                                     id: statusIndicator
                                     font.bold: true
-                                    text: "Status Indicator"
+                                    text: "Status Indicators"
                                     font.pixelSize: ratioCalc * 20
                                     Layout.topMargin: 10
                                     color: "#696969"
@@ -962,6 +928,7 @@ Item {
                                     border.color: "lightgray"
                                     radius: 2
                                 }
+
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
@@ -993,6 +960,7 @@ Item {
                                                 }
                                             }
                                         }
+
                                         Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
@@ -1018,6 +986,7 @@ Item {
                                                 }
                                             }
                                         }
+
                                         Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
@@ -1043,6 +1012,7 @@ Item {
                                                 }
                                             }
                                         }
+
                                         Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
@@ -1060,17 +1030,15 @@ Item {
                                                     width: 30
                                                 }
 
-                                                property var pg_vcc: platformInterface.temp_alert.value
-                                                onPg_vccChanged:  {
-                                                    if(pg_vcc === "true")
+                                                property var temp_alert: platformInterface.temp_alert.value
+                                                onTemp_alertChanged:  {
+                                                    if(temp_alert === "true")
                                                         tempAlertLed.status = SGStatusLight.Red
-                                                    else tempAlertLed.status = SGStatusLight.Green
+                                                    else tempAlertLed.status = SGStatusLight.Off
                                                 }
                                             }
                                         }
-
                                     }
-
                                 }
                             }
                         }
@@ -1079,5 +1047,4 @@ Item {
             }
         }
     }
-
 }
