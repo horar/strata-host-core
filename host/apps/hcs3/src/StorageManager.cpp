@@ -360,6 +360,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
 
         QJsonObject jsonPlatform(value.toObject());
         jsonPlatform.insert("image", url.toString());
+        jsonPlatform.insert("timestamp", platDoc->platformSelector().timestamp);
 
         QJsonArray parts_list;
 
@@ -470,6 +471,12 @@ void StorageManager::requestDownloadPlatformFiles(
         item.md5 = fileItem.md5;
 
         downloadList << item;
+    }
+
+    if (downloadList.isEmpty()) {
+        qCWarning(logCategoryHcsStorage()) << "requested files not valid";
+        emit downloadPlatformFilesFinished(clientId, "requested files not valid");
+        return;
     }
 
     DownloadRequest *request = new DownloadRequest();

@@ -2,11 +2,15 @@
 
 #include "ResourcePath.h"
 #include "logging/LoggingQtCategories.h"
+#include "SGVersionUtils.h"
 
 #include <QDirIterator>
 #include <QResource>
 #include <QFileInfo>
 #include <QTimer>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
 
 const QStringList ResourceLoader::coreResources_{
     QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
@@ -66,6 +70,7 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
     if (itr != viewsRegistered_.end() && itr.value()->filepath == resourceInfo.fileName()) {
         ResourceItem *info = itr.value();
         info->filepath = "";
+        info->gitTaggedVersion = "";
         info->version = "";
     }
     return true;
@@ -100,7 +105,19 @@ bool ResourceLoader::registerControlViewResource(const QString &rccPath, const Q
     }
 
     if (registerResource(rccPath, getQResourcePrefix(class_id, version))) {
-        ResourceItem *info = new ResourceItem(rccPath, version);
+        // `gitTaggedVersion` is created at build time. It incorporates the git tag version into the rcc file.
+        // The reason we store both is to double check that the metadata version shipped from OTA is the same as the
+        //      version that is created at build time.
+
+        QString gitTaggedVersion = getVersionJson(class_id, version);
+        ResourceItem *info = new ResourceItem(rccPath, version, gitTaggedVersion);
+
+        if (version != "static" && !SGVersionUtils::equalTo(version, gitTaggedVersion)) {
+            // TODO: Handle the case where gitTaggedVersion is different from the OTA version
+            qCWarning(logCategoryResourceLoader) << "Build version is different from OTA version for" << class_id << "- built in version:"
+                                                 << gitTaggedVersion << ", OTA version:" << version;
+        }
+
         viewsRegistered_.insert(class_id, info);
         return true;
     } else {
@@ -186,6 +203,47 @@ QString ResourceLoader::getVersionRegistered(const QString &class_id) {
     } else {
         return NULL;
     }
+}
+
+QString ResourceLoader::getGitTaggedVersion(const QString &class_id)
+{
+    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
+    if (itr != viewsRegistered_.end()) {
+        return itr.value()->gitTaggedVersion;
+    } else {
+        return NULL;
+    }
+}
+
+QString ResourceLoader::getVersionJson(const QString &class_id, const QString &version)
+{
+    QString filepath = ":" + getQResourcePrefix(class_id, version) + "/version.json";
+    QFile versionJsonFile(filepath);
+
+    qDebug(logCategoryResourceLoader) << "Looking in" << filepath << "for version.json";
+    if (!versionJsonFile.exists()) {
+        qCCritical(logCategoryResourceLoader) << "Could not find version.json." << filepath << "does not exist.";
+        return QString();
+    }
+
+    if (!versionJsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCCritical(logCategoryResourceLoader) << "Could not open version.json for" << class_id << "version" << version;
+        return QString();
+    }
+
+    QString fileText = versionJsonFile.readAll();
+    versionJsonFile.close();
+    QJsonDocument doc = QJsonDocument::fromJson(fileText.toUtf8());
+    QJsonObject docObj = doc.object();
+
+    if (!docObj.contains(QString("version"))) {
+        qCWarning(logCategoryResourceLoader) << "version.json does not have 'version' key.";
+        return QString();
+    }
+    QJsonValue versionJson = docObj.value(QString("version"));
+
+    qCInfo(logCategoryResourceLoader) << "Found version of " << versionJson.toString() << "for class id" << class_id;
+    return versionJson.toString();
 }
 
 QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QString &version) {
