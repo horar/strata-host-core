@@ -20,6 +20,7 @@ Rectangle {
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
     color: "#ccc"
+
     onVisibleChanged: {
         if(!openProjectContainer.visible) {
             alertMessage.Layout.preferredHeight = 0
