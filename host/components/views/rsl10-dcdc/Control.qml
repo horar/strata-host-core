@@ -10,6 +10,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0 as Widget10
 
 Rectangle {
     id: controlNavigation
@@ -192,7 +193,7 @@ Rectangle {
         }
     }
 
-    SGIcon {
+    Widget10.SGIcon {
         id: helpIcon
         anchors {
             right: parent.right
@@ -200,7 +201,7 @@ Rectangle {
             top: parent.top
             topMargin: 50
         }
-        source: "question-circle-solid.svg"
+        source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40
         width: 40
