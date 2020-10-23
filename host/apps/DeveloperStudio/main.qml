@@ -25,6 +25,7 @@ SGWidgets.SGMainWindow {
     title: Qt.application.displayName
 
     signal initialized()
+    signal attemptedToCloseOnUnsavedChanges(int unsavedCount)
 
     function resetWindowSize()
     {
@@ -43,6 +44,13 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
+        let unsavedCount = controlViewCreator.checkForUnsavedFiles();
+        if (unsavedCount > 0) {
+            close.accepted = false
+            mainWindow.attemptedToCloseOnUnsavedChanges(unsavedCount)
+            return;
+        }
+
         SessionUtils.close_session()
 
         // End session with HCS

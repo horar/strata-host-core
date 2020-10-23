@@ -36,7 +36,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/SGQrcTreeNode.cpp
     source/SGFileTabModel.cpp
     source/SGNewControlView.cpp
-    $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
+    $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
     source/RunGuard.cpp
 
     logging/LoggingQtCategories.cpp
@@ -48,7 +48,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
 
-    $<IF:$<CONFIG:Release>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
+    $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
 
     source/HcsNode.cpp
     ${NODE_RO_SRCS}

@@ -13,6 +13,7 @@ Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
 
+    property bool isConfirmCloseOpen: false
     property url currentFileUrl: ""
     property var debugPlatform: ({
       deviceId: Constants.NULL_DEVICE_ID,
@@ -22,11 +23,37 @@ Rectangle {
     onDebugPlatformChanged: {
         recompileControlViewQrc();
     }
+    property alias openFilesModel: editor.openFilesModel
+    property alias confirmClosePopup: confirmClosePopup
 
     SGUserSettings {
         id: sgUserSettings
         classId: "controlViewCreator"
         user: NavigationControl.context.user_id
+    }
+
+    ConfirmClosePopup {
+        id: confirmClosePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        parent: mainWindow.contentItem
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+
+        property int unsavedFileCount
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                controlViewCreator.openFilesModel.closeAll()
+                mainWindow.close()
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                controlViewCreator.openFilesModel.saveAll()
+                mainWindow.close()
+            }
+            isConfirmCloseOpen = false
+        }
     }
 
     RowLayout {
@@ -174,10 +201,26 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: mainWindow
+
+        onAttemptedToCloseOnUnsavedChanges: {
+            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                confirmClosePopup.unsavedFileCount = unsavedCount;
+                confirmClosePopup.open();
+                controlViewCreatorRoot.isConfirmCloseOpen = true;
+            }
+        }
+    }
+
     function recompileControlViewQrc () {
         if (editor.treeModel.url.toString() !== '') {
             sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
         }
+    }
+
+    function checkForUnsavedFiles() {
+        return editor.openFilesModel.getUnsavedCount();
     }
 
     function loadDebugView (compiledRccFile) {

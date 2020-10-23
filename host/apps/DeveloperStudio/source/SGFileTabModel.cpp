@@ -253,6 +253,24 @@ bool SGFileTabModel::closeTabAt(const int index)
     return true;
 }
 
+void SGFileTabModel::closeAll()
+{
+    clear();
+}
+
+void SGFileTabModel::saveFileAt(const int index)
+{
+    if (index < 0 || index >= data_.count()) {
+        return;
+    }
+
+    emit saveRequested(index);
+}
+
+void SGFileTabModel::saveAll()
+{
+    emit saveAllRequested();
+}
 
 bool SGFileTabModel::hasTab(const QString &id) const
 {
@@ -272,6 +290,17 @@ void SGFileTabModel::clear(bool emitSignals)
         emit countChanged();
         endResetModel();
     }
+}
+
+int SGFileTabModel::getUnsavedCount()
+{
+    int count = 0;
+    for (SGFileTabItem* tab : data_) {
+        if (tab->unsavedChanges()) {
+            ++count;
+        }
+    }
+    return count;
 }
 
 int SGFileTabModel::count() const
