@@ -6,11 +6,11 @@ Item{
     property string class_id
 
     property string eeprom_ID: "cce0f32e-ee1e-44aa-81a3-0801a71048ce"
-    property string partNumber: "<b> NCV6922 </b>"
-    property string title: "<b> Automotive 4 channels PMIC Converter </b>"
+    property string partNumber: "<b> NCP6922 </b>"
+    property string title: "<b> 4 channels PMIC Converter </b>"
     property string warningHVVinLable: "5.5V"
     property string warningLVVinLable: "4.5V"
-    property string opn: "STR-PWRNCV6922-R0-GEVK"
+    property string opn: "STR-PWRNCP6922C-R0-GEVK"
     property real minVin: 2.5
     property real nominalVin: 5
     property real vinScale: 10
@@ -334,11 +334,11 @@ Item{
         }
         else if(class_id === "cce0f32e-ee1e-44aa-81a3-0801a71048ce") {
             eeprom_ID = "cce0f32e-ee1e-44aa-81a3-0801a71048ce"
-            partNumber = "<b> NCV6922 </b>"
-            title = "<b> Automotive 4 channels PMIC Converter </b>"
+            partNumber = "<b> NCP6922C </b>"
+            title = "<b> 4 channels PMIC Converter </b>"
             warningHVVinLable = "5.5V"
             warningLVVinLable = "2.5V"
-            opn = "STR-PWRNCV6922-R0-GEVK"
+            opn = "STR-PWRNCP6922C-R0-GEVK"
             minVin = 2.5
             nominalVin = 5
             vinScale = 10
