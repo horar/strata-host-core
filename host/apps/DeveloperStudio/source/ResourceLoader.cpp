@@ -34,7 +34,11 @@ ResourceLoader::~ResourceLoader()
 }
 
 void ResourceLoader::requestDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem) {
-    qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
+    if (removeFromSystem) {
+        qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
+    } else {
+        qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
+    }
     QTimer::singleShot(100, this, [this, class_id, rccPath, version, parent, removeFromSystem]{ deleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
 }
 
