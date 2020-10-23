@@ -4,12 +4,21 @@ import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 import "qrc:/js/template_data.js" as TemplateData
+
+import "../general"
 
 Rectangle {
     id: createNewContainer
     color: "#ccc"
+
+    onVisibleChanged: {
+       if (!visible) {
+           alertMessage.Layout.preferredHeight = 0
+       }
+    }
 
     ColumnLayout {
         anchors {
@@ -29,6 +38,14 @@ Rectangle {
             color: "#333"
             Layout.preferredHeight: 1
             Layout.fillWidth: true
+        }
+
+        SGNotificationToast {
+            id: alertMessage
+            Layout.preferredWidth: parent.width * 0.7
+            interval: 0
+            z: 100
+            color: "red"
         }
 
         SGAlignedLabel {
@@ -136,21 +153,28 @@ Rectangle {
                 }
 
                 Rectangle {
+                    id: fileOutputContainer
                     Layout.preferredWidth: 600
                     Layout.preferredHeight: 40
                     color: "#eee"
                     border.color: "#333"
                     border.width: 1
+                    clip: true
 
                     TextInput {
                         id: fileOutput
+
                         anchors {
-                            verticalCenter: parent.verticalCenter
-                            left: parent.left
                             leftMargin: 10
+                            rightMargin: 5
+                            fill: parent
+                            verticalCenter: parent.verticalCenter
                         }
-                        text:  fileSelector.folder.toString();
+                        height: parent.height
+                        text: "Select a folder for your project..."
                         color: "#333"
+                        verticalAlignment: Text.AlignVCenter
+                        selectByMouse: true
                     }
                 }
             }
@@ -165,10 +189,31 @@ Rectangle {
                 text: "Create Project"
 
                 onClicked: {
-                    if (fileSelector.fileUrl.toString() !== "") {
-                        openProjectContainer.url = sdsModel.newControlView.createNewProject(fileSelector.fileUrl, templateButtonGroup.checkedButton.path);
-                        toolBarListView.currentIndex = toolBarListView.editTab;
-                        openProjectContainer.addToTheProjectList(fileSelector.fileUrl)
+                    if (fileOutput.text !== "" && fileOutput.text !== "Select a folder for your project...") {
+                        let path = fileOutput.text.trim();
+                        if (path.startsWith("file:///")) {
+                            // type is url
+                            path = SGUtilsCpp.urlToLocalFile(path);
+                        }
+
+                        if (!SGUtilsCpp.exists(path)) {
+                            console.warn("Tried to open non-existent project")
+                            if (alertMessage.visible) {
+                                alertMessage.Layout.preferredHeight = 0
+                            }
+                            alertMessage.text = "Cannot create project. Destination folder does not exist"
+                            alertMessage.show()
+                            return;
+                        }
+
+                        const qrcUrl = sdsModel.newControlView.createNewProject(
+                                    SGUtilsCpp.pathToUrl(path),
+                                    templateButtonGroup.checkedButton.path
+                        );
+                        openProjectContainer.url = qrcUrl
+                        toolBarListView.currentIndex = toolBarListView.editTab
+                        openProjectContainer.addToTheProjectList(qrcUrl.toString())
+                        fileOutput.text = "Select a folder for your project..."
                     }
                 }
             }
