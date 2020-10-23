@@ -741,7 +741,7 @@ Item {
 
                                         SGStatusLight{
                                             id: sgStatusLight_b12
-                                            label: "<b>MAPENA_SATUS</b>" // Default: "" (if not entered, label will not appear)
+                                            label: "<b>MAPENA_STATUS</b>" // Default: "" (if not entered, label will not appear) // 20201023 YI
                                             labelLeft: false        // Default: true
                                             lightSize: 40           // Default: 50
                                             textColor: "black"      // Default: "black"
