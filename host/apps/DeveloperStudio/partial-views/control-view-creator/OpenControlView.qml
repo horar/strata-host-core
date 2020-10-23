@@ -36,6 +36,31 @@ Rectangle {
         }
     }
 
+    function openProject(filepath, addToProjectList) {
+        let path = filepath.trim();
+        if (path.startsWith("file:///")) {
+            // type is url
+            path = SGUtilsCpp.urlToLocalFile(path);
+        }
+
+        if (!SGUtilsCpp.exists(path)) {
+            console.warn("Tried to open non-existent project")
+            if (alertMessage.visible) {
+                alertMessage.Layout.preferredHeight = 0
+            }
+            alertMessage.text = "Cannot open project. Qrc file does not exist."
+            alertMessage.show()
+            return false;
+        }
+
+        openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
+        toolBarListView.currentIndex = toolBarListView.editTab
+        if (addToProjectList) {
+            addToTheProjectList(openProjectContainer.url)
+        }
+        return true;
+    }
+
     function saveSettings() {
         sgUserSettings.writeFile(configFileName, previousFileURL);
     }
@@ -98,29 +123,13 @@ Rectangle {
                 editor.openFilesModel.saveAll()
             }
 
-            let path = addToProjectList ? filePath.text : newUrl;
-            if (path.startsWith("file:///")) {
-                // type is url
-                path = SGUtilsCpp.urlToLocalFile(path);
-            }
-
-            if (!SGUtilsCpp.exists(path)) {
-                console.warn("Tried to open non-existent project")
-                if (alertMessage.visible) {
-                    alertMessage.Layout.preferredHeight = 0
-                }
-                alertMessage.text = "Cannot open project. Qrc file does not exist."
-                alertMessage.show()
-                return;
-            }
-
-            openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
-            toolBarListView.currentIndex = toolBarListView.editTab
-            if (addToProjectList) {
-                addToTheProjectList(openProjectContainer.url)
-            }
-            filePath.text = "Select a .QRC file..."
             controlViewCreatorRoot.isConfirmCloseOpen = false
+
+            if (closeReason !== confirmClosePopup.cancelCloseReason) {
+                if (openProject(addToProjectList ? filePath.text : newUrl.toString(), addToProjectList)) {
+                    filePath.text = "Select a .QRC file..."
+                }
+            }
         }
     }
 
@@ -345,26 +354,9 @@ Rectangle {
                                 controlViewCreatorRoot.isConfirmCloseOpen = true
                             }
                         } else {
-                            let path = filePath.text;
-                            if (path.startsWith("file:///")) {
-                                // type is url
-                                path = SGUtilsCpp.urlToLocalFile(path);
+                            if (openProject(filePath.text, true)) {
+                                filePath.text = "Select a .QRC file..."
                             }
-
-                            if (!SGUtilsCpp.exists(path)) {
-                                console.warn("Tried to open non-existent project")
-                                if (alertMessage.visible) {
-                                    alertMessage.Layout.preferredHeight = 0
-                                }
-                                alertMessage.text = "Cannot open project. Qrc file does not exist."
-                                alertMessage.show()
-                                return;
-                            }
-
-                            openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
-                            toolBarListView.currentIndex = toolBarListView.editTab
-                            addToTheProjectList(openProjectContainer.url)
-                            filePath.text = "Select a .QRC file..."
                         }
                     }
                 }
