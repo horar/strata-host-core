@@ -62,7 +62,7 @@ The output after succesfull build will contain:
         Offline Installer `strata-setup-offline.app`
         Online Installer  `strata-setup-online.app`
     * Both:
-        Online Repo       `pub/repository/demo/`
+        Online Repo       `public/repository/demo/`
 
 The Windows build script will also sign all outputed .exe and .dll files using Window's signtool, so please make sure you have it installed.
 
