@@ -66,6 +66,8 @@ var status_bar_container_ = null
 var platform_view_repeater_ = null
 var platform_view_model_ = null
 var stack_container_ = null
+var resource_loader_ = null
+var main_qml_object_ = null
 var platform_list = {}
 var userSettings = {}
 
@@ -73,13 +75,15 @@ var userSettings = {}
   Navigation initialized with parent containers
   that will hold views
 */
-function init(status_bar_container, stack_container)
+function init(status_bar_container, stack_container, resource_loader, main_qml_object)
 {
     status_bar_container_ = status_bar_container
     main_container_ = stack_container.mainContainer
     platform_view_repeater_ = stack_container.platformViewRepeater
     platform_view_model_ = stack_container.platformViewModel
     stack_container_ = stack_container
+    resource_loader_ = resource_loader
+    main_qml_object_ = main_qml_object
     updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
 }
 
@@ -176,6 +180,9 @@ function globalEventHandler(event,data)
         while (platform_view_model_.count > 0) {
             platform_view_model_.remove(0)
         }
+
+        // Unregister all control views
+        resource_loader_.unregisterAllViews(main_qml_object_);
 
         // Show Login Screen
         navigation_state_ = states.LOGIN_STATE
