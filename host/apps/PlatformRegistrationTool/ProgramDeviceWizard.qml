@@ -528,6 +528,8 @@ FocusScope {
     CommonCpp.SGJLinkConnector {
         id: jLinkConnector
         eraseBeforeProgram: true
+        device: "EFM32GG380F1024"
+        speed: 4000
     }
 
     Item {
