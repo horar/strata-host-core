@@ -44,6 +44,10 @@ Item {
         "value": false
     }
 
+    property var error_msg: {
+        "value" : ""
+    }
+
     property var periodic_telemetry: {
         "vin": 60.00,       //Input voltage (VIN) [V] (float 2 decimals)
         "vout": 12.00,      //Ouput voltage (VOUT) [V]  (float 2 decimals)

@@ -19,6 +19,22 @@ Item {
         platformInterface.get_status_command.update()
     }
 
+    property var error_msg: platformInterface.error_msg.value
+    onError_msgChanged: {
+        if(error_msg !== "")
+            pushMessagesToLog(error_msg)
+    }
+
+    function pushMessagesToLog (messageIs) {
+        // Change text color to black of the entire existing list of faults
+        for(var j = 0; j < logFault.model.count; j++){
+            logFault.model.get(j).color = "black"
+        }
+
+        logFault.insert(messageIs, 0, "red")
+
+    }
+
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
         enableSwitch.checked = control_states.buck_enabled
