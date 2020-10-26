@@ -14,7 +14,7 @@ Rectangle {
     objectName: "ControlViewCreator"
 
     property bool isConfirmCloseOpen: false
-    property url currentFileUrl: ""
+    property bool rccInitialized: false
     property var debugPlatform: ({
       deviceId: Constants.NULL_DEVICE_ID,
       classId: ""
@@ -95,10 +95,9 @@ Rectangle {
                         viewStack.currentIndex = 3
                         break;
                     case viewTab:
-                        if (currentFileUrl != editor.treeModel.url) {
+                        if (rccInitialized == false) {
                             toolBarListView.recompiling = true
                             recompileControlViewQrc();
-                            currentFileUrl = editor.treeModel.url
                         } else {
                             viewStack.currentIndex = 4
                         }
@@ -187,16 +186,9 @@ Rectangle {
                 id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "lightcyan"
+                color: "white" // White background; transparent control views are possible
 
-                SGText {
-                    anchors {
-                        centerIn: parent
-                    }
-                    fontSizeMultiplier: 2
-                    text: "Control view from RCC loaded here"
-                    opacity: .25
-                }
+                // No children: they will be destroyed on control view load
             }
         }
     }
@@ -216,6 +208,7 @@ Rectangle {
     function recompileControlViewQrc () {
         if (editor.treeModel.url.toString() !== '') {
             sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
+            rccInitialized = true
         }
     }
 

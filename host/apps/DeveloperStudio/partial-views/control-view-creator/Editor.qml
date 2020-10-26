@@ -25,7 +25,6 @@ Item {
             openFilesModel.clear()
             parsingErrorRect.errorMessage = ""
             parsingErrorRect.visible = false
-
         }
 
         onErrorParsing: {
@@ -41,11 +40,8 @@ Item {
 
     SGSortFilterProxyModel {
         id: connectedPlatforms
-
         sourceModel: []
-        sortEnabled: false
         invokeCustomFilter: true
-        invokeCustomLessThan: false
 
         function filterAcceptsRow(index) {
             return sourceModel.get(index).connected;
@@ -75,104 +71,110 @@ Item {
             Layout.fillWidth: true
             spacing: 0
 
-            RowLayout {
-                id: editorToolBar
+            Rectangle {
+                color: editorToolBar.buttonColor
                 Layout.fillWidth: true
                 Layout.preferredHeight: 26
                 Layout.maximumHeight: 26
 
-                spacing: 0
-
-                property color buttonColor: "#777"
-
-                signal saveClicked()
-                signal undoClicked()
-                signal redoClicked()
-
-                SGComboBox {
-                    Layout.fillHeight: true
-                    Layout.topMargin: 0
-                    Layout.preferredWidth: 350
-
-                    model: connectedPlatforms
-                    placeholderText: "Select a platform to connect to..."
-                    textRole: "verbose_name"
-                    boxColor: editorToolBar.buttonColor
-                    textColor: "white"
-
-                    onCurrentIndexChanged: {
-                        let platform = connectedPlatforms.get(currentIndex);
-                        controlViewCreatorRoot.debugPlatform = {
-                            deviceId: platform.device_id,
-                            classId: platform.class_id
-                        };
+                RowLayout {
+                    id: editorToolBar
+                    anchors {
+                        fill: parent
                     }
-                }
+                    spacing: 0
 
-                Rectangle {
-                    id: filler
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: editorToolBar.buttonColor
-                }
+                    property color buttonColor: "#777"
 
-                Repeater {
-                    id: mainButtons
+                    signal saveClicked()
+                    signal undoClicked()
+                    signal redoClicked()
 
-                    model: [
-                        { buttonType: "save", iconSource: "qrc:/sgimages/save.svg" },
-                        { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg" },
-                        { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg" }
-                    ]
+                    Repeater {
+                        id: mainButtons
 
-                    delegate: Button {
-                        Layout.fillHeight: true
-                        Layout.preferredWidth: height
+                        model: [
+                            { buttonType: "save", iconSource: "qrc:/sgimages/save.svg" },
+                            { buttonType: "undo", iconSource: "qrc:/sgimages/undo.svg" },
+                            { buttonType: "redo", iconSource: "qrc:/sgimages/redo.svg" }
+                        ]
 
-                        enabled: openFilesModel.count > 0
+                        delegate: Button {
+                            Layout.fillHeight: true
+                            Layout.preferredWidth: height
 
-                        background: Rectangle {
-                            radius: 0
-                            color: editorToolBar.buttonColor
-                        }
+                            enabled: openFilesModel.count > 0
 
-                        SGIcon {
-                            id: icon
-                            anchors.fill: parent
-                            anchors.margins: 4
-                            iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
-                            source: modelData.iconSource
-                            fillMode: Image.PreserveAspectFit
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            enabled: parent.enabled
-                            hoverEnabled: true
-                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onPressed: {
-                                icon.iconColor = Qt.darker(icon.iconColor, 1.5)
+                            background: Rectangle {
+                                radius: 0
+                                color: editorToolBar.buttonColor
                             }
 
-                            onReleased: {
-                                icon.iconColor = "white"
+                            SGIcon {
+                                id: icon
+                                anchors.fill: parent
+                                anchors.margins: 4
+                                iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
+                                source: modelData.iconSource
+                                fillMode: Image.PreserveAspectFit
                             }
 
-                            onClicked: {
-                                switch (modelData.buttonType) {
-                                case "save":
-                                    editorToolBar.saveClicked()
-                                    break;
-                                case "undo":
-                                    editorToolBar.undoClicked()
-                                    break;
-                                case "redo":
-                                    editorToolBar.redoClicked()
-                                    break;
-                                default:
-                                    break;
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: parent.enabled
+                                hoverEnabled: true
+                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                onPressed: {
+                                    icon.iconColor = Qt.darker(icon.iconColor, 1.5)
+                                }
+
+                                onReleased: {
+                                    icon.iconColor = "white"
+                                }
+
+                                onClicked: {
+                                    switch (modelData.buttonType) {
+                                    case "save":
+                                        editorToolBar.saveClicked()
+                                        break;
+                                    case "undo":
+                                        editorToolBar.undoClicked()
+                                        break;
+                                    case "redo":
+                                        editorToolBar.redoClicked()
+                                        break;
+                                    default:
+                                        break;
+                                    }
                                 }
                             }
+                        }
+                    }
+
+                    Item {
+                        // space filler
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                    }
+
+                    SGComboBox {
+                        Layout.fillHeight: true
+                        Layout.topMargin: 0
+                        Layout.preferredWidth: 350
+
+                        model: connectedPlatforms
+                        placeholderText: "Select a platform to connect to..."
+                        enabled: model.count > 0
+                        textRole: "verbose_name"
+                        boxColor: editorToolBar.buttonColor
+                        textColor: "white"
+
+                        onCurrentIndexChanged: {
+                            let platform = connectedPlatforms.get(currentIndex);
+                            controlViewCreatorRoot.debugPlatform = {
+                                deviceId: platform.device_id,
+                                classId: platform.class_id
+                            };
                         }
                     }
                 }

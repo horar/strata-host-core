@@ -60,6 +60,7 @@ Rectangle {
         if (addToProjectList) {
             addToTheProjectList(openProjectContainer.url.toString())
         }
+        controlViewCreatorRoot.rccInitialized = false
         return true;
     }
 
@@ -272,10 +273,10 @@ Rectangle {
                                 } else {
                                     openProjectContainer.url = model.url
                                     toolBarListView.currentIndex = toolBarListView.editTab
+                                    controlViewCreatorRoot.rccInitialized = false
                                 }
                             }
                         }
-                        
                     }
                 }
             }
