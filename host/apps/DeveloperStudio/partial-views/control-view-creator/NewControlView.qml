@@ -44,6 +44,7 @@ Rectangle {
         openProjectContainer.url = qrcUrl
         toolBarListView.currentIndex = toolBarListView.editTab
         openProjectContainer.addToTheProjectList(qrcUrl.toString())
+        controlViewCreatorRoot.rccInitialized = false
         return true;
     }
 

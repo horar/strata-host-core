@@ -235,6 +235,7 @@ bool SGFileTabModel::closeTabAt(const int index)
         // This handles the case where the closed tab is the current tab
         if (data_.count() == 0) {
             setCurrentIndex(0);
+            emit countChanged();
             return true;
         }
 
@@ -286,6 +287,7 @@ void SGFileTabModel::clear(bool emitSignals)
     data_.clear();
 
     if (emitSignals) {
+        emit countChanged();
         endResetModel();
     }
 }

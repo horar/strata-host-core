@@ -6,13 +6,23 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
+import "qrc:/js/constants.js" as Constants
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
 
     property bool isConfirmCloseOpen: false
-    property url currentFileUrl: ""
+    property bool rccInitialized: false
+    property var debugPlatform: ({
+      deviceId: Constants.NULL_DEVICE_ID,
+      classId: ""
+    })
+
+    onDebugPlatformChanged: {
+        recompileControlViewQrc();
+    }
     property alias openFilesModel: editor.openFilesModel
     property alias confirmClosePopup: confirmClosePopup
 
@@ -85,10 +95,9 @@ Rectangle {
                         viewStack.currentIndex = 3
                         break;
                     case viewTab:
-                        if (currentFileUrl != editor.treeModel.url) {
+                        if (rccInitialized == false) {
                             toolBarListView.recompiling = true
                             recompileControlViewQrc();
-                            currentFileUrl = editor.treeModel.url
                         } else {
                             viewStack.currentIndex = 4
                         }
@@ -177,16 +186,9 @@ Rectangle {
                 id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "lightcyan"
+                color: "white" // White background; transparent control views are possible
 
-                SGText {
-                    anchors {
-                        centerIn: parent
-                    }
-                    fontSizeMultiplier: 2
-                    text: "Control view from RCC loaded here"
-                    opacity: .25
-                }
+                // No children: they will be destroyed on control view load
             }
         }
     }
@@ -204,8 +206,9 @@ Rectangle {
     }
 
     function recompileControlViewQrc () {
-        if (editor.treeModel.url !== '') {
+        if (editor.treeModel.url.toString() !== '') {
             sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
+            rccInitialized = true
         }
     }
 
@@ -226,7 +229,16 @@ Rectangle {
         }
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer);
+
+        Help.setClassId(controlViewCreatorRoot.deviceId)
+        NavigationControl.context.class_id = controlViewCreatorRoot.debugPlatform.classId
+        NavigationControl.context.device_id = controlViewCreatorRoot.debugPlatform.deviceId
+
+        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer, NavigationControl.context);
+
+        delete NavigationControl.context.class_id;
+        delete NavigationControl.context.device_id;
+
         if (obj === null) {
             let error_str = sdsModel.resourceLoader.getLastLoggedError()
             sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});

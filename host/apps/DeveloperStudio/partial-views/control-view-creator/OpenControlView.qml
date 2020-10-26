@@ -55,10 +55,12 @@ Rectangle {
         }
 
         openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
+        console.info(openProjectContainer.url);
         toolBarListView.currentIndex = toolBarListView.editTab
         if (addToProjectList) {
-            addToTheProjectList(openProjectContainer.url)
+            addToTheProjectList(openProjectContainer.url.toString())
         }
+        controlViewCreatorRoot.rccInitialized = false
         return true;
     }
 
@@ -200,7 +202,7 @@ Rectangle {
 
                     SGText {
                         Layout.fillWidth:true
-                        text: model.url
+                        text: model.url.toString()
                         elide:Text.ElideRight
                         verticalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
@@ -271,10 +273,10 @@ Rectangle {
                                 } else {
                                     openProjectContainer.url = model.url
                                     toolBarListView.currentIndex = toolBarListView.editTab
+                                    controlViewCreatorRoot.rccInitialized = false
                                 }
                             }
                         }
-                        
                     }
                 }
             }

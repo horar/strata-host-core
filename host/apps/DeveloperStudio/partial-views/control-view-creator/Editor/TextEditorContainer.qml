@@ -45,6 +45,28 @@ Item {
     }
 
     Connections {
+        target: editor.editorToolBar
+
+        onSaveClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                saveFile()
+            }
+        }
+
+        onUndoClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.undo()
+            }
+        }
+
+        onRedoClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.redo()
+            }
+        }
+    }
+    
+    Connections {
         target: openFilesModel
 
         onSaveRequested: {
@@ -74,6 +96,8 @@ Item {
 
         signal setValue(string value);
         signal setContainerHeight(string height);
+        signal undo();
+        signal redo();
 
         function setHtml(value) {
             setValue(value)

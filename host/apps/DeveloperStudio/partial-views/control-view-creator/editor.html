@@ -36,6 +36,14 @@
                 editor.layout()
             });
 
+            link.undo.connect(function() {
+                editor.trigger('undoClicked', 'undo');
+            });
+
+            link.redo.connect(function() {
+                editor.trigger('redoClicked', 'redo');
+            });
+
             editor.getModel().onDidChangeContent((event) => {
                 link.fileText = editor.getValue();
                 link.setVersionId(editor.getModel().getAlternativeVersionId());
