@@ -123,6 +123,8 @@ set ZMQ_DLL_DIR_SDS=%PKG_STRATA_DS%\%ZMQ_DLL%
 set ZMQ_DLL_DIR_HCS=%PKG_STRATA_HCS%\%ZMQ_DLL%
 set MSVCR_DLL=MSVCR100.dll
 set MSVCR_DLL_DIR=%windir%\system32\%MSVCR_DLL%
+set INSTALLERBASE_BINARY=installerbase.exe
+set INSTALLERBASE_BINARY_DIR=%PKG_STRATA%\%INSTALLERBASE_BINARY%
 set VCREDIST_BINARY=vc_redist.x64.exe
 set STRATA_OFFLINE=strata-setup-offline
 set STRATA_ONLINE=strata-setup-online
@@ -184,6 +186,18 @@ IF %ERRORLEVEL% NEQ 0 (
     echo =======================================================================
     Exit /B 1
 )
+
+echo  Checking QtIFW installerbase...
+where installerbase >nul 2>nul
+IF %ERRORLEVEL% NEQ 0 (
+    echo =======================================================================
+    echo  QtIFW's installerbase is missing from path! Aborting.
+    echo =======================================================================
+    Exit /B 1
+)
+
+@for /f "tokens=* usebackq" %%f in (`where installerbase`) do @set "INSTALLERBASE_BINARY_ORIG_DIR=%%f"
+echo   Detected location: %INSTALLERBASE_BINARY_ORIG_DIR%
 
 echo  Checking Qt windeployqt...
 where windeployqt >nul 2>nul
@@ -305,6 +319,9 @@ REM xcopy bin\component-*.rcc %PKG_STRATA_COMPONENTS% /Y
 echo Copying Qml Views Resources to %PKG_STRATA_COMPONENTS_VIEWS%
 if not exist %PKG_STRATA_COMPONENTS_VIEWS% md %PKG_STRATA_COMPONENTS_VIEWS%
 xcopy bin\views-*.rcc %PKG_STRATA_COMPONENTS_VIEWS% /Y
+
+echo Copyting %INSTALLERBASE_BINARY_ORIG_DIR% to %INSTALLERBASE_BINARY_DIR%
+copy "%INSTALLERBASE_BINARY_ORIG_DIR%" "%INSTALLERBASE_BINARY_DIR%"
 
 echo -----------------------------------------------------------------------------
 echo  Preparing %SDS_BINARY% dependencies..
@@ -548,7 +565,7 @@ echo ---------------------------------------------------------------------------
 
 if not exist "%PKG_STRATA_COMPONENTS_COMMON%\%COMMON_CPP_DLL%" (
     echo =======================================================================
-    echo  Missing %COMMON_CPP_DLL%, build probably not installed
+    echo  Missing %COMMON_CPP_DLL%, build probably failed
     echo =======================================================================
     Exit /B 2
 )
@@ -557,6 +574,25 @@ signtool sign /f %SIGNING_CERT% /p %SIGNING_PASS% /tr %SIGNING_TIMESTAMP_SERVER%
 IF %ERRORLEVEL% NEQ 0 (
     echo =======================================================================
     echo  Failed to sign %COMMON_CPP_DLL%!
+    echo =======================================================================
+    Exit /B 3
+)
+
+echo -----------------------------------------------------------------------------
+echo Signing %INSTALLERBASE_BINARY%
+echo -----------------------------------------------------------------------------
+
+if not exist "%INSTALLERBASE_BINARY_DIR%" (
+    echo =======================================================================
+    echo  Missing %INSTALLERBASE_BINARY%
+    echo =======================================================================
+    Exit /B 2
+)
+
+signtool sign /f %SIGNING_CERT% /p %SIGNING_PASS% /tr %SIGNING_TIMESTAMP_SERVER% /td %SIGNING_TIMESTAMP_ALG% "%INSTALLERBASE_BINARY_DIR%"
+IF %ERRORLEVEL% NEQ 0 (
+    echo =======================================================================
+    echo  Failed to sign %INSTALLERBASE_BINARY%!
     echo =======================================================================
     Exit /B 3
 )
@@ -640,9 +676,6 @@ echo =======================================================================
 if exist %STRATA_ONLINE_REPOSITORY% rd /s /q %STRATA_ONLINE_REPOSITORY%
 if not exist %STRATA_ONLINE_REPOSITORY% md %STRATA_ONLINE_REPOSITORY%
 
-echo -----------------------------------------------------------------------------
-echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%..
-echo -----------------------------------------------------------------------------
 repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA% %STRATA_ONLINE_REPOSITORY%
 IF %ERRORLEVEL% NEQ 0 (
     echo =======================================================================

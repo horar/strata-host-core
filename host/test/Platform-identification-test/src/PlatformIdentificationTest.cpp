@@ -16,7 +16,7 @@ PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     connect(this, &PlatformIdentificationTest::setState, this, &PlatformIdentificationTest::stateChangedHandler);
 
     connect(&jlinkConnector_, &SGJLinkConnector::checkConnectionProcessFinished, this, &PlatformIdentificationTest::checkJLinkDeviceConnectionHandler);
-    connect(&jlinkConnector_, &SGJLinkConnector::flashBoardProcessFinished, this, &PlatformIdentificationTest::flashCompletedHandler);
+    connect(&jlinkConnector_, &SGJLinkConnector::programBoardProcessFinished, this, &PlatformIdentificationTest::flashCompletedHandler);
 
     testTimeout_.setInterval(TEST_TIMEOUT);
     testTimeout_.setSingleShot(true);
@@ -42,6 +42,9 @@ bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString
 
     if (QFile::exists(jlinkExePath)) { 
         jlinkConnector_.setExePath(jlinkExePath);
+        jlinkConnector_.setEraseBeforeProgram(true);
+        jlinkConnector_.setDevice("EFM32GG380F1024");
+        jlinkConnector_.setSpeed(4000);
         // check if there is a JLinkConnected. need to connect the signals to get the result, this
         // is async process!
         if (!jlinkConnector_.checkConnectionRequested()) {
@@ -194,7 +197,7 @@ void PlatformIdentificationTest::flashPlatform(const QString& binaryFileName) {
     std::cout << "flashing platform..." << std::endl;
 
     // Use SGJLinkConnector to flash a the platform
-    jlinkConnector_.flashBoardRequested(binaryFileName, true);
+    jlinkConnector_.programBoardRequested(binaryFileName);
 }
 
 void PlatformIdentificationTest::printSummary() {
