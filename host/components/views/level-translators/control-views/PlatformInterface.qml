@@ -8,8 +8,6 @@ Item {
     // -------------------------------------------------------------------
     // UI Control States
     //
-
-    //
     property var startup : {
         "oe_i2c":true,
         "oe_spi":true,
@@ -28,7 +26,6 @@ Item {
         "vccb_spi":0,
         "vccb_ub":0
     }
-
 
     // -------------------------------------------------------------------
     // Outgoing Commands
@@ -57,6 +54,7 @@ Item {
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
                                  })
+
     property var tr_1_command : ({
                                      "cmd" : "tr_1",
                                      "payload": {
@@ -72,6 +70,7 @@ Item {
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
                                  })
+
     property var tr_2_command : ({
                                      "cmd" : "tr_2",
                                      "payload": {
@@ -87,6 +86,7 @@ Item {
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
                                  })
+
     property var tr_3_command : ({
                                      "cmd" : "tr_3",
                                      "payload": {
@@ -104,52 +104,52 @@ Item {
                                  })
 
     property var oe_ub_command : ({
-                                     "cmd" : "oe_ub",
-                                     "payload": {
-                                         "value":false
-                                     },
-                                     update: function (value) {
-                                         this.set(value)
-                                         this.send(this)
-                                     },
-                                     set: function (value) {
-                                         this.payload.value = value
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-                                 })
+                                      "cmd" : "oe_ub",
+                                      "payload": {
+                                          "value":false
+                                      },
+                                      update: function (value) {
+                                          this.set(value)
+                                          this.send(this)
+                                      },
+                                      set: function (value) {
+                                          this.payload.value = value
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
     property var oe_i2c_command : ({
-                                     "cmd" : "oe_i2c",
-                                     "payload": {
-                                         "value":false
-                                     },
-                                     update: function (value) {
-                                         this.set(value)
-                                         this.send(this)
-                                     },
-                                     set: function (value) {
-                                         this.payload.value = value
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-                                 })
+                                       "cmd" : "oe_i2c",
+                                       "payload": {
+                                           "value":false
+                                       },
+                                       update: function (value) {
+                                           this.set(value)
+                                           this.send(this)
+                                       },
+                                       set: function (value) {
+                                           this.payload.value = value
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
+
     property var oe_spi_command : ({
-                                     "cmd" : "oe_spi",
-                                     "payload": {
-                                         "value":false
-                                     },
-                                     update: function (value) {
-                                         this.set(value)
-                                         this.send(this)
-                                     },
-                                     set: function (value) {
-                                         this.payload.value = value
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-                                 })
-
-
+                                       "cmd" : "oe_spi",
+                                       "payload": {
+                                           "value":false
+                                       },
+                                       update: function (value) {
+                                           this.set(value)
+                                           this.send(this)
+                                       },
+                                       set: function (value) {
+                                           this.payload.value = value
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

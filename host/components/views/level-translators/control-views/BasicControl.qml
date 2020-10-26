@@ -14,13 +14,13 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
-        Help.registerTarget(enableI2c, "Enable or disable the I2C FXMA2102 level shifter. The IO pins will be high impedance when disabled.", 0, "levelShiftersHelp")
-        Help.registerTarget(vcca_vccbI2c, "Monitors VCCA and VCCB voltages of the I2C FXMA2102 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 1, "levelShiftersHelp")
-        Help.registerTarget(enableSpi, "Enable or disable the SPI FXLA104 level shifter. The IO pins will be high impedance when disabled.", 2, "levelShiftersHelp")
-        Help.registerTarget(vcca_vccbSpi, "Monitors VCCA and VCCB voltages of the SPI FXLA104 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 3, "levelShiftersHelp")
-        Help.registerTarget(enableUni, "Enable or disable UB (Uni/Bi Directional) FXL4TD245 level shifter. The IO pins will be high impedance when disabled.", 4, "levelShiftersHelp")
-        Help.registerTarget(vcca_vccbUni, "Monitors VCCA and VCCB voltages of the UB (Uni/Bi Directional) FXL4TD245 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 5, "levelShiftersHelp")
-        Help.registerTarget(trSwitchContainerForHelp,"Transmit and receive inputs. Transmit will send data from A to B (left to right on the PCB) and receive will send data from B to A (right to left on PCB).", 6, "levelShiftersHelp")
+        Help.registerTarget(enableI2c, "Enable or disable the I2C FXMA2102 level shifter. The IO pins will be high impedance when disabled.", 0, "levelTranslatorsHelp")
+        Help.registerTarget(vcca_vccbI2c, "Monitors VCCA and VCCB voltages of the I2C FXMA2102 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 1, "levelTranslatorsHelp")
+        Help.registerTarget(enableSpi, "Enable or disable the SPI FXLA104 level shifter. The IO pins will be high impedance when disabled.", 2, "levelTranslatorsHelp")
+        Help.registerTarget(vcca_vccbSpi, "Monitors VCCA and VCCB voltages of the SPI FXLA104 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 3, "levelTranslatorsHelp")
+        Help.registerTarget(enableUni, "Enable or disable UB (Uni/Bi Directional) FXL4TD245 level shifter. The IO pins will be high impedance when disabled.", 4, "levelTranslatorsHelp")
+        Help.registerTarget(vcca_vccbUni, "Monitors VCCA and VCCB voltages of the UB (Uni/Bi Directional) FXL4TD245 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 5, "levelTranslatorsHelp")
+        Help.registerTarget(trSwitchContainerForHelp,"Transmit and receive inputs. Transmit will send data from A to B (left to right on the PCB) and receive will send data from B to A (right to left on PCB).", 6, "levelTranslatorsHelp")
     }
 
     Item {

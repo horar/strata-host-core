@@ -42,7 +42,7 @@ Item {
                 fill: helpIcon
             }
             onClicked: {
-                Help.startHelpTour("levelShiftersHelp")
+                Help.startHelpTour("levelTranslatorsHelp")
             }
             hoverEnabled: true
         }
