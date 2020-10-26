@@ -10,6 +10,7 @@ A standard development environment for building Strata with "Qt Installer Framew
 The simplest way to set up the basic configuration is to install Hello Strata.
 And then install the "Qt Installer Framework" component (version 3.2) through Qt Maintenance Tool.
 It also must be added to PATH ( paths could be slightly different):
+
 * Windows:
     * Qt Installer Framework `C:\Qt\Tools\QtInstallerFramework\3.2\bin`
 * Mac:
@@ -38,12 +39,14 @@ For a more advanced guide installing the whole enviroment step by step, you can 
 ## Building Strata OTA on Windows / MacOS
 
 To run the script you can use standard terminal present in both OS (Command Prompt - Windows, Terminal - MacOS)
+
 * Windows:
     * `bootstrap-host-ota.bat`
 * Mac:
     * `./bootstrap-host-ota.sh`
 
 For usage and other info please run:
+
 * Windows:
     * `bootstrap-host-ota.bat -h`
 * Mac:
@@ -55,6 +58,7 @@ Once the script starts, you will see the step updates as well as all the output 
 It typically takes 10 (MacOS) - 15 (Windows) minutes to get the installer outputted in the build folder.
 
 The output after succesfull build will contain:
+
 * Windows:
     * Offline Installer `strata-setup-offline.exe`
     * Online Installer  `strata-setup-online.exe`
@@ -67,16 +71,20 @@ The output after succesfull build will contain:
 The Windows build script will also sign all outputed .exe and .dll files using Window's signtool, so please make sure you have it installed.
 
 ## Offline Installer Testing
+
 To test the offline installer, install the generated offline installer on your desired testing machine and test as needed.
 
 ## Online Installer Testing
+
 To test the online installer using the generated online installer, first you'll need to deploy a simple http file server.
 There you will have to copy content of the generated Online Repo ( for example http://127.0.0.1/strata ).
 Once that is done, during the installation, you will have to specify this repository in configuration (Settings - Repositories - Add).
 Then you can install on your desired testing machine and test as needed.
 
 ## Automate Strata Installation
+
 To install Strata in unattended mode run following command as an administrator to avoid installation permission prompts.
+
 * Windows:
     * `strata-setup-offline.exe isSilent=true`
 * Mac:
