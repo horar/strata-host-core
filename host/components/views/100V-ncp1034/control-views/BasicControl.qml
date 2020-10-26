@@ -38,27 +38,25 @@ Item {
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
         enableSwitch.checked = control_states.buck_enabled
-        setExternalVCC.checked = control_states.ldo_enabled
+        setExternalVCC.checked = control_states.ldo_enabled ? false : true
         outputVoltAdjustment.checked = control_states.dac_enabled
 
         if(control_states.rt_mode === 0)
             setSwitchFreq.checked = true
         else   setSwitchFreq.checked = false
 
-        /*if(control_states.ss_set === 1){
+        if(control_states.ss_set === 0){
             softStart.currentIndex = 0
         }
-        if(control_states.ss_set === 2){
+        if(control_states.ss_set === 1){
             softStart.currentIndex = 1
         }
-        if(control_states.ss_set === 3){
+        if(control_states.ss_set === 2){
             softStart.currentIndex = 2
         }
-        if(control_states.ss_set === 4){
+        if(control_states.ss_set === 3){
             softStart.currentIndex = 3
-        }*/
-
-        softStart.currentIndex = control_states.ss_set
+        }
 
         outputVolslider.value = control_states.vout_set.toFixed(2)
 
@@ -205,7 +203,7 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             model: ["1", "5.5", "11", "15.5"]
                                             onCurrentIndexChanged: {
-                                                platformInterface.set_ss.update(currentIndex+1)
+                                                platformInterface.set_ss.update(currentIndex)
                                             }
                                         }
                                     }
@@ -307,7 +305,7 @@ Item {
                                     }
                                 }
 
-                                Item {
+                                /*Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     SGAlignedLabel {
@@ -331,9 +329,9 @@ Item {
                                             grooveFillColor: "#0cf"         // Default: "#0cf"
                                         }
                                     }
-                                }
+                                }*/
 
-                                Item {
+                                /*Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     SGAlignedLabel {
@@ -359,7 +357,7 @@ Item {
 
                                         }
                                     }
-                                }
+                                }*/
 
                                 Item {
                                     Layout.fillWidth: true
@@ -970,9 +968,10 @@ Item {
 
                                                 property var pg_vin: platformInterface.pg_vin.value
                                                 onPg_vinChanged:  {
-                                                    if(pg_vin === "false")
-                                                        vinLed.status = SGStatusLight.Red
-                                                    else vinLed.status = SGStatusLight.Green
+                                                    //if(pg_vin === "false")
+                                                    if(pg_vin)
+                                                        vinLed.status = SGStatusLight.Green
+                                                    else vinLed.status = SGStatusLight.Red
                                                 }
                                             }
                                         }
@@ -996,9 +995,10 @@ Item {
 
                                                 property var pg_vout: platformInterface.pg_vout.value
                                                 onPg_voutChanged:  {
-                                                    if(pg_vout === "false")
-                                                        voutLed.status = SGStatusLight.Red
-                                                    else voutLed.status = SGStatusLight.Green
+                                                    //if(pg_vout === "false")
+                                                    if(pg_vout)
+                                                        voutLed.status = SGStatusLight.Green
+                                                    else voutLed.status = SGStatusLight.Red
                                                 }
                                             }
                                         }
@@ -1022,9 +1022,10 @@ Item {
 
                                                 property var pg_vcc: platformInterface.pg_vcc.value
                                                 onPg_vccChanged:  {
-                                                    if(pg_vcc === "false")
-                                                        vccLed.status = SGStatusLight.Red
-                                                    else vccLed.status = SGStatusLight.Green
+                                                    //if(pg_vcc === "false")
+                                                    if (pg_vcc)
+                                                        vccLed.status = SGStatusLight.Green
+                                                    else vccLed.status = SGStatusLight.Red
                                                 }
                                             }
                                         }
@@ -1048,7 +1049,8 @@ Item {
 
                                                 property var temp_alert: platformInterface.temp_alert.value
                                                 onTemp_alertChanged:  {
-                                                    if(temp_alert === "true")
+                                                    //if(temp_alert === "true")
+                                                    if (temp_alert)
                                                         tempAlertLed.status = SGStatusLight.Red
                                                     else tempAlertLed.status = SGStatusLight.Off
                                                 }
