@@ -29,6 +29,7 @@ public:
     Q_INVOKABLE QString formatDateTimeWithOffsetFromUtc(const QDateTime &dateTime, const QString &format=QString("yyyy-MM-dd hh:mm:ss.zzz t"));
     Q_INVOKABLE static QString generateUuid();
     Q_INVOKABLE static bool validateJson(const QByteArray &json, const QByteArray &schema);
+    Q_INVOKABLE static QString toHex(qint64 number, int width = 0);
 
 private:
     const QStringList fileSizePrefixList_;
