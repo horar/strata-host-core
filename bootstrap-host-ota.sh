@@ -130,6 +130,8 @@ fi
 STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config.xml
 MQTT_LIB=QtMqtt
 COMMON_CPP_LIB="libcomponent-commoncpp.so"
+INSTALLERBASE_BINARY=installerbase
+INSTALLERBASE_BINARY_DIR=$PKG_STRATA/$INSTALLERBASE_BINARY
 STRATA_OFFLINE=strata-setup-offline
 STRATA_ONLINE=strata-setup-online
 STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.app
@@ -188,6 +190,17 @@ if [ ! -x "$(command -v repogen)" ]; then
     echo "======================================================================="
     exit 1
 fi
+
+echo " Checking QtIFW installerbase..."
+if [ ! -x "$(command -v installerbase)" ]; then
+    echo "======================================================================="
+    echo " QtIFW's installerbase is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
+fi
+
+INSTALLERBASE_BINARY_ORIG_DIR=$(command -v installerbase | head -n 1)
+echo   Detected location: $INSTALLERBASE_BINARY_ORIG_DIR
 
 echo " Checking Qt macdeployqt..."
 if [ ! -x "$(command -v macdeployqt)" ]; then
@@ -353,6 +366,16 @@ if [ $? != 0 ] ; then
     exit 2
 fi
 
+echo Copying ${INSTALLERBASE_BINARY_ORIG_DIR} to ${INSTALLERBASE_BINARY_DIR}
+cp -fv "${INSTALLERBASE_BINARY_ORIG_DIR}" "${INSTALLERBASE_BINARY_DIR}"
+
+if [ $? != 0 ] ; then
+    echo "======================================================================="
+    echo " Failed to copy ${INSTALLERBASE_BINARY_ORIG_DIR} to ${INSTALLERBASE_BINARY_DIR}!"
+    echo "======================================================================="
+    exit 2
+fi
+
 echo "-----------------------------------------------------------------------------"
 echo " Preparing $SDS_BINARY dependencies.."
 echo "-----------------------------------------------------------------------------"
@@ -429,9 +452,6 @@ echo "======================================================================="
 if [ -d $STRATA_ONLINE_REPOSITORY ] ; then rm -rf $STRATA_ONLINE_REPOSITORY; fi
 if [ ! -d $STRATA_ONLINE_REPOSITORY ] ; then mkdir -pv $STRATA_ONLINE_REPOSITORY; fi
 
-echo "-----------------------------------------------------------------------------"
-echo " Preparing online repository $STRATA_ONLINE_REPOSITORY.."
-echo "-----------------------------------------------------------------------------"
 repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA $STRATA_ONLINE_REPOSITORY
 if [ $? != 0 ] ; then
     echo "======================================================================="
