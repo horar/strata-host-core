@@ -36,8 +36,6 @@ Item {
         height: 40
         source:  "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-
-
         MouseArea {
             id: helpMouse
             anchors {
@@ -49,5 +47,4 @@ Item {
             hoverEnabled: true
         }
     }
-
 }

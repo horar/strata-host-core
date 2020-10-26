@@ -14,15 +14,13 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
-        Help.registerTarget(enable3, "Enable or disable the I2C FXMA2102 level shifter. The IO pins will be high impedance when disabled.", 0, "levelShiftersHelp")
+        Help.registerTarget(enableI2c, "Enable or disable the I2C FXMA2102 level shifter. The IO pins will be high impedance when disabled.", 0, "levelShiftersHelp")
         Help.registerTarget(vcca_vccbI2c, "Monitors VCCA and VCCB voltages of the I2C FXMA2102 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 1, "levelShiftersHelp")
-        Help.registerTarget(enable2, "Enable or disable the SPI FXLA104 level shifter. The IO pins will be high impedance when disabled.", 2, "levelShiftersHelp")
+        Help.registerTarget(enableSpi, "Enable or disable the SPI FXLA104 level shifter. The IO pins will be high impedance when disabled.", 2, "levelShiftersHelp")
         Help.registerTarget(vcca_vccbSpi, "Monitors VCCA and VCCB voltages of the SPI FXLA104 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 3, "levelShiftersHelp")
-        Help.registerTarget(enable1, "Enable or disable UB (Uni/Bi Directional) FXL4TD245 level shifter. The IO pins will be high impedance when disabled.", 4, "levelShiftersHelp")
+        Help.registerTarget(enableUni, "Enable or disable UB (Uni/Bi Directional) FXL4TD245 level shifter. The IO pins will be high impedance when disabled.", 4, "levelShiftersHelp")
         Help.registerTarget(vcca_vccbUni, "Monitors VCCA and VCCB voltages of the UB (Uni/Bi Directional) FXL4TD245 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 5, "levelShiftersHelp")
         Help.registerTarget(controlContainerForHelp,"Transmit and receive inputs. Transmit will send data from A to B (left to right on the PCB) and receive will send data from B to A (right to left on PCB).", 6, "levelShiftersHelp")
-
-
     }
 
     Item {
@@ -65,9 +63,6 @@ Item {
         }
     }
 
-
-
-
     onWidthChanged: {
         vcca_vccbI2c.update()
         vcca_vccbSpi.update()
@@ -88,13 +83,11 @@ Item {
         }
     }
 
-
-
     property var startup: platformInterface.startup
     onStartupChanged: {
-        enable3.checked = startup.oe_i2c
-        enable2.checked = startup.oe_spi
-        enable1.checked = startup.oe_ub
+        enableI2c.checked = startup.oe_i2c
+        enableSpi.checked = startup.oe_spi
+        enableUni.checked = startup.oe_ub
         tr0.checked = startup.tr_0
         tr1.checked = startup.tr_1
         tr2.checked = startup.tr_2
@@ -185,8 +178,8 @@ Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
-                                        id:  enable3Label
-                                        target: enable3
+                                        id:  enableI2cLabel
+                                        target: enableI2c
                                         text: "Enable"
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
@@ -194,7 +187,7 @@ Item {
                                         anchors.centerIn: parent
 
                                         SGSwitch {
-                                            id: enable3
+                                            id: enableI2c
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
                                             onToggled: {
@@ -250,7 +243,6 @@ Item {
                                             width: 125 * ratioCalc
                                             unit: "<b>V</b>"
                                             text: "1.26"
-
                                         }
                                     }
                                 }
@@ -304,8 +296,8 @@ Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
-                                        id:  enable2Label
-                                        target: enable2
+                                        id:  enableSpiLabel
+                                        target: enableSpi
                                         text: "Enable"
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
@@ -313,7 +305,7 @@ Item {
                                         anchors.centerIn: parent
 
                                         SGSwitch {
-                                            id: enable2
+                                            id: enableSpi
                                             checkedLabel: "On"
                                             uncheckedLabel: "Off"
                                             onToggled: {
@@ -428,7 +420,6 @@ Item {
                                     top: line1.bottom
                                     topMargin: 10
                                     left: parent.left
-                                    //leftMargin: 30
                                     right: parent.right
                                     bottom: parent.bottom
                                 }
@@ -442,16 +433,15 @@ Item {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
                                             SGAlignedLabel {
-                                                id:  enable1Label
-                                                target: enable1
+                                                id:  enableUniLabel
+                                                target: enableUni
                                                 text: "Enable"
                                                 fontSizeMultiplier: ratioCalc * 1.2
                                                 font.bold : true
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.centerIn: parent
-
                                                 SGSwitch {
-                                                    id: enable1
+                                                    id: enableUni
                                                     checkedLabel: "On"
                                                     uncheckedLabel: "Off"
                                                     onToggled: {
@@ -459,7 +449,6 @@ Item {
                                                     }
                                                 }
                                             }
-
                                         }
                                         Rectangle {
                                             Layout.fillHeight: true
@@ -481,8 +470,6 @@ Item {
                                                     width: 125 * ratioCalc
                                                     unit: "<b>V</b>"
                                                     text: "1.50"
-
-
                                                 }
                                             }
                                         }
@@ -507,8 +494,6 @@ Item {
                                                     width: 125 * ratioCalc
                                                     unit: "<b>V</b>"
                                                     text: "2.50"
-
-
                                                 }
                                             }
                                         }
@@ -526,7 +511,6 @@ Item {
                                             id: trContainer
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
-
                                             SGAlignedLabel {
                                                 id:  tr0Label
                                                 target: tr0
@@ -535,7 +519,6 @@ Item {
                                                 font.bold : true
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.centerIn: parent
-
                                                 SGSwitch {
                                                     id: tr0
                                                     checkedLabel: "Transmit"
@@ -557,7 +540,6 @@ Item {
                                                 font.bold : true
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.centerIn: parent
-
                                                 SGSwitch {
                                                     id: tr1
                                                     checkedLabel: "Transmit"
@@ -581,7 +563,6 @@ Item {
                                                 font.bold : true
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.centerIn: parent
-
                                                 SGSwitch {
                                                     id: tr2
                                                     checkedLabel: "Transmit"
@@ -603,7 +584,6 @@ Item {
                                                 font.bold : true
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.centerIn: parent
-
                                                 SGSwitch {
                                                     id: tr3
                                                     checkedLabel: "Transmit"
@@ -617,190 +597,6 @@ Item {
                                     }
                                 }
                             }
-
-                            //                            GridLayout{
-                            //                                anchors {
-                            //                                    top: line1.bottom
-                            //                                    topMargin: 10
-                            //                                    left: parent.left
-                            //                                    leftMargin: 30
-                            //                                    right: parent.right
-                            //                                    bottom: parent.bottom
-                            //                                }
-                            //                                columnSpacing: 40
-                            //                                rows: 2
-                            //                                columns: 4
-                            //                                Rectangle {
-                            //                                    Layout.fillHeight: true
-                            //                                    Layout.fillWidth: true
-                            //                                    SGAlignedLabel {
-                            //                                        id:  enable1Label
-                            //                                        target: enable1
-                            //                                        text: "Enable"
-                            //                                        fontSizeMultiplier: ratioCalc * 1.2
-                            //                                        font.bold : true
-                            //                                        alignment: SGAlignedLabel.SideTopLeft
-                            //                                        anchors.centerIn: parent
-
-                            //                                        SGSwitch {
-                            //                                            id: enable1
-                            //                                            checkedLabel: "On"
-                            //                                            uncheckedLabel: "Off"
-                            //                                            onToggled: {
-                            //                                                platformInterface.oe_ub_command.update(checked)
-                            //                                            }
-                            //                                        }
-                            //                                    }
-
-                            //                                }
-                            //                                Rectangle {
-                            //                                    Layout.fillHeight: true
-                            //                                    Layout.fillWidth: true
-                            //                                    SGAlignedLabel {
-                            //                                        id: vccaLabel
-                            //                                        target: vcca
-                            //                                        font.bold: true
-                            //                                        alignment: SGAlignedLabel.SideTopLeft
-                            //                                        fontSizeMultiplier: ratioCalc * 1.2
-                            //                                        text: "VCCA"
-                            //                                        anchors.centerIn: parent
-                            //                                        SGInfoBox {
-                            //                                            id: vcca
-                            //                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                            //                                            boxColor: "lightgrey"
-                            //                                            boxFont.family: Fonts.digitalseven
-                            //                                            height:  35 * ratioCalc
-                            //                                            width: 125 * ratioCalc
-                            //                                            unit: "<b>V</b>"
-                            //                                            text: "1.50"
-
-
-                            //                                        }
-                            //                                    }
-                            //                                }
-
-                            //                                Rectangle {
-                            //                                    Layout.fillHeight: true
-                            //                                    Layout.fillWidth: true
-                            //                                    SGAlignedLabel {
-                            //                                        id: vccbLabel
-                            //                                        target: vccb
-                            //                                        font.bold: true
-                            //                                        alignment: SGAlignedLabel.SideTopLeft
-                            //                                        fontSizeMultiplier: ratioCalc * 1.2
-                            //                                        text: "VCCB"
-                            //                                        anchors.centerIn: parent
-                            //                                        SGInfoBox {
-                            //                                            id: vccb
-                            //                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                            //                                            boxColor: "lightgrey"
-                            //                                            boxFont.family: Fonts.digitalseven
-                            //                                            height:  35 * ratioCalc
-                            //                                            width: 125 * ratioCalc
-                            //                                            unit: "<b>V</b>"
-                            //                                            text: "2.50"
-
-
-                            //                                        }
-                            //                                    }
-                            //                                }
-                            //                                Rectangle {
-                            //                                    Layout.fillHeight: true
-                            //                                    Layout.fillWidth: true
-                            //                                }
-
-                            //                                Rectangle {
-                            //                                    Layout.fillHeight: true
-                            //                                    Layout.fillWidth: true
-
-                            //                                    SGAlignedLabel {
-                            //                                        id:  tr0Label
-                            //                                        target: tr0
-                            //                                        text: "T/R#0"
-                            //                                        fontSizeMultiplier: ratioCalc * 1.2
-                            //                                        font.bold : true
-                            //                                        alignment: SGAlignedLabel.SideTopLeft
-                            //                                        anchors.centerIn: parent
-
-                            //                                        SGSwitch {
-                            //                                            id: tr0
-                            //                                            checkedLabel: "Transmit"
-                            //                                            uncheckedLabel: "Recieve"
-                            //                                            onToggled: {
-                            //                                                platformInterface.tr_0_command.update(checked)
-                            //                                            }
-                            //                                        }
-                            //                                    }
-                            //                                }
-                            //                                Rectangle {
-                            //                                    Layout.fillHeight: true
-                            //                                    Layout.fillWidth: true
-                            //                                    SGAlignedLabel {
-                            //                                        id:  tr1Label
-                            //                                        target: tr1
-                            //                                        text: "T/R#1"
-                            //                                        fontSizeMultiplier: ratioCalc * 1.2
-                            //                                        font.bold : true
-                            //                                        alignment: SGAlignedLabel.SideTopLeft
-                            //                                        anchors.centerIn: parent
-
-                            //                                        SGSwitch {
-                            //                                            id: tr1
-                            //                                            checkedLabel: "Transmit"
-                            //                                            uncheckedLabel: "Recieve"
-                            //                                            onToggled: {
-                            //                                                platformInterface.tr_1_command.update(checked)
-                            //                                            }
-                            //                                        }
-                            //                                    }
-                            //                                }
-
-                            //                                Rectangle {
-                            //                                    Layout.fillHeight: true
-                            //                                    Layout.fillWidth: true
-
-                            //                                    SGAlignedLabel {
-                            //                                        id:  tr2Label
-                            //                                        target: tr2
-                            //                                        text: "T/R#2"
-                            //                                        fontSizeMultiplier: ratioCalc * 1.2
-                            //                                        font.bold : true
-                            //                                        alignment: SGAlignedLabel.SideTopLeft
-                            //                                        anchors.centerIn: parent
-
-                            //                                        SGSwitch {
-                            //                                            id: tr2
-                            //                                            checkedLabel: "Transmit"
-                            //                                            uncheckedLabel: "Recieve"
-                            //                                            onToggled: {
-                            //                                                platformInterface.tr_2_command.update(checked)
-                            //                                            }
-                            //                                        }
-                            //                                    }
-                            //                                }
-                            //                                Rectangle {
-                            //                                    Layout.fillHeight: true
-                            //                                    Layout.fillWidth: true
-                            //                                    SGAlignedLabel {
-                            //                                        id:  tr3Label
-                            //                                        target: tr3
-                            //                                        text: "T/R#3"
-                            //                                        fontSizeMultiplier: ratioCalc * 1.2
-                            //                                        font.bold : true
-                            //                                        alignment: SGAlignedLabel.SideTopLeft
-                            //                                        anchors.centerIn: parent
-
-                            //                                        SGSwitch {
-                            //                                            id: tr3
-                            //                                            checkedLabel: "Transmit"
-                            //                                            uncheckedLabel: "Recieve"
-                            //                                            onToggled: {
-                            //                                                platformInterface.tr_3_command.update(checked)
-                            //                                            }
-                            //                                        }
-                            //                                    }
-                            //                                }
-                            //                            }
                         }
                     }
                 }

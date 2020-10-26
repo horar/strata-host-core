@@ -75,19 +75,6 @@ var uuid_map = {
     "245": "bldcMotorControl",
     "246": "meshNetwork",
     "265": "zigbee",
-    "15411d3f-829f-4b65-b607-13e8dec840aa": "rsl10-dcdc",
-    "1ae9e1e7-a268-4302-8c3a-280f0aa095a5": "rsl10-dcdc",
-    "3ef8bbc6-92ff-4c98-b9ae-ca7e7c47d180": "rsl10-dcdc",
-    "3ea08e05-0bcd-4a4a-86ec-79a1ca9750cd": "rsl10-dcdc",
-    "abd65a0b-3229-44a4-a97c-38ea3c24f990": "rsl10-dcdc",
-    "266f22e5-dc05-4819-b565-e5fb8035984e": "rsl10-dcdc",
-    "d4937f24-219a-4648-a711-2f6e902b6f1c": "rsl10-dcdc",
-    "b519cdcb-5068-4483-b88e-155813fae915": "rsl10-dcdc",
-    "26ebc2ba-9bab-4bdd-97b6-09b5b8cbdf9e": "rsl10-dcdc",
-    "cce0f32e-ee1e-44aa-81a3-0801a71048ce": "rsl10-dcdc",
-    "2286e1e0-4035-46b9-b197-4d729653c101": "rsl10-dcdc",
-    "4aad7090-eac3-470e-a304-00988c8c006d": "rsl10-dcdc",
-    "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-dcdc",
 
     /*****
         Real UUID generated from interaction with Deployment Portal (class_id)
@@ -104,6 +91,19 @@ var uuid_map = {
     "36c48ce4-3794-4ba7-a9f4-07fc6e45a8aa" : "hello-strata-rsl10",
     "4a1c2e5f-d0b0-4970-8c93-70a9234d195c": "led-tail-light", // STR-NCV7685-AUTO-LED-GEVB
     "ecd43c02-3e7c-4d5e-9231-aabc149c8772": "led-tail-light",  // STR-NCV7684-AUTO-LED-GEVB
+    "15411d3f-829f-4b65-b607-13e8dec840aa": "rsl10-dcdc",
+    "1ae9e1e7-a268-4302-8c3a-280f0aa095a5": "rsl10-dcdc",
+    "3ef8bbc6-92ff-4c98-b9ae-ca7e7c47d180": "rsl10-dcdc",
+    "3ea08e05-0bcd-4a4a-86ec-79a1ca9750cd": "rsl10-dcdc",
+    "abd65a0b-3229-44a4-a97c-38ea3c24f990": "rsl10-dcdc",
+    "266f22e5-dc05-4819-b565-e5fb8035984e": "rsl10-dcdc",
+    "d4937f24-219a-4648-a711-2f6e902b6f1c": "rsl10-dcdc",
+    "b519cdcb-5068-4483-b88e-155813fae915": "rsl10-dcdc",
+    "26ebc2ba-9bab-4bdd-97b6-09b5b8cbdf9e": "rsl10-dcdc",
+    "cce0f32e-ee1e-44aa-81a3-0801a71048ce": "rsl10-dcdc",
+    "2286e1e0-4035-46b9-b197-4d729653c101": "rsl10-dcdc",
+    "4aad7090-eac3-470e-a304-00988c8c006d": "rsl10-dcdc",
+    "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-dcdc",
     "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators"
 
 }
