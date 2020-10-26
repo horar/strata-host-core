@@ -102,6 +102,8 @@ public:
 
 protected:
     virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) final;
+    virtual void setDeviceBootloaderMode(bool inBootloaderMode) final;
+    virtual void setDeviceApiVersion(device::Device::ApiVersion apiVersion) final;
     const QString cmdName_;
     const device::DevicePtr& device_;
     bool ackReceived_;
