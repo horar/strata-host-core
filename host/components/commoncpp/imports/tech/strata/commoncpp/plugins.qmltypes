@@ -88,6 +88,9 @@ Module {
         }
         Property { name: "exePath"; type: "string" }
         Property { name: "eraseBeforeProgram"; type: "bool" }
+        Property { name: "device"; type: "string" }
+        Property { name: "speed"; type: "int" }
+        Property { name: "startAddress"; type: "int" }
         Signal {
             name: "checkConnectionProcessFinished"
             Parameter { name: "exitedNormally"; type: "bool" }
@@ -97,13 +100,20 @@ Module {
             name: "programBoardProcessFinished"
             Parameter { name: "exitedNormally"; type: "bool" }
         }
-        Signal { name: "deviceChanged" }
-        Signal { name: "speedChanged" }
         Method { name: "checkConnectionRequested"; type: "bool" }
         Method {
             name: "programBoardRequested"
             type: "bool"
             Parameter { name: "binaryPath"; type: "string" }
+        }
+        Method {
+            name: "programBoardRequested"
+            type: "bool"
+            Parameter { name: "binaryPath"; type: "string" }
+            Parameter { name: "eraseBeforeProgram"; type: "bool" }
+            Parameter { name: "device"; type: "string" }
+            Parameter { name: "speed"; type: "int" }
+            Parameter { name: "startAddress"; type: "int" }
         }
     }
     Component {
