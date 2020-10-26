@@ -20,7 +20,7 @@ Item {
         Help.registerTarget(vcca_vccbSpi, "Monitors VCCA and VCCB voltages of the SPI FXLA104 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 3, "levelShiftersHelp")
         Help.registerTarget(enableUni, "Enable or disable UB (Uni/Bi Directional) FXL4TD245 level shifter. The IO pins will be high impedance when disabled.", 4, "levelShiftersHelp")
         Help.registerTarget(vcca_vccbUni, "Monitors VCCA and VCCB voltages of the UB (Uni/Bi Directional) FXL4TD245 level shifter circuit. Apply voltage using the headers at the left and right side of the board.", 5, "levelShiftersHelp")
-        Help.registerTarget(controlContainerForHelp,"Transmit and receive inputs. Transmit will send data from A to B (left to right on the PCB) and receive will send data from B to A (right to left on PCB).", 6, "levelShiftersHelp")
+        Help.registerTarget(trSwitchContainerForHelp,"Transmit and receive inputs. Transmit will send data from A to B (left to right on the PCB) and receive will send data from B to A (right to left on PCB).", 6, "levelShiftersHelp")
     }
 
     Item {
@@ -253,7 +253,6 @@ Item {
                 Rectangle{
                     Layout.preferredHeight: parent.height/5
                     Layout.fillWidth: true
-
                     ColumnLayout {
                         anchors.fill: parent
                         Rectangle {
@@ -271,7 +270,6 @@ Item {
                                     top: parent.top
                                 }
                             }
-
                             Rectangle {
                                 id: line2
                                 height: 1.5
@@ -371,10 +369,8 @@ Item {
                 Rectangle{
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    color: "red"
-
                     Item {
-                        id: controlContainerForHelp
+                        id: trSwitchContainerForHelp
                         width: parent.width/1.2
                         height: parent.height/12
                         anchors.bottom: parent.bottom
