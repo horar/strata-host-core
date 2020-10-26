@@ -13,7 +13,6 @@ Item {
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
-    property var helpTourCount: 0
 
     Item {
         id: filterHelpContainer1
@@ -111,46 +110,30 @@ Item {
         }
     }
 
-    Connections{
-        target: helpMouse
-        onClicked: {
-            if(visible) {
-                if(helpTourCount === 0) {
-                    Help.registerTarget(partNumber, "Indication of LED driver part assembled on PCB. The part number is reported to the user interface based on state of a GPIO pin PD9, low = NCV7684, high = NCV7685. The other LED driver can be installed if the state of the PD9 pin properly reflects the installed LED driver. See schematic and user manual for details on conversion to alternate LED driver.", 0, "ledDriverHelp")
-                    Help.registerTarget(enableOutput,"Toggles the output enable pin of the NCV7685. The NCV7684 does not support output enable.",1,"ledDriverHelp")
-                    Help.registerTarget(gobalCurrentSetSlider,"Sets the maximum current for each individual LED channel. A minimum 0mA set value may create an error in the SC_Iset indicator.",2,"ledDriverHelp")
-                    Help.registerTarget(pwmenableOutput,"Activates the PWM dimming feature of the LED driver. User interface controls related to PWM will be disabled when PWM is disabled.",3,"ledDriverHelp")
-                    Help.registerTarget(lockPWMDutyEN,"Locks together the PWM enable or disable state for all LED channels. Use OUT1 PWM Enable switch to control all channels when locked together.",4,"ledDriverHelp")
-                    Help.registerTarget(lockPWMDuty,"Locks together the PWM duty cycle for all LED channels. Use OUT1 PWM Duty slider to control all channels when locked together. The duty cycles are always locked together for the NCV7684 because it only has one duty cycle for all channels.",5,"ledDriverHelp")
-                    Help.registerTarget(pwmLinearLog,"Selects between logarithmic and linear translation of PWM Duty value.",6,"ledDriverHelp")
-                    Help.registerTarget(pwmFrequency,"Sets the PWM frequency. This list varies depending on if the NCV7684 or NCV7685 is connected.",7,"ledDriverHelp")
-                    Help.registerTarget(filterHelpContainer1, "Toggles each LED on or off. This control is ignored if PWM is enabled for a specific channel.", 8, "ledDriverHelp")
-                    Help.registerTarget(filterHelpContainer2, "Toggles each LED to use either onboard LEDs or externally connected LEDs through 24 pin header at the top of the PCB.", 9, "ledDriverHelp")
-                    Help.registerTarget(filterHelpContainer3, "Toggles PWM for each LED channel on or off. If PWM is disabled, these controls will also be disabled." , 10, "ledDriverHelp")
-                    Help.registerTarget(filterHelpContainer4, "Indicates fault on each LED channel. Disabled unless I2C/SAM Open Load Diagnostic control set to 'Diagnostic Only' or 'Auto Retry' and diagRange indicator is green (VLED above DIAGEN threshold)." , 11, "ledDriverHelp")
-                    Help.registerTarget(filterHelpContainer5, "Sets the duty cycle of the PWM for each LED channel with 128 step resolution. Maximum and minimum duty cycles will switch LED fully on and off respectively. If PWM is disabled, these controls will also be disabled. The duty cycles are always locked together for the NCV7684 because it does not have this capability. The duty cycles for the NCV7685 can be individually controlled or locked together using the Lock PWM Duty Together control.", 12, "ledDriverHelp")
-                    Help.registerTarget(diag,"Generic diagnostic error when any LED channel is in an error mode or when I2C Status Registers contain error.",13,"ledDriverHelp")
-                    Help.registerTarget(openLoadDiagnostic,"Sets the diagnostic state of the LED driver in I2C mode. This control will be disabled unless diagRange is on.\n\nNo Diagnostic = No open load detection is performed\n\nAuto Retry = During open load fault, 1) DIAG pin is pulled low, 2) low current is imposed on faulty channel only, 3) other channels turned off. If fault is recovered DIAG is released and normal operation continues.\n\nDiagnostic Only = During open load fault, the DIAG pin is pulled low with no change to current regulation. DIAG is released when the fault is recovered.",14,"ledDriverHelp")
-                    Help.registerTarget(scIset,"Set when the ISET pin is short-circuited to ground. A minimum 0mA set value in Global Current Set (ISET) control may create this error.",15,"ledDriverHelp")
-                    Help.registerTarget(i2Cerr,"Set if an error has been detected during the I2C communication. Reset on register read.",16,"ledDriverHelp")
-                    Help.registerTarget(uv,"Set if under voltage condition when VS is below VSUV (4.1V typical). All channels will be turned off.",17,"ledDriverHelp")
-                    Help.registerTarget(diagRange,"Set when divided voltage is above the VDiagenTH threshold and reset when below. Default voltage threshold is fixed on this PCB to 7.5V. User can adjust this threshold with the onboard potentiometer by removing lower divider resistor and shorting jumper.",18,"ledDriverHelp")
-                    Help.registerTarget(tw,"Thermal warning that is set when junction temperature is above the Tjwar_on threshold (140°C typical) and reset on register read and when temperature is below Tjwar_on minus Tjsd_hys threshold (127.5Â°C typical).",19,"ledDriverHelp")
-                    Help.registerTarget(tsd,"Thermal shutdown set when junction temperature is above the TSD threshold (170°C typical) and reset on register read and when temperature is below TSD minus Tjsd_hys threshold (157.5Â°C typical).",20,"ledDriverHelp")
-                    Help.registerTarget(diagerr,"Set when the DIAG pin is forced low externally.",21,"ledDriverHelp")
-                    Help.registerTarget(ol,"Set when at least one LED channel is in an open load and resets after load is applied. Disabled unless I2C/SAM Open Load Diagnostic control set to 'Diagnostic Only' or 'Auto Retry' and diagRange indicator is green (VLED above DIAGEN threshold). The OL indicator may flicker or show no error when open load is detected in 'Diagnostic Only' because the OL register bit is repetitively reset by the LED driver.",22,"ledDriverHelp")
-                    helpTourCount++
-                    Help.startHelpTour("ledDriverHelp")
-                }
-                else   {
-                    Help.startHelpTour("ledDriverHelp")
-                }
-            }
-        }
-    }
-
     Component.onCompleted: {
-
+        Help.registerTarget(partNumber, "Indication of LED driver part assembled on PCB. The part number is reported to the user interface based on state of a GPIO pin PD9, low = NCV7684, high = NCV7685. The other LED driver can be installed if the state of the PD9 pin properly reflects the installed LED driver. See schematic and user manual for details on conversion to alternate LED driver.", 0, "ledDriverHelp")
+        Help.registerTarget(enableOutput,"Toggles the output enable pin of the NCV7685. The NCV7684 does not support output enable.",1,"ledDriverHelp")
+        Help.registerTarget(gobalCurrentSetSlider,"Sets the maximum current for each individual LED channel. A minimum 0mA set value may create an error in the SC_Iset indicator.",2,"ledDriverHelp")
+        Help.registerTarget(pwmenableOutput,"Activates the PWM dimming feature of the LED driver. User interface controls related to PWM will be disabled when PWM is disabled.",3,"ledDriverHelp")
+        Help.registerTarget(lockPWMDutyEN,"Locks together the PWM enable or disable state for all LED channels. Use OUT1 PWM Enable switch to control all channels when locked together.",4,"ledDriverHelp")
+        Help.registerTarget(lockPWMDuty,"Locks together the PWM duty cycle for all LED channels. Use OUT1 PWM Duty slider to control all channels when locked together. The duty cycles are always locked together for the NCV7684 because it only has one duty cycle for all channels.",5,"ledDriverHelp")
+        Help.registerTarget(pwmLinearLog,"Selects between logarithmic and linear translation of PWM Duty value.",6,"ledDriverHelp")
+        Help.registerTarget(pwmFrequency,"Sets the PWM frequency. This list varies depending on if the NCV7684 or NCV7685 is connected.",7,"ledDriverHelp")
+        Help.registerTarget(filterHelpContainer1, "Toggles each LED on or off. This control is ignored if PWM is enabled for a specific channel.", 8, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer2, "Toggles each LED to use either onboard LEDs or externally connected LEDs through 24 pin header at the top of the PCB.", 9, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer3, "Toggles PWM for each LED channel on or off. If PWM is disabled, these controls will also be disabled." , 10, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer4, "Indicates fault on each LED channel. Disabled unless I2C/SAM Open Load Diagnostic control set to 'Diagnostic Only' or 'Auto Retry' and diagRange indicator is green (VLED above DIAGEN threshold)." , 11, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer5, "Sets the duty cycle of the PWM for each LED channel with 128 step resolution. Maximum and minimum duty cycles will switch LED fully on and off respectively. If PWM is disabled, these controls will also be disabled. The duty cycles are always locked together for the NCV7684 because it does not have this capability. The duty cycles for the NCV7685 can be individually controlled or locked together using the Lock PWM Duty Together control.", 12, "ledDriverHelp")
+        Help.registerTarget(diag,"Generic diagnostic error when any LED channel is in an error mode or when I2C Status Registers contain error.",13,"ledDriverHelp")
+        Help.registerTarget(openLoadDiagnostic,"Sets the diagnostic state of the LED driver in I2C mode. This control will be disabled unless diagRange is on.\n\nNo Diagnostic = No open load detection is performed\n\nAuto Retry = During open load fault, 1) DIAG pin is pulled low, 2) low current is imposed on faulty channel only, 3) other channels turned off. If fault is recovered DIAG is released and normal operation continues.\n\nDiagnostic Only = During open load fault, the DIAG pin is pulled low with no change to current regulation. DIAG is released when the fault is recovered.",14,"ledDriverHelp")
+        Help.registerTarget(scIset,"Set when the ISET pin is short-circuited to ground. A minimum 0mA set value in Global Current Set (ISET) control may create this error.",15,"ledDriverHelp")
+        Help.registerTarget(i2Cerr,"Set if an error has been detected during the I2C communication. Reset on register read.",16,"ledDriverHelp")
+        Help.registerTarget(uv,"Set if under voltage condition when VS is below VSUV (4.1V typical). All channels will be turned off.",17,"ledDriverHelp")
+        Help.registerTarget(diagRange,"Set when divided voltage is above the VDiagenTH threshold and reset when below. Default voltage threshold is fixed on this PCB to 7.5V. User can adjust this threshold with the onboard potentiometer by removing lower divider resistor and shorting jumper.",18,"ledDriverHelp")
+        Help.registerTarget(tw,"Thermal warning that is set when junction temperature is above the Tjwar_on threshold (140°C typical) and reset on register read and when temperature is below Tjwar_on minus Tjsd_hys threshold (127.5Â°C typical).",19,"ledDriverHelp")
+        Help.registerTarget(tsd,"Thermal shutdown set when junction temperature is above the TSD threshold (170°C typical) and reset on register read and when temperature is below TSD minus Tjsd_hys threshold (157.5Â°C typical).",20,"ledDriverHelp")
+        Help.registerTarget(diagerr,"Set when the DIAG pin is forced low externally.",21,"ledDriverHelp")
+        Help.registerTarget(ol,"Set when at least one LED channel is in an open load and resets after load is applied. Disabled unless I2C/SAM Open Load Diagnostic control set to 'Diagnostic Only' or 'Auto Retry' and diagRange indicator is green (VLED above DIAGEN threshold). The OL indicator may flicker or show no error when open load is detected in 'Diagnostic Only' because the OL register bit is repetitively reset by the LED driver.",22,"ledDriverHelp")
     }
 
     function setStateForPWMDuty(pwmDutyid,index)

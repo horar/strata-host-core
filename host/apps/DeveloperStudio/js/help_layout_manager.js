@@ -48,11 +48,11 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     let tourTargetList = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
 
     
-    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
-    tourStop.index = index
-    tourStop.description = targetDescription
-    let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": tourStop}
-
+    //    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+    //    tourStop.index = index
+    //    tourStop.description = targetDescription
+    // let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": tourStop}
+    let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": null}
     for (let i=0; i<tourTargetList.length; i++) {
         if (tourTargetList[i].index === index) {
             // update tourTarget if it already exists (occurs when same platform disconnected and reconnected - must update object references)
@@ -60,7 +60,6 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
             return
         }
     }
-
     // otherwise append as new target
     tourTargetList.push(tourTarget)
 }
@@ -117,9 +116,21 @@ function startHelpTour(tourName, device_id) {
 
     current_tour_targets = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
     let font_size_multiplier = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].font_size_multiplier
+    console.info(current_tour_targets)
 
     // tour_count initializes the x/y tour counter
     tour_count = current_tour_targets.length
+
+        if(!current_tour_targets[0]["helpObject"]) {
+           // for (let y = 0; y < tour_count; y++) {
+                let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+                tourStop.index = current_tour_targets[0]["index"]
+                tourStop.description = current_tour_targets[0]["description"]
+                //let tourTarget = {"index": current_tour_targets[y]["index"], "target": current_tour_targets[y]["target"], "description":  current_tour_targets[y]["description"], "helpObject": tourStop}
+                current_tour_targets[0]["helpObject"] = tourStop
+                //current_tour_targets[y] = tourTarget
+            //}
+        }
 
     for (let i = 0; i < tour_count; i++){
         let tour_target = current_tour_targets[i]
@@ -149,6 +160,13 @@ function next(currentIndex) {
                 break
             }
         } else if (current_tour_targets[i]["index"] === currentIndex+1) {
+            //right here
+            if(!current_tour_targets[i]["helpObject"]) {
+                let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+                tourStop.index = current_tour_targets[i]["index"]
+                tourStop.description = current_tour_targets[i]["description"]
+                current_tour_targets[i]["helpObject"] = tourStop
+            }
             refreshView(i)
             current_tour_targets[i]["helpObject"].visible = true
             internal_tour_index = i
@@ -209,9 +227,10 @@ function destroyHelp() {
 
 function killView(index) {
     for (let i=0; i<views[index].view_tours.length; i++) {
-        //        console.log(LoggerModule.Logger.devStudioHelpCategory, "Destroying", views[index].view_tours[i].tour_name)
+        //  console.log(LoggerModule.Logger.devStudioHelpCategory, "Destroying", views[index].view_tours[i].tour_name)
         for (let j=0; j<views[index].view_tours[i].tour_targets.length; j++) {
-            views[index].view_tours[i].tour_targets[j].helpObject.destroy()
+            if(views[index].view_tours[i].tour_targets[j].helpObject)
+                views[index].view_tours[i].tour_targets[j].helpObject.destroy()
         }
     }
     views.splice(index, 1)
