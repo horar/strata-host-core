@@ -44,13 +44,14 @@ public:
     Q_INVOKABLE bool registerResource(const QString &path, const QString &prefix);
 
     /**
-     * @brief requestDeleteViewResource Asynchronously requests resource cleanup so that asynchronous QML item destruction can complete first.
+     * @brief requestUnregisterDeleteViewResource Asynchronously requests resource unregistration (and optionally deletion from disk) so that asynchronous QML item destruction can complete first.
      * @param class_id The class id of the platform.
      * @param rccPath The path of the .rcc file to be removed.
      * @param version The version of the rcc file.
-     * @param parent The parent/container.
+     * @param parent The parent/container
+     * @param removeFromSystem Whether to remove the resource from the system or not
      */
-    Q_INVOKABLE void requestDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent);
+    Q_INVOKABLE void requestUnregisterDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem = true);
 
     /**
      * @brief registerControlViewResource Registers a control view's resource file.
@@ -94,16 +95,19 @@ public:
 
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 
+    Q_INVOKABLE void unregisterAllViews(QObject *parent);
+
 private slots:
     /**
-     * @brief deleteViewResource Deletes a resource from disk and unregisters it from qrc.
+     * @brief unregisterDeleteViewResource Unregisters resource from qrc and optionally deletes it from disk.
      * @param class_id The class id of the platform.
      * @param rccPath The path of the .rcc file to be removed.
      * @param version The version of the rcc file.
      * @param parent The parent/container.
+     * @param removeFromSystem Whether to remove the resource from the system or not
      * @return True if successful, false if unable to delete/unregister resource.
      */
-    bool deleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent);
+    bool unregisterDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem = true);
 
 private:
     void loadCoreResources();
