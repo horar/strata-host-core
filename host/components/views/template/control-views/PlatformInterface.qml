@@ -95,19 +95,97 @@ PlatformInterface {
     // @description: sends motor running command to platform
     //
     property var motor_running_command : ({
-        "cmd" : "motor_running",
-        "payload": {
-            "running": false // default value
-        },
+                                              "cmd" : "motor_running",
+                                              "payload": {
+                                                  "running": false // default value
+                                              },
 
-        update: function (running) {
-            this.set(running)
-            this.send(this)
-        },
-        set: function (running) {
-            this.payload.running = running
-        },
-        send: function () { platformInterface.send(this) },
-        show: function () { platformInterface.show(this) }
-    })
+                                              update: function (running) {
+                                                  this.set(running)
+                                                  this.send(this)
+                                              },
+                                              set: function (running) {
+                                                  this.payload.running = running
+                                              },
+                                              send: function () { platformInterface.send(this) },
+                                              show: function () { platformInterface.show(this) }
+                                          })
+
+    // @command: start_periodic
+    // @description: core commands that sends a command to start a periodic handler
+    //    The funtion is <periodic_command_name> has the same format as value of cmd but it points to a periodic command.
+    //    The run_count sets how many times must be the periodic command executed. The value -1 means forever.
+    //    The interval represents the time between the periodic command subsequent executions. The value is in milliseconds.
+
+    property var start_periodic_command : ({
+                                               "cmd" : "start_periodic",
+                                               "payload": {
+                                                   "function":"template_periodic",
+                                                   "run_count":1,
+                                                   "interval":100
+                                               },
+
+                                               update: function (periodic_function,periodic_run_count,periodic_interval) {
+                                                   this.set(periodic_function,periodic_run_count,periodic_interval)
+                                                   this.send(this)
+                                               },
+                                               set: function (periodic_function,periodic_run_count,periodic_interval) {
+                                                   this.payload.function = periodic_function
+                                                   this.payload.run_count = periodic_run_count
+                                                   this.payload.interval = periodic_interval
+                                               },
+                                                   send: function () { platformInterface.send(this) },
+                                                   show: function () { platformInterface.show(this) }
+                                               })
+
+    // @command: update_periodic
+    // @description: core commands that sends a command to update the periodic handler
+    //    The funtion is <periodic_command_name> has the same format as value of cmd but it points to a periodic command.
+    //    The run_count sets how many times must be the periodic command executed. The value -1 means forever.
+    //    The interval represents the time between the periodic command subsequent executions. The value is in milliseconds.
+
+    property var update_periodic_command : ({
+                                                "cmd" : "update_periodic",
+                                                "payload": {
+                                                    "function":"template_periodic",
+                                                    "run_count":1,
+                                                    "interval":100
+                                                },
+
+                                                update: function (periodic_function,periodic_run_count,periodic_interval) {
+                                                    this.set(periodic_function,periodic_run_count,periodic_interval)
+                                                    this.send(this)
+                                                },
+                                                set: function (periodic_function,periodic_run_count,periodic_interval) {
+                                                    this.payload.function = periodic_function
+                                                    this.payload.run_count = periodic_run_count
+                                                    this.payload.interval = periodic_interval
+                                                },
+                                                    send: function () { platformInterface.send(this) },
+                                                    show: function () { platformInterface.show(this) }
+
+                                                })
+
+    // @command: stop_periodic
+    // @description: core commands that sends a command to stop the periodic handler
+    //    The funtion is <periodic_command_name> has the same format as value of cmd but it points to a periodic command.
+
+    property var stop_periodic_command : ({
+                                              "cmd" : "stop_periodic",
+                                              "payload": {
+                                                  "function":"template_periodic",
+                                              },
+
+                                              update: function (periodic_function) {
+                                                  this.set(periodic_function)
+                                                  this.send(this)
+                                              },
+                                              set: function (periodic_function) {
+                                                  this.payload.function = periodic_function
+                                              },
+                                                  send: function () { platformInterface.send(this) },
+                                                  show: function () { platformInterface.show(this) }
+                                              })
+
+
 }
