@@ -8,7 +8,6 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 StackLayout {
     id: platformStack
-
     currentIndex: {
         switch (model.view) {
         case "collateral":
@@ -84,10 +83,9 @@ StackLayout {
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
 
-        // Commented out to remove OTA features from release v2.5.0
-//        PlatformSettings {
-//            id: platformSettings
-//        }
+        PlatformSettings {
+            id: platformSettings
+        }
     }
 
     SGUserSettings {
@@ -98,5 +96,11 @@ StackLayout {
         Component.onCompleted: {
             platformStack.userSettingsInitialized = true
         }
+    }
+
+    SGUserSettings {
+        id: versionSettings
+        classId: platformStack.class_id
+        user: "strata"
     }
 }

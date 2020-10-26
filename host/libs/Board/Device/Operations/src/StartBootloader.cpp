@@ -1,6 +1,5 @@
 #include <Device/Operations/StartBootloader.h>
 #include "Commands/include/DeviceCommands.h"
-#include "DeviceOperationsConstants.h"
 
 #include "logging/LoggingQtCategories.h"
 
@@ -34,7 +33,7 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
 void StartBootloader::skipCommands(CommandResult& result, int& data)
 {
     if ((currentCommand_ == beforeStartBootloader_) && (result == CommandResult::Done)) {
-        if (device_->property(device::DeviceProperties::verboseName) == QSTR_BOOTLOADER) {
+        if (device_->bootloaderMode() == true) {
             // skip rest of commands - set result to 'FinaliseOperation'
             result = CommandResult::FinaliseOperation;
             // set data for 'finished' signal

@@ -31,6 +31,7 @@ function Component()
 {
     installer.installationFinished.connect(this, Component.prototype.installationOrUpdateFinished);    // called after installation, update and adding/removing components
     installer.finishButtonClicked.connect(this, Component.prototype.finishButtonClicked);
+    installer.installationStarted.connect(this, Component.prototype.onInstallationStarted);
 
     if ((installer.isInstaller() == true) && (systemInfo.productType == "windows")) {
         component.loaded.connect(this, Component.prototype.addShortcutWidget);
@@ -52,6 +53,20 @@ Component.prototype.createOperations = function()
 
     if (installer.isInstaller() == true) {
         uninstallPreviousStrataInstallation();
+    }
+}
+
+Component.prototype.onInstallationStarted = function()
+{
+    if ((component.updateRequested() == true) || (component.installationRequested() == true)) {
+        if (systemInfo.productType == "windows") {
+            component.installerbaseBinaryPath = installer.value("TargetDir") + "\\installerbase.exe";
+            component.installerbaseBinaryPath = component.installerbaseBinaryPath.split("/").join("\\");
+            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+        } else if (systemInfo.productType == "osx") {
+            component.installerbaseBinaryPath = installer.value("TargetDir") + "/installerbase";
+            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+        }
     }
 }
 
@@ -270,7 +285,7 @@ function getPowershellElement(str, element_name) {
 function uninstallPreviousStrataInstallation()
 {
     if (systemInfo.productType == "windows") {
-        powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -eq '" + installer.value("Name") + "' })"
+        powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -like 'Strata Developer Studio*' -or $_.DisplayName -eq '" + installer.value("Name") + "' })"
         console.log("executing powershell command '" + powerShellCommand + "'");
         // the installer is 32bit application :/ it will not find 64bit registry entries unless it is forced to open 64bit binary
         var isInstalled = installer.execute("C:\\Windows\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe", ["-command", powerShellCommand]);
