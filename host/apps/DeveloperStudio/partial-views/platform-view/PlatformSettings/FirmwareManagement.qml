@@ -68,7 +68,7 @@ ColumnLayout {
                 const differentVersion = differentFirmware[i].version
                 const splitDifferentVersion = differentVersion.split(".")
                 for(let j = 0; j < splitInstalledVersion.length; j ++){
-                    if(splitInstalledVersion[j] < splitDifferentVersion[i]){
+                    if(Number(splitInstalledVersion[j]) < Number(splitDifferentVersion[i])){
                         NavigationControl.firmwareIsOutOfDate = true;
                     }
                 }
