@@ -381,5 +381,16 @@ Module {
             Parameter { name: "json"; type: "QByteArray" }
             Parameter { name: "schema"; type: "QByteArray" }
         }
+        Method {
+            name: "toHex"
+            type: "string"
+            Parameter { name: "number"; type: "qlonglong" }
+            Parameter { name: "width"; type: "int" }
+        }
+        Method {
+            name: "toHex"
+            type: "string"
+            Parameter { name: "number"; type: "qlonglong" }
+        }
     }
 }
