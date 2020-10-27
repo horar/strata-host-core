@@ -12,8 +12,6 @@ Item {
     anchors.centerIn: parent
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-
-
     Item {
         id: filterHelpContainer1
         property point topLeft

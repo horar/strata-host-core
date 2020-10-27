@@ -9,7 +9,6 @@ import QtGraphicalEffects 1.12
 Rectangle{
     anchors.fill: parent
     color: "lightgray"
-
     Rectangle {
         id: root
         color: "lightgray"
@@ -25,7 +24,6 @@ Rectangle{
             Help.registerTarget(carContainer, "The LEDs on the PCB are updated and then subsequently updated here in the user interface from the hardware. There are two methods of controlling the background brightness to simulate brighter or darker conditions: dynamic and manual described below. Rear running lights and front headlights (user interface only) will be enabled during darker conditions.\n\nDynamic = use the onboard ambient light sensor to control the background brightness. Hover your hand over the light sensor near the bottom right of the PCB to simulate darker conditions. Expose the light sensor to a brighter light, such as a cell phone flashlight, for brighter background conditions. An initial ambient light value is measured during each Car Demo Mode session – this value is considered 50% brightness and may not correlate directly with actual ambient light conditions. Starting Car Demo Mode in low light conditions will have adverse effects on demonstration. \n\nManual = use the sun or moon buttons to manually control the background brightness.", 1, "carDemoHelp")
             Help.registerTarget(brightnessContainerForHelp, "Manual control of the ambient light background brightness. The dynamic light sensor data is used by default if the light sensor is installed on the PCB, otherwise, manual control is default. Click the sun or moon icons to enable manual control then click the sun to increase and the moon to decrease background brightness. Revert back to dynamic light sensor mode by toggling to LED Driver tab then back to Car Demo Mode tab.", 2, "carDemoHelp")
         }
-
 
         property var car_demo_brightness: platformInterface.car_demo_brightness.value
         onCar_demo_brightnessChanged: {
