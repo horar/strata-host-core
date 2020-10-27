@@ -360,7 +360,7 @@ Rectangle {
     function loadUserSettings() {
         NavigationControl.userSettings = sgUserSettings
         const settings = NavigationControl.userSettings.readFile("settings.json")
-        if(settings === undefined){
+        if(settings.hasOwnProperty("autoOpenView")){
             NavigationControl.userSettings.autoOpenView = settings.autoOpenView
             NavigationControl.userSettings.switchToActive = settings.switchToActive
             NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate

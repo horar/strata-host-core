@@ -213,6 +213,7 @@ Row {
     }
 
     function saveUserSettings(index) {
+        NavigationControl.userSettings.selectedDistributionPortal = index
         NavigationControl.userSettings.writeFile("settings.json",
             {
               selectedDistributionPortal: index,
