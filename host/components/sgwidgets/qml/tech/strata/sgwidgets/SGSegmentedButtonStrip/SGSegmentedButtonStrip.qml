@@ -84,7 +84,7 @@ Item {
         }
 
         function checked () {
-            if (segmentedButtons.children.count > 0) {
+            if (segmentedButtons.children.length > 0) {
                 for (var child_id in segmentedButtons.children[0].children) {
                     if (segmentedButtons.children[0].children[child_id].checked){
                         root.nothingChecked = false
