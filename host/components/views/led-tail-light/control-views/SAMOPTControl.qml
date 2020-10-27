@@ -14,7 +14,6 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
     Component.onCompleted: {
-        console.info("sam test")
         Help.registerTarget(enableCRC, "Toggles the cyclic redundancy check (CRC) to prevent data corruption on I2C communication lines. A CRC byte is calculated inserted into I2C read and write communications and verified by master and slave devices. The CRC configuration is as follows:\n\n1) The CRC polynomial is 0x2F (x⁸+x⁵+x³+x²+x+1)\n2) The initial XOR is 0xFF\n3) The final XOR is 0x00\n4) Reflect and data and remainder are disabled\n\nThis design will by default search for a device with I2C CRC disabled and 7-bit I2C slave address of 0x60 - if no LED driver is found the user must enter a valid I2C configuration to enable the user interface.", 0, "samoptHelp")
         Help.registerTarget(current7bit, "The current 7-bit I2C slave address used to communicate with the LED driver.", 1, "samoptHelp")
         Help.registerTarget(filterHelpContainer2, "Sets a new 7-bit I2C slave address. Click Apply I2C Address to change. The value entered will be coerced to a valid I2C slave address between 0x60 and 0x7F. The Current 7-bit I2C Address will be updated with the new address if successfully applied. The firmware will by default search for a device with I2C CRC disabled and 7-bit I2C slave address of 0x60. The user will be required to enter a valid I2C configuration to enable the user interface if the default search failed.", 2, "samoptHelp")
