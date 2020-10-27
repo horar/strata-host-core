@@ -17,6 +17,7 @@ usage() {
     echo "     [-c | --cleanup]: To clean build folder before build"
     echo "     [-s | --skiptests]: To skip tests after build"
     echo "     [-f | --config]: To use selected HCS configuration: PROD|QA|DEV|DOCKER (Default: QA)"
+    echo "     [-d | --dmg]: To use .dmg installer format (Default: .app)"
     echo "     [-h | --help]: For this help"
     echo "For example:"
     echo "     ./bootstrap-host-ota.sh -i=999 -f=PROD --cleanup -s"
@@ -34,6 +35,7 @@ USE_PROD_CONFIG=0
 USE_QA_CONFIG=0
 USE_DEV_CONFIG=0
 USE_DOCKER_CONFIG=0
+USE_DMG_FORMAT=0
 BOOTSTRAP_USAGE=0
 
 for i in "$@"
@@ -66,6 +68,10 @@ case $i in
     SKIP_TESTS=1
     shift # past argument with no value
     ;;
+    -d|--dmg)
+    USE_DMG_FORMAT=1
+    shift # past argument with no value
+    ;;
     -h|--help)
     BOOTSTRAP_USAGE=1
     shift # past argument with no value
@@ -87,14 +93,26 @@ BUILD_DIR=build-host-ota
 PACKAGES_DIR=packages
 export BUILD_ID
 
-PKG_STRATA=$PACKAGES_DIR/com.onsemi.strata/data
-PKG_STRATA_COMPONENTS=$PACKAGES_DIR/com.onsemi.strata.components/data
+APP_FORMAT=app
+DMG_FORMAT=dmg
+
+STRATA_COMPONENTS=components
+STRATA_DS=devstudio
+STRATA_HCS=hcs
+
+MODULE_STRATA=com.onsemi.strata
+MODULE_STRATA_COMPONENTS=$MODULE_STRATA.$STRATA_COMPONENTS
+MODULE_STRATA_DS=$MODULE_STRATA.$STRATA_DS
+MODULE_STRATA_HCS=$MODULE_STRATA.$STRATA_HCS
+
+PKG_STRATA=$PACKAGES_DIR/$MODULE_STRATA/data
+PKG_STRATA_COMPONENTS=$PACKAGES_DIR/$MODULE_STRATA_COMPONENTS/data
 PKG_STRATA_COMPONENTS_COMMON=$PKG_STRATA_COMPONENTS/imports/tech/strata/commoncpp
 PKG_STRATA_COMPONENTS_VIEWS=$PKG_STRATA_COMPONENTS/views
-PKG_STRATA_DS=$PACKAGES_DIR/com.onsemi.strata.devstudio/data
-PKG_STRATA_HCS=$PACKAGES_DIR/com.onsemi.strata.hcs/data
+PKG_STRATA_DS=$PACKAGES_DIR/$MODULE_STRATA_DS/data
+PKG_STRATA_HCS=$PACKAGES_DIR/$MODULE_STRATA_HCS/data
 
-SDS_BINARY=Strata\ Developer\ Studio.app
+SDS_BINARY=Strata\ Developer\ Studio.$APP_FORMAT
 HCS_BINARY=hcs
 SDS_BINARY_DIR=$PKG_STRATA_DS/$SDS_BINARY
 HCS_BINARY_DIR=$PKG_STRATA_HCS/$HCS_BINARY
@@ -121,12 +139,18 @@ fi
 STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config.xml
 MQTT_LIB=QtMqtt
 COMMON_CPP_LIB="libcomponent-commoncpp.so"
+INSTALLERBASE_BINARY=installerbase
+INSTALLERBASE_BINARY_DIR=$PKG_STRATA/$INSTALLERBASE_BINARY
 STRATA_OFFLINE=strata-setup-offline
 STRATA_ONLINE=strata-setup-online
-STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.app
-STRATA_ONLINE_BINARY=$STRATA_ONLINE.app
-STRATA_ONLINE_REPO_ROOT=pub
-STRATA_ONLINE_REPOSITORY=$STRATA_ONLINE_REPO_ROOT/repository/demo
+STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.$APP_FORMAT
+STRATA_ONLINE_BINARY=$STRATA_ONLINE.$APP_FORMAT
+if [ $USE_DMG_FORMAT != 0 ] ; then
+    STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.$DMG_FORMAT
+    STRATA_ONLINE_BINARY=$STRATA_ONLINE.$DMG_FORMAT
+fi
+
+STRATA_ONLINE_REPOSITORY=public/repository/demo
 
 echo "-----------------------------------------------------------------------------"
 echo " Build env. setup:"
@@ -180,6 +204,17 @@ if [ ! -x "$(command -v repogen)" ]; then
     echo "======================================================================="
     exit 1
 fi
+
+echo " Checking QtIFW installerbase..."
+if [ ! -x "$(command -v installerbase)" ]; then
+    echo "======================================================================="
+    echo " QtIFW's installerbase is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
+fi
+
+INSTALLERBASE_BINARY_ORIG_DIR=$(command -v installerbase | head -n 1)
+echo   Detected location: $INSTALLERBASE_BINARY_ORIG_DIR
 
 echo " Checking Qt macdeployqt..."
 if [ ! -x "$(command -v macdeployqt)" ]; then
@@ -345,6 +380,16 @@ if [ $? != 0 ] ; then
     exit 2
 fi
 
+echo Copying ${INSTALLERBASE_BINARY_ORIG_DIR} to ${INSTALLERBASE_BINARY_DIR}
+cp -fv "${INSTALLERBASE_BINARY_ORIG_DIR}" "${INSTALLERBASE_BINARY_DIR}"
+
+if [ $? != 0 ] ; then
+    echo "======================================================================="
+    echo " Failed to copy ${INSTALLERBASE_BINARY_ORIG_DIR} to ${INSTALLERBASE_BINARY_DIR}!"
+    echo "======================================================================="
+    exit 2
+fi
+
 echo "-----------------------------------------------------------------------------"
 echo " Preparing $SDS_BINARY dependencies.."
 echo "-----------------------------------------------------------------------------"
@@ -387,7 +432,7 @@ binarycreator \
     --offline-only \
     -c $STRATA_CONFIG_XML \
     -p $PACKAGES_DIR \
-    $STRATA_OFFLINE
+    $STRATA_OFFLINE_BINARY
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
@@ -405,7 +450,7 @@ binarycreator \
     --online-only \
     -c $STRATA_CONFIG_XML \
     -p $PACKAGES_DIR \
-    $STRATA_ONLINE
+    $STRATA_ONLINE_BINARY
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
@@ -418,17 +463,68 @@ echo "======================================================================="
 echo " Preparing online repository $STRATA_ONLINE_REPOSITORY.."
 echo "======================================================================="
 
-if [ -d $STRATA_ONLINE_REPO_ROOT ] ; then rm -rf $STRATA_ONLINE_REPO_ROOT; fi
+if [ -d $STRATA_ONLINE_REPOSITORY ] ; then rm -rf $STRATA_ONLINE_REPOSITORY; fi
+if [ ! -d $STRATA_ONLINE_REPOSITORY ] ; then mkdir -pv $STRATA_ONLINE_REPOSITORY; fi
 
-repogen \
-    --update-new-components \
-    --verbose \
-    -p $PACKAGES_DIR \
-    $STRATA_ONLINE_REPOSITORY
-
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA $STRATA_ONLINE_REPOSITORY
 if [ $? != 0 ] ; then
     echo "======================================================================="
     echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY!"
+    echo "======================================================================="
+    exit 3
+fi
+
+echo "-----------------------------------------------------------------------------"
+echo " Updating online repository $STRATA_ONLINE_REPOSITORY/Updates.xml.."
+echo "-----------------------------------------------------------------------------"
+
+if [ ! -f "$STRATA_ONLINE_REPOSITORY/Updates.xml" ] ; then
+    echo "======================================================================="
+    echo " Missing $STRATA_ONLINE_REPOSITORY/Updates.xml, repogen probably failed"
+    echo "======================================================================="
+    exit 2
+fi
+
+cp $STRATA_ONLINE_REPOSITORY/Updates.xml $STRATA_ONLINE_REPOSITORY/Updates.xml.bak
+sed '$ d' $STRATA_ONLINE_REPOSITORY/Updates.xml.bak > $STRATA_ONLINE_REPOSITORY/Updates.xml
+rm -f $STRATA_ONLINE_REPOSITORY/Updates.xml.bak
+
+echo " <RepositoryUpdate>
+  <Repository action=\"add\" url=\"modules/${STRATA_COMPONENTS}\" displayname=\"Module $MODULE_STRATA_COMPONENTS\"/>
+  <Repository action=\"add\" url=\"modules/${STRATA_DS}\" displayname=\"Module $MODULE_STRATA_DS\"/>
+  <Repository action=\"add\" url=\"modules/${STRATA_HCS}\" displayname=\"Module $MODULE_STRATA_HCS\"/>
+ </RepositoryUpdate>
+</Updates>" >> $STRATA_ONLINE_REPOSITORY/Updates.xml
+
+echo "-----------------------------------------------------------------------------"
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_COMPONENTS.."
+echo "-----------------------------------------------------------------------------"
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_COMPONENTS $STRATA_ONLINE_REPOSITORY/modules/$STRATA_COMPONENTS
+if [ $? != 0 ] ; then
+    echo "======================================================================="
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_COMPONENTS!"
+    echo "======================================================================="
+    exit 3
+fi
+
+echo "-----------------------------------------------------------------------------"
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_DS.."
+echo "-----------------------------------------------------------------------------"
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_DS $STRATA_ONLINE_REPOSITORY/modules/$STRATA_DS
+if [ $? != 0 ] ; then
+    echo "======================================================================="
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_DS!"
+    echo "======================================================================="
+    exit 3
+fi
+
+echo "-----------------------------------------------------------------------------"
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_HCS.."
+echo "-----------------------------------------------------------------------------"
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_HCS $STRATA_ONLINE_REPOSITORY/modules/$STRATA_HCS
+if [ $? != 0 ] ; then
+    echo "======================================================================="
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_HCS!"
     echo "======================================================================="
     exit 3
 fi

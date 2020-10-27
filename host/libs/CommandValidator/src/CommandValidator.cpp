@@ -156,6 +156,8 @@ const rapidjson::SchemaDocument CommandValidator::getFirmwareInfo_nps_(
 			"$schema": "http://json-schema.org/draft-04/schema#",
 			"type": "object",
 			"properties": {
+				"api_version": { "type": "string" },
+				"active":      { "type": "string" },
 				"bootloader": {
 					"oneOf": [
 						{

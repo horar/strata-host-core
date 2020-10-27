@@ -80,14 +80,13 @@ Item {
             buttonModel.append(buttonData)
         }
 
-        // Commented out to remove OTA features from release v2.5.0
-//        buttonData = {
-//            "text": "Settings",
-//            "view": "settings",
-//            "icon": "qrc:/sgimages/cog.svg",
-//            "selected": false
-//        }
-//        buttonModel.append(buttonData)
+        buttonData = {
+            "text": "Settings",
+            "view": "settings",
+            "icon": "qrc:/sgimages/cog.svg",
+            "selected": false
+        }
+        buttonModel.append(buttonData)
 
         buttonData = {
             "text": "Close Platform",
