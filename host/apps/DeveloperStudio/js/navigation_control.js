@@ -325,17 +325,6 @@ function updateState(event, data)
                     }
                 }
 
-                if (userSettings.autoOpenView) {
-                    if(!data.name && !data.available){
-                        data.name = "Unknown Platform"
-                        data.available = {
-                            "control": true
-                        }
-                    }
-
-                    updateState(events.OPEN_PLATFORM_VIEW_EVENT, data)
-                }
-
                 break;
 
             case events.PLATFORM_DISCONNECTED_EVENT:
