@@ -25,6 +25,8 @@ Item {
     property bool nothingChecked: true
     property bool hoverEnabled: true
 
+    onNothingCheckedChanged: console.log("FALLER:", "nothingchecked", nothingChecked)
+
     Text {
         id: labelText
         text: root.label
@@ -61,8 +63,10 @@ Item {
         property bool masterHoverEnabled: hoverEnabled
 
         onLoaded: {
+            console.log("FALLER LOADED:", segmentedButtons.children.length, segmentedButtons.children[0].children.length)
             if (exclusive === false){
                 for (var child_id in segmentedButtons.children[0].children) {
+                    console.log("FALLER inside loop:", )
                     segmentedButtons.children[0].children[child_id].checkedChanged.connect(checked)
                 }
             }
@@ -83,6 +87,7 @@ Item {
     }
 
     Component.onCompleted: {
+        console.log("FALLER:", "completed", segmentedButtons.children[0].children.length)
         segmentedButtons.checked()
     }
 }
