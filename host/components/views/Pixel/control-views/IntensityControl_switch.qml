@@ -192,6 +192,7 @@ Item {
         Component.onCompleted:  {
             Help.registerTarget(sgSwitch_auto_addr, "Auto Addressing start when switch is turned on. Also Boost and Buck Enable are controlled automatically by GUI so LED are flusing seveal times. After Auto Addressing finish, all enable switches can select", 0, "Help1")
             Help.registerTarget(sgStatusLight, "LED indicator for Auto addressing, LED becomes green after auto addressing procedure finished.", 1, "Help1")
+            Help.registerTarget(sgSwitch_wd, "Watch Dog switch controls periodical access of watch dog timer. In OFF, the dimming data will be disappeared and in ON, the dimming data will be kept.", 3, "Help1")  // YI
         }
     }
 }
