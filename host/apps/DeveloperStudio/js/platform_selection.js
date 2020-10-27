@@ -245,7 +245,12 @@ function addConnectedPlatform(platform) {
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
         insertUnknownListing(platform)
     }
-         NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, platform)
+        let data = {
+            "class_id": class_id_string,
+            "device_id": platform.device_id,
+            "firmware_version": platform.firmware_version
+        }
+         NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
 }
 
 /*
