@@ -186,9 +186,29 @@ Rectangle {
                 id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "white" // White background; transparent control views are possible
+                color: "white"
 
-                // No children: they will be destroyed on control view load
+                Loader {
+                    id: controlViewLoader
+                    anchors.fill: parent
+                    asynchronous: true
+
+                    onStatusChanged: {
+                        if (status === Loader.Ready) {
+                            toolBarListView.recompiling = false
+                            if (toolBarListView.currentIndex === toolBarListView.viewTab
+                                    || source === NavigationControl.screens.LOAD_ERROR) {
+                                viewStack.currentIndex = 4
+                            }
+                        } else if (status === Loader.Error) {
+                            toolBarListView.recompiling = false
+                            console.error("Error while loading control view")
+                            setSource(NavigationControl.screens.LOAD_ERROR,
+                                      { "error_message": "Failed to load control view" }
+                            );
+                        }
+                    }
+                }
             }
         }
     }
@@ -217,7 +237,7 @@ Rectangle {
     }
 
     function loadDebugView (compiledRccFile) {
-        NavigationControl.removeView(controlViewContainer)
+        controlViewLoader.setSource("")
 
         let uniquePrefix = new Date().getTime().valueOf()
         uniquePrefix = "/" + uniquePrefix
@@ -229,20 +249,6 @@ Rectangle {
         }
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-
-        Help.setClassId(controlViewCreatorRoot.deviceId)
-        NavigationControl.context.class_id = controlViewCreatorRoot.debugPlatform.classId
-        NavigationControl.context.device_id = controlViewCreatorRoot.debugPlatform.deviceId
-
-        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer, NavigationControl.context);
-
-        delete NavigationControl.context.class_id;
-        delete NavigationControl.context.device_id;
-
-        if (obj === null) {
-            let error_str = sdsModel.resourceLoader.getLastLoggedError()
-            sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
-            console.error("Could not load view: " + error_str)
-        }
+        controlViewLoader.setSource(qml_control)
     }
 }
