@@ -36,7 +36,16 @@
                 editor.layout()
             });
 
+            link.undo.connect(function() {
+                editor.trigger('undoClicked', 'undo');
+            });
+
+            link.redo.connect(function() {
+                editor.trigger('redoClicked', 'redo');
+            });
+
             editor.getModel().onDidChangeContent((event) => {
+                link.fileText = editor.getValue();
                 link.setVersionId(editor.getModel().getAlternativeVersionId());
             });
         });
@@ -47,10 +56,13 @@
                 noSemanticValidation: true,
                 noSyntaxValidation: true,
             });
+
             var editor = monaco.editor.create(document.getElementById('container'), {
                 value: "",
                 language: 'javascript',
-                theme: "vs"
+                theme: "vs",
+                insertSpaces: true,
+                detectIndentation: false
             });
 
             function getValue() {

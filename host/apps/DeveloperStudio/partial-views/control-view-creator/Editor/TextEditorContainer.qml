@@ -21,25 +21,64 @@ Item {
     property int currentVersionId
 
     function openFile() {
-        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+        let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+
+        // Before returning the fileText, replace tabs with 4 spaces
+        return fileText.replace(/\t/g, '    ')
     }
 
     function saveFile() {
-        webEngine.runJavaScript('getValue()', function (fileText) {
-            let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), fileText);
+        let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), channelObject.fileText);
 
-            if (success) {
-                savedVersionId = currentVersionId;
-                model.unsavedChanges = false;
-            } else {
-                console.error("Unable to save file", model.filepath)
-            }
-        });
+        if (success) {
+            savedVersionId = currentVersionId;
+            model.unsavedChanges = false;
+        } else {
+            console.error("Unable to save file", model.filepath)
+        }
     }
 
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
             saveFile()
+        }
+    }
+
+    Connections {
+        target: editor.editorToolBar
+
+        onSaveClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                saveFile()
+            }
+        }
+
+        onUndoClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.undo()
+            }
+        }
+
+        onRedoClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.redo()
+            }
+        }
+    }
+    
+    Connections {
+        target: openFilesModel
+
+        onSaveRequested: {
+            if (index === fileContainerRoot.modelIndex) {
+                saveFile();
+            }
+        }
+
+        onSaveAllRequested: {
+            if (model.unsavedChanges) {
+                saveFile();
+            }
         }
     }
 
@@ -53,8 +92,12 @@ Item {
         objectName: "fileChannel"
         WebChannel.id: "valueLink"
 
+        property string fileText: ""
+
         signal setValue(string value);
         signal setContainerHeight(string height);
+        signal undo();
+        signal redo();
 
         function setHtml(value) {
             setValue(value)
@@ -96,6 +139,7 @@ Item {
                 channelObject.setContainerHeight(height.toString())
                 let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
+                channelObject.fileText = fileText
             }
         }
 

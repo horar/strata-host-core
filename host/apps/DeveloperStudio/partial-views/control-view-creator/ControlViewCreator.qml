@@ -6,17 +6,54 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
+import "qrc:/js/constants.js" as Constants
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
 
-    property url currentFileUrl: ""
+    property bool isConfirmCloseOpen: false
+    property bool rccInitialized: false
+    property var debugPlatform: ({
+      deviceId: Constants.NULL_DEVICE_ID,
+      classId: ""
+    })
+
+    onDebugPlatformChanged: {
+        recompileControlViewQrc();
+    }
+    property alias openFilesModel: editor.openFilesModel
+    property alias confirmClosePopup: confirmClosePopup
 
     SGUserSettings {
         id: sgUserSettings
         classId: "controlViewCreator"
         user: NavigationControl.context.user_id
+    }
+
+    ConfirmClosePopup {
+        id: confirmClosePopup
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+        parent: mainWindow.contentItem
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+
+        property int unsavedFileCount
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                controlViewCreator.openFilesModel.closeAll()
+                mainWindow.close()
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                controlViewCreator.openFilesModel.saveAll()
+                mainWindow.close()
+            }
+            isConfirmCloseOpen = false
+        }
     }
 
     RowLayout {
@@ -58,10 +95,9 @@ Rectangle {
                         viewStack.currentIndex = 3
                         break;
                     case viewTab:
-                        if (currentFileUrl != editor.treeModel.url) {
+                        if (rccInitialized == false) {
                             toolBarListView.recompiling = true
                             recompileControlViewQrc();
-                            currentFileUrl = editor.treeModel.url
                         } else {
                             viewStack.currentIndex = 4
                         }
@@ -177,10 +213,27 @@ Rectangle {
         }
     }
 
-    function recompileControlViewQrc () {
-        if (editor.treeModel.url !== '') {
-            sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
+    Connections {
+        target: mainWindow
+
+        onAttemptedToCloseOnUnsavedChanges: {
+            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                confirmClosePopup.unsavedFileCount = unsavedCount;
+                confirmClosePopup.open();
+                controlViewCreatorRoot.isConfirmCloseOpen = true;
+            }
         }
+    }
+
+    function recompileControlViewQrc () {
+        if (editor.treeModel.url.toString() !== '') {
+            sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
+            rccInitialized = true
+        }
+    }
+
+    function checkForUnsavedFiles() {
+        return editor.openFilesModel.getUnsavedCount();
     }
 
     function loadDebugView (compiledRccFile) {

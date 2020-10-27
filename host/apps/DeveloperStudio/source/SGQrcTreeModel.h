@@ -159,19 +159,22 @@ signals:
     void projectDirectoryChanged();
     void rootChanged();
     void errorParsing(const QString error);
+    void finishedReadingQrc(const QByteArray &fileText);
 
 public slots:
     void childrenChanged(const QModelIndex &index, int role);
-
+private slots:
+    void startPopulating(const QByteArray &fileText);
 private:
     void clear(bool emitSignals = true);
-    bool readQrcFile();
+    void readQrcFile();
+    bool createQrcXmlDocument(const QByteArray &fileText);
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
     void startSave();
     void save();
 
-    SGQrcTreeNode *root_;
+    SGQrcTreeNode *root_ = nullptr;
     QUrl url_;
     QUrl projectDir_;
     QDomDocument qrcDoc_;
