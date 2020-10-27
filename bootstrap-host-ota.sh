@@ -17,6 +17,7 @@ usage() {
     echo "     [-c | --cleanup]: To clean build folder before build"
     echo "     [-s | --skiptests]: To skip tests after build"
     echo "     [-f | --config]: To use selected HCS configuration: PROD|QA|DEV|DOCKER (Default: QA)"
+    echo "     [-d | --dmg]: To use .dmg installer format (Default: .app)"
     echo "     [-h | --help]: For this help"
     echo "For example:"
     echo "     ./bootstrap-host-ota.sh -i=999 -f=PROD --cleanup -s"
@@ -34,6 +35,7 @@ USE_PROD_CONFIG=0
 USE_QA_CONFIG=0
 USE_DEV_CONFIG=0
 USE_DOCKER_CONFIG=0
+USE_DMG_FORMAT=0
 BOOTSTRAP_USAGE=0
 
 for i in "$@"
@@ -66,6 +68,10 @@ case $i in
     SKIP_TESTS=1
     shift # past argument with no value
     ;;
+    -d|--dmg)
+    USE_DMG_FORMAT=1
+    shift # past argument with no value
+    ;;
     -h|--help)
     BOOTSTRAP_USAGE=1
     shift # past argument with no value
@@ -87,6 +93,9 @@ BUILD_DIR=build-host-ota
 PACKAGES_DIR=packages
 export BUILD_ID
 
+APP_FORMAT=app
+DMG_FORMAT=dmg
+
 STRATA_COMPONENTS=components
 STRATA_DS=devstudio
 STRATA_HCS=hcs
@@ -103,7 +112,7 @@ PKG_STRATA_COMPONENTS_VIEWS=$PKG_STRATA_COMPONENTS/views
 PKG_STRATA_DS=$PACKAGES_DIR/$MODULE_STRATA_DS/data
 PKG_STRATA_HCS=$PACKAGES_DIR/$MODULE_STRATA_HCS/data
 
-SDS_BINARY=Strata\ Developer\ Studio.app
+SDS_BINARY=Strata\ Developer\ Studio.$APP_FORMAT
 HCS_BINARY=hcs
 SDS_BINARY_DIR=$PKG_STRATA_DS/$SDS_BINARY
 HCS_BINARY_DIR=$PKG_STRATA_HCS/$HCS_BINARY
@@ -134,8 +143,13 @@ INSTALLERBASE_BINARY=installerbase
 INSTALLERBASE_BINARY_DIR=$PKG_STRATA/$INSTALLERBASE_BINARY
 STRATA_OFFLINE=strata-setup-offline
 STRATA_ONLINE=strata-setup-online
-STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.app
-STRATA_ONLINE_BINARY=$STRATA_ONLINE.app
+STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.$APP_FORMAT
+STRATA_ONLINE_BINARY=$STRATA_ONLINE.$APP_FORMAT
+if [ $USE_DMG_FORMAT != 0 ] ; then
+    STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.$DMG_FORMAT
+    STRATA_ONLINE_BINARY=$STRATA_ONLINE.$DMG_FORMAT
+fi
+
 STRATA_ONLINE_REPOSITORY=public/repository/demo
 
 echo "-----------------------------------------------------------------------------"
@@ -418,7 +432,7 @@ binarycreator \
     --offline-only \
     -c $STRATA_CONFIG_XML \
     -p $PACKAGES_DIR \
-    $STRATA_OFFLINE
+    $STRATA_OFFLINE_BINARY
 
 if [ $? != 0 ] ; then
     echo "======================================================================="
@@ -436,7 +450,7 @@ binarycreator \
     --online-only \
     -c $STRATA_CONFIG_XML \
     -p $PACKAGES_DIR \
-    $STRATA_ONLINE
+    $STRATA_ONLINE_BINARY
 
 if [ $? != 0 ] ; then
     echo "======================================================================="

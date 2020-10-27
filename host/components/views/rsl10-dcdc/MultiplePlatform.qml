@@ -6,10 +6,10 @@ Item{
     property string class_id
 
     property string eeprom_ID: "cce0f32e-ee1e-44aa-81a3-0801a71048ce"
-    property string partNumber: "<b> NCP6922 </b>"
+    property string partNumber: "<b> NCP6922C </b>"
     property string title: "<b> 4 channels PMIC Converter </b>"
     property string warningHVVinLable: "5.5V"
-    property string warningLVVinLable: "4.5V"
+    property string warningLVVinLable: "2.5V"
     property string opn: "STR-PWRNCP6922C-R0-GEVK"
     property real minVin: 2.5
     property real nominalVin: 5
@@ -49,18 +49,18 @@ Item{
             warningLVVinLable = "4.5V"
             opn = "STR-PWRNCV81599-R0-GEVK"
             minVin = 4.5
-            nominalVin = 18
+            nominalVin = 10
             vinScale = 20
             iinScale = 10
             voutScale = 10
             ioutScale = 10
-            poutScale = 50
+            poutScale = 50000
             pdissScale = 10000
             showDecimal = true
-            poutStep = 5
+            poutStep = 5000
             pdissStep = 1000
             rst = false
-            dio14 = false
+            dio14 = true
             jumperDIO14 = false
             dio13 = false
             jumperDIO13 = false
@@ -71,6 +71,10 @@ Item{
             lowpowerDCDC = true
             pdiss = "mW"
             current = "A"
+            minVout1 = 4.2
+            minVout2 = 4.2
+            minVout3 = 4.2
+            minVout4 = 4.2
         }
         else if(class_id === "1ae9e1e7-a268-4302-8c3a-280f0aa095a5") {
             eeprom_ID = "1ae9e1e7-a268-4302-8c3a-280f0aa095a5"
