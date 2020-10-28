@@ -48,7 +48,6 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     let tourTargetList = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
     let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": null}
 
-
     for (let i=0; i<tourTargetList.length; i++) {
         if (tourTargetList[i].index === index) {
             // update tourTarget if it already exists (occurs when same platform disconnected and reconnected - must update object references)
@@ -57,15 +56,15 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
         }
     }
 
+    //loading index 0 when index 0 is registered originally
     if(index === 0) {
         let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
         tourStop.index = index
         tourStop.description = targetDescription
-        let tourTargetIndex = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": tourStop}
-        tourTargetList[0] = tourTargetIndex
+        let tourTargetIndex0 = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": tourStop}
+        tourTargetList[0] = tourTargetIndex0
         return
     }
-
 
     // otherwise append as new target
     tourTargetList.push(tourTarget)
@@ -162,8 +161,8 @@ function next(currentIndex) {
                 break
             }
         } else if (current_tour_targets[i]["index"] === currentIndex+1) {
-            if(i+1 < current_tour_targets.length)  {
-                if(!current_tour_targets[i+1]["helpObject"]){
+            if(i+1 < current_tour_targets.length) {
+                if(!current_tour_targets[i+1]["helpObject"]) {
                     //Loading currentIndex+1 is advance
                     let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
                     tourStop.index = current_tour_targets[i+1]["index"]
@@ -185,10 +184,10 @@ function prev(currentIndex) {
             if (current_tour_targets[i]["index"] === currentIndex) {
                 current_tour_targets[i]["helpObject"].visible = false
             } else if (current_tour_targets[i]["index"] === currentIndex-1) {
+                refreshView(i)
                 current_tour_targets[i]["helpObject"].visible = true
                 internal_tour_index = i
                 utility.internal_tour_indexChanged(i)
-                refreshView(i)
             }
         }
     }
@@ -231,7 +230,7 @@ function destroyHelp() {
 
 function killView(index) {
     for (let i=0; i<views[index].view_tours.length; i++) {
-        //  console.log(LoggerModule.Logger.devStudioHelpCategory, "Destroying", views[index].view_tours[i].tour_name)
+        //        console.log(LoggerModule.Logger.devStudioHelpCategory, "Destroying", views[index].view_tours[i].tour_name)
         for (let j=0; j<views[index].view_tours[i].tour_targets.length; j++) {
             if(views[index].view_tours[i].tour_targets[j].helpObject)
                 views[index].view_tours[i].tour_targets[j].helpObject.destroy()
