@@ -607,7 +607,7 @@ binarycreator ^
     -c %STRATA_CONFIG_XML% ^
     -p %PACKAGES_DIR% ^
     -p %PACKAGES_WIN_DIR% ^
-    %STRATA_OFFLINE%
+    %STRATA_OFFLINE_BINARY%
 
 IF %ERRORLEVEL% NEQ 0 (
     echo =======================================================================
@@ -643,7 +643,7 @@ binarycreator ^
     -c %STRATA_CONFIG_XML% ^
     -p %PACKAGES_DIR% ^
     -p %PACKAGES_WIN_DIR% ^
-    %STRATA_ONLINE%
+    %STRATA_ONLINE_BINARY%
 
 IF %ERRORLEVEL% NEQ 0 (
     echo =======================================================================
