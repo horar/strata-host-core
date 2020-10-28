@@ -42,16 +42,6 @@ Rectangle{
         rows: 2
         rowSpacing: 30
 
-        SGNotificationToast {
-            id: firmwareUpDate
-            Layout.preferredWidth: container.width / 2
-            Layout.preferredHeight: 40
-            Layout.columnSpan: 3
-            text: "There is an update to this control view firmware"
-            color: "#57d445"
-            visible: NavigationControl.userSettings.notifyOnFirmwareUpdate && NavigationControl.firmwareIsOutOfDate //This will be the firmware version is not upToDate
-        }
-
         UserAndLogoContainer {
             Layout.columnSpan: 3
             Layout.alignment: Qt.AlignHCenter

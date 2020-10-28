@@ -372,3 +372,15 @@ function updateState(event, data)
             break;
     }
 }
+
+function firmwareUpdate() {
+    if(userSettings.hasOwnProperty("notifyOnFirmwareUpdate")) {
+        if(userSettings.notifyOnFirmwareUpdate && firmwareIsOutOfDate) {
+            return true
+        } else {
+            return false
+        }
+    } else {
+        return false
+    }
+}

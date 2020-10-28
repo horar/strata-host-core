@@ -21,6 +21,7 @@ Item {
 
     readonly property string staticVersion: "static"
 
+
     SGText {
         anchors.centerIn: parent
         text: "Loading Control View..."

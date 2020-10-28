@@ -23,6 +23,7 @@ Item {
     property int index: model.index
     property bool inView: NavigationControl.stack_container_.currentIndex === index + 1
     property string selectedButtonIcon: ""
+    property bool firmwareNotification: NavigationControl.firmwareUpdate()
 
     Component.onCompleted: {
         populateButtons()
@@ -64,7 +65,7 @@ Item {
             buttonData = {
                 "text": "Control",
                 "view": "control",
-                "icon": "",
+                "icon": firmwareNotification ? "qrc:/sgimages/exclamation-triangle.svg" : "",
                 "selected": false
             }
             buttonModel.append(buttonData)
@@ -83,7 +84,7 @@ Item {
         buttonData = {
             "text": "Settings",
             "view": "settings",
-            "icon": "qrc:/sgimages/cog.svg",
+            "icon": firmwareNotification ? "qrc:/sgimages/exclamation-triangle.svg": "qrc:/sgimages/cog.svg",
             "selected": false
         }
         buttonModel.append(buttonData)
@@ -183,7 +184,9 @@ Item {
                 source: {
                     if (mouseMenu.containsMouse || dropDownPopup.visible) {
                         return "qrc:/sgimages/chevron-down.svg"
-                    } else {
+                    } else if(firmwareNotification) {
+                        return "qrc:/sgimages/exclamation-triangle.svg"
+                    } else  {
                         return selectedButtonIcon
                     }
                 }

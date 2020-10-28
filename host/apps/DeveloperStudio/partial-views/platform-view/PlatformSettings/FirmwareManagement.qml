@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/partial-views/general/"
 
 ColumnLayout {
     id: firmwareColumn
@@ -72,8 +73,6 @@ ColumnLayout {
                         NavigationControl.firmwareIsOutOfDate = true;
                     }
                 }
-            } else {
-                console.log("Version is the same or lower")
             }
         }
     }
@@ -84,6 +83,15 @@ ColumnLayout {
                 firmwareList.firmwareVersions.children[i].description = ""
             }
         }
+    }
+
+    SGNotificationToast {
+        id: firmwareUpDate
+        Layout.fillWidth: true
+        Layout.preferredHeight: 40
+        text: "There is an update to this control view firmware"
+        color: "#eed202"
+        visible: NavigationControl.firmwareUpdate() //This will be the firmware version is not upToDate
     }
 
     SGText {
