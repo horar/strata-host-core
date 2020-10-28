@@ -38,7 +38,7 @@ Item {
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
         enableSwitch.checked = control_states.buck_enabled
-        setExternalVCC.checked = control_states.ldo_enabled ? false : true
+        enableVCCLDO.checked = control_states.ldo_enabled
         outputVoltAdjustment.checked = control_states.dac_enabled
 
         if(control_states.rt_mode === 0)
@@ -158,7 +158,7 @@ Item {
                                     SGAlignedLabel {
                                         id: setSwitchFreqLabel
                                         target: setSwitchFreq
-                                        text: "Set Switching \n Frequency"
+                                        text: "Set Switching \nFrequency"
                                         alignment: SGAlignedLabel.SideLeftCenter
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
@@ -282,7 +282,7 @@ Item {
                                     SGAlignedLabel {
                                         id: setoutputVoltAdjustmentLabel
                                         target: outputVoltAdjustment
-                                        text: "Output Voltage \n Adjustment"
+                                        text: "Output Voltage \nAdjustment"
                                         alignment: SGAlignedLabel.SideLeftCenter
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
@@ -363,16 +363,16 @@ Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     SGAlignedLabel {
-                                        id: setExternalVCCLabel
-                                        target: setExternalVCC
-                                        text: "External VCC \n Supply"
+                                        id: enableVCCLDOLabel
+                                        target: enableVCCLDO
+                                        text: "Enable VCC \nLDO"
                                         alignment: SGAlignedLabel.SideLeftCenter
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
                                         font.bold : true
 
                                         SGSwitch {
-                                            id: setExternalVCC
+                                            id: enableVCCLDO
                                             anchors.verticalCenter: parent.verticalCenter
                                             labelsInside: true
                                             checkedLabel: "On"
@@ -684,11 +684,50 @@ Item {
 
                                             SGStatusLogBox{
                                                 id: logFault
-
+                                                //anchors.fill: parent
                                                 width: parent.width - 20
                                                 height: parent.height - 50
                                                 title: "Status List"
                                                 anchors.centerIn: parent
+
+                                                listElementTemplate : {
+                                                    "message": "",
+                                                    "id": 0,
+                                                    "color": "black"
+                                                }
+                                                scrollToEnd: false
+                                                delegate: Rectangle {
+                                                    id: delegatecontainer
+                                                    height: delegateText.height
+                                                    width: ListView.view.width
+
+                                                    SGText {
+                                                        id: delegateText
+                                                        text: { return (
+                                                                    logFault.showMessageIds ?
+                                                                        model.id + ": " + model.message :
+                                                                        model.message
+                                                                    )}
+
+                                                        fontSizeMultiplier: logFault.fontSizeMultiplier
+                                                        color: model.color
+                                                        wrapMode: Text.Wrap
+                                                        width: parent.width
+                                                    }
+                                                }
+
+                                                function append(message,color) {
+                                                    listElementTemplate.message = message
+                                                    listElementTemplate.color = color
+                                                    model.append( listElementTemplate )
+                                                    return (listElementTemplate.id++)
+                                                }
+                                                function insert(message,index,color){
+                                                    listElementTemplate.message = message
+                                                    listElementTemplate.color = color
+                                                    model.insert(index, listElementTemplate )
+                                                    return (listElementTemplate.id++)
+                                                }
                                             }
                                         }
                                     }
