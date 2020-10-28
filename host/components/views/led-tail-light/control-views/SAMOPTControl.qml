@@ -635,7 +635,7 @@ Item {
                                             ],
                                             samOpenLoadDiagnostic.currentText,
                                             platformInterface.soc_crcValue,
-                                            platformInterface.addr_curr_apply)
+                                            platformInterface.addr_curr)
 
                             }
                         }
