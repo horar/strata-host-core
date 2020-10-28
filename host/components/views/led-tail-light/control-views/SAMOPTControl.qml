@@ -435,7 +435,7 @@ Item {
                 Text {
                     id: warningTextForPopupOTP
                     anchors.fill:parent
-                    text: "Cannot OTP the part as it has been previously OTPâ€™ed."
+                    text: "Cannot OTP the part as it has been previously OTP'ed."
                     verticalAlignment:  Text.AlignVCenter
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit
