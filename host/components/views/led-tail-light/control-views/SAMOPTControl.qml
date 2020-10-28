@@ -538,7 +538,7 @@ Item {
                 Text {
                     id: warningTextForPopup
                     anchors.fill:parent
-                    text: "The part will be permanently OTPâ€™ed. The non-volatile registers settings in ID_LOCK_OTP cannot be changed again! The volatile register settings in ID_SET_OTP can still be modified to illustrate SAM configuration."
+                    text: "The part will be permanently OTP'ed. The non-volatile registers settings in ID_LOCK_OTP cannot be changed again! The volatile register settings in ID_SET_OTP can still be modified to illustrate SAM configuration."
                     verticalAlignment:  Text.AlignVCenter
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit
