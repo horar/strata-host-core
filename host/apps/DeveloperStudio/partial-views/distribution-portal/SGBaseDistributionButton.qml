@@ -214,14 +214,7 @@ Row {
 
     function saveUserSettings(index) {
         NavigationControl.userSettings.selectedDistributionPortal = index
-        NavigationControl.userSettings.writeFile("settings.json",
-            {
-              selectedDistributionPortal: index,
-              autoOpenView: NavigationControl.userSettings.autoOpenView,
-              switchToActive: NavigationControl.userSettings.switchToActive,
-              notifyOnFirmwareUpdate: NavigationControl.userSettings.notifyOnFirmwareUpdate
-            }
-        );
+        NavigationControl.userSettings.saveSettings()
     }
 
     TextMetrics {
