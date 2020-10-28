@@ -273,3 +273,110 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
         return "/" + class_id + (version.isEmpty() ? "" : "/" + version);
     }
 }
+
+void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
+#ifdef QT_RCC_EXECUTABLE
+    const QString rccExecutablePath = QT_RCC_EXECUTABLE;
+#else // Triggers if Release build -- in Release builds, for now this will not work unless RCC compiler executable is manually placed in the application directory
+// Will be completed in CS-1093
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+    #ifdef Q_OS_MACOS
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+    #endif
+    const QString rccExecutablePath = applicationDir.filePath("rcc");
+#endif
+
+    qrcFilePath.replace("file://", "");
+    if (qrcFilePath.at(0) == "/" && qrcFilePath.at(0) != QDir::separator()) {
+        qrcFilePath.remove(0, 1);
+    }
+
+    QFile rccExecutable(rccExecutablePath);
+    QFile qrcFile(qrcFilePath);
+
+    clearLastLoggedError();
+
+    if (!rccExecutable.exists()) {
+        QString error_str = "Could not find RCC executable at " + rccExecutablePath;
+        qCWarning(logCategoryStrataDevStudio) << error_str;
+        setLastLoggedError(error_str);
+        emit finishedRecompiling(QString());
+        return;
+    }
+
+    if (!qrcFile.exists()) {
+        QString error_str = "Could not find QRC file at " + qrcFilePath;
+        qCWarning(logCategoryStrataDevStudio) << error_str;
+        setLastLoggedError(error_str);
+        emit finishedRecompiling(QString());
+        return;
+    }
+
+    QFileInfo qrcFileInfo = QFileInfo(qrcFile);
+    QDir qrcFileParent = qrcFileInfo.dir();
+    QString compiledRccFile = qrcFileParent.path() + QDir::separator() + "DEV-CONTROLVIEW" + QDir::separator();
+    QDir qrcDevControlView(compiledRccFile);
+
+    if (qrcDevControlView.exists()) {
+        if (!qrcDevControlView.removeRecursively()) {
+            QString error_str = "Could not delete directory at " + compiledRccFile;
+            qCWarning(logCategoryStrataDevStudio) << error_str;
+            setLastLoggedError(error_str);
+            emit finishedRecompiling(QString());
+            return;
+        }
+    }
+
+    // Make directory for compiled RCC files
+    QDir().mkdir(compiledRccFile);
+
+    // Split qrcFile base name and add ".rcc" extension
+    compiledRccFile += qrcFileInfo.baseName() + ".rcc";
+    lastCompiledRccResource = compiledRccFile;
+
+    // Set and launch rcc compiler process
+    const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
+
+    if (rccCompilerProcess_ != nullptr) {
+        delete rccCompilerProcess_;
+    }
+    rccCompilerProcess_ = new QProcess();
+    rccCompilerProcess_->setProgram(rccExecutablePath);
+    rccCompilerProcess_->setArguments(arguments);
+    connect(rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
+    connect(rccCompilerProcess_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
+
+    rccCompilerProcess_->start();
+}
+
+void ResourceLoader::onOutputRead() {
+    QString error_str = rccCompilerProcess_->readAllStandardError();
+    qCCritical(logCategoryStrataDevStudio) << error_str;
+    setLastLoggedError(error_str);
+}
+
+void ResourceLoader::recompileFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    Q_UNUSED(exitCode);
+
+    if (exitStatus == QProcess::CrashExit || lastLoggedError != "") {
+        emit finishedRecompiling(QString());
+    } else {
+        qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << lastCompiledRccResource;
+        emit finishedRecompiling(lastCompiledRccResource);
+    }
+}
+
+void ResourceLoader::clearLastLoggedError() {
+    lastLoggedError = "";
+}
+
+void ResourceLoader::setLastLoggedError(QString &error_str) {
+    lastLoggedError = error_str;
+}
+
+QString ResourceLoader::getLastLoggedError() {
+    return lastLoggedError;
+}
