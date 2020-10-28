@@ -83,7 +83,7 @@ Window {
                             root.qrcFilePath = path
                             console.info("Set QRC file path to '" + root.qrcFilePath + "'")
                         } else {
-                            console.error("Error with QRC file path '" + root.qrcFilePath + "'")
+                            console.error("Error with QRC file path")
                         }
                     }
                 }
@@ -103,10 +103,14 @@ Window {
                     }
 
                     onClicked: {
-                        sdsModel.resourceLoader.recompileControlViewQrc(root.qrcFilePath)
-                        if (!root.controlViewVisible) {
-                            stackContainer.currentIndex = stackContainer.count - 1
-                            root.controlViewVisible = true
+                        if (root.qrcFilePath.length > 0) {
+                            sdsModel.resourceLoader.recompileControlViewQrc(root.qrcFilePath)
+                            if (!root.controlViewVisible) {
+                                stackContainer.currentIndex = stackContainer.count - 1
+                                root.controlViewVisible = true
+                            }
+                        } else {
+                            console.error("Error with QRC file path")
                         }
                     }
                 }
@@ -146,8 +150,7 @@ Window {
                 loadDebugView(filepath)
             } else {
                 let error_str = sdsModel.resourceLoader.getLastLoggedError()
-                controlViewLoader.setSource(NavigationControl.screens.LOAD_ERROR,
-                                            { "error_message": error_str });
+                sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, root.controlViewDevContainer, {"error_message": error_str});
             }
         }
     }
