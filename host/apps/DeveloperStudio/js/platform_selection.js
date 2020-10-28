@@ -245,12 +245,13 @@ function addConnectedPlatform(platform) {
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
         insertUnknownListing(platform)
     }
-        let data = {
-            "class_id": class_id_string,
-            "device_id": platform.device_id,
-            "firmware_version": platform.firmware_version
-        }
-         NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
+
+    let data = {
+        "class_id": class_id_string,
+        "device_id": platform.device_id,
+        "firmware_version": platform.firmware_version
+    }
+    NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
 }
 
 /*
@@ -288,7 +289,6 @@ function connectListing(class_id_string, device_id, firmware_version) {
     }
 
     selector_listing = platformSelectorModel.get(selector_index)
-    selector_listing.index = selector_index
     selector_listing.connected = true
     selector_listing.firmware_version = firmware_version
     selector_listing.device_id = device_id
@@ -297,8 +297,16 @@ function connectListing(class_id_string, device_id, firmware_version) {
     available.unlisted = false // override unlisted to show hidden listing when physical board present
     selector_listing.available = available
 
-    if(NavigationControl.userSettings.autoOpenView){
-        openPlatformView(selector_listing)
+    if (NavigationControl.userSettings.autoOpenView){
+        let data = {
+            "name": selector_listing.verbose_name,
+            "available": selector_listing.available,
+            "class_id": selector_listing.class_id,
+            "device_id": selector_listing.device_id,
+            "firmware_version": selector_listing.firmware_version,
+            "index": selector_index
+        }
+        openPlatformView(data)
     }
 }
 
@@ -413,7 +421,6 @@ function insertUnknownListing (platform) {
 */
 function insertUnlistedListing (platform) {
     let platform_info = generateErrorListing(platform)
-    platform_info.name = "Unknown Platform"
     platform_info.available.control = true
     platform_info.description = "No information to display."
 
@@ -421,13 +428,11 @@ function insertUnlistedListing (platform) {
 
     if(NavigationControl.userSettings.autoOpenView){
         let data = {
-            "name": platform_info.name,
+            "name": platform_info.verbose_name,
             "available": platform_info.available,
-            "connected": true,
-            "view": "control",
-            "class_id":String(platform.class_id),
-            "device_id": platform.device_id,
-            "firmware_version": platform.firmware_version,
+            "class_id": platform_info.class_id,
+            "device_id": platform_info.device_id,
+            "firmware_version": platform_info.firmware_version,
             "index": index
         }
         openPlatformView(data)
