@@ -70,6 +70,8 @@ Item {
         property bool masterEnabled: enabled
         property bool masterHoverEnabled: hoverEnabled
 
+        property bool initialized_: false
+
         onLoaded: {
             if (exclusive === false) {
                 for (var child_id1 in segmentedButtons.children[0].children) {
@@ -81,6 +83,9 @@ Item {
                     segmentedButtons.children[0].children[child_id2].indexUpdate.connect(indexUpdate)
                 }
             }
+
+            initialized_ = true
+            root.init_()
         }
 
         function checked () {
@@ -102,10 +107,17 @@ Item {
     }
 
     Component.onCompleted: {
-        segmentedButtons.checked()
-        if (exclusive && index !== 0) {
-            segmentedButtons.children[0].children[index].checked = true
-        }
         initialized_ = true
+        init_()
+    }
+
+    function init_() {
+        // run once after fully loaded
+        if (segmentedButtons.initialized_ && root.initialized_) {
+            segmentedButtons.checked()
+            if (exclusive && index !== 0) {
+                segmentedButtons.children[0].children[index].checked = true
+            }
+        }
     }
 }
