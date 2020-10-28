@@ -47,6 +47,8 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
     let tourTargetList = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
     let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": null}
+
+
     for (let i=0; i<tourTargetList.length; i++) {
         if (tourTargetList[i].index === index) {
             // update tourTarget if it already exists (occurs when same platform disconnected and reconnected - must update object references)
@@ -54,6 +56,17 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
             return
         }
     }
+
+    if(index === 0) {
+        let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+        tourStop.index = index
+        tourStop.description = targetDescription
+        let tourTargetIndex = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": tourStop}
+        tourTargetList[0] = tourTargetIndex
+        return
+    }
+
+
     // otherwise append as new target
     tourTargetList.push(tourTarget)
 }
@@ -114,13 +127,11 @@ function startHelpTour(tourName, device_id) {
     // tour_count initializes the x/y tour counter
     tour_count = current_tour_targets.length
 
-    if(!current_tour_targets[0]["helpObject"]) {
-        for (let y = 0; y < tour_count; y++) {
-            let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
-            tourStop.index = current_tour_targets[y]["index"]
-            tourStop.description = current_tour_targets[y]["description"]
-            current_tour_targets[y]["helpObject"] = tourStop
-        }
+    if(!current_tour_targets[1]["helpObject"]) {
+        let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+        tourStop.index = current_tour_targets[1]["index"]
+        tourStop.description = current_tour_targets[1]["description"]
+        current_tour_targets[1]["helpObject"] = tourStop
     }
 
     for (let i = 0; i < tour_count; i++){
@@ -151,13 +162,15 @@ function next(currentIndex) {
                 break
             }
         } else if (current_tour_targets[i]["index"] === currentIndex+1) {
-            //right here
-            //            if(!current_tour_targets[i]["helpObject"]) {
-            //                let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
-            //                tourStop.index = current_tour_targets[i]["index"]
-            //                tourStop.description = current_tour_targets[i]["description"]
-            //                current_tour_targets[i]["helpObject"] = tourStop
-            //            }
+            if(i+1 < current_tour_targets.length)  {
+                if(!current_tour_targets[i+1]["helpObject"]){
+                    //Loading currentIndex+1 is advance
+                    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+                    tourStop.index = current_tour_targets[i+1]["index"]
+                    tourStop.description = current_tour_targets[i+1]["description"]
+                    current_tour_targets[i+1]["helpObject"] = tourStop
+                }
+            }
             refreshView(i)
             current_tour_targets[i]["helpObject"].visible = true
             internal_tour_index = i
@@ -172,10 +185,10 @@ function prev(currentIndex) {
             if (current_tour_targets[i]["index"] === currentIndex) {
                 current_tour_targets[i]["helpObject"].visible = false
             } else if (current_tour_targets[i]["index"] === currentIndex-1) {
-                refreshView(i)
                 current_tour_targets[i]["helpObject"].visible = true
                 internal_tour_index = i
                 utility.internal_tour_indexChanged(i)
+                refreshView(i)
             }
         }
     }
