@@ -27,11 +27,11 @@ Item {
     property bool searchTagShown: false
     property var highlightColor
     property alias contentX: logListView.contentX
+    property alias contentY: logListView.contentY
     property int animationDuration: 500
     property bool automaticScroll: true
     property bool timestampSimpleFormat: false
-
-    signal currentItemChanged(int index)
+    property int indexOfVisibleItem: logListView.indexAt(contentX, contentY) //Returns the index of the visible item containing the point x, y in content coordinates.
 
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)
@@ -387,7 +387,7 @@ Item {
                 logListView.contentWidth = delegate.width + 10
             }
 
-            ListView.onCurrentItemChanged : {
+            ListView.onCurrentItemChanged: {
                 if (ListView.isCurrentItem && startAnimation) {
                     cellAnimation.start()
                 } else {
@@ -463,8 +463,7 @@ Item {
                     anchors.fill: parent
                     onPressed:  {
                         logViewWrapper.forceActiveFocus()
-                        logListView.currentIndex = index
-                        currentItemChanged(index)
+                        currentIndex = index
                     }
                 }
             }
@@ -597,22 +596,32 @@ Item {
     Keys.onPressed: {
         if (event.key === Qt.Key_Up && currentIndex > 0){
             currentIndex = currentIndex - 1
-            currentItemChanged(currentIndex)
         } else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
             currentIndex = currentIndex + 1
-            currentItemChanged(currentIndex)
         }
         else if (event.key === Qt.Key_Left) {
-            logListView.contentX = logListView.contentX - logListView.width
+            contentX = contentX - logListView.width
         }
         else if (event.key === Qt.Key_Right) {
-            logListView.contentX = logListView.contentX + logListView.width
+            contentX = contentX + logListView.width
         }
         else if (event.key === Qt.Key_PageDown) {
-            logListView.contentY = logListView.contentY + logListView.height
+            contentY = contentY + logListView.height
+
+            if (currentIndex < indexOfVisibleItem) {
+                currentIndex = indexOfVisibleItem
+            } else {
+                currentIndex = logListView.count - 1
+            }
         }
         else if (event.key === Qt.Key_PageUp) {
-            logListView.contentY = logListView.contentY - logListView.height
+            contentY = contentY - logListView.height
+
+            if ((currentIndex > indexOfVisibleItem) && (indexOfVisibleItem > 0)) {
+                currentIndex = indexOfVisibleItem
+            } else {
+                currentIndex = 0
+            }
         }
         else if (event.key === Qt.Key_Home) {
             logListView.positionViewAtBeginning()

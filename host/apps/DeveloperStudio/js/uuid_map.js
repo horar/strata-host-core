@@ -27,7 +27,6 @@ var uuid_map = {
     "entice_rgb" : "entice_rgb",
     "template": "template",
 
-
     /*****
         CES HACK or temporary Class ID for development purposes(class_id)
     *****/
@@ -102,6 +101,7 @@ var uuid_map = {
     "cce0f32e-ee1e-44aa-81a3-0801a71048ce": "rsl10-dcdc",
     "2286e1e0-4035-46b9-b197-4d729653c101": "rsl10-dcdc",
     "4aad7090-eac3-470e-a304-00988c8c006d": "rsl10-dcdc",
-    "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-dcdc"
+    "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-dcdc",
+    "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators"
 
 }
