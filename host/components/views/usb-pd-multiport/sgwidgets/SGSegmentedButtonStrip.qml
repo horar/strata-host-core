@@ -25,8 +25,6 @@ Item {
     property bool nothingChecked: true
     property bool hoverEnabled: true
 
-    onNothingCheckedChanged: console.log("FALLER:", "nothingchecked", nothingChecked)
-
     Text {
         id: labelText
         text: root.label
