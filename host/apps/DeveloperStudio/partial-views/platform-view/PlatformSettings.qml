@@ -35,7 +35,7 @@ Rectangle {
 
         SGCheckBox {
             id: notifyCheck
-            text: "Notify on firmware updates"
+            text: "Notify me when firmware version updates"
             checked: NavigationControl.userSettings.notifyOnFirmwareUpdate
             Layout.alignment: Qt.AlignLeft
             leftPadding: 0
