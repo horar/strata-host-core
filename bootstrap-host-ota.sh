@@ -476,41 +476,41 @@ sed '$ d' $STRATA_ONLINE_REPOSITORY/Updates.xml.bak > $STRATA_ONLINE_REPOSITORY/
 rm -f $STRATA_ONLINE_REPOSITORY/Updates.xml.bak
 
 echo " <RepositoryUpdate>
-  <Repository action=\"add\" url=\"modules/${STRATA_COMPONENTS}\" displayname=\"Module $MODULE_STRATA_COMPONENTS\"/>
-  <Repository action=\"add\" url=\"modules/${STRATA_DS}\" displayname=\"Module $MODULE_STRATA_DS\"/>
-  <Repository action=\"add\" url=\"modules/${STRATA_HCS}\" displayname=\"Module $MODULE_STRATA_HCS\"/>
+  <Repository action=\"add\" url=\"${STRATA_COMPONENTS}\" displayname=\"Module $MODULE_STRATA_COMPONENTS\"/>
+  <Repository action=\"add\" url=\"${STRATA_DS}\" displayname=\"Module $MODULE_STRATA_DS\"/>
+  <Repository action=\"add\" url=\"${STRATA_HCS}\" displayname=\"Module $MODULE_STRATA_HCS\"/>
  </RepositoryUpdate>
 </Updates>" >> $STRATA_ONLINE_REPOSITORY/Updates.xml
 
 echo "-----------------------------------------------------------------------------"
-echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_COMPONENTS.."
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$STRATA_COMPONENTS.."
 echo "-----------------------------------------------------------------------------"
-repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_COMPONENTS $STRATA_ONLINE_REPOSITORY/modules/$STRATA_COMPONENTS
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_COMPONENTS $STRATA_ONLINE_REPOSITORY/$STRATA_COMPONENTS
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_COMPONENTS!"
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/$STRATA_COMPONENTS!"
     echo "======================================================================="
     exit 3
 fi
 
 echo "-----------------------------------------------------------------------------"
-echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_DS.."
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$STRATA_DS.."
 echo "-----------------------------------------------------------------------------"
-repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_DS $STRATA_ONLINE_REPOSITORY/modules/$STRATA_DS
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_DS $STRATA_ONLINE_REPOSITORY/$STRATA_DS
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_DS!"
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/$STRATA_DS!"
     echo "======================================================================="
     exit 3
 fi
 
 echo "-----------------------------------------------------------------------------"
-echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_HCS.."
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$STRATA_HCS.."
 echo "-----------------------------------------------------------------------------"
-repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_HCS $STRATA_ONLINE_REPOSITORY/modules/$STRATA_HCS
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA_HCS $STRATA_ONLINE_REPOSITORY/$STRATA_HCS
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/modules/$STRATA_HCS!"
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/$STRATA_HCS!"
     echo "======================================================================="
     exit 3
 fi
