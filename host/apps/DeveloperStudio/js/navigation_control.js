@@ -69,7 +69,7 @@ var stack_container_ = null
 var resource_loader_ = null
 var main_qml_object_ = null
 var platform_list = {}
-var userSettings = {}
+var userSettings = null
 
 /*
   Navigation initialized with parent containers
