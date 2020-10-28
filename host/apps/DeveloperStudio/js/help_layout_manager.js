@@ -126,15 +126,11 @@ function startHelpTour(tourName, device_id) {
     // tour_count initializes the x/y tour counter
     tour_count = current_tour_targets.length
 
-    if(!current_tour_targets[1]["helpObject"]) {
-        let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
-        tourStop.index = current_tour_targets[1]["index"]
-        tourStop.description = current_tour_targets[1]["description"]
-        current_tour_targets[1]["helpObject"] = tourStop
-    }
+
 
     for (let i = 0; i < tour_count; i++){
         let tour_target = current_tour_targets[i]
+        console.info(current_tour_targets[i]["index"])
         if (tour_target.index === 0) {
             tour_running = true
             utility.tour_runningChanged(tour_running)
@@ -144,6 +140,14 @@ function startHelpTour(tourName, device_id) {
         if (font_size_multiplier !== 1) {
             tour_target.helpObject.fontSizeMultiplier = font_size_multiplier
         }
+        if(tour_target.index === 1) {
+            if(!current_tour_targets[i]["helpObject"]) {
+                let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+                tourStop.index = current_tour_targets[i]["index"]
+                tourStop.description = current_tour_targets[i]["description"]
+                current_tour_targets[i]["helpObject"] = tourStop
+            }
+        }
     }
 
     refreshView(internal_tour_index)
@@ -151,7 +155,9 @@ function startHelpTour(tourName, device_id) {
 }
 
 function next(currentIndex) {
+
     for (let i = 0; i < current_tour_targets.length; i++){
+        console.info(i,current_tour_targets[i]["index"],currentIndex)
         if (current_tour_targets[i]["index"] === currentIndex) {
             current_tour_targets[i]["helpObject"].visible = false
             if (current_tour_targets[i]["index"] === tour_count - 1) { //if last, end tour
@@ -161,20 +167,24 @@ function next(currentIndex) {
                 break
             }
         } else if (current_tour_targets[i]["index"] === currentIndex+1) {
-            if(i+1 < current_tour_targets.length) {
-                if(!current_tour_targets[i+1]["helpObject"]) {
-                    //Loading currentIndex+1 is advance
-                    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
-                    tourStop.index = current_tour_targets[i+1]["index"]
-                    tourStop.description = current_tour_targets[i+1]["description"]
-                    current_tour_targets[i+1]["helpObject"] = tourStop
-                }
-            }
+
             refreshView(i)
             current_tour_targets[i]["helpObject"].visible = true
             internal_tour_index = i
             utility.internal_tour_indexChanged(i)
+
         }
+        else if(current_tour_targets[i]["index"] === currentIndex+2) {
+            if(!current_tour_targets[i]["helpObject"]) {
+                //Loading currentIndex+1 is advance
+                let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+                tourStop.index = current_tour_targets[i]["index"]
+                tourStop.description = current_tour_targets[i]["description"]
+                current_tour_targets[i]["helpObject"] = tourStop
+            }
+
+        }
+
     }
 }
 
