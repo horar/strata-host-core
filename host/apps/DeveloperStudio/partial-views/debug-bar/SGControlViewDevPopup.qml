@@ -168,6 +168,8 @@ Window {
         let obj = sdsModel.resourceLoader.createViewObject(qml_control, root.controlViewDevContainer);
         if (obj === null) {
             console.error("Could not load view.")
+            let error_str = sdsModel.resourceLoader.getLastLoggedError()
+            sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, root.controlViewDevContainer, {"error_message": error_str});
         }
     }
 }
