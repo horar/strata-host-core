@@ -33,7 +33,7 @@ SGStrataPopup {
             }
             SGCheckBox{
                 id: autoOpen
-                text: "open platform view automatically"
+                text: "Open platform view automatically"
                 checked: NavigationControl.userSettings.autoOpenView
                 leftPadding: 0
             }

@@ -360,13 +360,11 @@ Rectangle {
     function loadUserSettings() {
         NavigationControl.userSettings = sgUserSettings
         const settings = NavigationControl.userSettings.readFile("settings.json")
-        NavigationControl.userSettings.autoOpenView = settings.autoOpenView
-        NavigationControl.userSettings.switchToActive = settings.switchToActive
-        NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
-        if(settings.selectedDistributionPortal){
+        if(settings.hasOwnProperty("autoOpenView")){
+            NavigationControl.userSettings.autoOpenView = settings.autoOpenView
+            NavigationControl.userSettings.switchToActive = settings.switchToActive
+            NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
             NavigationControl.userSettings.selectedDistributionPortal = settings.selectedDistributionPortal
-        } else {
-            NavigationControl.userSettings.selectedDistributionPortal = 0
         }
     }
 }
