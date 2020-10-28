@@ -65,7 +65,6 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
         tourTargetList[0] = tourTargetIndex0
         return
     }
-
     // otherwise append as new target
     tourTargetList.push(tourTarget)
 }
@@ -152,9 +151,7 @@ function startHelpTour(tourName, device_id) {
 }
 
 function next(currentIndex) {
-
     for (let i = 0; i < current_tour_targets.length; i++){
-        console.info(i,current_tour_targets[i]["index"],currentIndex)
         if (current_tour_targets[i]["index"] === currentIndex) {
             current_tour_targets[i]["helpObject"].visible = false
             if (current_tour_targets[i]["index"] === tour_count - 1) { //if last, end tour
