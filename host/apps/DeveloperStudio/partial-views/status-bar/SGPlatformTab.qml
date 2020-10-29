@@ -45,12 +45,16 @@ Item {
                     "device_id": platformTabRoot.device_id
                 }
                 PlatformSelection.closePlatformView(data)
+
                 NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)  // must call last - model entry/delegate begins destruction
+                return
             } else {
                 model.view = selection.view
                 setSelectedButton()
             }
         }
+
+        bringIntoView()
     }
 
     function bringIntoView() {
@@ -208,7 +212,6 @@ Item {
             signal clicked(int index)
 
             onClicked: {
-                platformTabRoot.bringIntoView()
                 platformTabRoot.menuClicked(index)
             }
 
