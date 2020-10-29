@@ -101,6 +101,7 @@ Window {
         Button {
             id: recompileButton
             text: "Recompile QRC file"
+            enabled: root.qrcFilePath !== ""
 
             MouseArea {
                 anchors.fill: parent
@@ -127,6 +128,7 @@ Window {
         Button {
             id: controlViewDisplayButton
             text: root.controlViewVisible ? "Disable Control View display" : "Enable Control View display"
+            enabled: root.qrcFilePath !== ""
 
             MouseArea {
                 anchors.fill: parent
