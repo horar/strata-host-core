@@ -9,10 +9,10 @@ import QtQml 2.12
 SGMainWindow {
     id:  window
     title: qsTr("Platform Interface Generator")
-    height: 600
-    width: 800
-    minimumHeight: 600
-    minimumWidth: 800
+    height: 400
+    width: 600
+    minimumHeight: 400
+    minimumWidth: 600
 
     visible: true
 
