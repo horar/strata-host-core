@@ -48,6 +48,11 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     let tourTargetList = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
     let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": null}
 
+    if (index === 0) {
+        // On registration, pre-load first helpObject before tour is opened
+        createHelpObject(tourTarget)
+    }
+
     for (let i=0; i<tourTargetList.length; i++) {
         if (tourTargetList[i].index === index) {
             // update tourTarget if it already exists (occurs when same platform disconnected and reconnected - must update object references)
@@ -56,15 +61,6 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
         }
     }
 
-    //loading index 0 when index 0 is registered originally
-    if(index === 0) {
-        let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
-        tourStop.index = index
-        tourStop.description = targetDescription
-        let tourTargetIndex0 = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": tourStop}
-        tourTargetList[0] = tourTargetIndex0
-        return
-    }
     // otherwise append as new target
     tourTargetList.push(tourTarget)
 }
@@ -136,12 +132,10 @@ function startHelpTour(tourName, device_id) {
         if (font_size_multiplier !== 1) {
             tour_target.helpObject.fontSizeMultiplier = font_size_multiplier
         }
-        if(tour_target.index === 1) {
-            if(!current_tour_targets[i]["helpObject"]) {
-                let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
-                tourStop.index = current_tour_targets[i]["index"]
-                tourStop.description = current_tour_targets[i]["description"]
-                current_tour_targets[i]["helpObject"] = tourStop
+        if (tour_target.index === 1) {
+            // Pre-load second helpObject if not loaded already
+            if (tour_target.helpObject === null) {
+                createHelpObject(tour_target)
             }
         }
     }
@@ -165,13 +159,10 @@ function next(currentIndex) {
             current_tour_targets[i]["helpObject"].visible = true
             internal_tour_index = i
             utility.internal_tour_indexChanged(i)
-        }
-        else if(current_tour_targets[i]["index"] === currentIndex+2) {
-            if(!current_tour_targets[i]["helpObject"]) {
-                let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
-                tourStop.index = current_tour_targets[i]["index"]
-                tourStop.description = current_tour_targets[i]["description"]
-                current_tour_targets[i]["helpObject"] = tourStop
+        } else if (current_tour_targets[i]["index"] === currentIndex+2) {
+            // Pre-load index+2 helpObject if not loaded already
+            if (!current_tour_targets[i]["helpObject"]) {
+                createHelpObject(current_tour_targets[i])
             }
         }
     }
@@ -245,4 +236,11 @@ function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
     } else {
         views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].font_size_multiplier = fontSizeMultiplier
     }
+}
+
+function createHelpObject(tourTarget) {
+    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+    tourStop.index = tourTarget.index
+    tourStop.description = tourTarget.description
+    tourTarget.helpObject = tourStop
 }
