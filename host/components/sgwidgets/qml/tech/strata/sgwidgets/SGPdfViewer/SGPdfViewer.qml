@@ -3,11 +3,25 @@ import QtQuick.Controls 2.12
 import QtWebEngine 1.6
 import QtGraphicalEffects 1.12
 
-Item {
+Rectangle {
     id: root
+    color: "#191919" // color of PDF.js background
+
     property string url: "datasheet-unavailable"
 
     signal error()
+
+    Text {
+        id: progress
+        color: "#3f3f3f"
+        anchors {
+            centerIn: parent
+        }
+        text: "Loading PDF Viewer<br>" + webEngine.loadProgress + "%"
+        font.pixelSize: 20
+        horizontalAlignment: Text.AlignHCenter
+        visible: webEngine.loadProgress !== 100
+    }
 
     WebEngineView {
         id: webEngine
@@ -34,42 +48,6 @@ Item {
             }
             onDownloadFinished: {
                 console.log("download finished")
-            }
-        }
-
-        Rectangle {
-            id: barContainer
-            color: "white"
-            anchors {
-                centerIn: webEngine
-            }
-            width: progressBar.width + 40
-            height: progressBar.height + 60
-            z: webEngine.z+1
-            visible: progressBar.visible
-
-            ProgressBar {
-                id: progressBar
-                anchors {
-                    centerIn: barContainer
-                    verticalCenterOffset: 10
-                }
-                height: 10
-                width: webEngine.width/2
-                z: webEngine.z + 2
-                visible: value !== 100
-                from: 0
-                to: 100
-                value: webEngine.loadProgress
-
-                Text {
-                    text: "Loading PDF Viewer..."
-                    anchors {
-                        bottom: progressBar.top
-                        bottomMargin: 10
-                        horizontalCenter: progressBar.horizontalCenter
-                    }
-                }
             }
         }
 
@@ -139,7 +117,7 @@ Item {
                 fill: parent
             }
             z: 20
-            visible: !webEngine.enabled && !progressBar.visible && !notAvailableCoverUp.visible
+            visible: !webEngine.enabled && !progress.visible && !notAvailableCoverUp.visible
         }
 
         Text {

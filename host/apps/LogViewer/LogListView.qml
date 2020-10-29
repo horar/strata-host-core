@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
@@ -25,14 +26,12 @@ Item {
     property bool messageWrapEnabled: true
     property bool searchTagShown: false
     property var highlightColor
-    property int requestedWidth: 1
     property alias contentX: logListView.contentX
+    property alias contentY: logListView.contentY
     property int animationDuration: 500
     property bool automaticScroll: true
     property bool timestampSimpleFormat: false
-
-    signal newWidthRequested()
-    signal currentItemChanged(int index)
+    property int indexOfVisibleItem: logListView.indexAt(contentX, contentY) //Returns the index of the visible item containing the point x, y in content coordinates.
 
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)
@@ -40,10 +39,6 @@ Item {
 
     function positionViewAtEnd() {
         logListView.positionViewAtEnd();
-    }
-
-    function resetRequestedWith() {
-        requestedWidth = 0
     }
 
     //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
@@ -54,7 +49,7 @@ Item {
     }
 
     TextMetrics {
-        id: textMetricsTsTime
+        id: textMetricsTsSimpleTime
         font: timestampHeaderText.font
         text: "99:99.99.999"
     }
@@ -78,18 +73,42 @@ Item {
     }
 
     TextMetrics {
-        id: textMetricsSidePanel
+        id: textMetricsTsMinimum
         font: timestampHeaderText.font
         text: "Timestamp"
+    }
+
+    TextMetrics {
+        id: textMetricsPidMinimum
+        font: timestampHeaderText.font
+        text: "PID  "
+    }
+
+    TextMetrics {
+        id: textMetricsTidMinimum
+        font: timestampHeaderText.font
+        text: "TID  "
+    }
+
+    TextMetrics {
+        id: textMetricsLevelMinimum
+        font: timestampHeaderText.font
+        text: "Level"
+    }
+
+    TextMetrics {
+        id: textMetricsMsgMinimum
+        font: timestampHeaderText.font
+        text: "Message"
     }
 
     Item {
         id: header
         anchors.top: parent.top
-        width: if (logListView.contentWidth < logListView.width) {
-                   return logListView.width
-               } else {
+        width: if (logListView.contentWidth > root.width) {
                    return logListView.contentWidth
+               } else {
+                   return root.width
                }
         height: headerContent.height + 8
         x: -logViewWrapper.contentX
@@ -107,21 +126,28 @@ Item {
             color: "lightgray"
         }
 
-        Row {
+        RowLayout {
             id: headerContent
-            anchors {
-                verticalCenter: parent.verticalCenter
-            }
             height: messageHeaderText.contentHeight
-            leftPadding: handleSpacer
             spacing: 8
 
             Item {
                 id: tsHeader
-                anchors.verticalCenter: parent.verticalCenter
-                height: timestampHeaderText.contentHeight + cellHeightSpacer
-                width: timestampSimpleFormat ? textMetricsTsTime.boundingRect.width + cellWidthSpacer : textMetricsTs.boundingRect.width + cellWidthSpacer
+                Layout.preferredHeight: timestampHeaderText.contentHeight + cellHeightSpacer
+                Layout.preferredWidth: timestampSimpleFormat ? textMetricsTsSimpleTime.boundingRect.width + cellWidthSpacer : textMetricsTs.boundingRect.width + cellWidthSpacer
+                Layout.minimumWidth: textMetricsTsMinimum.boundingRect.width
+                Layout.maximumWidth: logListView.width/2
+                Layout.leftMargin: handleSpacer
+                Layout.fillWidth: true
+
                 visible: timestampColumnVisible
+                clip: true
+
+                onWidthChanged: {
+                    if (tsDivider.mouseArea.onPressed) {
+                        Layout.preferredWidth = width
+                    }
+                }
 
                 SGWidgets.SGText {
                     id: timestampHeaderText
@@ -131,19 +157,37 @@ Item {
                     }
                     font.family: "monospace"
                     text: qsTr("Timestamp")
+                    elide: Text.ElideRight
                 }
             }
 
             Divider {
+                id: tsDivider
+                Layout.fillHeight: true
                 visible: timestampColumnVisible
+                clickable: true
+
+                mouseArea.onMouseXChanged: {
+                    tsHeader.width = tsHeader.width + mouseX
+                }
             }
 
             Item {
                 id: pidHeader
-                anchors.verticalCenter: parent.verticalCenter
-                height: pidHeaderText.contentHeight + cellHeightSpacer
-                width: textMetricsPid.boundingRect.width + cellWidthSpacer
+                Layout.preferredHeight: pidHeaderText.contentHeight + cellHeightSpacer
+                Layout.preferredWidth: textMetricsPid.boundingRect.width + cellWidthSpacer
+                Layout.minimumWidth: textMetricsPidMinimum.boundingRect.width
+                Layout.maximumWidth: logListView.width/4
+                Layout.fillWidth: true
+
                 visible: pidColumnVisible
+                clip: true
+
+                onWidthChanged: {
+                    if (pidDivider.mouseArea.onPressed) {
+                        Layout.preferredWidth = width
+                    }
+                }
 
                 SGWidgets.SGText {
                     id: pidHeaderText
@@ -152,20 +196,38 @@ Item {
                         verticalCenter: parent.verticalCenter
                     }
                     font.family: "monospace"
+                    elide: Text.ElideRight
                     text: qsTr("PID")
                 }
             }
 
             Divider {
+                id: pidDivider
+                Layout.fillHeight: true
                 visible: pidColumnVisible
+                clickable: true
+
+                mouseArea.onMouseXChanged: {
+                    pidHeader.width = pidHeader.width + mouseX
+                }
             }
 
             Item {
                 id: tidHeader
-                anchors.verticalCenter: parent.verticalCenter
-                height: tidHeaderText.contentHeight + cellHeightSpacer
-                width: textMetricsTid.boundingRect.width + cellWidthSpacer
+                Layout.preferredHeight: tidHeaderText.contentHeight + cellHeightSpacer
+                Layout.preferredWidth: textMetricsTid.boundingRect.width + cellWidthSpacer
+                Layout.minimumWidth: textMetricsTidMinimum.boundingRect.width
+                Layout.maximumWidth: logListView.width/4
+                Layout.fillWidth: true
+
                 visible: tidColumnVisible
+                clip: true
+
+                onWidthChanged: {
+                    if (tidDivider.mouseArea.onPressed) {
+                        Layout.preferredWidth = width
+                    }
+                }
 
                 SGWidgets.SGText {
                     id: tidHeaderText
@@ -174,26 +236,44 @@ Item {
                         verticalCenter: parent.verticalCenter
                     }
                     font.family: "monospace"
+                    elide: Text.ElideRight
                     text: qsTr("TID")
                 }
             }
 
             Divider {
+                id: tidDivider
+                Layout.fillHeight: true
                 visible: tidColumnVisible
+                clickable: true
+
+                mouseArea.onMouseXChanged: {
+                    tidHeader.width = tidHeader.width + mouseX
+                }
             }
 
             Item {
                 id: levelHeader
-                anchors.verticalCenter: parent.verticalCenter
-                height: levelHeaderText.contentHeight + cellHeightSpacer
-                width: textMetricsLevelTag.boundingRect.width + cellWidthSpacer
+                Layout.preferredHeight: levelHeaderText.contentHeight + cellHeightSpacer
+                Layout.preferredWidth: textMetricsLevelTag.boundingRect.width + cellWidthSpacer
+                Layout.minimumWidth: textMetricsLevelMinimum.boundingRect.width
+                Layout.maximumWidth: logListView.width/4
+                Layout.fillWidth: true
+
                 visible: levelColumnVisible
+                clip: true
+
+                onWidthChanged: {
+                    if (levelDivider.mouseArea.onPressed) {
+                        Layout.preferredWidth = width
+                    }
+                }
 
                 SGWidgets.SGText {
                     id: levelHeaderText
                     anchors {
                         left: levelHeader.left
-                        centerIn: parent
+                        verticalCenter: parent.verticalCenter
                     }
                     font.family: "monospace"
                     text: qsTr("Level")
@@ -201,15 +281,31 @@ Item {
             }
 
             Divider {
+                id: levelDivider
+                Layout.fillHeight: true
                 visible: levelColumnVisible
+                clickable: true
+
+                mouseArea.onMouseXChanged: {
+                    levelHeader.width = levelHeader.width + mouseX
+                }
             }
 
             Item {
                 id: msgHeader
-                anchors.verticalCenter: parent.verticalCenter
-                height: messageHeaderText.contentHeight + cellHeightSpacer
-                width: messageHeaderText.contentWidth + cellWidthSpacer
+                Layout.preferredHeight: messageHeaderText.contentHeight + cellHeightSpacer
+                Layout.preferredWidth: root.width
+                Layout.minimumWidth: textMetricsMsgMinimum.boundingRect.width
+                Layout.fillWidth: true
+
                 visible: messageColumnVisible
+                clip: true
+
+                onWidthChanged: {
+                    if (msgDivider.mouseArea.onPressed) {
+                        Layout.preferredWidth = width
+                    }
+                }
 
                 SGWidgets.SGText {
                     id: messageHeaderText
@@ -222,19 +318,20 @@ Item {
 
                     onFontInfoChanged: {
                         logViewWrapper.contentX = 0
-                        requestNewWidthTimer.start()
                     }
                 }
             }
-        }
-    }
 
-    Timer {
-        id: requestNewWidthTimer
-        interval: 100
-        onTriggered: {
-            requestedWidth = 1
-            newWidthRequested()
+            Divider {
+                id: msgDivider
+                Layout.fillHeight: true
+                visible: messageColumnVisible
+                clickable: true
+
+                mouseArea.onMouseXChanged: {
+                    msgHeader.width = msgHeader.width + mouseX
+                }
+            }
         }
     }
 
@@ -255,7 +352,6 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        contentWidth: messageWrapEnabled ? parent.width : requestedWidth
         flickableDirection: Flickable.HorizontalAndVerticalFlick
         boundsMovement: Flickable.StopAtBounds
         boundsBehavior: Flickable.DragAndOvershootBounds
@@ -269,7 +365,7 @@ Item {
         }
 
         ScrollBar.horizontal: ScrollBar {
-            visible: !messageWrapEnabled
+            id: horizontalScrollbar
             minimumSize: 0.1
             policy: ScrollBar.AsNeeded
         }
@@ -287,24 +383,11 @@ Item {
             width: row.width
             height: row.height
 
-            function setRequestedWidth() {
-                if (delegate.width > requestedWidth) {
-                    requestedWidth = delegate.width
-                }
-            }
-
             onWidthChanged: {
-                setRequestedWidth()
+                logListView.contentWidth = delegate.width + 10
             }
 
-            Connections {
-                target: logViewWrapper
-                onNewWidthRequested: {
-                    setRequestedWidth()
-                }
-            }
-
-            ListView.onCurrentItemChanged : {
+            ListView.onCurrentItemChanged: {
                 if (ListView.isCurrentItem && startAnimation) {
                     cellAnimation.start()
                 } else {
@@ -356,8 +439,8 @@ Item {
             Rectangle {
                 id: cell
                 height: parent.height
-                width: if (requestedWidth > root.width) {
-                           return requestedWidth
+                width: if (logListView.contentWidth > root.width) {
+                           return logListView.contentWidth
                        } else {
                            return root.width
                        }
@@ -380,8 +463,7 @@ Item {
                     anchors.fill: parent
                     onPressed:  {
                         logViewWrapper.forceActiveFocus()
-                        logListView.currentIndex = index
-                        currentItemChanged(index)
+                        currentIndex = index
                     }
                 }
             }
@@ -408,6 +490,8 @@ Item {
                         }
                     }
                     visible: timestampColumnVisible
+                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
                 }
 
                 SGWidgets.SGText {
@@ -417,6 +501,8 @@ Item {
                     font.family: "monospace"
                     text: visible ? model.pid : ""
                     visible: pidColumnVisible
+                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
                 }
 
                 SGWidgets.SGText {
@@ -426,68 +512,81 @@ Item {
                     font.family: "monospace"
                     text: visible ? model.tid : ""
                     visible: tidColumnVisible
+                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
                 }
 
-                Rectangle {
-                    id: levelTag
-                    anchors.top: parent.top
-                    anchors.topMargin: 1
-                    height: level.height - 2
+                SGWidgets.SGText {
+                    id: level
                     width: levelHeader.width
-                    radius: 4
-                    z: -1
+                    leftPadding: 2
+                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                    visible: levelColumnVisible
                     color: {
-                        if (model.level === LogViewModels.LogModel.LevelWarning) {
-                            return SGWidgets.SGColorsJS.WARNING_COLOR
-                        }
-                        if (model.level === LogViewModels.LogModel.LevelError) {
-                            return SGWidgets.SGColorsJS.ERROR_COLOR
+                        if (delegate.ListView.isCurrentItem
+                                || (model.level === LogViewModels.LogModel.LevelWarning
+                                    || model.level === LogViewModels.LogModel.LevelError)) {
+                            return "white"
                         } else {
-                            return cell.color
+                            return "black"
                         }
                     }
-                    visible: levelColumnVisible
+                    font.family: "monospace"
+                    text: {
+                        if (visible) {
+                            switch (model.level) {
+                            case LogViewModels.LogModel.LevelDebug:
+                                return "DEBUG"
+                            case LogViewModels.LogModel.LevelInfo:
+                                return "INFO"
+                            case LogViewModels.LogModel.LevelWarning:
+                                return "WARN"
+                            case LogViewModels.LogModel.LevelError:
+                                return "ERROR"
+                            }
+                            return ""
+                        } else {
+                            return ""
+                        }
+                    }
 
-                    SGWidgets.SGText {
-                        id: level
-                        anchors.centerIn: parent
+                    TextMetrics {
+                        id: textMetricsLevel
+                        font: level.font
+                        text: level.text
+                    }
+
+                    Rectangle {
+                        id: levelTag
+                        anchors.top: parent.top
+                        anchors.topMargin: 1
+                        height: level.height - 2
+                        width: levelHeader.width < textMetricsLevel.boundingRect.width + 5 ? parent.width : textMetricsLevel.boundingRect.width + 5
+                        radius: 4
+                        z: -1
                         color: {
-                            if (delegate.ListView.isCurrentItem
-                                    || (model.level === LogViewModels.LogModel.LevelWarning
-                                        || model.level === LogViewModels.LogModel.LevelError)) {
-                                return "white"
+                            if (model.level === LogViewModels.LogModel.LevelWarning) {
+                                return SGWidgets.SGColorsJS.WARNING_COLOR
+                            }
+                            if (model.level === LogViewModels.LogModel.LevelError) {
+                                return SGWidgets.SGColorsJS.ERROR_COLOR
                             } else {
-                                return "black"
+                                return cell.color
                             }
                         }
-                        font.family: "monospace"
-                        text: {
-                            if (visible) {
-                                switch (model.level) {
-                                case LogViewModels.LogModel.LevelDebug:
-                                    return "DEBUG"
-                                case LogViewModels.LogModel.LevelInfo:
-                                    return "INFO"
-                                case LogViewModels.LogModel.LevelWarning:
-                                    return "WARN"
-                                case LogViewModels.LogModel.LevelError:
-                                    return "ERROR"
-                                }
-                                return ""
-                            } else {
-                                return ""
-                            }
-                        }
+                        clip: true
                     }
                 }
 
                 SGWidgets.SGText {
                     id: msg
-                    width: messageWrapEnabled ? (logListView.width - msg.x) : msg.contentWidth
+                    width: msgHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
                     font.family: "monospace"
                     text: visible ? model.message : ""
                     visible: messageColumnVisible
+                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
                     wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
                 }
             }
@@ -497,22 +596,32 @@ Item {
     Keys.onPressed: {
         if (event.key === Qt.Key_Up && currentIndex > 0){
             currentIndex = currentIndex - 1
-            currentItemChanged(currentIndex)
         } else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
             currentIndex = currentIndex + 1
-            currentItemChanged(currentIndex)
         }
         else if (event.key === Qt.Key_Left) {
-            logListView.contentX = logListView.contentX - logListView.width
+            contentX = contentX - logListView.width
         }
         else if (event.key === Qt.Key_Right) {
-            logListView.contentX = logListView.contentX + logListView.width
+            contentX = contentX + logListView.width
         }
         else if (event.key === Qt.Key_PageDown) {
-            logListView.contentY = logListView.contentY + logListView.height
+            contentY = contentY + logListView.height
+
+            if (currentIndex < indexOfVisibleItem) {
+                currentIndex = indexOfVisibleItem
+            } else {
+                currentIndex = logListView.count - 1
+            }
         }
         else if (event.key === Qt.Key_PageUp) {
-            logListView.contentY = logListView.contentY - logListView.height
+            contentY = contentY - logListView.height
+
+            if ((currentIndex > indexOfVisibleItem) && (indexOfVisibleItem > 0)) {
+                currentIndex = indexOfVisibleItem
+            } else {
+                currentIndex = 0
+            }
         }
         else if (event.key === Qt.Key_Home) {
             logListView.positionViewAtBeginning()

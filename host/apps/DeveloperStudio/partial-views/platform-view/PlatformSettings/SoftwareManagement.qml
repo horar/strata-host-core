@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.logger 1.0 as Logger
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -69,21 +70,28 @@ ColumnLayout {
     function matchVersion() {
         // when the active view is this view, then match the version
         if (platformStack.currentIndex === settingsContainer.stackIndex) {
-            let activeIdx = platformStack.controlViewContainer.controlViewList.getInstalledVersion()
+            let installedVersion = controlViewContainer.getInstalledVersion(NavigationControl.context.user_id);
 
-            if (activeIdx >= 0) {
-                activeVersion = platformStack.controlViewContainer.controlViewList.get(activeIdx)
-                upToDate = isUpToDate()
-                return
+            if (installedVersion) {
+                activeVersion = {
+                    "version": installedVersion.version
+                }
+                upToDate = isUpToDate();
+                return;
+            } else {
+                const activeIdx = controlViewContainer.controlViewList.getInstalledVersion()
+
+                if (activeIdx >= 0) {
+                    activeVersion = platformStack.controlViewContainer.controlViewList.get(activeIdx)
+                } else {
+                    // Using a local view, so set the active version to the git tagged version
+                    activeVersion = {
+                        "version": sdsModel.resourceLoader.getGitTaggedVersion(platformStack.class_id)
+                    }
+                }
             }
-
-            upToDate = false
-            let latestVersionIdx = platformStack.controlViewContainer.controlViewList.getLatestVersion();
-            latestVersion = platformStack.controlViewContainer.controlViewList.get(latestVersionIdx);
-
-            if (objectIsEmpty(latestVersion)) {
-                console.error("Could not find any control views on server for class id:", platformStack.class_id)
-            }
+            
+            upToDate = isUpToDate();
         }
     }
 
@@ -92,15 +100,17 @@ ColumnLayout {
     }
 
     function isUpToDate() {
-        for (let i = 0; i < platformStack.controlViewContainer.controlViewListCount; i++) {
-            let version = platformStack.controlViewContainer.controlViewList.version(i)
-            if (version !== activeVersion.version && SGVersionUtils.greaterThan(version, activeVersion.version)) {
-                // if the version is greater, then set the latestVersion here
-                latestVersion = platformStack.controlViewContainer.controlViewList.get(i);
-                return false;
-            }
+        const latestVersionIdx = platformStack.controlViewContainer.controlViewList.getLatestVersion();
+        latestVersion = platformStack.controlViewContainer.controlViewList.get(latestVersionIdx);
+
+        if (objectIsEmpty(latestVersion)) {
+            console.warn(Logger.devStudioCategory, "Could not find any control views on server for class id:", platformStack.class_id)
+            return true;
         }
-        latestVersion = activeVersion;
+
+        if (SGVersionUtils.greaterThan(latestVersion.version, activeVersion.version)) {
+            return false;
+        }
         return true;
     }
 
@@ -126,11 +136,7 @@ ColumnLayout {
 
     Text {
         text: {
-            if (platformStack.controlViewContainer.usingStaticView) {
-                return "Original version installed";
-            }
-
-            if (activeVersion !== null) {
+            if (activeVersion !== null && activeVersion.version !== "") {
                 return activeVersion.version;
             } else {
                 return "Not installed";

@@ -83,30 +83,37 @@ Module {
             values: {
                 "PROCESS_NO_PROCESS": 0,
                 "PROCESS_CHECK_CONNECTION": 1,
-                "PROCESS_FLASH": 2
+                "PROCESS_PROGRAM": 2
             }
         }
         Property { name: "exePath"; type: "string" }
+        Property { name: "eraseBeforeProgram"; type: "bool" }
+        Property { name: "device"; type: "string" }
+        Property { name: "speed"; type: "int" }
+        Property { name: "startAddress"; type: "int" }
         Signal {
             name: "checkConnectionProcessFinished"
             Parameter { name: "exitedNormally"; type: "bool" }
             Parameter { name: "connected"; type: "bool" }
         }
         Signal {
-            name: "flashBoardProcessFinished"
+            name: "programBoardProcessFinished"
             Parameter { name: "exitedNormally"; type: "bool" }
         }
         Method { name: "checkConnectionRequested"; type: "bool" }
         Method {
-            name: "flashBoardRequested"
+            name: "programBoardRequested"
             type: "bool"
             Parameter { name: "binaryPath"; type: "string" }
-            Parameter { name: "eraseFirst"; type: "bool" }
         }
         Method {
-            name: "flashBoardRequested"
+            name: "programBoardRequested"
             type: "bool"
             Parameter { name: "binaryPath"; type: "string" }
+            Parameter { name: "eraseBeforeProgram"; type: "bool" }
+            Parameter { name: "device"; type: "string" }
+            Parameter { name: "speed"; type: "int" }
+            Parameter { name: "startAddress"; type: "int" }
         }
     }
     Component {
@@ -376,6 +383,24 @@ Module {
             name: "formatDateTimeWithOffsetFromUtc"
             type: "string"
             Parameter { name: "dateTime"; type: "QDateTime" }
+        }
+        Method { name: "generateUuid"; type: "string" }
+        Method {
+            name: "validateJson"
+            type: "bool"
+            Parameter { name: "json"; type: "QByteArray" }
+            Parameter { name: "schema"; type: "QByteArray" }
+        }
+        Method {
+            name: "toHex"
+            type: "string"
+            Parameter { name: "number"; type: "qlonglong" }
+            Parameter { name: "width"; type: "int" }
+        }
+        Method {
+            name: "toHex"
+            type: "string"
+            Parameter { name: "number"; type: "qlonglong" }
         }
     }
 }

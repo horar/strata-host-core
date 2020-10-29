@@ -9,6 +9,12 @@
 #include <QDir>
 #include <QDateTime>
 #include <cmath>
+#include <QUuid>
+
+#include <rapidjson/schema.h>
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/error/en.h>
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
     : QObject(parent),
@@ -138,4 +144,66 @@ QString SGUtilsCpp::formattedDataSize(qint64 bytes, int precision)
 QString SGUtilsCpp::formatDateTimeWithOffsetFromUtc(const QDateTime &dateTime, const QString &format)
 {
     return dateTime.toOffsetFromUtc(dateTime.offsetFromUtc()).toString(format);
+}
+
+QString SGUtilsCpp::generateUuid()
+{
+    return QUuid::createUuid().toString(QUuid::WithoutBraces);
+}
+
+bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
+{
+    //parse json
+    rapidjson::Document jsonDoc;
+    rapidjson::ParseResult result = jsonDoc.Parse(json.data());
+    if (result.IsError()) {
+        qCCritical(logCategoryUtils).nospace().noquote()
+                << "Json is not valid: " << endl << json;
+
+        qCCritical(logCategoryUtils).nospace().noquote()
+                << "JSON parse error at offset " << result.Offset()
+                << ": " << rapidjson::GetParseError_En(result.Code());
+
+        return false;
+    }
+
+    //parse schema
+    rapidjson::Document schemaDoc;
+    result = schemaDoc.Parse(schema.data());
+    if (result.IsError()) {
+        qCCritical(logCategoryUtils).nospace().noquote()
+                << "Schema is not valid: " << endl << schema;
+
+        qCCritical(logCategoryUtils).nospace().noquote()
+                << "JSON parse error at offset " << result.Offset()
+                << ": " << rapidjson::GetParseError_En(result.Code());
+
+        return false;
+    }
+
+    //validate
+    rapidjson::SchemaDocument schemaDocument(schemaDoc);
+    rapidjson::SchemaValidator validator(schemaDocument);
+    if (jsonDoc.Accept(validator) == false) {
+        rapidjson::StringBuffer buffer;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+
+        jsonDoc.Accept(writer);
+
+        buffer.Clear();
+        writer.Reset(buffer);
+        validator.GetError().Accept(writer);
+
+        qCDebug(logCategoryUtils).nospace().noquote() << "json: " << json;
+        qCCritical(logCategoryUtils).nospace().noquote() << "validate error: " << buffer.GetString();
+
+        return false;
+    }
+
+    return true;
+}
+
+QString SGUtilsCpp::toHex(qint64 number, int width)
+{
+    return QStringLiteral("0x") + QString::number(number, 16).rightJustified(width, '0');
 }

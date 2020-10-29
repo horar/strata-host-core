@@ -237,6 +237,7 @@ Item {
                         username:emailField.text,
                         password:passwordField.text
                     }
+                    registrationStatus.currentId = Registration.getNextId()
                     Registration.register(register_info)
                 }
 
@@ -313,8 +314,6 @@ Item {
         visible: !fieldGrid.visible
         anchors.centerIn: parent
     }
-
-
 
     Connections {
         target: Signals

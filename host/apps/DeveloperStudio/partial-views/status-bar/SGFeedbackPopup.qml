@@ -303,6 +303,7 @@ SGStrataPopup {
 
                         onClicked: {
                             var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text, type: feedbackTypeListView.currentItem.typeValue }
+                            feedbackStatus.currentId = Feedback.getNextId()
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
                         }

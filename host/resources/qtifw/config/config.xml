@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
     <Name>Strata</Name>
-    <Version>0.0.1-1</Version>
+    <Version>1.0.0-1</Version>
     <Title>ON Semiconductor: Strata</Title>
     <Publisher>ON Semiconductor Slovakia, a.s.</Publisher>
     <ProductUrl>https://www.onsemi.com/strata</ProductUrl>
@@ -13,10 +13,10 @@
     <WizardDefaultWidth>840</WizardDefaultWidth>
     <WizardDefaultHeight>480</WizardDefaultHeight>
     <StartMenuDir>ON Semiconductor</StartMenuDir>
-    <TargetDir>@HomeDir@/ON Semiconductor/Strata</TargetDir>
+    <TargetDir>@ApplicationsDirX64@/ON Semiconductor/Strata</TargetDir>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
-    <RemoveTargetDir>false</RemoveTargetDir>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
-    <CreateLocalRepository>false</CreateLocalRepository>
     <InstallActionColumnVisible>true</InstallActionColumnVisible>
+    <DisableAuthorizationFallback>true</DisableAuthorizationFallback>
+    <ControlScript>installscript.qs</ControlScript>
 </Installer>
