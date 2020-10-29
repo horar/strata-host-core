@@ -1194,7 +1194,7 @@ ColumnLayout {
 
                                                     property var status_os_alert: platformInterface.status_os_alert.os_alert
                                                     onStatus_os_alertChanged: {
-                                                        if(osALERT === true)
+                                                        if(status_os_alert === true)
                                                             osALERT.status = SGStatusLight.Red
                                                         else  osALERT.status = SGStatusLight.Off
                                                     }
