@@ -358,9 +358,12 @@ function updateState(event, data)
                 // if in-view tab is closing, focus on tab to left. otherwise, close out-of-view tab and stay on present tab
                 if (stack_container_.currentIndex === l + 1 && l !== 1) {
                     updateState(events.SWITCH_VIEW_EVENT, {"index": l}) // focus on tab to left
-                } else {
+                } else if(stack_container_.currentIndex !== 0 && l !== 1) {
                     updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1}) // adjust to stay on current tab
+                } else {
+                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex })
                 }
+
                 break;
 
             case events.SWITCH_VIEW_EVENT:
@@ -383,7 +386,7 @@ function updateState(event, data)
 }
 
 function firmwareUpdate() {
-    if(userSettings.hasOwnProperty("notifyOnFirmwareUpdate")) {
+    if(userSettings.notifyOnFirmwareUpdate !== undefined) {
         if(userSettings.notifyOnFirmwareUpdate && firmwareIsOutOfDate) {
             return true
         } else {

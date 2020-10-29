@@ -55,23 +55,21 @@ SGStrataPopup {
                 }
             }
 
-            // to be uncommented in CS-880
-//            SGText {
-//                text: "Firmware Settings"
-//                fontSizeMultiplier: 1.3
-//            }
 
-//            SGCheckBox {
-//                id: firmwareUpdates
-//                text: "Notify me when firmware and view updates are available"
-//                checked: userSettings.notifyOnFirmwareUpdate
-//                leftPadding: 0
+            SGText {
+                text: "Firmware Settings"
+                fontSizeMultiplier: 1.3
+            }
 
-//                onCheckedChanged: {
-//                    userSettings.notifyOnFirmwareUpdate = checked
-//                    userSettings.saveSettings()
-//                }
-//            }
+            SGSettingsCheckbox {
+                text: "Notify me when firmware version updates"
+                checked: userSettings.notifyOnFirmwareUpdate
+
+                onCheckedChanged: {
+                    userSettings.notifyOnFirmwareUpdate = checked
+                    userSettings.saveSettings()
+                }
+            }
 
 //            SGCheckBox {
 //                text: "Preload firmware versions"
