@@ -186,7 +186,6 @@ Row {
         }
     }
 
-
     Component.onCompleted: {
         // This is needed to create the model
         loadModel();
@@ -202,19 +201,14 @@ Row {
     function setIndex(index) {
         providerUrl = sgBaseRepeater.model.get(index).url
         providerName = sgBaseRepeater.model.get(index).name
-        saveUserSettings(index)
-
+        NavigationControl.userSettings.selectedDistributionPortal = index
+        NavigationControl.userSettings.saveSettings()
     }
 
     function loadModel(){
         providers.forEach(function (child){
             sgBaseRepeater.model.append(child)
         })
-    }
-
-    function saveUserSettings(index) {
-        NavigationControl.userSettings.selectedDistributionPortal = index
-        NavigationControl.userSettings.saveSettings()
     }
 
     TextMetrics {

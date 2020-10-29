@@ -94,6 +94,7 @@
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
         <file>partial-views/general/SGNotificationToast.qml</file>
-        <file>partial-views/SGSettingsPopup.qml</file>
+        <file>partial-views/status-bar/SGSettingsPopup.qml</file>
+        <file>partial-views/status-bar/SGSettingsCheckbox.qml</file>
     </qresource>
 </RCC>

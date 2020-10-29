@@ -337,7 +337,7 @@ Rectangle {
 
     Loader {
         id: settingsLoader
-        source: "qrc:/partial-views/SGSettingsPopup.qml"
+        source: "qrc:/partial-views/status-bar/SGSettingsPopup.qml"
         active: false
     }
 
@@ -347,7 +347,7 @@ Rectangle {
         user: NavigationControl.context.user_id
 
         property bool autoOpenView: false
-        property bool switchToActive: false
+        property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
 
         property int selectedDistributionPortal: 0
@@ -356,7 +356,7 @@ Rectangle {
             const settings = readFile("general-settings.json")
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
-                switchToActive = settings.switchToActive
+                closeOnDisconnect = settings.closeOnDisconnect
                 notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
                 selectedDistributionPortal = settings.selectedDistributionPortal
             }
@@ -366,7 +366,7 @@ Rectangle {
         function saveSettings() {
             const settings = {
                 autoOpenView: autoOpenView,
-                switchToActive: switchToActive,
+                closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
                 selectedDistributionPortal: selectedDistributionPortal
             }
