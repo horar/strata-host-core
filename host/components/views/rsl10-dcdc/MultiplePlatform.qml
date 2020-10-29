@@ -274,13 +274,45 @@ Item{
             pdiss = "W"
             current = "A"
         }
+
+        else if(class_id === "057ec75e-e48f-42db-bea9-3d191ed8a736") {
+            eeprom_ID = "d4937f24-219a-4648-a711-2f6e902b6f1c"
+            partNumber = "<b> FD350X </b>"
+            title = "<b> 48V/12V Full-Bridge demoboard </b>"
+            warningHVVinLable = "70V"
+            warningLVVinLable = "30V"
+            opn = "STR-PWRFD350X-R0-GEVK"
+            minVin = 30
+            nominalVin = 60
+            vinScale = 100
+            iinScale = 10
+            voutScale = 20
+            ioutScale = 50
+            poutScale = 1000
+            pdissScale = 500
+            showDecimal = true
+            poutStep = 100
+            pdissStep = 50
+            rst = false
+            dio14 = false
+            jumperDIO14 = true
+            dio13 = false
+            jumperDIO13 = false
+            dio12 = true
+            jumperDIO12 = true
+            dio04 = true
+            jumperDIO04 = true
+            lowpowerDCDC = true
+            pdiss = "W"
+            current = "A"
+        }
         else if(class_id === "b519cdcb-5068-4483-b88e-155813fae915") {
             eeprom_ID = "b519cdcb-5068-4483-b88e-155813fae915"
-            partNumber = "<b> NCV816x </b>"
+            partNumber = "<b> NCV8163 </b>"
             title = "<b> Automotive Linear Regulator </b>"
             warningHVVinLable = "5.5V"
             warningLVVinLable = "1.9V"
-            opn = "STR-PWRNCV816x-R0-GEVK"
+            opn = "STR-PWRNCV8163-R0-GEVK"
             minVin = 1.9
             nominalVin = 5
             vinScale = 10
@@ -407,77 +439,6 @@ Item{
             minVout4 = 3.069
         }
 
-        else if(class_id === "264") {
-            eeprom_ID = "264"
-            partNumber = "<b> MOTHERBOARD </b>"
-            title = "<b> LV DC-DC ECOSYSTEM </b>"
-            warningHVVinLable = "40V"
-            warningLVVinLable = "1.8V"
-            opn = "STR-LVDCDCECOSYSTEM-R0-GEVK"
-            minVin = 1.8
-            nominalVin = 18
-            vinScale = 20
-            iinScale = 10
-            voutScale = 15
-            ioutScale = 10
-            poutScale = 50
-            pdissScale = 20
-            showDecimal = true
-            poutStep = 5
-            pdissStep = 0.5
-            rst = true
-            dio14 = true
-            jumperDIO14 = true
-            dio13 = true
-            jumperDIO13 = true
-            dio12 = true
-            jumperDIO12 = true
-            dio04 = true
-            jumperDIO04 = true
-            lowpowerDCDC = false
-            pdiss = "W"
-            current = "A"
-            minVout1 = 3.069
-            minVout2 = 3.069
-            minVout3 = 3.069
-            minVout4 = 3.069
-        }
-
-        else if(class_id === "263") {
-            eeprom_ID = "263"
-            partNumber = "<b> NCV881930 and NCV6357 </b>"
-            title = "<b> Automotive ADAS Preregulator </b>"
-            warningHVVinLable = "40V"
-            warningLVVinLable = "2.5V"
-            opn = "STR-ADAS-PREREGULATOR-GEVK"
-            minVin = 2.5
-            nominalVin = 12
-            vinScale = 20
-            iinScale = 15
-            voutScale = 10
-            ioutScale = 15
-            poutScale = 100
-            pdissScale = 25
-            showDecimal = true
-            poutStep = 10
-            pdissStep = 2.5
-            rst = false
-            dio14 = true
-            jumperDIO14 = true
-            dio13 = true
-            jumperDIO13 = true
-            dio12 = true
-            jumperDIO12 = true
-            dio04 = true
-            jumperDIO04 = true
-            lowpowerDCDC = false
-            pdiss = "W"
-            current = "A"
-            minVout1 = 3.069
-            minVout2 = 3.069
-            minVout3 = 3.069
-            minVout4 = 3.069
-        }
         else  {
             console.log("unknown")
         }
