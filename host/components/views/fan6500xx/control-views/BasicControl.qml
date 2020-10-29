@@ -807,7 +807,7 @@ ColumnLayout {
                                             from: 100
                                             to: 1200
                                             live: false
-                                            stepSize: 100
+                                            stepSize: 5
                                             width: frequencyContainer.width/1.2
 
                                             inputBoxWidth: frequencyContainer.width/8
