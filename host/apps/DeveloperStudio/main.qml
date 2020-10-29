@@ -97,12 +97,6 @@ SGWidgets.SGMainWindow {
                 Layout.fillWidth: true
             }
 
-            Item {
-                id: controlViewDevContainer
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-
             ListModel {
                 id: platformViewModel
             }
@@ -111,6 +105,13 @@ SGWidgets.SGMainWindow {
                 id: platformViewRepeater
                 model: platformViewModel
                 delegate: SGPlatformView {}
+            }
+
+            Item {
+                id: controlViewDevContainer
+                objectName: "controlViewDevContainer"
+                Layout.fillHeight: true
+                Layout.fillWidth: true
             }
         }
     }
@@ -139,7 +140,5 @@ SGWidgets.SGMainWindow {
         anchors {
             fill: parent
         }
-        stackContainer: stackContainer
-        controlViewDevContainer: controlViewDevContainer
     }
 }

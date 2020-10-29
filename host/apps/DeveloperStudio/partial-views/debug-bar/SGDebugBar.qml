@@ -18,9 +18,6 @@ Item {
 
     property string testAuthServer: "http://18.191.108.5/"
 
-    property alias stackContainer: controlViewDevDialog.stackContainer
-    property alias controlViewDevContainer: controlViewDevDialog.controlViewDevContainer
-
     Rectangle {
         id: commandBar
         visible: false
