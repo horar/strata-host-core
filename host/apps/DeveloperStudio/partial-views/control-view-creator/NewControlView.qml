@@ -41,10 +41,11 @@ Rectangle {
                     SGUtilsCpp.pathToUrl(path),
                     templateButtonGroup.checkedButton.path
         );
+
         openProjectContainer.url = qrcUrl
-        toolBarListView.currentIndex = toolBarListView.editTab
         openProjectContainer.addToTheProjectList(qrcUrl.toString())
         controlViewCreatorRoot.rccInitialized = false
+        toolBarListView.currentIndex = toolBarListView.editTab
         return true;
     }
 
