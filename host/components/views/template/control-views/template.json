@@ -1,0 +1,23 @@
+{
+    "commands": [
+        {
+            "cmd": "my_cmd_simple",
+            "payload": {
+                "io":true,
+                "dac":0.5
+            }
+        },
+        {
+            "cmd":"my_cmd_simple_periodic_update",
+            "payload":{
+                "run_state":true,
+                "interval":2000,
+                "run_count":-1
+                }
+          }
+        
+    ],
+     "notifications": [
+
+     ]
+}
