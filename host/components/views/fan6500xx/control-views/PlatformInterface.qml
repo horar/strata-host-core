@@ -43,7 +43,7 @@ Item {
     }
 
     property var status_os_alert:  {
-        "os_alert":"false"
+        "os_alert":false
     }
 
     property var vout_below_threshold:  {
