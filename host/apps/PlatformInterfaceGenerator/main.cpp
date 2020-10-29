@@ -6,9 +6,11 @@
 #include <QDebug>
 #include <QDir>
 #include <QUrl>
+#include <QIcon>
 #include <QResource>
 
 #include "SGUtilsCpp.h"
+#include "Version.h"
 #include "PlatformInterfaceGenerator.h"
 
 void loadResources() {
@@ -56,11 +58,12 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
-//    QGuiApplication::setApplicationVersion("1.0.0");
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
 
     loadResources();
 
