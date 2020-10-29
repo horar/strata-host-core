@@ -29,9 +29,10 @@ Window {
     }
 
     ColumnLayout {
-        anchors.centerIn: parent
         id: mainColumn
         spacing: 10
+        anchors.centerIn: parent
+        width: parent.width - 30
 
         SGText {
             text: 'Recompile and reload RCC resources'
@@ -52,6 +53,8 @@ Window {
         SGText {
             text: "Current QRC Path:<br>" + root.qrcFilePath
             visible: root.qrcFilePath !== ""
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
         }
 
         Button {
