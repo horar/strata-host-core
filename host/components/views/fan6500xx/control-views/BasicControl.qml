@@ -445,11 +445,11 @@ ColumnLayout {
                                     Layout.fillHeight: true
                                     Item {
                                         id: inputCurrentVoltageHelpContainer
-                                        width: inputVoltageContainer.width + inputCurrentContainer.width - 80
+                                        width: inputVoltageContainer.width + inputCurrentContainer.width - 65
                                         height: inputVoltageContainer.height/2
                                         anchors.verticalCenter:parent.verticalCenter
                                         anchors.right:parent.right
-                                        anchors.rightMargin: 100
+                                        anchors.rightMargin: 85
                                     }
 
 
@@ -712,11 +712,11 @@ ColumnLayout {
                                     Layout.fillHeight: true
                                     Item {
                                         id: outputCurrentVoltageHelpContainer
-                                        width: outputVoltageContainer.width + outputCurrentContainer.width - 80
+                                        width: outputVoltageContainer.width + outputCurrentContainer.width - 65
                                         height: outputVoltageContainer.height - 20
                                         anchors.bottom: parent.bottom
                                         anchors.right:parent.right
-                                        anchors.rightMargin: 100
+                                        anchors.rightMargin: 85
                                     }
 
                                     RowLayout {
