@@ -36,6 +36,16 @@ function data_source_handler (payload) {
                 } else {
                     console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Notification is malformed:", JSON.stringify(notification));
                 }
+            } else if (message.hasOwnProperty("payload") && message.hasOwnProperty("ack")) {
+                // We are receiving negative acknowledgement
+                let payloadPart = message.payload;
+                if (payloadPart.hasOwnProperty("return_value") && payloadPart.return_value === false) {
+                    if (payloadPart.hasOwnProperty("return_string")) {
+                        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Ack returned '" + payloadPart.return_string + "' when receiving command: '" + message.ack + "'");
+                    } else {
+                        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Ack returned false when receiving command '" + message.ack + "'");
+                    }
+                }
             }
         }
 
