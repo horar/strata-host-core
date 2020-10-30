@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QJsonParseError>
 #include <QMetaType>
 #include <QVariantList>
@@ -22,6 +23,7 @@ QString PlatformInterfaceGenerator::lastError()
 
 bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QString &outputPath)
 {
+    lastError_ = "";
     if (!QFile::exists(pathToJson)) {
         lastError_ = "Path to input file (" + pathToJson + ") does not exist.";
         qCritical() << "Input file path does not exist. Tried to read from" << pathToJson;
@@ -34,14 +36,16 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
     QString fileText = inputFile.readAll();
     inputFile.close();
 
-    rapidjson::Document platInterfaceData;
-    rapidjson::ParseResult result = platInterfaceData.Parse(fileText.toUtf8());
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(fileText.toUtf8(), &parseError);
 
-    if (!result) {
-        lastError_ = "Failed to parse json. Offset : " + QString::number(result.Offset());
+    if (parseError.error != QJsonParseError::NoError) {
+        lastError_ = "Failed to parse json: " + parseError.errorString();
         qCritical() << lastError_;
         return false;
     }
+
+    QJsonObject platInterfaceData = doc.object();
 
     QDir outputDir(outputPath);
 
@@ -83,20 +87,23 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
 
     // Create QtObjects to handle notifications
 
-    rapidjson::Value& notificationsList = platInterfaceData["notifications"];
+    QJsonValue notificationsList = platInterfaceData["notifications"];
 
-    if (!notificationsList.IsArray()) {
+    if (!notificationsList.isArray()) {
         lastError_ = "'notifications' needs to be an array";
         qCritical() << lastError_;
         return false;
     }
 
-    for (rapidjson::Value &vNotification : notificationsList.GetArray()) {
-        const rapidjson::Value::Object &notification = vNotification.GetObject();
-        if (notification.HasMember("payload") && notification["payload"].IsNull()) {
+    for (QJsonValue vNotification : notificationsList.toArray()) {
+        QJsonObject notification = vNotification.toObject();
+        if (notification.contains("payload") && notification["payload"].isNull()) {
             continue;
         }
         outputStream << generateNotification(notification, indentLevel);
+        if (lastError_.length() > 0) {
+            return false;
+        }
     }
 
     indentLevel--;
@@ -109,11 +116,13 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
     indentLevel++;
     outputStream << insertTabs(indentLevel) << "id: commands\n";
 
-    const rapidjson::GenericArray commandsList = platInterfaceData["commands"].GetArray();
-
-    for (uint i = 0; i < commandsList.Size(); ++i) {
-        rapidjson::Value::Object command = commandsList[i].GetObject();
+    QJsonArray commandsList = platInterfaceData["commands"].toArray();
+    for (int i = 0; i < commandsList.count(); ++i) {
+        QJsonObject command = commandsList[i].toObject();
         outputStream << generateCommand(command, indentLevel);
+        if (lastError_.length() > 0) {
+            return false;
+        }
     }
 
     indentLevel--;
@@ -141,9 +150,9 @@ QString PlatformInterfaceGenerator::generateImports()
     return imports;
 }
 
-QString PlatformInterfaceGenerator::generateCommand(const rapidjson::Value::Object &command, int &indentLevel)
+QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, int &indentLevel)
 {
-    const QString cmd = command["cmd"].GetString();
+    const QString cmd = command["cmd"].toString();
     QString documentationText = generateComment("@command " + cmd, indentLevel);
     QString commandBody = "";
 
@@ -153,10 +162,10 @@ QString PlatformInterfaceGenerator::generateCommand(const rapidjson::Value::Obje
     QStringList updateFunctionParams;
     QStringList updateFunctionKwRemoved;
 
-    if (command.HasMember("payload") && !command["payload"].IsNull()) {
-        rapidjson::Value::Object payload = command["payload"].GetObject();
-        for (auto &prop : payload) {
-            updateFunctionParams.append(QString(prop.name.GetString()));
+    if (command.contains("payload") && !command["payload"].isNull()) {
+        QJsonObject payload = command["payload"].toObject();
+        for (QString key : payload.keys()) {
+            updateFunctionParams.append(key);
         }
         updateFunctionKwRemoved = updateFunctionParams;
         removeReservedKeywords(updateFunctionKwRemoved);
@@ -164,14 +173,24 @@ QString PlatformInterfaceGenerator::generateCommand(const rapidjson::Value::Obje
         commandBody += insertTabs(indentLevel + 1) + "\"payload\": {\n";
         QStringList payloadProperties;
 
-        for (auto &prop : payload) {
-            rapidjson::Value &propValue = prop.value;
+        for (QString key : payload.keys()) {
+            QJsonValue propValue = payload[key];
             QString propType = getType(propValue);
-            QString key = prop.name.GetString();
+            if (propType.isNull()) {
+                lastError_ = "Property in payload for command " + cmd + " is null";
+                qCritical() << lastError_;
+                return "";
+            }
 
-            payloadProperties.append(insertTabs(indentLevel + 2) + "\"" + key + "\": " + getPropertyValue(propValue, propType));
-            if (propType == "var" && propValue.IsArray()) {
-                documentationText += generateComment("@property " + key + ": list of size " + QString::number(propValue.GetArray().Size()), indentLevel);
+            payloadProperties.append(insertTabs(indentLevel + 2) + "\"" + key + "\": " + getPropertyValue(propValue, propType, indentLevel + 2));
+
+            if (lastError_.length() > 0) {
+                qCritical() << lastError_;
+                return "";
+            }
+
+            if (propType == "var" && propValue.isArray()) {
+                documentationText += generateComment("@property " + key + ": list of size " + QString::number(propValue.toArray().count()), indentLevel);
             } else {
                 documentationText += generateComment("@property " + key + ": " + propType, indentLevel);
             }
@@ -210,15 +229,15 @@ QString PlatformInterfaceGenerator::generateCommand(const rapidjson::Value::Obje
     return documentationText + commandBody;
 }
 
-QString PlatformInterfaceGenerator::generateNotification(const rapidjson::Value::Object &notification, int &indentLevel)
+QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &notification, int &indentLevel)
 {
-    if (!notification.HasMember("value")) {
+    if (!notification.contains("value")) {
         lastError_ = "Notification did not contain 'value'";
         qCritical() << lastError_;
         return QString();
     }
 
-    QString notificationId = notification["value"].GetString();
+    QString notificationId = notification["value"].toString();
     QString notificationBody = "";
     QString documentationBody = "";
 
@@ -233,22 +252,34 @@ QString PlatformInterfaceGenerator::generateNotification(const rapidjson::Value:
     QString childrenDocumentationBody = "";
     QString propertiesBody = "";
 
-    rapidjson::Value::Object payload = notification["payload"].GetObject();
+    QJsonObject payload = notification["payload"].toObject();
 
     // Add the properties to the notification
-    for (auto &prop : payload) {
-        rapidjson::Value &propValue = prop.value;
-        QString payloadProperty = prop.name.GetString();
+    for (QString payloadProperty : payload.keys()) {
+        QJsonValue propValue = payload[payloadProperty];
 
         generateNotificationProperty(indentLevel, notificationId, payloadProperty, propValue, childrenNotificationBody, childrenDocumentationBody);
 
-        QString propType = getType(propValue);
+        if (lastError_.length() > 0) {
+            return "";
+        }
 
-        if (propValue.IsArray() && propValue.GetArray().Size() > 0) {
+        QString propType = getType(propValue);
+        if (propType.isNull()) {
+            lastError_ = "Property for notification " + notificationId + " has unknown type";
+            qCritical() << lastError_;
+            return "";
+        }
+
+        if (propValue.isArray() && propValue.toArray().count() > 0) {
             continue;
         }
 
-        propertiesBody += insertTabs(indentLevel) + "property " + propType + " " + payloadProperty + ": " + getPropertyValue(propValue, propType) + "\n";
+        propertiesBody += insertTabs(indentLevel) + "property " + propType + " " + payloadProperty + ": " + getPropertyValue(propValue, propType, indentLevel) + "\n";
+        if (lastError_.length() > 0) {
+            qCritical() << lastError_;
+            return "";
+        }
     }
 
     notificationBody = childrenDocumentationBody + notificationBody + propertiesBody;
@@ -259,7 +290,7 @@ QString PlatformInterfaceGenerator::generateNotification(const rapidjson::Value:
     return documentationBody + notificationBody;
 }
 
-void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, const QString &parentId, const QString &id, const rapidjson::Value &value, QString &childrenNotificationBody, QString &childrenDocumentationBody)
+void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, const QString &parentId, const QString &id, const QJsonValue &value, QString &childrenNotificationBody, QString &childrenDocumentationBody)
 {
     QString propType = getType(value);
     QString notificationBody = "";
@@ -271,11 +302,11 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
         return;
     }
 
-    if (propType == "var" && value.IsArray() && value.GetArray().Size() > 0) {
+    if (propType == "var" && value.isArray() && value.toArray().count() > 0) {
         QString properties = "";
         QString childNotificationBody = "";
         QString childDocumentationBody = "";
-        const rapidjson::GenericArray valueArray = value.GetArray();
+        QJsonArray valueArray = value.toArray();
 
         // Generate a property for each element in array
         notificationBody += insertTabs(indentLevel) + "property QtObject " + id + ": QtObject {\n";
@@ -285,8 +316,8 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
         documentation += generateComment("@property " + id + ": " + propType, indentLevel - 1);
 
         // Add the properties to the notification
-        for (uint i = 0; i < valueArray.Size(); ++i) {
-            const rapidjson::Value &element = valueArray[i];
+        for (int i = 0; i < valueArray.count(); ++i) {
+            QJsonValue element = valueArray[i];
             QString childId = id + "_" + QString::number(i);
 
             generateNotificationProperty(indentLevel + 1, parentId + "_" + id, childId, element, childNotificationBody, childDocumentationBody);
@@ -296,12 +327,21 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
             }
 
             QString childType = getType(element);
+            if (childType.isNull()) {
+                lastError_ = "Unrecognized type of property for notificaition " + parentId;
+                qCritical() << lastError_;
+                return;
+            }
 
-            if (element.IsArray() && element.GetArray().Size() > 0) {
+            if (element.isArray() && element.toArray().count() > 0) {
                 continue;
             }
 
-            properties += insertTabs(indentLevel + 1) + "property " + childType + " " + childId + ": " + getPropertyValue(element, childType) + "\n";
+            properties += insertTabs(indentLevel + 1) + "property " + childType + " " + childId + ": " + getPropertyValue(element, childType, indentLevel) + "\n";
+            if (lastError_.length() > 0) {
+                qCritical() << lastError_;
+                return;
+            }
         }
 
         notificationBody = childDocumentationBody + notificationBody + properties + childNotificationBody;
@@ -338,50 +378,67 @@ QString PlatformInterfaceGenerator::insertTabs(const int num, const int spaces)
     return text;
 }
 
-QString PlatformInterfaceGenerator::getType(const rapidjson::Value &value)
+QString PlatformInterfaceGenerator::getType(const QJsonValue &value)
 {
-    if (value.IsArray()) {
+    if (value.isArray()) {
         return "var";
-    } else if (value.IsObject()) {
+    } else if (value.isString()) {
+        QString str = value.toString();
+        if (str == "string") {
+            return "string";
+        } else if (str == "int") {
+            return "int";
+        } else if (str == "double") {
+            return "double";
+        } else if (str == "bool") {
+            return "bool";
+        } else {
+            lastError_ = "Unknown type " + str;
+            return QString();
+        }
+    } else if (value.isObject()) {
         return "var";
-    } else if (value.IsString()) {
-        return "string";
-    } else if (value.IsBool()) {
-        return "bool";
-    } else if (value.IsDouble()) {
-        return "double";
-    } else if (value.IsInt()) {
-        return "int";
     } else {
+        lastError_ = "Unknown type";
         return QString();
     }
 }
 
-QString PlatformInterfaceGenerator::getPropertyValue(const rapidjson::Value &value, const QString &propertyType)
+QString PlatformInterfaceGenerator::getPropertyValue(const QJsonValue &value, const QString &propertyType, const int indentLevel)
 {
-    if (propertyType == "var" && value.IsArray()) {
+    if (propertyType == "var" && value.isArray()) {
         QString returnText = "[";
-        const rapidjson::GenericArray arr = value.GetArray();
+        QJsonArray arr = value.toArray();
 
-        for (uint i = 0; i < arr.Size(); ++i) {
-            returnText += getPropertyValue(arr[i], getType(arr[i]));
-            if (i != arr.Size() - 1)
+        for (int i = 0; i < arr.count(); ++i) {
+            returnText += getPropertyValue(arr[i], getType(arr[i]), indentLevel);
+            if (i != arr.count() - 1)
                 returnText += ", ";
         }
         returnText += "]";
         return returnText;
     } else if (propertyType == "bool") {
-        return value.GetBool() ? "true" : "false";
+        return "false";
     } else if (propertyType == "string") {
-        return "\"" + QString(value.GetString()) + "\"";
+        return "\"\"";
     } else if (propertyType == "int") {
-        return QString::number(value.GetInt());
+        return "0";
     } else if (propertyType == "double") {
-        QString tmp = QString::number(value.GetDouble());
-        if (!tmp.contains('.')) {
-            tmp.append(".0");
+        return "0.0";
+    } else if (propertyType == "var" && value.isObject()) {
+        QString returnText = "{\n";
+        QJsonObject obj = value.toObject();
+        int i = 0;
+        for (QString key : obj.keys()) {
+            returnText += insertTabs(indentLevel + 1) + "\"" + key + "\": " + getPropertyValue(obj[key], getType(obj[key]), indentLevel + 1);
+            if (i != obj.keys().count()) {
+                returnText += ",";
+            }
+            returnText += "\n";
+            i++;
         }
-        return tmp;
+        returnText += insertTabs(indentLevel) + "}";
+        return returnText;
     } else {
         return "";
     }

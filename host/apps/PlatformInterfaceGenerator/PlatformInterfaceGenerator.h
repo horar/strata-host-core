@@ -2,7 +2,8 @@
 #include <QVariant>
 #include <QVariantMap>
 #include <QString>
-#include <rapidjson/document.h>
+#include <QJsonObject>
+#include <QJsonValue>
 
 class PlatformInterfaceGenerator : public QObject
 {
@@ -37,7 +38,7 @@ public:
      * @param indentLevel The level of indentation
      * @return Returns the command text
      */
-    static QString generateCommand(const rapidjson::Value::Object &command, int &indentLevel);
+    static QString generateCommand(const QJsonObject &command, int &indentLevel);
 
     /**
      * @brief generateNotification
@@ -45,7 +46,7 @@ public:
      * @param indentLevel The current indentation level
      * @return Returns the notification text
      */
-    static QString generateNotification(const rapidjson::Value::Object &notification, int &indentLevel);
+    static QString generateNotification(const QJsonObject &notification, int &indentLevel);
 
     /**
      * @brief generateNotificationProperty
@@ -57,7 +58,7 @@ public:
      * @param childrenDocumentationBody The documentation body for the children of this parent
      * @return
      */
-    static void generateNotificationProperty(int indentLevel, const QString &parentId, const QString &id, const rapidjson::Value &value, QString &childrenNotificationBody, QString &childrenDocumentationBody);
+    static void generateNotificationProperty(int indentLevel, const QString &parentId, const QString &id, const QJsonValue &value, QString &childrenNotificationBody, QString &childrenDocumentationBody);
 
     /**
      * @brief generateComment Generates a single line comment
@@ -90,15 +91,16 @@ private:
      * @param value The item to get the type of
      * @return Returns the string representation of the type for `value`
      */
-    static QString getType(const rapidjson::Value &value);
+    static QString getType(const QJsonValue &value);
 
     /**
      * @brief getPropertyValue Gets the string representation of the value passed in
      * @param value The QJsonValue to get the string representation of
      * @param propertyType The type of `value` from getType()
+     * @param indentLevel The currentIndentLevel
      * @return Returns the string representation of the `value`
      */
-    static QString getPropertyValue(const rapidjson::Value &value, const QString &propertyType);
+    static QString getPropertyValue(const QJsonValue &value, const QString &propertyType, const int indentLevel);
 
     /**
      * @brief removeReservedKeywords Removes reserved keywords from a list of parameters
