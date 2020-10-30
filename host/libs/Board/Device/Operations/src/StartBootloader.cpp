@@ -1,5 +1,6 @@
 #include <Device/Operations/StartBootloader.h>
 #include "Commands/include/DeviceCommands.h"
+#include "DeviceOperationsConstants.h"
 
 #include "logging/LoggingQtCategories.h"
 
@@ -14,11 +15,11 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     BaseDeviceOperation(device, Type::StartBootloader)
 {
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));  // 0
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));       // 1
-    commandList_.emplace_back(std::make_unique<CmdStartBootloader>(device_));         // 2
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));  // 3
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));       // 4
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true, MAX_GET_FW_INFO_RETRIES)); // 0
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 1
+    commandList_.emplace_back(std::make_unique<CmdStartBootloader>(device_));        // 2
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true));  // 3
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 4
 
     currentCommand_ = commandList_.end();
 
