@@ -291,12 +291,30 @@ const rapidjson::SchemaDocument CommandValidator::strataCommandSchema_(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::setPlatformId_nps_(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": ["ok", "failed", "already_initialized"]
+                }
+            },
+            "required": [ "status" ]
+        })"
+    )
+);
+
 const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument&> CommandValidator::schemas_ = {
     {JsonType::cmd, cmdSchema_},
     {JsonType::ack, ackSchema_},
     {JsonType::notification, notificationSchema_},
     {JsonType::reqPlatformIdNotif, reqPlatformId_nps_},
-    {JsonType::setPlatformIdNotif, notifPayloadStatusSchema_},
+    {JsonType::setPlatformIdNotif, setPlatformId_nps_},
+    {JsonType::setAssistedPlatformIdNotif, setPlatformId_nps_},
     {JsonType::getFirmwareInfoNotif, getFirmwareInfo_nps_},
     {JsonType::startBootloaderNotif, notifPayloadStatusSchema_},
     {JsonType::startApplicationNotif, notifPayloadStatusSchema_},
@@ -312,6 +330,7 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
 const std::map<const CommandValidator::JsonType, const char*> CommandValidator::notifications_ = {
     {JsonType::reqPlatformIdNotif, "platform_id"},
     {JsonType::setPlatformIdNotif, "set_platform_id"},
+    {JsonType::setAssistedPlatformIdNotif, "set_assisted_platform_id"},
     {JsonType::getFirmwareInfoNotif, "get_firmware_info"},
     {JsonType::startBootloaderNotif, "start_bootloader"},
     {JsonType::startApplicationNotif, "start_application"},

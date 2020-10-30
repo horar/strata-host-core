@@ -28,6 +28,8 @@ enum class Type: int {
     FlashBootloader,
     BackupFirmware,
     StartApplication,
+    SetPlatformId,
+    SetAssistedPlatformId,
     // special values for finished signal (operation was not finished successfully):
     Cancel,   // operation was cancelled
     Timeout,  // no response from device
