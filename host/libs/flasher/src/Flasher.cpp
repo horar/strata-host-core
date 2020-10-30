@@ -301,14 +301,19 @@ void Flasher::manageBackup(int chunkNumber) {
             }
         } else {  // the last chunk
             binaryFile_.close();
-            qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_ << " - firmware backup is done.";
-            emit backupFirmwareProgress(chunkNumber, chunkCount_);
-            if (startApp_) {
-                operation_ = std::make_unique<operation::StartApplication>(device_);
-                connectHandlers(operation_.get());
-                operation_->run();
+            if (chunkCount_ != 0) {
+                qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_ << " - firmware backup is done.";
+                emit backupFirmwareProgress(chunkNumber, chunkCount_);
+                if (startApp_) {
+                    operation_ = std::make_unique<operation::StartApplication>(device_);
+                    connectHandlers(operation_.get());
+                    operation_->run();
+                } else {
+                    finish(Result::Ok);
+                }
             } else {
-                finish(Result::Ok);
+                qCWarning(logCategoryFlasher) << "Cannot backup firmware which has 0 chunks.";
+                finish(Result::NoFirmware);
             }
             return;
         }
