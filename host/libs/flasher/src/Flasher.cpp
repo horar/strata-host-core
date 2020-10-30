@@ -22,7 +22,7 @@ Flasher::Flasher(const DevicePtr& device, const QString& fileName) :
     Flasher(device, fileName, QString()) { }
 
 Flasher::Flasher(const DevicePtr& device, const QString& fileName, const QString& fileMD5) :
-    device_(device), binaryFile_(fileName), fileMD5_(fileMD5)
+    device_(device), binaryFile_(fileName), fileMD5_(fileMD5), operation_(nullptr, nullptr)
 {
     qCDebug(logCategoryFlasher) << device_ << "Flasher created (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
 }
@@ -44,7 +44,8 @@ void Flasher::backupFirmware(bool startApplication) {
         chunkCount_ = 0;
         qCInfo(logCategoryFlasher) << device_ << "Preparing for firmware backup.";
         emit switchToBootloader(false);
-        operation_ = std::make_unique<operation::StartBootloader>(device_);
+        operation_ = std::unique_ptr<operation::StartBootloader, void(*)(operation::BaseDeviceOperation*)>
+                     (new operation::StartBootloader(device_), operationDeleter);
         connectHandlers(operation_.get());
         operation_->run();
     } else {
@@ -88,7 +89,8 @@ void Flasher::flash(bool flashFirmware, bool startApplication) {
 
             emit switchToBootloader(false);
 
-            operation_ = std::make_unique<operation::StartBootloader>(device_);
+            operation_ = std::unique_ptr<operation::StartBootloader, void(*)(operation::BaseDeviceOperation*)>
+                         (new operation::StartBootloader(device_), operationDeleter);
             connectHandlers(operation_.get());
             operation_->run();
         } else {
@@ -123,13 +125,16 @@ void Flasher::handleOperationFinished(operation::Type opType, int data) {
         }
         switch (action_) {
         case Action::FlashFirmware :
-            operation_ = std::make_unique<operation::Flash>(device_, binaryFile_.size(), chunkCount_, fileMD5_, true);
+            operation_ = std::unique_ptr<operation::Flash, void(*)(operation::BaseDeviceOperation*)>
+                         (new operation::Flash(device_, binaryFile_.size(), chunkCount_, fileMD5_, true), operationDeleter);
             break;
         case Action::FlashBootloader :
-            operation_ = std::make_unique<operation::Flash>(device_, binaryFile_.size(), chunkCount_, fileMD5_, false);
+            operation_ = std::unique_ptr<operation::Flash, void(*)(operation::BaseDeviceOperation*)>
+                         (new operation::Flash(device_, binaryFile_.size(), chunkCount_, fileMD5_, false), operationDeleter);
             break;
         case Action::BackupFirmware :
-            operation_ = std::make_unique<operation::Backup>(device_);
+            operation_ = std::unique_ptr<operation::Backup, void(*)(operation::BaseDeviceOperation*)>
+                         (new operation::Backup(device_), operationDeleter);
             break;
         }
         connectHandlers(operation_.get());
@@ -205,14 +210,16 @@ void Flasher::manageFlash(int lastFlashedChunk) {
             : emit flashBootloaderProgress(flashedChunk, chunkCount_);
         if (flashFw) {
             if (startApp_) {
-                operation_ = std::make_unique<operation::StartApplication>(device_);
+                operation_ = std::unique_ptr<operation::StartApplication, void(*)(operation::BaseDeviceOperation*)>
+                             (new operation::StartApplication(device_), operationDeleter);
                 connectHandlers(operation_.get());
                 operation_->run();
             } else {
                 finish(Result::Ok);
             }
         } else {  // flash bootloader
-            operation_ = std::make_unique<operation::Identify>(device_, true, MAX_GET_FW_INFO_RETRIES);
+            operation_ = std::unique_ptr<operation::Identify, void(*)(operation::BaseDeviceOperation*)>
+                         (new operation::Identify(device_, true, MAX_GET_FW_INFO_RETRIES), operationDeleter);
             connectHandlers(operation_.get());
             device::operation::Identify *identify = dynamic_cast<device::operation::Identify*>(operation_.get());
             identify->runWithDelay(IDENTIFY_OPERATION_DELAY);  // starting new bootloader takes some time
@@ -305,7 +312,8 @@ void Flasher::manageBackup(int chunkNumber) {
                 qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_ << " - firmware backup is done.";
                 emit backupFirmwareProgress(chunkNumber, chunkCount_);
                 if (startApp_) {
-                    operation_ = std::make_unique<operation::StartApplication>(device_);
+                    operation_ = std::unique_ptr<operation::StartApplication, void(*)(operation::BaseDeviceOperation*)>
+                                 (new operation::StartApplication(device_), operationDeleter);
                     connectHandlers(operation_.get());
                     operation_->run();
                 } else {
@@ -338,6 +346,10 @@ void Flasher::finish(Result result) {
 void Flasher::connectHandlers(operation::BaseDeviceOperation *operation) {
     connect(operation, &operation::BaseDeviceOperation::finished, this, &Flasher::handleOperationFinished);
     connect(operation, &operation::BaseDeviceOperation::error, this, &Flasher::handleOperationError);
+}
+
+void Flasher::operationDeleter(operation::BaseDeviceOperation *operation) {
+    operation->deleteLater();
 }
 
 }  // namespace
