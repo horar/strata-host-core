@@ -86,19 +86,19 @@ ColumnLayout {
 
     Component.onCompleted:  {
         Help.registerTarget(vinLEDHelpContainer, "This LED indicates whether the input voltage is above the required 4.5 V for proper operation. Green indicates above 4.5 V and red indicates below 4.5 V.", 0,"basicFan65Help")
-        Help.registerTarget(inputCurrentVoltageHelpContainer, "This box displays the input voltage supplied to the board. This box displays the input current supplied to the board.", 1,"basicFan65Help")
+        Help.registerTarget(inputCurrentVoltageHelpContainer, "This box displays the input voltage and input current supplied to the board.", 1,"basicFan65Help")
         Help.registerTarget(inputVCCLabel, "This box displays the voltage of the VCC pin of the FAN6500XX, which supplies power to the internal analog circuits. Using the VCC Source dropdown, this pin can be supplied either by the PVCC pin on the FAN6500XX, or it can be supplied by an external 5V source.", 2,"basicFan65Help")
         Help.registerTarget(pvccLabel, "This box displays the voltage of the PVCC pin of the FAN6500XX. This voltage is generated internally on the FAN6500XX and can be used to power VCC.", 3,"basicFan65Help")
-        Help.registerTarget(vbstLabel, "This box displays the estimated voltage of the VBST pin of the FAN6500XX. This voltage is estimated using the ratio between the input and output voltage to determine the approximate duty cycle, as well as factoring in VCC.", 4,"basicFan65Help")
+        Help.registerTarget(vbstLabel, "This box displays the estimated voltage of the VBST pin of the FAN6500XX. This voltage is estimated using the ratio between the input and output voltage to determine the approximate duty cycle, as well as factoring in VCC. The calculation is:\n VBST = (VBST_ADC_AVG - VCC)/(VOUT/VIN) + VCC", 4,"basicFan65Help")
         Help.registerTarget(pgoodLabel, "This LED will be green when the regulator is operating normally (PGOOD pin is high).", 5,"basicFan65Help")
-        Help.registerTarget(outputCurrentVoltageHelpContainer, "This box displays the regulated output voltage. This box displays the regulated output current.", 6,"basicFan65Help")
+        Help.registerTarget(outputCurrentVoltageHelpContainer, "This box displays the regulated output voltage and output current.", 6,"basicFan65Help")
         Help.registerTarget(frequencyLabel, "This slider enables modification of the switching frequency. It is disabled while the regulator is enabled. The user can also enter a number into the text box to the right of the slider.", 7,"basicFan65Help")
         Help.registerTarget(outputLabel, "This slider allows you to adjust the desired output voltage. Output voltage adjustment is disabled while the regulator is enabled. The user can also enter a number into the text box to the right of the slider.", 8,"basicFan65Help")
         Help.registerTarget(ocpLabel, "The FAN6500XX regulator uses peak current detection in order to detect OCP errors. This slider allows the user to change the peak OCP threshold. However, there is some tolerance in both the regulator detection circuitry as well as the digital potentiometer used to change the threshold, so some error is expected.", 9,"basicFan65Help")
-        Help.registerTarget(filterHelp3Container, "This gauge shows the efficiency of the regulator. It is calculated using the ratio of the input power and output power.This gauge shows the power loss of the regulator. It is calculated using the difference between the input and output power.This gauge shows the output power of the regulator. It is calculated using the output voltage and output current telemetry.", 10,"basicFan65Help")
+        Help.registerTarget(filterHelp3Container, "These gauges show the power telemetry of the board. The efficiency is calculated using the ratio of the input power and output power.The power loss is calculated using the difference between the input power and output power. Finally, the output power is calculated using the output voltage and output current telemetry.", 10,"basicFan65Help")
         Help.registerTarget(tempGaugeContainer, "This gauge shows the board temperature near the ground pad of the regulator. It is not meant to be used as an accurate measure of the regulator temperature.", 11,"basicFan65Help")
         Help.registerTarget(osAlertLabel, "This indicator will be red when the temperature sensor detects a board temperature near the ground pad of the regulator of 80°C, which corresponds to a regulator temperature of roughly 100°C.", 12,"basicFan65Help")
-        Help.registerTarget(dltConnectedLabel, "This checkbox is used when an ON Semi DLT is connected to the 8-pin connector. It disabled certain telemetry that is bypassed when using the DLT.", 13,"basicFan65Help")
+        Help.registerTarget(dltConnectedLabel, "This checkbox can be used when an ON Semi DLT is connected to the 8-pin connector. It disables the power telemetry that is bypassed when using the DLT. The output current telemetry remains active in case the user pulls power from the banana plugs in parallel with the DLT.", 13,"basicFan65Help")
         Help.registerTarget(enableSwitchLabel, "This switch enables the regulator.", 14,"basicFan65Help")
         Help.registerTarget(syncLabel, "This box allows the regulator to be set into master or slave mode. In master mode, the FAN6500XX creates an internal switching frequency proportional to the resistor connected to the RT pin. It uses this internal switching frequency for the switch node and outputs the signal onto the SYNC pin for use in driving another regulator in slave mode. In slave mode, the FAN6500XX accepts a PWM signal on the SYNC pin as the switching frequency. On this eval board, the MCU provides the external frequency.", 15,"basicFan65Help")
         Help.registerTarget(modeLabel, "DCM (Discontinuous conduction mode) is a power saving mode that is built into the regulator. It will save power at lower current levels. FCCM (Forced continuous conduction mode) will maintain the set switching frequency, regardless of power.", 16,"basicFan65Help")
@@ -1209,6 +1209,22 @@ ColumnLayout {
                                                     height: 25
                                                     onCheckedChanged: {
                                                         platformInterface.set_dlt_connected.update(checked)
+                                                        if(checked){
+                                                            efficiencyGaugeContainer.enabled = false
+                                                            efficiencyGaugeContainer.opacity = 0.5
+                                                            powerDissipatedContainer.enabled = false
+                                                            powerDissipatedContainer.opacity = 0.5
+                                                            powerOutputContainer.enabled = false
+                                                            powerOutputContainer.opacity = 0.5
+                                                        }
+                                                        else{
+                                                            efficiencyGaugeContainer.enabled = true
+                                                            efficiencyGaugeContainer.opacity = 1.0
+                                                            powerDissipatedContainer.enabled = true
+                                                            powerDissipatedContainer.opacity = 1.0
+                                                            powerOutputContainer.enabled = true
+                                                            powerOutputContainer.opacity = 1.0
+                                                        }
                                                     }
                                                 }
 
