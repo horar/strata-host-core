@@ -28,8 +28,8 @@ Item {
         color: root.textColor
     }
 
-    ButtonGroup{
-        buttons: radioButtons.children[0].children
+    ButtonGroup {
+        buttons: radioButtons.status !== Loader.Ready ? [] : radioButtons.children[0].children
         exclusive: root.exclusive
     }
 

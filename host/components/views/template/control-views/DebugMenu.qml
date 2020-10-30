@@ -9,7 +9,7 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: root
-    height: 200
+    height: 290
     width: 350
     border {
         width: 1
@@ -98,6 +98,27 @@ Rectangle {
                     notification.value = "motor_speed_notification"
                     notification.payload.speed = (Math.random()*100).toFixed(2)
                     notification.sendAndReset()
+                }
+            }
+            Button {
+                id: startPeriodic
+                text: "Send start_periodic_command"
+                onClicked: {
+                    platformInterface.start_periodic_command.update("template_periodic",10, 100)
+                }
+            }
+            Button {
+                id: updatePeriodic
+                text: "Send update_periodic_command"
+                onClicked: {
+                    platformInterface.update_periodic_command.update("template_periodic",1, 200)
+                }
+            }
+            Button {
+                id: stopPeriodic
+                text: "Send stop_periodic_command"
+                onClicked: {
+                    platformInterface.stop_periodic_command.update("template_periodic")
                 }
             }
         }
