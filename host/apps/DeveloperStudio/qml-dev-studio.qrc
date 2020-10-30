@@ -152,5 +152,6 @@
         <file>partial-views/control-view-creator/navigation/SGSideNavItem.qml</file>
         <file>partial-views/control-view-creator/navigation/SideNavFooter.qml</file>
         <file>partial-views/control-view-creator/Console/ConsoleLogger.qml</file>
+        <file>partial-views/control-view-creator/ConfirmClosePopup.qml</file>
     </qresource>
 </RCC>

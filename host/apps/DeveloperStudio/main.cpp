@@ -146,7 +146,6 @@ int main(int argc, char *argv[])
                          }
                          emit sdsModel->notifyQmlError(msg.join(QStringLiteral("\n")));
                      });
-    QObject::connect(&engine
 
     // Starting services this build?
     // [prasanth] : Important note: Start HCS before launching the UI

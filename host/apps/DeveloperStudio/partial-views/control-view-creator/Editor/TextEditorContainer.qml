@@ -17,43 +17,99 @@ Item {
 
     property int modelIndex: index
     property string file: model.filename
-    property string fileText
+    property int savedVersionId
+    property int currentVersionId
 
-    Component.onCompleted: {
-        channel.registerObject("valueLink", channelObject)
+    function openFile() {
+        let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+
+        // Before returning the fileText, replace tabs with 4 spaces
+        return fileText.replace(/\t/g, '    ')
     }
 
-    function openFile(fileUrl) {
-        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(fileUrl));
-    }
+    function saveFile() {
+        let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), channelObject.fileText);
 
-    function saveFile(fileUrl, text) {
-        return SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text);
+        if (success) {
+            savedVersionId = currentVersionId;
+            model.unsavedChanges = false;
+        } else {
+            console.error("Unable to save file", model.filepath)
+        }
     }
 
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
-            saveFile(model.filepath, fileText)
+            saveFile()
+        }
+    }
+
+    Connections {
+        target: editor.editorToolBar
+
+        onSaveClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                saveFile()
+            }
+        }
+
+        onUndoClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.undo()
+            }
+        }
+
+        onRedoClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.redo()
+            }
+        }
+    }
+    
+    Connections {
+        target: openFilesModel
+
+        onSaveRequested: {
+            if (index === fileContainerRoot.modelIndex) {
+                saveFile();
+            }
+        }
+
+        onSaveAllRequested: {
+            if (model.unsavedChanges) {
+                saveFile();
+            }
         }
     }
 
     WebChannel {
         id: channel
+        registeredObjects: [channelObject]
     }
 
     QtObject {
         id: channelObject
         objectName: "fileChannel"
+        WebChannel.id: "valueLink"
+
+        property string fileText: ""
 
         signal setValue(string value);
         signal setContainerHeight(string height);
+        signal undo();
+        signal redo();
 
         function setHtml(value) {
             setValue(value)
         }
 
-        function setFileText(value) {
-            fileText = value;
+        function setVersionId(version) {
+            // If this is the first change, then we have just initialized the editor
+            if (!savedVersionId) {
+                savedVersionId = version
+            }
+            currentVersionId = version
+            model.unsavedChanges = (savedVersionId !== version)
         }
     }
 
@@ -81,8 +137,9 @@ Item {
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
                 channelObject.setContainerHeight(height.toString())
-                fileText = openFile(model.filepath)
+                let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
+                channelObject.fileText = fileText
             }
         }
 

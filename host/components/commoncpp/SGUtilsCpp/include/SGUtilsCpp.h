@@ -24,6 +24,7 @@ public:
     Q_INVOKABLE static QString dirName(const QString &path);
     Q_INVOKABLE static QString parentDirectoryPath(const QString &filepath);
     Q_INVOKABLE static QUrl pathToUrl(const QString &path, const QString &scheme=QString("file"));
+    Q_INVOKABLE static bool exists(const QString &filepath);
     Q_INVOKABLE static bool fileIsChildOfDir(const QString &filePath, QString dirPath);
 
     Q_INVOKABLE bool atomicWrite(const QString &path, const QString &content);

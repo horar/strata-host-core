@@ -38,7 +38,7 @@ QUrl SGNewControlView::createNewProject(const QUrl &filepath, const QString &ori
     // Copy files from templates selection
     QDir oldDir(orgSrc.absoluteFilePath());
     copyFiles(oldDir,dir,false);
-    return SGUtilsCpp::pathToUrl(qrcpath_);
+    return QUrl::fromLocalFile(qrcpath_);
 }
 
 /***

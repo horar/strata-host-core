@@ -15,16 +15,19 @@ public:
     QString filename() const;
     QUrl filepath() const;
     QString filetype() const;
+    bool unsavedChanges() const;
 
     QString id() const;
     bool setFilename(const QString &filename);
     bool setFilepath(const QUrl &filepath);
     bool setFiletype(const QString &filetype);
+    bool setUnsavedChanges(const bool &unsaved);
 private:
     QString id_;
     QString filename_;
     QUrl filepath_;
     QString filetype_;
+    bool unsavedChanges_;
 };
 
 class SGFileTabModel : public QAbstractListModel
@@ -41,7 +44,8 @@ public:
         FilenameRole = Qt::UserRole + 1,
         FilepathRole = Qt::UserRole + 2,
         FiletypeRole = Qt::UserRole + 3,
-        IdRole = Qt::UserRole + 4
+        IdRole = Qt::UserRole + 4,
+        UnsavedChangesRole = Qt::UserRole + 5
     };
 
     // OVERRIDES
@@ -55,8 +59,12 @@ public:
     Q_INVOKABLE bool addTab(const QString &filename, const QUrl &filepath, const QString &filetype, const QString &id);
     Q_INVOKABLE bool closeTab(const QString &id);
     Q_INVOKABLE bool closeTabAt(const int index);
+    Q_INVOKABLE void closeAll();
+    Q_INVOKABLE void saveFileAt(const int index);
+    Q_INVOKABLE void saveAll();
     Q_INVOKABLE bool hasTab(const QString &id) const;
     Q_INVOKABLE void clear(bool emitSignals = true);
+    Q_INVOKABLE int getUnsavedCount();
 
     int count() const;
     int currentIndex() const;
@@ -67,6 +75,8 @@ public:
 signals:
     void currentIndexChanged();
     void countChanged();
+    void saveRequested(const int index);
+    void saveAllRequested();
 
 private:
     QList<SGFileTabItem*> data_;
