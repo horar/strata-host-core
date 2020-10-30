@@ -23,4 +23,17 @@ void Identify::runWithDelay(std::chrono::milliseconds delay)
     QTimer::singleShot(delay, this, [this](){ BaseDeviceOperation::run(); });
 }
 
+Identify::BoardMode Identify::boardMode()
+{
+    if (BaseDeviceOperation::isSuccessfullyFinished()) {
+        if (BaseDeviceOperation::bootloaderMode()) {
+            return BoardMode::Bootloader;
+        } else {
+            return BoardMode::Application;
+        }
+    }
+
+    return BoardMode::Unknown;
+}
+
 }  // namespace

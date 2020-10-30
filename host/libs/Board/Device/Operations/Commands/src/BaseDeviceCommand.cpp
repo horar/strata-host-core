@@ -5,7 +5,8 @@
 namespace strata::device::command {
 
 BaseDeviceCommand::BaseDeviceCommand(const device::DevicePtr& device, const QString& commandName) :
-    cmdName_(commandName), device_(device), ackReceived_(false), result_(CommandResult::InProgress) { }
+    cmdName_(commandName), device_(device), ackReceived_(false),
+    result_(CommandResult::InProgress), status_(operation::DEFAULT_STATUS) { }
 
 BaseDeviceCommand::~BaseDeviceCommand() { }
 
@@ -17,9 +18,13 @@ bool BaseDeviceCommand::ackReceived() const {
     return ackReceived_;
 }
 
+void BaseDeviceCommand::setCommandRejected() {
+    result_ = CommandResult::Reject;
+}
+
 void BaseDeviceCommand::onTimeout() {
     // Default result is 'InProgress' - command timed out, finish operation with failure.
-    // In some cases timeout is not a problem, result is 'Done' or 'Retry' then.
+    // If timeout is not a problem, reimplement this method and set result to 'Done' or 'Retry'.
     result_ = CommandResult::InProgress;
 }
 
@@ -31,16 +36,16 @@ std::chrono::milliseconds BaseDeviceCommand::waitBeforeNextCommand() const {
     return std::chrono::milliseconds(0);
 }
 
-int BaseDeviceCommand::dataForFinish() const {
-    return operation::DEFAULT_DATA;  // default value for finished() signal
-}
-
 const QString BaseDeviceCommand::name() const {
     return cmdName_;
 }
 
 CommandResult BaseDeviceCommand::result() const {
     return result_;
+}
+
+int BaseDeviceCommand::status() const {
+    return status_;
 }
 
 void BaseDeviceCommand::setDeviceProperties(const char* name, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) {

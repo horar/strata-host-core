@@ -8,6 +8,7 @@
 #include <Device/Operations/Backup.h>
 #include <Device/Operations/StartApplication.h>
 #include <Device/Operations/Identify.h>
+#include <DeviceOperationsFinished.h>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -114,15 +115,47 @@ void Flasher::cancel() {
     }
 }
 
-void Flasher::handleOperationFinished(operation::Type opType, int data) {
-    switch (opType) {
+void Flasher::handleOperationFinished(operation::Result result, int status, QString errStr) {
+    switch (result) {
+    case operation::Result::Success :
+        performNextOperation(qobject_cast<operation::BaseDeviceOperation*>(QObject::sender()), status);
+        break;
+    case operation::Result::Timeout :
+        qCCritical(logCategoryFlasher) << device_ << "Timeout during firmware operation.";
+        finish(Result::Timeout);
+        break;
+    case operation::Result::Cancel :
+        // Do nothing
+        break;
+    case operation::Result::Reject :
+    case operation::Result::Failure :
+        {
+            QString errMsg(QStringLiteral("Firmware operation has failed (faulty response from device)."));
+            qCCritical(logCategoryFlasher) << device_ << errMsg;
+            emit error(errMsg);
+            finish(Result::Error);
+        }
+    case operation::Result::Error:
+        qCCritical(logCategoryFlasher) << device_ << "Error during flashing: " << errStr;
+        emit error(errStr);
+        finish(Result::Error);
+        break;
+    }
+}
+
+void Flasher::performNextOperation(device::operation::BaseDeviceOperation* baseOp, int status) {
+    if (baseOp == nullptr) {
+        return;
+    }
+
+    switch (baseOp->type()) {
     case operation::Type::StartBootloader :
         emit switchToBootloader(true);
         qCInfo(logCategoryFlasher) << device_ << "Switched to bootloader (version '"
                                    << device_->property(DeviceProperties::bootloaderVer) << "').";
-        if (data == operation::DEFAULT_DATA) {
-            // Operation SwitchToBootloader has data set to OPERATION_ALREADY_IN_BOOTLOADER (1) if board was
-            // already in bootloader mode, otherwise data has default value OPERATION_DEFAULT_DATA (INT_MIN).
+        if (status == operation::DEFAULT_STATUS) {
+            // Operation SwitchToBootloader has status set to OPERATION_ALREADY_IN_BOOTLOADER (1) if board was
+            // already in bootloader mode, otherwise status has default value DEFAULT_STATUS (INT_MIN).
             emit devicePropertiesChanged();
         }
         switch (action_) {
@@ -144,14 +177,14 @@ void Flasher::handleOperationFinished(operation::Type opType, int data) {
         break;
     case operation::Type::FlashFirmware :
     case operation::Type::FlashBootloader :
-        if (data == operation::FLASH_STARTED) {
+        if (status == operation::FLASH_STARTED) {
             manageFlash(-1);  // negative value (-1) means that no chunk was flashed yet
         } else {
-            manageFlash(data);
+            manageFlash(status);  // status contains chunk number
         }
         break;
     case operation::Type::BackupFirmware :
-        switch (data) {
+        switch (status) {
         case operation::BACKUP_NO_FIRMWARE :
             finish(Result::NoFirmware);
             break;
@@ -159,7 +192,7 @@ void Flasher::handleOperationFinished(operation::Type opType, int data) {
             manageBackup(-1);  // negative value (-1) means that no chunk was backed up yet
             break;
         default :
-            manageBackup(data);
+            manageBackup(status);  // status contains chunk number
             break;
         }
         break;
@@ -170,21 +203,6 @@ void Flasher::handleOperationFinished(operation::Type opType, int data) {
                                    << device_->property(DeviceProperties::applicationVer) << "'.";
         emit devicePropertiesChanged();
         finish(Result::Ok);
-        break;
-    case operation::Type::Timeout :
-        qCCritical(logCategoryFlasher) << device_ << "Timeout during firmware operation.";
-        finish(Result::Timeout);
-        break;
-    case operation::Type::Cancel :
-        // Do nothing.
-        break;
-    case operation::Type::Failure :
-        {
-            QString errStr(QStringLiteral("Firmware operation has failed (faulty response from device)."));
-            qCCritical(logCategoryFlasher) << device_ << errStr;
-            emit error(errStr);
-            finish(Result::Error);
-        }
         break;
     default :
         {
@@ -333,12 +351,6 @@ void Flasher::manageBackup(int chunkNumber) {
     backupOp->backupNextChunk();
 }
 
-void Flasher::handleOperationError(QString errStr) {
-    qCCritical(logCategoryFlasher) << device_ << "Error during flashing: " << errStr;
-    emit error(errStr);
-    finish(Result::Error);
-}
-
 void Flasher::finish(Result result) {
     operation_.reset();
     if (binaryFile_.isOpen()) {
@@ -349,7 +361,6 @@ void Flasher::finish(Result result) {
 
 void Flasher::connectHandlers(operation::BaseDeviceOperation *operation) {
     connect(operation, &operation::BaseDeviceOperation::finished, this, &Flasher::handleOperationFinished);
-    connect(operation, &operation::BaseDeviceOperation::error, this, &Flasher::handleOperationError);
 }
 
 void Flasher::operationDeleter(operation::BaseDeviceOperation *operation) {

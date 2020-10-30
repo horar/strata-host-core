@@ -9,10 +9,8 @@
 #include <Device/Device.h>
 
 namespace strata::device::operation {
-
-class BaseDeviceOperation;
-enum class Type : int;
-
+    class BaseDeviceOperation;
+    enum class Result : int;
 }
 
 namespace strata {
@@ -123,14 +121,12 @@ class Flasher : public QObject
         void devicePropertiesChanged();
 
     private slots:
-        void handleOperationFinished(device::operation::Type opType, int data);
-        void handleOperationError(QString errStr);
+        void handleOperationFinished(device::operation::Result result, int status, QString errStr);
 
     private:
         void flash(bool flashFirmware, bool startApplication);
-        void startFlash();
+        void performNextOperation(device::operation::BaseDeviceOperation* baseOp, int status);
         void manageFlash(int lastFlashedChunk);
-        void startBackup();
         void manageBackup(int chunkNumber);
         void finish(Result result);
         void connectHandlers(device::operation::BaseDeviceOperation* operation);

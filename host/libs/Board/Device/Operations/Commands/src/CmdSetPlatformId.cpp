@@ -14,8 +14,7 @@ CmdSetPlatformId::CmdSetPlatformId(
         const device::DevicePtr &device,
         const CmdSetPlatformIdData &data)
     : BaseDeviceCommand(device, QStringLiteral("set_platform_id")),
-      data_(data),
-      dataForFinished_(operation::DEFAULT_DATA)
+      data_(data)
 {
 }
 
@@ -25,12 +24,12 @@ QByteArray CmdSetPlatformId::message()
     QJsonObject data;
     QJsonObject payload;
 
-    payload.insert("class_id", data_.classId);
-    payload.insert("platform_id", data_.platformId);
-    payload.insert("board_count", data_.boardCount);
+    payload.insert(JSON_CLASS_ID, data_.classId);
+    payload.insert(JSON_PLATFORM_ID, data_.platformId);
+    payload.insert(JSON_BOARD_COUNT, data_.boardCount);
 
-    data.insert("cmd", this->name());
-    data.insert("payload", payload);
+    data.insert(JSON_CMD, this->name());
+    data.insert(JSON_PAYLOAD, payload);
 
     doc.setObject(data);
 
@@ -46,24 +45,19 @@ bool CmdSetPlatformId::processNotification(rapidjson::Document &doc)
     result_ = CommandResult::Failure;
 
     const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
-    QString status = payload[JSON_STATUS].GetString();
+    const QString jsonStatus = payload[JSON_STATUS].GetString();
 
-    if (status == "ok") {
+    if (jsonStatus == JSON_OK) {
         result_ = CommandResult::Done;
-    } else if (status == "failed") {
-        dataForFinished_ = operation::SET_PLATFORM_ID_FAILED;
-    } else if (status == "already_initialized") {
-        dataForFinished_ = operation::PLATFORM_ID_ALREADY_SET;
+    } else if (jsonStatus == JSON_FAILED) {
+        status_ = operation::SET_PLATFORM_ID_FAILED;
+    } else if (jsonStatus == JSON_ALREADY_INITIALIZED) {
+        status_ = operation::PLATFORM_ID_ALREADY_SET;
     } else {
-        qCCritical(logCategoryDeviceOperations) << "unknown status string:" << status;
+        qCCritical(logCategoryDeviceOperations) << device_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;
 }
 
-int CmdSetPlatformId::dataForFinish() const
-{
-    return dataForFinished_;
-}
-
-} //namespace
+}  // namespace
