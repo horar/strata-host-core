@@ -212,7 +212,7 @@ void Flasher::manageFlash(int lastFlashedChunk) {
                 finish(Result::Ok);
             }
         } else {  // flash bootloader
-            operation_ = std::make_unique<operation::Identify>(device_, MAX_GET_FW_INFO_RETRIES);
+            operation_ = std::make_unique<operation::Identify>(device_, true, MAX_GET_FW_INFO_RETRIES);
             connectHandlers(operation_.get());
             device::operation::Identify *identify = dynamic_cast<device::operation::Identify*>(operation_.get());
             identify->runWithDelay(IDENTIFY_OPERATION_DELAY);  // starting new bootloader takes some time
