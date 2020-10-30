@@ -23,8 +23,7 @@ ColumnLayout {
     property string currentVersion: ""
 
     onFirmwareCountChanged: {
-        matchVersion()
-        checkForNewerVersion(currentVersion, firmwareListModel)
+        checkForNewerVersion()
     }
 
     Connections {
@@ -39,13 +38,11 @@ ColumnLayout {
     Connections {
         target: platformStack
         onConnectedChanged: {
-            matchVersion()
-            checkForNewerVersion(currentVersion, firmwareListModel)
+            checkForNewerVersion()
 
         }
         onFirmware_versionChanged: {
-            matchVersion()
-            checkForNewerVersion(currentVersion, firmwareListModel)
+            checkForNewerVersion()
 
         }
     }
@@ -62,11 +59,12 @@ ColumnLayout {
         }
     }
 
-    function checkForNewerVersion(installedVersion, differentFirmware) {
-        const splitInstalledVersion = installedVersion.split(".")
-        for (let i = 0; i < differentFirmware.count; i++){
-            if(installedVersion !== differentFirmware[i].version){
-                const differentVersion = differentFirmware[i].version
+    function checkForNewerVersion() {
+        matchVersion()
+        const splitInstalledVersion = currentVersion.split(".")
+        for (let i = 0; i < firmwareListModel.count; i++){
+            if(installedVersion !== firmwareListModel.version(i)){
+                const differentVersion = firmwareListModel.version(i)
                 const splitDifferentVersion = differentVersion.split(".")
                 for(let j = 0; j < splitInstalledVersion.length; j ++){
                     if(Number(splitInstalledVersion[j]) < Number(splitDifferentVersion[i])){
