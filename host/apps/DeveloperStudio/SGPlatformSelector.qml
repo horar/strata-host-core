@@ -111,6 +111,17 @@ Rectangle{
             Help.startHelpTour("selectorHelp", "strataMain")
         }
 
+        Rectangle {
+            // white icon backround fill
+            anchors {
+                centerIn: parent
+            }
+            width: parent.width - 4
+            height: width
+            radius: width/2
+            z:-1
+        }
+
         MouseArea {
             id: helpMouse
             hoverEnabled: true
