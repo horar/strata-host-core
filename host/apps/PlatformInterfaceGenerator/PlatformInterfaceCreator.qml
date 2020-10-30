@@ -7,10 +7,10 @@ Rectangle {
     id: root
 
     readonly property var templatePayload: ({
-       "name": "", // The name of the property
-       "type": "int", // Type of the property, "array", "int", "string", etc.
-       "array": [] // This is only filled if the type == "array"
-   });
+                                                "name": "", // The name of the property
+                                                "type": "int", // Type of the property, "array", "int", "string", etc.
+                                                "array": [] // This is only filled if the type == "array"
+                                            });
 
     ListModel {
         id: finishedModel
@@ -18,14 +18,6 @@ Rectangle {
 
     ListModel {
         id: payloadModel
-
-        Component.onCompleted: {
-            let model = [ // List of payload properties
-                templatePayload
-            ];
-
-            append(model);
-        }
 
         function convertModelToObject(listmodel) {
             let modelArr = [];
@@ -50,7 +42,7 @@ Rectangle {
         }
     }
 
-    ColumnLayout {
+    RowLayout {
         id: commandsContainer
 
         width: parent.width
@@ -59,15 +51,16 @@ Rectangle {
         property bool editing: false
         property var editingIndex
 
+
         /*****************************************
           * This ListView corresponds to each command/notification
          *****************************************/
         ListView {
             id: commandsList
             model: finishedModel
-            Layout.maximumHeight: 300
+            Layout.preferredWidth: 50
             Layout.fillWidth: true
-            Layout.preferredHeight: 200
+            Layout.fillHeight: true
 
             clip: true
 
@@ -137,313 +130,326 @@ Rectangle {
             }
         }
 
-        RowLayout {
-            id: currentCmdNotif
-
-            Layout.preferredHeight: 30
-
-            property string name: cmdNotifName.text
-            property string type: cmdNotifType.currentText
-
-            TextField {
-                id: cmdNotifName
-                Layout.fillWidth: true
-                Layout.preferredHeight: 30
-                placeholderText: "Command name"
-                validator: RegExpValidator {
-                    regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]+/
-                }
-            }
-            ComboBox {
-                id: cmdNotifType
-                Layout.preferredWidth: 150
-                Layout.preferredHeight: 30
-                model: ["command", "notification"]
-            }
-        }
-
-
-        /*****************************************
-          * This ListView corresponds to each property in the payload
-         *****************************************/
-        ListView {
-            id: cmdNotifRepeater
-            model: payloadModel
-            clip: true
-
+        ColumnLayout {
+            id: commandColumn
+            Layout.preferredWidth: 50
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.minimumHeight: 100
-            Layout.preferredHeight: 400
 
-            delegate: ColumnLayout {
-                id: payloadContainer
+            RowLayout {
+                id: currentCmdNotif
+                Layout.fillWidth: true
+                Layout.fillHeight: false
+                Layout.preferredHeight: 30
 
-                width: parent.width
-                spacing: 5
+                property string name: cmdNotifName.text
+                property string type: cmdNotifType.currentText
 
-                property ListModel payloadArrayModel: model.array
-
-                RowLayout {
-                    id: propertyBox
-                    spacing: 5
-                    enabled: cmdNotifName.text.length > 0
-
+                TextField {
+                    id: cmdNotifName
+                    Layout.fillWidth: true
                     Layout.preferredHeight: 30
-
-                    RoundButton {
-                        Layout.preferredHeight: 15
-                        Layout.preferredWidth: 15
-                        padding: 0
-                        hoverEnabled: true
-                        visible: payloadModel.count > 1
-
-                        icon {
-                            source: "qrc:/sgimages/times.svg"
-                            color: removePayloadPropertyMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
-                            height: 7
-                            width: 7
-                            name: "Remove property"
-                        }
-
-                        MouseArea {
-                            id: removePayloadPropertyMouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onClicked: {
-                                payloadModel.remove(index)
-                            }
-                        }
-                    }
-
-                    TextField {
-                        id: propertyKey
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 30
-                        placeholderText: "Property key"
-                        validator: RegExpValidator {
-                            regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]*/
-                        }
-
-                        Component.onCompleted: {
-                            text = model.name
-                        }
-
-                        onTextChanged: {
-                            model.name = text
-                        }
-                    }
-
-                    ComboBox {
-                        id: propertyType
-                        Layout.preferredWidth: 150
-                        Layout.preferredHeight: 30
-                        model: ["int", "double", "string", "bool", "array"]
-
-                        Component.onCompleted: {
-                            let idx = find(model.type);
-                            if (idx === -1) {
-                                currentIndex = 0;
-                            } else {
-                                currentIndex = idx
-                            }
-                        }
-
-                        onActivated: {
-                            if (index === 4) {
-                                if (payloadContainer.payloadArrayModel.count == 0) {
-                                    payloadContainer.payloadArrayModel.append({"type": "int", "indexSelected": 0})
-                                }
-                            } else {
-                                payloadContainer.payloadArrayModel.clear()
-                            }
-
-                            type = currentText // This refers to model.type, but since there is a naming conflict with this ComboBox, we have to use type
-                        }
+                    placeholderText: "Command name"
+                    validator: RegExpValidator {
+                        regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]+/
                     }
                 }
 
-                /*****************************************
-                  * This ListView corresponds to the elements in a property of type "array"
-                 *****************************************/
-                ListView {
-                    id: payloadArrayRepeater
-                    model: payloadContainer.payloadArrayModel
+                ComboBox {
+                    id: cmdNotifType
+                    Layout.preferredWidth: 150
+                    Layout.preferredHeight: 30
+                    model: ["command", "notification"]
+                }
+            }
+
+
+            /*****************************************
+          * This ListView corresponds to each property in the payload
+         *****************************************/
+            ListView {
+                id: cmdNotifRepeater
+                model: payloadModel
+                clip: true
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.maximumHeight: contentHeight
+                Layout.preferredHeight: contentHeight
+
+                delegate: ColumnLayout {
+                    id: payloadContainer
+
+                    width: parent.width
                     spacing: 5
 
-                    Layout.maximumHeight: 300
-                    Layout.fillWidth: true
-                    Layout.leftMargin: 50
-                    Layout.preferredHeight: payloadContainer && payloadContainer.payloadArrayModel ? payloadContainer.payloadArrayModel.count * 40: 0
-                    clip: true
+                    property ListModel payloadArrayModel: model.array
 
-                    add: Transition {
-                        NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 300; }
-                    }
+                    RowLayout {
+                        id: propertyBox
+                        spacing: 5
+                        enabled: cmdNotifName.text.length > 0
 
-                    Connections {
-                        target: payloadContainer.payloadArrayModel
-                        onCountChanged: {
-                            payloadArrayRepeater.positionViewAtEnd()
-                            payloadArrayRepeater.currentIndex = payloadContainer.payloadArrayModel.count - 1
-                        }
-                    }
+                        Layout.preferredHeight: 30
 
-                    delegate: Rectangle {
-                        width: rowLayout.width + 10
-                        height: 40
-                        color: "transparent"
-                        border.color: ListView.isCurrentItem ? "green" : "transparent"
+                        RoundButton {
+                            Layout.preferredHeight: 15
+                            Layout.preferredWidth: 15
+                            padding: 0
+                            hoverEnabled: true
 
-                        Component.onCompleted: {
-                            arrayPropertyType.currentIndex = model.indexSelected
-                        }
+                            icon {
+                                source: "qrc:/sgimages/times.svg"
+                                color: removePayloadPropertyMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
+                                height: 7
+                                width: 7
+                                name: "Remove property"
+                            }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                payloadArrayRepeater.currentIndex = index
+                            MouseArea {
+                                id: removePayloadPropertyMouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                onClicked: {
+                                    payloadModel.remove(index)
+                                }
                             }
                         }
 
-                        RowLayout {
-                            id: rowLayout
-                            height: 30
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            spacing: 5
-
-                            Text {
-                                text: index + 1 + ". Element type: "
-                                Layout.alignment: Qt.AlignVCenter
-                                Layout.preferredWidth: 120
-                                verticalAlignment: Text.AlignVCenter
+                        TextField {
+                            id: propertyKey
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 30
+                            placeholderText: "Property key"
+                            validator: RegExpValidator {
+                                regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]*/
                             }
 
-                            ComboBox {
-                                id: arrayPropertyType
-                                Layout.preferredWidth: 400
-                                Layout.preferredHeight: 30
-                                z: 2
-                                model: ["int", "double", "string", "bool"]
+                            Component.onCompleted: {
+                                text = model.name
+                            }
 
-                                Component.onCompleted: {
-                                    currentIndex = indexSelected
+                            onTextChanged: {
+                                model.name = text
+                            }
+                        }
+
+                        ComboBox {
+                            id: propertyType
+                            Layout.preferredWidth: 150
+                            Layout.preferredHeight: 30
+                            model: ["int", "double", "string", "bool", "array"]
+
+                            Component.onCompleted: {
+                                let idx = find(model.type);
+                                if (idx === -1) {
+                                    currentIndex = 0;
+                                } else {
+                                    currentIndex = idx
+                                }
+                            }
+
+                            onActivated: {
+                                if (index === 4) {
+                                    if (payloadContainer.payloadArrayModel.count == 0) {
+                                        payloadContainer.payloadArrayModel.append({"type": "int", "indexSelected": 0})
+                                    }
+                                } else {
+                                    payloadContainer.payloadArrayModel.clear()
                                 }
 
-                                onActivated: {
-                                    type = currentText
-                                    indexSelected = index
-                                }
+                                type = currentText // This refers to model.type, but since there is a naming conflict with this ComboBox, we have to use type
+                            }
+                        }
+                    }
 
-                                onPressedChanged: {
+                    /*****************************************
+                  * This ListView corresponds to the elements in a property of type "array"
+                 *****************************************/
+                    ListView {
+                        id: payloadArrayRepeater
+                        model: payloadContainer.payloadArrayModel
+                        spacing: 5
+
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 50
+                        Layout.bottomMargin: 5
+                        Layout.preferredHeight: contentHeight//payloadContainer && payloadContainer.payloadArrayModel ? payloadContainer.payloadArrayModel.count * 40: 0
+                        clip: true
+
+                        add: Transition {
+                            NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 300; }
+                        }
+
+                        Connections {
+                            target: payloadContainer.payloadArrayModel
+                            onCountChanged: {
+                                payloadArrayRepeater.positionViewAtEnd()
+                                payloadArrayRepeater.currentIndex = payloadContainer.payloadArrayModel.count - 1
+                            }
+                        }
+
+                        delegate: Rectangle {
+                            width: payloadArrayRepeater.width
+                            height: 40
+                            color: "transparent"
+                            border.color: ListView.isCurrentItem ? "green" : "transparent"
+
+                            Component.onCompleted: {
+                                arrayPropertyType.currentIndex = model.indexSelected
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
                                     payloadArrayRepeater.currentIndex = index
                                 }
                             }
 
-                            RoundButton {
-                                Layout.preferredHeight: 25
-                                Layout.preferredWidth: 25
-                                hoverEnabled: true
-                                visible: index === payloadContainer.payloadArrayModel.count - 1
+                            RowLayout {
+                                id: rowLayout
+                                height: 30
+                                width: parent.width - 10
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                spacing: 5
 
-                                icon {
-                                    source: "qrc:/sgimages/plus.svg"
-                                    color: addItemToArrayMouseArea.containsMouse ? Qt.darker("green", 1.25) : "green"
-                                    height: 20
-                                    width: 20
-                                    name: "add"
+                                Text {
+                                    text: index + 1 + ". Element type: "
+                                    Layout.alignment: Qt.AlignVCenter
+                                    Layout.preferredWidth: 120
+                                    verticalAlignment: Text.AlignVCenter
                                 }
 
-                                MouseArea {
-                                    id: addItemToArrayMouseArea
-                                    anchors.fill: parent
+                                ComboBox {
+                                    id: arrayPropertyType
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 30
+                                    z: 2
+                                    model: ["int", "double", "string", "bool"]
+
+                                    Component.onCompleted: {
+                                        currentIndex = indexSelected
+                                    }
+
+                                    onActivated: {
+                                        type = currentText
+                                        indexSelected = index
+                                    }
+
+                                    onPressedChanged: {
+                                        payloadArrayRepeater.currentIndex = index
+                                    }
+                                }
+
+                                RoundButton {
+                                    Layout.preferredHeight: 25
+                                    Layout.preferredWidth: 25
                                     hoverEnabled: true
-                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                    onClicked: {
-                                        payloadContainer.payloadArrayModel.append({"type": "int", "indexSelected": 0})
+                                    visible: index === payloadContainer.payloadArrayModel.count - 1
+
+                                    icon {
+                                        source: "qrc:/sgimages/plus.svg"
+                                        color: addItemToArrayMouseArea.containsMouse ? Qt.darker("green", 1.25) : "green"
+                                        height: 20
+                                        width: 20
+                                        name: "add"
+                                    }
+
+                                    MouseArea {
+                                        id: addItemToArrayMouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                        onClicked: {
+                                            payloadContainer.payloadArrayModel.append({"type": "int", "indexSelected": 0})
+                                        }
+                                    }
+                                }
+
+                                RoundButton {
+                                    Layout.preferredHeight: 25
+                                    Layout.preferredWidth: 25
+                                    hoverEnabled: true
+                                    visible: payloadContainer.payloadArrayModel.count > 1
+
+                                    icon {
+                                        source: "qrc:/sgimages/times.svg"
+                                        color: removeItemMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
+
+                                        height: 20
+                                        width: 20
+                                        name: "add"
+                                    }
+
+                                    MouseArea {
+                                        id: removeItemMouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                        onClicked: {
+                                            payloadContainer.payloadArrayModel.remove(index)
+                                        }
                                     }
                                 }
                             }
-
-                            RoundButton {
-                                Layout.preferredHeight: 25
-                                Layout.preferredWidth: 25
-                                hoverEnabled: true
-                                visible: payloadContainer.payloadArrayModel.count > 1
-
-                                icon {
-                                    source: "qrc:/sgimages/times.svg"
-                                    color: removeItemMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
-
-                                    height: 20
-                                    width: 20
-                                    name: "add"
-                                }
-
-                                MouseArea {
-                                    id: removeItemMouseArea
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                    onClicked: {
-                                        payloadContainer.payloadArrayModel.remove(index)
-                                    }
-                                }
-                            }
-
                         }
                     }
                 }
 
-                Button {
+                header: Button {
                     id: addPropertyButton
                     text: "Add Property"
-                    height: 30
+                    Layout.alignment: Qt.AlignHCenter
+                    enabled: cmdNotifName.text !== ""
 
                     onClicked: {
-                        visible = false
                         payloadModel.append(templatePayload)
                     }
                 }
             }
-        }
 
-        Button {
-            id: addCmdNotifButton
-            text: commandsContainer.editing ? "Save " : "Add " + cmdNotifType.currentText
+            Button {
+                id: addCmdNotifButton
+                text: "Save"
 
-            Layout.fillWidth: true
-            Layout.preferredHeight: 50
-            Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
 
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: {
-                    let obj = {
-                        "name": currentCmdNotif.name,
-                        "type": currentCmdNotif.type,
-                        "editing": false,
-                        "payload": payloadModel.convertModelToObject(payloadModel)
-                    };
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: {
+                        let obj = {
+                            "name": currentCmdNotif.name,
+                            "type": currentCmdNotif.type,
+                            "editing": false,
+                            "payload": payloadModel.convertModelToObject(payloadModel)
+                        };
 
-                    if (commandsContainer.editing) {
-                        finishedModel.set(commandsContainer.editingIndex, obj)
-                        commandsContainer.editing = false
-                        commandsContainer.editingIndex = null
-                    } else {
-                        finishedModel.append(obj);
+                        if (commandsContainer.editing) {
+                            finishedModel.set(commandsContainer.editingIndex, obj)
+                            commandsContainer.editing = false
+                            commandsContainer.editingIndex = null
+                        } else {
+                            finishedModel.append(obj);
+                        }
+
+                        payloadModel.clear()
+                        payloadModel.append([templatePayload])
+
+                        cmdNotifName.text = ""
                     }
-
-                    payloadModel.clear()
-                    payloadModel.append([templatePayload])
-
-                    cmdNotifName.text = ""
                 }
+            }
+
+            Item {
+                // filler
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
         }
     }

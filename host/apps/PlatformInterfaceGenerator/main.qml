@@ -66,6 +66,7 @@ SGMainWindow {
                 topMargin: 20
                 left: parent.left
                 right: parent.right
+                bottom: parent.bottom
             }
 
             JsonImporter {
