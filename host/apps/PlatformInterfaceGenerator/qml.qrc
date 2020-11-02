@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>JsonImporter.qml</file>
         <file>PlatformInterfaceCreator.qml</file>
+        <file>AlertToast.qml</file>
     </qresource>
 </RCC>

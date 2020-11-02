@@ -1,5 +1,6 @@
 #include "PlatformInterfaceGenerator.h"
 #include "SGUtilsCpp.h"
+#include "logging/LoggingQtCategories.h"
 
 #include <QFile>
 #include <QDir>
@@ -26,7 +27,7 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
     lastError_ = "";
     if (!QFile::exists(pathToJson)) {
         lastError_ = "Path to input file (" + pathToJson + ") does not exist.";
-        qCritical() << "Input file path does not exist. Tried to read from" << pathToJson;
+        qCCritical(logCategoryPlatformInterfaceGenerator) << "Input file path does not exist. Tried to read from" << pathToJson;
         return false;
     }
 
@@ -41,7 +42,7 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
 
     if (parseError.error != QJsonParseError::NoError) {
         lastError_ = "Failed to parse json: " + parseError.errorString();
-        qCritical() << lastError_;
+        qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
         return false;
     }
 
@@ -51,7 +52,7 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
 
     if (!outputDir.exists()) {
         lastError_ = "Path to output folder (" + outputPath + ") does not exist.";
-        qCritical() << "Output folder path does not exist.";
+        qCCritical(logCategoryPlatformInterfaceGenerator) << "Output folder path does not exist.";
         return false;
     }
 
@@ -59,7 +60,7 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
 
     if (!outputFile.open(QFile::WriteOnly | QFile::Truncate)) {
         lastError_ = "Could not open " + outputFile.fileName() + " for writing";
-        qCritical() << "Could not open" << outputFile.fileName() + "for writing";
+        qCCritical(logCategoryPlatformInterfaceGenerator) << "Could not open" << outputFile.fileName() + "for writing";
         return false;
     }
 
@@ -87,11 +88,17 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
 
     // Create QtObjects to handle notifications
 
+    if (!platInterfaceData.contains("notifications")) {
+        lastError_ = "Missing notifications list in JSON.";
+        qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
+        return false;
+    }
+
     QJsonValue notificationsList = platInterfaceData["notifications"];
 
     if (!notificationsList.isArray()) {
         lastError_ = "'notifications' needs to be an array";
-        qCritical() << lastError_;
+        qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
         return false;
     }
 
@@ -116,7 +123,20 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
     indentLevel++;
     outputStream << insertTabs(indentLevel) << "id: commands\n";
 
+    if (!platInterfaceData.contains("commands")) {
+        lastError_ = "Missing commands list in JSON.";
+        qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
+        return false;
+    }
+
     QJsonArray commandsList = platInterfaceData["commands"].toArray();
+
+    if (!notificationsList.isArray()) {
+        lastError_ = "'commands' needs to be an array";
+        qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
+        return false;
+    }
+
     for (int i = 0; i < commandsList.count(); ++i) {
         QJsonObject command = commandsList[i].toObject();
         outputStream << generateCommand(command, indentLevel);
@@ -133,7 +153,7 @@ bool PlatformInterfaceGenerator::generate(const QString &pathToJson, const QStri
 
     if (indentLevel != 0) {
         lastError_ = "Final indent level is not 0. Check file for indentation errors";
-        qWarning() << lastError_;
+        qCWarning(logCategoryPlatformInterfaceGenerator) << lastError_;
         return true;
     }
 
@@ -178,14 +198,14 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
             QString propType = getType(propValue);
             if (propType.isNull()) {
                 lastError_ = "Property in payload for command " + cmd + " is null";
-                qCritical() << lastError_;
+                qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
                 return "";
             }
 
             payloadProperties.append(insertTabs(indentLevel + 2) + "\"" + key + "\": " + getPropertyValue(propValue, propType, indentLevel + 2));
 
             if (lastError_.length() > 0) {
-                qCritical() << lastError_;
+                qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
                 return "";
             }
 
@@ -233,7 +253,7 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
 {
     if (!notification.contains("value")) {
         lastError_ = "Notification did not contain 'value'";
-        qCritical() << lastError_;
+        qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
         return QString();
     }
 
@@ -267,7 +287,7 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
         QString propType = getType(propValue);
         if (propType.isNull()) {
             lastError_ = "Property for notification " + notificationId + " has unknown type";
-            qCritical() << lastError_;
+            qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
             return "";
         }
 
@@ -277,7 +297,7 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
 
         propertiesBody += insertTabs(indentLevel) + "property " + propType + " " + payloadProperty + ": " + getPropertyValue(propValue, propType, indentLevel) + "\n";
         if (lastError_.length() > 0) {
-            qCritical() << lastError_;
+            qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
             return "";
         }
     }
@@ -298,7 +318,7 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
 
     if (propType.isNull()) {
         lastError_ = "Property for " + id + " is null";
-        qCritical() << lastError_;
+        qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
         return;
     }
 
@@ -329,7 +349,7 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
             QString childType = getType(element);
             if (childType.isNull()) {
                 lastError_ = "Unrecognized type of property for notificaition " + parentId;
-                qCritical() << lastError_;
+                qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
                 return;
             }
 
@@ -339,7 +359,7 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
 
             properties += insertTabs(indentLevel + 1) + "property " + childType + " " + childId + ": " + getPropertyValue(element, childType, indentLevel) + "\n";
             if (lastError_.length() > 0) {
-                qCritical() << lastError_;
+                qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
                 return;
             }
         }
