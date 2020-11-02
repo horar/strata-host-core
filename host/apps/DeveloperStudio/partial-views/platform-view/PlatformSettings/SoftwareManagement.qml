@@ -73,17 +73,27 @@ ColumnLayout {
     function matchVersion() {
         // when the active view is this view, then match the version
         if (platformStack.currentIndex === settingsContainer.stackIndex) {
-            let activeIdx = platformStack.controlViewContainer.controlViewList.getInstalledVersion()
+            let installedVersion = controlViewContainer.getInstalledVersion(NavigationControl.context.user_id);
 
-            if (activeIdx >= 0) {
-                activeVersion = platformStack.controlViewContainer.controlViewList.get(activeIdx)
-            } else {
-                // Using a local view, so set the active version to the git tagged version
+            if (installedVersion) {
                 activeVersion = {
-                    "version": sdsModel.resourceLoader.getGitTaggedVersion(platformStack.class_id)
+                    "version": installedVersion.version
+                }
+                upToDate = isUpToDate();
+                return;
+            } else {
+                const activeIdx = controlViewContainer.controlViewList.getInstalledVersion()
+
+                if (activeIdx >= 0) {
+                    activeVersion = platformStack.controlViewContainer.controlViewList.get(activeIdx)
+                } else {
+                    // Using a local view, so set the active version to the git tagged version
+                    activeVersion = {
+                        "version": sdsModel.resourceLoader.getGitTaggedVersion(platformStack.class_id)
+                    }
                 }
             }
-
+            
             upToDate = isUpToDate();
         }
     }
