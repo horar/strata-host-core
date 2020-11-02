@@ -71,7 +71,6 @@ if(APPLE)
         resources/icons/app/on-logo.icns
         PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
-
 endif()
 
 target_link_libraries(${PROJECT_NAME}
@@ -131,14 +130,15 @@ if(WIN32)
     endif()
 endif()
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_DISABLE_DEPRECATED_BEFORE=0x060000
-    $<$<CONFIG:Debug>:QT_QML_DEBUG>
-)
-
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
     COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")

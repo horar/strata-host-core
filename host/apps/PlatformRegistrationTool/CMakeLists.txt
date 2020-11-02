@@ -84,11 +84,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_DISABLE_DEPRECATED_BEFORE=0x060000
-    $<$<CONFIG:Debug>:QT_QML_DEBUG>
-)
-
 if(WIN32)
     get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
@@ -134,6 +129,12 @@ add_custom_command(
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/prt-config.ini
     COMMENT "Deploying config file ${APPS_TOOLBOX_PRT_CONFIG} as 'prt-config.ini'"
     VERBATIM
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")

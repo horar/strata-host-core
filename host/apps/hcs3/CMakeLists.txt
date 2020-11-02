@@ -141,3 +141,8 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMENT "Deploying 'hcs.config'..."
     VERBATIM
 )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
+)

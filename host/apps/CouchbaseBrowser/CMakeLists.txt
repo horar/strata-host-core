@@ -69,6 +69,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
+)
+
 if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
