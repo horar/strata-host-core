@@ -5,6 +5,7 @@ Menu {
 
     MenuItem {
         text: "Add to Qrc"
+        enabled: !model.inQrc
         onTriggered: {
             treeModel.addToQrc(styleData.index);
             fileContextMenu.dismiss()
@@ -13,6 +14,7 @@ Menu {
 
     MenuItem {
         text: "Remove from Qrc"
+        enabled: model.inQrc
         onTriggered: {
             treeModel.removeFromQrc(styleData.index);
             fileContextMenu.dismiss()
