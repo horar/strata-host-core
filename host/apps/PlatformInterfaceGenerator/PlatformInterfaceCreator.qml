@@ -16,6 +16,7 @@ Rectangle {
     readonly property var templateCommand: ({
         "type": "cmd",
         "name": "",
+        "valid": false,
         "payload": [],
         "editing": false
     });
@@ -23,6 +24,7 @@ Rectangle {
     readonly property var templateNotification: ({
         "type": "value",
         "name": "",
+        "valid": false,
         "payload": [],
         "editing": false
     });
@@ -30,8 +32,53 @@ Rectangle {
     readonly property var templatePayload: ({
         "name": "", // The name of the property
         "type": "int", // Type of the property, "array", "int", "string", etc.
+        "valid": false,
         "array": [] // This is only filled if the type == "array"
     });
+
+    /**
+      * This function creates the JSON object to output
+     **/
+    function createJsonObject() {
+        let obj = {};
+
+        for (let i = 0; i < finishedModel.count; i++) {
+            let type = finishedModel.get(i);
+            let commands = [];
+
+            for(let j = 0; j < type.data.count; j++) {
+                let command = type.data.get(j);
+                let commandObj = {};
+                commandObj[command.type] = command.name;
+
+                if (command.payload.count === 0) {
+                    commandObj["payload"] = null;
+                    commands.push(commandObj);
+                    continue;
+                } else {
+                    commandObj["payload"] = {};
+                }
+
+                for (let k = 0; k < command.payload.count; k++) {
+                    let payloadProperty = command.payload.get(k);
+
+                    if (payloadProperty.type !== "array") {
+                        commandObj["payload"][payloadProperty.name] = payloadProperty.type;
+                    } else {
+                        let arrayElements = [];
+                        for (let m = 0; m < payloadProperty.array.count; m++) {
+                            let arrayElement = payloadProperty.array.get(m);
+                            arrayElements.push(arrayElement.type)
+                        }
+                        commandObj["payload"][payloadProperty.name] = arrayElements;
+                    }
+                }
+                commands.push(commandObj)
+            }
+            obj[type.name] = commands;
+        }
+        return obj;
+    }
 
     ListModel {
         id: finishedModel
@@ -47,6 +94,95 @@ Rectangle {
 
                 append(type)
             }
+        }
+
+        /**
+          * This function checks if all fields are valid
+         **/
+        function checkForAllValid() {
+            for (let i = 0; i < count; i++) {
+                let commands = get(i).data;
+                for (let k = 0; k < commands.count; k++) {
+                    let valid = true;
+                    if (commands.get(k).name === "") {
+                        commands.setProperty(k, "valid", false)
+                        console.error("Empty", i === 0 ? "command" : "notification", "name at index", k)
+                        return false;
+                    }
+
+                    for (let j = 0; j < commands.count; j++) {
+                        if (j !== k && commands.get(k).name === commands.get(j).name) {
+                            commands.setProperty(j, "valid", false)
+                            console.error("Duplicate", i === 0 ? "command" : "notification", "'" + commands.get(j).name + "' found")
+                            return false;
+                        }
+                    }
+
+                    if (!checkForDuplicatePropertyNames(i, k, true)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /**
+          * This function checks for valid and duplicate property names in a command / notification
+         **/
+        function checkForDuplicatePropertyNames(typeIndex, commandIndex, shortCircuit = false) {
+            let commands = get(typeIndex).data;
+            let payload = commands.get(commandIndex).payload;
+
+            let allValid = true;
+            for (let i = 0; i < payload.count; i++) {
+                let valid = true;
+
+                if (payload.get(i).name === "") {
+                    payload.setProperty(i, "valid", false)
+                    allValid = false;
+                    if (shortCircuit) {
+                        console.error("Empty payload name at index", i)
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                for (let j = 0; j < payload.count; j++) {
+                    if (j !== i && payload.get(i).name === payload.get(j).name) {
+                        valid = false;
+                        allValid = false;
+                        if (shortCircuit) {
+                            console.error("Duplicate payload key '" + payload.get(j).name + "' found")
+                            return false;
+                        }
+                        break;
+                    }
+                }
+                payload.setProperty(i, "valid", valid)
+            }
+            return allValid;
+        }
+
+        /**
+          * This function checks for duplicate ids in either the "commands" or "notifications" array. Note that there can be duplicates between the commands and notifications. E.g.) Commands can have a cmd with name "test" and so can the notifications
+         **/
+        function checkForDuplicateIds(index) {
+            let commands = get(index).data;
+            let allValid = true
+            for (let i = 0; i < commands.count; i++) {
+                let valid = true;
+                for (let j = 0; j < commands.count; j++) {
+                    if (j !== i && commands.get(i).name === commands.get(j).name) {
+                        valid = false;
+                        allValid = false;
+                        break;
+                    }
+                }
+                get(index).data.setProperty(i, "valid", valid)
+            }
+
+            return allValid;
         }
     }
 
@@ -131,6 +267,8 @@ Rectangle {
                         Layout.maximumHeight: contentHeight
                         Layout.preferredHeight: contentHeight
 
+                        property var modelIndex: index
+
                         spacing: 10
                         clip: true
 
@@ -174,9 +312,35 @@ Rectangle {
                                     id: cmdNotifName
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 30
+
                                     placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
                                     validator: RegExpValidator {
                                         regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]+/
+                                    }
+
+                                    background: Rectangle {
+                                        border.color: {
+                                            if (!model.valid) {
+                                                border.width = 2
+                                                return "#D10000";
+                                            } else if (cmdNotifName.activeFocus) {
+                                                border.width = 2
+                                                return palette.highlight
+                                            } else {
+                                                border.width = 1
+                                                return "lightgrey"
+                                            }
+                                        }
+                                        border.width: 2
+                                    }
+
+                                    onTextChanged: {
+                                        if (text.length > 0) {
+                                            model.name = text
+                                            finishedModel.checkForDuplicateIds(commandsListView.modelIndex)
+                                        } else {
+                                            model.valid = false
+                                        }
                                     }
                                 }
                             }
@@ -201,7 +365,6 @@ Rectangle {
                                         id: propertyBox
                                         spacing: 5
                                         enabled: cmdNotifName.text.length > 0
-
                                         Layout.preferredHeight: 30
 
                                         RoundButton {
@@ -238,12 +401,27 @@ Rectangle {
                                                 regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]*/
                                             }
 
-                                            Component.onCompleted: {
-                                                text = model.name
+                                            background: Rectangle {
+                                                border.color: {
+                                                    if (!model.valid) {
+                                                        border.width = 2
+                                                        return "#D10000";
+                                                    } else if (propertyKey.activeFocus) {
+                                                        border.width = 2
+                                                        return palette.highlight
+                                                    } else {
+                                                        border.width = 1
+                                                        return "lightgrey"
+                                                    }
+                                                }
+                                                border.width: 2
                                             }
 
                                             onTextChanged: {
-                                                model.name = text
+                                                if (text.length > 0) {
+                                                    model.name = text
+                                                    finishedModel.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
+                                                }
                                             }
                                         }
 
@@ -380,7 +558,9 @@ Rectangle {
 
                                 onClicked: {
                                     commandsColumn.payloadModel.append(templatePayload)
-                                    commandsListView.contentY += 70
+                                    if (commandsColumn.modelIndex === commandsListView.count - 1) {
+                                        commandsListView.contentY += 70
+                                    }
                                 }
                             }
 
@@ -440,9 +620,9 @@ Rectangle {
                 anchors.fill: parent
                 color: {
                     if (!generateButton.enabled) {
-                        return "grey"
+                        return "lightgrey"
                     } else {
-                        return generateButtonMouseArea.containsMouse ? Qt.darker("green", 1.5) : "green"
+                        return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
                     }
                 }
             }
@@ -462,12 +642,28 @@ Rectangle {
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
 
                 onClicked: {
-                    let result = generator.generate(inputFilePath, outputFilePath);
+                    let valid = finishedModel.checkForAllValid();
+                    if (!valid) {
+                        alertToast.text = "Not all fields are valid! Make sure your command / notification names are unique."
+                        alertToast.textColor = "white"
+
+                        alertToast.color = "#D10000"
+                        alertToast.interval = 0
+                        alertToast.show()
+                        return
+                    }
+
+                    let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
+
+                    let jsonObject = createJsonObject();
+                    let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
+
+                    let result = generator.generate(jsonInputFilePath, outputFileText.text);
                     if (!result) {
                         alertToast.text = "Generation Failed: " + generator.lastError
                         alertToast.textColor = "white"
 
-                        alertToast.color = "red"
+                        alertToast.color = "#D10000"
                         alertToast.interval = 0
                     } else if (generator.lastError.length > 0) {
                         alertToast.text = "Generation Succeeded, but with warnings: " + generator.lastError

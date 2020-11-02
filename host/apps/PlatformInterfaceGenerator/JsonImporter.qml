@@ -92,9 +92,9 @@ ColumnLayout {
             anchors.fill: parent
             color: {
                 if (!generateButton.enabled) {
-                    return "grey"
+                    return "lightgrey"
                 } else {
-                    return generateButtonMouseArea.containsMouse ? Qt.darker("green", 1.5) : "green"
+                    return generateButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
                 }
             }
         }
@@ -119,7 +119,7 @@ ColumnLayout {
                     alertToast.text = "Generation Failed: " + generator.lastError
                     alertToast.textColor = "white"
 
-                    alertToast.color = "red"
+                    alertToast.color = "#D10000"
                     alertToast.interval = 0
                 } else if (generator.lastError.length > 0) {
                     alertToast.text = "Generation Succeeded, but with warnings: " + generator.lastError
