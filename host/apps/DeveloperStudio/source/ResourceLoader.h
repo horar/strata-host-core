@@ -136,7 +136,7 @@ private:
 
     static const QStringList coreResources_;
 
-    QProcess *rccCompilerProcess_ = nullptr;
+    std::unique_ptr<QProcess> rccCompilerProcess_ = nullptr;
 
     QString lastLoggedError = "";
 

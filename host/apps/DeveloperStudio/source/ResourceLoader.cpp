@@ -345,14 +345,11 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     // Set and launch rcc compiler process
     const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
 
-    if (rccCompilerProcess_ != nullptr) {
-        delete rccCompilerProcess_;
-    }
-    rccCompilerProcess_ = new QProcess();
+    rccCompilerProcess_ = std::make_unique<QProcess>();
     rccCompilerProcess_->setProgram(rccExecutablePath);
     rccCompilerProcess_->setArguments(arguments);
-    connect(rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
-    connect(rccCompilerProcess_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
+    connect(rccCompilerProcess_.get(), SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
+    connect(rccCompilerProcess_.get(), QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
 
     rccCompilerProcess_->start();
 }

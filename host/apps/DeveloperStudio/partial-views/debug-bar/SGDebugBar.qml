@@ -229,6 +229,7 @@ Item {
 
                 onClicked: {
                     controlViewDevDialog.setVisible(true)
+                    controlViewDevDialog.raise()
                 }
             }
 
