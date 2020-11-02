@@ -1,7 +1,7 @@
 #include "HostControllerService.h"
 
 #include "Version.h"
-#include "HostControllerServiceTimestamp.h"
+#include "Timestamp.h"
 #include "RunGuard.h"
 
 #include "HostControllerServiceNode.h"
@@ -139,4 +139,3 @@ int main(int argc, char *argv[])
 
     return app.exec();
 }
-
