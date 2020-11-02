@@ -22,7 +22,10 @@ Item {
     property bool externalChanges: false
 
     function openFile() {
-        return SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+        let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+
+        // Before returning the fileText, replace tabs with 4 spaces
+        return fileText.replace(/\t/g, '    ')
     }
 
     function saveFile() {
@@ -57,6 +60,44 @@ Item {
         }
     }
 
+    Connections {
+        target: editor.editorToolBar
+
+        onSaveClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                saveFile()
+            }
+        }
+
+        onUndoClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.undo()
+            }
+        }
+
+        onRedoClicked: {
+            if (modelIndex === openFilesModel.currentIndex) {
+                channelObject.redo()
+            }
+        }
+    }
+    
+    Connections {
+        target: openFilesModel
+
+        onSaveRequested: {
+            if (index === fileContainerRoot.modelIndex) {
+                saveFile();
+            }
+        }
+
+        onSaveAllRequested: {
+            if (model.unsavedChanges) {
+                saveFile();
+            }
+        }
+    }
+
     WebChannel {
         id: channel
         registeredObjects: [channelObject]
@@ -71,6 +112,8 @@ Item {
 
         signal setValue(string value);
         signal setContainerHeight(string height);
+        signal undo();
+        signal redo();
 
         function setHtml(value) {
             setValue(value)
@@ -116,8 +159,9 @@ Item {
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
                 channelObject.setContainerHeight(height.toString())
-                channelObject.fileText = openFile(model.filepath)
-                channelObject.setHtml(channelObject.fileText)
+                let fileText = openFile(model.filepath)
+                channelObject.setHtml(fileText)
+                channelObject.fileText = fileText
             }
         }
 

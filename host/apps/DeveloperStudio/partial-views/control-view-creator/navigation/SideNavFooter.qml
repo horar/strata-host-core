@@ -98,15 +98,9 @@ Item {
                 if (filepath !== '') {
                     loadDebugView(filepath)
                 } else {
-                    NavigationControl.removeView(controlViewContainer)
                     let error_str = sdsModel.resourceLoader.getLastLoggedError()
-                    sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
-                }
-
-                toolBarListView.recompiling = false
-
-                if (toolBarListView.currentIndex === toolBarListView.viewTab) {
-                    viewStack.currentIndex = 4
+                    controlViewLoader.setSource(NavigationControl.screens.LOAD_ERROR,
+                                                { "error_message": error_str });
                 }
             }
         }

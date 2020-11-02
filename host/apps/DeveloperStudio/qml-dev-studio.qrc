@@ -154,5 +154,6 @@
         <file>partial-views/control-view-creator/Sidebar/SideBarDelegate.qml</file>
         <file>partial-views/control-view-creator/Sidebar/FileContextMenu.qml</file>
         <file>partial-views/control-view-creator/Sidebar/FolderContextMenu.qml</file>
+        <file>partial-views/control-view-creator/ConfirmClosePopup.qml</file>
     </qresource>
 </RCC>

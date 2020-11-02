@@ -196,6 +196,7 @@ signals:
     void projectDirectoryChanged();
     void rootChanged();
     void errorParsing(const QString error);
+    void finishedReadingQrc(const QByteArray &fileText);
 
     // This signal is emitted when the file at the specified path is modified
     void fileChanged(const QUrl path);
@@ -211,9 +212,13 @@ signals:
      * SLOTS
      ***/
 public slots:
-    void childrenChanged(const QModelIndex &index, int role);
+    void childrenChanged(const QModelIndex &index, int role);    
 
+    /***
+     * PRIVATE MEMBERS
+     ***/
 private slots:
+    void startPopulating(const QByteArray &fileText);
     /**
      * @brief projectFilesModified This slot is connected to the QFileSystemWatcher::fileChanged signal
      * @details This slot only deals with files (not directories). It handles individual files
@@ -229,19 +234,15 @@ private slots:
      * @param path The path of the directory that changed.
      */
     void directoryStructureChanged(const QString &path);
-
-
-    /***
-     * PRIVATE MEMBERS
-     ***/
 private:
     void clear(bool emitSignals = true);
-    bool readQrcFile();
+    void readQrcFile();
+    bool createQrcXmlDocument(const QByteArray &fileText);
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
     void save();
 
-    SGQrcTreeNode *root_;
+    SGQrcTreeNode *root_ = nullptr;
     QUrl url_;
     QUrl projectDir_;
     QDomDocument qrcDoc_;
