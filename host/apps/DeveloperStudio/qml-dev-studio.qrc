@@ -38,7 +38,6 @@
         <file>partial-views/login/SGLoginControls.qml</file>
         <file>partial-views/login/SelectionButton.qml</file>
         <file>partial-views/login/SGSessionControls.qml</file>
-        <file>partial-views/SGSalesPopup.qml</file>
         <file>partial-views/platform-selector/SGPlatformSelectorStatus.qml</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/amplifiers_and_comparators.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg</file>
@@ -93,9 +92,12 @@
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
         <file>partial-views/general/SGNotificationToast.qml</file>
+        <file>partial-views/general/SGWebPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsCheckbox.qml</file>
         <file>partial-views/platform-selector/RecentlyReleased.qml</file>
         <file>partial-views/platform-selector/PlatformImage.qml</file>
+        <file>partial-views/general/WebPopup/SGWebControls.qml</file>
+        <file>partial-views/general/WebPopup/SGWebView.qml</file>
     </qresource>
 </RCC>
