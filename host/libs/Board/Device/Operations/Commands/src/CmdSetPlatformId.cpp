@@ -12,13 +12,9 @@ namespace strata::device::command {
 
 CmdSetPlatformId::CmdSetPlatformId(
         const device::DevicePtr &device,
-        const QString &classId,
-        const QString &platformId,
-        int boardCount)
+        const CmdSetPlatformIdData &data)
     : BaseDeviceCommand(device, QStringLiteral("set_platform_id")),
-      classId_(classId),
-      platformId_(platformId),
-      boardCount_(boardCount),
+      data_(data),
       dataForFinished_(operation::DEFAULT_DATA)
 {
 }
@@ -29,9 +25,9 @@ QByteArray CmdSetPlatformId::message()
     QJsonObject data;
     QJsonObject payload;
 
-    payload.insert("class_id", classId_);
-    payload.insert("platform_id", platformId_);
-    payload.insert("board_count", boardCount_);
+    payload.insert("class_id", data_.classId);
+    payload.insert("platform_id", data_.platformId);
+    payload.insert("board_count", data_.boardCount);
 
     data.insert("cmd", this->name());
     data.insert("payload", payload);

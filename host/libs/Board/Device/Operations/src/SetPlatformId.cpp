@@ -7,17 +7,13 @@ namespace strata::device::operation {
 using command::CmdSetPlatformId;
 
 SetPlatformId::SetPlatformId(
-        const device::DevicePtr& device,
-        const QString &classId,
-        const QString &platformId,
-        int boardCount)
+        const device::DevicePtr &device,
+        const command::CmdSetPlatformIdData &data)
     : BaseDeviceOperation(device, Type::SetPlatformId)
 {
     commandList_.emplace_back(std::make_unique<CmdSetPlatformId>(
                                   device_,
-                                  classId,
-                                  platformId,
-                                  boardCount));
+                                  data));
 
     currentCommand_ = commandList_.end();
 }
