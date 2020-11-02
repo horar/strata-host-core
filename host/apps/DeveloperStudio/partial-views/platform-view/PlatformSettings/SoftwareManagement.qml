@@ -51,7 +51,10 @@ ColumnLayout {
         }
         onDownloadControlViewProgress: {
             if (platformStack.currentIndex === settingsContainer.stackIndex && payload.url === activeDownloadUri) {
-                progressUpdateText.percent = payload.bytes_received / payload.bytes_total
+                let progressPercent = payload.bytes_received / payload.bytes_total
+                if (progressPercent >= 0 && progressPercent <= 100) {
+                    progressUpdateText.percent = progressPercent
+                }
             }
         }
     }
