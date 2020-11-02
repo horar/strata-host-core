@@ -189,7 +189,6 @@ void BaseDeviceOperation::handleDeviceError(device::Device::ErrorCode errCode, Q
     emit finished(Type::Failure);
 }
 
-
 void BaseDeviceOperation::resume()
 {
     if (run_) {
