@@ -83,8 +83,7 @@ Rectangle {
                                 return;
                             }
                         }
-                        treeModel.insertChild(path, -1, true, treeView.rootIndex);
-                        treeModel.startSave();
+                        treeModel.insertChild(path, -1, false, treeView.rootIndex);
                     }
                 }
             }

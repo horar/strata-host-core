@@ -194,8 +194,7 @@ Item {
                         return;
                     }
                 }
-                treeModel.insertChild(path, -1, true, styleData.index);
-                treeModel.startSave();
+                treeModel.insertChild(path, -1, false, styleData.index);
             }
         }
 

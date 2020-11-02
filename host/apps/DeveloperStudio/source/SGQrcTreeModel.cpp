@@ -585,6 +585,7 @@ void SGQrcTreeModel::clear(bool emitSignals)
     }
     if (fsWatcher_->directories().count() > 0) {
         fsWatcher_->removePaths(fsWatcher_->directories());
+    }
     if (!qrcDoc_.isNull()) {
         qrcDoc_.clear();
     }
