@@ -2,45 +2,44 @@
 def REPO_NAME = "s"
 def ROOT_BUILD_DIR = "b"
 def BUILD_NAME = UUID.randomUUID().toString()
-def INSTALLER_PATH = ""
+def INSTALLER_PATH_OFFLINE = ""
+def INSTALLER_PATH_ONLINE = ""
 pipeline {
-    agent { 
-        node { 
+    agent {
+        node {
             label 'master'
             // TODO: hard drive letter should be loaded from ${env.SystemDrive} but node can't access env
             customWorkspace "C:/${REPO_NAME}"
-        } 
+        }
     }
     stages {
         stage('Build') {
             steps {
-                sh "${env.workspace}/deployment/Strata/deploy_strata_windows.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}' --nosigning"
+                sh "${env.workspace}/deployment/Strata2/release_app.sh -c -g -n -s -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}'"
             }
-        }           
+        }
         stage('Test') {
             steps {
                 script{
-                    INSTALLER_PATH = sh(encoding: 'UTF-8', script: "find '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}' -type f  -iname 'Strata*.exe' ", returnStdout: true)
-                    INSTALLER_PATH = INSTALLER_PATH.minus("\n")
+                    INSTALLER_PATH_OFFLINE = sh(encoding: 'UTF-8', script: "find '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}' -type f  -iname 'strata-setup-offline.*' ", returnStdout: true)
+                    INSTALLER_PATH_OFFLINE = INSTALLER_PATH_OFFLINE.minus("\n")
+                    INSTALLER_PATH_ONLINE = sh(encoding: 'UTF-8', script: "find '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}' -type f  -iname 'strata-setup-online.*' ", returnStdout: true)
+                    INSTALLER_PATH_ONLINE = INSTALLER_PATH_ONLINE.minus("\n")
                 }
-                echo "Installer Path: $INSTALLER_PATH"
-                //powershell "${env.workspace}/host/test/release-testing/Test-StrataRelease.ps1 '${INSTALLER_PATH}'"              
+                echo "Installer Path Offline: $INSTALLER_PATH_OFFLINE"
+                echo "Installer Path Online: $INSTALLER_PATH_ONLINE"
             }
         }
-        stage('Deploy'){
-            steps{
-                sh "python -m venv ${env.workspace}/deployment/OTA/ota-deploy-env"
-                sh "source ${env.workspace}/deployment/OTA/ota-deploy-env/Scripts/activate"
-                sh "python -m pip install -r ${env.workspace}/deployment/OTA/requirements.txt"
-                sh """python '${env.workspace}/deployment/OTA/deploy.py' \
+        stage('Deploy') {
+            steps {
+                sh "python -m pip install -r deployment/Strata2/requirements.txt"
+                sh """python 'deployment/Strata2/deploy_build.py' \
                     --dir '${BUILD_NAME}' \
-                    --hcs '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/hcs.exe' \
-                    --devstudio '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/Strata Developer Studio.exe' \
-                    --views '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin' \
-                    --qmlcomponents '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin' \
-                    --libs '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
+                    --offline '${INSTALLER_PATH_OFFLINE}' \
+                    --online '${INSTALLER_PATH_ONLINE}' \
+                    --repo '${ROOT_BUILD_DIR}/${BUILD_NAME}/public/repository/strata' \
                     """
-                archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/Strata*.exe", onlyIfSuccessful: true
+                archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/strata-setup-*", onlyIfSuccessful: true
             }
         }
     }
