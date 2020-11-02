@@ -109,6 +109,8 @@ void Flasher::flash(bool flashFirmware, bool startApplication) {
 void Flasher::cancel() {
     if (operation_) {
         operation_->cancelOperation();
+        qCWarning(logCategoryFlasher) << device_ << "Firmware operation was cancelled.";
+        finish(Result::Cancelled);
     }
 }
 
@@ -174,8 +176,7 @@ void Flasher::handleOperationFinished(operation::Type opType, int data) {
         finish(Result::Timeout);
         break;
     case operation::Type::Cancel :
-        qCWarning(logCategoryFlasher) << device_ << "Firmware operation was cancelled.";
-        finish(Result::Cancelled);
+        // Do nothing.
         break;
     case operation::Type::Failure :
         {
@@ -321,6 +322,8 @@ void Flasher::manageBackup(int chunkNumber) {
                 }
             } else {
                 qCWarning(logCategoryFlasher) << "Cannot backup firmware which has 0 chunks.";
+                // Operation 'Backup' is currently runing, it must be cancelled.
+                operation_->cancelOperation();
                 finish(Result::NoFirmware);
             }
             return;
@@ -337,6 +340,7 @@ void Flasher::handleOperationError(QString errStr) {
 }
 
 void Flasher::finish(Result result) {
+    operation_.reset();
     if (binaryFile_.isOpen()) {
         binaryFile_.close();
     }
