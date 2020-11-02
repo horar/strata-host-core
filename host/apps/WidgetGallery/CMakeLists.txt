@@ -58,4 +58,3 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
-add_qml_import_path(PATH ":/")

@@ -89,9 +89,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
-add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
-add_qml_import_path(PATH ":/")
-
 if(WIN32)
     get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
@@ -112,7 +109,6 @@ if(WIN32)
         message(WARNING "Please install OpenSSL coming with your Qt installer (can't find OpenSSL DLL's in '${QT_SSL_LIBRARY_DIR}'")
     endif()
 endif()
-
 
 # deploy desired config file into side-by-side to compiled binary/bundle
 set(PRT_CONFIG_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/configs)
@@ -139,3 +135,5 @@ add_custom_command(
     COMMENT "Deploying config file ${APPS_TOOLBOX_PRT_CONFIG} as 'prt-config.ini'"
     VERBATIM
 )
+
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
