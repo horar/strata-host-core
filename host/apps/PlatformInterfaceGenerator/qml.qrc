@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>JsonImporter.qml</file>
+        <file>PlatformInterfaceCreator.qml</file>
     </qresource>
 </RCC>
