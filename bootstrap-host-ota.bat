@@ -59,6 +59,7 @@ set BUILD_DIR=build-host-ota
 set PACKAGES_DIR=packages
 set PACKAGES_WIN_DIR=packages_win
 
+set STRATA=strata
 set STRATA_COMPONENTS=components
 set STRATA_DS=devstudio
 set STRATA_HCS=hcs
@@ -66,7 +67,7 @@ set STRATA_QT=qt
 set STRATA_VC_REDIST=vcredist
 set STRATA_FTDI=ftdi
 
-set MODULE_STRATA=com.onsemi.strata
+set MODULE_STRATA=com.onsemi.%STRATA%
 set MODULE_STRATA_COMPONENTS=%MODULE_STRATA%.%STRATA_COMPONENTS%
 set MODULE_STRATA_DS=%MODULE_STRATA%.%STRATA_DS%
 set MODULE_STRATA_HCS=%MODULE_STRATA%.%STRATA_HCS%
@@ -90,7 +91,6 @@ set SDS_BINARY_DIR=%PKG_STRATA_DS%\%SDS_BINARY%
 set HCS_BINARY_DIR=%PKG_STRATA_HCS%\%HCS_BINARY%
 set STRATA_DEPLOYMENT_DIR=..\deployment\Strata
 set STRATA_RESOURCES_DIR=..\host\resources\qtifw
-set STRATA_HCS_CONFIG_DIR=..\host\assets\config\hcs
 
 set STRATA_HCS_CONFIG_FILE_PROD=hcs_prod.config
 set STRATA_HCS_CONFIG_FILE_QA=hcs_qa.config
@@ -676,27 +676,31 @@ echo =======================================================================
 if exist %STRATA_ONLINE_REPOSITORY% rd /s /q %STRATA_ONLINE_REPOSITORY%
 if not exist %STRATA_ONLINE_REPOSITORY% md %STRATA_ONLINE_REPOSITORY%
 
-repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA% %STRATA_ONLINE_REPOSITORY%
+echo -----------------------------------------------------------------------------
+echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%STRATA%..
+echo -----------------------------------------------------------------------------
+
+repogen --verbose -p %PACKAGES_DIR% -p %PACKAGES_WIN_DIR% --include %MODULE_STRATA% %STRATA_ONLINE_REPOSITORY%\%STRATA%
 IF %ERRORLEVEL% NEQ 0 (
     echo =======================================================================
-    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%!
+    echo  Failed to create online repository %STRATA_ONLINE_REPOSITORY%\%STRATA%!
     echo =======================================================================
     Exit /B 3
 )
 
 echo -----------------------------------------------------------------------------
-echo  Updating online repository %STRATA_ONLINE_REPOSITORY%\Updates.xml..
+echo  Updating online repository %STRATA_ONLINE_REPOSITORY%\%STRATA%\Updates.xml..
 echo -----------------------------------------------------------------------------
 
-if not exist %STRATA_ONLINE_REPOSITORY%\Updates.xml (
+if not exist %STRATA_ONLINE_REPOSITORY%\%STRATA%\Updates.xml (
     echo =======================================================================
-    echo  Missing %STRATA_ONLINE_REPOSITORY%\Updates.xml, repogen probably failed
+    echo  Missing %STRATA_ONLINE_REPOSITORY%\%STRATA%\Updates.xml, repogen probably failed
     echo =======================================================================
     Exit /B 2
 )
 
 SetLocal DisableDelayedExpansion
-Set "SrcFile=%STRATA_ONLINE_REPOSITORY%\Updates.xml"
+Set "SrcFile=%STRATA_ONLINE_REPOSITORY%\%STRATA%\Updates.xml"
 Copy /Y "%SrcFile%" "%SrcFile%.bak">Nul 2>&1||Exit /B
 (   Set "Line="
     For /F "UseBackQ Delims=" %%A In ("%SrcFile%.bak") Do (
@@ -709,15 +713,15 @@ EndLocal
 
 (
 echo  ^<RepositoryUpdate^>
-echo   ^<Repository action="add" url="%STRATA_COMPONENTS%" displayname="Module %MODULE_STRATA_COMPONENTS%"/^>
-echo   ^<Repository action="add" url="%STRATA_DS%" displayname="Module %MODULE_STRATA_DS%"/^>
-echo   ^<Repository action="add" url="%STRATA_HCS%" displayname="Module %MODULE_STRATA_HCS%"/^>
-echo   ^<Repository action="add" url="%STRATA_QT%" displayname="Module %MODULE_STRATA_QT%"/^>
-echo   ^<Repository action="add" url="utils_%STRATA_VC_REDIST%" displayname="Module %MODULE_STRATA_VC_REDIST%"/^>
-echo   ^<Repository action="add" url="utils_%STRATA_FTDI%" displayname="Module %MODULE_STRATA_FTDI%"/^>
+echo   ^<Repository action="add" url="../%STRATA_COMPONENTS%" displayname="Module %MODULE_STRATA_COMPONENTS%"/^>
+echo   ^<Repository action="add" url="../%STRATA_DS%" displayname="Module %MODULE_STRATA_DS%"/^>
+echo   ^<Repository action="add" url="../%STRATA_HCS%" displayname="Module %MODULE_STRATA_HCS%"/^>
+echo   ^<Repository action="add" url="../%STRATA_QT%" displayname="Module %MODULE_STRATA_QT%"/^>
+echo   ^<Repository action="add" url="../utils_%STRATA_VC_REDIST%" displayname="Module %MODULE_STRATA_VC_REDIST%"/^>
+echo   ^<Repository action="add" url="../utils_%STRATA_FTDI%" displayname="Module %MODULE_STRATA_FTDI%"/^>
 echo  ^</RepositoryUpdate^>
 echo ^</Updates^>
-)>> %STRATA_ONLINE_REPOSITORY%\Updates.xml
+)>> %STRATA_ONLINE_REPOSITORY%\%STRATA%\Updates.xml
 
 echo -----------------------------------------------------------------------------
 echo  Preparing online repository %STRATA_ONLINE_REPOSITORY%\%STRATA_COMPONENTS%..
