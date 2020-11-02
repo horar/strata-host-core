@@ -4,9 +4,9 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
 
-import "qrc:/partial-views"
-import "qrc:/partial-views/platform-selector"
-import "qrc:/partial-views/distribution-portal"
+import "partial-views"
+import "partial-views/platform-selector"
+import "partial-views/distribution-portal"
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/help_layout_manager.js" as Help
@@ -31,40 +31,64 @@ Rectangle{
         fillMode: Image.Tile
     }
 
-    GridLayout {
+    ColumnLayout {
+        id: column
         anchors {
             fill: container
-            margins: 30
+            margins: 20
+        }
+        spacing: 20
+
+        RowLayout {
+
+            Item {
+                // filler to match DistributionButton
+                Layout.preferredHeight: distributionPortal.implicitHeight
+                Layout.fillWidth: true
+                Layout.preferredWidth: distributionPortal.implicitWidth
+            }
+
+            RecentlyReleased {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                Layout.maximumWidth: implicitWidth
+            }
+
+            Item {
+                Layout.preferredHeight: distributionPortal.implicitHeight
+                Layout.fillWidth: true
+                Layout.preferredWidth: distributionPortal.implicitWidth
+
+                SGBaseDistributionButton {
+                    id: distributionPortal
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        right: parent.right
+                    }
+                    width: Math.min(parent.width, implicitWidth)
+                }
+            }
         }
 
-        columns: 3
-        rows: 2
-        rowSpacing: 30
+        RowLayout {
+            spacing: container.width < 1100 ?0 : 30
 
-        UserAndLogoContainer {
-            Layout.columnSpan: 3
-            Layout.alignment: Qt.AlignHCenter
+            FilterColumn {
+                id: leftFilters
+                model: Filters.categoryFilterModel
+                side: "left"
+            }
+
+            SGPlatformSelectorListView {
+                id: platformSelectorListView
+            }
+
+            FilterColumn {
+                id: rightFilters
+                model: Filters.categoryFilterModel
+                side: "right"
+            }
         }
-
-        FilterColumn {
-            id: leftFilters
-            model: Filters.categoryFilterModel
-            side: "left"
-        }
-
-        SGPlatformSelectorListView {
-
-        }
-
-        FilterColumn {
-            id: rightFilters
-            model: Filters.categoryFilterModel
-            side: "right"
-        }
-    }
-
-    SGBaseDistributionButton {
-
     }
 
     SGIcon {
@@ -85,6 +109,17 @@ Rectangle{
 
         function clickAction() {
             Help.startHelpTour("selectorHelp", "strataMain")
+        }
+
+        Rectangle {
+            // white icon backround fill
+            anchors {
+                centerIn: parent
+            }
+            width: parent.width - 4
+            height: width
+            radius: width/2
+            z:-1
         }
 
         MouseArea {
