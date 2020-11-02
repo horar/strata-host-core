@@ -19,6 +19,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     PlatformInterfaceGenerator.cpp
 
     qml.qrc
+    logging/LoggingQtCategories.cpp
+    logging/qml/tech/strata/logger/qml.qrc
 )
 
 generate_app_version(GITTAG_PREFIX "pig_" MACBUNDLE ON)
@@ -56,4 +58,5 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 add_qml_import_path(PATH ":/")
