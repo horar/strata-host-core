@@ -638,7 +638,14 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
         return false;
     }
 
-    qDebug() << "Successfully parsed qrc file";
+    QDomNodeList files = qrcDoc_.elementsByTagName("file");
+    for (int i = 0; i < files.count(); i++) {
+        QDomElement element = files.at(i).toElement();
+        QString absolutePath = SGUtilsCpp::joinFilePath(SGUtilsCpp::urlToLocalFile(projectDir_), element.text());
+        qrcItems_.insert(absolutePath);
+    }
+
+    qDebug(logCategoryControlViewCreator) << "Successfully parsed qrc file";
     return true;
 }
 

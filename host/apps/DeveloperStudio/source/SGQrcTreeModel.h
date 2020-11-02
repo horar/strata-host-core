@@ -101,7 +101,7 @@ public:
      * @param parent Parent index to insert the child into
      * @return true if successful, otherwise false
      */
-    Q_INVOKABLE bool insertChild(const QUrl &fileUrl, int position = -1, const bool inQrc = false, const QModelIndex &parent = QModelIndex());
+    Q_INVOKABLE bool insertChild(const QUrl &fileUrl, int position = -1, const bool inQrc = true, const QModelIndex &parent = QModelIndex());
 
     /**
      * @brief insertChild Inserts a blank child node into the parent
