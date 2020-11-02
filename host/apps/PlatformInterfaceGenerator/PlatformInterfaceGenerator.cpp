@@ -197,7 +197,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
             QJsonValue propValue = payload[key];
             QString propType = getType(propValue);
             if (propType.isNull()) {
-                lastError_ = "Property in payload for command " + cmd + " is null";
+                lastError_ = "Property '" + key + "' in command '" + cmd + "' does not have a valid value.";
                 qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
                 return "";
             }
