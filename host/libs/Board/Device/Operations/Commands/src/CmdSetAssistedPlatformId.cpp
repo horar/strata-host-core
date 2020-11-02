@@ -12,21 +12,9 @@ namespace strata::device::command {
 
 CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(
         const device::DevicePtr &device,
-        const QString &classId,
-        const QString &platformId,
-        int boardCount,
-        const QString &controllerClassId,
-        const QString &controllerPlatformId,
-        int controllerBoardCount,
-        const QString fwClassId)
+        const CmdSetAssistedPlatformIdData &data)
     : BaseDeviceCommand(device, QStringLiteral("set_assisted_platform_id")),
-      classId_(classId),
-      platformId_(platformId),
-      boardCount_(boardCount),
-      controllerClassId_(controllerClassId),
-      controllerPlatformId_(controllerPlatformId),
-      controllerBoardCount_(controllerBoardCount),
-      fwClassId_(fwClassId),
+      data_(data),
       dataForFinished_(operation::DEFAULT_DATA)
 {
 }
@@ -37,13 +25,13 @@ QByteArray CmdSetAssistedPlatformId::message()
     QJsonObject data;
     QJsonObject payload;
 
-    payload.insert("class_id", classId_);
-    payload.insert("platform_id", platformId_);
-    payload.insert("board_count", boardCount_);
-    payload.insert("controller_class_id", controllerClassId_);
-    payload.insert("controller_platform_id", controllerPlatformId_);
-    payload.insert("controller_board_count", controllerBoardCount_);
-    payload.insert("fw_class_id", fwClassId_);
+    payload.insert("class_id", data_.classId);
+    payload.insert("platform_id", data_.platformId);
+    payload.insert("board_count", data_.boardCount);
+    payload.insert("controller_class_id", data_.controllerClassId);
+    payload.insert("controller_platform_id", data_.controllerPlatformId);
+    payload.insert("controller_board_count", data_.controllerBoardCount);
+    payload.insert("fw_class_id", data_.fwClassId);
 
     data.insert("cmd", this->name());
     data.insert("payload", payload);

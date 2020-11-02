@@ -10,4 +10,14 @@ struct CmdSetPlatformIdData {
     int boardCount;
 };
 
+struct CmdSetAssistedPlatformIdData {
+    QString classId;
+    QString platformId;
+    int boardCount;
+    QString controllerClassId;
+    QString controllerPlatformId;
+    int controllerBoardCount;
+    QString fwClassId;
+};
+
 } // namespace

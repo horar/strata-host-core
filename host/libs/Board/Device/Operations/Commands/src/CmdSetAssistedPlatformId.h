@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseDeviceCommand.h"
+#include "DeviceOperationsData.h"
 
 namespace strata::device::command {
 
@@ -9,27 +10,15 @@ class CmdSetAssistedPlatformId: public BaseDeviceCommand
 public:
     explicit CmdSetAssistedPlatformId(
             const device::DevicePtr &device,
-            const QString &classId,
-            const QString &platformId,
-            int boardCount,
-            const QString &controllerClassId,
-            const QString &controllerPlatformId,
-            int controllerBoardCount,
-            const QString fwClassId);
+            const CmdSetAssistedPlatformIdData &data);
 
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     int dataForFinish() const override;
 
 private:
-    QString classId_;
-    QString platformId_;
-    int boardCount_;
-    QString controllerClassId_;
-    QString controllerPlatformId_;
-    int controllerBoardCount_;
-    QString fwClassId_;
+    CmdSetAssistedPlatformIdData data_;
     int dataForFinished_;
 };
 
-}
+}  // namespace
