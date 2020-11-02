@@ -103,11 +103,12 @@ Rectangle{
         id: orderPopup
 
         function open() {
-            var salesPopup = NavigationControl.createView("qrc:/partial-views/SGSalesPopup.qml", orderPopup)
-            salesPopup.width = container.width-100
-            salesPopup.height = container.height - 100
-            salesPopup.x = container.width/2 - salesPopup.width/2
-            salesPopup.y =  container.height/2 - salesPopup.height/2
+            var salesPopup = NavigationControl.createView("qrc:/partial-views/general/SGWebPopup.qml", orderPopup)
+            salesPopup.width = Qt.binding(()=> container.width-100)
+            salesPopup.height = Qt.binding(()=> container.height - 100)
+            salesPopup.x = Qt.binding(()=> container.width/2 - salesPopup.width/2)
+            salesPopup.y =  Qt.binding(()=> container.height/2 - salesPopup.height/2)
+            salesPopup.url = "https://www.onsemi.com/PowerSolutions/locateSalesSupport.do"
             salesPopup.open()
         }
     }
