@@ -25,7 +25,9 @@ Rectangle {
         "type": "value",
         "name": "",
         "valid": false,
-        "payload": [],
+        "payload": [
+            templatePayload
+        ],
         "editing": false
     });
 
@@ -315,7 +317,7 @@ Rectangle {
 
                                     placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
                                     validator: RegExpValidator {
-                                        regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]+/
+                                        regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]+/
                                     }
 
                                     background: Rectangle {
@@ -398,7 +400,7 @@ Rectangle {
                                             Layout.preferredHeight: 30
                                             placeholderText: "Property key"
                                             validator: RegExpValidator {
-                                                regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]*/
+                                                regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
                                             }
 
                                             background: Rectangle {
