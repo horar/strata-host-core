@@ -81,7 +81,6 @@ Popup {
                 onCheckedChanged: {
                     NavigationControl.userSettings.notifyOnFirmwareUpdate = checked
                     NavigationControl.userSettings.saveSettings()
-                    firmwarePopup.close()
                 }
             }
         }
