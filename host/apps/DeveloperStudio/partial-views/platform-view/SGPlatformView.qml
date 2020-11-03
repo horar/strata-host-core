@@ -82,10 +82,6 @@ StackLayout {
         Layout.fillWidth: true
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
-
-        PlatformSettings {
-            id: platformSettings
-        }
     }
 
     SGUserSettings {
