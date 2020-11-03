@@ -31,6 +31,7 @@ function Component()
 {
     installer.installationFinished.connect(this, Component.prototype.installationOrUpdateFinished);    // called after installation, update and adding/removing components
     installer.finishButtonClicked.connect(this, Component.prototype.finishButtonClicked);
+    installer.installationStarted.connect(this, Component.prototype.onInstallationStarted);
 
     if ((installer.isInstaller() == true) && (systemInfo.productType == "windows")) {
         component.loaded.connect(this, Component.prototype.addShortcutWidget);
@@ -52,6 +53,20 @@ Component.prototype.createOperations = function()
 
     if (installer.isInstaller() == true) {
         uninstallPreviousStrataInstallation();
+    }
+}
+
+Component.prototype.onInstallationStarted = function()
+{
+    if ((component.updateRequested() == true) || (component.installationRequested() == true)) {
+        if (systemInfo.productType == "windows") {
+            component.installerbaseBinaryPath = installer.value("TargetDir") + "\\installerbase.exe";
+            component.installerbaseBinaryPath = component.installerbaseBinaryPath.split("/").join("\\");
+            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+        } else if (systemInfo.productType == "osx") {
+            component.installerbaseBinaryPath = installer.value("TargetDir") + "/installerbase";
+            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+        }
     }
 }
 

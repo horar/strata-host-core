@@ -47,4 +47,12 @@ void BaseDeviceCommand::setDeviceProperties(const char* name, const char* platfo
     device_->setProperties(name, platformId, classId, btldrVer, applVer);
 }
 
+void BaseDeviceCommand::setDeviceBootloaderMode(bool inBootloaderMode) {
+    device_->setBootloaderMode(inBootloaderMode);
+}
+
+void BaseDeviceCommand::setDeviceApiVersion(device::Device::ApiVersion apiVersion) {
+    device_->setApiVersion(apiVersion);
+}
+
 }  // namespace

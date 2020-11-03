@@ -20,6 +20,7 @@ import "qrc:/js/core_update.js" as CoreUpdate
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 Rectangle {
     id: container
@@ -39,6 +40,7 @@ Rectangle {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
+        userSettings.loadSettings()
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -308,6 +310,15 @@ Rectangle {
                     }
                 }
 
+                SGMenuItem {
+                    text: qsTr("Settings")
+                    onClicked: {
+                        profileMenu.close()
+                        settingsLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
                 Rectangle {
                     id: menuDivider
                     color: "white"
@@ -346,6 +357,45 @@ Rectangle {
         id: profileLoader
         source: "qrc:/partial-views/profile-popup/SGProfilePopup.qml"
         active: false
+    }
+
+    Loader {
+        id: settingsLoader
+        source: "qrc:/partial-views/status-bar/SGSettingsPopup.qml"
+        active: false
+    }
+
+    SGUserSettings {
+        id: userSettings
+        classId: "general-settings"
+        user: NavigationControl.context.user_id
+
+        property bool autoOpenView: false
+        property bool closeOnDisconnect: false
+        property bool notifyOnFirmwareUpdate: false
+
+        property int selectedDistributionPortal: 0
+
+        function loadSettings() {
+            const settings = readFile("general-settings.json")
+            if (settings.hasOwnProperty("autoOpenView")) {
+                autoOpenView = settings.autoOpenView
+                closeOnDisconnect = settings.closeOnDisconnect
+                notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+                selectedDistributionPortal = settings.selectedDistributionPortal
+            }
+            NavigationControl.userSettings = userSettings
+        }
+
+        function saveSettings() {
+            const settings = {
+                autoOpenView: autoOpenView,
+                closeOnDisconnect: closeOnDisconnect,
+                notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
+                selectedDistributionPortal: selectedDistributionPortal
+            }
+            userSettings.writeFile("general-settings.json", settings)
+        }
     }
 
     function showAboutWindow(){

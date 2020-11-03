@@ -135,3 +135,12 @@ set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/signals/qml")
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    get_target_property(QT_RCC_EXECUTABLE Qt5::rcc IMPORTED_LOCATION)
+    if(QT_RCC_EXECUTABLE STREQUAL "")
+        message(WARNING "Could not locate Qt RCC compiler executable.")
+    else()
+        target_compile_definitions(${PROJECT_NAME} PRIVATE -DQT_RCC_EXECUTABLE="${QT_RCC_EXECUTABLE}")
+    endif()
+endif()

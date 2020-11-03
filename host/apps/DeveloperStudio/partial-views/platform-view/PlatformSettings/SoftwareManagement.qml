@@ -43,12 +43,18 @@ ColumnLayout {
                 downloadButtonMouseArea.enabled = true
                 downloadIcon.opacity = 1
                 downloadButtonMouseArea.cursorShape = Qt.PointingHandCursor
+            } else if (latestVersion.hasOwnProperty("uri") && payload.url === latestVersion.uri) {
+                activeVersion = latestVersion
+                upToDate = true
             }
-        }
 
+        }
         onDownloadControlViewProgress: {
             if (platformStack.currentIndex === settingsContainer.stackIndex && payload.url === activeDownloadUri) {
-                progressUpdateText.percent = payload.bytes_received / payload.bytes_total
+                let progressPercent = payload.bytes_received / payload.bytes_total
+                if (progressPercent >= 0 && progressPercent <= 100) {
+                    progressUpdateText.percent = progressPercent
+                }
             }
         }
     }
@@ -70,17 +76,27 @@ ColumnLayout {
     function matchVersion() {
         // when the active view is this view, then match the version
         if (platformStack.currentIndex === settingsContainer.stackIndex) {
-            let activeIdx = platformStack.controlViewContainer.controlViewList.getInstalledVersion()
+            let installedVersion = controlViewContainer.getInstalledVersion(NavigationControl.context.user_id);
 
-            if (activeIdx >= 0) {
-                activeVersion = platformStack.controlViewContainer.controlViewList.get(activeIdx)
-            } else {
-                // Using a local view, so set the active version to the git tagged version
+            if (installedVersion) {
                 activeVersion = {
-                    "version": sdsModel.resourceLoader.getGitTaggedVersion(platformStack.class_id)
+                    "version": installedVersion.version
+                }
+                upToDate = isUpToDate();
+                return;
+            } else {
+                const activeIdx = controlViewContainer.controlViewList.getInstalledVersion()
+
+                if (activeIdx >= 0) {
+                    activeVersion = platformStack.controlViewContainer.controlViewList.get(activeIdx)
+                } else {
+                    // Using a local view, so set the active version to the git tagged version
+                    activeVersion = {
+                        "version": sdsModel.resourceLoader.getGitTaggedVersion(platformStack.class_id)
+                    }
                 }
             }
-
+            
             upToDate = isUpToDate();
         }
     }
@@ -98,7 +114,7 @@ ColumnLayout {
             return true;
         }
 
-        if (SGVersionUtils.greaterThan(latestVersion.version, activeVersion.version)) {
+        if (activeVersion.version === "" || SGVersionUtils.greaterThan(latestVersion.version, activeVersion.version)) {
             return false;
         }
         return true;

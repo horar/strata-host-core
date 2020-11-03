@@ -66,19 +66,24 @@ var status_bar_container_ = null
 var platform_view_repeater_ = null
 var platform_view_model_ = null
 var stack_container_ = null
+var resource_loader_ = null
+var main_qml_object_ = null
 var platform_list = {}
+var userSettings = null
 
 /*
   Navigation initialized with parent containers
   that will hold views
 */
-function init(status_bar_container, stack_container)
+function init(status_bar_container, stack_container, resource_loader, main_qml_object)
 {
     status_bar_container_ = status_bar_container
     main_container_ = stack_container.mainContainer
     platform_view_repeater_ = stack_container.platformViewRepeater
     platform_view_model_ = stack_container.platformViewModel
     stack_container_ = stack_container
+    resource_loader_ = resource_loader
+    main_qml_object_ = main_qml_object
     updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
 }
 
@@ -175,6 +180,9 @@ function globalEventHandler(event,data)
         while (platform_view_model_.count > 0) {
             platform_view_model_.remove(0)
         }
+
+        // Unregister all control views
+        resource_loader_.unregisterAllViews(main_qml_object_);
 
         // Show Login Screen
         navigation_state_ = states.LOGIN_STATE
@@ -311,7 +319,12 @@ function updateState(event, data)
                     connected_view.device_id = data.device_id
                     connected_view.firmware_version = data.firmware_version
                     connected_view.connected = true
+
+                    if (userSettings.autoOpenView) {
+                        updateState(events.SWITCH_VIEW_EVENT, {"index": view_index + 1})
+                    }
                 }
+
                 break;
 
             case events.PLATFORM_DISCONNECTED_EVENT:
@@ -322,6 +335,10 @@ function updateState(event, data)
                     if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
                         disconnected_view.connected = false
                         disconnected_view.firmware_version = ""
+
+                        if (userSettings.closeOnDisconnect) {
+                            updateState(events.CLOSE_PLATFORM_VIEW_EVENT, data)
+                        }
                         break
                     }
                 }
@@ -337,7 +354,12 @@ function updateState(event, data)
                     }
                 }
 
-                updateState(events.SWITCH_VIEW_EVENT, {"index": l}) // focus on tab to left
+                // if in-view tab is closing, focus on tab to left. otherwise, close out-of-view tab and stay on present tab
+                if (stack_container_.currentIndex === l + 1 && l !== 1) {
+                    updateState(events.SWITCH_VIEW_EVENT, {"index": l}) // focus on tab to left
+                } else {
+                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1}) // adjust to stay on current tab
+                }
                 break;
 
             case events.SWITCH_VIEW_EVENT:

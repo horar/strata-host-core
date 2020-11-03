@@ -24,6 +24,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC
     Qt5::Core
     strata::QtLogger
+    strata::SGUtilsCpp
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

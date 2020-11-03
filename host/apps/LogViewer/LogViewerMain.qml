@@ -767,15 +767,15 @@ FocusScope {
                         timestampSimpleFormat: timestampSimpleFormatButton.checked
                         automaticScroll: logViewerMain.automaticScroll
 
-                        onCurrentItemChanged: {
-                            var sourceIndex = logModelProxy.mapIndexToSource(index)
+                        onCurrentIndexChanged: {
+                            var sourceIndex = logModelProxy.mapIndexToSource(currentIndex)
                             primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
                             primaryLogView.currentIndex = sourceIndex
                         }
 
                         onActiveFocusChanged: {
                             if (secondaryLogView.activeFocus) {
-                                currentItemChanged(secondaryLogView.currentIndex)
+                                primaryLogView.currentIndex = logModelProxy.mapIndexToSource(currentIndex)
                             }
                         }
 
