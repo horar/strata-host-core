@@ -502,9 +502,9 @@ Rectangle {
                                             }
 
                                             Text {
-                                                text: index + 1 + ". Element type: "
+                                                text: "[Index " + index  + "] Element type: "
                                                 Layout.alignment: Qt.AlignVCenter
-                                                Layout.preferredWidth: 120
+                                                Layout.preferredWidth: 150
                                                 verticalAlignment: Text.AlignVCenter
                                             }
 
@@ -557,7 +557,7 @@ Rectangle {
 
                             Button {
                                 id: addPropertyButton
-                                text: "Add Property"
+                                text: "Add Payload Property"
                                 Layout.alignment: Qt.AlignHCenter
                                 visible: commandsListView.count > 0
                                 enabled: cmdNotifName.text !== ""
