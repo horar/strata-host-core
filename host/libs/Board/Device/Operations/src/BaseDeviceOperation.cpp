@@ -40,7 +40,7 @@ void BaseDeviceOperation::run()
         QString errMsg(QStringLiteral("The operation has already run."));
         qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
         emit error(errMsg);
-        emit finished(Type::Failure);
+        emit finished(Type::Failure, operation::DEFAULT_DATA);
         return;
     }
 
@@ -48,7 +48,7 @@ void BaseDeviceOperation::run()
         QString errMsg(QStringLiteral("Cannot get access to device (another operation is running)."));
         qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
         emit error(errMsg);
-        emit finished(Type::Failure);
+        emit finished(Type::Failure, operation::DEFAULT_DATA);
         return;
     }
 
@@ -94,7 +94,7 @@ void BaseDeviceOperation::handleSendCommand()
         qCCritical(logCategoryDeviceOperations) << device_ << errMsg;
         reset();
         emit error(errMsg);
-        emit finished(Type::Failure);
+        emit finished(Type::Failure, operation::DEFAULT_DATA);
     }
 }
 
@@ -186,7 +186,7 @@ void BaseDeviceOperation::handleDeviceError(device::Device::ErrorCode errCode, Q
     reset();
     qCCritical(logCategoryDeviceOperations) << device_ << "Error: " << msg;
     emit error(msg);
-    emit finished(Type::Failure);
+    emit finished(Type::Failure, operation::DEFAULT_DATA);
 }
 
 void BaseDeviceOperation::resume()
@@ -231,7 +231,7 @@ void BaseDeviceOperation::nextCommand()
         emit sendCommand(QPrivateSignal());  // send same command again
         break;
     case CommandResult::Failure :
-        finishOperation(Type::Failure);
+        finishOperation(Type::Failure, data);
         break;
     case CommandResult::FinaliseOperation :
         finishOperation(type_, data);

@@ -43,12 +43,18 @@ ColumnLayout {
                 downloadButtonMouseArea.enabled = true
                 downloadIcon.opacity = 1
                 downloadButtonMouseArea.cursorShape = Qt.PointingHandCursor
+            } else if (latestVersion.hasOwnProperty("uri") && payload.url === latestVersion.uri) {
+                activeVersion = latestVersion
+                upToDate = true
             }
-        }
 
+        }
         onDownloadControlViewProgress: {
             if (platformStack.currentIndex === settingsContainer.stackIndex && payload.url === activeDownloadUri) {
-                progressUpdateText.percent = payload.bytes_received / payload.bytes_total
+                let progressPercent = payload.bytes_received / payload.bytes_total
+                if (progressPercent >= 0 && progressPercent <= 100) {
+                    progressUpdateText.percent = progressPercent
+                }
             }
         }
     }
@@ -108,7 +114,7 @@ ColumnLayout {
             return true;
         }
 
-        if (SGVersionUtils.greaterThan(latestVersion.version, activeVersion.version)) {
+        if (activeVersion.version === "" || SGVersionUtils.greaterThan(latestVersion.version, activeVersion.version)) {
             return false;
         }
         return true;

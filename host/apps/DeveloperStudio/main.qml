@@ -87,6 +87,7 @@ SGWidgets.SGMainWindow {
             id: stackContainer
 
             property alias mainContainer: mainContainer
+            property alias controlViewDevContainer: controlViewDevContainer
             property alias platformViewModel: platformViewModel
             property alias platformViewRepeater: platformViewRepeater
 
@@ -104,6 +105,13 @@ SGWidgets.SGMainWindow {
                 id: platformViewRepeater
                 model: platformViewModel
                 delegate: SGPlatformView {}
+            }
+
+            Item {
+                id: controlViewDevContainer
+                objectName: "controlViewDevContainer"
+                Layout.fillHeight: true
+                Layout.fillWidth: true
             }
         }
     }
