@@ -337,7 +337,6 @@ Rectangle {
                                     }
 
                                     Component.onCompleted: {
-                                        console.info("FOCUSING")
                                         forceActiveFocus()
                                     }
 
