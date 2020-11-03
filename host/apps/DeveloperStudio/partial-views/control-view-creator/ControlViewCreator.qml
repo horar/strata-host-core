@@ -146,7 +146,6 @@ Rectangle {
 
                     function onClicked() {
                         logs.visible = !logs.visible;
-                        cvc_console.createLogs("debug","Opened new Log");
                     }
                 }
                 /*****************************************
@@ -216,59 +215,12 @@ Rectangle {
                         opacity: .25
                     }
                 }
-            }
-
-            Rectangle {
-                id: logs
-                color: "#eee"
-                Layout.preferredHeight: 300 // Todo: make grab handle divider so user can scale up/down
-                Layout.maximumHeight: 800
-                Layout.minimumHeight: 150
-                Layout.fillWidth: true
-                visible: false // Todo: ensure visible == false when on "open project"/"new project" views
-                Drag.active: dragArea.drag.active
-                Drag.dragType: Drag.Automatic
-
-                Rectangle {
-                    // divider
-                    id: divider
-                    height: consoleText.height
-                    width: parent.width
-                    color: "#444"
-
-                    SGText {
-                        id: consoleText
-                        text: "Console Output"
-                        fontSizeMultiplier: 1.4
-                        Layout.alignment: Qt.AlignLeft
-                        alternativeColorEnabled: true
-                        leftPadding: 10
-                        topPadding: 5
-                        bottomPadding: 5
-                    }
-
-                    MouseArea {
-                        id: dragArea
-                        anchors.fill: parent
-                        cursorShape: Qt.ClosedHandCursor
-                    }
-
-                }
-
-                ConsoleLogger {
-                    id: cvc_console
-                    anchors {
-                        top:divider.bottom
-                        left: logs.left
-                        right: logs.right
-                        bottom: logs.bottom
-                    }
-                }
 
                 Loader {
                     id: controlViewLoader
-                    anchors.fill: parent
-                    asynchronous: true
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    // asynchronous: true
 
                     onStatusChanged: {
                         if (status === Loader.Ready) {
@@ -287,6 +239,54 @@ Rectangle {
                     }
                 }
             }
+
+        Rectangle {
+            id: logs
+            color: "#eee"
+            Layout.preferredHeight: 300 // Todo: make grab handle divider so user can scale up/down
+            Layout.maximumHeight: 800
+            Layout.minimumHeight: 150
+            Layout.fillWidth: true
+            visible: false // Todo: ensure visible == false when on "open project"/"new project" views
+
+            Rectangle {
+                // divider
+                id: divider
+                height: consoleText.height
+                width: parent.width
+                color: "#444"
+
+                SGText {
+                    id: consoleText
+                    text: "Console Output"
+                    fontSizeMultiplier: 1.4
+                    Layout.alignment: Qt.AlignLeft
+                    alternativeColorEnabled: true
+                    leftPadding: 10
+                    topPadding: 5
+                    bottomPadding: 5
+                }
+
+                MouseArea {
+                    id: dragArea
+                    anchors.fill: parent
+                    cursorShape: Qt.ClosedHandCursor
+                }
+
+            }
+
+            ConsoleLogger {
+                id: cvc_console
+                anchors {
+                    top:divider.bottom
+                    left: logs.left
+                    right: logs.right
+                    bottom: logs.bottom
+                }
+            }
+          }
+
+
         }
     }
 
