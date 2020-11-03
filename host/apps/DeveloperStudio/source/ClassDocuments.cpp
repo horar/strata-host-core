@@ -59,6 +59,11 @@ bool ClassDocuments::initialized() const
     return initialized_;
 }
 
+bool ClassDocuments::metaDataInitialized() const
+{
+    return metaDataInitialized_;
+}
+
 int ClassDocuments::loadingProgressPercentage() const
 {
     return loadingProgressPercentage_;
@@ -90,8 +95,6 @@ void ClassDocuments::populateModels(QJsonObject data)
     QList<DocumentItem* > pdfList;
     QList<DocumentItem* > datasheetList;
     QList<DownloadDocumentItem* > downloadList;
-    QList<VersionedItem* > firmwareList;
-    QList<VersionedItem* > controlViewList;
 
     if (data.contains("error")) {
         qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
@@ -99,6 +102,7 @@ void ClassDocuments::populateModels(QJsonObject data)
         setErrorString(data["error"].toString());
         setLoading(false);
         setInitialized(true);
+        setMetaDataInitialized(true);
         return;
     }
 
@@ -179,6 +183,20 @@ void ClassDocuments::populateModels(QJsonObject data)
         }
     }
 
+    pdfModel_.populateModel(pdfList);
+    datasheetModel_.populateModel(datasheetList);
+    downloadDocumentModel_.populateModel(downloadList);
+
+    setLoading(false);
+    setInitialized(true);
+    setMetaDataInitialized(true);
+}
+
+void ClassDocuments::populateMetaData(QJsonObject data)
+{
+    QList<VersionedItem* > firmwareList;
+    QList<VersionedItem* > controlViewList;
+
     QJsonArray firmwareArray = data["firmwares"].toArray();
     for (const QJsonValueRef firmwareValue : firmwareArray) {
         QJsonObject documentObject = firmwareValue.toObject();
@@ -229,14 +247,10 @@ void ClassDocuments::populateModels(QJsonObject data)
         controlViewList.append(controlViewItem);
     }
 
-    pdfModel_.populateModel(pdfList);
-    datasheetModel_.populateModel(datasheetList);
-    downloadDocumentModel_.populateModel(downloadList);
     firmwareModel_.populateModel(firmwareList);
     controlViewModel_.populateModel(controlViewList);
 
-    setLoading(false);
-    setInitialized(true);
+    setMetaDataInitialized(true);
 }
 
 void ClassDocuments::clearDocuments()
@@ -267,6 +281,14 @@ void ClassDocuments::setInitialized(bool initialized)
     if (initialized_ != initialized) {
         initialized_ = initialized;
         emit initializedChanged();
+    }
+}
+
+void ClassDocuments::setMetaDataInitialized(bool init)
+{
+    if (metaDataInitialized_ != init) {
+        metaDataInitialized_ = init;
+        emit metaDataInitializedChanged();
     }
 }
 

@@ -36,6 +36,7 @@ signals:
     void updateProgressRequested(QJsonObject data);
     void populateModelsRequested(QJsonObject data);
     void populateModelsFinished(QString classId);
+    void populateMetaDataFinished(QString classId);
 
 private slots:
     void documentProgressHandler(QJsonObject data);
@@ -43,6 +44,7 @@ private slots:
 
     void updateLoadingProgress(QJsonObject data);
     void populateModels(QJsonObject data);
+    void platformDocumentsMetaDataHandler(QJsonObject data);
 
 private:
     CoreInterface *coreInterface_;

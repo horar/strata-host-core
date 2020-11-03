@@ -119,6 +119,12 @@ public slots:
             qint64 bytesReceived,
             qint64 bytesTotal);
 
+    void sendPlatformDocumentsMetaData(
+            const QByteArray &clientId,
+            const QString &classId,
+            const QJsonArray &controlViewList,
+            const QJsonArray &firmwareList);
+
 
 private:
     void handleMessage(const PlatformMessage& msg);

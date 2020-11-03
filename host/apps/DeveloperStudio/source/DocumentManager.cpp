@@ -26,6 +26,8 @@ DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
     coreInterface->registerDataSourceHandler("document",
                                             std::bind(&DocumentManager::loadDocumentHandler,
                                             this, std::placeholders::_1));
+    connect(coreInterface_, &CoreInterface::platformDocumentsMetaData, this, &DocumentManager::platformDocumentsMetaDataHandler);
+
     init();
 }
 
@@ -74,6 +76,17 @@ void DocumentManager::populateModels(QJsonObject data)
     }
 
     emit populateModelsFinished(classId);
+}
+
+void DocumentManager::platformDocumentsMetaDataHandler(QJsonObject data)
+{
+    QString classId = data["class_id"].toString();
+
+    if (classes_.contains(classId)) {
+        classes_[classId]->populateMetaData(data);
+    }
+
+    emit populateMetaDataFinished(classId);
 }
 
 void DocumentManager::init()

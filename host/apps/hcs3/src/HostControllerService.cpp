@@ -84,6 +84,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
     connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
     connect(&storageManager_, &StorageManager::downloadControlViewProgress, this, &HostControllerService::sendControlViewDownloadProgressMessage);
+    connect(&storageManager_, &StorageManager::platformDocumentsMetaData, this, &HostControllerService::sendPlatformDocumentsMetaData);
 
     /* We dont want to call these StorageManager methods directly
      * as they should be executed in the main thread. Not in dispatcher's thread. */
@@ -301,6 +302,22 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
 
     doc.setObject(message);
 
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+}
+
+void HostControllerService::sendPlatformDocumentsMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList, const QJsonArray &firmwareList)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "platform_meta_data");
+    payload.insert("class_id", classId);
+    payload.insert("control_views", controlViewList);
+    payload.insert("firmwares", firmwareList);
+    message.insert("hcs::notification", payload);
+
+    doc.setObject(message);
     clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
