@@ -8,15 +8,16 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 StackLayout {
     id: platformStack
-    currentIndex: {
+
+    currentIndex:  {
         switch (model.view) {
-        case "collateral":
-            return 1
-        case "settings":
-            return 2
-        default: // case "control":
-            return 0
-        }
+            case "collateral":
+                return 1
+            case "settings":
+                return 2
+            default: // case "control":
+                return 0
+       }
     }
 
     property var device_id: model.device_id // var type so Constants.DEVICE_IDs are not coerced to 32 bit signed ints
@@ -66,6 +67,7 @@ StackLayout {
          Layout.fillWidth: true
     }
 
+
     Item {
         id: collateralContainer
         Layout.fillHeight: true
@@ -82,6 +84,7 @@ StackLayout {
         Layout.fillWidth: true
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
+        property alias platformSettings: platformSettings
 
         PlatformSettings {
             id: platformSettings

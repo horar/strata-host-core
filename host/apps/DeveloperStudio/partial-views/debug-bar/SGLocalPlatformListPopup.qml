@@ -311,8 +311,8 @@ Window {
                                     "name": "Unknown Platform",
                                     "view": "control",
                                     "connected": true,
-                                    "available": {'documents': false, 'order': true, 'control': true, 'unlisted': false},
-                                    "firmware_version":"1.0.1"
+                                    "available": {'documents': true, 'order': true, 'control': true, 'unlisted': false},
+                                    "firmware_version":"1.0.2"
                                 }
                             ],
                             "type":"connected_platforms"

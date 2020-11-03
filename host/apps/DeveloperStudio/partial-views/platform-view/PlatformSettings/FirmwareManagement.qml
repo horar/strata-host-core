@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/partial-views/general/"
 
@@ -16,6 +17,7 @@ ColumnLayout {
     Component.onCompleted: {
         firmwareListModel = sdsModel.documentManager.getClassDocuments(platformStack.class_id).firmwareListModel
         firmwareList.firmwareRepeater.model = firmwareListModel
+        checkForNewerVersion()
     }
 
     property var firmwareListModel: null
@@ -49,9 +51,8 @@ ColumnLayout {
 
     function matchVersion() {
         for (let i = 0; i < firmwareListModel.count; i++) {
-            let version = firmwareListModel.version(i)
-            if (version === platformStack.firmware_version) {
-                currentVersion = version
+            if (SGVersionUtils.equalTo(firmwareListModel.version(i),platformStack.firmware_version)) {
+                currentVersion = firmwareListModel.version(i)
                 firmwareListModel.setInstalled(i, true)
             } else {
                 firmwareListModel.setInstalled(i, false)
@@ -63,14 +64,8 @@ ColumnLayout {
         matchVersion()
         const splitInstalledVersion = currentVersion.split(".")
         for (let i = 0; i < firmwareListModel.count; i++){
-            if(installedVersion !== firmwareListModel.version(i)){
-                const differentVersion = firmwareListModel.version(i)
-                const splitDifferentVersion = differentVersion.split(".")
-                for(let j = 0; j < splitInstalledVersion.length; j ++){
-                    if(Number(splitInstalledVersion[j]) < Number(splitDifferentVersion[i])){
-                        NavigationControl.firmwareIsOutOfDate = true;
-                    }
-                }
+            if(SGVersionUtils.lessThan(currentVersion,firmwareListModel.version(i))){
+                NavigationControl.firmwareIsOutOfDate = true
             }
         }
     }
@@ -83,14 +78,7 @@ ColumnLayout {
         }
     }
 
-    SGNotificationToast {
-        id: firmwareUpDate
-        Layout.fillWidth: true
-        Layout.preferredHeight: 40
-        text: "There is an update to this control view firmware"
-        color: "#eed202"
-        visible: NavigationControl.firmwareUpdate() //This will be the firmware version is not upToDate
-    }
+    //
 
     SGText {
         text: "Firmware Settings:"

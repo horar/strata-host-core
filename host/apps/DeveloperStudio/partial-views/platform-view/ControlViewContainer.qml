@@ -85,6 +85,10 @@ Item {
         visible: platformStack.connected === false
     }
 
+    SGFirmwareNotificationPopup {
+        visible: NavigationControl.firmwareIsOutOfDate && NavigationControl.userSettings.notifyOnFirmwareUpdate
+    }
+
     function initialize() {
         if (controlLoaded === false){
             // When we reconnect the board, the view has already been registered, so we can immediately load the control
