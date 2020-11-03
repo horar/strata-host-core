@@ -336,6 +336,11 @@ Rectangle {
                                         border.width: 2
                                     }
 
+                                    Component.onCompleted: {
+                                        console.info("FOCUSING")
+                                        forceActiveFocus()
+                                    }
+
                                     onTextChanged: {
                                         if (text.length > 0) {
                                             finishedModel.checkForDuplicateIds(commandsListView.modelIndex)
@@ -420,6 +425,10 @@ Rectangle {
                                                 border.width: 2
                                             }
 
+                                            Component.onCompleted: {
+                                                forceActiveFocus()
+                                            }
+
                                             onTextChanged: {
                                                 if (text.length > 0) {
                                                     finishedModel.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
@@ -484,7 +493,6 @@ Rectangle {
                                                 icon {
                                                     source: "qrc:/sgimages/times.svg"
                                                     color: removeItemMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
-
                                                     height: 7
                                                     width: 7
                                                     name: "add"
