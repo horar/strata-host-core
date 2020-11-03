@@ -8,7 +8,7 @@ namespace strata::device::operation {
 class SetPlatformId : public BaseDeviceOperation {
 
 public:
-    explicit SetPlatformId(
+    SetPlatformId(
             const device::DevicePtr& device,
             const command::CmdSetPlatformIdData &data);
 

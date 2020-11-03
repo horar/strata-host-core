@@ -8,7 +8,7 @@ namespace strata::device::command {
 class CmdSetPlatformId: public BaseDeviceCommand
 {
 public:
-    explicit CmdSetPlatformId(
+    CmdSetPlatformId(
             const device::DevicePtr &device,
             const CmdSetPlatformIdData &data);
 

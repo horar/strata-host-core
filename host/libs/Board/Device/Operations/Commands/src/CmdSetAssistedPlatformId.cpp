@@ -10,13 +10,25 @@
 
 namespace strata::device::command {
 
-CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(
-        const device::DevicePtr &device,
-        const CmdSetAssistedPlatformIdData &data)
+CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(const DevicePtr &device)
     : BaseDeviceCommand(device, QStringLiteral("set_assisted_platform_id")),
-      data_(data),
       dataForFinished_(operation::DEFAULT_DATA)
 {
+}
+
+void CmdSetAssistedPlatformId::setBaseData(const CmdSetPlatformIdData &data)
+{
+    data_ = data;
+}
+
+void CmdSetAssistedPlatformId::setControllerData(const CmdSetPlatformIdData &controllerData)
+{
+    controllerData_ = controllerData;
+}
+
+void CmdSetAssistedPlatformId::setFwClassId(const QString &fwClassId)
+{
+    fwClassId_ = fwClassId;
 }
 
 QByteArray CmdSetAssistedPlatformId::message()
@@ -25,13 +37,22 @@ QByteArray CmdSetAssistedPlatformId::message()
     QJsonObject data;
     QJsonObject payload;
 
-    payload.insert("class_id", data_.classId);
-    payload.insert("platform_id", data_.platformId);
-    payload.insert("board_count", data_.boardCount);
-    payload.insert("controller_class_id", data_.controllerClassId);
-    payload.insert("controller_platform_id", data_.controllerPlatformId);
-    payload.insert("controller_board_count", data_.controllerBoardCount);
-    payload.insert("fw_class_id", data_.fwClassId);
+    if (data_.has_value()) {
+        payload.insert("class_id", data_->classId);
+        payload.insert("platform_id", data_->platformId);
+        payload.insert("board_count", data_->boardCount);
+    }
+
+    if (controllerData_.has_value()) {
+        payload.insert("controller_class_id", controllerData_->classId);
+        payload.insert("controller_platform_id", controllerData_->platformId);
+        payload.insert("controller_board_count", controllerData_->boardCount);
+    }
+
+    if (fwClassId_.has_value()) {
+        //macos 10.14 does not support value()
+        payload.insert("fw_class_id", fwClassId_.value_or(""));
+    }
 
     data.insert("cmd", this->name());
     data.insert("payload", payload);
