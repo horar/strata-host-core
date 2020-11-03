@@ -1,8 +1,13 @@
 #include "CouchbaseDocument.h"
 #include "logging/LoggingQtCategories.h"
-#include <iostream>
+
+#include <QUuid>
+
 CouchbaseDocument::CouchbaseDocument(const std::string id) {
-    mutable_doc_ = std::make_unique<cbl::MutableDocument>(id);
+    doc_ID_ = id;
+
+    auto uuid = QUuid::createUuid();
+    mutable_doc_ = std::make_unique<cbl::MutableDocument>("StrataDocID_" + uuid.toString(QUuid::WithoutBraces).toStdString());
 }
 
 bool CouchbaseDocument::setBody(const std::string &body) {
@@ -23,4 +28,12 @@ fleece::keyref<fleece::MutableDict, fleece::slice> CouchbaseDocument::operator[]
     auto doc_ref = mutable_doc_.get();
     auto fleece_ref = (*doc_ref)[key.c_str()];
     return fleece_ref;
+}
+
+void CouchbaseDocument::tagChannelField(const std::string &channel) {
+    auto doc_ref = mutable_doc_.get();
+
+    // TODO: might need to check if fields are already taken to avoid overwriting
+    (*doc_ref)["StrataExternalChannelID"] = channel;
+    (*doc_ref)["StrataExternalDocID"] = doc_ID_;
 }

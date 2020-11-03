@@ -2,37 +2,28 @@
 
 #include "CouchbaseDatabase.h"
 
-#include <QObject>
+class DatabaseAccess;
 
-class CouchbaseDocument;
-class CouchbaseDatabase;
-
-class Database : public QObject
+class DatabaseManager
 {
-    Q_OBJECT
-
     friend class CouchbaseDocument;
 
 public:
-    /**
-     * Constructor: declares the DB object, does not open or create a DB
-     * @param db_name DB name
-     * @param db_path DB absolute path (default is empty: path is set to QDir::currentPath)
-     * @param parent
-     */
-    Database(const QString &db_name, const QString &db_path = "", QObject *parent = nullptr);
+    DatabaseAccess* open(const QString &channel_access, const QString &database_prefix = "");
 
-    /********************************************
-     * MAIN CRUD OPERATIONS *
-     *******************************************/
+private:
+    DatabaseAccess *db_access_;
+};
 
-    /**
-     * Opens an existing DB or creates a new DB
-     * @return true when succeeded, otherwise false
-     */
-    bool open();
 
-    bool save(CouchbaseDocument *doc);
+class DatabaseAccess
+{
+    friend class DatabaseManager;
+
+public:
+    QString getChannelAccess();
+
+    bool write(CouchbaseDocument *doc);
 
     bool deleteDoc(const QString &id);
 
@@ -67,7 +58,6 @@ public:
      * @param url replicator / sync-gateway URL to connect to
      * @param username sync-gateway username (optional)
      * @param password sync-gateway password (optional)
-     * @param channels replication channels (optional)
      * @param type push/pull/push and pull (optional)
      * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
      * @param reconnection_policy default behavior or automatically try to reconnect (optional)
@@ -76,7 +66,6 @@ public:
     bool startReplicator(const QString &url,
                          const QString &username = "",
                          const QString &password = "",
-                         const QStringList &channels = QStringList(),
                          const QString &replicator_type = "",
                          std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr,
                          std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr,
@@ -88,6 +77,8 @@ public:
     int getReplicatorError();
 
 private:
+    QString channel_access_;
+
     std::unique_ptr<CouchbaseDatabase> database_;
 
     std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr;

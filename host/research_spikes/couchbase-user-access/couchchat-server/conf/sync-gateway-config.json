@@ -1,0 +1,58 @@
+{
+  "logging": {
+    "console": {
+      "enabled": true,
+      "log_level": "info",
+      "log_keys": ["*"]
+    }
+  },
+  "databases": {
+    "user-access-test": {
+      "server": "http://couchbase:8091",
+      "bucket": "user-access-test",
+      "username": "sync_gateway",
+      "password": "sync_gateway",
+      "enable_shared_bucket_access": true,
+      "import_docs": "continuous",
+      "num_index_replicas": 0,
+
+      "users": {
+        "GUEST": {
+          "disabled": false, "admin_channels": ["*"]
+        },
+        "username": {
+          "disabled": false, "admin_channels": ["*"], "password":"password"
+        }
+      },
+
+      "sync":
+      `
+        function (doc, oldDoc) {
+          // Access safety: only accept documents with 'StrataExternalChannelID' field
+          if (!doc.StrataExternalChannelID) {
+            throw({forbidden: "Invalid document: missing 'StrataExternalChannelID' field."})
+          }
+
+          // Access safety: only accept documents with 'StrataExternalDocID' field
+          if (!doc.StrataExternalDocID) {
+            throw({forbidden: "Invalid document: missing 'StrataExternalDocID' field."})
+          }
+
+          // Access safety: only allow access from list of valid channels
+          // Data routing: translate external channel name into internal channel name, and vice-versa
+          if (doc.StrataExternalChannelID == "chatroom_1") {
+            // channel("internal_ID_chatroom_1");
+            channel("chatroom_1");
+            // channel("chatroom_1");
+          } else if (doc.StrataExternalChannelID == "chatroom_2") {
+            channel("internal_ID_chatroom_2");
+            // channel("chatroom_1");
+          } else {
+              // throw({forbidden: "Invalid external channel ID!"})
+              channel("no_strata_external_channel_id")
+          }
+        }
+      `
+    }
+  }
+}

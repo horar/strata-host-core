@@ -155,7 +155,8 @@ std::vector<std::string> CouchbaseDatabase::getAllDocumentKeys() {
 bool CouchbaseDatabase::startReplicator(const std::string &url, const std::string &username, const std::string &password,
                                 const std::vector<std::string> &channels, const ReplicatorType &replicator_type,
                                 std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback,
-                                std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback) {
+                                std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback,
+                                bool continuous) {
     if (!database_) {
         qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, verify DB is valid and open.";
         return false;
@@ -198,6 +199,8 @@ bool CouchbaseDatabase::startReplicator(const std::string &url, const std::strin
         replicator_configuration_->channels = channels_temp;
     }
 
+    replicator_configuration_->continuous = continuous;
+
     // Official CBL API: Replicator CTOR can throw so this is wrapped in try/catch
     try {
         replicator_ = std::make_unique<cbl::Replicator>(*replicator_configuration_.get());
@@ -205,8 +208,6 @@ bool CouchbaseDatabase::startReplicator(const std::string &url, const std::strin
         qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of replicator. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
         return false;
     }
-
-    replicator_configuration_->continuous = false;
 
     latest_replication_.url = url;
     latest_replication_.username = username;

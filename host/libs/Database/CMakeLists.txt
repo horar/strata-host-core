@@ -15,9 +15,13 @@ add_library(${PROJECT_NAME}
     include/Database.h
     include/CouchbaseDatabase.h
     include/CouchbaseDocument.h
+    include/DatabaseManager.h
+
     src/Database.cpp
     src/CouchbaseDatabase.cpp
     src/CouchbaseDocument.cpp
+    src/DatabaseManager.cpp
+
     # Logging Categories
     logging/LoggingQtCategories.h
     logging/LoggingQtCategories.cpp
@@ -49,3 +53,5 @@ endif()
 if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
+
+add_subdirectory(sample-app)
