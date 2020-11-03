@@ -28,6 +28,8 @@ enum class Type: int {
     FlashBootloader,
     BackupFirmware,
     StartApplication,
+    SetPlatformId,
+    SetAssistedPlatformId,
     // special values for finished signal (operation was not finished successfully):
     Cancel,   // operation was cancelled
     Timeout,  // no response from device
@@ -81,7 +83,7 @@ signals:
      * \param operation value from OperationType enum (opertion identificator or special value, e.g. Timeout)
      * \param data data related to finished operation (OPERATION_DEFAULT_DATA (INT_MIN) by default)
      */
-    void finished(Type operation, int data = operation::DEFAULT_DATA);
+    void finished(Type operation, int data);
 
     /*!
      * This signal is emitted when error occurres.
