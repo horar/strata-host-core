@@ -338,11 +338,12 @@ Rectangle {
 
                                     onTextChanged: {
                                         if (text.length > 0) {
-                                            model.name = text
                                             finishedModel.checkForDuplicateIds(commandsListView.modelIndex)
                                         } else {
                                             model.valid = false
                                         }
+
+                                        model.name = text
                                     }
                                 }
                             }
@@ -421,9 +422,12 @@ Rectangle {
 
                                             onTextChanged: {
                                                 if (text.length > 0) {
-                                                    model.name = text
                                                     finishedModel.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
+                                                } else {
+                                                    model.valid = false
                                                 }
+
+                                                model.name = text
                                             }
                                         }
 
