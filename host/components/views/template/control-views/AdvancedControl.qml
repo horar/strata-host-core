@@ -48,8 +48,8 @@ Widget09.SGResponsiveScrollView {
 
                 // 'checked' state is bound to and sets the
                 // _motor_running_control property in PlatformInterface
-                checked: platformInterface._motor_running_control
-                onCheckedChanged: platformInterface._motor_running_control = checked
+                //checked: platformInterface._motor_running_control
+                //onCheckedChanged: platformInterface._motor_running_control = checked
             }
         }
 
@@ -62,7 +62,7 @@ Widget09.SGResponsiveScrollView {
             height: 200
             width: 200
 
-            value: platformInterface._motor_speed
+           // value: platformInterface._motor_speed
         }
     }
 }

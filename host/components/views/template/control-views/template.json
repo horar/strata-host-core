@@ -3,21 +3,130 @@
         {
             "cmd": "my_cmd_simple",
             "payload": {
-                "io":true,
-                "dac":0.5
+                "io": "bool",
+                "dac": "double"
             }
         },
         {
-            "cmd":"my_cmd_simple_periodic_update",
-            "payload":{
-                "run_state":true,
-                "interval":2000,
-                "run_count":-1
-                }
-          }
-        
+            "cmd": "my_cmd_simple_periodic_update",
+            "payload": {
+                "run_state": "bool",
+                "interval": "int",
+                "run_count": "int"
+            }
+        },
+        {
+            "cmd": "my_cmd_complex",
+            "payload": {
+                "my_bool": "bool",
+                "my_int": "int",
+                "my_float": "double",
+                "my_string": "string",
+                "my_bools": [
+                    "bool",
+                    "bool"
+                ],
+                "my_ints": [
+                    "int",
+                    "int"
+                ],
+                "my_floats": [
+                    "double",
+                    "double"
+                ],
+                "my_strings": [
+                    "string",
+                    "string"
+                ]
+            }
+        },
+        {
+            "cmd": "my_cmd_i2c",
+            "payload": null
+        }
     ],
-     "notifications": [
-
-     ]
+    "notifications": [
+        {
+            "value": "my_cmd_simple_periodic",
+            "payload": {
+                "adc_read": "double",
+                "io_read": "bool"
+            }
+        },
+        {
+            "value": "my_cmd_complex_periodic",
+            "payload": {
+                "bool_array": [
+                    "bool",
+                    "bool",
+                    "bool"
+                ],
+                "bool_array_rval": [
+                    "bool",
+                    "bool",
+                    "bool"
+                ],
+                "bool_vector": [
+                    "bool",
+                    "bool",
+                    "bool"
+                ],
+                "float_array_3dec": [
+                    "double",
+                    "double",
+                    "double"
+                ],
+                "float_array_rval_4dec": [
+                    "double",
+                    "double",
+                    "double"
+                ],
+                "float_vector_5dec": [
+                    "double",
+                    "double",
+                    "double"
+                ],
+                "int_array": [
+                    "int",
+                    "int",
+                    "int"
+                ],
+                "int_array_rval": [
+                    "int",
+                    "int",
+                    "int",
+                    "int",
+                    "int"
+                ],
+                "int_vector": [
+                    "int",
+                    "int",
+                    "int"
+                ],
+                "single_bool": "bool",
+                "single_bool_rval": "bool",
+                "single_float_1dec": "double",
+                "single_float_rval_2dec": "double",
+                "single_int": "int",
+                "single_int_rval": "int",
+                "single_string": "string",
+                "string_array": [
+                    "string",
+                    "string",
+                    "string"
+                ],
+                "string_array_rval": [
+                    "string",
+                    "string",
+                    "string"
+                ],
+                "string_literal": "string",
+                "string_vector": [
+                    "string",
+                    "string",
+                    "string"
+                ]
+            }
+        }
+    ]
 }
