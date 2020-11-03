@@ -11,6 +11,8 @@ constexpr int ALREADY_IN_BOOTLOADER(1);
 constexpr int BACKUP_NO_FIRMWARE(-100);
 constexpr int BACKUP_STARTED(-101);
 constexpr int FLASH_STARTED(-102);
+constexpr int SET_PLATFORM_ID_FAILED(-200);
+constexpr int PLATFORM_ID_ALREADY_SET(-201);
 
 }
 

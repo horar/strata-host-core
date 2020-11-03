@@ -9,7 +9,7 @@ using command::CmdStartBackupFirmware;
 using command::CmdBackupFirmware;
 
 Backup::Backup(const device::DevicePtr& device) :
-    BaseDeviceOperation(device, Type::BackupFirmware)
+    BaseDeviceOperation(device, Type::BackupFirmware), totalChunks_(0)
 {
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<CmdStartBackupFirmware>(device_));
