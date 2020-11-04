@@ -1,7 +1,7 @@
 // REPO_NAME & ROOT_BUILD_DIR must be as short as possible
 def REPO_NAME = "s"
 def ROOT_BUILD_DIR = "b"
-def BUILD_NAME = "ota" //UUID.randomUUID().toString()
+def BUILD_NAME = UUID.randomUUID().toString()
 def INSTALLER_PATH_OFFLINE = ""
 def INSTALLER_PATH_ONLINE = ""
 pipeline {
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 sh "python -m pip install -r deployment/Strata2/requirements.txt"
                 sh """python 'deployment/Strata2/deploy_build.py' \
-                    --dir '${BUILD_NAME}' \
+                    --dir 'ota' \
                     --repo '${ROOT_BUILD_DIR}/${BUILD_NAME}/public/repository/strata' \
                     """
                     //--offline '${INSTALLER_PATH_OFFLINE}' \
