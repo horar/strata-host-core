@@ -136,7 +136,7 @@ elif [ $USE_DOCKER_CONFIG != 0 ] ; then
     STRATA_HCS_CONFIG_FILE=${STRATA_HCS_CONFIG_FILE_DOCKER}
 fi
 
-STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config_macos.xml
+STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config_demo.xml
 MQTT_LIB=QtMqtt
 COMMON_CPP_LIB="libcomponent-commoncpp.so"
 INSTALLERBASE_BINARY=installerbase

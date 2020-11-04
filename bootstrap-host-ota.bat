@@ -108,7 +108,7 @@ if %USE_PROD_CONFIG% EQU 1 (
     set STRATA_HCS_CONFIG_FILE=%STRATA_HCS_CONFIG_FILE_DOCKER%
 )
 
-set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config_windows.xml
+set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config_demo.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
 set COMMON_CPP_DLL=component-commoncpp.dll
