@@ -311,6 +311,11 @@ Rectangle {
                             if (visible && openFilesModel.currentId === model.uid) {
                                 treeView.selectItem(styleData.index);
                             }
+
+                            if (openFilesModel.currentId === "" && treeView.selection.currentIndex.valid) {
+                                // No files are selected
+                                treeView.selection.clearCurrentIndex()
+                            }
                         }
                     }
                 }
