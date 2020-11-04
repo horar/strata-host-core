@@ -21,9 +21,9 @@ pipeline {
         stage('Test') {
             steps {
                 script{
-                    INSTALLER_PATH_OFFLINE = sh(encoding: 'UTF-8', script: "find '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}' -type f  -iname 'strata-setup-offline.*' ", returnStdout: true)
+                    INSTALLER_PATH_OFFLINE = sh(encoding: 'UTF-8', script: "find '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}' -type f  -iname 'strata-setup-offline*' ", returnStdout: true)
                     INSTALLER_PATH_OFFLINE = INSTALLER_PATH_OFFLINE.minus("\n")
-                    INSTALLER_PATH_ONLINE = sh(encoding: 'UTF-8', script: "find '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}' -type f  -iname 'strata-setup-online.*' ", returnStdout: true)
+                    INSTALLER_PATH_ONLINE = sh(encoding: 'UTF-8', script: "find '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}' -type f  -iname 'strata-setup-online*' ", returnStdout: true)
                     INSTALLER_PATH_ONLINE = INSTALLER_PATH_ONLINE.minus("\n")
                 }
                 echo "Installer Path Offline: $INSTALLER_PATH_OFFLINE"
