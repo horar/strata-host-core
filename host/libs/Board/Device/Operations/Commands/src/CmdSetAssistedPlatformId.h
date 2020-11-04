@@ -3,6 +3,8 @@
 #include "BaseDeviceCommand.h"
 #include "DeviceOperationsData.h"
 
+#include <optional>
+
 namespace strata::device::command {
 
 class CmdSetAssistedPlatformId: public BaseDeviceCommand
