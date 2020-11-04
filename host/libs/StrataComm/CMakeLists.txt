@@ -11,9 +11,10 @@ find_package(Qt5 ${VERSION_QT5}
 add_library(${PROJECT_NAME}
     src/StrataServer.cpp
     src/StrataClient.cpp
-
-    src/logging/LoggingQtCategories.cpp
+    src/Dispatcher.cpp
+    src/logging/LoggingQtCatagories.cpp
 )
+
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
@@ -25,6 +26,10 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC strata::QtLogger
 )
 
-# if(BUILD_TESTING)
-#     add_subdirectory(test)
-# endif()
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    AUTOMOC ON
+)
+
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()
