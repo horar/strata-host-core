@@ -31,15 +31,19 @@ Rectangle {
                 width: parent.width
                 height: parent.height
 
+                function selectItem(index) {
+                    treeView.selection.clearCurrentIndex();
+                    treeView.selection.select(index, ItemSelectionModel.Rows);
+                    treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
+                }
+
                 Connections {
                     target: treeModel
 
                     // When a row is inserted, we want to focus on that row
                     onRowsInserted: {
                         let index = treeModel.index(first, 0, parent);
-                        treeView.selection.clearCurrentIndex();
-                        treeView.selection.select(index, ItemSelectionModel.Rows);
-                        treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
+                        treeView.selectItem(index)
 
                         // Only set editing to true if we have created a new file and the filename is empty
                         let node = treeModel.getNode(index);
@@ -47,6 +51,21 @@ Rectangle {
                             treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
                         } else {
                             openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
+                        }
+                    }
+
+                    onModelReset: {
+                        // Find the Control.qml file and select it
+                        for (let i = 0; i < treeModel.root.childCount(); i++) {
+                            if (treeModel.root.childNode(i).filename === "Control.qml") {
+                                let idx = treeModel.index(i);
+                                let node = treeModel.root.childNode(i);
+
+                                openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
+                                // Need to use callLater here because the model indices haven't been set yet
+                                Qt.callLater(treeView.selectItem, idx)
+                                break;
+                            }
                         }
                     }
                 }
@@ -86,15 +105,6 @@ Rectangle {
 
                 itemDelegate: Item {
                     anchors.verticalCenter: parent.verticalCenter
-
-                    Component.onCompleted: {
-                        if (model.filename === "Control.qml") {
-                            openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-                            treeView.selection.clearCurrentIndex();
-                            treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                            treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
-                        }
-                    }
 
                     Text {
                         id: itemFilename
@@ -281,9 +291,7 @@ Rectangle {
                                     }
                                 } else if (mouse.button === Qt.LeftButton) {
                                     if (!model.isDir) {
-                                        treeView.selection.clearCurrentIndex();
-                                        treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                                        treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                                        treeView.selectItem(styleData.index)
                                         if (openFilesModel.hasTab(model.uid)) {
                                             openFilesModel.currentId = model.uid
                                         } else {
@@ -301,9 +309,7 @@ Rectangle {
 
                         onCurrentIndexChanged: {
                             if (visible && openFilesModel.currentId === model.uid) {
-                                treeView.selection.clearCurrentIndex();
-                                treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                                treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                                treeView.selectItem(styleData.index);
                             }
                         }
                     }
