@@ -12,6 +12,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(${PROJECT_NAME}-test
     DispatcherTest.cpp
     TestHandlers.cpp
+    ClientsControllerTest.cpp
     main.cpp
 )
 
