@@ -95,7 +95,6 @@ Item {
                 if (sdsModel.resourceLoader.getVersionRegistered(platformStack.class_id) !== controlViewContainer.staticVersion) {
                     usingStaticView = false;
                 }
-
                 loadControl()
             } else {
                 loadingBarContainer.visible = true;
@@ -177,10 +176,6 @@ Item {
         const versionInstalled = getInstalledVersion(NavigationControl.context.user_id, versionControl);
 
         if (versionInstalled) {
-            /**
-              TODO: OTA - Check if file exists before trying to register so error screen doesn't briefly show
-                    add SGUtilsCpp.isFile() or SGUtilsCpp.exists() when it is merged to the below if statement
-            **/
             if (registerResource(versionInstalled.path, versionInstalled.version)) {
                 return;
             }

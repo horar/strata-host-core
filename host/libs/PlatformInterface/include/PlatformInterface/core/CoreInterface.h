@@ -76,7 +76,7 @@ signals:
     bool connectedPlatformListChanged(QString list);
     bool hcsTokenChanged(QString token);
 
-    void platformDocumentsMetaData(QJsonObject payload);
+    void platformMetaData(QJsonObject payload);
     void downloadPlatformFilepathChanged(QJsonObject payload);
     void downloadPlatformSingleFileProgress(QJsonObject payload);
     void downloadPlatformSingleFileFinished(QJsonObject payload);

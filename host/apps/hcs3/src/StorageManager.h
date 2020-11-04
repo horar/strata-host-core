@@ -89,9 +89,8 @@ signals:
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
     void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray datasheetList, QJsonArray documentList,
-                                            QJsonArray firmwareList, QJsonArray controlViewList, QString error);
-    void platformDocumentsMetaData(QByteArray clientId, QString classId,
-                                   QJsonArray firmwareList, QJsonArray controlViewList);
+                                            QString error);
+    void platformMetaData(QByteArray clientId, QString classId, QJsonArray firmwareList, QJsonArray controlViewList, QString error);
 
 private slots:
     void filePathChangedHandler(QString groupId,

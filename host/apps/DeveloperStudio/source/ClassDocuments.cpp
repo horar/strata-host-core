@@ -54,11 +54,6 @@ bool ClassDocuments::loading() const
     return loading_;
 }
 
-bool ClassDocuments::initialized() const
-{
-    return initialized_;
-}
-
 bool ClassDocuments::metaDataInitialized() const
 {
     return metaDataInitialized_;
@@ -101,8 +96,6 @@ void ClassDocuments::populateModels(QJsonObject data)
         clearDocuments();
         setErrorString(data["error"].toString());
         setLoading(false);
-        setInitialized(true);
-        setMetaDataInitialized(true);
         return;
     }
 
@@ -188,12 +181,16 @@ void ClassDocuments::populateModels(QJsonObject data)
     downloadDocumentModel_.populateModel(downloadList);
 
     setLoading(false);
-    setInitialized(true);
-    setMetaDataInitialized(true);
 }
 
 void ClassDocuments::populateMetaData(QJsonObject data)
 {
+    if (data.contains("error")) {
+        qCWarning(logCategoryDocumentManager) << "Document metadata error:" << data["error"].toString();
+        setMetaDataInitialized(true);
+        return;
+    }
+
     QList<VersionedItem* > firmwareList;
     QList<VersionedItem* > controlViewList;
 
@@ -273,14 +270,6 @@ void ClassDocuments::setLoading(bool loading)
     if (loading_ != loading) {
         loading_ = loading;
         emit loadingChanged();
-    }
-}
-
-void ClassDocuments::setInitialized(bool initialized)
-{
-    if (initialized_ != initialized) {
-        initialized_ = initialized;
-        emit initializedChanged();
     }
 }
 
