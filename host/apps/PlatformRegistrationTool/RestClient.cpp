@@ -81,13 +81,25 @@ void RestClient::replyFinished()
         return;
     }
 
+    /* reply->error() contains also other erros than just http status codes (and not all of them)
+     * for example there is no error for code 406 - in that case UnknownContentError is returned. */
     int statusCode =  reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    qCDebug(logCategoryPrtRestClient) << "http status code" << statusCode;
+    qCDebug(logCategoryPrtRestClient) << "error" << reply->error() << reply->errorString();
+
     QByteArray data = reply->readAll();
 
     if (reply->error() == QNetworkReply::NoError) {
         deferred->callSuccess(statusCode, data);
     } else {
-        deferred->callError(statusCode, reply->errorString());
+        int errorCode = statusCode;
+        if (reply->error() < 100) {
+            //these are errors related to connection
+            errorCode = reply->error();
+        }
+
+        deferred->callError(errorCode, reply->errorString());
     }
 
     deferredList_.removeOne(deferred);
