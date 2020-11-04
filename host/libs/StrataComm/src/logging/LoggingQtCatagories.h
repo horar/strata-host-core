@@ -5,3 +5,4 @@
 Q_DECLARE_LOGGING_CATEGORY(logCategoryStrataServer)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryStrataClient)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryStrataDispatcher)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryStrataClientsController)
