@@ -1,7 +1,7 @@
 // REPO_NAME & ROOT_BUILD_DIR must be as short as possible
 def REPO_NAME = "s"
 def ROOT_BUILD_DIR = "b"
-def BUILD_NAME = UUID.randomUUID().toString()
+def BUILD_NAME = "ota" //UUID.randomUUID().toString()
 def INSTALLER_PATH_OFFLINE = ""
 def INSTALLER_PATH_ONLINE = ""
 pipeline {
@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "${env.workspace}/deployment/Strata2/release_app.sh -c -g -n -s -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}'"
+                sh "${env.workspace}/deployment/Strata2/release_app.sh -c -g -n -s -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}' -f PROD"
             }
         }
         stage('Test') {
@@ -35,10 +35,10 @@ pipeline {
                 sh "python -m pip install -r deployment/Strata2/requirements.txt"
                 sh """python 'deployment/Strata2/deploy_build.py' \
                     --dir '${BUILD_NAME}' \
-                    --offline '${INSTALLER_PATH_OFFLINE}' \
-                    --online '${INSTALLER_PATH_ONLINE}' \
                     --repo '${ROOT_BUILD_DIR}/${BUILD_NAME}/public/repository/strata' \
                     """
+                    //--offline '${INSTALLER_PATH_OFFLINE}' \
+                    //--online '${INSTALLER_PATH_ONLINE}' \
                 archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/strata-setup-*", onlyIfSuccessful: true
             }
         }
