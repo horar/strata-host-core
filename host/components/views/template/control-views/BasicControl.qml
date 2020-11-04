@@ -264,9 +264,9 @@ Item {
                     anchors.fill: parent
                     text: {
                         if(graphTimerAxis.running === true)
-                            JSON.stringify(my_cmd_simple_start_periodic_obj,null,4)
+                            "Send: \n" + JSON.stringify(my_cmd_simple_start_periodic_obj,null,4)
                         else
-                            JSON.stringify(my_cmd_simple_stop_periodic_obj,null,4)
+                           "Send: \n" + JSON.stringify(my_cmd_simple_stop_periodic_obj,null,4)
                     }
                 }
             }
@@ -277,7 +277,7 @@ Item {
             ColumnLayout {
                 anchors.fill: parent
                 RowLayout{
-                    Layout.preferredHeight: parent.height/3
+                    Layout.fillHeight: true
                     Layout.fillWidth: true
                     Rectangle{
                         Layout.fillHeight: true
@@ -340,8 +340,24 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
+                    /*
+                      This version of SGStatusLogBox shows how it can be customized for delegates made up of selectable text.
+                       This is more efficient for things like output logs (1000+ lines) than a single text component as listView caches out-of-view delegates.
+                    */
+                    SGStatusLogBoxSelectableText {
+                        id: logBoxText
+                        title: "Selectable Text Status Logs"
+                        filterEnabled: false
+                        height: parent.height
+                        width: parent.width/1.5
+                        anchors.centerIn: parent
 
-
+                        Component.onCompleted: {
+                            for (let i = 0; i < 10; i++){
+                                logBoxText.append("Message " + i)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -362,7 +378,6 @@ Item {
                     anchors.fill: parent
                     text: {
                         "Received:" + "\n" + JSON.stringify(obj1, null, 4)
-
                     }
                 }
             }
