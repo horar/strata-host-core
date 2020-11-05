@@ -1081,8 +1081,8 @@ ColumnLayout {
                                                     gaugeFillColor1: Qt.rgba(0,1,.25,1)
                                                     gaugeFillColor2: Qt.rgba(1,0,0,1)
                                                     minimumValue: 0
-                                                    maximumValue: 5
-                                                    tickmarkStepSize: 0.5
+                                                    maximumValue: 10
+                                                    tickmarkStepSize: 1
                                                     width: powerDissipatedContainer.width
                                                     height: powerDissipatedContainer.height/1.3
                                                     unitText: "W"
@@ -1127,8 +1127,8 @@ ColumnLayout {
                                                     gaugeFillColor1: Qt.rgba(0,0.5,1,1)
                                                     gaugeFillColor2: Qt.rgba(1,0,0,1)
                                                     minimumValue: 0
-                                                    maximumValue: 100
-                                                    tickmarkStepSize: 20
+                                                    maximumValue: 250
+                                                    tickmarkStepSize: 50
                                                     unitText: "W"
                                                     unitTextFontSizeMultiplier: ratioCalc * 2.2
                                                     width: powerOutputContainer.width
