@@ -69,7 +69,7 @@ Item {
             buttonData = {
                 "text": "Control",
                 "view": "control",
-                "icon": firmwareNotification ? "qrc:/sgimages/exclamation-triangle.svg" : "",
+                "icon": "",
                 "selected": false
             }
             buttonModel.append(buttonData)
@@ -88,7 +88,7 @@ Item {
         buttonData = {
             "text": "Settings",
             "view": "settings",
-            "icon": firmwareNotification ? "qrc:/sgimages/exclamation-triangle.svg": "qrc:/sgimages/cog.svg",
+            "icon": "qrc:/sgimages/cog.svg",
             "selected": false
         }
         buttonModel.append(buttonData)

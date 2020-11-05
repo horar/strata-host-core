@@ -18,6 +18,7 @@ StackLayout {
             default: // case "control":
                 return 0
        }
+
     }
 
     property var device_id: model.device_id // var type so Constants.DEVICE_IDs are not coerced to 32 bit signed ints
@@ -27,6 +28,8 @@ StackLayout {
     property string name: model.name
     property alias controlViewContainer: controlViewContainer
 
+    property bool platformIsOutOfDate: false
+    property bool firmwareIsOutOfDate: false
     property bool platformDocumentsInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).initialized;
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false

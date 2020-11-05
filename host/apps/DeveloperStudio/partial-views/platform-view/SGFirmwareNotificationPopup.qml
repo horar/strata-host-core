@@ -12,14 +12,13 @@ import tech.strata.sgwidgets 1.0
 
 Popup {
     id: firmwarePopup
-    width: 400
+    width: 450
     height: 200
     x: parent.width/2 - width/2
     y: parent.height/2 - height/2
     modal: true
     padding: 0
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
 
     DropShadow {
         width: firmwarePopup.width
@@ -41,14 +40,27 @@ Popup {
 
 
         ColumnLayout {
-            anchors.centerIn: parent
-            spacing: 10
+            anchors.fill: parent
+            spacing: 5
             SGText {
                 Layout.alignment: Qt.AlignHCenter
-                text: "There is a new firmware version, do you wish to update?"
                 fontSizeMultiplier: 1.15
                 leftPadding: 5
                 rightPadding: 5
+
+                    text: {
+                        if(firmwareIsOutOfDate && platformIsOutOfDate) return "Both firmware and software for this platform are out of date"
+                        else if(firmwareIsOutOfDate) return "Firmware for this platform is out of date"
+                        else return "Software for this platform is out of date"
+                    }
+            }
+
+            SGText {
+                Layout.alignment: Qt.AlignHCenter
+                fontSizeMultiplier: 1.15
+                leftPadding: 5
+                rightPadding: 5
+                text: "Do you wish to update?"
             }
 
             RowLayout {
@@ -59,7 +71,8 @@ Popup {
 
                 SGButton {
                     text: "Okay"
-                    onClicked: {                      
+                    onClicked: {
+                       platformStack.currentIndex = 2
                        firmwarePopup.close()
                     }
                 }
@@ -73,10 +86,9 @@ Popup {
             }
 
             SGCheckBox {
-                Layout.alignment: Qt.AlignLeft
                 checked: false
                 text: "Do not remind me"
-                leftPadding: 5
+                leftPadding: 10
 
                 onCheckedChanged: {
                     NavigationControl.userSettings.notifyOnFirmwareUpdate = checked

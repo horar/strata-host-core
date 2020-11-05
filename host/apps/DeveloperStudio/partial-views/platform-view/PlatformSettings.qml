@@ -17,7 +17,6 @@ Rectangle {
     property alias softwareManagement: softwareManagement
     property alias firmwareManagement: firmwareManagement
 
-
     ColumnLayout {
         id: mainColumn
         anchors {

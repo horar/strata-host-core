@@ -22,6 +22,7 @@ Item {
     readonly property string staticVersion: "static"
 
 
+
     SGText {
         anchors.centerIn: parent
         text: "Loading Control View..."
@@ -86,7 +87,8 @@ Item {
     }
 
     SGFirmwareNotificationPopup {
-        visible: NavigationControl.firmwareIsOutOfDate && NavigationControl.userSettings.notifyOnFirmwareUpdate
+        id: notifyPop
+        visible: (platformIsOutOfDate || firmwareIsOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate
     }
 
     function initialize() {

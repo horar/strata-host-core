@@ -5,7 +5,6 @@ import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
-import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/partial-views/general/"
 
 ColumnLayout {
@@ -17,7 +16,6 @@ ColumnLayout {
     Component.onCompleted: {
         firmwareListModel = sdsModel.documentManager.getClassDocuments(platformStack.class_id).firmwareListModel
         firmwareList.firmwareRepeater.model = firmwareListModel
-        checkForNewerVersion()
     }
 
     property var firmwareListModel: null
@@ -47,6 +45,7 @@ ColumnLayout {
             checkForNewerVersion()
 
         }
+
     }
 
     function matchVersion() {
@@ -65,7 +64,7 @@ ColumnLayout {
         const splitInstalledVersion = currentVersion.split(".")
         for (let i = 0; i < firmwareListModel.count; i++){
             if(SGVersionUtils.lessThan(currentVersion,firmwareListModel.version(i))){
-                NavigationControl.firmwareIsOutOfDate = true
+                firmwareIsOutOfDate = true
             }
         }
     }
