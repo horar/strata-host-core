@@ -14,11 +14,9 @@ public:
 
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
-    int dataForFinish() const override;
 
 private:
     CmdSetPlatformIdData data_;
-    int dataForFinished_;
 };
 
 }  // namespace
