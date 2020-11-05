@@ -1,66 +1,51 @@
 #include "ClientsController.h"
 
-ClientsController::ClientsController(QObject *parent) : QObject(parent) {
+void ClientsController::notifyAllClients(const QJsonObject &payload) {
+    qCInfo(logCategoryStrataClientsController) << "Notifying all clients.";
+    qCInfo(logCategoryStrataClientsController) << "Payload: " << payload;
+    for( const auto &client : clientsList_) {
+        qCInfo(logCategoryStrataClientsController) << "Notifying Client ID: " << client.getClientID();
+        emit notifyClientSignal(client, payload);
+    }
 }
 
-ClientsController::~ClientsController() {
-}
-
-// Client *ClientsController::getClient(QByteArray clientID) {
-//     qCInfo(logCategoryStrataClientsController) << "searching for clientID: " << clientID;
-//     auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientID] (Client &client) {
-//         return client.getClientID() == clientID;
-//     });
-//     if (it == clientsList_.end()) {
-//         return nullptr;
-//     }
-//     return it;
-// }
-
-// Client &ClientsController::getClient(QByteArray clientID) const {
-//     qCInfo(logCategoryStrataClientsController) << "searching for clientID: " << clientID;
-//     auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientID] (Client &client) {
-//         return client.getClientID() == clientID;
-//     });
-//     if (it == clientsList_.end()) {
-//         return nullptr;
-//     }
-//     return it;
-// }
-
-void ClientsController::notifyAllClients(/* Add a payload */) {
-    
-}
-
-bool ClientsController::isRegisteredClient(QByteArray clientID) {
+bool ClientsController::isRegisteredClient(const QByteArray &clientID) {
     qCInfo(logCategoryStrataClientsController) << "searching for clientID: " << clientID;
     auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientID] (Client &client) {
         return client.getClientID() == clientID;
     });
     if (it == clientsList_.end()) {
-        qCDebug(logCategoryStrataClientsController) << "Client not found. clientID: " << clientID;
+        qCDebug(logCategoryStrataClientsController) << "Client is not registered. clientID: " << clientID;
         return false;
     }
-    qCDebug(logCategoryStrataClientsController) << "Client found. clientID: " << clientID;
+    qCDebug(logCategoryStrataClientsController) << "Client is registered. clientID: " << clientID;
     return true;
 }
 
-bool ClientsController::registerClient(Client client) {
+bool ClientsController::registerClient(const Client &client) {
     qCInfo(logCategoryStrataClientsController) << "Registering Client: " << client.getClientID() << " " << client.getApiVersion();
+
+    // if ( true == isRegisteredClient(client.getClientID())) {
+    //     qCCritical(logCategoryStrataClientsController) << "Client ID is already registered. ClientID: " << client.getClientID();
+    //     return false;
+    // }
+
     clientsList_.push_back(client);
     return true;
 }
 
-bool ClientsController::unregisterClient(Client client) {
-    qCInfo(logCategoryStrataClientsController) << "Unregistering Client: " << client.getClientID() << " " << client.getApiVersion();
-    auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&client] (Client &currentClient) {
-        return currentClient.getClientID() == client.getClientID();
+bool ClientsController::unregisterClient(const QByteArray &clientID) {
+    qCInfo(logCategoryStrataClientsController) << "Unregistering client. clientID: " << clientID;
+
+    auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientID] (const Client &currentClient) {
+        return currentClient.getClientID() == clientID;
     });
+
     if (it == clientsList_.end()) {
-        qCDebug(logCategoryStrataClientsController) << "client not found. Client ID: " << client.getClientID();
+        qCDebug(logCategoryStrataClientsController) << "Client not found. Client ID: " << clientID;
         return false;
     } else {
-        qCDebug(logCategoryStrataClientsController) << "client unregistered. Client ID: " << client.getClientID();
+        qCDebug(logCategoryStrataClientsController) << "Client unregistered. Client ID: " << clientID;
         clientsList_.erase(it);
         return true;
     }

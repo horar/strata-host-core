@@ -10,15 +10,17 @@ class ClientsController : public QObject
 {
     Q_OBJECT
 public:
-    ClientsController(QObject *parent = nullptr);
-    ~ClientsController();
-    // Client &getClient(QByteArray clientID) const;
-    void notifyAllClients(/* Add a payload */); // maybe make this a slot?
-    bool isRegisteredClient(QByteArray clientID);
-    bool registerClient(Client client);
-    bool unregisterClient(Client client);
+    ClientsController(QObject *parent = nullptr): QObject(parent) {}
+    ~ClientsController(){}
+
+    void notifyAllClients(const QJsonObject &payload); // maybe make this a slot?
+    bool isRegisteredClient(const QByteArray &clientID);
+    bool registerClient(const Client &client);
+    bool unregisterClient(const QByteArray &clientID);
+
+signals:
+    void notifyClientSignal(const Client &client, const QJsonObject &payload);
 
 private:
     std::vector<Client> clientsList_;
-    // QVector<Client> clientsList_;
 };
