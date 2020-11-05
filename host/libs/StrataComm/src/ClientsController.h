@@ -4,7 +4,7 @@
 #include <QVector>
 
 #include "Client.h"
-#include "logging/LoggingQtCatagories.h"
+#include "logging/LoggingQtCategories.h"
 
 class ClientsController : public QObject
 {

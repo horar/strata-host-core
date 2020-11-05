@@ -1,5 +1,5 @@
 #include "Dispatcher.h"
-#include "logging/LoggingQtCatagories.h"
+#include "logging/LoggingQtCategories.h"
 
 Dispatcher::Dispatcher(QObject *parent) : QObject(parent)
 {
@@ -7,7 +7,7 @@ Dispatcher::Dispatcher(QObject *parent) : QObject(parent)
 }
 
 Dispatcher::~Dispatcher() {
-    qCInfo(logCategoryStrataDispatcher) << "dispatcher distroyed.";
+    qCInfo(logCategoryStrataDispatcher) << "dispatcher destroyed.";
 }
 
 bool Dispatcher::start() {

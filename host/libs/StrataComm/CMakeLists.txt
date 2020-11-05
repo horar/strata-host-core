@@ -14,7 +14,7 @@ add_library(${PROJECT_NAME}
     src/Dispatcher.cpp
     src/Client.cpp
     src/ClientsController.cpp
-    src/logging/LoggingQtCatagories.cpp
+    src/logging/LoggingQtCategories.cpp
 )
 
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
