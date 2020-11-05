@@ -131,12 +131,6 @@ namespace strata::device {
         virtual Type deviceType() const final;
 
         /**
-         * Check if device is in bootloader mode.
-         * @return true if device is switched to bootloader mode
-         */
-        virtual bool bootloaderMode() final;
-
-        /**
          * Get version of device API.
          * @return API version of device
          */
@@ -172,6 +166,8 @@ namespace strata::device {
         virtual void unlockDevice(quintptr lockId) final;
         virtual bool sendMessage(const QByteArray msg, quintptr lockId) = 0;
         virtual void setBootloaderMode(bool inBootloaderMode) final;
+        // Before calling bootloaderMode(), commands get_firmware_info and request_platform_id must be called.
+        virtual bool bootloaderMode() final;
         virtual void setApiVersion(ApiVersion apiVersion) final;
         // ***
 

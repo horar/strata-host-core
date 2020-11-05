@@ -1,4 +1,5 @@
 #include <Device/Operations/StartBootloader.h>
+#include <DeviceOperationsStatus.h>
 #include "Commands/include/DeviceCommands.h"
 #include "DeviceOperationsConstants.h"
 
@@ -31,14 +32,14 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     postCommandHandler_ = std::bind(&StartBootloader::skipCommands, this, std::placeholders::_1, std::placeholders::_2);
 }
 
-void StartBootloader::skipCommands(CommandResult& result, int& data)
+void StartBootloader::skipCommands(CommandResult& result, int& status)
 {
     if ((currentCommand_ == beforeStartBootloader_) && (result == CommandResult::Done)) {
-        if (device_->bootloaderMode() == true) {
+        if (BaseDeviceOperation::bootloaderMode() == true) {
             // skip rest of commands - set result to 'FinaliseOperation'
             result = CommandResult::FinaliseOperation;
-            // set data for 'finished' signal
-            data = ALREADY_IN_BOOTLOADER;
+            // set status for 'finished' signal
+            status = ALREADY_IN_BOOTLOADER;
             qCInfo(logCategoryDeviceOperations) << device_ << "Platform already in bootloader mode.";
         }
     }

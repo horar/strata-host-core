@@ -17,6 +17,7 @@ enum class CommandResult : int {
     Done,              // successfully done (received device response is OK)
     Partial,           // successfully done (received device response is OK), another command is expected to follow
     Retry,             // retry - send command again with same data
+    Reject,            // command was rejected (is unsupported)
     Failure,           // response to command is not successful
     FinaliseOperation  // finish operation (there is no point in continuing)
 };
@@ -66,6 +67,11 @@ public:
     virtual bool ackReceived() const final;
 
     /*!
+     * Sets command result to CommandResult::Reject.
+     */
+    virtual void setCommandRejected() final;
+
+    /*!
      * This method is called when expires timeout for sent command.
      */
     virtual void onTimeout();
@@ -83,12 +89,6 @@ public:
     virtual std::chrono::milliseconds waitBeforeNextCommand() const;
 
     /*!
-     * Returns specific data for finished() signal (e.g. chunk number).
-     * \return data for finished() signal or INT_MIN if not used (by default)
-     */
-    virtual int dataForFinish() const;
-
-    /*!
      * Command name.
      * \return name of command
      */
@@ -100,6 +100,12 @@ public:
      */
     virtual CommandResult result() const final;
 
+    /*!
+     * Command status.
+     * \return status specific for command (chunk number, defined constant, ...)
+     */
+    virtual int status() const final;
+
 protected:
     virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) final;
     virtual void setDeviceBootloaderMode(bool inBootloaderMode) final;
@@ -108,6 +114,7 @@ protected:
     const device::DevicePtr& device_;
     bool ackReceived_;
     CommandResult result_;
+    int status_;
 };
 
 }  // namespace

@@ -3,6 +3,8 @@
 #include "BaseDeviceCommand.h"
 #include "DeviceOperationsData.h"
 
+#include <optional>
+
 namespace strata::device::command {
 
 class CmdSetAssistedPlatformId: public BaseDeviceCommand
@@ -16,13 +18,11 @@ public:
 
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
-    int dataForFinish() const override;
 
 private:
     std::optional<CmdSetPlatformIdData> data_;
     std::optional<CmdSetPlatformIdData> controllerData_;
     std::optional<QString> fwClassId_;
-    int dataForFinished_;
 };
 
 }  // namespace

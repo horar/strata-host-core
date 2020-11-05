@@ -89,7 +89,6 @@ void FlasherConnector::flashFirmware(bool flashOld) {
         : flasher_ = std::make_unique<Flasher>(device_, firmwarePath, newFirmwareMD5_);
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
-    connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
     (flashOld)
         ? connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress)
         : connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::flashProgress);
@@ -110,7 +109,6 @@ void FlasherConnector::backupFirmware(bool backupOld) {
     flasher_ = std::make_unique<Flasher>(device_, firmwarePath);
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
-    connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
     connect(flasher_.get(), &Flasher::backupFirmwareProgress, this, &FlasherConnector::backupProgress);
     connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
@@ -149,32 +147,35 @@ void FlasherConnector::processStartupError(const QString& errorString) {
     emit finished(Result::Unsuccess);
 }
 
-void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult) {
+void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QString errorString) {
     flasher_.reset();
 
-    State result;
+    State result = State::Failed;
     switch (flasherResult) {
     case Flasher::Result::Ok :
     case Flasher::Result::NoFirmware :
         result = State::Finished;
         break;
+    case Flasher::Result::Error :
+        result = State::Failed;
+        if (errorString.isEmpty()) {
+            errorString_ = QStringLiteral("Unknown error");
+        } else {
+            qCDebug(logCategoryFlasherConnector).noquote() << "Flasher error:" << errorString;
+            errorString_ = errorString;
+        }
+        break;
+    case Flasher::Result::Timeout :
+        result = State::Failed;
+        errorString_ = QStringLiteral("Timeout. No response from board.");
+        break;
     case Flasher::Result::Cancelled :
         result = State::Cancelled;
         qCWarning(logCategoryFlasherConnector) << "Firmware operation was cancelled.";
         break;
-    case Flasher::Result::Timeout :
-        errorString_ = QStringLiteral("Timeout. No response from board.");
-        [[fallthrough]];
-    default :
-        result = State::Failed;
-        if (errorString_.isEmpty()) {
-            errorString_ = QStringLiteral("Unknown error");
-        }
-        break;
     }
     if (result == State::Failed) {
         emit operationStateChanged(operation_, result, errorString_);
-        errorString_.clear();
     } else {
         emit operationStateChanged(operation_, result);
     }
@@ -228,11 +229,6 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult) {
         break;
     }
     return;
-}
-
-void FlasherConnector::handleFlasherError(QString errorString) {
-    qCDebug(logCategoryFlasherConnector).noquote() << "Flasher error:" << errorString;
-    errorString_ = errorString;
 }
 
 void FlasherConnector::handleSwitchToBootloader(bool done) {
