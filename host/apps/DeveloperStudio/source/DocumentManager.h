@@ -43,6 +43,7 @@ private slots:
 
     void updateLoadingProgress(QJsonObject data);
     void populateModels(QJsonObject data);
+    void platformMetaDataHandler(QJsonObject data);
 
 private:
     CoreInterface *coreInterface_;

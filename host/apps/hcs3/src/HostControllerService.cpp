@@ -84,6 +84,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
     connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
     connect(&storageManager_, &StorageManager::downloadControlViewProgress, this, &HostControllerService::sendControlViewDownloadProgressMessage);
+    connect(&storageManager_, &StorageManager::platformMetaData, this, &HostControllerService::sendPlatformMetaData);
 
     /* We dont want to call these StorageManager methods directly
      * as they should be executed in the main thread. Not in dispatcher's thread. */
@@ -304,13 +305,33 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
     clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
+void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList, const QJsonArray &firmwareList, const QString &error)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "platform_meta_data");
+    payload.insert("class_id", classId);
+
+    if (error.isEmpty()) {
+        payload.insert("control_views", controlViewList);
+        payload.insert("firmwares", firmwareList);
+    } else {
+        payload.insert("error", error);
+    }
+
+    message.insert("hcs::notification", payload);
+
+    doc.setObject(message);
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+}
+
 void HostControllerService::sendPlatformDocumentsMessage(
         const QByteArray &clientId,
         const QString &classId,
         const QJsonArray &datasheetList,
         const QJsonArray &documentList,
-        const QJsonArray &firmwareList,
-        const QJsonArray &controlViewList,
         const QString &error)
 {
     QJsonDocument doc;
@@ -323,8 +344,6 @@ void HostControllerService::sendPlatformDocumentsMessage(
     if (error.isEmpty()) {
         payload.insert("datasheets", datasheetList);
         payload.insert("documents", documentList);
-        payload.insert("firmwares", firmwareList);
-        payload.insert("control_views", controlViewList);
     } else {
         payload.insert("error", error);
     }

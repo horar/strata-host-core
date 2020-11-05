@@ -26,12 +26,12 @@ StackLayout {
     property string name: model.name
     property alias controlViewContainer: controlViewContainer
 
-    property bool platformDocumentsInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).initialized;
+    property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
     property bool fullyInitialized: platformStackInitialized &&
                                     userSettingsInitialized &&
-                                    platformDocumentsInitialized
+                                    platformMetaDataInitialized
 
     onFullyInitializedChanged: {
         initialize()
