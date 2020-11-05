@@ -18,17 +18,18 @@ bool ClientsController::isRegisteredClient(const QByteArray &clientID) {
         qCDebug(logCategoryStrataClientsController) << "Client is not registered. clientID: " << clientID;
         return false;
     }
-    qCDebug(logCategoryStrataClientsController) << "Client is registered. clientID: " << clientID;
+    qCDebug(logCategoryStrataClientsController) << "Client is registered. clientID: " << it->getClientID() << " API Version: " << it->getApiVersion();
     return true;
 }
 
 bool ClientsController::registerClient(const Client &client) {
     qCInfo(logCategoryStrataClientsController) << "Registering Client: " << client.getClientID() << " " << client.getApiVersion();
 
-    // if ( true == isRegisteredClient(client.getClientID())) {
-    //     qCCritical(logCategoryStrataClientsController) << "Client ID is already registered. ClientID: " << client.getClientID();
-    //     return false;
-    // }
+    // find a better way.. maybe use different DS that vector or qlist? 
+    if (true == isRegisteredClient(client.getClientID())) {
+        qCCritical(logCategoryStrataClientsController) << "Client ID is already registered. ClientID: " << client.getClientID();
+        return false;
+    }
 
     clientsList_.push_back(client);
     return true;

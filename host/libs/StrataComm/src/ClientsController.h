@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include <QVector>
+#include <QList>
 
 #include "Client.h"
 #include "logging/LoggingQtCategories.h"
@@ -22,5 +22,6 @@ signals:
     void notifyClientSignal(const Client &client, const QJsonObject &payload);
 
 private:
-    std::vector<Client> clientsList_;
+    QList<Client> clientsList_;
+    // std::vector<Client> clientsList_;
 };
