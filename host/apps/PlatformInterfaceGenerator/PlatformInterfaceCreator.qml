@@ -236,9 +236,6 @@ Rectangle {
             Repeater {
                 model: finishedModel
 
-                /*****************************************
-                  * This ListView corresponds to each command / notification
-                 *****************************************/
                 delegate: ColumnLayout {
                     id: commandColumn
                     Layout.fillWidth: true
