@@ -51,8 +51,7 @@ void Flasher::backupFirmware(bool startApplication) {
         operation_->run();
     } else {
         qCCritical(logCategoryFlasher) << device_ << "Cannot open file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
-        emit error(binaryFile_.errorString());
-        finish(Result::Error);
+        finish(Result::Error, binaryFile_.errorString());
     }
 }
 
@@ -75,8 +74,7 @@ void Flasher::flash(bool flashFirmware, bool startApplication) {
                     if (fileMD5_ != md5) {
                         QString errStr(QStringLiteral("Wrong MD5 checksum of file to be flashed."));
                         qCCritical(logCategoryFlasher) << device_ << errStr;
-                        emit error(errStr);
-                        finish(Result::Error);
+                        finish(Result::Error, errStr);
                         return;
                     }
                 }
@@ -97,13 +95,11 @@ void Flasher::flash(bool flashFirmware, bool startApplication) {
         } else {
             QString errStr = QStringLiteral("File '") + binaryFile_.fileName() + QStringLiteral("' is empty.");
             qCCritical(logCategoryFlasher) << device_ << errStr;
-            emit error(errStr);
-            finish(Result::Error);
+            finish(Result::Error, errStr);
         }
     } else {
         qCCritical(logCategoryFlasher) << device_ << "Cannot open file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
-        emit error(binaryFile_.errorString());
-        finish(Result::Error);
+        finish(Result::Error, binaryFile_.errorString());
     }
 }
 
@@ -132,13 +128,12 @@ void Flasher::handleOperationFinished(operation::Result result, int status, QStr
         {
             QString errMsg(QStringLiteral("Firmware operation has failed (faulty response from device)."));
             qCCritical(logCategoryFlasher) << device_ << errMsg;
-            emit error(errMsg);
-            finish(Result::Error);
+            finish(Result::Error, errMsg);
         }
+        break;
     case operation::Result::Error:
         qCCritical(logCategoryFlasher) << device_ << "Error during flashing: " << errStr;
-        emit error(errStr);
-        finish(Result::Error);
+        finish(Result::Error, errStr);
         break;
     }
 }
@@ -208,8 +203,7 @@ void Flasher::performNextOperation(device::operation::BaseDeviceOperation* baseO
         {
             QString errStr(QStringLiteral("Unsupported operation."));
             qCCritical(logCategoryFlasher) << device_ << errStr;
-            emit error(errStr);
-            finish(Result::Error);
+            finish(Result::Error, errStr);
         }
     }
 }
@@ -261,8 +255,7 @@ void Flasher::manageFlash(int lastFlashedChunk) {
     if (binaryFile_.atEnd()) {
         QString errStr(QStringLiteral("Unexpected end of file."));
         qCCritical(logCategoryFlasher) << device_ << errStr << ' ' <<  binaryFile_.fileName();
-        emit error(errStr);
-        finish(Result::Error);
+        finish(Result::Error, errStr);
         return;
     }
 
@@ -282,13 +275,11 @@ void Flasher::manageFlash(int lastFlashedChunk) {
         } else {
             QString errStr(QStringLiteral("Unexpected flash error."));
             qCCritical(logCategoryFlasher) << device_ << errStr;
-            emit error(errStr);
-            finish(Result::Error);
+            finish(Result::Error, errStr);
         }
     } else {
         qCCritical(logCategoryFlasher) << device_ << "Cannot read from file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
-        emit error(QStringLiteral("File read error. ") + binaryFile_.errorString());
-        finish(Result::Error);
+        finish(Result::Error, QStringLiteral("File read error. ") + binaryFile_.errorString());
     }
 }
 
@@ -297,8 +288,7 @@ void Flasher::manageBackup(int chunkNumber) {
     if (backupOp == nullptr) {
         QString errStr(QStringLiteral("Unexpected backup error."));
         qCCritical(logCategoryFlasher) << device_ << errStr;
-        emit error(errStr);
-        finish(Result::Error);
+        finish(Result::Error, errStr);
         return;
     }
 
@@ -309,8 +299,7 @@ void Flasher::manageBackup(int chunkNumber) {
         qint64 bytesWritten = binaryFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
             qCCritical(logCategoryFlasher) << device_ << "Cannot write to file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
-            emit error(QStringLiteral("File write error. ") + binaryFile_.errorString());
-            finish(Result::Error);
+            finish(Result::Error, QStringLiteral("File write error. ") + binaryFile_.errorString());
             return;
         }
 
@@ -351,12 +340,12 @@ void Flasher::manageBackup(int chunkNumber) {
     backupOp->backupNextChunk();
 }
 
-void Flasher::finish(Result result) {
+void Flasher::finish(Result result, QString errorString) {
     operation_.reset();
     if (binaryFile_.isOpen()) {
         binaryFile_.close();
     }
-    emit finished(result);
+    emit finished(result, errorString);
 }
 
 void Flasher::connectHandlers(operation::BaseDeviceOperation *operation) {

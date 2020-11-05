@@ -78,14 +78,9 @@ class Flasher : public QObject
         /*!
          * This signal is emitted when Flasher finishes.
          * \param result result of firmware operation
+         * \param errorString error description if result is Error
          */
-        void finished(Result result);
-
-        /*!
-         * This signal is emitted when error occurres.
-         * \param errorString error description
-         */
-        void error(QString errorString);
+        void finished(Result result, QString errorString);
 
         /*!
          * This signal is emitted with request to switch the board to bootloader mode
@@ -128,7 +123,7 @@ class Flasher : public QObject
         void performNextOperation(device::operation::BaseDeviceOperation* baseOp, int status);
         void manageFlash(int lastFlashedChunk);
         void manageBackup(int chunkNumber);
-        void finish(Result result);
+        void finish(Result result, QString errorString = QString());
         void connectHandlers(device::operation::BaseDeviceOperation* operation);
         static void operationDeleter(device::operation::BaseDeviceOperation* operation);
 
