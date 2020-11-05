@@ -95,6 +95,13 @@ public:
      */
     virtual Type type() const final;
 
+    /*!
+     * Get error string for provided Result.
+     * \param result enum value
+     * \return corresponding error string
+     */
+     static QString resolveErrorString(Result result);
+
 protected:
     /*!
      * Check if device is in bootloader mode. Commands get_firmware_info

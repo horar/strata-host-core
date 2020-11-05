@@ -84,6 +84,21 @@ Type BaseDeviceOperation::type() const {
     return type_;
 }
 
+QString BaseDeviceOperation::resolveErrorString(Result result)
+{
+    switch(result) {
+    case Result::Success: return QString();
+    case Result::Reject: return QStringLiteral("Command rejected");
+    case Result::Cancel: return QStringLiteral("Operation cancelled");
+    case Result::Timeout: return QStringLiteral("No response from device");
+    case Result::Failure:return QStringLiteral("Faulty response from device");
+    case Result::Error: return QStringLiteral("Error during operation");
+    }
+
+    qCCritical(logCategoryDeviceOperations) << "unsupported result value";
+    return QString("Unknown error");
+}
+
 bool BaseDeviceOperation::bootloaderMode() {
     return device_->bootloaderMode();
 }
