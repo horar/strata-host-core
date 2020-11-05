@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "${env.workspace}/deployment/Strata2/release_app.sh -c -g -n -s -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}' -f PROD"
+                sh "${env.workspace}/deployment/Strata2/release_app.sh -c -g -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}'"
             }
         }
         stage('Test') {
@@ -37,6 +37,7 @@ pipeline {
                     --dir 'ota' \
                     --repo '${ROOT_BUILD_DIR}/${BUILD_NAME}/public/repository/strata' \
                     """
+                // Note: Online and Offline installer will be part of artifacts and will not be uploaded to S3/DP for the moment
                     //--offline '${INSTALLER_PATH_OFFLINE}' \
                     //--online '${INSTALLER_PATH_ONLINE}' \
                 archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/strata-setup-*", onlyIfSuccessful: true
