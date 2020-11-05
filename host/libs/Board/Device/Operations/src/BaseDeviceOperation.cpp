@@ -41,14 +41,14 @@ void BaseDeviceOperation::run()
     if (started_) {
         QString errStr(QStringLiteral("The operation has already run."));
         qCWarning(logCategoryDeviceOperations) << device_ << errStr;
-        endWithError(errStr);
+        finishOperation(Result::Error, errStr);
         return;
     }
 
     if (device_->lockDeviceForOperation(reinterpret_cast<quintptr>(this)) == false) {
         QString errStr(QStringLiteral("Cannot get access to device (another operation is running)."));
         qCWarning(logCategoryDeviceOperations) << device_ << errStr;
-        endWithError(errStr);
+        finishOperation(Result::Error, errStr);
         return;
     }
 
@@ -122,7 +122,7 @@ void BaseDeviceOperation::handleSendCommand()
     } else {
         QString errStr(QStringLiteral("Cannot send '") + command->name() + QStringLiteral("' command."));
         qCCritical(logCategoryDeviceOperations) << device_ << errStr;
-        endWithError(errStr);
+        finishOperation(Result::Error,errStr);
     }
 }
 
@@ -216,7 +216,7 @@ void BaseDeviceOperation::handleDeviceError(device::Device::ErrorCode errCode, Q
     Q_UNUSED(errCode)
     responseTimer_.stop();
     qCCritical(logCategoryDeviceOperations) << device_ << "Error: " << errStr;
-    endWithError(errStr);
+    finishOperation(Result::Error, errStr);
 }
 
 void BaseDeviceOperation::resume()
@@ -272,19 +272,19 @@ void BaseDeviceOperation::nextCommand()
     }
 }
 
-void BaseDeviceOperation::endWithError(QString errorString) {
-    reset();
-    finished_ = true;
-    emit finished(Result::Error, status_, errorString);
-}
-
-void BaseDeviceOperation::finishOperation(Result result) {
+void BaseDeviceOperation::finishOperation(Result result, const QString &errorString) {
     reset();
     finished_ = true;
     if (result == Result::Success) {
         succeeded_ = true;
     }
-    emit finished(result, status_);
+
+    QString effectiveErrorString = errorString;
+    if (effectiveErrorString.isEmpty() && result != Result::Success) {
+        effectiveErrorString = resolveErrorString(result);
+    }
+
+    emit finished(result, status_, effectiveErrorString);
 }
 
 void BaseDeviceOperation::reset() {

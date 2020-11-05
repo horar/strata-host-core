@@ -25,7 +25,7 @@ void Backup::backupNextChunk()
     if (BaseDeviceOperation::hasStarted() == false || currentCommand_ == commandList_.end()) {
         QString errMsg(QStringLiteral("Cannot backup chunk, backup operation is not running."));
         qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
-        BaseDeviceOperation::endWithError(errMsg);
+        finishOperation(Result::Error, errMsg);
         return;
     }
 

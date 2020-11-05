@@ -131,7 +131,6 @@ private slots:
 
 private:
     void nextCommand();
-    void finishOperation(Result result);
     void reset();
 
     const Type type_;
@@ -143,7 +142,7 @@ private:
     bool finished_;
 
 protected:
-    void endWithError(QString errorString);
+    void finishOperation(Result result, const QString &errorString=QString());
     void resume();
 
     device::DevicePtr device_;
