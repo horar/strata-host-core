@@ -1,5 +1,5 @@
 #include <Device/Operations/Backup.h>
-#include <DeviceOperationsFinished.h>
+#include <DeviceOperationsStatus.h>
 #include "Commands/include/DeviceCommands.h"
 
 #include "logging/LoggingQtCategories.h"

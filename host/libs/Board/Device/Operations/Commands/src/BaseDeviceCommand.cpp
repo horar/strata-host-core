@@ -1,6 +1,6 @@
 #include "BaseDeviceCommand.h"
 
-#include <DeviceOperationsFinished.h>
+#include <DeviceOperationsStatus.h>
 
 namespace strata::device::command {
 

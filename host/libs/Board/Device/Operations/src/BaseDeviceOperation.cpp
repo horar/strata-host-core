@@ -1,5 +1,5 @@
 #include <Device/Operations/BaseDeviceOperation.h>
-#include <DeviceOperationsFinished.h>
+#include <DeviceOperationsStatus.h>
 
 #include "Commands/include/DeviceCommands.h"
 #include "DeviceOperationsConstants.h"

@@ -1,7 +1,7 @@
 #include "CmdBackupFirmware.h"
 #include "DeviceOperationsConstants.h"
 
-#include <DeviceOperationsFinished.h>
+#include <DeviceOperationsStatus.h>
 
 #include <CommandValidator.h>
 

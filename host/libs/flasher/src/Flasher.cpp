@@ -8,7 +8,7 @@
 #include <Device/Operations/Backup.h>
 #include <Device/Operations/StartApplication.h>
 #include <Device/Operations/Identify.h>
-#include <DeviceOperationsFinished.h>
+#include <DeviceOperationsStatus.h>
 
 #include "logging/LoggingQtCategories.h"
 
