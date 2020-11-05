@@ -118,9 +118,9 @@ Rectangle {
 
     Rectangle {
         color: "#33b13b"
-        width: image.width
+        width: imageContainer.width
         anchors {
-            bottom: image.bottom
+            bottom: imageContainer.bottom
         }
         height: 25
         visible: model.connected
