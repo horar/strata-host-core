@@ -23,12 +23,12 @@ Item {
     property int index: model.index
     property bool inView: NavigationControl.stack_container_.currentIndex === index + 1
     property string selectedButtonIcon: ""
-    property bool firmwareNotification: NavigationControl.firmwareUpdate()
 
     Component.onCompleted: {
         populateButtons()
         setControlIcon()
         setSelectedButton()
+        NavigationControl.navigateToPlatform = menuClicked
     }
 
     onConnectedChanged: {
@@ -188,8 +188,6 @@ Item {
                 source: {
                     if (mouseMenu.containsMouse || dropDownPopup.visible) {
                         return "qrc:/sgimages/chevron-down.svg"
-                    } else if(firmwareNotification) {
-                        return "qrc:/sgimages/exclamation-triangle.svg"
                     } else  {
                         return selectedButtonIcon
                     }

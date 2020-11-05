@@ -86,7 +86,7 @@ Item {
         visible: platformStack.connected === false
     }
 
-    SGFirmwareNotificationPopup {
+    SGPlatformNotificationPopup {
         id: notifyPop
         visible: (platformIsOutOfDate || firmwareIsOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate
     }

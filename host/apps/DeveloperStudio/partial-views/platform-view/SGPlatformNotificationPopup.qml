@@ -6,12 +6,13 @@ import QtGraphicalEffects 1.0
 import "qrc:/partial-views"
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "./"
+import "../status-bar/"
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
 
 Popup {
-    id: firmwarePopup
+    id: platformPopup
     width: 450
     height: 200
     x: parent.width/2 - width/2
@@ -20,21 +21,27 @@ Popup {
     padding: 0
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
+
+    onClosed: {
+        NavigationControl.userSettings.notifyOnFirmwareUpdate = !checkBox.checked
+        NavigationControl.userSettings.saveSettings()
+    }
+
     DropShadow {
-        width: firmwarePopup.width
-        height: firmwarePopup.height
+        width: platformPopup.width
+        height: platformPopup.height
         horizontalOffset: 1
         verticalOffset: 3
         radius: 15.0
         samples: 30
         color: "#cc000000"
-        source: firmwarePopup.background
+        source: platformPopup.background
         z: -1
         cached: true
     }
 
     Rectangle {
-        id:firmwareItem
+        id:platformItem
         anchors.fill: parent
         color: "#ccc"
 
@@ -49,9 +56,9 @@ Popup {
                 rightPadding: 5
 
                     text: {
-                        if(firmwareIsOutOfDate && platformIsOutOfDate) return "Both firmware and software for this platform are out of date"
-                        else if(firmwareIsOutOfDate) return "Firmware for this platform is out of date"
-                        else return "Software for this platform is out of date"
+                        if(firmwareIsOutOfDate && platformIsOutOfDate) return "Both the firmware and software for this platform are out of date."
+                        else if(firmwareIsOutOfDate) return "The firmware for this platform is out of date."
+                        else return "The software for this platform is out of date."
                     }
             }
 
@@ -67,33 +74,41 @@ Popup {
                 Layout.alignment: Qt.AlignCenter
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: 20
 
                 SGButton {
-                    text: "Okay"
+                    text: "Yes"
+                    Layout.fillWidth: true
+                    leftInset: 5
+                    roundedBottom: true
+                    roundedLeft: true
+                    roundedRight: true
+                    roundedTop: true
                     onClicked: {
-                       platformStack.currentIndex = 2
-                       firmwarePopup.close()
+                       platformPopup.close()
+                       NavigationControl.navigateToPlatform(2)
                     }
                 }
 
                 SGButton {
-                    text: "Cancel"
+                    text: "No"
+                    rightInset: 5
+                    roundedBottom: true
+                    roundedLeft: true
+                    roundedRight: true
+                    roundedTop: true
+                    Layout.fillWidth: true
                     onClicked: {
-                        firmwarePopup.close()
+                        platformPopup.close()
                     }
                 }
             }
 
             SGCheckBox {
+                Layout.alignment: Qt.AlignHCenter
+                id: checkBox
                 checked: false
                 text: "Do not remind me"
-                leftPadding: 10
-
-                onCheckedChanged: {
-                    NavigationControl.userSettings.notifyOnFirmwareUpdate = checked
-                    NavigationControl.userSettings.saveSettings()
-                }
+                topPadding: -10
             }
         }
     }

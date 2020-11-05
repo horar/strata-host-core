@@ -70,7 +70,8 @@ var resource_loader_ = null
 var main_qml_object_ = null
 var platform_list = {}
 var userSettings = {}
-var firmwareIsOutOfDate = false
+var navigateToPlatform = null
+
 
 /*
   Navigation initialized with parent containers
@@ -385,14 +386,3 @@ function updateState(event, data)
     }
 }
 
-function firmwareUpdate() {
-    if(userSettings.notifyOnFirmwareUpdate !== undefined) {
-        if(userSettings.notifyOnFirmwareUpdate && firmwareIsOutOfDate) {
-            return true
-        } else {
-            return false
-        }
-    } else {
-        return false
-    }
-}

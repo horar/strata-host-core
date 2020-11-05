@@ -46,6 +46,8 @@ ColumnLayout {
             } else if (latestVersion.hasOwnProperty("uri") && payload.url === latestVersion.uri) {
                 activeVersion = latestVersion
                 upToDate = true
+            } else {
+                platformIsOutOfDate = true
             }
 
         }
@@ -63,6 +65,7 @@ ColumnLayout {
         target: platformStack
 
         onConnectedChanged: {
+                console.log(platformStack.connected)
             if (platformStack.connected){
                 matchVersion()
             }
