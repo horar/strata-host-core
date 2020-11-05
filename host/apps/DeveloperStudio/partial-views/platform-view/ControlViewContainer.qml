@@ -180,14 +180,10 @@ Item {
     */
     function getOTAResource() {
         let versionControl = versionSettings.readFile("versionControl.json");
-        let versionInstalled = getInstalledVersion(NavigationControl.context.user_id, versionControl);
+        const versionInstalled = getInstalledVersion(NavigationControl.context.user_id, versionControl);
 
         if (versionInstalled) {
-
-            if (!SGUtilsCpp.isFile(versionInstalled.path)) {
-                versionControl = saveInstalledVersion(null, null, versionControl);
-                versionInstalled = null;
-            } else if (registerResource(versionInstalled.path, versionInstalled.version)) {
+            if (registerResource(versionInstalled.path, versionInstalled.version)) {
                 return;
             }
         }
@@ -297,16 +293,8 @@ Item {
     */
     function saveInstalledVersion(version, pathToRcc, versionsInstalled) {
         let user_id = NavigationControl.context.user_id;
-
         if (!versionsInstalled.hasOwnProperty(user_id)) {
             versionsInstalled[user_id] = {};
-        }
-
-        // This signifies that we want to delete the installed version
-        if (!version) {
-            delete versionsInstalled[user_id];
-            versionSettings.writeFile("versionControl.json", versionsInstalled);
-            return versionsInstalled;
         }
 
         if (!versionsInstalled[user_id].hasOwnProperty("version") || !SGVersionUtils.equalTo(versionsInstalled[user_id].version, version)) {
@@ -314,7 +302,6 @@ Item {
             versionsInstalled[user_id].version = version;
             versionsInstalled[user_id].path = pathToRcc;
             versionSettings.writeFile("versionControl.json", versionsInstalled)
-            return versionsInstalled;
         }
     }
 
