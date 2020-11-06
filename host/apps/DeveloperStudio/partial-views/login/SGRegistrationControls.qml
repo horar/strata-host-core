@@ -85,6 +85,7 @@ Item {
             echoMode: TextInput.Password
             placeholderText: "Password"
             showIcon: false
+            rightPadding: showPasswordIcon.width + showPasswordIcon.anchors.rightMargin + 5
 
             SGIcon {
                 id: showPasswordIcon
