@@ -7,9 +7,9 @@
     }
   },
   "databases": {
-    "user-access-test": {
+    "couch-chat-server": {
       "server": "http://couchbase:8091",
-      "bucket": "user-access-test",
+      "bucket": "couch-chat-server",
       "username": "sync_gateway",
       "password": "sync_gateway",
       "enable_shared_bucket_access": true,

@@ -15,7 +15,9 @@ class CouchChat: public QObject {
 public:
     explicit CouchChat(QQmlApplicationEngine *engine = nullptr, QObject *parent = nullptr);
 
-    Q_INVOKABLE void sendMessage(QString message);
+    Q_INVOKABLE void sendMessage(const QString &message);
+    Q_INVOKABLE void loginAndStartReplication(const QString &user_name, const QString &channel_name, const QString &endpoint_url);
+    Q_INVOKABLE void logoutAndStopReplication();
 
     QQmlApplicationEngine* engine_;
     QQmlComponent* component_;
@@ -24,22 +26,21 @@ public:
     QString getChannel() const { return channel_name_; }
 
 signals:
-    void receivedMessage(QString message);
+    void receivedMessage(QString user, QString message);
     void usernameChanged();
     void channelChanged();
 
 private:
     DatabaseAccess* DB_;
 
+    // Current user info
+    QString user_name_ = "";
+    QString channel_name_ = "";
+
     // Replicator URL endpoint
-    const QString replicator_url = "ws://localhost:4984/user-access-test";
-    const QString replicator_username = "";
-    const QString replicator_password = "";
-
-    QString user_name_, channel_name_;
-
-    // std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener,
-    // std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener,
+    QString endpoint_url_ = "";
+    const QString replicator_username_ = "";
+    const QString replicator_password_ = "";
 };
 
 #endif // COUCHCHAT_H

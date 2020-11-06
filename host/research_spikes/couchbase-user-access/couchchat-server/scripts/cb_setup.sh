@@ -21,7 +21,7 @@ echo Indexes
 out=$(curl -s -w "%{http_code}\n" -X POST -u sync_gateway:sync_gateway $COUCHBASE_ENDPOINT/settings/indexes -d 'storageMode=forestdb')
 
 echo Pools Default
-out=$(curl -s -w "%{http_code}\n" -X POST -u sync_gateway:sync_gateway $COUCHBASE_ENDPOINT/pools/default -d 'clusterName=user-access-test&memoryQuota=312&indexMemoryQuota=512&ftsMemoryQuota=256')
+out=$(curl -s -w "%{http_code}\n" -X POST -u sync_gateway:sync_gateway $COUCHBASE_ENDPOINT/pools/default -d 'clusterName=couch-chat-server&memoryQuota=312&indexMemoryQuota=512&ftsMemoryQuota=256')
 
 echo Setup Services
 out=$(curl -s -w "%{http_code}\n" -X POST -u sync_gateway:sync_gateway $COUCHBASE_ENDPOINT/node/controller/setupServices -d 'services=kv%2Cindex%2Cn1ql%2Cfts')
@@ -33,4 +33,4 @@ echo Setup Administrator username and password
 out=$(curl -s -w "%{http_code}\n" -X POST -u sync_gateway:sync_gateway $COUCHBASE_ENDPOINT/settings/web -d 'password=sync_gateway&username=sync_gateway&port=SAME')
 
 echo Create bucket
-out=$(curl -s -w "%{http_code}\n" -X POST -u sync_gateway:sync_gateway $COUCHBASE_ENDPOINT/pools/default/buckets -d name=user-access-test -d ramQuotaMB=100 -d authType=none)
+out=$(curl -s -w "%{http_code}\n" -X POST -u sync_gateway:sync_gateway $COUCHBASE_ENDPOINT/pools/default/buckets -d name=couch-chat-server -d ramQuotaMB=100 -d authType=none)

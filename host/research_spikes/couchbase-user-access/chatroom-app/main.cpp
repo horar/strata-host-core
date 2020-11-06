@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     CouchChat *couchChat = new CouchChat(engine);
     engine->rootContext()->setContextProperty ("couchChat", couchChat);
 
-    engine->load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine->load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     return app.exec();
 }
