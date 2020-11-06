@@ -29,10 +29,6 @@ void CouchChat::loginAndStartReplication(const QString &user_name, const QString
         return;
     }
 
-    // Get database name and channel access name
-    qDebug() << "Database name: " << DB_->getDatabaseName();
-    qDebug() << "DB_ channel access: " << DB_->getChannelAccess();
-
     auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
         qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!";
     };
