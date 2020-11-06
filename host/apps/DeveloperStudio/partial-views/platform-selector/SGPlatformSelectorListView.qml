@@ -347,6 +347,7 @@ Item {
                             CheckBox {
                                 id: searchCategoryText
                                 checked: true
+                                enabled: searchCategoryPartsList.checked
 
                                 onCheckedChanged: {
                                     filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
@@ -363,6 +364,7 @@ Item {
                             CheckBox {
                                 id: searchCategoryPartsList
                                 checked: true
+                                enabled: searchCategoryText.checked
 
                                 onCheckedChanged: {
                                     filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
