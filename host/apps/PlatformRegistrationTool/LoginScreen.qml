@@ -125,6 +125,7 @@ FocusScope {
             id: autoLoginCheckbox
             text: "Auto login"
             leftPadding: 0
+            enabled: usernameEdit.enabled
 
             Component.onCompleted: {
                 checked = prtModel.authenticator.xAccessToken.byteLength > 0
