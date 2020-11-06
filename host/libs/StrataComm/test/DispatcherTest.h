@@ -6,6 +6,9 @@
 #include "TestHandlers.h"
 #include "QtTest.h"
 
+using strata::strataComm::Dispatcher;
+using strata::strataComm::ClientMessage;
+
 class DispatcherTest : public QObject
 {
     Q_OBJECT

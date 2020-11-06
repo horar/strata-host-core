@@ -3,6 +3,8 @@
 #include <QString>
 #include <QJsonObject>
 
+namespace strata::strataComm {
+
 struct ClientMessage {
     enum MessageType {
         Notifiation,
@@ -16,3 +18,5 @@ struct ClientMessage {
     QByteArray clientID;
     MessageType messageType;
 };
+
+} // namespace strata::strataComm 

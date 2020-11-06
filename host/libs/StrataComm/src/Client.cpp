@@ -1,5 +1,7 @@
 #include "Client.h"
 
+using namespace strata::strataComm;
+
 Client::Client(QByteArray clientId, QString APIVersion) : clientId_(clientId), APIVersion_(APIVersion) {
 }
 

@@ -6,6 +6,8 @@
 #include "Client.h"
 #include "logging/LoggingQtCategories.h"
 
+namespace strata::strataComm {
+
 class ClientsController : public QObject
 {
     Q_OBJECT
@@ -25,3 +27,5 @@ private:
     QList<Client> clientsList_;
     // std::vector<Client> clientsList_;
 };
+
+}   // namespace strata::strataComm

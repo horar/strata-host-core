@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QString>
 
+namespace strata::strataComm {
 class Client
 {
 public:
@@ -16,3 +17,5 @@ private:
     QByteArray clientId_;
     QString APIVersion_;
 };
+
+}   // namespace strata::strataComm

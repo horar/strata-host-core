@@ -1,5 +1,7 @@
 #include "ClientsController.h"
 
+using namespace strata::strataComm;
+
 void ClientsController::notifyAllClients(const QJsonObject &payload) {
     qCInfo(logCategoryStrataClientsController) << "Notifying all clients.";
     qCInfo(logCategoryStrataClientsController) << "Payload: " << payload;

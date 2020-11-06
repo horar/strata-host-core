@@ -6,6 +6,8 @@
 
 #include "ClientMessage.h"
 
+namespace strata::strataComm {
+
 class Dispatcher : public QObject
 {
     Q_OBJECT
@@ -26,3 +28,5 @@ private:
 //    QMap<QString, std::function<void(const ClientMessage &)>> handlersList_;
     std::map<QString, std::function<void(const ClientMessage &)>> handlersList_;
 };
+
+}   // namespace strata::strataComm

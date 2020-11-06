@@ -6,6 +6,8 @@
 #include "QtTest.h"
 #include "../src/ClientsController.h"
 
+using strata::strataComm::ClientsController;
+using strata::strataComm::Client;
 
 class ClientsControllerTest : public QObject {
     Q_OBJECT

@@ -1,6 +1,8 @@
 #pragma once
 #include "../src/ClientMessage.h"
 
+using strata::strataComm::ClientMessage;
+
 class TestHandlers {
 public:
     TestHandlers() {}

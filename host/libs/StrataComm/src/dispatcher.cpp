@@ -1,6 +1,8 @@
 #include "Dispatcher.h"
 #include "logging/LoggingQtCategories.h"
 
+using namespace strata::strataComm;
+
 Dispatcher::Dispatcher(QObject *parent) : QObject(parent)
 {
     qCInfo(logCategoryStrataDispatcher) << "dispatcher created.";
