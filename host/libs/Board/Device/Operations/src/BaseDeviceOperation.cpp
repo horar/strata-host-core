@@ -275,12 +275,11 @@ void BaseDeviceOperation::nextCommand()
 void BaseDeviceOperation::finishOperation(Result result, const QString &errorString) {
     reset();
     finished_ = true;
-    if (result == Result::Success) {
-        succeeded_ = true;
-    }
 
     QString effectiveErrorString = errorString;
-    if (effectiveErrorString.isEmpty() && result != Result::Success) {
+    if (result == Result::Success) {
+        succeeded_ = true;
+    } else if (effectiveErrorString.isEmpty()) {
         effectiveErrorString = resolveErrorString(result);
     }
 
