@@ -82,6 +82,33 @@ Rectangle {
         return obj;
     }
 
+    function generatePlatformInterface() {
+        let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
+
+        let jsonObject = createJsonObject();
+        let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
+
+        let result = generator.generate(jsonInputFilePath, outputFileText.text);
+        if (!result) {
+            alertToast.text = "Generation Failed: " + generator.lastError
+            alertToast.textColor = "white"
+
+            alertToast.color = "#D10000"
+            alertToast.interval = 0
+        } else if (generator.lastError.length > 0) {
+            alertToast.text = "Generation Succeeded, but with warnings: " + generator.lastError
+            alertToast.textColor = "black"
+            alertToast.color = "#DFDF43"
+            alertToast.interval = 0
+        } else {
+            alertToast.textColor = "white"
+            alertToast.text = "Successfully generated PlatformInterface.qml"
+            alertToast.color = "green"
+            alertToast.interval = 4000
+        }
+        alertToast.show();
+    }
+
     ListModel {
         id: finishedModel
 
@@ -188,6 +215,18 @@ Rectangle {
         }
     }
 
+    SGConfirmationDialog {
+        id: confirmOverwriteDialog
+        acceptButtonText: "Overwrite"
+        rejectButtonText: "Cancel"
+        title: "PlatformInterface.qml already exists"
+        text: "The output destination folder already contains 'PlatformInterface.qml'. Are you sure you want to overwrite this file?"
+
+        onAccepted: {
+            generatePlatformInterface();
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
 
@@ -203,11 +242,19 @@ Rectangle {
             spacing: 5
 
             Button {
+                id: selectOutFolderButton
                 text: "Select Output Folder"
                 Layout.preferredWidth: 200
                 Layout.preferredHeight: 30
 
+                Accessible.name: selectOutFolderButton.text
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: {
+                    selectOutFolderMouseArea.clicked()
+                }
+
                 MouseArea {
+                    id: selectOutFolderMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
 
@@ -281,7 +328,14 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignHCenter
 
+                        Accessible.name: addCmdNotifButton.text
+                        Accessible.role: Accessible.Button
+                        Accessible.onPressAction: {
+                            addCmdNotifMouseArea.clicked()
+                        }
+
                         MouseArea {
+                            id: addCmdNotifMouseArea
                             anchors.fill: parent
                             hoverEnabled: true
 
@@ -312,8 +366,15 @@ Rectangle {
 
             Layout.fillWidth: true
             Layout.preferredHeight: 30
+            text: "Generate"
 
             enabled: outputFileText.text !== ""
+
+            Accessible.name: generateButton.text
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                generateButtonMouseArea.clicked()
+            }
 
             background: Rectangle {
                 anchors.fill: parent
@@ -352,30 +413,14 @@ Rectangle {
                         return
                     }
 
-                    let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
-
-                    let jsonObject = createJsonObject();
-                    let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
-
-                    let result = generator.generate(jsonInputFilePath, outputFileText.text);
-                    if (!result) {
-                        alertToast.text = "Generation Failed: " + generator.lastError
-                        alertToast.textColor = "white"
-
-                        alertToast.color = "#D10000"
-                        alertToast.interval = 0
-                    } else if (generator.lastError.length > 0) {
-                        alertToast.text = "Generation Succeeded, but with warnings: " + generator.lastError
-                        alertToast.textColor = "black"
-                        alertToast.color = "#DFDF43"
-                        alertToast.interval = 0
-                    } else {
-                        alertToast.textColor = "white"
-                        alertToast.text = "Successfully generated PlatformInterface.qml"
-                        alertToast.color = "green"
-                        alertToast.interval = 4000
+                    // If the file already exists, prompt a popup confirming they want to overwrite
+                    let fileName = SGUtilsCpp.joinFilePath(outputFileText.text, "PlatformInterface.qml")
+                    if (SGUtilsCpp.isFile(fileName)) {
+                        confirmOverwriteDialog.open()
+                        return
                     }
-                    alertToast.show();
+
+                    generatePlatformInterface()
                 }
             }
         }

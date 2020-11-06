@@ -25,7 +25,13 @@ ColumnLayout {
                 color: removeCommandMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
                 height: 7
                 width: 7
-                name: "Remove command"
+                name: "Remove command / notification"
+            }
+
+            Accessible.name: "Remove command / notification"
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                removeCommandMouseArea.clicked()
             }
 
             MouseArea {
@@ -70,13 +76,13 @@ ColumnLayout {
             }
 
             onTextChanged: {
+                model.name = text
+
                 if (text.length > 0) {
                     finishedModel.checkForDuplicateIds(commandsListView.modelIndex)
                 } else {
                     model.valid = false
                 }
-
-                model.name = text
             }
         }
     }
@@ -97,6 +103,12 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         visible: commandsListView.count > 0
         enabled: cmdNotifName.text !== ""
+
+        Accessible.name: addPropertyButton.text
+        Accessible.role: Accessible.Button
+        Accessible.onPressAction: {
+            addPropertyButton.clicked()
+        }
 
         onClicked: {
             commandsColumn.payloadModel.append(templatePayload)

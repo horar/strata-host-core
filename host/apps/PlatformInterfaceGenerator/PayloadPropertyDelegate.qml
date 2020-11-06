@@ -31,6 +31,12 @@ ColumnLayout {
                 name: "Remove property"
             }
 
+            Accessible.name: "Remove payload property"
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                removePayloadPropertyMouseArea.clicked()
+            }
+
             MouseArea {
                 id: removePayloadPropertyMouseArea
                 anchors.fill: parent
@@ -72,13 +78,13 @@ ColumnLayout {
             }
 
             onTextChanged: {
+                model.name = text
+
                 if (text.length > 0) {
                     finishedModel.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
                 } else {
                     model.valid = false
                 }
-
-                model.name = text
             }
         }
 
@@ -140,6 +146,12 @@ ColumnLayout {
                     name: "add"
                 }
 
+                Accessible.name: "Remove item from array"
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: {
+                    removeItemMouseArea.clicked()
+                }
+
                 MouseArea {
                     id: removeItemMouseArea
                     anchors.fill: parent
@@ -176,6 +188,7 @@ ColumnLayout {
             }
 
             RoundButton {
+                id: addItemToArrayButton
                 Layout.preferredHeight: 25
                 Layout.preferredWidth: 25
                 hoverEnabled: true
@@ -187,6 +200,12 @@ ColumnLayout {
                     height: 20
                     width: 20
                     name: "add"
+                }
+
+                Accessible.name: "Add item to array"
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: {
+                    addItemToArrayMouseArea.clicked()
                 }
 
                 MouseArea {
