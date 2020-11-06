@@ -78,6 +78,8 @@ bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document &doc)
         status_ = operation::SET_PLATFORM_ID_FAILED;
     } else if (jsonStatus == JSON_ALREADY_INITIALIZED) {
         status_ = operation::PLATFORM_ID_ALREADY_SET;
+    } else if (jsonStatus == JSON_BOARD_NOT_CONNECTED) {
+        status_ = operation::BOARD_NOT_CONNECTED_TO_CONTROLLER;
     } else {
         qCCritical(logCategoryDeviceOperations) << device_ << "Unknown status string:" << jsonStatus;
     }

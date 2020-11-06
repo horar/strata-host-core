@@ -41,14 +41,14 @@ void BaseDeviceOperation::run()
     if (started_) {
         QString errStr(QStringLiteral("The operation has already run."));
         qCWarning(logCategoryDeviceOperations) << device_ << errStr;
-        endWithError(errStr);
+        finishOperation(Result::Error, errStr);
         return;
     }
 
     if (device_->lockDeviceForOperation(reinterpret_cast<quintptr>(this)) == false) {
         QString errStr(QStringLiteral("Cannot get access to device (another operation is running)."));
         qCWarning(logCategoryDeviceOperations) << device_ << errStr;
-        endWithError(errStr);
+        finishOperation(Result::Error, errStr);
         return;
     }
 
@@ -84,6 +84,21 @@ Type BaseDeviceOperation::type() const {
     return type_;
 }
 
+QString BaseDeviceOperation::resolveErrorString(Result result)
+{
+    switch(result) {
+    case Result::Success: return QString();
+    case Result::Reject: return QStringLiteral("Command rejected");
+    case Result::Cancel: return QStringLiteral("Operation cancelled");
+    case Result::Timeout: return QStringLiteral("No response from device");
+    case Result::Failure:return QStringLiteral("Faulty response from device");
+    case Result::Error: return QStringLiteral("Error during operation");
+    }
+
+    qCCritical(logCategoryDeviceOperations) << "unsupported result value";
+    return QString("Unknown error");
+}
+
 bool BaseDeviceOperation::bootloaderMode() {
     return device_->bootloaderMode();
 }
@@ -107,7 +122,7 @@ void BaseDeviceOperation::handleSendCommand()
     } else {
         QString errStr(QStringLiteral("Cannot send '") + command->name() + QStringLiteral("' command."));
         qCCritical(logCategoryDeviceOperations) << device_ << errStr;
-        endWithError(errStr);
+        finishOperation(Result::Error,errStr);
     }
 }
 
@@ -201,7 +216,7 @@ void BaseDeviceOperation::handleDeviceError(device::Device::ErrorCode errCode, Q
     Q_UNUSED(errCode)
     responseTimer_.stop();
     qCCritical(logCategoryDeviceOperations) << device_ << "Error: " << errStr;
-    endWithError(errStr);
+    finishOperation(Result::Error, errStr);
 }
 
 void BaseDeviceOperation::resume()
@@ -257,19 +272,18 @@ void BaseDeviceOperation::nextCommand()
     }
 }
 
-void BaseDeviceOperation::endWithError(QString errorString) {
+void BaseDeviceOperation::finishOperation(Result result, const QString &errorString) {
     reset();
     finished_ = true;
-    emit finished(Result::Error, status_, errorString);
-}
 
-void BaseDeviceOperation::finishOperation(Result result) {
-    reset();
-    finished_ = true;
+    QString effectiveErrorString = errorString;
     if (result == Result::Success) {
         succeeded_ = true;
+    } else if (effectiveErrorString.isEmpty()) {
+        effectiveErrorString = resolveErrorString(result);
     }
-    emit finished(result, status_);
+
+    emit finished(result, status_, effectiveErrorString);
 }
 
 void BaseDeviceOperation::reset() {
