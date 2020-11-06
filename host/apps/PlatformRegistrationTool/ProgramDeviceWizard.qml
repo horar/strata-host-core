@@ -58,6 +58,10 @@ FocusScope {
         if (jlinkExePath.length === 0) {
             jlinkExePath = searchJLinkExePath()
         }
+
+        if (jlinkExePath.length > 0) {
+            searchEdit.forceActiveFocus()
+        }
     }
 
     QtLabsSettings.Settings {

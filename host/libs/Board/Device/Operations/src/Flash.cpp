@@ -20,10 +20,10 @@ Flash::Flash(const device::DevicePtr& device, int size, int chunks, const QStrin
 
 void Flash::flashChunk(const QVector<quint8>& chunk, int chunkNumber)
 {
-    if (run_ == false || currentCommand_ == commandList_.end()) {
+    if (BaseDeviceOperation::hasStarted() == false || currentCommand_ == commandList_.end()) {
         QString errMsg(QStringLiteral("Cannot flash chunk, flash operation is not running."));
         qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
-        emit error(errMsg);
+        BaseDeviceOperation::endWithError(errMsg);
         return;
     }
 

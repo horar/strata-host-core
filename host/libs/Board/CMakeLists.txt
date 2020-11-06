@@ -53,6 +53,8 @@ add_library(${DEVICE_OPERATIONS}
     Device/Operations/Commands/src/CmdStartBackupFirmware.cpp
     Device/Operations/Commands/src/CmdBackupFirmware.cpp
     Device/Operations/Commands/src/CmdStartApplication.cpp
+    Device/Operations/Commands/src/CmdSetPlatformId.cpp
+    Device/Operations/Commands/src/CmdSetAssistedPlatformId.cpp
 
     Device/Operations/BaseDeviceOperation.h
     Device/Operations/src/BaseDeviceOperation.cpp
@@ -61,6 +63,8 @@ add_library(${DEVICE_OPERATIONS}
     Device/Operations/src/Flash.cpp
     Device/Operations/src/Backup.cpp
     Device/Operations/src/StartApplication.cpp
+    Device/Operations/src/SetPlatformId.cpp
+    Device/Operations/src/SetAssistedPlatformId.cpp
 )
 add_library(strata::${DEVICE_OPERATIONS} ALIAS ${DEVICE_OPERATIONS})
 

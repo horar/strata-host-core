@@ -51,7 +51,10 @@ ColumnLayout {
         }
         onDownloadControlViewProgress: {
             if (platformStack.currentIndex === settingsContainer.stackIndex && payload.url === activeDownloadUri) {
-                progressUpdateText.percent = payload.bytes_received / payload.bytes_total
+                let progressPercent = payload.bytes_received / payload.bytes_total
+                if (progressPercent >= 0 && progressPercent <= 100) {
+                    progressUpdateText.percent = progressPercent
+                }
             }
         }
     }
@@ -301,6 +304,13 @@ ColumnLayout {
                                 color: "#57d445"
                                 height: barBackground1.height
                                 width: 0
+
+                                function reset() {
+                                    color = "#57d445"
+                                    width = 0
+                                    downloadError = false
+                                    progressUpdateText.percent = 0.0
+                                }
                             }
                         }
 
@@ -314,6 +324,8 @@ ColumnLayout {
                                 }
                             }
                             activeDownloadUri = software.latestVersion.uri
+                            progressBar.reset();
+
                             coreInterface.sendCommand(JSON.stringify(updateCommand));
                         }
                     }

@@ -50,11 +50,6 @@ Device::Type Device::deviceType() const {
     return deviceType_;
 }
 
-bool Device::bootloaderMode() {
-    QReadLocker rLock(&properiesLock_);
-    return bootloaderMode_;
-}
-
 Device::ApiVersion Device::apiVersion() {
     QReadLocker rLock(&properiesLock_);
     return apiVersion_;
@@ -91,6 +86,11 @@ void Device::unlockDevice(quintptr lockId) {
 void Device::setBootloaderMode(bool inBootloaderMode) {
     QWriteLocker wLock(&properiesLock_);
     bootloaderMode_ = inBootloaderMode;
+}
+
+bool Device::bootloaderMode() {
+    QReadLocker rLock(&properiesLock_);
+    return bootloaderMode_;
 }
 
 void Device::setApiVersion(ApiVersion apiVersion) {

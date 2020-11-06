@@ -9,6 +9,12 @@ namespace strata::device::operation {
 class Identify : public BaseDeviceOperation {
 
 public:
+    enum class BoardMode {
+        Unknown,
+        Application,
+        Bootloader
+    };
+
     /*!
      * Identify operation constructor
      * \param device device which will be used for operation
@@ -28,6 +34,12 @@ public:
      * \param delay number of milliseconds before running operation
      */
     void runWithDelay(std::chrono::milliseconds delay);
+
+    /*!
+     * Checks if board is in bootloader or application mode.
+     * \return value from BoardMode enum
+     */
+    BoardMode boardMode();
 };
 
 }  // namespace
