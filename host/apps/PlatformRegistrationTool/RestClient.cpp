@@ -45,6 +45,8 @@ Deferred* RestClient::post(
 {
     QNetworkRequest request = resolveRequest(endpoint, rawHeaderData);
     Deferred *deferred = resolveDeferred(request);
+
+    qCDebug(logCategoryPrtRestClient) << "call" << endpoint;
     QNetworkReply *reply = networkManager_->post(request, data);
 
     connect(reply, &QNetworkReply::finished, this, &RestClient::replyFinished);
@@ -59,6 +61,8 @@ Deferred* RestClient::get(
 {
     QNetworkRequest request = resolveRequest(endpoint, rawHeaderData);
     Deferred *deferred = resolveDeferred(request);
+
+    qCDebug(logCategoryPrtRestClient) << "call" << endpoint;
     QNetworkReply *reply = networkManager_->get(request);
 
     connect(reply, &QNetworkReply::finished, this, &RestClient::replyFinished);
