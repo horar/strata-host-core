@@ -22,7 +22,7 @@ bool Dispatcher::stop() {
     return true;
 }
 
-bool Dispatcher::registerHandler(const QString &handlerName, std::function<void(const ClientMessage &)> handler) {
+bool Dispatcher::registerHandler(const QString &handlerName, StrataHandler handler) {
     qCInfo(logCategoryStrataDispatcher) << "registering " << handlerName << " handler.";
 
     if(true == isRegisteredHandler(handlerName)) {

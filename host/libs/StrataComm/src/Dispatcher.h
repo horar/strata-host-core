@@ -17,7 +17,7 @@ public:
     bool start();
     bool stop();
     bool dispatch(const ClientMessage &clientMessage);
-    bool registerHandler(const QString &handlerName, std::function<void(const ClientMessage &)> handler);
+    bool registerHandler(const QString &handlerName, StrataHandler handler);
     bool unregisterHandler(const QString &handlerName);
 
 public slots:
@@ -25,8 +25,8 @@ public slots:
 
 private:
     bool isRegisteredHandler(const QString &handlerName);
-//    QMap<QString, std::function<void(const ClientMessage &)>> handlersList_;
-    std::map<QString, std::function<void(const ClientMessage &)>> handlersList_;
+//    QMap<QString, StrataHandler> handlersList_;
+    std::map<QString, StrataHandler> handlersList_;
 };
 
 }   // namespace strata::strataComm

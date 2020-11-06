@@ -19,4 +19,6 @@ struct ClientMessage {
     MessageType messageType;
 };
 
+typedef std::function<void(const ClientMessage &)> StrataHandler;
+
 } // namespace strata::strataComm 
