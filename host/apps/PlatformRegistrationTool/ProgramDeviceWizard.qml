@@ -58,6 +58,10 @@ FocusScope {
         if (jlinkExePath.length === 0) {
             jlinkExePath = searchJLinkExePath()
         }
+
+        if (jlinkExePath.length > 0) {
+            searchEdit.forceActiveFocus()
+        }
     }
 
     QtLabsSettings.Settings {
@@ -311,7 +315,7 @@ FocusScope {
                 id: stateProgramBootloader
 
                 onEntered: {
-                    var run = jLinkConnector.flashBoardRequested(wizard.prtModel.bootloaderFilepath, true)
+                    var run = jLinkConnector.programBoardRequested(wizard.prtModel.bootloaderFilepath)
 
                     if (run === false) {
                         stateMechine.jlinkProcessFailed()
@@ -328,13 +332,13 @@ FocusScope {
 
                 DSM.SignalTransition {
                     targetState: stateProgramFirmware
-                    signal: jLinkConnector.flashBoardProcessFinished
+                    signal: jLinkConnector.programBoardProcessFinished
                     guard: exitedNormally
                 }
 
                 DSM.SignalTransition {
                     targetState: stateLoopFailed
-                    signal: jLinkConnector.flashBoardProcessFinished
+                    signal: jLinkConnector.programBoardProcessFinished
                     guard: exitedNormally === false
                     onTriggered: {
                         wizard.subtextNote = "JLink process failed"
@@ -527,6 +531,9 @@ FocusScope {
 
     CommonCpp.SGJLinkConnector {
         id: jLinkConnector
+        eraseBeforeProgram: true
+        device: "EFM32GG380F1024"
+        speed: 4000
     }
 
     Item {

@@ -137,8 +137,7 @@ signals:
     void devicePropertiesChanged();
 
 private slots:
-    void handleFlasherFinished(Flasher::Result flasherResult);
-    void handleFlasherError(QString errorString);
+    void handleFlasherFinished(Flasher::Result flasherResult, QString errorString);
     void handleSwitchToBootloader(bool done);
 
 private:

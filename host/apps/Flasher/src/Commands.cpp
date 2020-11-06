@@ -96,7 +96,7 @@ void FlasherCommand::process() {
 
     flasher_ = std::make_unique<Flasher>(device, fileName_);
 
-    connect(flasher_.get(), &Flasher::finished, this, [=](Flasher::Result result){
+    connect(flasher_.get(), &Flasher::finished, this, [=](Flasher::Result result, QString){
         emit this->finished((result == Flasher::Result::Ok) ? EXIT_SUCCESS : EXIT_FAILURE);
     });
 
