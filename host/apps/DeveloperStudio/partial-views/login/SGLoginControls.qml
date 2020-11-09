@@ -114,11 +114,12 @@ Item {
             id: passwordField
             Layout.fillWidth: true
             activeFocusOnTab: true
-            echoMode: TextInput.Password
+            echoMode: showPasswordMouseArea.pressed ? TextField.Normal : TextField.Password
             selectByMouse: true
             KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
             placeholderText: qsTr("Password")
             showIcon: false
+            rightPadding: showPasswordIcon.width + showPasswordIcon.anchors.rightMargin + 5
 
             Keys.onPressed: {
                 loginErrorRect.hide()
@@ -126,6 +127,26 @@ Item {
 
             Keys.onReturnPressed:{
                 loginButton.submit()
+            }
+
+            SGIcon {
+                id: showPasswordIcon
+                height: passwordField.height * 0.75
+                width: height
+                anchors {
+                    verticalCenter: passwordField.verticalCenter
+                    rightMargin: 5
+                    right: passwordField.right
+                }
+
+                source: showPasswordMouseArea.pressed ?  "qrc:/sgimages/eye-slash.svg" : "qrc:/sgimages/eye.svg"
+                iconColor: showPasswordMouseArea.containsMouse ? "lightgrey" : "#ddd"
+
+                MouseArea {
+                    id: showPasswordMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                }
             }
         }
 
