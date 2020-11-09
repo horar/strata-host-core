@@ -4,11 +4,10 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 
-//**Not Required To Use UserSetting in ControlView ******************
+//**Not Required To Use UserSetting in ControlView.qml ******************
 import tech.strata.commoncpp 1.0
-import "navigation_control.js" as NavigationControl
-//***************************************************************//
-
+import "js/navigation_control.js" as NavigationControl
+//********************************************************************//
 
 
 Rectangle {
@@ -17,13 +16,13 @@ Rectangle {
     width: 1000
     height: 800
 
-    //**Not Required To Use UserSetting in ControlView ******************
+    //**Not Required To Use UserSetting in ControlView.qml *****************
     SGUserSettings {
         id: sgUserSettings
         classId: "ExUserSetting"
         user: NavigationControl.context.user_id
     }
-    //***************************************************************//
+    //**********************************************************************//
 
     Column {
         id: basicSettingsControl
