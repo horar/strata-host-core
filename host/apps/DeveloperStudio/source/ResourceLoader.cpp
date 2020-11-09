@@ -31,7 +31,6 @@ ResourceLoader::~ResourceLoader()
         itr.next();
         delete itr.value();
     }
-    delete rccCompilerProcess_;
 }
 
 void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem) {

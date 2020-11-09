@@ -121,8 +121,6 @@ private slots:
 
     void recompileFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
-    void onOutputRead();
-    void recompileFinished(int exitCode, QProcess::ExitStatus exitStatus);
 private:
     void loadCoreResources();
     QString getQResourcePrefix(const QString &class_id, const QString &version);
