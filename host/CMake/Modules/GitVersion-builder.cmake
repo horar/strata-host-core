@@ -107,6 +107,13 @@ if(CMAKE_BUILD_TYPE STREQUAL "OTA")
         process_config_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta/ ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta package.xml)
     endif()
 
+    if(EXISTS ${PROJECT_DIR}/resources/qtifw/config/config.xml.in)
+        string(TOLOWER ${CMAKE_HOST_SYSTEM_NAME} CMAKE_SYSTEM_NAME_LOWER)
+		set(STRATA_OTA_REPOSITORY_ENABLED $ENV{STRATA_OTA_REPOSITORY_ENABLED})
+		set(ApplicationsDirX64 "@ApplicationsDirX64@")
+        process_config_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/config/ ${WORKING_DIR} ${DEPLOYMENT_DIR} config.xml)
+    endif()
+
     file(GLOB files "${PROJECT_DIR}/resources/qtifw/packages/meta/*license*")
     foreach(file ${files})
         get_filename_component(filename ${file} NAME)
