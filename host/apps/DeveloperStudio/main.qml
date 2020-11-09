@@ -35,7 +35,7 @@ SGWidgets.SGMainWindow {
 
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
-        NavigationControl.init(statusBarContainer, stackContainer)
+        NavigationControl.init(statusBarContainer, stackContainer, sdsModel.resourceLoader, mainWindow)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
             PlatformSelection.initialize(sdsModel.coreInterface)
@@ -96,6 +96,7 @@ SGWidgets.SGMainWindow {
             id: stackContainer
 
             property alias mainContainer: mainContainer
+            property alias controlViewDevContainer: controlViewDevContainer
             property alias platformViewModel: platformViewModel
             property alias platformViewRepeater: platformViewRepeater
 
@@ -117,6 +118,13 @@ SGWidgets.SGMainWindow {
 
             ControlViewCreator {
                 id: controlViewCreator
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+            }
+            
+            Item {
+                id: controlViewDevContainer
+                objectName: "controlViewDevContainer"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }

@@ -10,7 +10,7 @@ public:
     explicit StartBootloader(const device::DevicePtr& device);
     ~StartBootloader() = default;
 private:
-    void skipCommands(command::CommandResult& result, int& data);
+    void skipCommands(command::CommandResult& result, int& status);
     std::vector<std::unique_ptr<command::BaseDeviceCommand>>::iterator beforeStartBootloader_;
 };
 

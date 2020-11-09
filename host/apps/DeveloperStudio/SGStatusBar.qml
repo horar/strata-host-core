@@ -19,6 +19,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 Rectangle {
     id: container
@@ -38,6 +39,7 @@ Rectangle {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
+        userSettings.loadSettings()
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -153,7 +155,7 @@ Rectangle {
         }
         height: container.height
         width: controlViewCreatorRow.implicitWidth + 20
-        color: controlViewCreatorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? "#33b13b" : "#444"
+        color: controlViewCreatorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
 
         MouseArea {
             id: controlViewCreatorMouse
@@ -164,7 +166,7 @@ Rectangle {
             cursorShape: Qt.PointingHandCursor
 
             onClicked: {
-                let data = {"index": NavigationControl.stack_container_.count-1}
+                let data = {"index": NavigationControl.stack_container_.count-2}
                 NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
             }
         }
@@ -331,6 +333,15 @@ Rectangle {
                     width: profileMenu.width
                 }
 
+                SGMenuItem {
+                    text: qsTr("Settings")
+                    onClicked: {
+                        profileMenu.close()
+                        settingsLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
                 Rectangle {
                     id: menuDivider
                     color: "white"
@@ -369,6 +380,45 @@ Rectangle {
         id: profileLoader
         source: "qrc:/partial-views/profile-popup/SGProfilePopup.qml"
         active: false
+    }
+
+    Loader {
+        id: settingsLoader
+        source: "qrc:/partial-views/status-bar/SGSettingsPopup.qml"
+        active: false
+    }
+
+    SGUserSettings {
+        id: userSettings
+        classId: "general-settings"
+        user: NavigationControl.context.user_id
+
+        property bool autoOpenView: false
+        property bool closeOnDisconnect: false
+        property bool notifyOnFirmwareUpdate: false
+
+        property int selectedDistributionPortal: 0
+
+        function loadSettings() {
+            const settings = readFile("general-settings.json")
+            if (settings.hasOwnProperty("autoOpenView")) {
+                autoOpenView = settings.autoOpenView
+                closeOnDisconnect = settings.closeOnDisconnect
+                notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+                selectedDistributionPortal = settings.selectedDistributionPortal
+            }
+            NavigationControl.userSettings = userSettings
+        }
+
+        function saveSettings() {
+            const settings = {
+                autoOpenView: autoOpenView,
+                closeOnDisconnect: closeOnDisconnect,
+                notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
+                selectedDistributionPortal: selectedDistributionPortal
+            }
+            userSettings.writeFile("general-settings.json", settings)
+        }
     }
 
     function showAboutWindow(){
