@@ -165,86 +165,95 @@ Item {
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Row {
+            RowLayout {
+                anchors.fill: parent
                 spacing: 5
-                SGGraph{
-                    id: timedGraphAxis
-                    width: 400
-                    height: 200
-                    title: "Timed Graph - Points Move"
-                    yMin: 0
-                    yMax: 1
-                    xMin: 0
-                    xMax: 5
-                    xTitle: "X Axis"
-                    yTitle: "Y Axis"
-                    panXEnabled: false
-                    panYEnabled: false
-                    zoomXEnabled: false
-                    zoomYEnabled: false
-                    autoUpdate: false
-                    xGrid: true
-                    yGrid: true
-                    Component.onCompleted: {
-                        let movingCurve = createCurve("movingCurve")
-                        movingCurve.color = "turquoise"
-                        movingCurve.autoUpdate = false
-                    }
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: parent.width/1.5
+                    color: "red"
+                    SGGraph{
+                        id: timedGraphAxis
+                        anchors.fill: parent
+                        title: "Timed Graph - Points Move"
+                        yMin: 0
+                        yMax: 1
+                        xMin: 0
+                        xMax: 5
+                        xTitle: "X Axis"
+                        yTitle: "Y Axis"
+                        panXEnabled: false
+                        panYEnabled: false
+                        zoomXEnabled: false
+                        zoomYEnabled: false
+                        autoUpdate: false
+                        xGrid: true
+                        yGrid: true
+                        Component.onCompleted: {
+                            let movingCurve = createCurve("movingCurve")
+                            movingCurve.color = "turquoise"
+                            movingCurve.autoUpdate = false
+                        }
 
-                    Timer {
-                        id: graphTimerAxis
-                        interval: 60
-                        running: false
-                        repeat: true
+                        Timer {
+                            id: graphTimerAxis
+                            interval: 60
+                            running: false
+                            repeat: true
 
-                        property real startTime
-                        property real lastTime
+                            property real startTime
+                            property real lastTime
 
-                        onRunningChanged: {
-                            if (running){
-                                timedGraphAxis.curve(0).clear()
-                                startTime = Date.now()
-                                lastTime = startTime
-                                timedGraphAxis.xMin = -5
-                                timedGraphAxis.xMax = 0
+                            onRunningChanged: {
+                                if (running){
+                                    timedGraphAxis.curve(0).clear()
+                                    startTime = Date.now()
+                                    lastTime = startTime
+                                    timedGraphAxis.xMin = -5
+                                    timedGraphAxis.xMax = 0
+                                }
                             }
-                        }
 
-                        onTriggered: {
-                            let currentTime = Date.now()
-                            timedGraphAxis.curve(0).append((currentTime - startTime)/1000, yourDataValueHere())
-                            timedGraphAxis.shiftXAxis((currentTime - lastTime)/1000)
-                            removeOutOfViewPoints()
-                            timedGraphAxis.update()
-                            lastTime = currentTime
-                        }
-
-                        function removeOutOfViewPoints() {
-                            // recursively clean up points that have moved out of view
-                            if (timedGraphAxis.curve(0).at(0).x < timedGraphAxis.xMin) {
-                                timedGraphAxis.curve(0).remove(0)
+                            onTriggered: {
+                                let currentTime = Date.now()
+                                timedGraphAxis.curve(0).append((currentTime - startTime)/1000, yourDataValueHere())
+                                timedGraphAxis.shiftXAxis((currentTime - lastTime)/1000)
                                 removeOutOfViewPoints()
+                                timedGraphAxis.update()
+                                lastTime = currentTime
+                            }
+
+                            function removeOutOfViewPoints() {
+                                // recursively clean up points that have moved out of view
+                                if (timedGraphAxis.curve(0).at(0).x < timedGraphAxis.xMin) {
+                                    timedGraphAxis.curve(0).remove(0)
+                                    removeOutOfViewPoints()
+                                }
                             }
                         }
                     }
                 }
-                Column {
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                    }
-                    spacing: 5
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Column {
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                        }
+                        spacing: 5
 
-                    SGButton {
-                        text: "Start/stop \n timed graphing"
-                        onClicked: {
-                            if(graphTimerAxis.running === true) {
-                                platformInterface.commands.my_cmd_simple_periodic_update.update(false,2000,-1)
-                            }
-                            else {
-                                platformInterface.commands.my_cmd_simple_periodic_update.update(true,2000,-1)
-                            }
-                            graphTimerAxis.running = !graphTimerAxis.running
+                        SGButton {
+                            text: "Start/stop \n timed graphing"
+                            onClicked: {
+                                if(graphTimerAxis.running === true) {
+                                    platformInterface.commands.my_cmd_simple_periodic_update.update(false,2000,-1)
+                                }
+                                else {
+                                    platformInterface.commands.my_cmd_simple_periodic_update.update(true,2000,-1)
+                                }
+                                graphTimerAxis.running = !graphTimerAxis.running
 
+                            }
                         }
                     }
                 }
@@ -266,7 +275,7 @@ Item {
                         if(graphTimerAxis.running === true)
                             "Send: \n" + JSON.stringify(my_cmd_simple_start_periodic_obj,null,4)
                         else
-                           "Send: \n" + JSON.stringify(my_cmd_simple_stop_periodic_obj,null,4)
+                            "Send: \n" + JSON.stringify(my_cmd_simple_stop_periodic_obj,null,4)
                     }
                 }
             }
