@@ -109,7 +109,7 @@ if %USE_PROD_CONFIG% EQU 1 (
 )
 
 set STRATA_OTA_REPOSITORY_ENABLED=0
-set STRATA_CONFIG_XML=config.xml
+set STRATA_CONFIG_XML=config\config.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
 set COMMON_CPP_DLL=component-commoncpp.dll

@@ -137,7 +137,7 @@ elif [ $USE_DOCKER_CONFIG != 0 ] ; then
 fi
 
 export STRATA_OTA_REPOSITORY_ENABLED=0
-STRATA_CONFIG_XML=config.xml
+STRATA_CONFIG_XML=config/config.xml
 MQTT_LIB=QtMqtt
 COMMON_CPP_LIB="libcomponent-commoncpp.so"
 INSTALLERBASE_BINARY=installerbase
