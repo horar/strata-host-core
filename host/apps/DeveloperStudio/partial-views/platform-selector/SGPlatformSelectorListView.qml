@@ -18,6 +18,10 @@ Item {
     Layout.fillWidth: false
     Layout.fillHeight: true
 
+    property alias listview: listviewContainer.listview
+    property alias model: filteredPlatformSelectorModel
+    property alias filterText: filter.text
+
     Component.onCompleted: {
         // Restore previously set filters
         if (Filters.segmentFilter !== "") {
@@ -163,6 +167,10 @@ Item {
             }
             filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
         }
+
+        onKeywordFilterChanged: {
+            root.filterText = ""
+        }
     }
 
     Rectangle {
@@ -234,7 +242,18 @@ Item {
 
                     Text {
                         id: placeholderText
-                        text: "Search..."
+                        text: {
+                            if (searchCategoryText.checked) {
+                                if (searchCategoryPartsList.checked) {
+                                    return "Search Titles, Descriptions, and Part Numbers..."
+                                }
+                                return "Search Titles and Descriptions..."
+                            } else if (searchCategoryPartsList.checked) {
+                                return "Search Part Numbers in Bill of Materials..."
+                            } else {
+                                return "Please Select Search Options Below..."
+                            }
+                        }
                         color: filter.enabled? "#666" : "#ddd"
                         visible: filter.text === ""
                         anchors {
@@ -261,7 +280,7 @@ Item {
                     width: height
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
-                        right: cogIcon.left
+                        right: settingsIcon.left
                         rightMargin: (textFilterContainer.height - height) / 2
                     }
                     iconColor: textFilterClearMouse.containsMouse ?  "#bbb" : "#999"
@@ -279,16 +298,16 @@ Item {
                 }
 
                 SGIcon {
-                    id: cogIcon
-                    source: "qrc:/sgimages/cog.svg"
-                    height: parent.height * .75
+                    id: settingsIcon
+                    source: "qrc:/sgimages/chevron-down.svg"
+                    height: 20
                     width: height
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
                         right: textFilterContainer.right
                         rightMargin: (textFilterContainer.height - height) / 2
                     }
-                    iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ?  "#bbb" : "#999"
+                    iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ? "#444" : "#666"
 
                     MouseArea {
                         id: cogMouse
@@ -324,23 +343,37 @@ Item {
                         id: checkboxCol
                         anchors.fill: parent
 
-                        CheckBox {
-                            id: searchCategoryText
-                            text: qsTr("Platform Titles and Descriptions")
-                            checked: true
+                        RowLayout {
+                            CheckBox {
+                                id: searchCategoryText
+                                checked: true
+                                enabled: searchCategoryPartsList.checked
 
-                            onCheckedChanged: {
-                                filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                onCheckedChanged: {
+                                    filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                }
+                            }
+
+                            SGText {
+                                id: titlesDescriptions
+                                text: qsTr("Platform Titles and Descriptions")
                             }
                         }
 
-                        CheckBox {
-                            id: searchCategoryPartsList
-                            text: qsTr("Part Numbers in Bill of Materials")
-                            checked: true
+                        RowLayout {
+                            CheckBox {
+                                id: searchCategoryPartsList
+                                checked: true
+                                enabled: searchCategoryText.checked
 
-                            onCheckedChanged: {
-                                filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                onCheckedChanged: {
+                                    filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                }
+                            }
+
+                            SGText {
+                                id: partNumbers
+                                text: qsTr("Part Numbers in Bill of Materials")
                             }
                         }
                     }
@@ -391,8 +424,15 @@ Item {
                             case "segment-industrial-cloud-power":
                                 activeSegmentFilterText.text =  "Showing Industrial & Cloud Power Platforms"
                                 break
-                            default: // case "wirelessiot":
+                            case "segment-iot":
                                 activeSegmentFilterText.text =  "Showing Internet of Things Platforms"
+                                break
+                            default: // case "":
+                                activeSegmentFilterText.text =  ""
+                                defaultSegmentFilterText.visible = true
+                                for (let i = 0; i < segmentFilterRepeater.model.count; i++) {
+                                    segmentFilterRepeater.itemAt(i).checked = false
+                                }
                             }
                         }
                     }
@@ -463,6 +503,7 @@ Item {
                             }
 
                             Repeater {
+                                id: segmentFilterRepeater
                                 delegate: SegmentFilterDelegate {
                                     Component.onCompleted: {
                                         selected.connect(segmentFilterRow.selected)
@@ -500,6 +541,8 @@ Item {
         anchors {
             top: filterContainer.bottom
         }
+
+        property alias listview: listview
 
         Image {
             id: maskTop

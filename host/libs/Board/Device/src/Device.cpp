@@ -17,7 +17,9 @@ QDebug operator<<(QDebug dbg, const DevicePtr& d) {
 }
 
 Device::Device(const int deviceId, const QString& name, const Type type) :
-    deviceId_(deviceId), deviceName_(name), deviceType_(type), operationLock_(0) { }
+    deviceId_(deviceId), deviceName_(name), deviceType_(type), operationLock_(0),
+    bootloaderMode_(false), apiVersion_(ApiVersion::Unknown)
+{ }
 
 Device::~Device() { }
 
@@ -48,6 +50,11 @@ Device::Type Device::deviceType() const {
     return deviceType_;
 }
 
+Device::ApiVersion Device::apiVersion() {
+    QReadLocker rLock(&properiesLock_);
+    return apiVersion_;
+}
+
 void Device::setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) {
     QWriteLocker wLock(&properiesLock_);
     if (verboseName) { verboseName_ = verboseName; }
@@ -74,6 +81,21 @@ void Device::unlockDevice(quintptr lockId) {
     if (operationLock_ == lockId) {
         operationLock_ = 0;
     }
+}
+
+void Device::setBootloaderMode(bool inBootloaderMode) {
+    QWriteLocker wLock(&properiesLock_);
+    bootloaderMode_ = inBootloaderMode;
+}
+
+bool Device::bootloaderMode() {
+    QReadLocker rLock(&properiesLock_);
+    return bootloaderMode_;
+}
+
+void Device::setApiVersion(ApiVersion apiVersion) {
+    QWriteLocker wLock(&properiesLock_);
+    apiVersion_ = apiVersion;
 }
 
 }  // namespace

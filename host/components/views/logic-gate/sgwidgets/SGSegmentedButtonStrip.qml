@@ -24,6 +24,8 @@ Item {
     property bool nothingChecked: true
     property bool hoverEnabled: true
 
+    property bool initialized_: false
+
     property int index: 0
     onIndexChanged: {
         if (exclusive) {
@@ -66,7 +68,9 @@ Item {
         property bool masterEnabled: enabled
         property bool masterHoverEnabled: hoverEnabled
 
-        Component.onCompleted: {
+        property bool initialized_: false
+
+        onLoaded: {
             if (exclusive === false){
                 for (var child_id1 in segmentedButtons.children[0].children) {
                     segmentedButtons.children[0].children[child_id1].checkedChanged.connect(checked)
@@ -77,15 +81,20 @@ Item {
                     segmentedButtons.children[0].children[child_id2].indexUpdate.connect(indexUpdate)
                 }
             }
+
+            initialized_ = true
+            root.init_()
         }
 
         function checked () {
-            for (var child_id in segmentedButtons.children[0].children) {
-                if (segmentedButtons.children[0].children[child_id].checked){
-                    root.nothingChecked = false
-                    break
-                } else if (child_id === "" + (segmentedButtons.children[0].children.length - 1)) { // if last child is reached and not checked, nothingChecked = true
-                    root.nothingChecked = true
+            if (segmentedButtons.children.length > 0) {
+                for (var child_id in segmentedButtons.children[0].children) {
+                    if (segmentedButtons.children[0].children[child_id].checked){
+                        root.nothingChecked = false
+                        break
+                    } else if (child_id === "" + (segmentedButtons.children[0].children.length - 1)) { // if last child is reached and not checked, nothingChecked = true
+                        root.nothingChecked = true
+                    }
                 }
             }
         }
@@ -96,6 +105,14 @@ Item {
     }
 
     Component.onCompleted: {
-        segmentedButtons.checked()
+        initialized_ = true
+        init_()
+    }
+
+    function init_() {
+        // run once after fully loaded
+        if (segmentedButtons.initialized_ && root.initialized_) {
+            segmentedButtons.checked()
+        }
     }
 }

@@ -1,6 +1,6 @@
 #include "CmdStartBootloader.h"
 #include "DeviceOperationsConstants.h"
-#include <DeviceOperationsFinished.h>
+#include <DeviceOperationsStatus.h>
 
 #include <CommandValidator.h>
 
@@ -18,7 +18,12 @@ QByteArray CmdStartBootloader::message() {
 bool CmdStartBootloader::processNotification(rapidjson::Document& doc) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::startBootloaderNotif, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
-        result_ = (status == JSON_OK) ? CommandResult::Done : CommandResult::Failure;
+        if (status == JSON_OK) {
+            result_ = CommandResult::Done;
+            setDeviceApiVersion(device::Device::ApiVersion::Unknown);
+        } else {
+            result_ = CommandResult::Failure;
+        }
         return true;
     } else {
         return false;

@@ -10,7 +10,6 @@ public:
     explicit CmdStartBackupFirmware(const device::DevicePtr& device);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
-    int dataForFinish() const override;
     int totalChunks() const;
 private:
     uint chunks_;
