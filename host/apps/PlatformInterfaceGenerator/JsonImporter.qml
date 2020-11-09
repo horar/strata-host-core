@@ -26,11 +26,21 @@ ColumnLayout {
         spacing: 5
 
         Button {
+            id: selectInputFileButton
             text: "Select Input File"
             Layout.preferredWidth: 200
             Layout.preferredHeight: 30
 
+
+            Accessible.name: selectInputFileButton.text
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                selectInputFileMouseArea.clicked()
+            }
+
+
             MouseArea {
+                id: selectInputFileMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
 
@@ -57,11 +67,20 @@ ColumnLayout {
         spacing: 5
 
         Button {
+            id: selectOutFolderButton
             text: "Select Output Folder"
             Layout.preferredWidth: 200
             Layout.preferredHeight: 30
 
+            Accessible.name: selectOutFolderButton.text
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                selectOutFolderMouseArea.clicked()
+            }
+
+
             MouseArea {
+                id: selectOutFolderMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
 
@@ -85,8 +104,16 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.preferredHeight: 30
+        text: "Generate"
 
         enabled: root.inputFilePath !== "" && root.outputFilePath !== ""
+
+        Accessible.name: generateButton.text
+        Accessible.role: Accessible.Button
+        Accessible.onPressAction: {
+            generateButtonMouseArea.clicked()
+        }
+
 
         background: Rectangle {
             anchors.fill: parent

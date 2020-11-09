@@ -1,7 +1,7 @@
 #include "CmdBackupFirmware.h"
 #include "DeviceOperationsConstants.h"
 
-#include <DeviceOperationsFinished.h>
+#include <DeviceOperationsStatus.h>
 
 #include <CommandValidator.h>
 
@@ -48,6 +48,7 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
             auto [realDecodedSize, readChars] = base64::decode(chunk_.data(), dataStr, dataSize);
             chunk_.resize(static_cast<int>(realDecodedSize));
             chunkNumber_ = number.GetInt();
+            status_ = chunkNumber_;
 
             bool ok = false;
             if (size.GetUint() == realDecodedSize) {
@@ -86,10 +87,6 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
 
 bool CmdBackupFirmware::logSendMessage() const {
     return firstBackupChunk_;
-}
-
-int CmdBackupFirmware::dataForFinish() const {
-    return chunkNumber_;
 }
 
 }  // namespace

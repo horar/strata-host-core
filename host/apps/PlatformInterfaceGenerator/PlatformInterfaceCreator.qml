@@ -25,7 +25,9 @@ Rectangle {
         "type": "value",
         "name": "",
         "valid": false,
-        "payload": [],
+        "payload": [
+            templatePayload
+        ],
         "editing": false
     });
 
@@ -78,6 +80,33 @@ Rectangle {
             obj[type.name] = commands;
         }
         return obj;
+    }
+
+    function generatePlatformInterface() {
+        let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
+
+        let jsonObject = createJsonObject();
+        let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
+
+        let result = generator.generate(jsonInputFilePath, outputFileText.text);
+        if (!result) {
+            alertToast.text = "Generation Failed: " + generator.lastError
+            alertToast.textColor = "white"
+
+            alertToast.color = "#D10000"
+            alertToast.interval = 0
+        } else if (generator.lastError.length > 0) {
+            alertToast.text = "Generation Succeeded, but with warnings: " + generator.lastError
+            alertToast.textColor = "black"
+            alertToast.color = "#DFDF43"
+            alertToast.interval = 0
+        } else {
+            alertToast.textColor = "white"
+            alertToast.text = "Successfully generated PlatformInterface.qml"
+            alertToast.color = "green"
+            alertToast.interval = 4000
+        }
+        alertToast.show();
     }
 
     ListModel {
@@ -186,6 +215,18 @@ Rectangle {
         }
     }
 
+    SGConfirmationDialog {
+        id: confirmOverwriteDialog
+        acceptButtonText: "Overwrite"
+        rejectButtonText: "Cancel"
+        title: "PlatformInterface.qml already exists"
+        text: "The output destination folder already contains 'PlatformInterface.qml'. Are you sure you want to overwrite this file?"
+
+        onAccepted: {
+            generatePlatformInterface();
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
 
@@ -201,11 +242,19 @@ Rectangle {
             spacing: 5
 
             Button {
+                id: selectOutFolderButton
                 text: "Select Output Folder"
                 Layout.preferredWidth: 200
                 Layout.preferredHeight: 30
 
+                Accessible.name: selectOutFolderButton.text
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: {
+                    selectOutFolderMouseArea.clicked()
+                }
+
                 MouseArea {
+                    id: selectOutFolderMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
 
@@ -234,9 +283,6 @@ Rectangle {
             Repeater {
                 model: finishedModel
 
-                /*****************************************
-                  * This ListView corresponds to each command / notification
-                 *****************************************/
                 delegate: ColumnLayout {
                     id: commandColumn
                     Layout.fillWidth: true
@@ -272,307 +318,7 @@ Rectangle {
                         spacing: 10
                         clip: true
 
-                        delegate: ColumnLayout {
-                            id: commandsColumn
-
-                            width: parent.width
-
-                            property ListModel payloadModel: model.payload
-                            property var modelIndex: index
-
-                            RowLayout {
-                                Layout.fillWidth: true
-
-                                RoundButton {
-                                    Layout.preferredHeight: 15
-                                    Layout.preferredWidth: 15
-                                    padding: 0
-                                    hoverEnabled: true
-
-                                    icon {
-                                        source: "qrc:/sgimages/times.svg"
-                                        color: removeCommandMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
-                                        height: 7
-                                        width: 7
-                                        name: "Remove command"
-                                    }
-
-                                    MouseArea {
-                                        id: removeCommandMouseArea
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                        onClicked: {
-                                            commandColumn.commandModel.remove(index)
-                                        }
-                                    }
-                                }
-
-                                TextField {
-                                    id: cmdNotifName
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 30
-
-                                    placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
-                                    validator: RegExpValidator {
-                                        regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]+/
-                                    }
-
-                                    background: Rectangle {
-                                        border.color: {
-                                            if (!model.valid) {
-                                                border.width = 2
-                                                return "#D10000";
-                                            } else if (cmdNotifName.activeFocus) {
-                                                border.width = 2
-                                                return palette.highlight
-                                            } else {
-                                                border.width = 1
-                                                return "lightgrey"
-                                            }
-                                        }
-                                        border.width: 2
-                                    }
-
-                                    onTextChanged: {
-                                        if (text.length > 0) {
-                                            model.name = text
-                                            finishedModel.checkForDuplicateIds(commandsListView.modelIndex)
-                                        } else {
-                                            model.valid = false
-                                        }
-                                    }
-                                }
-                            }
-
-                            /*****************************************
-                            * This Repeater corresponds to each property in the payload
-                            *****************************************/
-                            Repeater {
-                                id: payloadRepeater
-                                model: commandsColumn.payloadModel
-
-                                delegate: ColumnLayout {
-                                    id: payloadContainer
-
-                                    Layout.fillWidth: true
-                                    Layout.leftMargin: 20
-                                    spacing: 5
-
-                                    property ListModel payloadArrayModel: model.array
-
-                                    RowLayout {
-                                        id: propertyBox
-                                        spacing: 5
-                                        enabled: cmdNotifName.text.length > 0
-                                        Layout.preferredHeight: 30
-
-                                        RoundButton {
-                                            Layout.preferredHeight: 15
-                                            Layout.preferredWidth: 15
-                                            padding: 0
-                                            hoverEnabled: true
-
-                                            icon {
-                                                source: "qrc:/sgimages/times.svg"
-                                                color: removePayloadPropertyMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
-                                                height: 7
-                                                width: 7
-                                                name: "Remove property"
-                                            }
-
-                                            MouseArea {
-                                                id: removePayloadPropertyMouseArea
-                                                anchors.fill: parent
-                                                hoverEnabled: true
-                                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                                onClicked: {
-                                                    payloadModel.remove(index)
-                                                }
-                                            }
-                                        }
-
-                                        TextField {
-                                            id: propertyKey
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: 30
-                                            placeholderText: "Property key"
-                                            validator: RegExpValidator {
-                                                regExp: /^(?!default|function)[a-z][a-zA-Z0-9_]*/
-                                            }
-
-                                            background: Rectangle {
-                                                border.color: {
-                                                    if (!model.valid) {
-                                                        border.width = 2
-                                                        return "#D10000";
-                                                    } else if (propertyKey.activeFocus) {
-                                                        border.width = 2
-                                                        return palette.highlight
-                                                    } else {
-                                                        border.width = 1
-                                                        return "lightgrey"
-                                                    }
-                                                }
-                                                border.width: 2
-                                            }
-
-                                            onTextChanged: {
-                                                if (text.length > 0) {
-                                                    model.name = text
-                                                    finishedModel.checkForDuplicatePropertyNames(commandsListView.modelIndex, commandsColumn.modelIndex)
-                                                }
-                                            }
-                                        }
-
-                                        ComboBox {
-                                            id: propertyType
-                                            Layout.preferredWidth: 150
-                                            Layout.preferredHeight: 30
-                                            model: ["int", "double", "string", "bool", "array"]
-
-                                            Component.onCompleted: {
-                                                let idx = find(model.type);
-                                                if (idx === -1) {
-                                                    currentIndex = 0;
-                                                } else {
-                                                    currentIndex = idx
-                                                }
-                                            }
-
-                                            onActivated: {
-                                                if (index === 4) {
-                                                    if (payloadContainer.payloadArrayModel.count == 0) {
-                                                        payloadContainer.payloadArrayModel.append({"type": "int", "indexSelected": 0})
-                                                        commandsListView.contentY += 50
-                                                    }
-                                                } else {
-                                                    payloadContainer.payloadArrayModel.clear()
-                                                }
-
-                                                type = currentText // This refers to model.type, but since there is a naming conflict with this ComboBox, we have to use type
-                                            }
-                                        }
-                                    }
-
-                                    /*****************************************
-                                  * This ListView corresponds to the elements in a property of type "array"
-                                 *****************************************/
-                                    Repeater {
-                                        id: payloadArrayRepeater
-                                        model: payloadContainer.payloadArrayModel
-
-                                        delegate: RowLayout {
-                                            id: rowLayout
-                                            Layout.preferredHeight: 30
-                                            Layout.leftMargin: 20
-                                            Layout.fillHeight: true
-                                            spacing: 5
-
-                                            RoundButton {
-                                                Layout.preferredHeight: 15
-                                                Layout.preferredWidth: 15
-                                                padding: 0
-                                                hoverEnabled: true
-
-                                                icon {
-                                                    source: "qrc:/sgimages/times.svg"
-                                                    color: removeItemMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
-
-                                                    height: 7
-                                                    width: 7
-                                                    name: "add"
-                                                }
-
-                                                MouseArea {
-                                                    id: removeItemMouseArea
-                                                    anchors.fill: parent
-                                                    hoverEnabled: true
-                                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                                    onClicked: {
-                                                        payloadContainer.payloadArrayModel.remove(index)
-                                                    }
-                                                }
-                                            }
-
-                                            Text {
-                                                text: index + 1 + ". Element type: "
-                                                Layout.alignment: Qt.AlignVCenter
-                                                Layout.preferredWidth: 120
-                                                verticalAlignment: Text.AlignVCenter
-                                            }
-
-                                            ComboBox {
-                                                id: arrayPropertyType
-                                                Layout.fillWidth: true
-                                                Layout.preferredHeight: 30
-                                                z: 2
-                                                model: ["int", "double", "string", "bool"]
-
-                                                Component.onCompleted: {
-                                                    currentIndex = indexSelected
-                                                }
-
-                                                onActivated: {
-                                                    type = currentText
-                                                    indexSelected = index
-                                                }
-                                            }
-
-                                            RoundButton {
-                                                Layout.preferredHeight: 25
-                                                Layout.preferredWidth: 25
-                                                hoverEnabled: true
-                                                visible: index === payloadContainer.payloadArrayModel.count - 1
-
-                                                icon {
-                                                    source: "qrc:/sgimages/plus.svg"
-                                                    color: addItemToArrayMouseArea.containsMouse ? Qt.darker("green", 1.25) : "green"
-                                                    height: 20
-                                                    width: 20
-                                                    name: "add"
-                                                }
-
-                                                MouseArea {
-                                                    id: addItemToArrayMouseArea
-                                                    anchors.fill: parent
-                                                    hoverEnabled: true
-                                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                                    onClicked: {
-                                                        payloadContainer.payloadArrayModel.append({"type": "int", "indexSelected": 0})
-                                                        commandsListView.contentY += 40
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            Button {
-                                id: addPropertyButton
-                                text: "Add Property"
-                                Layout.alignment: Qt.AlignHCenter
-                                visible: commandsListView.count > 0
-                                enabled: cmdNotifName.text !== ""
-
-                                onClicked: {
-                                    commandsColumn.payloadModel.append(templatePayload)
-                                    if (commandsColumn.modelIndex === commandsListView.count - 1) {
-                                        commandsListView.contentY += 70
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                id: hDivider
-                                Layout.preferredHeight: 1
-                                Layout.fillWidth: true
-                                Layout.topMargin: 10
-                                visible: index !== commandsListView.count - 1
-                                color: "black"
-                            }
-                        }
+                        delegate: CommandNotificationDelegate {}
                     }
 
                     Button {
@@ -582,7 +328,14 @@ Rectangle {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignHCenter
 
+                        Accessible.name: addCmdNotifButton.text
+                        Accessible.role: Accessible.Button
+                        Accessible.onPressAction: {
+                            addCmdNotifMouseArea.clicked()
+                        }
+
                         MouseArea {
+                            id: addCmdNotifMouseArea
                             anchors.fill: parent
                             hoverEnabled: true
 
@@ -613,8 +366,15 @@ Rectangle {
 
             Layout.fillWidth: true
             Layout.preferredHeight: 30
+            text: "Generate"
 
             enabled: outputFileText.text !== ""
+
+            Accessible.name: generateButton.text
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                generateButtonMouseArea.clicked()
+            }
 
             background: Rectangle {
                 anchors.fill: parent
@@ -653,30 +413,14 @@ Rectangle {
                         return
                     }
 
-                    let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
-
-                    let jsonObject = createJsonObject();
-                    let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
-
-                    let result = generator.generate(jsonInputFilePath, outputFileText.text);
-                    if (!result) {
-                        alertToast.text = "Generation Failed: " + generator.lastError
-                        alertToast.textColor = "white"
-
-                        alertToast.color = "#D10000"
-                        alertToast.interval = 0
-                    } else if (generator.lastError.length > 0) {
-                        alertToast.text = "Generation Succeeded, but with warnings: " + generator.lastError
-                        alertToast.textColor = "black"
-                        alertToast.color = "#DFDF43"
-                        alertToast.interval = 0
-                    } else {
-                        alertToast.textColor = "white"
-                        alertToast.text = "Successfully generated PlatformInterface.qml"
-                        alertToast.color = "green"
-                        alertToast.interval = 4000
+                    // If the file already exists, prompt a popup confirming they want to overwrite
+                    let fileName = SGUtilsCpp.joinFilePath(outputFileText.text, "PlatformInterface.qml")
+                    if (SGUtilsCpp.isFile(fileName)) {
+                        confirmOverwriteDialog.open()
+                        return
                     }
-                    alertToast.show();
+
+                    generatePlatformInterface()
                 }
             }
         }

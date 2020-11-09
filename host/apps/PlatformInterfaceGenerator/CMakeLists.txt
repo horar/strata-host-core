@@ -42,7 +42,6 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Widgets
 
     PUBLIC strata::SGUtilsCpp
-    PUBLIC rapidjson::rapidjson
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

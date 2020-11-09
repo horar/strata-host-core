@@ -81,15 +81,10 @@ void BoardManagerDerivate::checkNewSerialDevices()
     // empty, disable the BoardManager functionality working with serial ports
 }
 
-void BoardManagerDerivate::handleOperationFinished(strata::device::operation::Type opType,
-                                                   int data)
+void BoardManagerDerivate::handleOperationFinished(strata::device::operation::Result result,
+                                                   int status, QString errStr)
 {
-    BoardManager::handleOperationFinished(opType, data);
-}
-
-void BoardManagerDerivate::handleOperationError(QString message)
-{
-    BoardManager::handleOperationError(message);
+    BoardManager::handleOperationFinished(result, status, errStr);
 }
 
 void BoardManagerDerivate::handleDeviceError(strata::device::Device::ErrorCode errCode,
