@@ -102,6 +102,11 @@ FocusScope {
             page: "ExSGTextField.qml"
         }
 
+        ListElement {
+            name: "SGUserSetting"
+            page: "ExSGUserSetting.qml"
+        }
+
     }
 
     Component.onCompleted: {
