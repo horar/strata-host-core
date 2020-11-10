@@ -76,7 +76,6 @@ Popup {
 
                 SGButton {
                     text: "Yes"
-                    color: "green"
                     Layout.fillWidth: true
                     leftInset: 5
                     roundedBottom: true
@@ -85,13 +84,12 @@ Popup {
                     roundedTop: true
                     onClicked: {
                        platformPopup.close()
-                       NavigationControl.navigateToPlatform(2)
+                       navigateToPlatform()
                     }
                 }
 
                 SGButton {
                     text: "No"
-                    color: "red"
                     rightInset: 5
                     roundedBottom: true
                     roundedLeft: true
@@ -105,8 +103,8 @@ Popup {
             }
 
             SGCheckBox {
-                Layout.alignment: Qt.AlignHCenter
                 id: checkBox
+                Layout.alignment: Qt.AlignHCenter
                 checked: false
                 text: "Do not remind me"
                 topPadding: -10

@@ -28,15 +28,19 @@ Item {
         populateButtons()
         setControlIcon()
         setSelectedButton()
-        NavigationControl.navigateToPlatform = menuClicked
     }
 
     onConnectedChanged: {
         setControlIcon()
     }
 
+    onViewChanged: {
+        goToView(view)
+    }
+
     function menuClicked(index) {
         let selection = buttonModel.get(index)
+
         if (selection.view !== view) {
             dropDownPopup.close()
 
@@ -53,9 +57,19 @@ Item {
                 model.view = selection.view
                 setSelectedButton()
             }
+        } else {
+            setSelectedButton()
         }
 
         bringIntoView()
+    }
+
+    function goToView(view){
+            for(let i = 0; i < buttonModel.count - 1; i++){
+                if(view === buttonModel.get(i).view){
+                     menuClicked(i);
+                }
+            }
     }
 
     function bringIntoView() {
@@ -188,7 +202,7 @@ Item {
                 source: {
                     if (mouseMenu.containsMouse || dropDownPopup.visible) {
                         return "qrc:/sgimages/chevron-down.svg"
-                    } else  {
+                    } else {
                         return selectedButtonIcon
                     }
                 }

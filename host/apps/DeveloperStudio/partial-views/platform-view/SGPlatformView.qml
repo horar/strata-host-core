@@ -64,6 +64,10 @@ StackLayout {
         }
     }
 
+    function navigateToPlatform() {
+        model.view = "settings"
+    }
+
     ControlViewContainer {
          id: controlViewContainer
          Layout.fillHeight: true

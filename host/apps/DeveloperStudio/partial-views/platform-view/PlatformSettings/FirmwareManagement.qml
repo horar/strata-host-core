@@ -39,11 +39,9 @@ ColumnLayout {
         target: platformStack
         onConnectedChanged: {
             checkForNewerVersion()
-
         }
         onFirmware_versionChanged: {
             checkForNewerVersion()
-
         }
 
     }
@@ -51,7 +49,6 @@ ColumnLayout {
     function matchVersion() {
         for (let i = 0; i < firmwareListModel.count; i++) {
             if (SGVersionUtils.equalTo(firmwareListModel.version(i),platformStack.firmware_version)) {
-                currentVersion = firmwareListModel.version(i)
                 firmwareListModel.setInstalled(i, true)
             } else {
                 firmwareListModel.setInstalled(i, false)
@@ -61,9 +58,8 @@ ColumnLayout {
 
     function checkForNewerVersion() {
         matchVersion()
-        const splitInstalledVersion = currentVersion.split(".")
         for (let i = 0; i < firmwareListModel.count; i++){
-            if(SGVersionUtils.lessThan(currentVersion,firmwareListModel.version(i))){
+            if(SGVersionUtils.lessThan(platformStack.firmware_version,firmwareListModel.version(i))){
                 firmwareIsOutOfDate = true
             }
         }
