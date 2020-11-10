@@ -7,6 +7,7 @@
         <file alias="SGQmlErrorListView.qml">partial-views/debug-bar/SGQmlErrorListView.qml</file>
         <file alias="SGQmlErrorListViewDelegate.qml">partial-views/debug-bar/SGQmlErrorListViewDelegate.qml</file>
         <file alias="SGQmlErrorListButton.qml">partial-views/debug-bar/SGQmlErrorListButton.qml</file>
+        <file alias="SGControlViewDevPopup.qml">partial-views/debug-bar/SGControlViewDevPopup.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

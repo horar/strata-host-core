@@ -11,6 +11,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QQmlContext>
 
 const QStringList ResourceLoader::coreResources_{
     QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
@@ -30,15 +31,18 @@ ResourceLoader::~ResourceLoader()
         itr.next();
         delete itr.value();
     }
-    delete rccCompilerProcess_;
 }
 
-void ResourceLoader::requestDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent) {
-    qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
-    QTimer::singleShot(100, this, [this, class_id, rccPath, version, parent]{ deleteViewResource(class_id, rccPath, version, parent); });
+void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem) {
+    if (removeFromSystem) {
+        qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
+    } else {
+        qDebug(logCategoryResourceLoader) << "Requesting unregistration of RCC:" << rccPath;
+    }
+    QTimer::singleShot(100, this, [this, class_id, rccPath, version, parent, removeFromSystem]{ unregisterDeleteViewResource(class_id, rccPath, version, parent, removeFromSystem); });
 }
 
-bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent) {
+bool ResourceLoader::unregisterDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem) {
     if (rccPath.isEmpty() || class_id.isEmpty() || version.isEmpty()) {
         return false;
     }
@@ -55,9 +59,12 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
         } else {
             qCDebug(logCategoryResourceLoader) << "Successfully unregistered resource version " << version << " for " << resourceInfo.fileName();
         }
-        if (resourceInfo.remove() == false) {
-            qCCritical(logCategoryResourceLoader) << "Could not delete the resource " << resourceInfo.fileName();
-            return false;
+
+        if (removeFromSystem) {
+            if (resourceInfo.remove() == false) {
+                qCCritical(logCategoryResourceLoader) << "Could not delete the resource " << resourceInfo.fileName();
+                return false;
+            }
         }
     } else {
         qCCritical(logCategoryResourceLoader) << "Attempted to delete control view that doesn't exist - " << resourceInfo.fileName();
@@ -151,6 +158,18 @@ QUrl ResourceLoader::getStaticResourcesUrl() {
     url.setScheme("file");
     url.setPath(ResourcePath::viewsResourcePath());
     return url;
+}
+
+void ResourceLoader::unregisterAllViews(QObject *parent)
+{
+    QHashIterator<QString, ResourceItem*> itr(viewsRegistered_);
+    while (itr.hasNext()) {
+        itr.next();
+        ResourceItem* item = itr.value();
+
+        requestUnregisterDeleteViewResource(itr.key(), item->filepath, item->version, parent, false);
+    }
+    viewsRegistered_.clear();
 }
 
 bool ResourceLoader::isViewRegistered(const QString &class_id) {
@@ -326,14 +345,11 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     // Set and launch rcc compiler process
     const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
 
-    if (rccCompilerProcess_ != nullptr) {
-        delete rccCompilerProcess_;
-    }
-    rccCompilerProcess_ = new QProcess();
+    rccCompilerProcess_ = std::make_unique<QProcess>();
     rccCompilerProcess_->setProgram(rccExecutablePath);
     rccCompilerProcess_->setArguments(arguments);
-    connect(rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
-    connect(rccCompilerProcess_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
+    connect(rccCompilerProcess_.get(), SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
+    connect(rccCompilerProcess_.get(), QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
 
     rccCompilerProcess_->start();
 }

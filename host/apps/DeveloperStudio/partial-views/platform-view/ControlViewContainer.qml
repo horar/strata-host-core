@@ -7,6 +7,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.ResourceLoader 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 Item {
     id: controlViewContainer
@@ -86,27 +87,30 @@ Item {
     function initialize() {
         if (controlLoaded === false){
             // When we reconnect the board, the view has already been registered, so we can immediately load the control
-            if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)) {
+            let versionControl = versionSettings.readFile("versionControl.json");
+            const versionInstalled = getInstalledVersion(NavigationControl.context.user_id, versionControl);
+
+            if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)
+                    && (versionInstalled === null || versionInstalled.version === sdsModel.resourceLoader.getVersionRegistered(platformStack.class_id))) {
                 if (sdsModel.resourceLoader.getVersionRegistered(platformStack.class_id) !== controlViewContainer.staticVersion) {
                     usingStaticView = false;
                 }
                 loadControl()
             } else {
-                // Commented out to remove OTA features from release v2.5.0
-//                loadingBarContainer.visible = true;
-//                loadingBar.value = 0.01;
+                loadingBarContainer.visible = true;
+                loadingBar.value = 0.01;
 
                 // Try to load a previously installed OTA resource
-//                if (controlViewList.getInstalledVersion() > -1) {
-//                    usingStaticView = false;
-//                    getOTAResource();
-//                    return
-//                }
+                if (controlViewList.getInstalledVersion() > -1) {
+                    usingStaticView = false;
+                    getOTAResource();
+                    return
+                }
 
                 // Try to load static resource, otherwise download/install a new OTA resource
                 if (getStaticResource() === false) {
-//                    usingStaticView = false;
-//                    getOTAResource();
+                    usingStaticView = false;
+                    getOTAResource();
                 }
             }
         }
@@ -118,8 +122,8 @@ Item {
     function loadControl () {
         let version = controlViewContainer.staticVersion
         if (usingStaticView === false) {
-            let installedVersionIndex = controlViewList.getInstalledVersion();
-            version = controlViewList.version(installedVersionIndex);
+            let installedVersion = getInstalledVersion(NavigationControl.context.user_id);
+            version = installedVersion.version
         }
 
         let control_filepath = NavigationControl.getQMLFile("Control", platformStack.class_id, version)
@@ -157,9 +161,8 @@ Item {
             if (registerResource(RCCpath, controlViewContainer.staticVersion)) {
                 return true;
             } else {
-                // Commented out to remove OTA features from release v2.5.0
-//                removeControl() // registerResource() failing creates an error screen, kill it to show OTA progress bar
-//                usingStaticView = false
+                removeControl() // registerResource() failing creates an error screen, kill it to show OTA progress bar
+                usingStaticView = false
             }
         }
         return false
@@ -169,11 +172,25 @@ Item {
         Try to find an installed OTA resource file and load it, otherwise download newest version
     */
     function getOTAResource() {
+        let versionControl = versionSettings.readFile("versionControl.json");
+        let versionInstalled = getInstalledVersion(NavigationControl.context.user_id, versionControl);
+
+        if (versionInstalled) {
+
+            if (!SGUtilsCpp.isFile(versionInstalled.path)) {
+                versionControl = saveInstalledVersion(null, null, versionControl);
+                versionInstalled = null;
+            } else if (registerResource(versionInstalled.path, versionInstalled.version)) {
+                return;
+            }
+        }
+
         // Find index of any installed version
         let installedVersionIndex = controlViewList.getInstalledVersion();
 
         if (installedVersionIndex >= 0) {
-            registerResource(controlViewList.filepath(installedVersionIndex), controlViewList.version(installedVersionIndex))
+            saveInstalledVersion(controlViewList.version(installedVersionIndex), controlViewList.filepath(installedVersionIndex), versionControl);
+            registerResource(controlViewList.filepath(installedVersionIndex), controlViewList.version(installedVersionIndex));
         } else {
             let latestVersionindex = controlViewList.getLatestVersion();
 
@@ -204,11 +221,16 @@ Item {
         removeControl();
 
         if (newVersion !== "") {
+            let versionControl = versionSettings.readFile("versionControl.json");
+            saveInstalledVersion(newVersion, newPath, versionControl)
+
             for (let i = 0; i < controlViewListCount; i++) {
                 if (controlViewList.version(i) === newVersion) {
                     controlViewList.setInstalled(i, true);
                     controlViewList.setFilepath(i, newPath);
-                } else if (controlViewList.version(i) !== newVersion && controlViewList.installed(i) === true) {
+                } else if (controlViewList.version(i) !== newVersion
+                           && controlViewList.installed(i) === true
+                           && !versionInUseOnSystem(controlViewList.version(i), versionControl)) {
                     controlViewList.setInstalled(i, false);
                     let versionToRemove = {
                         "version": controlViewList.version(i),
@@ -235,17 +257,73 @@ Item {
     */
     function cleanUpResources() {
         // Remove any static resources if available
+
         if (UuidMap.uuid_map.hasOwnProperty(platformStack.class_id)) {
             let name = UuidMap.uuid_map[platformStack.class_id];
             let RCCpath = sdsModel.resourceLoader.getStaticResourcesString() + "/views-" + name + ".rcc"
-            sdsModel.resourceLoader.requestDeleteViewResource(platformStack.class_id, RCCpath, controlViewContainer.staticVersion, controlContainer);
+            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, RCCpath, controlViewContainer.staticVersion, controlContainer);
         }
 
         for (let i = 0; i < otaVersionsToRemove.length; i++) {
-            sdsModel.resourceLoader.requestDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlContainer);
+            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlContainer);
         }
 
         otaVersionsToRemove = []
+    }
+
+    /*
+      Checks if a version is still in user in versionControl.json
+    */
+    function versionInUseOnSystem(version, versionsInstalled) {
+        for (const user of Object.keys(versionsInstalled)) {
+            if (user !== NavigationControl.context.user_id) {
+                if (SGVersionUtils.equalTo(versionsInstalled[user].version, version)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /*
+      Update the versionControl.json
+    */
+    function saveInstalledVersion(version, pathToRcc, versionsInstalled) {
+        let user_id = NavigationControl.context.user_id;
+
+        if (!versionsInstalled.hasOwnProperty(user_id)) {
+            versionsInstalled[user_id] = {};
+        }
+
+        // This signifies that we want to delete the installed version
+        if (!version) {
+            delete versionsInstalled[user_id];
+            versionSettings.writeFile("versionControl.json", versionsInstalled);
+            return versionsInstalled;
+        }
+
+        if (!versionsInstalled[user_id].hasOwnProperty("version") || !SGVersionUtils.equalTo(versionsInstalled[user_id].version, version)) {
+            // Only write to file if the version doesn't exist or the versions are different
+            versionsInstalled[user_id].version = version;
+            versionsInstalled[user_id].path = pathToRcc;
+            versionSettings.writeFile("versionControl.json", versionsInstalled)
+            return versionsInstalled;
+        }
+    }
+
+    /*
+      Gets the installed version for the user
+    */
+    function getInstalledVersion(user_id, versionsInstalled = null) {
+        if (!versionsInstalled) {
+            versionsInstalled = versionSettings.readFile("versionControl.json");
+        }
+
+        if (!versionsInstalled.hasOwnProperty(user_id)) {
+            return null;
+        }
+
+        return versionsInstalled[user_id];
     }
 
     /*
