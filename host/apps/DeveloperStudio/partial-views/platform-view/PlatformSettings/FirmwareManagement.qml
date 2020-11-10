@@ -77,8 +77,6 @@ ColumnLayout {
         }
     }
 
-    //
-
     SGText {
         text: "Firmware Settings:"
         font.bold: true

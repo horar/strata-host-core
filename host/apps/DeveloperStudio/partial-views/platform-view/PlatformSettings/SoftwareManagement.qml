@@ -320,6 +320,7 @@ ColumnLayout {
                                 }
                             }
                             activeDownloadUri = software.latestVersion.uri
+                            progressBar.reset();
                             coreInterface.sendCommand(JSON.stringify(updateCommand));
                         }
                     }
