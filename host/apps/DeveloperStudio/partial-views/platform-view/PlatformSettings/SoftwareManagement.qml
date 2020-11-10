@@ -65,7 +65,6 @@ ColumnLayout {
         target: platformStack
 
         onConnectedChanged: {
-                console.log(platformStack.connected)
             if (platformStack.connected){
                 matchVersion()
             }

@@ -10,7 +10,6 @@ import "../status-bar/"
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
-
 Popup {
     id: platformPopup
     width: 450
@@ -19,6 +18,7 @@ Popup {
     y: parent.height/2 - height/2
     modal: true
     padding: 0
+
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
 
@@ -43,8 +43,7 @@ Popup {
     Rectangle {
         id:platformItem
         anchors.fill: parent
-        color: "#ccc"
-
+        color: "#ddd"
 
         ColumnLayout {
             anchors.fill: parent
@@ -77,6 +76,7 @@ Popup {
 
                 SGButton {
                     text: "Yes"
+                    color: "green"
                     Layout.fillWidth: true
                     leftInset: 5
                     roundedBottom: true
@@ -91,6 +91,7 @@ Popup {
 
                 SGButton {
                     text: "No"
+                    color: "red"
                     rightInset: 5
                     roundedBottom: true
                     roundedLeft: true

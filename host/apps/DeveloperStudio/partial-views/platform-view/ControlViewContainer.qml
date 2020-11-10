@@ -21,8 +21,6 @@ Item {
 
     readonly property string staticVersion: "static"
 
-
-
     SGText {
         anchors.centerIn: parent
         text: "Loading Control View..."
@@ -87,7 +85,6 @@ Item {
     }
 
     SGPlatformNotificationPopup {
-        id: notifyPop
         visible: (platformIsOutOfDate || firmwareIsOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate
     }
 
@@ -183,7 +180,10 @@ Item {
         const versionInstalled = getInstalledVersion(NavigationControl.context.user_id, versionControl);
 
         if (versionInstalled) {
-            if (registerResource(versionInstalled.path, versionInstalled.version)) {
+            if (!SGUtilsCpp.isFile(versionInstalled.path)) {
+                     versionControl = saveInstalledVersion(null, null, versionControl);
+                           versionInstalled = null;
+            } else if (registerResource(versionInstalled.path, versionInstalled.version)) {
                 return;
             }
         }
@@ -292,9 +292,17 @@ Item {
       Update the versionControl.json
     */
     function saveInstalledVersion(version, pathToRcc, versionsInstalled) {
+
         let user_id = NavigationControl.context.user_id;
         if (!versionsInstalled.hasOwnProperty(user_id)) {
             versionsInstalled[user_id] = {};
+        }
+
+        // This signifies that we want to delete the installed version
+        if (!version) {
+            delete versionsInstalled[user_id];
+            versionSettings.writeFile("versionControl.json", versionsInstalled);
+            return versionsInstalled;
         }
 
         if (!versionsInstalled[user_id].hasOwnProperty("version") || !SGVersionUtils.equalTo(versionsInstalled[user_id].version, version)) {
@@ -302,6 +310,7 @@ Item {
             versionsInstalled[user_id].version = version;
             versionsInstalled[user_id].path = pathToRcc;
             versionSettings.writeFile("versionControl.json", versionsInstalled)
+            return versionsInstalled;
         }
     }
 

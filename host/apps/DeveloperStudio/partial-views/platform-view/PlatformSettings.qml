@@ -40,7 +40,8 @@ Rectangle {
             Layout.alignment: Qt.AlignLeft
             leftPadding: 0
             onCheckedChanged: {
-                saveSettings()
+                NavigationControl.userSettings.notifyOnFirmwareUpdate = notifyCheck.checked
+                NavigationControl.userSettings.saveSettings()
             }
         }
 
@@ -67,17 +68,5 @@ Rectangle {
                 warningPop.close()
             }
         }
-    }
-
-    function saveSettings() {
-        NavigationControl.userSettings.writeFile("settings.json",
-            {
-              selectedDistributionPortal: NavigationControl.userSettings.selectedDistributionPortal,
-              autoOpenView: NavigationControl.userSettings.autoOpenView,
-              switchToActive: NavigationControl.userSettings.switchToActive,
-              notifyOnFirmwareUpdate: notifyCheck.checked
-            }
-        );
-        NavigationControl.userSettings.notifyOnFirmwareUpdate = notifyCheck.checked
     }
 }

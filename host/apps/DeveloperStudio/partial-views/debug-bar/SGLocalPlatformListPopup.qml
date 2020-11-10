@@ -308,10 +308,6 @@ Window {
                                 {
                                     "class_id": class_id.text,
                                     "device_id": Constants.DEBUG_DEVICE_ID,
-                                    "name": "Unknown Platform",
-                                    "view": "control",
-                                    "connected": true,
-                                    "available": {'documents': true, 'order': true, 'control': true, 'unlisted': false},
                                     "firmware_version":"1.0.2"
                                 }
                             ],

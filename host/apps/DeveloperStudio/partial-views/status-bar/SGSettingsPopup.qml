@@ -55,7 +55,6 @@ SGStrataPopup {
                 }
             }
 
-
             SGText {
                 text: "Firmware Settings"
                 fontSizeMultiplier: 1.3
