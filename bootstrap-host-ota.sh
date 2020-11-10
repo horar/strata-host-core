@@ -137,6 +137,7 @@ elif [ $USE_DOCKER_CONFIG != 0 ] ; then
 fi
 
 export STRATA_OTA_REPOSITORY_ENABLED=0
+export STRATA_OTA_REPOSITORY="http://10.238.54.227/s3com?fl=ota/darwin/modules/strata"
 STRATA_CONFIG_XML=config/config.xml
 MQTT_LIB=QtMqtt
 COMMON_CPP_LIB="libcomponent-commoncpp.so"

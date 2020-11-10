@@ -21,7 +21,7 @@
     <ControlScript>installscript.qs</ControlScript>
     <RemoteRepositories>
         <Repository>
-            <Url>http://10.238.54.227/s3com?fl=ota/@CMAKE_SYSTEM_NAME_LOWER@/modules/strata</Url>
+            <Url>@STRATA_OTA_REPOSITORY@</Url>
             <Enabled>@STRATA_OTA_REPOSITORY_ENABLED@</Enabled>
             <DisplayName>Strata Repository</DisplayName>
         </Repository>

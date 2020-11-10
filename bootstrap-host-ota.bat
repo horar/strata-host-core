@@ -109,6 +109,7 @@ if %USE_PROD_CONFIG% EQU 1 (
 )
 
 set STRATA_OTA_REPOSITORY_ENABLED=0
+set STRATA_OTA_REPOSITORY=http://10.238.54.227/s3com?fl=ota/windows/modules/strata
 set STRATA_CONFIG_XML=config\config.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
