@@ -145,7 +145,7 @@ Rectangle {
                     enabled: editor.treeModel.url.toString() !== ""
 
                     function onClicked() {
-                        logs.visible = !logs.visible;
+                        logsLayout.visible = !logsLayout.visible;
                     }
                 }
                 /*****************************************
@@ -240,14 +240,19 @@ Rectangle {
                 }
             }
 
+    ColumnLayout{
+        id: logsLayout
+        Layout.preferredHeight: 250 // Todo: make grab handle divider so user can scale up/down
+        Layout.minimumHeight: 150
+        Layout.maximumHeight: 400
+        Layout.fillWidth: true
+        visible: false
         Rectangle {
             id: logs
             color: "#eee"
-            Layout.preferredHeight: 300 // Todo: make grab handle divider so user can scale up/down
-            Layout.maximumHeight: 800
-            Layout.minimumHeight: 150
+            Layout.fillHeight: true
             Layout.fillWidth: true
-            visible: false // Todo: ensure visible == false when on "open project"/"new project" views
+            visible: true // Todo: ensure visible == false when on "open project"/"new project" views
 
             Rectangle {
                 // divider
@@ -283,9 +288,19 @@ Rectangle {
                     right: logs.right
                     bottom: logs.bottom
                 }
+
+            }
+
+            DragHandler {
+                id: dragHandler
+                target: logs
+                xAxis.enabled: false
+                yAxis.minimum: 0
+                yAxis.maximum: 200
+
             }
           }
-
+    }
 
         }
     }
