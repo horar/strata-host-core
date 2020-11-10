@@ -14,6 +14,7 @@ add_library(${PROJECT_NAME}
     src/Dispatcher.cpp
     src/Client.cpp
     src/ClientsController.cpp
+    src/ServerConnector.cpp
     src/logging/LoggingQtCategories.cpp
 )
 
@@ -27,6 +28,7 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC strata::QtLogger
+    strata::connector
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
