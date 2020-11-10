@@ -31,10 +31,37 @@ function data_source_handler (payload) {
                 let notification = message.notification
                 if (notification.hasOwnProperty("value") && notification.hasOwnProperty("payload")) {
                     var notification_key = notification.value
-                    platformInterface[notification_key] = Object.create(notification["payload"]);
+                    if (platformInterface.apiVersion && platformInterface.apiVersion > 1) {
+                        // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
+                        for (const key of Object.keys(notification["payload"])) {
+                            let obj = notification["payload"][key];
+                            if (Array.isArray(obj)) {
+                                // Loop through each value in array and set according property in platforminterface
+                                for (let i = 0; i < obj.length; i++) {
+                                    let idxName = `${key}_${i}`;
+                                    platformInterface["notifications"][notification_key][key][idxName] = obj[i];
+                                }
+                            } else {
+                                platformInterface["notifications"][notification_key][key] = notification["payload"][key]
+                            }
+                        }
+                        
+                    } else {
+                        platformInterface[notification_key] = Object.create(notification["payload"]);
+                    }
                     //console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "data_source_handler: signalling -> notification key:", notification_key);
                 } else {
                     console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Notification is malformed:", JSON.stringify(notification));
+                }
+            } else if (message.hasOwnProperty("payload") && message.hasOwnProperty("ack")) {
+                // We are receiving negative acknowledgement
+                let payloadPart = message.payload;
+                if (payloadPart.hasOwnProperty("return_value") && payloadPart.return_value === false) {
+                    if (payloadPart.hasOwnProperty("return_string")) {
+                        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Ack returned '" + payloadPart.return_string + "' when receiving command: '" + message.ack + "'");
+                    } else {
+                        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Ack returned false when receiving command '" + message.ack + "'");
+                    }
                 }
             }
         }

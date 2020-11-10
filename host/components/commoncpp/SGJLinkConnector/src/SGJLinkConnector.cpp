@@ -1,6 +1,7 @@
 #include "SGJLinkConnector.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <SGUtilsCpp.h>
 #include <QRegularExpression>
 #include <QTextStream>
 #include <QDir>
@@ -30,32 +31,60 @@ bool SGJLinkConnector::checkConnectionRequested()
     return processRequest(cmd, PROCESS_CHECK_CONNECTION);
 }
 
-bool SGJLinkConnector::flashBoardRequested(const QString &binaryPath, bool eraseFirst)
+bool SGJLinkConnector::programBoardRequested(const QString &binaryPath)
 {
-    qCInfo(logCategoryJLink)
-            << "binaryPath=" <<binaryPath
-            << "eraseFirst=" << eraseFirst;
+    if (device_.isEmpty()) {
+        qCCritical(logCategoryJLink()) << "device is not set";
+        return false;
+    }
+
+    if (speed_ <= 0) {
+        qCCritical(logCategoryJLink()) << "speed is not valid";
+        return false;
+    }
+
+    if (startAddress_ < 0) {
+        qCCritical(logCategoryJLink()) << "start address is not valid";
+        return false;
+    }
 
     QString cmd;
     cmd += QString("exitonerror 1\n");
     cmd += QString("exec DisableInfoWinFlashDL\n");
     cmd += QString("si %1\n").arg("SWD");
-    cmd += QString("speed %1\n").arg("4000");
+    cmd += QString("speed %1\n").arg(speed_);
 
-    if (eraseFirst) {
+    if (eraseBeforeProgram_) {
         cmd += QString("erase\n");
     }
 
-    cmd += QString("loadbin \"%1\", 0x0\n").arg(binaryPath);
-    cmd += QString("verifybin \"%1\", 0x0\n").arg(binaryPath);
+    QString startAddressHex = SGUtilsCpp::toHex(startAddress_, 8);
+
+    cmd += QString("loadbin \"%1\", %2\n").arg(binaryPath). arg(startAddressHex);
+    cmd += QString("verifybin \"%1\", %2\n").arg(binaryPath).arg(startAddressHex);
     cmd += QString("r\n");
     cmd += QString("go\n");
     cmd += QString("exit\n");
 
-    return processRequest(cmd, PROCESS_FLASH);
+    return processRequest(cmd, PROCESS_PROGRAM);
 }
 
-QString SGJLinkConnector::exePath()
+bool SGJLinkConnector::programBoardRequested(
+        const QString &binaryPath,
+        bool eraseBeforeProgram,
+        QString device,
+        int speed,
+        int startAddress)
+{
+    setEraseBeforeProgram(eraseBeforeProgram);
+    setDevice(device);
+    setSpeed(speed);
+    setStartAddress(startAddress);
+
+    return programBoardRequested(binaryPath);
+}
+
+QString SGJLinkConnector::exePath() const
 {
     return exePath_;
 }
@@ -65,6 +94,58 @@ void SGJLinkConnector::setExePath(const QString &exePath)
     if (exePath_ != exePath) {
         exePath_ = exePath;
         emit exePathChanged();
+    }
+}
+
+bool SGJLinkConnector::eraseBeforeProgram() const
+{
+    return eraseBeforeProgram_;
+}
+
+void SGJLinkConnector::setEraseBeforeProgram(bool eraseBeforeProgram)
+{
+    if (eraseBeforeProgram_ != eraseBeforeProgram) {
+        eraseBeforeProgram_ = eraseBeforeProgram;
+        emit eraseBeforeProgramChanged();
+    }
+}
+
+QString SGJLinkConnector::device() const
+{
+    return device_;
+}
+
+void SGJLinkConnector::setDevice(const QString &device)
+{
+    if (device_ != device) {
+        device_ = device;
+        emit deviceChanged();
+    }
+}
+
+int SGJLinkConnector::speed() const
+{
+    return speed_;
+}
+
+void SGJLinkConnector::setSpeed(int speed)
+{
+    if (speed_ != speed) {
+        speed_ = speed;
+        emit speedChanged();
+    }
+}
+
+int SGJLinkConnector::startAddress() const
+{
+    return startAddress_;
+}
+
+void SGJLinkConnector::setStartAddress(int startAddress)
+{
+    if (startAddress_ != startAddress) {
+        startAddress_ = startAddress;
+        emit startAddressChanged();
     }
 }
 
@@ -129,6 +210,8 @@ bool SGJLinkConnector::processRequest(const QString &cmd, ProcessType type)
         return false;
     }
 
+    qCInfo(logCategoryJLink) << "command" << cmd;
+
     QTextStream out(configFile_);
     QStringList arguments;
 
@@ -137,8 +220,11 @@ bool SGJLinkConnector::processRequest(const QString &cmd, ProcessType type)
 
     configFile_->close();
 
-    arguments << "-Device" << "EFM32GG380F1024"
-              << "-CommandFile" << QDir::toNativeSeparators(configFile_->fileName());
+    if (device_.isEmpty() == false) {
+        arguments << "-Device" << device_;
+    }
+
+    arguments << "-CommandFile" << QDir::toNativeSeparators(configFile_->fileName());
 
     process_ = new QProcess(this);
 
@@ -176,8 +262,8 @@ void SGJLinkConnector::finishProcess(bool exitedNormally)
     if (type == PROCESS_CHECK_CONNECTION) {
         bool isConnected = parseStatusOutput(output);
         emit checkConnectionProcessFinished(exitedNormally, isConnected);
-    } else if(type == PROCESS_FLASH) {
-        emit flashBoardProcessFinished(exitedNormally);
+    } else if(type == PROCESS_PROGRAM) {
+        emit programBoardProcessFinished(exitedNormally);
     }
 }
 

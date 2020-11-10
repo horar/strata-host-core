@@ -26,6 +26,8 @@ Item {
     property bool nothingChecked: true
     property bool hoverEnabled: true
 
+    property bool initialized_: false
+
     Text {
         id: labelText
         text: root.label
@@ -64,27 +66,42 @@ Item {
         property bool masterEnabled: enabled
         property bool masterHoverEnabled: hoverEnabled
 
-        Component.onCompleted: {
+        property bool initialized_: false
+
+        onLoaded: {
             if (exclusive === false){
                 for (var child_id in segmentedButtons.children[0].children) {
                     segmentedButtons.children[0].children[child_id].checkedChanged.connect(checked)
                 }
             }
+
+            initialized_ = true
+            root.init()
         }
 
         function checked () {
-            for (var child_id in segmentedButtons.children[0].children) {
-                if (segmentedButtons.children[0].children[child_id].checked){
-                    root.nothingChecked = false
-                    break
-                } else if (child_id === "" + (segmentedButtons.children[0].children.length - 1)) {
-                    root.nothingChecked = true
+            if (segmentedButtons.children.length > 0) {
+                for (var child_id in segmentedButtons.children[0].children) {
+                    if (segmentedButtons.children[0].children[child_id].checked){
+                        root.nothingChecked = false
+                        break
+                    } else if (child_id === "" + (segmentedButtons.children[0].children.length - 1)) {
+                        root.nothingChecked = true
+                    }
                 }
             }
         }
     }
 
     Component.onCompleted: {
-        segmentedButtons.checked()
+        initialized_ = true
+        init()
+    }
+
+    function init() {
+        // run once after fully loaded
+        if (segmentedButtons.initialized_ && root.initialized_) {
+            segmentedButtons.checked()
+        }
     }
 }

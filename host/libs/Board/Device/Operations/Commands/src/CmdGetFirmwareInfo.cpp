@@ -5,16 +5,13 @@
 
 #include "logging/LoggingQtCategories.h"
 
+#include <cstring>
+
 namespace strata::device::command {
 
-CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse) :
+CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse, uint maxRetries) :
     BaseDeviceCommand(device, QStringLiteral("get_firmware_info")),
-    requireResponse_(requireResponse), maxRetries_(0), retriesCount_(0)
-{ }
-
-CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, uint maxRetries) :
-    BaseDeviceCommand(device, QStringLiteral("get_firmware_info")),
-    requireResponse_(true), maxRetries_(maxRetries), retriesCount_(0)
+    requireResponse_(requireResponse), maxRetries_(maxRetries), retriesCount_(0)
 { }
 
 QByteArray CmdGetFirmwareInfo::message() {
@@ -28,14 +25,33 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
         const rapidjson::Value& application = payload[JSON_APPLICATION];
 
         result_ = CommandResult::Failure;
+
+        if (payload.HasMember(JSON_API_VERSION) &&
+            (std::strcmp(payload[JSON_API_VERSION].GetString(), CSTR_API_2_0) == 0)
+           ) {
+            setDeviceApiVersion(device::Device::ApiVersion::v2_0);
+        } else {
+            setDeviceApiVersion(device::Device::ApiVersion::Unknown);
+        }
+
+        if (payload.HasMember(JSON_ACTIVE) &&
+            (std::strcmp(payload[JSON_ACTIVE].GetString(), CSTR_BOOTLOADER) == 0)
+           ) {
+            setDeviceBootloaderMode(true);
+        } else {
+            setDeviceBootloaderMode(false);
+        }
+
         if (bootloader.MemberCount() > 0) {  // JSON_BOOTLOADER object has some members -> it is not empty
             setDeviceProperties(nullptr, nullptr, nullptr, bootloader[JSON_VERSION].GetString(), "");
             result_ = CommandResult::Done;
         }
+
         if (application.MemberCount() > 0) {  // JSON_APPLICATION object has some members -> it is not empty
             setDeviceProperties(nullptr, nullptr, nullptr, nullptr, application[JSON_VERSION].GetString());
             result_ = CommandResult::Done;
         }
+
         return true;
     } else {
         return false;

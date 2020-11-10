@@ -97,10 +97,13 @@ ColumnLayout {
                             id: description
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignRight
-                            color: "#bbb"
+                            color: "#666"
                             elide: Text.ElideRight
                             wrapMode: Text.Wrap
                             horizontalAlignment: Text.AlignRight
+                            text: defaultText
+
+                            property string defaultText: !model.installed && installMouse.enabled ? "Download and flash firmware" : ""
                         }
 
                         Item {
@@ -126,6 +129,7 @@ ColumnLayout {
                                 visible: firmwareRow.flashingInProgress === false
 
                                 MouseArea {
+                                    id: installMouse
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: model.installed || firmwareColumn.flashingInProgress || platformStack.connected === false ? Qt.ArrowCursor : Qt.PointingHandCursor
@@ -181,7 +185,7 @@ ColumnLayout {
                             fillBar.width = 0
                             fillBar.color = "lime"
                             flashStatus.visible = false
-                            description.text = ""
+                            description.text = Qt.binding(() => description.defaultText)
                         }
 
                         function startFlash() {

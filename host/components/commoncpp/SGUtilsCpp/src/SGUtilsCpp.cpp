@@ -256,3 +256,8 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
 
     return true;
 }
+
+QString SGUtilsCpp::toHex(qint64 number, int width)
+{
+    return QStringLiteral("0x") + QString::number(number, 16).rightJustified(width, '0');
+}
