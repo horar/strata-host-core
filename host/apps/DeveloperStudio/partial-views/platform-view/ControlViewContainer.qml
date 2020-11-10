@@ -145,7 +145,7 @@ Item {
         NavigationControl.context.class_id = platformStack.class_id
         NavigationControl.context.device_id = platformStack.device_id
 
-        controlLoader.setSource(control_filepath, NavigationControl.context)
+        controlLoader.setSource(control_filepath, Object.assign({}, NavigationControl.context))
 
         // Tear Down creation context
         delete NavigationControl.context.class_id
