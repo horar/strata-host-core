@@ -30,6 +30,10 @@ Item {
     }
 
     function saveFile() {
+        if (alertToast.visible) {
+            alertToast.hide()
+        }
+
         let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), channelObject.fileText);
 
         if (success) {
