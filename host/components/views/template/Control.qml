@@ -88,12 +88,12 @@ Item {
         anchors {
             right: controlContainer.right
             top: controlContainer.top
-            margins: 20
+            margins: 10
         }
         source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        height: 40
-        width: 40
+        height: 30
+        width: 30
 
         MouseArea {
             id: helpMouse
@@ -111,11 +111,11 @@ Item {
         }
     }
 
-    DebugMenu {
-        // See description in control-views/DebugMenu.qml
-        anchors {
-            right: controlContainer.right
-            bottom: controlContainer.bottom
-        }
-    }
+//    DebugMenu {
+//        // See description in control-views/DebugMenu.qml
+//        anchors {
+//            right: controlContainer.right
+//            bottom: controlContainer.bottom
+//        }
+//    }
 }
