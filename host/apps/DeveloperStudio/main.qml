@@ -116,7 +116,7 @@ SGWidgets.SGMainWindow {
                 asynchronous: true
 
                 onStatusChanged: {
-                    if (status === Loader.Null) {
+                    if (status === Loader.Null || status === Loader.Error) {
                         setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": "Could not load control view"})
                     }
                 }
