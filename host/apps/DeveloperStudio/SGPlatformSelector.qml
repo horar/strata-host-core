@@ -47,6 +47,7 @@ Rectangle{
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.preferredWidth: rightContainer.Layout.preferredWidth
+                Layout.preferredHeight: 150
 
                 Image {
                     sourceSize.width: Math.min(parent.width, 275)
@@ -60,6 +61,7 @@ Rectangle{
             }
 
             RecentlyReleased {
+                id: recentlyReleased
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 Layout.maximumWidth: implicitWidth
@@ -70,6 +72,7 @@ Rectangle{
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.preferredWidth: distributionPortal.implicitWidth
+                Layout.preferredHeight: 150
 
                 ColumnLayout {
                     width: parent.width
