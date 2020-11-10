@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}-test
     DispatcherTest.cpp
     TestHandlers.cpp
     ClientsControllerTest.cpp
+    QzmqTest.cpp
     main.cpp
 )
 
