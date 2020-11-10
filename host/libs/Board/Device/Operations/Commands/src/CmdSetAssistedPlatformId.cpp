@@ -1,7 +1,7 @@
 #include "CmdSetAssistedPlatformId.h"
 
 #include "DeviceOperationsConstants.h"
-#include <DeviceOperationsFinished.h>
+#include <DeviceOperationsStatus.h>
 #include <CommandValidator.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -11,8 +11,7 @@
 namespace strata::device::command {
 
 CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(const DevicePtr &device)
-    : BaseDeviceCommand(device, QStringLiteral("set_assisted_platform_id")),
-      dataForFinished_(operation::DEFAULT_DATA)
+    : BaseDeviceCommand(device, QStringLiteral("set_assisted_platform_id"))
 {
 }
 
@@ -38,24 +37,24 @@ QByteArray CmdSetAssistedPlatformId::message()
     QJsonObject payload;
 
     if (data_.has_value()) {
-        payload.insert("class_id", data_->classId);
-        payload.insert("platform_id", data_->platformId);
-        payload.insert("board_count", data_->boardCount);
+        payload.insert(JSON_CLASS_ID, data_->classId);
+        payload.insert(JSON_PLATFORM_ID, data_->platformId);
+        payload.insert(JSON_BOARD_COUNT, data_->boardCount);
     }
 
     if (controllerData_.has_value()) {
-        payload.insert("controller_class_id", controllerData_->classId);
-        payload.insert("controller_platform_id", controllerData_->platformId);
-        payload.insert("controller_board_count", controllerData_->boardCount);
+        payload.insert(JSON_CNTRL_CLASS_ID, controllerData_->classId);
+        payload.insert(JSON_CNTRL_PLATFORM_ID, controllerData_->platformId);
+        payload.insert(JSON_CNTRL_BOARD_COUNT, controllerData_->boardCount);
     }
 
     if (fwClassId_.has_value()) {
         //macos 10.14 does not support value()
-        payload.insert("fw_class_id", fwClassId_.value_or(""));
+        payload.insert(JSON_FW_CLASS_ID, fwClassId_.value_or(""));
     }
 
-    data.insert("cmd", this->name());
-    data.insert("payload", payload);
+    data.insert(JSON_CMD, this->name());
+    data.insert(JSON_PAYLOAD, payload);
 
     doc.setObject(data);
 
@@ -71,24 +70,21 @@ bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document &doc)
     result_ = CommandResult::Failure;
 
     const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
-    QString status = payload[JSON_STATUS].GetString();
+    const QString jsonStatus = payload[JSON_STATUS].GetString();
 
-    if (status == "ok") {
+    if (jsonStatus == JSON_OK) {
         result_ = CommandResult::Done;
-    } else if (status == "failed") {
-        dataForFinished_ = operation::SET_PLATFORM_ID_FAILED;
-    } else if (status == "already_initialized") {
-        dataForFinished_ = operation::PLATFORM_ID_ALREADY_SET;
+    } else if (jsonStatus == JSON_FAILED) {
+        status_ = operation::SET_PLATFORM_ID_FAILED;
+    } else if (jsonStatus == JSON_ALREADY_INITIALIZED) {
+        status_ = operation::PLATFORM_ID_ALREADY_SET;
+    } else if (jsonStatus == JSON_BOARD_NOT_CONNECTED) {
+        status_ = operation::BOARD_NOT_CONNECTED_TO_CONTROLLER;
     } else {
-        qCCritical(logCategoryDeviceOperations) << "unknown status string:" << status;
+        qCCritical(logCategoryDeviceOperations) << device_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;
-}
-
-int CmdSetAssistedPlatformId::dataForFinish() const
-{
-    return dataForFinished_;
 }
 
 }

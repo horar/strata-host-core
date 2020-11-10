@@ -308,13 +308,30 @@ const rapidjson::SchemaDocument CommandValidator::setPlatformId_nps_(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::setAssistedPlatformId_nps_(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": ["ok", "failed", "already_initialized", "board_not_connected"]
+                }
+            },
+            "required": [ "status" ]
+        })"
+    )
+);
+
 const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument&> CommandValidator::schemas_ = {
     {JsonType::cmd, cmdSchema_},
     {JsonType::ack, ackSchema_},
     {JsonType::notification, notificationSchema_},
     {JsonType::reqPlatformIdNotif, reqPlatformId_nps_},
     {JsonType::setPlatformIdNotif, setPlatformId_nps_},
-    {JsonType::setAssistedPlatformIdNotif, setPlatformId_nps_},
+    {JsonType::setAssistedPlatformIdNotif, setAssistedPlatformId_nps_},
     {JsonType::getFirmwareInfoNotif, getFirmwareInfo_nps_},
     {JsonType::startBootloaderNotif, notifPayloadStatusSchema_},
     {JsonType::startApplicationNotif, notifPayloadStatusSchema_},
