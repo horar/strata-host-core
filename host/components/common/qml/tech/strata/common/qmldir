@@ -3,4 +3,4 @@ module tech.strata.common
 singleton Logger 1.0 Logger.qml
 
 ContentView 1.0 ContentView/ContentView.qml
-PlatformInterface 1.0 PlatformInterface.qml
+PlatformInterfaceBase 1.0 PlatformInterfaceBase.qml

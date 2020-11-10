@@ -42,7 +42,12 @@ FocusScope {
             if (status === true) {
                 loginStatus = LoginScreen.LoginSucceed
             } else {
-                loginStatus = LoginScreen.Logout
+                if (errorString.length > 0) {
+                    loginStatus = LoginScreen.LoginFailed
+                    statusText.text = errorString
+                } else {
+                    loginStatus = LoginScreen.Logout
+                }
             }
         }
 
@@ -120,6 +125,7 @@ FocusScope {
             id: autoLoginCheckbox
             text: "Auto login"
             leftPadding: 0
+            enabled: usernameEdit.enabled
 
             Component.onCompleted: {
                 checked = prtModel.authenticator.xAccessToken.byteLength > 0
@@ -179,6 +185,7 @@ FocusScope {
                     horizontalCenter: parent.horizontalCenter
                 }
 
+                horizontalAlignment: Text.AlignHCenter
                 font.bold: true
                 textColor: {
                     if (loginStatus === LoginScreen.LoginFailed) {
