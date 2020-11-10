@@ -4,25 +4,25 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 
-//**Not Required To Use UserSetting in ControlView.qml ******************
+//** Not Required To Include This To Use sgUserSettings In ControlView.qml *******************
 import tech.strata.commoncpp 1.0
 import "js/navigation_control.js" as NavigationControl
-//********************************************************************//
+//***************************************************************************************//
 
 
 Rectangle {
     id: container
-     color: "#cfc"
+    color: "#cfc"
     width: 1000
     height: 800
 
-    //**Not Required To Use UserSetting in ControlView.qml *****************
+    //** Not Required To Include This To Use sgUserSettings In ControlView.qml *********************
     SGUserSettings {
         id: sgUserSettings
         classId: "ExUserSetting"
         user: NavigationControl.context.user_id
     }
-    //**********************************************************************//
+    //*****************************************************************************************//
 
     Column {
         id: basicSettingsControl
