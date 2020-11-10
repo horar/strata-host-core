@@ -26,7 +26,7 @@ Item {
         text: "Loading Control View..."
         fontSizeMultiplier: 2
         color: "#666"
-        visible: controlContainer.children.length === 0
+        visible: controlLoader.status === Loader.Loading && loadingBarContainer.visible === false
     }
 
     Rectangle {
