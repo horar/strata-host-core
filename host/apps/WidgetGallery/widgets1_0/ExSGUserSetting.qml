@@ -7,16 +7,16 @@ import tech.strata.sgwidgets 1.0
 //** Not Required To Include This To Use SGUserSettings In ControlView.qml *******************
 import tech.strata.commoncpp 1.0
 import "js/navigation_control.js" as NavigationControl
-//***************************************************************************************//
+//*******************************************************************************************//
 
 
 Rectangle {
     id: container
     color: "#cfc"
     width: 1000
-    height: 800
+    height: 700
 
-    //** Not Required To Include This To Use SGUserSettings In ControlView.qml *********************
+    //** Not Required To Include This To Use SGUserSettings In ControlView.qml *****************
     SGUserSettings {
         id: sgUserSettings
         classId: "ExUserSetting"
