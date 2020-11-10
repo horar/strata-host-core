@@ -82,42 +82,14 @@ Item {
         ValidationField {
             id: passwordField
             Layout.fillWidth: true
-            echoMode: TextInput.Password
             placeholderText: "Password"
             showIcon: false
-            rightPadding: showPasswordIcon.width + showPasswordIcon.anchors.rightMargin + 5
-
-            SGIcon {
-                id: showPasswordIcon
-                source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
-                iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
-                anchors {
-                    verticalCenter: passwordField.verticalCenter
-                    rightMargin: 5
-                    right: passwordField.right
-                }
-                height: passwordField.height*.75
-                width: height
-
-                MouseArea {
-                    id: showPassword
-                    anchors.fill: showPasswordIcon
-                    hoverEnabled: true
-                    onClicked: {
-                        if (passwordField.echoMode === TextInput.Password) {
-                            passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Normal
-                        } else {
-                            passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Password
-                        }
-                    }
-                    cursorShape: Qt.PointingHandCursor
-                }
-            }
+            passwordMode: true
         }
 
         ValidationField {
             id: confirmPasswordField
-            echoMode: TextInput.Password
+            echoMode: passwordField.echoMode
             KeyNavigation.tab: policyCheck
             valid: passReqs.passwordValid
             placeholderText: "Confirm Password"
