@@ -34,21 +34,64 @@ Test-StrataRelease.ps1
         [Parameter(Mandatory=$True, Position=0, HelpMessage="Please enter a path for Strata Installer")]
         [string]$SDSExecPath,
 
-        [Parameter(Mandatory=$True, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, ValueFromRemainingArguments=$true)]
+        [Parameter(Mandatory=$True, ValueFromPipeline=$True, ValueFromPipelineByPropertyName=$True, ValueFromRemainingArguments=$True)]
         [ValidateSet("gui", "database", "collateral", "controlViews", "hcs", "platformIdentification", "tokenAndViews", "all")]
         [string[]]
         [Alias("t")]
-        $TestsToRun,
-
-        [Parameter(Mandatory=$True, HelpMessage="Please specify either dev, prod, or qa for your DPEnv")]
-        [ValidateSet("dev", "qa", "prod")]
-        [string]$DPEnv
+        $TestsToRun
     )
 
-# Import common functions
-. "$PSScriptRoot\Common-Functions.ps1"
+    # [Parameter(Mandatory=$True, HelpMessage="Please specify either dev, prod, or qa for your DPEnv")]
+    # [ValidateSet("dev", "qa", "prod")]
+    # [string]$DPEnv
 
-Set-DPEnvironment "$DPEnv"
+# $hcsConfig = ''
+# if ($DPEnv -eq "prod") {
+#     $hcsConfig = '//
+#     // Host Controller Service configuration file [PROD]
+#     //
+#     //
+#     {
+#          "host_controller_service": {
+#            "subscriber_address": "tcp://*:5563"  // client subscribe address
+#         },
+#         "database":{
+#            "file_server":"https://api.strata.onsemi.com/api/v1/files/",
+#            "gateway_sync":"wss://api.strata.onsemi.com/strata"
+#         },
+#         "stage": "prod"
+#     }'
+# } elseif ($DPEnv -eq "qa") {
+#     $hcsConfig = '//
+#     // Host Controller Service configuration file [QA]
+#     //
+#     //
+#     {
+#          "host_controller_service": {
+#            "subscriber_address": "tcp://*:5563"  // client subscribe address
+#         },
+#         "database":{
+#            "file_server":"https://qa-api.strata.onsemi.com/api/v1/files/",
+#            "gateway_sync":"wss://qa-api.strata.onsemi.com/spyglass-qa"
+#         },
+#         "stage": "qa"
+#     }'
+# } else {
+#     $hcsConfig = '//
+#     // Host Controller Service configuration file [dev]
+#     //
+#     //
+#     {
+#          "host_controller_service": {
+#            "subscriber_address": "tcp://*:5563"  // client subscribe address
+#         },
+#         "database":{
+#            "file_server":"https://dev-api.strata.onsemi.com/api/v1/files/",
+#            "gateway_sync":"wss://dev-api.strata.onsemi.com/spyglass"
+#         },
+#         "stage": "dev"
+#     }'
+# }
 
 # Define HCS TCP endpoint to be used
 Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
@@ -57,10 +100,10 @@ Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
 Set-Variable "SDSRootDir"    "$SDSExecPath\.."
 Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\Host Controller Service"
 Set-Variable "StrataDeveloperStudioIniDir" "$Env:AppData\ON Semiconductor\"
-Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
+Set-Variable "HCSConfigFile" "$SDSRootDir\hcs.config"
 Set-Variable "HCSExecFile"   "$SDSRootDir\hcs.exe"
-Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
-Set-Variable "HCSDbFile"     "$HCSAppDataDir\PROD\db\strata_db\db.sqlite3"
+Set-Variable "SDSExecFile"   "$SDSExecPath"
+Set-Variable "HCSDbFile"     "$HCSAppDataDir\DEV\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
 Set-Variable "JLinkExePath"  "${Env:ProgramFiles(x86)}\SEGGER\JLink\JLink.exe"
 Set-Variable "RequirementsFile" "$TestRoot\requirements.txt"
@@ -77,6 +120,9 @@ Set-Variable "PythonPlatformIdentificationTest" "$PSScriptRoot/PlatformIdentific
 Set-Variable "PythonGUIMain"                    "$PSScriptRoot/gui-testing/runtest.py"
 Set-Variable "PythonGUIMainLoginTestPre"        "$PSScriptRoot/gui-testing/main_login_test_pre.py"
 
+# Import common functions
+. "$PSScriptRoot\Common-Functions.ps1"
+
 # Import functions for test "Test-Database"
 . "$PSScriptRoot\hcs\Test-Database.ps1"
 
@@ -88,6 +134,9 @@ Set-Variable "PythonGUIMainLoginTestPre"        "$PSScriptRoot/gui-testing/main_
 
 # Import functions for test "Test-SDSControlViews"
 . "$PSScriptRoot\strataDev\Test-SDSControlViews.ps1"
+
+# Import functions for test "Test-SDSInstaller"
+. "$PSScriptRoot\installer\Test-SDSInstaller.ps1"
 
 # Import functions for test "Test-PlatformIdentification"
 . "$PSScriptRoot\PlatformIdentification\Test-PlatformIdentification.ps1"
@@ -185,7 +234,7 @@ If ($SDSControlViewsResults) {
 }
 #------------------------------------------------------------[Clean up]-------------------------------------------------------------
 
-Restore-Strata_INI
-Remove-TemporaryFiles
+# Restore-Strata_INI
+# Remove-TemporaryFiles
 
 Write-Host "`n`nTesting complete!`n`n"

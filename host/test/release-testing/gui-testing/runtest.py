@@ -10,6 +10,7 @@ import sys
 import subprocess
 import StrataInterface as strata
 import unittest
+import os
 
 import Common
 from GUITestResult import GUITestResult
@@ -19,14 +20,17 @@ if __name__ == "__main__":
     args = Common.getCommandLineArguments(sys.argv)
     if args.verbose:
         with Common.TestLogger() as logger:
-            logger.setLevel("INFO")
+            logger.setLevel("DEBUG")
 
     if args.strataPath:
         subprocess.Popen(args.strataPath)
 
     if args.hcsAddress:
         strata.bindToStrata(args.hcsAddress)
-
+    
+    if args.sdsRootDir:
+        os.environ["SDSRootDir"] = args.sdsRootDir
+        
     Common.awaitStrata()
 
     tests = unittest.defaultTestLoader.loadTestsFromNames(args.testNames)
