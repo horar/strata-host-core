@@ -13,7 +13,6 @@ public:
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     bool logSendMessage() const override;
-    int dataForFinish() const override;
     void setNewChunk(const QVector<quint8>& chunk, int chunkNumber);
 private:
     const bool flashFirmware_;  // true = flash firmware, false = flash bootloader

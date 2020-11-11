@@ -9,10 +9,8 @@
 #include <Device/Device.h>
 
 namespace strata::device::operation {
-
-class BaseDeviceOperation;
-enum class Type : int;
-
+    class BaseDeviceOperation;
+    enum class Result : int;
 }
 
 namespace strata {
@@ -80,14 +78,9 @@ class Flasher : public QObject
         /*!
          * This signal is emitted when Flasher finishes.
          * \param result result of firmware operation
+         * \param errorString error description if result is Error
          */
-        void finished(Result result);
-
-        /*!
-         * This signal is emitted when error occurres.
-         * \param errorString error description
-         */
-        void error(QString errorString);
+        void finished(Result result, QString errorString);
 
         /*!
          * This signal is emitted with request to switch the board to bootloader mode
@@ -123,24 +116,23 @@ class Flasher : public QObject
         void devicePropertiesChanged();
 
     private slots:
-        void handleOperationFinished(device::operation::Type opType, int data);
-        void handleOperationError(QString errStr);
+        void handleOperationFinished(device::operation::Result result, int status, QString errStr);
 
     private:
         void flash(bool flashFirmware, bool startApplication);
-        void startFlash();
+        void performNextOperation(device::operation::BaseDeviceOperation* baseOp, int status);
         void manageFlash(int lastFlashedChunk);
-        void startBackup();
         void manageBackup(int chunkNumber);
-        void finish(Result result);
+        void finish(Result result, QString errorString = QString());
         void connectHandlers(device::operation::BaseDeviceOperation* operation);
+        static void operationDeleter(device::operation::BaseDeviceOperation* operation);
 
         device::DevicePtr device_;
 
         QFile binaryFile_;
         QString fileMD5_;
 
-        std::unique_ptr<device::operation::BaseDeviceOperation> operation_;
+        std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> operation_;
 
         int chunkNumber_;
         int chunkCount_;

@@ -230,9 +230,8 @@ void BoardManager::startDeviceOperations(const int deviceId, const DevicePtr dev
     );
 
     connect(operation.get(), &operation::BaseDeviceOperation::finished, this, &BoardManager::handleOperationFinished);
-    connect(operation.get(), &operation::BaseDeviceOperation::error, this, &BoardManager::handleOperationError);
 
-    device::operation::Identify *identify = dynamic_cast<device::operation::Identify*>(operation.get());
+    operation::Identify *identify = dynamic_cast<operation::Identify*>(operation.get());
     identify->runWithDelay(IDENTIFY_LAUNCH_DELAY);  // Some boards need time for booting
 
     deviceOperations_.insert(deviceId, operation);
@@ -256,34 +255,28 @@ void BoardManager::logInvalidDeviceId(const QString& message, const int deviceId
     qCWarning(logCategoryBoardManager).nospace() << message << ", invalid device ID: 0x" << hex << static_cast<uint>(deviceId);
 }
 
-void BoardManager::handleOperationFinished(operation::Type opType, int) {
+void BoardManager::handleOperationFinished(operation::Result result, int status, QString errStr) {
+    Q_UNUSED(status)
+
     operation::BaseDeviceOperation *baseOp = qobject_cast<operation::BaseDeviceOperation*>(QObject::sender());
     if (baseOp == nullptr) {
         return;
     }
 
-    int deviceId = baseOp->deviceId();
-    bool boardRecognized = false;
-    if (opType == operation::Type::Identify) {
-        boardRecognized = true;
+    if (baseOp->type() == operation::Type::Identify) {
+        int deviceId = baseOp->deviceId();
+
+        // operation has finished, we do not need BaseDeviceOperation object anymore
+        deviceOperations_.remove(deviceId);
+
+        bool boardRecognized = (result == operation::Result::Success) ? true : false;
+
+        if (result == operation::Result::Error) {
+            emit boardError(deviceId, errStr);
+        }
+
+        emit boardReady(deviceId, boardRecognized);
     }
-
-    // operation has finished, we do not need DeviceOperations object anymore
-    deviceOperations_.remove(deviceId);
-
-    emit boardReady(deviceId, boardRecognized);
-}
-
-void BoardManager::handleOperationError(QString errMsg) {
-    operation::BaseDeviceOperation *baseOp = qobject_cast<operation::BaseDeviceOperation*>(QObject::sender());
-    if (baseOp == nullptr) {
-        return;
-    }
-    int deviceId = baseOp->deviceId();
-    // operation has finished with error, we do not need DeviceOperations object anymore
-    deviceOperations_.remove(deviceId);
-
-    emit boardError(deviceId, errMsg);
 }
 
 void BoardManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) {

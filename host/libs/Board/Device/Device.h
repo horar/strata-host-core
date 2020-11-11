@@ -74,6 +74,12 @@ namespace strata::device {
             SerialDevice
         };
 
+        enum class ApiVersion {
+            Unknown,
+            v1_0,
+            v2_0
+        };
+
         /**
          * Device constructor
          * @param deviceId device ID
@@ -124,6 +130,12 @@ namespace strata::device {
          */
         virtual Type deviceType() const final;
 
+        /**
+         * Get version of device API.
+         * @return API version of device
+         */
+        virtual ApiVersion apiVersion() final;
+
         friend QDebug operator<<(QDebug dbg, const Device* d);
         friend QDebug operator<<(QDebug dbg, const DevicePtr& d);
 
@@ -147,13 +159,16 @@ namespace strata::device {
          */
         void deviceError(ErrorCode errCode, QString msg);
 
-//    protected:
     private:
-        // *** functions used by friend classes DeviceOperations and BaseDeviceCommand:
+        // *** functions used by friend classes BaseDeviceOperation and BaseDeviceCommand:
         virtual void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) final;
         virtual bool lockDeviceForOperation(quintptr lockId) final;
         virtual void unlockDevice(quintptr lockId) final;
         virtual bool sendMessage(const QByteArray msg, quintptr lockId) = 0;
+        virtual void setBootloaderMode(bool inBootloaderMode) final;
+        // Before calling bootloaderMode(), commands get_firmware_info and request_platform_id must be called.
+        virtual bool bootloaderMode() final;
+        virtual void setApiVersion(ApiVersion apiVersion) final;
         // ***
 
     protected:
@@ -168,10 +183,11 @@ namespace strata::device {
         // Address of DeviceOperations class instance is used as value of operationLock_. 0 means unlocked.
         quintptr operationLock_;
 
+    private:
         QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
 
-    // TODO: make these variables private after removing deprecated functions from SerialDevice
-    //private:
+        bool bootloaderMode_;
+        ApiVersion apiVersion_;
         QString platformId_;
         QString classId_;
         QString verboseName_;
