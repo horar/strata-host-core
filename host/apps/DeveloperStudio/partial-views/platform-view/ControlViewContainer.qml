@@ -178,7 +178,6 @@ Item {
         if (versionInstalled) {
             if (!SGUtilsCpp.isFile(versionInstalled.path)) {
                 versionControl = saveInstalledVersion(null, null, versionControl);
-                versionInstalled = null;
             } else if (registerResource(versionInstalled.path, versionInstalled.version)) {
                 return;
             }
