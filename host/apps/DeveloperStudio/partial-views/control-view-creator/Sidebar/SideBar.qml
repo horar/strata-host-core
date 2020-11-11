@@ -56,6 +56,11 @@ Rectangle {
                 // When a row is inserted, we want to focus on that row
                 onRowsInserted: {
                     let index = treeModel.index(first, 0, parent);
+
+                    if (!treeView.isExpanded(parent)) {
+                        treeView.expand(parent)
+                    }
+
                     treeView.selection.clearCurrentIndex();
                     treeView.selection.select(index, ItemSelectionModel.Rows);
                     treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
@@ -63,15 +68,6 @@ Rectangle {
                     let node = treeModel.getNode(index);
                     if (node.filename === "") {
                         treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
-                    } else {
-                        if (!node.isDir) {
-                            if (treeView.isExpanded(parent)) {
-                                openFilesModel.addTab(node.filename,
-                                                      node.filepath,
-                                                      node.filetype,
-                                                      node.uid);
-                            }
-                        }
                     }
                 }
 
