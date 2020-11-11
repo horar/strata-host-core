@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME}
     src/Client.cpp
     src/ClientsController.cpp
     src/ServerConnector.cpp
+    src/ClientConnector.cpp
     src/logging/LoggingQtCategories.cpp
 )
 
