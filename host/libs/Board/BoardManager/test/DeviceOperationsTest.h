@@ -7,7 +7,7 @@
 
 namespace strata::device::operation {
 class BaseDeviceOperation;
-enum class Type : int;
+enum class Result : int;
 }
 
 class DeviceOperationsTest : public QObject
@@ -28,8 +28,7 @@ private slots:
     void cancelOperationTest();
 
 protected slots:
-    void handleOperationFinished(strata::device::operation::Type opType, int data);
-    void handleOperationError(QString message);
+    void handleOperationFinished(strata::device::operation::Result result, int, QString);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);

@@ -45,12 +45,16 @@ Item {
                     "device_id": platformTabRoot.device_id
                 }
                 PlatformSelection.closePlatformView(data)
+
                 NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)  // must call last - model entry/delegate begins destruction
+                return
             } else {
                 model.view = selection.view
                 setSelectedButton()
             }
         }
+
+        bringIntoView()
     }
 
     function bringIntoView() {
@@ -80,14 +84,13 @@ Item {
             buttonModel.append(buttonData)
         }
 
-        // Commented out to remove OTA features from release v2.5.0
-//        buttonData = {
-//            "text": "Settings",
-//            "view": "settings",
-//            "icon": "qrc:/sgimages/cog.svg",
-//            "selected": false
-//        }
-//        buttonModel.append(buttonData)
+        buttonData = {
+            "text": "Settings",
+            "view": "settings",
+            "icon": "qrc:/sgimages/cog.svg",
+            "selected": false
+        }
+        buttonModel.append(buttonData)
 
         buttonData = {
             "text": "Close Platform",
@@ -209,7 +212,6 @@ Item {
             signal clicked(int index)
 
             onClicked: {
-                platformTabRoot.bringIntoView()
                 platformTabRoot.menuClicked(index)
             }
 

@@ -92,14 +92,10 @@ bool CmdFlash::logSendMessage() const {
     return (chunkNumber_ == 0);
 }
 
-int CmdFlash::dataForFinish() const {
-    // flashed chunk number is used as data for finished() signal
-    return chunkNumber_;
-}
-
 void CmdFlash::setNewChunk(const QVector<quint8>& chunk, int chunkNumber) {
     chunk_ = chunk;
     chunkNumber_ = chunkNumber;
+    status_ = chunkNumber_;
     retriesCount_ = 0;  // reset retries count before next run
 }
 

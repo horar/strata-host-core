@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import QtQml 2.12
 
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -15,6 +16,7 @@ Item {
 
     property string side: ""
     property alias model: repeater.model
+    property alias repeater: repeater
 
     Item {
         id: topTextContainer
@@ -68,6 +70,17 @@ Item {
                             return index >= Filters.categoryFilterModel.count/2
                         }
                     }
+                }
+            }
+        }
+    }
+
+    Connections {
+        target: Filters.utility
+        onCategoryFiltersChanged: {
+            if (Filters.categoryFilters.length === 0) {
+                for (let i = 0; i < repeater.model.count; i++){
+                    repeater.itemAt(i).pressed = false
                 }
             }
         }

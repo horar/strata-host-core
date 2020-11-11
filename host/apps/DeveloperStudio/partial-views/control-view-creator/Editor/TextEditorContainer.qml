@@ -10,6 +10,8 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 
+import "../../general"
+
 Item {
     id: fileContainerRoot
     Layout.fillHeight: true
@@ -29,6 +31,10 @@ Item {
     }
 
     function saveFile() {
+        if (alertToast.visible) {
+            alertToast.hide()
+        }
+
         const path = SGUtilsCpp.urlToLocalFile(model.filepath);
         treeModel.stopWatchingPath(path);
         const success = SGUtilsCpp.atomicWrite(path, channelObject.fileText);
@@ -38,6 +44,8 @@ Item {
             savedVersionId = currentVersionId;
             model.unsavedChanges = false;
         } else {
+            alertToast.text = "Could not save file. Make sure the file has write permissions or try again."
+            alertToast.show()
             console.error("Unable to save file", model.filepath)
         }
     }
@@ -98,6 +106,20 @@ Item {
         }
     }
 
+    RowLayout {
+        id: alertRow
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width * 0.7
+        SGNotificationToast {
+            id: alertToast
+            Layout.fillWidth: true
+            interval: 0
+            z: 100
+            color: "red"
+        }
+    }
+
     WebChannel {
         id: channel
         registeredObjects: [channelObject]
@@ -150,7 +172,12 @@ Item {
         settings.pluginsEnabled: true
         settings.showScrollBars: false
 
-        anchors.fill: parent
+        anchors {
+            top: alertRow.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
 
         onHeightChanged: {
             channelObject.setContainerHeight(height.toString())
