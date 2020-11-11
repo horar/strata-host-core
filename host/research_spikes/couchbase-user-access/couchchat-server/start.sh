@@ -1,10 +1,26 @@
 #!/usr/bin/env sh
 
-# Starts the Couchbase and a simple file server
-# Adds documents to the Couchbase
+# Launches desired Couchbase environment
+# ./start.sh chatroom-app
+# ./start.sh platform-list
 
 COUCHBASE_ENDPOINT="http://127.0.0.1:8091"
 SYNC_GATEWAY_ENDPOINT="http://127.0.0.1:8093/query/service"
+
+# Check inputs -- project name is required
+if [ -z "$1" ]; then
+    echo "Error: no argument supplied, check documentation. Invoke as: './start.sh <project-name>'"
+    exit 1
+fi
+
+if test "$1" == "chatroom-app"; then
+    docker_compose_fileinput="docker-compose-chatroom-app.yml"
+elif test "$1" == "platform-list"; then
+    docker_compose_fileinput="docker-compose-platform-list.yml"
+else
+    echo "Error: unrecognized argument supplied, check documentation."
+    exit 1
+fi
 
 # Check Docker is running
 docker_ps=$(docker ps)
@@ -15,8 +31,8 @@ fi
 
 echo "Bringing up Couchbase containers..."
 
-./scripts/up.sh
-couchbase_sg_docker_ps=$(docker-compose ps -q couchbase)
+./scripts/up.sh $docker_compose_fileinput
+couchbase_sg_docker_ps=$(docker-compose --file $docker_compose_fileinput ps -q couchbase)
 
 if test "$?" != "0" || test "$couchbase_sg_docker_ps" == ""; then
     echo "Error bringing up Couchbase containers, aborting."

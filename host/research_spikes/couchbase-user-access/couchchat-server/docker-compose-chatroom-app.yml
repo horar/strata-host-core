@@ -2,12 +2,12 @@ version: "3"
 
 services:
   sync-gateway:
-    container_name: channels-sgw
+    container_name: chatroom-app-sgw
     image: couchbase/sync-gateway:2.5.1-community
     ports:
       - "4984:4984"
     command:
-      - /tmp/config/sync-gateway-config.json
+      - /tmp/config/sync-gateway-config-chatroom-app.json
     volumes:
       - ./conf:/tmp/config:ro
     networks:
@@ -19,7 +19,7 @@ services:
     restart: on-failure
 
   couchbase:
-    container_name: channels-cb
+    container_name: chatroom-app-cb
     image: couchbase:community-6.0.0
     ports:
       - "8091-8094:8091-8094"
@@ -31,7 +31,7 @@ services:
 
   # simple file server (local development only)
   nginx:
-    container_name: channels-fs
+    container_name: chatroom-app-fs
     image: nginx:1.17.3-alpine
     ports:
       - "8000:80"
