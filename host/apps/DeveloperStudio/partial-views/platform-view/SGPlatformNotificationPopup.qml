@@ -10,14 +10,17 @@ import "../status-bar/"
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
-Popup {
+SGStrataPopup {
     id: platformPopup
     width: 450
     height: 200
     x: parent.width/2 - width/2
     y: parent.height/2 - height/2
+    headerText: "Platform Notification"
     modal: true
     padding: 0
+
+    glowColor: "#ccc"
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
@@ -43,7 +46,7 @@ Popup {
     Rectangle {
         id:platformItem
         anchors.fill: parent
-        color: "#ddd"
+        color: "transparent"
 
         ColumnLayout {
             anchors.fill: parent
@@ -104,7 +107,7 @@ Popup {
 
             SGCheckBox {
                 id: checkBox
-                Layout.alignment: Qt.AlignHCenter
+                Layout.alignment: Qt.AlignLeft
                 checked: false
                 text: "Do not remind me"
                 topPadding: -10

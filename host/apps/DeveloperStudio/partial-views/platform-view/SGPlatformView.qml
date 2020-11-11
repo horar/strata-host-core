@@ -98,6 +98,10 @@ StackLayout {
         }
     }
 
+    SGPlatformNotificationPopup {
+        visible: (platformIsOutOfDate || firmwareIsOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate
+    }
+
     SGUserSettings {
         id: sgUserSettings
         classId: platformStack.class_id
