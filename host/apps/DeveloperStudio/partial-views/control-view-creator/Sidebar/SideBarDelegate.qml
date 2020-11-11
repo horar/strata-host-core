@@ -135,6 +135,9 @@ Item {
         onClicked: {
             if (model.filename !== "") {
                 if (mouse.button === Qt.RightButton) {
+                    treeView.selection.clearCurrentIndex();
+                    treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
+                    treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
                     contextMenu.item.popup()
                 } else if (mouse.button === Qt.LeftButton) {
                     if (!model.isDir) {
