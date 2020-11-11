@@ -180,7 +180,7 @@ void Flasher::performNextOperation(device::operation::BaseDeviceOperation* baseO
         break;
     case operation::Type::BackupFirmware :
         switch (status) {
-        case operation::BACKUP_NO_FIRMWARE :
+        case operation::NO_FIRMWARE :
             finish(Result::NoFirmware);
             break;
         case operation::BACKUP_STARTED :
@@ -193,11 +193,15 @@ void Flasher::performNextOperation(device::operation::BaseDeviceOperation* baseO
         break;
     case operation::Type::Identify :
     case operation::Type::StartApplication :
-        qCInfo(logCategoryFlasher) << device_ << "Launching device software. Name: '"
-                                   << device_->property(DeviceProperties::verboseName) << "', version: '"
-                                   << device_->property(DeviceProperties::applicationVer) << "'.";
-        emit devicePropertiesChanged();
-        finish(Result::Ok);
+        if (status == operation::NO_FIRMWARE) {
+            finish(Result::NoFirmware);
+        } else {
+            qCInfo(logCategoryFlasher) << device_ << "Launching device software. Name: '"
+                                       << device_->property(DeviceProperties::verboseName) << "', version: '"
+                                       << device_->property(DeviceProperties::applicationVer) << "'.";
+            emit devicePropertiesChanged();
+            finish(Result::Ok);
+        }
         break;
     default :
         {
