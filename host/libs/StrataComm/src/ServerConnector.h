@@ -26,7 +26,7 @@ signals:
     void newMessageRecived(const QByteArray &clientId, const QString &message);
 
 private slots:
-    void readNewMessages(int socket);
+    void readNewMessages(/*int socket*/);
 
 private:
     std::unique_ptr<strata::connector::Connector> connector_;

@@ -24,7 +24,7 @@ bool ServerConnector::initilize() {
     return true;
 }
 
-void ServerConnector::readNewMessages(int socket) {
+void ServerConnector::readNewMessages(/*int socket*/) {
     readSocketNotifier_->setEnabled(false);
     std::string message;
     for(;;) {
