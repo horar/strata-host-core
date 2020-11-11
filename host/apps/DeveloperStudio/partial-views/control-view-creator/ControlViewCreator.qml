@@ -141,8 +141,8 @@ Rectangle {
                     Layout.preferredHeight: 70
                     iconText: "Logs"
                     iconSource: "qrc:/sgimages/bars.svg"
-                    color: logs.visible ? "#33b13b" : "transparent"
-                    enabled: editor.treeModel.url.toString() !== ""
+                    color: logsLayout.visible ? "#33b13b" : "transparent"
+                    enabled: editor.treeModel.url.toString() !== "" && !openProjectContainer.visible && !newControlViewContainer.visible && !startContainer.visible
 
                     function onClicked() {
                         logsLayout.visible = !logsLayout.visible;
@@ -180,18 +180,30 @@ Rectangle {
                 id: startContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                onVisibleChanged: {
+                    if(visible) logsLayout.visible = !visible
+                }
             }
 
                 OpenControlView {
                     id: openProjectContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+
+                    onVisibleChanged: {
+                        if(visible) logsLayout.visible = !visible
+                    }
                 }
 
                 NewControlView {
                     id: newControlViewContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+
+                    onVisibleChanged: {
+                        if(visible) logsLayout.visible = !visible
+                    }
                 }
 
                 Editor {
@@ -238,69 +250,17 @@ Rectangle {
                         }
                     }
                 }
-            }
-
-    ColumnLayout{
-        id: logsLayout
-        Layout.preferredHeight: 250 // Todo: make grab handle divider so user can scale up/down
-        Layout.minimumHeight: 150
-        Layout.maximumHeight: 400
-        Layout.fillWidth: true
-        visible: false
-        Rectangle {
-            id: logs
-            color: "#eee"
-            Layout.fillHeight: true
+            }  
+        ConsoleContainer {
+            id: logsLayout
             Layout.fillWidth: true
-            visible: true // Todo: ensure visible == false when on "open project"/"new project" views
-
-            Rectangle {
-                // divider
-                id: divider
-                height: consoleText.height
-                width: parent.width
-                color: "#444"
-
-                SGText {
-                    id: consoleText
-                    text: "Console Output"
-                    fontSizeMultiplier: 1.4
-                    Layout.alignment: Qt.AlignLeft
-                    alternativeColorEnabled: true
-                    leftPadding: 10
-                    topPadding: 5
-                    bottomPadding: 5
-                }
-
-                MouseArea {
-                    id: dragArea
-                    anchors.fill: parent
-                    cursorShape: Qt.ClosedHandCursor
-                }
-
-            }
+            visible: false
 
             ConsoleLogger {
                 id: cvc_console
-                anchors {
-                    top:divider.bottom
-                    left: logs.left
-                    right: logs.right
-                    bottom: logs.bottom
-                }
-
+                anchors.fill: parent
             }
-
-            DragHandler {
-                id: dragHandler
-                target: logs
-                xAxis.enabled: false
-                yAxis.minimum: 0
-                yAxis.maximum: 200
-
-            }
-          }
-    }
+         }
 
         }
     }
