@@ -335,6 +335,13 @@ Item {
         Button {
             id: select
             text: model.view_open ? "Return to Platform Tab" : (model.connected && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
+
+            Accessible.role: Accessible.Button
+            Accessible.name: text
+            Accessible.onPressAction: {
+                clicked()
+            }
+
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }

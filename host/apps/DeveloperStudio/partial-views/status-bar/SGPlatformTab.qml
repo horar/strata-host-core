@@ -165,6 +165,12 @@ Item {
             Layout.preferredWidth: height
             color: mouseMenu.containsMouse ? "#34993b" : inView ? platformTabRoot.menuColor : mouse.containsMouse ? platformTabRoot.menuColor :"#444"
 
+            Accessible.name: "Open Platform Tab"
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                mouseMenu.clicked(mouse)
+            }
+
             MouseArea {
                 id: mouseMenu
                 anchors.fill: parent
@@ -198,16 +204,21 @@ Item {
     Popup {
         id: dropDownPopup
         y: platformTabRoot.height
+        z: 100
         width: menu.width
         height: menu.height
         padding: 0
         closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside
+        focus: true
 
         Rectangle {
             id: menu
             color: "#34993b"
             width: platformTabRoot.width
             height: menuColumn.height + 1
+
+            Accessible.role: Accessible.Pane
+            Accessible.name: "Platform Tab Popup"
 
             signal clicked(int index)
 
