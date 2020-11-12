@@ -159,5 +159,8 @@
         <file>partial-views/general/WebPopup/SGWebControls.qml</file>
         <file>partial-views/general/WebPopup/SGWebView.qml</file>
         <file>partial-views/control-view-creator/Console/ConsoleContainer.qml</file>
+        <file>partial-views/control-view-creator/Console/ConsoleBreakpoints.qml</file>
+        <file>partial-views/control-view-creator/Console/ConsoleDebugger.qml</file>
+        <file>partial-views/control-view-creator/Console/ConsoleTools.qml</file>
     </qresource>
 </RCC>

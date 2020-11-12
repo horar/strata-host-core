@@ -120,6 +120,7 @@ Item {
         signal setContainerHeight(string height);
         signal undo();
         signal redo();
+        signal setBreakpoints(int lineNumber, string lineCode)
 
         function setHtml(value) {
             setValue(value)
@@ -132,6 +133,10 @@ Item {
             }
             currentVersionId = version
             model.unsavedChanges = (savedVersionId !== version)
+        }
+
+        function createBreakpoint(lineNumber, lineCode){
+            setBreakpoints(lineNumber, lineCode)
         }
     }
 
@@ -168,6 +173,10 @@ Item {
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             }
+        }
+
+        onContextMenuRequested: {
+
         }
 
         url: "qrc:///partial-views/control-view-creator/editor.html"

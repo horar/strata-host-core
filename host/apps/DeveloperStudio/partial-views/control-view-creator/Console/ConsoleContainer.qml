@@ -13,16 +13,19 @@ Rectangle {
     color: "#eee"
     z: 3
 
-
+ColumnLayout {
+    anchors.fill: parent
+    spacing: 0
+    z: 5
     Rectangle {
         id: topBar
-        width: root.width
-        height: 30
+        Layout.fillWidth: true
+        Layout.preferredHeight: 30
         color: "#444"
-        z: 5
 
         RowLayout {
             anchors.fill: parent
+            spacing: 0
 
             SGText {
                 text: "Console Output"
@@ -34,8 +37,8 @@ Rectangle {
                 ComboBox {
                     id: comboBox
                     Layout.preferredHeight: 30
-                    Layout.preferredWidth: 30
-                    model: [{"source":"qrc:/sgimages/zoom.svg", "text": "search", "index": 0},{"source":"qrc:/sgimages/tools.svg", "text": "tools", "index": 1 },{"source":"qrc:/sgimages/clock.svg", "text": "breakpoints", "index": 2}]
+                    Layout.preferredWidth: 150
+                    model: [{"source":"qrc:/sgimages/zoom.svg", "text": "console", "index": 0},{"source":"qrc:/sgimages/tools.svg", "text": "tools", "index": 1 },{"source":"qrc:/sgimages/clock.svg", "text": "breakpoints", "index": 2}, {"source":"qrc:/sgimages/coding.svg", "text":"debugging", "index": 3}]
                     currentIndex: 0
                     background: Rectangle {
                         color: "#444"
@@ -45,11 +48,23 @@ Rectangle {
                     contentItem: Item {
                         anchors.fill: parent
                         SGIcon {
+                            id: contentIcon
                             source: comboBox.model[comboBox.currentIndex].source
                             height: 20
                             width: 20
-                            anchors.centerIn: parent
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: parent.left
+                            anchors.leftMargin: 5
                             iconColor: "#ddd"
+                        }
+
+                        SGText {
+                            text: comboBox.model[comboBox.currentIndex].text
+                            color: "#ddd"
+                            fontSizeMultiplier: 1.05
+                            leftPadding: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.left: contentIcon.right
                         }
                     }
 
@@ -87,6 +102,7 @@ Rectangle {
 
                             onClicked: {
                                 comboBox.currentIndex = modelData.index
+                                loader.state = comboBox.model[modelData.index].text
                                 comboBox.popup.close()
                             }
                         }
@@ -95,19 +111,14 @@ Rectangle {
 
             Rectangle {
                 id: searchFilter
-                Layout.fillHeight: true
+                Layout.preferredHeight: 30
                 Layout.preferredWidth: 300
                 border.color: "#444"
                 border.width: 0.5
-                TextInput {
-                    text: "Search here..."
-                    font.family: "Helvetica"
+                TextField {
+                    font.family: "Merryweather"
                     font.pixelSize: 14
-                    anchors {
-                        verticalCenter: searchFilter.verticalCenter
-                        left: searchFilter.left
-                        right: searchFilter.right
-                    }
+                    anchors.fill: parent
 
                     leftPadding: 5
                 }
@@ -204,4 +215,49 @@ Rectangle {
         yAxis.minimum: 0
         yAxis.maximum: 100
     }
+
+    Loader {
+        id: loader
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+
+        state: "console"
+        active: true
+        source: "ConsoleLogger.qml"
+
+        states: [
+            State {
+                name: "console"
+                PropertyChanges {
+                    target: loader
+                    source: "ConsoleLogger.qml"
+                }
+            },
+            State {
+                name: "tools"
+                PropertyChanges {
+                    target: loader
+                    source: "ConsoleTools.qml"
+                }
+            },
+            State {
+                name: "breakpoints"
+                PropertyChanges {
+                    target: loader
+                    source: "ConsoleBreakpoints.qml"
+                }
+            },
+            State {
+                name: "debugging"
+                PropertyChanges {
+                    target: loader
+                    source: "ConsoleDebugger.qml"
+                }
+            }
+
+
+
+        ]
+    }
+   }
 }
