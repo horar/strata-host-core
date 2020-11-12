@@ -31,6 +31,7 @@ function Test-Gui()
     Write-Separator
     $ResultsFile = "$TestRoot\gui-testing\results.txt"
     $BasicTests = "Tests.BoardTests Tests.FeedbackTests Tests.InvalidInputTests Tests.NewRegisterTests Tests.PasswordResetTests"
+    $OTATests = "Tests.OTATests"
     $NoNetworkTests = "Tests.NoNetworkTests"
     $StrataRestartTests = "Tests.StrataRestartTests"
 
@@ -46,11 +47,18 @@ function Test-Gui()
     # Write to "Strata Developer Studio.ini"
     Set-Content "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" $token_string
 
-
     #In case instances still remain
     Stop-SDS
     Stop-HCS
 
+    Write-Host "TEST GROUP 0: OTA Strata Tests"
+    Remove-Item -Path "$Env:AppData\ON Semiconductor\Host Controller Service\DEV" -Recurse
+
+    Start-SDSAndWait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $OTATests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --sdsRootDir `"$SDSRootDir`" --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+
+    Stop-SDS
+    Stop-HCS
 
     Write-Host "TEST GROUP 1: Normal Strata Tests"
 
