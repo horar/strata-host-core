@@ -51,8 +51,7 @@ ScrollView {
         id: consoleItems
     }
 
-    function createLogs(type,msg){
-        const time = new Date(Date.now()).toString()
-        consoleItems.append({time: time, type: type, msg: msg })
+    Connections {
+        target: sdsModel
     }
 }

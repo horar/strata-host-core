@@ -24,7 +24,7 @@ Item {
                     model: debugCommands
 
                     delegate: SGText {
-                        text: JSON.stringify(modelData)
+                        text: modelData
                     }
                 }
 
@@ -34,10 +34,11 @@ Item {
                     function sendCommands(command){
                         if(command !== ""){
                             if(command.includes("{") && command.includes("}")){
-                                debugCommands.append({ "cmd": command })
+                                const cmd = {"cmd":command}
+                                debugCommands.append(cmd)
                             } else {
-                                const errObj = {"error": "Syntax Error: Is not an Object"}
-                                debugCommands.append({"cmd": errObj })
+                                const errObj = "Syntax Error: Is not an Object"
+                                debugCommands.append({errObj})
                             }
                         }
                     }
