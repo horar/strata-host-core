@@ -479,19 +479,21 @@ bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Do
 }
 
 QByteArray CommandValidator::notificationStatus(const rapidjson::Document &doc) {
-    if (doc.HasMember(JSON_NOTIFICATION)) {
-        const rapidjson::Value& notification = doc[JSON_NOTIFICATION];
-        if (notification.HasMember(JSON_PAYLOAD)) {
-            const rapidjson::Value& payload = notification[JSON_PAYLOAD];
-            if (payload.HasMember(JSON_STATUS)) {
-                const rapidjson::Value& status = payload[JSON_STATUS];
-                if (status.IsString()) {
-                    return QByteArray(status.GetString(), status.GetStringLength());
-                }
-            }
-        }
+    if (doc.HasMember(JSON_NOTIFICATION) == false) {
+        return QByteArray();
     }
-
+    const rapidjson::Value& notification = doc[JSON_NOTIFICATION];
+    if (notification.HasMember(JSON_PAYLOAD) == false) {
+        return QByteArray();
+    }
+    const rapidjson::Value& payload = notification[JSON_PAYLOAD];
+    if (payload.HasMember(JSON_STATUS) == false) {
+        return QByteArray();
+    }
+    const rapidjson::Value& status = payload[JSON_STATUS];
+    if (status.IsString()) {
+        return QByteArray(status.GetString(), status.GetStringLength());
+    }
     return QByteArray();
 }
 
