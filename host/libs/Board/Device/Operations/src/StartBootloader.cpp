@@ -15,11 +15,11 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     BaseDeviceOperation(device, Type::StartBootloader)
 {
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));       // 0
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));  // 1
-    commandList_.emplace_back(std::make_unique<CmdStartBootloader>(device_));         // 2
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));       // 3
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));  // 4
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true, MAX_GET_FW_INFO_RETRIES)); // 0
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 1
+    commandList_.emplace_back(std::make_unique<CmdStartBootloader>(device_));        // 2
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true));  // 3
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 4
 
     currentCommand_ = commandList_.end();
 
@@ -34,7 +34,7 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
 void StartBootloader::skipCommands(CommandResult& result, int& data)
 {
     if ((currentCommand_ == beforeStartBootloader_) && (result == CommandResult::Done)) {
-        if (device_->property(device::DeviceProperties::verboseName) == QSTR_BOOTLOADER) {
+        if (device_->bootloaderMode() == true) {
             // skip rest of commands - set result to 'FinaliseOperation'
             result = CommandResult::FinaliseOperation;
             // set data for 'finished' signal

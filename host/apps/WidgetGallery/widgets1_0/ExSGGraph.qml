@@ -137,6 +137,71 @@ Item {
         Row {
             spacing: 5
             SGWidgets.SGGraph {
+                id: yAxisGraph
+                width: 400
+                height: 300
+                title: "Basic Graph - Multiple Y Axis Enabled"
+                xMin: 0
+                xMax: 1
+                yMin: 0
+                yMax: 5
+                yRightMin: 0
+                yRightMax: 10
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
+                yRightTitle: "Y1 Axis"
+                xGrid: true
+                yGrid: true
+                gridColor: "green"
+                yRightVisible: true
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+
+                Button {
+                    text: "Add curve to graph and populate with points for x and y left axis"
+                    onClicked: {
+                        let curve = yAxisGraph.createCurve("graphCurve" + yAxisGraph.count)
+                        curve.color = sgGraphExample.randomColor()
+                        let dataArray = []
+                        for (let i = 0; i <= 1000; i++) {
+                            dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
+                        }
+                        curve.appendList(dataArray)
+                    }
+                }
+
+                Button {
+                    text: "Add curve to graph and populate with points for x and y right axis"
+                    onClicked: {
+                        let curve = yAxisGraph.createCurve("graphCurve" + yAxisGraph.count)
+                        curve.color = sgGraphExample.randomColor()
+                        curve.yAxisLeft = false // YRight axis is enabled to plot the given curve. Default yAxisLeft = true
+                        let dataArray = []
+                        for (let i = 0; i <= 1000; i++) {
+                            dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
+                        }
+                        curve.appendList(dataArray)
+                    }
+                }
+
+                Button {
+                    text: "Remove first curve from graph"
+                    enabled: yAxisGraph.count > 0
+                    onClicked: {
+                        yAxisGraph.removeCurve(0);
+                    }
+                }
+            }
+        }
+
+        Row {
+            spacing: 5
+            SGWidgets.SGGraph {
                 id: timedGraphPoints
                 width: 400
                 height: 300
@@ -286,6 +351,80 @@ Item {
                         graphTimerAxis.running = !graphTimerAxis.running
                     }
                 }
+            }
+        }
+
+        Row {
+            spacing: 5
+            SGWidgets.SGGraph {
+                // Note: Zoom/Pan mouse actions are disabled for log graph axes
+                id: gridLogGraph
+                width: 400
+                height: 300
+                title: "Graph to Toggle major, minor grid and x/y Logarithmic"
+                xMin: 1
+                xMax: 50
+                yMin: 1
+                yMax: 50
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
+                gridColor: "black"
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+                Button {
+                    text: "Add Major Gridline"
+                    onClicked: {
+                        if(gridLogGraph.xMinorGrid && gridLogGraph.yMinorGrid) {
+                            gridLogGraph.xMinorGrid = false
+                            gridLogGraph.yMinorGrid = false
+                        }
+                        gridLogGraph.xGrid = true
+                        gridLogGraph.yGrid = true
+                    }
+
+                }
+
+                Button {
+                    text: "Add Minor Gridline"
+                    onClicked: {
+                        gridLogGraph.xMinorGrid = true
+                        gridLogGraph.yMinorGrid = true
+                    }
+                }
+
+                Button {
+                    text: "Clear Gridline"
+                    onClicked: {
+                        gridLogGraph.xGrid = false
+                        gridLogGraph.yGrid = false
+                        gridLogGraph.xMinorGrid = false
+                        gridLogGraph.yMinorGrid = false
+                    }
+                }
+
+                Button {
+                    text: "Toggle X/Y Logarithmic Axes"
+                    onClicked: {
+                        if(gridLogGraph.xLogarithmic && gridLogGraph.yLogarithmic) {
+                            gridLogGraph.xLogarithmic = false
+                            gridLogGraph.yLogarithmic = false
+                            text = "Toggle X/Y Logarithmic Axes"
+                        }
+                        else {
+                            gridLogGraph.xLogarithmic = true
+                            gridLogGraph.yLogarithmic = true
+                            text = "Toggle X/Y Linear Axes"
+                        }
+                    }
+                }
+
+
+
             }
         }
 

@@ -84,6 +84,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
     connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
     connect(&storageManager_, &StorageManager::downloadControlViewProgress, this, &HostControllerService::sendControlViewDownloadProgressMessage);
+    connect(&storageManager_, &StorageManager::platformMetaData, this, &HostControllerService::sendPlatformMetaData);
 
     /* We dont want to call these StorageManager methods directly
      * as they should be executed in the main thread. Not in dispatcher's thread. */
@@ -143,16 +144,18 @@ void HostControllerService::start()
 
 void HostControllerService::stop()
 {
-    clients_.stop();    // first stop clients controller, then dispatcher (it receives data from clients controller)
+    clients_.stop();        // first stop "clients controller" and then stop "dispatcher" (dispatcher receives data from clients controller)
 
-    if (dispatcherThread_.get_id() == std::thread::id()) {
-        return;
+    bool stop_dispatcher = (dispatcherThread_.get_id() != std::thread::id());
+    if (stop_dispatcher) {
+        dispatcher_->stop();
+        dispatcherThread_.join();
     }
 
-    dispatcher_->stop();
+    db_.stop();             // db should be stopped last for it receives requests from dispatcher
 
-    dispatcherThread_.join();
-    qCInfo(logCategoryHcs) << "Host controller service stoped.";
+    if (stop_dispatcher)    // log only once and at the very end
+        qCInfo(logCategoryHcs) << "Host controller service stoped.";
 }
 
 void HostControllerService::onAboutToQuit()
@@ -302,13 +305,33 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
     clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
+void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList, const QJsonArray &firmwareList, const QString &error)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "platform_meta_data");
+    payload.insert("class_id", classId);
+
+    if (error.isEmpty()) {
+        payload.insert("control_views", controlViewList);
+        payload.insert("firmwares", firmwareList);
+    } else {
+        payload.insert("error", error);
+    }
+
+    message.insert("hcs::notification", payload);
+
+    doc.setObject(message);
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+}
+
 void HostControllerService::sendPlatformDocumentsMessage(
         const QByteArray &clientId,
         const QString &classId,
         const QJsonArray &datasheetList,
         const QJsonArray &documentList,
-        const QJsonArray &firmwareList,
-        const QJsonArray &controlViewList,
         const QString &error)
 {
     QJsonDocument doc;
@@ -321,8 +344,6 @@ void HostControllerService::sendPlatformDocumentsMessage(
     if (error.isEmpty()) {
         payload.insert("datasheets", datasheetList);
         payload.insert("documents", documentList);
-        payload.insert("firmwares", firmwareList);
-        payload.insert("control_views", controlViewList);
     } else {
         payload.insert("error", error);
     }

@@ -20,6 +20,16 @@ if (APPLE)
     )
 endif()
 
+if(WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME}-test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
+            $<TARGET_FILE_DIR:${PROJECT_NAME}-test>
+        COMMENT "Deploying dependant 3rd party libraries..."
+        VERBATIM
+    )
+endif()
+
 add_test(NAME ${PROJECT_NAME}-test
     COMMAND ${PROJECT_NAME}-test
 )

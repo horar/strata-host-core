@@ -480,6 +480,7 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
     EXPECT_TRUE(CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc));
 
     // API v2
+    // embedded
     testCommand = R"(
         {
             "notification":{
@@ -490,6 +491,47 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
                     "platform_id":"00000000-0000-0000-0000-000000000000",
                     "class_id":"00000000-0000-0000-0000-000000000000",
                     "board_count":1
+                }
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(QByteArray::fromStdString(testCommand), doc));
+    EXPECT_TRUE(CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc));
+
+    // assisted
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{
+                    "name":"PlatformId API version 2.0",
+                    "controller_type":1,
+                    "platform_id":"00000000-0000-0000-0000-000000000000",
+                    "class_id":"00000000-0000-0000-0000-000000000000",
+                    "board_count":1,
+                    "controller_platform_id":"00000000-0000-0000-0000-000000000000",
+                    "controller_class_id":"00000000-0000-0000-0000-000000000000",
+                    "controller_board_count":1,
+                    "fw_class_id":"00000000-0000-0000-0000-000000000000"
+                }
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(QByteArray::fromStdString(testCommand), doc));
+    EXPECT_TRUE(CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc));
+
+    // assisted without connected board
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{
+                    "name":"PlatformId API version 2.0",
+                    "controller_type":1,
+                    "controller_platform_id":"00000000-0000-0000-0000-000000000000",
+                    "controller_class_id":"00000000-0000-0000-0000-000000000000",
+                    "controller_board_count":1,
+                    "fw_class_id":"00000000-0000-0000-0000-000000000000"
                 }
             }
         }
@@ -542,6 +584,23 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
                     "class_id":"201",
                     "count": 1.1,
                     "platform_id_version":"2.0"
+                }
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(QByteArray::fromStdString(testCommand), doc));
+    EXPECT_FALSE(CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc));
+
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{
+                    "name":"PlatformId API version 2.0",
+                    "controller_type":1,
+                    "platform_id":"00000000-0000-0000-0000-000000000000",
+                    "controller_class_id":"00000000-0000-0000-0000-000000000000",
+                    "board_count":1
                 }
             }
         }

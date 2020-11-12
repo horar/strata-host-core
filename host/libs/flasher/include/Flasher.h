@@ -68,9 +68,8 @@ class Flasher : public QObject
 
         /*!
          * Flash bootloader.
-         * \param startApplication if set to true start application after flashing
          */
-        void flashBootloader(bool startApplication = true);
+        void flashBootloader();
 
         /*!
          * Cancel flash firmware operation.
@@ -135,13 +134,14 @@ class Flasher : public QObject
         void manageBackup(int chunkNumber);
         void finish(Result result);
         void connectHandlers(device::operation::BaseDeviceOperation* operation);
+        static void operationDeleter(device::operation::BaseDeviceOperation* operation);
 
         device::DevicePtr device_;
 
         QFile binaryFile_;
         QString fileMD5_;
 
-        std::unique_ptr<device::operation::BaseDeviceOperation> operation_;
+        std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> operation_;
 
         int chunkNumber_;
         int chunkCount_;

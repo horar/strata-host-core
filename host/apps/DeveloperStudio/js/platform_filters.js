@@ -153,7 +153,7 @@ var categoryFilters = []
 var segmentFilter = ""
 var keywordFilter = ""
 
-var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal categoryFiltersChanged(); signal segmentFilterChanged(); }', Qt.application, 'FiltersUtility');
+var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal categoryFiltersChanged(); signal segmentFilterChanged(); signal keywordFilterChanged();}', Qt.application, 'FiltersUtility');
 
 function findFilter (filter) {
     if (mapping.hasOwnProperty(filter)) {
@@ -196,4 +196,7 @@ function clearActiveFilters () {
     categoryFilters = []
     segmentFilter = ""
     keywordFilter = ""
+    utility.categoryFiltersChanged()
+    utility.segmentFilterChanged()
+    utility.keywordFilterChanged()
 }

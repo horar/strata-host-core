@@ -59,6 +59,9 @@ void FirmwareUpdater::downloadFirmware()
         return;
     }
 
+    //file is created on disk, no need to keep descriptor open
+    firmwareFile_.close();
+
     QList<DownloadManager::DownloadRequestItem> downloadRequestList;
 
     DownloadManager::DownloadRequestItem firmwareItem;
@@ -71,6 +74,7 @@ void FirmwareUpdater::downloadFirmware()
     settings.notifySingleDownloadProgress = true;
     settings.keepOriginalName = true;
     settings.oneFailsAllFail = true;
+    settings.removeCorruptedFile = false;
 
     connect(downloadManager_, &DownloadManager::groupDownloadFinished, this, &FirmwareUpdater::handleDownloadFinished);
     connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &FirmwareUpdater::handleSingleDownloadProgress);

@@ -19,6 +19,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 Rectangle {
     id: container
@@ -38,6 +39,7 @@ Rectangle {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
+        userSettings.loadSettings()
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -201,7 +203,6 @@ Rectangle {
                 anchors {
                     centerIn: parent
                 }
-
                 source: "qrc:/sgimages/exclamation-circle.svg"
                 iconColor : "white"
             }
@@ -271,7 +272,7 @@ Rectangle {
                     text: qsTr("Feedback")
                     onClicked: {
                         profileMenu.close()
-                        feedbackPopup.open();
+                        feedLoader.active = true
                     }
                     width: profileMenu.width
                 }
@@ -280,7 +281,16 @@ Rectangle {
                     text: qsTr("Profile")
                     onClicked: {
                         profileMenu.close()
-                        profilePopup.open()
+                        profileLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Settings")
+                    onClicked: {
+                        profileMenu.close()
+                        settingsLoader.active = true
                     }
                     width: profileMenu.width
                 }
@@ -313,21 +323,58 @@ Rectangle {
         }
     }
 
-    SGFeedbackPopup {
-        id: feedbackPopup
-        width: Math.max(container.width * 0.8, 600)
-        height: Math.max(container.height * 0.8, 600)
-        x: container.width/2 - feedbackPopup.width/2
-        y: container.parent.windowHeight/2 - feedbackPopup.height/2
+    Loader {
+        id: feedLoader
+        source: "qrc:/partial-views/status-bar/SGFeedbackPopup.qml"
+        active: false
     }
 
-    SGProfilePopup {
-        id: profilePopup
-        x: container.width/2 - profilePopup.width/2
-        y: container.parent.windowHeight/2 - profilePopup.height/2
+    Loader {
+        id: profileLoader
+        source: "qrc:/partial-views/profile-popup/SGProfilePopup.qml"
+        active: false
     }
 
-    function showAboutWindow() {
+    Loader {
+        id: settingsLoader
+        source: "qrc:/partial-views/status-bar/SGSettingsPopup.qml"
+        active: false
+    }
+
+    SGUserSettings {
+        id: userSettings
+        classId: "general-settings"
+        user: NavigationControl.context.user_id
+
+        property bool autoOpenView: false
+        property bool closeOnDisconnect: false
+        property bool notifyOnFirmwareUpdate: false
+
+        property int selectedDistributionPortal: 0
+
+        function loadSettings() {
+            const settings = readFile("general-settings.json")
+            if (settings.hasOwnProperty("autoOpenView")) {
+                autoOpenView = settings.autoOpenView
+                closeOnDisconnect = settings.closeOnDisconnect
+                notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+                selectedDistributionPortal = settings.selectedDistributionPortal
+            }
+            NavigationControl.userSettings = userSettings
+        }
+
+        function saveSettings() {
+            const settings = {
+                autoOpenView: autoOpenView,
+                closeOnDisconnect: closeOnDisconnect,
+                notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
+                selectedDistributionPortal: selectedDistributionPortal
+            }
+            userSettings.writeFile("general-settings.json", settings)
+        }
+    }
+
+    function showAboutWindow(){
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 }

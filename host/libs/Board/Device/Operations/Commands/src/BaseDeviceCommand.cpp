@@ -18,6 +18,8 @@ bool BaseDeviceCommand::ackReceived() const {
 }
 
 void BaseDeviceCommand::onTimeout() {
+    // Default result is 'InProgress' - command timed out, finish operation with failure.
+    // In some cases timeout is not a problem, result is 'Done' or 'Retry' then.
     result_ = CommandResult::InProgress;
 }
 
@@ -43,6 +45,14 @@ CommandResult BaseDeviceCommand::result() const {
 
 void BaseDeviceCommand::setDeviceProperties(const char* name, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) {
     device_->setProperties(name, platformId, classId, btldrVer, applVer);
+}
+
+void BaseDeviceCommand::setDeviceBootloaderMode(bool inBootloaderMode) {
+    device_->setBootloaderMode(inBootloaderMode);
+}
+
+void BaseDeviceCommand::setDeviceApiVersion(device::Device::ApiVersion apiVersion) {
+    device_->setApiVersion(apiVersion);
 }
 
 }  // namespace

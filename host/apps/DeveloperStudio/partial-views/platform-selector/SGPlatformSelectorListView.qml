@@ -18,6 +18,10 @@ Item {
     Layout.fillWidth: false
     Layout.fillHeight: true
 
+    property alias listview: listviewContainer.listview
+    property alias model: filteredPlatformSelectorModel
+    property alias filterText: filter.text
+
     Component.onCompleted: {
         // Restore previously set filters
         if (Filters.segmentFilter !== "") {
@@ -162,6 +166,10 @@ Item {
                 filteredPlatformSelectorModel.filteringSegment = true
             }
             filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+        }
+
+        onKeywordFilterChanged: {
+            root.filterText = ""
         }
     }
 
@@ -391,8 +399,15 @@ Item {
                             case "segment-industrial-cloud-power":
                                 activeSegmentFilterText.text =  "Showing Industrial & Cloud Power Platforms"
                                 break
-                            default: // case "wirelessiot":
+                            case "segment-iot":
                                 activeSegmentFilterText.text =  "Showing Internet of Things Platforms"
+                                break
+                            default: // case "":
+                                activeSegmentFilterText.text =  ""
+                                defaultSegmentFilterText.visible = true
+                                for (let i = 0; i < segmentFilterRepeater.model.count; i++) {
+                                    segmentFilterRepeater.itemAt(i).checked = false
+                                }
                             }
                         }
                     }
@@ -463,6 +478,7 @@ Item {
                             }
 
                             Repeater {
+                                id: segmentFilterRepeater
                                 delegate: SegmentFilterDelegate {
                                     Component.onCompleted: {
                                         selected.connect(segmentFilterRow.selected)
@@ -500,6 +516,8 @@ Item {
         anchors {
             top: filterContainer.bottom
         }
+
+        property alias listview: listview
 
         Image {
             id: maskTop

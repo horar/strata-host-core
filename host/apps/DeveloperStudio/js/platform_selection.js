@@ -118,7 +118,7 @@ function emptyListRetry() {
 */
 function generatePlatform (platform) {
     let class_id_string = String(platform.class_id)
-    // Enforce uuidMap presence due to removal of OTA features in v2.5.0
+    // Enforce uuidMap presence due to removal of OTA features in v2.6.0
     if (UuidMap.uuid_map.hasOwnProperty(class_id_string) === false && platform.available.control){
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Control 'available' flag set but no mapped UI for this class_id; overriding to deny access");
         platform.available.control = false
@@ -252,8 +252,8 @@ function addConnectedPlatform(platform) {
     }
 
     let data = {
-        "device_id": platform.device_id,
         "class_id": class_id_string,
+        "device_id": platform.device_id,
         "firmware_version": platform.firmware_version
     }
     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
@@ -301,6 +301,18 @@ function connectListing(class_id_string, device_id, firmware_version) {
     let available = copyObject(copyObject(selector_listing.available))
     available.unlisted = false // override unlisted to show hidden listing when physical board present
     selector_listing.available = available
+
+    if (NavigationControl.userSettings.autoOpenView){
+        let data = {
+            "name": selector_listing.verbose_name,
+            "available": selector_listing.available,
+            "class_id": selector_listing.class_id,
+            "device_id": selector_listing.device_id,
+            "firmware_version": selector_listing.firmware_version,
+            "index": selector_index
+        }
+        openPlatformView(data)
+    }
 }
 
 function openPlatformView(platform) {
@@ -335,7 +347,6 @@ function openPlatformView(platform) {
 function disconnectPlatform(platform) {
     let class_id_string = String(platform.class_id)
     let selector_listing = getDeviceListing(class_id_string, platform.device_id)
-
     selector_listing.connected = false
 
     if (selector_listing.view_open === false) {
@@ -415,11 +426,22 @@ function insertUnknownListing (platform) {
 */
 function insertUnlistedListing (platform) {
     let platform_info = generateErrorListing(platform)
-
     platform_info.available.control = true
     platform_info.description = "No information to display."
 
     let index = insertErrorListing(platform_info)
+
+    if(NavigationControl.userSettings.autoOpenView){
+        let data = {
+            "name": platform_info.verbose_name,
+            "available": platform_info.available,
+            "class_id": platform_info.class_id,
+            "device_id": platform_info.device_id,
+            "firmware_version": platform_info.firmware_version,
+            "index": index
+        }
+        openPlatformView(data)
+    }
 }
 
 function generateErrorListing (platform) {

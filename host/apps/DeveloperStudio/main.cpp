@@ -26,6 +26,7 @@
 #include "ResourceLoader.h"
 
 #include "HcsNode.h"
+#include "RunGuard.h"
 
 #include "AppUi.h"
 
@@ -93,6 +94,12 @@ int main(int argc, char *argv[])
     }
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
+
+    RunGuard appGuard{"tech.strata.sds"};
+    if (appGuard.tryToRun() == false) {
+        qCCritical(logCategoryStrataDevStudio) << QStringLiteral("Another instance of Developer Studio is already running.");
+        return EXIT_FAILURE;
+    }
 
     qmlRegisterUncreatableType<ResourceLoader>("tech.strata.ResourceLoader", 1, 0, "ResourceLoader", "You can't instantiate ResourceLoader in QML");
     qmlRegisterUncreatableType<CoreInterface>("tech.strata.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));

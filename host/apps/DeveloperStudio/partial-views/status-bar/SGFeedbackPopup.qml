@@ -1,4 +1,4 @@
-import QtQuick 2.9
+import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "qrc:/partial-views"
@@ -15,8 +15,13 @@ SGStrataPopup {
     id: root
     headerText: "Strata Feedback"
     modal: true
+    visible: true
     glowColor: "#666"
     closePolicy: Popup.CloseOnEscape
+    width: container.width * 0.8
+    height: 600
+    x: container.width/2 - root.width/2
+    y: container.parent.windowHeight/2 - root.height/2
 
     onVisibleChanged: {
         if (visible) {
@@ -24,7 +29,10 @@ SGStrataPopup {
         }
     }
 
-    onClosed: alertToast.hide()
+    onClosed: {
+        alertToast.hide()
+        parent.active = false
+    }
 
     contentItem: ColumnLayout {
         id: mainColumn
@@ -295,6 +303,7 @@ SGStrataPopup {
 
                         onClicked: {
                             var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text, type: feedbackTypeListView.currentItem.typeValue }
+                            feedbackStatus.currentId = Feedback.getNextId()
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
                         }

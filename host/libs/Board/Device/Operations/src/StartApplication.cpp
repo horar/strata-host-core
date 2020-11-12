@@ -13,8 +13,8 @@ StartApplication::StartApplication(const device::DevicePtr& device) :
 {
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<CmdStartApplication>(device_));
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_, MAX_PLATFORM_ID_RETRIES));
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true, MAX_GET_FW_INFO_RETRIES));
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
 
     currentCommand_ = commandList_.end();
 }

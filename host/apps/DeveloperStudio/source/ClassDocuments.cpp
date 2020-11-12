@@ -54,9 +54,9 @@ bool ClassDocuments::loading() const
     return loading_;
 }
 
-bool ClassDocuments::initialized() const
+bool ClassDocuments::metaDataInitialized() const
 {
-    return initialized_;
+    return metaDataInitialized_;
 }
 
 int ClassDocuments::loadingProgressPercentage() const
@@ -90,15 +90,12 @@ void ClassDocuments::populateModels(QJsonObject data)
     QList<DocumentItem* > pdfList;
     QList<DocumentItem* > datasheetList;
     QList<DownloadDocumentItem* > downloadList;
-    QList<VersionedItem* > firmwareList;
-    QList<VersionedItem* > controlViewList;
 
     if (data.contains("error")) {
         qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
         clearDocuments();
         setErrorString(data["error"].toString());
         setLoading(false);
-        setInitialized(true);
         return;
     }
 
@@ -121,6 +118,13 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString category = datasheetObject.value("category").toString();
         QString uri = datasheetObject.value("datasheet").toString();
         QString name = datasheetObject.value("name").toString();
+
+        if (uri.length() == 0
+                || name.length() == 0)
+        {
+            qCWarning(logCategoryDocumentManager) << "Datasheet has missing data";
+            continue;
+        }
 
         DocumentItem *di = new DocumentItem(uri, name, category);
         datasheetList.append(di);
@@ -172,6 +176,24 @@ void ClassDocuments::populateModels(QJsonObject data)
         }
     }
 
+    pdfModel_.populateModel(pdfList);
+    datasheetModel_.populateModel(datasheetList);
+    downloadDocumentModel_.populateModel(downloadList);
+
+    setLoading(false);
+}
+
+void ClassDocuments::populateMetaData(QJsonObject data)
+{
+    if (data.contains("error")) {
+        qCWarning(logCategoryDocumentManager) << "Document metadata error:" << data["error"].toString();
+        setMetaDataInitialized(true);
+        return;
+    }
+
+    QList<VersionedItem* > firmwareList;
+    QList<VersionedItem* > controlViewList;
+
     QJsonArray firmwareArray = data["firmwares"].toArray();
     for (const QJsonValueRef firmwareValue : firmwareArray) {
         QJsonObject documentObject = firmwareValue.toObject();
@@ -222,14 +244,10 @@ void ClassDocuments::populateModels(QJsonObject data)
         controlViewList.append(controlViewItem);
     }
 
-    pdfModel_.populateModel(pdfList);
-    datasheetModel_.populateModel(datasheetList);
-    downloadDocumentModel_.populateModel(downloadList);
     firmwareModel_.populateModel(firmwareList);
     controlViewModel_.populateModel(controlViewList);
 
-    setLoading(false);
-    setInitialized(true);
+    setMetaDataInitialized(true);
 }
 
 void ClassDocuments::clearDocuments()
@@ -255,11 +273,11 @@ void ClassDocuments::setLoading(bool loading)
     }
 }
 
-void ClassDocuments::setInitialized(bool initialized)
+void ClassDocuments::setMetaDataInitialized(bool init)
 {
-    if (initialized_ != initialized) {
-        initialized_ = initialized;
-        emit initializedChanged();
+    if (metaDataInitialized_ != init) {
+        metaDataInitialized_ = init;
+        emit metaDataInitializedChanged();
     }
 }
 
@@ -296,6 +314,8 @@ void ClassDocuments::populateDatasheetList(const QString &path, QList<DocumentIt
 
             DocumentItem *di = new DocumentItem(datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
             list.append(di);
+        } else {
+            qCWarning(logCategoryDocumentManager) << "Skipping datasheet with missing information:" << datasheetLine;
         }
     }
 

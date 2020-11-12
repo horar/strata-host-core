@@ -18,12 +18,7 @@ Database::Database(QObject *parent)
 
 Database::~Database()
 {
-    delete sg_replicator_;      // will call stop
-    delete url_endpoint_;
-    delete sg_replicator_configuration_;
-    delete basic_authenticator_;
-
-    delete sg_database_;
+    stop();
 }
 
 bool Database::open(std::string_view db_path, const std::string& db_name)
@@ -103,6 +98,7 @@ void Database::updateChannels()
     bool wasRunning = isRunning_;
     if (isRunning_) {
         sg_replicator_->stop();
+        sg_replicator_->join();
     }
 
     std::vector<std::string> myChannels;
@@ -120,6 +116,10 @@ void Database::updateChannels()
 
 bool Database::getDocument(const std::string& doc_id, std::string& result)
 {
+    if (sg_database_ == nullptr) {
+        return false;
+    }
+
     SGDocument doc(sg_database_, doc_id);
     if (!doc.exist()) {
         return false;
@@ -127,6 +127,26 @@ bool Database::getDocument(const std::string& doc_id, std::string& result)
 
     result = doc.getBody();
     return true;
+}
+
+void Database::stop()
+{
+    if(sg_replicator_ != nullptr) {
+        delete sg_replicator_;      // destructor will call stop and join
+        sg_replicator_ = nullptr;
+        qCDebug(logCategoryHcsDb) << "Replicator stoped.";
+    }
+
+    // delete also these in case we would like to reinit replication through initReplicator()
+    delete url_endpoint_; url_endpoint_ = nullptr;
+    delete sg_replicator_configuration_; sg_replicator_configuration_ = nullptr;
+    delete basic_authenticator_; basic_authenticator_ = nullptr;
+    isRunning_ = false;
+
+    if(sg_database_ != nullptr) {
+        delete sg_database_; sg_database_ = nullptr;
+        qCDebug(logCategoryHcsDb) << "Database closed.";
+    }
 }
 
 bool Database::initReplicator(const std::string& replUrl, const std::string& username, const std::string& password)

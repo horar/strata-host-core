@@ -8,7 +8,6 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 StackLayout {
     id: platformStack
-
     currentIndex: {
         switch (model.view) {
         case "collateral":
@@ -27,12 +26,12 @@ StackLayout {
     property string name: model.name
     property alias controlViewContainer: controlViewContainer
 
-    property bool platformDocumentsInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).initialized;
+    property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
     property bool fullyInitialized: platformStackInitialized &&
                                     userSettingsInitialized &&
-                                    platformDocumentsInitialized
+                                    platformMetaDataInitialized
 
     onFullyInitializedChanged: {
         initialize()
@@ -83,11 +82,6 @@ StackLayout {
         Layout.fillWidth: true
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
-
-        // Commented out to remove OTA features from release v2.5.0
-//        PlatformSettings {
-//            id: platformSettings
-//        }
     }
 
     SGUserSettings {
@@ -98,5 +92,11 @@ StackLayout {
         Component.onCompleted: {
             platformStack.userSettingsInitialized = true
         }
+    }
+
+    SGUserSettings {
+        id: versionSettings
+        classId: platformStack.class_id
+        user: "strata"
     }
 }

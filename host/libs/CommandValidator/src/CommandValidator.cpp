@@ -89,22 +89,60 @@ const rapidjson::SchemaDocument CommandValidator::reqPlatformId_nps_(
 		{
 			"$schema": "http://json-schema.org/draft-04/schema#",
 			"type": "object",
-			"properties": {
-				"name":                { "type": "string" },
-				"verbose_name":        { "type": "string" },
-				"controller_type":     { "type": "integer" },
-				"platform_id":         { "type": "string" },
-				"class_id":            { "type": "string" },
-				"count":               { "type": [ "string", "integer" ] },
-				"board_count":         { "type": "integer" },
-				"platform_id_version": { "type": "string" }
-			},
 			"oneOf": [
 				{
+					"properties": {
+						"name":                { "type": "string" },
+						"verbose_name":        { "type": "string" },
+						"platform_id":         { "type": "string" },
+						"class_id":            { "type": "string" },
+						"count":               { "type": [ "string", "integer" ] },
+						"platform_id_version": { "type": "string" }
+					},
 					"required": [ "name", "platform_id", "class_id", "count", "platform_id_version" ]
 				},
 				{
-					"required": [ "name", "controller_type", "platform_id", "class_id", "board_count" ]
+					"properties": {
+						"name":            { "type": "string" },
+						"controller_type": { "type": "integer" },
+						"platform_id":     { "type": "string" },
+						"class_id":        { "type": "string" },
+						"board_count":     { "type": "integer" }
+					},
+					"required": [ "name", "controller_type", "platform_id", "class_id", "board_count" ],
+					"additionalProperties": false
+				},
+				{
+					"properties": {
+						"name":                   { "type": "string" },
+						"controller_type":        { "type": "integer" },
+						"platform_id":            { "type": "string" },
+						"class_id":               { "type": "string" },
+						"board_count":            { "type": "integer" },
+						"fw_class_id":            { "type": "string"},
+						"controller_platform_id": { "type": "string" },
+						"controller_class_id":    { "type": "string" },
+						"controller_board_count": { "type": "integer" }
+					},
+					"required": [
+						"name", "controller_type", "platform_id", "class_id", "board_count", "fw_class_id",
+						"controller_platform_id", "controller_class_id", "controller_board_count"
+					]
+				},
+				{
+					"properties": {
+						"name":                   { "type": "string" },
+						"controller_type":        { "type": "integer" },
+						"fw_class_id":            { "type": "string"},
+						"controller_platform_id": { "type": "string" },
+						"controller_class_id":    { "type": "string" },
+						"controller_board_count": { "type": "integer" }
+					},
+					"required": [
+						"name", "controller_type", "fw_class_id", "controller_platform_id",
+						"controller_class_id", "controller_board_count"
+					],
+					"additionalProperties": false
 				}
 			]
 		})"
@@ -118,6 +156,8 @@ const rapidjson::SchemaDocument CommandValidator::getFirmwareInfo_nps_(
 			"$schema": "http://json-schema.org/draft-04/schema#",
 			"type": "object",
 			"properties": {
+				"api_version": { "type": "string" },
+				"active":      { "type": "string" },
 				"bootloader": {
 					"oneOf": [
 						{

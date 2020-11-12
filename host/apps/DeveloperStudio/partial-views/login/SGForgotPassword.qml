@@ -114,6 +114,7 @@ SGStrataPopup {
 
                     onClicked: {
                         var reset_info = {username:emailField.text}
+                        submitStatus.currentId = Password.getNextId()
                         Password.password_reset_request(reset_info)
                         alertRect.hide()
                         fieldGrid.visible = false

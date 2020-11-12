@@ -52,6 +52,18 @@ CustomControl {
 
 
     //Control enable
+
+    property var light_sensor_enable: platformInterface.light_sensor.available
+    onLight_sensor_enableChanged: {
+        if(light_sensor_enable === true) {
+            lightSensorEnablePopUp.visible = false
+            content.enabled = true
+        }
+        else {
+            lightSensorEnablePopUp.visible = true
+            content.enabled = false
+        }
+    }
     property var light_ctl_enable_status: platformInterface.light_ctl_enable.status
     onLight_ctl_enable_statusChanged: {
         if(light_ctl_enable_status === true) {
@@ -112,6 +124,39 @@ CustomControl {
         else  {
             startswLabel.enabled = false
             startswLabel.opacity = 0.5
+        }
+    }
+
+    Rectangle {
+        id: lightSensorEnablePopUp
+        width: parent.width
+        height: parent.height
+        color: "#a9a9a9"
+        opacity: 0.8
+        visible: false
+        z: 3
+
+        Rectangle {
+            width: enablePopUpText.contentWidth
+            height: enablePopUpText.contentHeight
+            z: 4
+            anchors.centerIn: parent
+            color: "transparent"
+            Text {
+                id: enablePopUpText
+                z:5
+                anchors.fill:parent
+                font.family: "Helvetica"
+                font.pixelSize: {
+                    if(lightSensorEnablePopUp.width < 500)
+                        return lightSensorEnablePopUp.width/10
+                    else {
+                        return lightSensorEnablePopUp.width/17
+                    }
+                }
+                text:  qsTr("Not Available")
+                color: "white"
+            }
         }
     }
 

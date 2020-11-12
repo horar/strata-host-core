@@ -5,11 +5,11 @@ import QtQml 2.8
   Global container for emitting signals in Javascript
 */
 QtObject {
+
     /*
       General connection signals
     */
-
-    signal connectionStatus(int status)
+    signal connectionStatus(int status, int requestId)
 
     /*
       Authentication signals
@@ -41,7 +41,7 @@ QtObject {
     /*
       Update Profile Signals
     */
-    signal profileUpdateResult(string result)
+    signal profileUpdateResult(string result, var updatedProperties)
 
     /*
       Change Password Signals
@@ -52,13 +52,14 @@ QtObject {
       Get Profile Signals
     */
     signal getProfileResult(string result, var user)
+
     /*
       Signal for changing auth server to test auth server via debug bar
     */
     signal serverChanged()
+
     /*
       Feedback result signals
     */
     signal feedbackResult(string result)
-
 }
