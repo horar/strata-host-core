@@ -226,8 +226,8 @@ Rectangle {
     }
 
     function recompileControlViewQrc () {
-        if (editor.treeModel.url.toString() !== '') {
-            sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
+        if (editor.fileTreeModel.url.toString() !== '') {
+            sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
             rccInitialized = true
         }
     }

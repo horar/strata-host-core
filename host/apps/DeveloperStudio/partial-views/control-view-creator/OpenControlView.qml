@@ -33,7 +33,7 @@ Rectangle {
 
     onUrlChanged: {
         if (url.toString() !== "") {
-            editor.treeModel.url = url
+            editor.fileTreeModel.url = url
         }
     }
 

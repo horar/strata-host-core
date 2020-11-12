@@ -10,7 +10,7 @@ Rectangle {
     enabled: {
         if (modelIndex === toolBarListView.editTab
                 || modelIndex === toolBarListView.viewTab) {
-            if (editor.treeModel.url.toString() === "") {
+            if (editor.fileTreeModel.url.toString() === "") {
                 return false;
             } else if (toolBarListView.currentIndex === toolBarListView.viewTab && modelIndex === toolBarListView.viewTab && viewStack.currentIndex !== 4) {
                 return false;

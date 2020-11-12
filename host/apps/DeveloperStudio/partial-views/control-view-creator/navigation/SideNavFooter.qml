@@ -82,7 +82,7 @@ Item {
 
         iconText: "Build"
         iconSource: "qrc:/sgimages/bolt.svg"
-        enabled: editor.treeModel.url.toString() !== "" && !toolBarListView.recompiling
+        enabled: editor.fileTreeModel.url.toString() !== "" && !toolBarListView.recompiling
         visible: !toolBarListView.recompiling
         color: "transparent"
 
