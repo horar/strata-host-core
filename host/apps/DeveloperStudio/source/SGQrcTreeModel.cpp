@@ -25,8 +25,6 @@ SGQrcTreeModel::SGQrcTreeModel(QObject *parent) : QAbstractItemModel(parent)
     connect(fsWatcher_.get(), &QFileSystemWatcher::directoryChanged, this, &SGQrcTreeModel::directoryStructureChanged);
     connect(fsWatcher_.get(), &QFileSystemWatcher::fileChanged, this, &SGQrcTreeModel::projectFilesModified);
     connect(this, &SGQrcTreeModel::finishedReadingQrc, this, &SGQrcTreeModel::startPopulating);
-    connect(this, &SGQrcTreeModel::fileAdded, this, &SGQrcTreeModel::handleExternalFileAdded);
-    connect(this, &SGQrcTreeModel::fileDeleted, this, &SGQrcTreeModel::handleExternalFileDeleted);
 }
 
 SGQrcTreeModel::~SGQrcTreeModel()
@@ -297,10 +295,11 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool 
 
     // This handles the case where parentNode is the .qrc file.
     QString parentDir = parentNode->isDir() ? SGUtilsCpp::urlToLocalFile(parentNode->filepath()) : SGUtilsCpp::urlToLocalFile(projectDir_);
-    QFileInfo fileInfo(SGUtilsCpp::urlToLocalFile(fileUrl));
+    QString filePath = SGUtilsCpp::urlToLocalFile(fileUrl);
+    QFileInfo fileInfo(filePath);
 
     // If the file is not a child of the parent node, then we want to copy the file to the project's location
-    if (! SGUtilsCpp::fileIsChildOfDir(fileInfo.filePath(), parentDir)) {
+    if (! SGUtilsCpp::fileIsChildOfDir(filePath, parentDir)) {
         QFileInfo outputFileLocation(SGUtilsCpp::joinFilePath(parentDir, fileInfo.fileName()));
         QString ext = outputFileLocation.completeSuffix();
         QString filenameWithoutExt = outputFileLocation.baseName();
@@ -321,7 +320,7 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool 
 
     bool success = false;
 
-    if (!pathsInTree_.contains(SGUtilsCpp::pathToUrl(fileInfo.filePath()))) {
+    if (!pathsInTree_.contains(QUrl::fromLocalFile(fileInfo.filePath()))) {
         beginInsertRows(parent, position, position);
         QString uid = QUuid::createUuid().toString();
         SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, fileInfo, fileInfo.isDir(), inQrc, uid);
@@ -342,11 +341,11 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool 
         while (subItr.hasNext()) {
             subItr.next();
             QFileInfo subFi(subItr.fileInfo());
-            if (!pathsInTree_.contains(SGUtilsCpp::pathToUrl(subFi.filePath()))) {
+            if (!pathsInTree_.contains(QUrl::fromLocalFile(subFi.filePath()))) {
                 if (subFi.isDir()) {
                     fsWatcher_->addPath(fileInfo.filePath());
                 }
-                insertChild(SGUtilsCpp::pathToUrl(subFi.filePath()), -1, inQrc, index(position, 0, parent));
+                insertChild(QUrl::fromLocalFile(subFi.filePath()), -1, inQrc, index(position, 0, parent));
             }
         }
     } else if (inQrc) {
@@ -398,7 +397,7 @@ void SGQrcTreeModel::setUrl(QUrl url)
     if (url_ != url) {
         url_ = url;
         QDir dir(QFileInfo(SGUtilsCpp::urlToLocalFile(url)).dir());
-        projectDir_ = SGUtilsCpp::pathToUrl(dir.path());
+        projectDir_ = QUrl::fromLocalFile(dir.path());
         emit urlChanged();
         emit projectDirectoryChanged();
     }
@@ -640,7 +639,7 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
             fsWatcher_->addPath(info.filePath());
             recursiveDirSearch(dirNode, QDir(info.filePath()), qrcItems, depth + 1);
         } else {
-            if (SGUtilsCpp::pathToUrl(info.filePath()) == url_) {
+            if (QUrl::fromLocalFile(info.filePath()) == url_) {
                 continue;
             }
             SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()), uid);
@@ -722,7 +721,7 @@ void SGQrcTreeModel::childrenChanged(const QModelIndex &index, int role) {
  ***/
 void SGQrcTreeModel::projectFilesModified(const QString &path)
 {
-    const QUrl url = SGUtilsCpp::pathToUrl(path);
+    const QUrl url = QUrl::fromLocalFile(path);
     QHashIterator<QString, SGQrcTreeNode*> itr(uidMap_);
     SGQrcTreeNode *deletedNode = nullptr;
 
@@ -756,7 +755,7 @@ void SGQrcTreeModel::directoryStructureChanged(const QString &path)
     QHashIterator<QString, SGQrcTreeNode*> hashItr(uidMap_);
     QDirIterator dirItr(path, QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files | QDir::Dirs);
     SGQrcTreeNode *parentNode = nullptr;
-    const QUrl dirUrl = SGUtilsCpp::pathToUrl(path);
+    const QUrl dirUrl = QUrl::fromLocalFile(path);
 
     if (!parentNode && dirUrl == projectDir_) {
         parentNode = root_;
@@ -805,7 +804,9 @@ void SGQrcTreeModel::directoryStructureChanged(const QString &path)
                 fsWatcher_->addPaths(paths);
             }
 
-            emit fileDeleted(node->uid());
+            QString uid = node->uid();
+            handleExternalFileDeleted(uid);
+            emit fileDeleted(uid);
         }
     }
 
@@ -813,23 +814,25 @@ void SGQrcTreeModel::directoryStructureChanged(const QString &path)
         dirItr.next();
 
         QFileInfo fi(dirItr.fileInfo());
-        QUrl parentUrl = SGUtilsCpp::pathToUrl(fi.dir().absolutePath());
+        QUrl parentUrl = QUrl::fromLocalFile(fi.dir().absolutePath());
         if (parentUrl == projectDir_) {
             parentUrl = url_;
         }
-        QUrl fileUrl = SGUtilsCpp::pathToUrl(fi.filePath());
+        QUrl fileUrl = QUrl::fromLocalFile(fi.filePath());
 
         if (fileUrl == root_->filepath()) {
             continue;
         }
 
-        // If the child filepaths does not con
+        // If the paths in the tree does not contain the fileUrl
         if (!pathsInTree_.contains(fileUrl)) {
             // If we have reached this, then the current file is new. Let the projectFilesModified handle the modification of existing files.
             // We only want to watch for file modifications if the file is open
             if (fi.isDir()) {
                 fsWatcher_->addPath(fi.filePath());
             }
+
+            handleExternalFileAdded(fileUrl, parentUrl);
             emit fileAdded(fileUrl, parentUrl);
         }
     }

@@ -27,8 +27,7 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isD
     filename_ = info.fileName();
     filetype_ = info.suffix();
 
-    filepath_.setScheme("file");
-    filepath_.setPath(info.filePath());
+    filepath_ = QUrl::fromLocalFile(info.filePath());
     children_ = QVector<SGQrcTreeNode*>();
     editing_ = false;
 }

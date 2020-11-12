@@ -230,6 +230,13 @@ private slots:
      */
     void directoryStructureChanged(const QString &path);
 
+private:
+    void clear(bool emitSignals = true);
+    void readQrcFile();
+    bool createQrcXmlDocument(const QByteArray &fileText);
+    void createModel();
+    void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
+    QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
     /**
      * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program
      * @param path The path of the file/directory added
@@ -242,13 +249,6 @@ private slots:
      * @param uid The UID of the file deleted
      */
     void handleExternalFileDeleted(const QString uid);
-private:
-    void clear(bool emitSignals = true);
-    void readQrcFile();
-    bool createQrcXmlDocument(const QByteArray &fileText);
-    void createModel();
-    void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
-    QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
     void save();
 
     SGQrcTreeNode *root_ = nullptr;
