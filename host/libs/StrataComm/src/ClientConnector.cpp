@@ -22,7 +22,6 @@ bool ClientConnector::initilize() {
     readSocketNotifier_ = new QSocketNotifier(connector_->getFileDescriptor(), QSocketNotifier::Type::Read, this);
     connect(readSocketNotifier_, &QSocketNotifier::activated, this, &ClientConnector::readNewMessages);
 
-    // need to flush the receive buffer to make the thing trigger??
     readMessages();
 
     return true;
@@ -31,19 +30,11 @@ bool ClientConnector::initilize() {
 void ClientConnector::readNewMessages(/*int socket*/) {
     qCDebug(logCategoryStrataClientConnector) << "message received.";
     readSocketNotifier_->setEnabled(false);
-    std::string message;
-    for(;;) {
-        if (connector_->read(message) == false) {
-            break;
-        }
-        qCDebug(logCategoryStrataClientConnector) << "message received. Message:" << QString::fromStdString(message);
-        emit newMessageRecived(QString::fromStdString(message));
-    }
+    readMessages();
     readSocketNotifier_->setEnabled(true);
 }
 
 void ClientConnector::readMessages() {
-    qCDebug(logCategoryStrataClientConnector) << "reading all messages.";
     std::string message;
     for(;;) {
         // if (connector_->read(message, strata::connector::ReadMode::BLOCKING) == false) {
@@ -51,6 +42,7 @@ void ClientConnector::readMessages() {
             break;
         }
         qCDebug(logCategoryStrataClientConnector) << QString::fromStdString(message);
+        emit newMessageRecived(QString::fromStdString(message));
     }
 }
 

@@ -34,4 +34,4 @@ private:
     std::string serverAddress_;
 };
 
-}   // namespace strata::strataComm 
+}   // namespace strata::strataComm
