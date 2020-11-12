@@ -8,34 +8,49 @@ import sys
 import time 
 import json
 import zmq
+import signal
 import os
+from subprocess import Popen, check_output
 from shutil import copy2
 from GUIInterface.StrataUI import *
 
 hcs_endpoint = "tcp://127.0.0.1:5563"
+strataProcess = None
 
 class OpenControlView(unittest.TestCase):
     '''
-    Test opening a control view that via OTA
+    Test opening a control view via OTA
     '''
 
     def setUp(self):
-        rccFilePath = (os.getenv("SDSRootDir") + "/views-logic-gate.rcc").replace('\\', '/')
-        if (os.path.exists(rccFilePath)):
-            os.remove(rccFilePath)
+        global strataProcess
+        strataPath = os.path.abspath(os.getenv("SDSRootDir") + "/Strata Developer Studio.exe")
+        strataProcess = Popen(strataPath)
+        strata.bindToStrata(hcs_endpoint)
+
+        Common.awaitStrata()
+
         ui = StrataUI()
         ui.SetToLoginTab()
 
     def tearDown(self) -> None:
         rccFilePath = (os.getenv("SDSRootDir") + "/views-logic-gate.rcc").replace('\\', '/')
-        currentDir = os.path.dirname(os.path.realpath(__file__))
-        copy2(os.path.abspath(currentDir + "/../views-logic-gate.rcc"), rccFilePath)
+        if (not os.path.exists(rccFilePath)):
+            currentDir = os.path.dirname(os.path.realpath(__file__))
+            copy2(os.path.abspath(currentDir + "/../views-logic-gate.rcc"), rccFilePath)
         ui = StrataUI()
         ui.CloseControlView()
         Logout(ui)
         strata.closePlatforms()
+        os.kill(strataProcess.pid, signal.SIGTERM)
+        os.system("taskkill /f /im  hcs.exe")
 
-    def test_open_ota_control_view(self):
+    ##################### TESTS #####################
+
+    def test_open_1_static(self):
+        '''
+        Tests opening a static version of a control view when no OTA control views are installed
+        '''
         args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()
         # assert on login page
@@ -46,28 +61,56 @@ class OpenControlView(unittest.TestCase):
         time.sleep(0.5)
         self.assertTrue(ui.OnPlatformView())
 
-        strata.initPlatformList([
-            {
-                "filters": [
-                    "automotive",
-                    "industrial"
-                ],
-                "available": {
-                    "control":True,
-                    "documents":False,
-                    "order":False,
-                    "unlisted":False
-                },
-                "class_id":"201",
-                "description":"Test Platform",
-                "image":"",
-                "opn":"STR-TEST-PLATFORM",
-                "verbose_name":"Test Platform",
-                "version":"1.0.0"
-            }
-        ])
+        # Send the platform list notification
+        strata.initPlatformList(self.sample_platform_list())
 
         time.sleep(3)
+
+        # Connect the platform
+        strata.openPlatform("201")
+        self.assertTrue(ui.ConnectedPlatforms() > 0)
+        time.sleep(1)
+
+        # Open the control view
+        ui.OpenControlView()
+        time.sleep(0.7)
+        docs = self.sample_platform_docs("201")
+
+        # Send the platform documents command with no control views
+        strata.platformDocumentsMessage(classId="201",
+            documents=docs["documents"],
+            datasheets=docs["datasheets"],
+            firmwares=docs["firmwares"],
+            controlViews=[])
+
+        time.sleep(1)
+        self.assertTrue(ui.OnControlView())
+        
+
+    def test_open_2_ota_control_view(self):
+        '''
+        Tests opening an ota control view via "downloading" it
+        '''
+
+        # Remove the static rcc
+        self.remove_static_rcc()
+        args = Common.getCommandLineArguments(sys.argv)
+
+        ui = StrataUI()
+        # assert on login page
+        self.assertIsNotNone(ui.OnLoginScreen())
+
+        Login(ui, args.username, args.password, self)
+
+        time.sleep(0.5)
+        self.assertTrue(ui.OnPlatformView())
+
+        # Send platform list notification
+        strata.initPlatformList(self.sample_platform_list())
+
+        time.sleep(3)
+
+        # Connect the platform
         strata.openPlatform("201")
         self.assertTrue(ui.ConnectedPlatforms() > 0)
         time.sleep(1)
@@ -78,9 +121,11 @@ class OpenControlView(unittest.TestCase):
         outputPath += "/ON Semiconductor/Host Controller Service/DEV/documents/control_views/{}".format(docs["control_view"][1]["uri"])
         outputPath = outputPath.replace('\\', '/')
 
+        # Remove the the previously downloaded rcc file if it exists
         if (os.path.exists(outputPath)):
             os.remove(outputPath)
 
+        # Open the control view
         ui.OpenControlView()
         time.sleep(0.7)
         strata.platformDocumentsMessage(classId="201",
@@ -96,7 +141,15 @@ class OpenControlView(unittest.TestCase):
 
         self.assertTrue(ui.OnControlView())
 
-    def test_open_previously_downloaded_control_view(self):
+
+    def test_open_3_previously_downloaded_control_view(self):
+        '''
+        This tests occurs after the test_open_ota_control_view test. At this point, the rcc file is located in the
+        correct appdata path and we have downloaded it. For this test, we want to make sure that we are able to load the downloaded
+        control view without re-downloading it.
+        '''
+        self.remove_static_rcc()
+
         args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()
         # assert on login page
@@ -108,7 +161,47 @@ class OpenControlView(unittest.TestCase):
         self.assertTrue(ui.OnPlatformView())
 
         docs = self.sample_platform_docs("201")
-        strata.initPlatformList([
+        downloadedPath = os.getenv("APPDATA")
+        downloadedPath += "/ON Semiconductor/Host Controller Service/DEV/documents/control_views/{}".format(docs["control_view"][1]["uri"])
+        downloadedPath = downloadedPath.replace('\\', '/')
+
+        # Set the filepath to the previously downloaded path 
+        docs["control_view"][1]["filepath"] = downloadedPath
+
+        # Send the platform list notification
+        strata.initPlatformList(self.sample_platform_list())
+
+        time.sleep(3)
+
+        # Connect the platform
+        strata.openPlatform("201")
+        self.assertTrue(ui.ConnectedPlatforms() > 0)
+        time.sleep(1)
+
+        # Open the control view
+        ui.OpenControlView()
+        time.sleep(0.7)
+
+        # Send the platform documents notification
+        strata.platformDocumentsMessage(classId="201",
+            documents=docs["documents"],
+            datasheets=docs["datasheets"],
+            firmwares=docs["firmwares"],
+            controlViews=docs["control_view"])
+
+        time.sleep(1)
+        self.assertTrue(ui.OnControlView())
+
+
+    ##################### UTILITIES #####################
+
+    def remove_static_rcc(self):
+        rccFilePath = (os.getenv("SDSRootDir") + "/views-logic-gate.rcc").replace('\\', '/')
+        if (os.path.exists(rccFilePath)):
+            os.remove(rccFilePath)
+
+    def sample_platform_list(self):
+        return [
             {
                 "filters": [
                     "automotive",
@@ -127,23 +220,7 @@ class OpenControlView(unittest.TestCase):
                 "verbose_name":"Test Platform",
                 "version":"1.0.0"
             }
-        ])
-
-        time.sleep(3)
-        strata.openPlatform("201")
-        self.assertTrue(ui.ConnectedPlatforms() > 0)
-        time.sleep(1)
-
-        ui.OpenControlView()
-        time.sleep(0.7)
-        strata.platformDocumentsMessage(classId="201",
-            documents=docs["documents"],
-            datasheets=docs["datasheets"],
-            firmwares=docs["firmwares"],
-            controlViews=docs["control_view"])
-
-        time.sleep(1)
-        self.assertTrue(ui.OnControlView())
+        ]
 
 
     def sample_platform_docs(self, classId):

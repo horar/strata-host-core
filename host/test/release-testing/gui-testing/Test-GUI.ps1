@@ -52,10 +52,9 @@ function Test-Gui()
     Stop-HCS
 
     Write-Host "TEST GROUP 0: OTA Strata Tests"
-    Remove-Item -Path "$Env:AppData\ON Semiconductor\Host Controller Service\DEV" -Recurse
+    Remove-Item -Path "$Env:AppData\ON Semiconductor\Host Controller Service\DEV" -Recurse -Force
 
-    Start-SDSAndWait
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $OTATests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --sdsRootDir `"$SDSRootDir`" --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $OTATests --username $Username --password $Password --sdsRootDir `"$SDSRootDir`" --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
     Stop-SDS
     Stop-HCS
@@ -65,7 +64,7 @@ function Test-Gui()
     #run basic tests
     Start-SDSAndWait
     Write-Host "Starting test suite"
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $BasicTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $BasicTests --username $Username --password $Password --awaitStrata --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
     Stop-SDS
     Stop-HCS
@@ -81,7 +80,7 @@ function Test-Gui()
 
     Start-SDSAndWait
 
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $NoNetworkTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $NoNetworkTests --username $Username --password $Password --awaitStrata --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
 #    Stop-Process -Name "Strata Developer Studio" -Force
 #    Stop-Process -Name "hcs" -Force
@@ -97,7 +96,7 @@ function Test-Gui()
     Write-Host "`n`nTEST GROUP 3: Strata After Logging In and Restarting"
 
     Start-SDSAndWait
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMainLoginTestPre --username $Username --password $Password" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMainLoginTestPre --username $Username --password $Password --awaitStrata" -NoNewWindow -Wait
 
     Stop-SDS
     Stop-HCS
@@ -105,7 +104,7 @@ function Test-Gui()
     #Test for Strata automatically going to the platform view
     Write-Host "Starting test suite"
     Start-SDSAndWait
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $StrataRestartTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $StrataRestartTests --username $Username --password $Password --awaitStrata --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
     Stop-SDS
     Stop-HCS

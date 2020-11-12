@@ -16,7 +16,7 @@ import Common
 from GUITestResult import GUITestResult
 
 if __name__ == "__main__":
-
+    
     args = Common.getCommandLineArguments(sys.argv)
     if args.verbose:
         with Common.TestLogger() as logger:
@@ -31,7 +31,8 @@ if __name__ == "__main__":
     if args.sdsRootDir:
         os.environ["SDSRootDir"] = args.sdsRootDir
         
-    Common.awaitStrata()
+    if args.awaitStrata:
+        Common.awaitStrata()
 
     tests = unittest.defaultTestLoader.loadTestsFromNames(args.testNames)
     runner = unittest.TextTestRunner(verbosity=2, descriptions=True, resultclass= GUITestResult)
