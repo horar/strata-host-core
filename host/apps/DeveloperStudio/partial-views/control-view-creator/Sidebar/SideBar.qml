@@ -53,8 +53,6 @@ Rectangle {
                             }
                             treeView.selectItem(index)
                             treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
-                        } else {
-                            openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
                         }
                     }
 
