@@ -8,15 +8,6 @@ Item {
     id: itemContainer
     anchors.verticalCenter: parent.verticalCenter
 
-    Component.onCompleted: {
-        if (model.filename === "Control.qml") {
-            openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-            treeView.selection.clearCurrentIndex();
-            treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-            treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
-        }
-    }
-
     Text {
         id: itemFilename
         text: styleData.value
@@ -137,9 +128,7 @@ Item {
                     contextMenu.item.popup()
                 } else if (mouse.button === Qt.LeftButton) {
                     if (!model.isDir) {
-                        treeView.selection.clearCurrentIndex();
-                        treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                        treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                        treeView.selectItem(styleData.index)
                         if (openFilesModel.hasTab(model.uid)) {
                             openFilesModel.currentId = model.uid
                         } else {
@@ -156,9 +145,12 @@ Item {
 
         onCurrentIndexChanged: {
             if (visible && openFilesModel.currentId === model.uid) {
-                treeView.selection.clearCurrentIndex();
-                treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                treeView.selectItem(styleData.index);
+            }
+
+            if (openFilesModel.currentId === "" && treeView.selection.currentIndex.valid) {
+                // No files are selected
+                treeView.selection.clearCurrentIndex()
             }
         }
     }

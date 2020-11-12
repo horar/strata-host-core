@@ -31,6 +31,55 @@ Rectangle {
                 onRootIndexChanged: {
                     treeModel.rootIndex = rootIndex
                 }
+                
+                function selectItem(index) {
+                    treeView.selection.clearCurrentIndex();
+                    treeView.selection.select(index, ItemSelectionModel.Rows);
+                    treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
+                }
+
+                Connections {
+                    target: treeModel
+
+                    // When a row is inserted, we want to focus on that row
+                    onRowsInserted: {
+                        let index = treeModel.index(first, 0, parent);
+
+                        // Only set editing to true if we have created a new file and the filename is empty
+                        let node = treeModel.getNode(index);
+                        if (node.filename === "") {
+                            if (!treeView.isExpanded(parent)) {
+                                treeView.expand(parent)
+                            }
+                            treeView.selectItem(index)
+                            treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
+                        } else {
+                            openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
+                        }
+                    }
+
+                    onModelReset: {
+                        // Find the Control.qml file and select it
+                        for (let i = 0; i < treeModel.root.childCount(); i++) {
+                            if (treeModel.root.childNode(i).filename === "Control.qml") {
+                                let idx = treeModel.index(i);
+                                let node = treeModel.root.childNode(i);
+
+                                openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
+                                // Need to use callLater here because the model indices haven't been set yet
+                                Qt.callLater(treeView.selectItem, idx);
+                                return;
+                            }
+                        }
+
+                        // TODO in CS-1288: Handle this situation when a Control.qml is not found in the top level
+                        console.error("Project does not have control.qml at the top level")
+                    }
+
+                    onFileDeleted: {
+                        openFilesModel.closeTab(uid)
+                    }
+                }
 
                 selection: ItemSelectionModel {
                     model: treeModel
@@ -51,32 +100,6 @@ Rectangle {
                     title: treeModel.root ? treeModel.root.filename : "Project Files"
                     role: "filename"
                     width: 250
-                }
-            }
-
-            Connections {
-                target: treeModel
-
-                // When a row is inserted, we want to focus on that row
-                onRowsInserted: {
-                    let index = treeModel.index(first, 0, parent);
-
-                    // Only set editing to true if we have created a new file and the filename is empty
-                    let node = treeModel.getNode(index);
-                    if (node.filename === "") {
-                        if (!treeView.isExpanded(parent)) {
-                            treeView.expand(parent)
-                        }
-
-                        treeView.selection.clearCurrentIndex();
-                        treeView.selection.select(index, ItemSelectionModel.Rows);
-                        treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
-                        treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
-                    }
-                }
-
-                onFileDeleted: {
-                    openFilesModel.closeTab(uid)
                 }
             }
         }
