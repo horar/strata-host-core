@@ -15,6 +15,7 @@ Rectangle {
 
     property bool isConfirmCloseOpen: false
     property bool rccInitialized: false
+    property bool recompileRequested: false
     property var debugPlatform: ({
       deviceId: Constants.NULL_DEVICE_ID,
       classId: ""
@@ -227,8 +228,8 @@ Rectangle {
 
     function recompileControlViewQrc () {
         if (editor.treeModel.url.toString() !== '') {
+            recompileRequested = true
             sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
-            rccInitialized = true
         }
     }
 
