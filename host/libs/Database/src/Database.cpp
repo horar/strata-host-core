@@ -9,6 +9,10 @@ bool Database::open() {
     return database_->open();
 }
 
+bool Database::close() {
+    return database_->close();
+}
+
 bool Database::save(CouchbaseDocument *doc) {
     return database_->save(doc);
 }

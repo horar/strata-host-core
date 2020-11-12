@@ -21,6 +21,8 @@ class DatabaseAccess
     friend class DatabaseManager;
 
 public:
+    bool close();
+
     QString getChannelAccess();
 
     bool write(CouchbaseDocument *doc);

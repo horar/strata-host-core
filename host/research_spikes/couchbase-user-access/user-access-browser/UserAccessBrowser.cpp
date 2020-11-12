@@ -80,4 +80,7 @@ void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsern
 
 void UserAccessBrowser::logoutAndStopReplication() {
     DB_->stopReplicator();
+    DB_->close();
+    strataLoginUsername_ = "";
+    endpointURL_ = "";
 }

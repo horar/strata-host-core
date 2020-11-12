@@ -20,6 +20,14 @@ DatabaseAccess* DatabaseManager::open(const QString &channel_access, const QStri
     return nullptr;
 }
 
+bool DatabaseAccess::close() {
+    if (!database_) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Cannot close database (database does not exist).";
+        return false;
+    }
+    return database_->close();
+}
+
 bool DatabaseAccess::write(CouchbaseDocument *doc) {
     // Tag 'channels' field
     doc->tagChannelField(channel_access_.toStdString());

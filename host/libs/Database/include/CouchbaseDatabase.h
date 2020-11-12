@@ -41,6 +41,8 @@ public:
      */
     bool open();
 
+    bool close();
+
     bool save(CouchbaseDocument *doc);
 
     bool deleteDoc(const std::string &id);

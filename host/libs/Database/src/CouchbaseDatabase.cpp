@@ -58,6 +58,20 @@ bool CouchbaseDatabase::open() {
     return true;
 }
 
+bool CouchbaseDatabase::close() {
+    if (!database_) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Cannot close database (database not initialized).";
+        return false;
+    }
+    try {
+        database_->close();
+    } catch (CBLError err) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem closing database. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        return false;
+    }
+    return true;
+}
+
 bool CouchbaseDatabase::save(CouchbaseDocument *doc) {
     if (!database_) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database, verify database is valid and open.";
