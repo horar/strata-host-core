@@ -13,7 +13,6 @@ SGQrcTreeNode::SGQrcTreeNode(QObject *parent) : QObject(parent)
     parent_ = nullptr;
     editing_ = false;
     children_ = QVector<SGQrcTreeNode*>();
-    md5_ = QByteArray();
     filename_ = QString();
     filepath_ = QUrl();
 }
@@ -32,14 +31,12 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isD
     filepath_.setPath(info.filePath());
     children_ = QVector<SGQrcTreeNode*>();
     editing_ = false;
-    md5_ = QByteArray();
 }
 
 SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, QString uid, QObject *parent) : QObject(parent), parent_(parentNode), isDir_(isDir), uid_(uid)
 {
     inQrc_ = false;
     children_ = QVector<SGQrcTreeNode*>();
-    md5_ = QByteArray();
     filename_ = QString();
     filepath_ = QUrl();
 }
@@ -107,11 +104,6 @@ bool SGQrcTreeNode::editing() const
     return editing_;
 }
 
-QByteArray SGQrcTreeNode::md5() const
-{
-    return md5_;
-}
-
 QString SGQrcTreeNode::uid() const
 {
     return uid_;
@@ -169,15 +161,6 @@ bool SGQrcTreeNode::setEditing(bool editing)
 {
     if (editing_ != editing) {
         editing_ = editing;
-        return true;
-    }
-    return false;
-}
-
-bool SGQrcTreeNode::setMd5(QByteArray md5)
-{
-    if (md5_ != md5) {
-        md5_ = md5;
         return true;
     }
     return false;

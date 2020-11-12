@@ -28,6 +28,10 @@ Rectangle {
                 width: treeViewContainer.width
                 height: treeViewContainer.height
 
+                onRootIndexChanged: {
+                    treeModel.rootIndex = rootIndex
+                }
+
                 selection: ItemSelectionModel {
                     model: treeModel
                 }
@@ -57,30 +61,22 @@ Rectangle {
                 onRowsInserted: {
                     let index = treeModel.index(first, 0, parent);
 
-                    if (!treeView.isExpanded(parent)) {
-                        treeView.expand(parent)
-                    }
-
-                    treeView.selection.clearCurrentIndex();
-                    treeView.selection.select(index, ItemSelectionModel.Rows);
-                    treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
                     // Only set editing to true if we have created a new file and the filename is empty
                     let node = treeModel.getNode(index);
                     if (node.filename === "") {
+                        if (!treeView.isExpanded(parent)) {
+                            treeView.expand(parent)
+                        }
+
+                        treeView.selection.clearCurrentIndex();
+                        treeView.selection.select(index, ItemSelectionModel.Rows);
+                        treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
                         treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
                     }
                 }
 
-                onFileAdded: {
-                    if (parentPath === treeModel.projectDirectory) {
-                        for (let i = 0; i < treeModel.root.childNodes.count; i++) {
-                            if (treeModel.root.childNodes[i].filepath === path) {
-                                // Don't add the file because it already exists
-                                return;
-                            }
-                        }
-                        treeModel.insertChild(path, -1, false, treeView.rootIndex);
-                    }
+                onFileDeleted: {
+                    openFilesModel.closeTab(uid)
                 }
             }
         }

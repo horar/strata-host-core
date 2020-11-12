@@ -19,7 +19,6 @@ class SGQrcTreeNode : public QObject
     Q_PROPERTY(QString uid READ uid)
     Q_PROPERTY(QVector<SGQrcTreeNode*> childNodes READ children)
     Q_PROPERTY(bool editing READ editing)
-    Q_PROPERTY(QByteArray md5 READ md5)
 public:
     explicit SGQrcTreeNode(QObject *parent = nullptr);
     SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, QString uid, QObject *parent = nullptr);
@@ -92,11 +91,6 @@ public:
      */
     bool editing() const;
 
-    /**
-     * @brief md5 Returns the md5 of the file
-     * @return Returns the md5 of the file
-     */
-    QByteArray md5() const;
 
     // SETTERS
 
@@ -143,12 +137,6 @@ public:
      */
     bool setEditing(bool editing);
 
-    /**
-     * @brief setMd5 Sets the md5 of the file
-     * @param md5 The md5 to set it to.
-     * @return Returns true if changed, false otherwise.
-     */
-    bool setMd5(QByteArray md5);
 
     /***
      * NODE UTILITIES
@@ -209,7 +197,6 @@ private:
     bool inQrc_;
     QString uid_;
     bool editing_;
-    QByteArray md5_;
 };
 
 Q_DECLARE_METATYPE(SGQrcTreeNode*)

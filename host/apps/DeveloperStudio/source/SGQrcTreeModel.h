@@ -19,6 +19,7 @@ class SGQrcTreeModel : public QAbstractItemModel
     Q_PROPERTY(SGQrcTreeNode* root READ root NOTIFY rootChanged)
     Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
     Q_PROPERTY(QVector<SGQrcTreeNode*> childNodes READ childNodes)
+    Q_PROPERTY(QModelIndex rootIndex READ rootIndex WRITE setRootIndex)
 public:
     explicit SGQrcTreeModel(QObject *parent = nullptr);
     ~SGQrcTreeModel();
@@ -116,6 +117,18 @@ public:
     // Model Utilities
 
     /**
+     * @brief rootIndex Gets the root index
+     * @return Returns the QModelIndex for the root
+     */
+    QModelIndex rootIndex() const;
+
+    /**
+     * @brief setRootIndex Sets the root index
+     * @param index The root index to set
+     */
+    void setRootIndex(const QModelIndex &index);
+
+    /**
      * @brief url Returns the url to the .qrc file
      * @return The url to the .qrc file
      */
@@ -156,22 +169,6 @@ public:
     Q_INVOKABLE bool deleteFile(const int row, const QModelIndex &parent = QModelIndex());
 
     /**
-     * @brief handleExternalRenamed Used for when a file is renamed on the file system. Changes the filepath, filename, and updates the qrc.
-     * @param index The index of the file in the tree
-     * @param oldPath The old filepath
-     * @param newPath The new filepath
-     * @return Returns true if successful, false otherwise.
-     */
-    Q_INVOKABLE bool handleExternalRename(const QModelIndex &index, const QUrl &oldPath, const QUrl &newPath);
-
-    /**
-     * @brief getMd5 Gets the md5 checksum for a file
-     * @param filepath The filepath to the file
-     * @return Returns the md5 QByteArray
-     */
-    Q_INVOKABLE QByteArray getMd5(const QString &filepath);
-
-    /**
      * @brief stopWatchingPath Removes the `path` from internal QFileSystemWatcher
      * @param path The path to the file or directory
      */
@@ -204,8 +201,6 @@ signals:
     void fileDeleted(const QString uid);
     // This signal is emitted when a file is added to the project.
     void fileAdded(const QUrl path, const QUrl parentPath);
-    // This signal is emitted when a file is renamed
-    void fileRenamed(const QUrl oldPath, const QUrl newPath);
 
 
     /***
@@ -234,12 +229,26 @@ private slots:
      * @param path The path of the directory that changed.
      */
     void directoryStructureChanged(const QString &path);
+
+    /**
+     * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program
+     * @param path The path of the file/directory added
+     * @param parentPath The path of the parent that is added
+     */
+    void handleExternalFileAdded(const QUrl path, const QUrl parentPath);
+
+    /**
+     * @brief handleExternalFileDeleted Handles the situation when a file is deleted externally to the program
+     * @param uid The UID of the file deleted
+     */
+    void handleExternalFileDeleted(const QString uid);
 private:
     void clear(bool emitSignals = true);
     void readQrcFile();
     bool createQrcXmlDocument(const QByteArray &fileText);
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
+    QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
     void save();
 
     SGQrcTreeNode *root_ = nullptr;
@@ -247,6 +256,8 @@ private:
     QUrl projectDir_;
     QDomDocument qrcDoc_;
     QHash<QString, SGQrcTreeNode*> uidMap_;
+    QSet<QUrl> pathsInTree_;
     QSet<QString> qrcItems_;
-    QFileSystemWatcher* fsWatcher_;
+    std::unique_ptr<QFileSystemWatcher> fsWatcher_;
+    QModelIndex rootIndex_;
 };

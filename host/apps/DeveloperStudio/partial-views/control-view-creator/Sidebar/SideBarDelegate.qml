@@ -71,7 +71,6 @@ Item {
             model.filepath = SGUtilsCpp.pathToUrl(path);
             if (!model.isDir) {
                 model.filetype = SGUtilsCpp.fileSuffix(text)
-                model.md5 = treeModel.getMd5(path);
                 if (!model.inQrc) {
                     treeModel.addToQrc(styleData.index);
                 }
@@ -135,9 +134,6 @@ Item {
         onClicked: {
             if (model.filename !== "") {
                 if (mouse.button === Qt.RightButton) {
-                    treeView.selection.clearCurrentIndex();
-                    treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                    treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
                     contextMenu.item.popup()
                 } else if (mouse.button === Qt.LeftButton) {
                     if (!model.isDir) {
@@ -153,7 +149,6 @@ Item {
                 }
             }
         }
-
     }
 
     Connections {
@@ -164,46 +159,6 @@ Item {
                 treeView.selection.clearCurrentIndex();
                 treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
                 treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
-            }
-        }
-    }
-
-    Connections {
-        target: treeModel
-
-        onFileChanged: {
-            if (model && model.filepath === path) {
-                // Refresh text editor if it is open
-                model.md5 = treeModel.getMd5(SGUtilsCpp.urlToLocalFile(path))
-            }
-        }
-
-        onFileDeleted: {
-            if (model && model.uid === uid) {
-                if (!model.isDir) {
-                    openFilesModel.closeTab(model.uid)
-                }
-                treeModel.removeFromQrc(styleData.index)
-                treeModel.removeRows(model.row, 1, styleData.index.parent)
-                treeModel.startSave();
-            }
-        }
-
-        onFileAdded: {
-            if (model && model.filepath === parentPath) {
-                for (let i = 0; i < model.childNodes.count; i++) {
-                    if (model.childNodes[i].filepath === path) {
-                        // Don't add the file because it already exists
-                        return;
-                    }
-                }
-                treeModel.insertChild(path, -1, false, styleData.index);
-            }
-        }
-
-        onFileRenamed: {
-            if (model && model.filepath === oldPath) {
-                treeModel.handleExternalRename(styleData.index, oldPath, newPath);
             }
         }
     }
