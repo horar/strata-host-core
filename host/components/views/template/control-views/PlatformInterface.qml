@@ -2,7 +2,7 @@ import QtQuick 2.12
 
 import tech.strata.common 1.0
 
-PlatformInterface {
+PlatformInterfaceBase {
     id: platformInterface
 
     // PlatformInterface contains the following built-in functions:

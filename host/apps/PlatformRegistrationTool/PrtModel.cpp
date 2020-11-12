@@ -2,11 +2,18 @@
 #include "logging/LoggingQtCategories.h"
 #include <SGUtilsCpp.h>
 
+#include <Device/Operations/StartBootloader.h>
+#include <Device/Operations/StartApplication.h>
+#include <Device/Operations/SetPlatformId.h>
+#include <Device/Operations/SetAssistedPlatformId.h>
+#include <Device/Operations/include/DeviceOperationsStatus.h>
+
 #include <QDir>
 #include <QSettings>
 #include <QCoreApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
+
 
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent),
@@ -267,40 +274,150 @@ void PrtModel::requestBootloaderUrl()
     });
 }
 
-void PrtModel::writeRegistrationData(
+void PrtModel::setPlatformId(
         const QString &classId,
-        const QString &platfromId,
+        const QString &platformId,
         int boardCount)
 {
-    QString errorString;
+    using strata::device::operation::SetPlatformId;
+    using strata::device::operation::Result;
+
     if (platformList_.isEmpty()) {
-        errorString = "No platform connected";
-    }
-
-    if (errorString.isEmpty() == false) {
+        QString errorString = "No platform connected";
         qCCritical(logCategoryPrt) << errorString;
-
-        emit writeRegistrationDataFinished(errorString);
+        emit setPlatformIdFinished(errorString);
         return;
     }
 
-    QJsonDocument doc;
-    QJsonObject data;
-    QJsonObject payload;
-    payload.insert("class_id", classId);
-    payload.insert("platform_id", platfromId);
-    payload.insert("board_count", boardCount);
+    strata::device::command::CmdSetPlatformIdData data;
+    data.classId = classId;
+    data.platformId = platformId;
+    data.boardCount = boardCount;
 
-    data.insert("cmd", QSTR_SET_PLATFORM_ID);
-    data.insert("payload", payload);
+    SetPlatformId *operation = new SetPlatformId(
+                platformList_.first(),
+                data);
 
-    doc.setObject(data);
+    connect(operation, &SetPlatformId::finished, [this, operation](Result result, int status, QString errorString) {
 
-    connect(platformList_.first().get(), &strata::device::Device::msgFromDevice, this, &PrtModel::messageFromDeviceHandler);
+        if (result != Result::Success) {
+            emit setPlatformIdFinished(errorString);
+        } else if (status == strata::device::operation::SET_PLATFORM_ID_FAILED) {
+            emit setPlatformIdFinished("Board refused registration");
+        } else if (status == strata::device::operation::PLATFORM_ID_ALREADY_SET) {
+            emit setPlatformIdFinished("Board has already been registered");
+        }
 
-    QByteArray message = doc.toJson(QJsonDocument::Compact);
-    qCDebug(logCategoryPrtAuth) << message;
-    platformList_.first()->sendMessage(message);
+        emit setPlatformIdFinished("");
+        operation->deleteLater();
+    });
+
+    operation->run();
+}
+
+void PrtModel::setAssistedPlatformId()
+{
+    using strata::device::operation::SetAssistedPlatformId;
+    using strata::device::operation::Result;
+
+    if (platformList_.isEmpty()) {
+        QString errorString = "No platform connected";
+        qCCritical(logCategoryPrt) << errorString;
+        emit startApplicationFinished(errorString);
+        return;
+    }
+
+    /*only faked data as there is no service support for asisted platforms type*/
+
+    strata::device::command::CmdSetPlatformIdData baseData;
+    baseData.classId = "abababab-62e5-4541-ab70-0f51322c711a";
+    baseData.platformId = "acacacac-p2e5-4541-ab70-0f51322c711a";
+    baseData.boardCount = 4;
+
+    strata::device::command::CmdSetPlatformIdData controllerData;
+    controllerData.classId = "cccccccc-62e5-4541-ab70-0f51322c711a";
+    controllerData.platformId = "aaaaaaaa-62e5-4541-ab70-0f51322c711a";
+    controllerData.boardCount = 1;
+
+    QString fwClassId = "ffffffff-62e5-4541-ab70-0f51322c711a";
+
+    SetAssistedPlatformId *operation = new SetAssistedPlatformId(platformList_.first());
+    //any of
+    operation->setBaseData(baseData);
+    operation->setControllerData(controllerData);
+    operation->setFwClassId(fwClassId);
+
+    connect(operation, &SetAssistedPlatformId::finished, [this, operation](Result result, int status, QString errorString) {
+        qDebug() << "PLATFORM ID SET fnished" << static_cast<int>(result) << status << errorString;
+
+        if (result != Result::Success) {
+            emit setPlatformIdFinished(errorString);
+        } else if (status == strata::device::operation::SET_PLATFORM_ID_FAILED) {
+            emit setPlatformIdFinished("Board refused registration");
+        } else if (status == strata::device::operation::PLATFORM_ID_ALREADY_SET) {
+            emit setPlatformIdFinished("Board has already been registered");
+        } else if (status == strata::device::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
+            emit setPlatformIdFinished("Board not connected to dongle");
+        }
+
+        operation->deleteLater();
+    });
+
+    operation->run();
+}
+
+void PrtModel::startBootloader()
+{
+    using strata::device::operation::StartBootloader;
+    using strata::device::operation::Result;
+
+    if (platformList_.isEmpty()) {
+        QString errorString = "No platform connected";
+        qCCritical(logCategoryPrt) << errorString;
+        emit startBootloaderFinished(errorString);
+        return;
+    }
+
+    StartBootloader *operation = new StartBootloader(platformList_.first());
+
+    connect(operation, &StartBootloader::finished, [this, operation](Result result, int status, QString errorString) {
+        if (errorString.isEmpty() == false ) {
+            qCCritical(logCategoryPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
+        }
+
+        emit startBootloaderFinished(errorString);
+
+        operation->deleteLater();
+    });
+
+    operation->run();
+}
+
+void PrtModel::startApplication()
+{
+    using strata::device::operation::StartApplication;
+    using strata::device::operation::Result;
+
+    if (platformList_.isEmpty()) {
+        QString errorString = "No platform connected";
+        qCCritical(logCategoryPrt) << errorString;
+        emit startApplicationFinished(errorString);
+        return;
+    }
+
+    StartApplication *operation = new StartApplication(platformList_.first());
+
+    connect(operation, &StartApplication::finished, [this, operation](Result result, int status, QString errorString) {
+        if (errorString.isEmpty() == false ) {
+            qCCritical(logCategoryPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
+        }
+
+        emit startApplicationFinished(errorString);
+
+        operation->deleteLater();
+    });
+
+    operation->run();
 }
 
 void PrtModel::boardReadyHandler(int deviceId, bool recognized)
@@ -349,61 +466,13 @@ void PrtModel::downloadFinishedHandler(QString groupId, QString errorString)
     downloadJobId_.clear();
 }
 
-void PrtModel::messageFromDeviceHandler(QByteArray message)
-{
-    QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
-
-    if (parseError.error != QJsonParseError::NoError) {
-        qCCritical(logCategoryPrtAuth) << "cannot parse message" << parseError.errorString();
-        qCCritical(logCategoryPrtAuth) << "message:"<< message;
-        return;
-    }
-
-    if (doc.object().contains("ack")
-            && doc.object().value("ack").toString() == QSTR_SET_PLATFORM_ID)
-    {
-        QJsonObject payload = doc.object().value("payload").toObject();
-        if(payload.isEmpty()) {
-            finishRegistrationCommand("invalid response");
-            return;
-        }
-
-        if (payload.value("return_value").toBool(false) == false) {
-            finishRegistrationCommand("request not accepted by device");
-            return;
-        }
-    } else if (doc.object().contains("notification")) {
-        QJsonObject notification = doc.object().value("notification").toObject();
-
-        if (notification.contains("value")
-                && notification.value("value").toString() == QSTR_SET_PLATFORM_ID)
-        {
-            QJsonObject payload = notification.value("payload").toObject();
-            if (payload.isEmpty()) {
-                finishRegistrationCommand("invalid response");
-                return;
-            }
-
-            QString status = payload.value("status").toString();
-            if (status == "OK") {
-                finishRegistrationCommand("");
-            } else if (status == "failed!") {
-                finishRegistrationCommand("failed to write data");
-            } else if (status == "already_initialized") {
-                finishRegistrationCommand("board has already been registered");
-            } else {
-                finishRegistrationCommand("invalid response");
-            }
-        }
-    }
-}
 
 bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString &firmwareUrl)
 {
     //bootloader
     QFile bootloaderFile(bootloaderUrl);
     if (bootloaderFile.open(QIODevice::ReadOnly) == false) {
+        qCCritical(logCategoryPrt()) << "cannot open bootloader file";
         return false;
     }
     QByteArray data = bootloaderFile.readAll();
@@ -419,6 +488,7 @@ bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString 
     //firmware
     QFile firmwareFile(firmwareUrl);
     if (firmwareFile.open(QIODevice::ReadOnly) == false) {
+        qCCritical(logCategoryPrt()) << "cannot open firmware file";
         return false;
     }
     data = firmwareFile.readAll();
@@ -445,15 +515,4 @@ QString PrtModel::resolveConfigFilePath()
 #endif
 
     return applicationDir.filePath("prt-config.ini");
-}
-
-void PrtModel::finishRegistrationCommand(QString errorString)
-{
-    if (errorString.isEmpty() == false) {
-        qCCritical(logCategoryPrt) << "set_platform_id failed:" << errorString;
-    }
-
-    disconnect(platformList_.first().get(), &strata::device::Device::msgFromDevice, this, nullptr);
-
-    emit writeRegistrationDataFinished(errorString);
 }

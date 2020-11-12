@@ -42,6 +42,7 @@ constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
 constexpr const char* const JSON_FAILED = "failed";
 constexpr const char* const JSON_ALREADY_INITIALIZED = "already_initialized";
+constexpr const char* const JSON_BOARD_NOT_CONNECTED = "board_not_connected";
 constexpr const char* const JSON_RESEND_CHUNK = "resend_chunk";
 constexpr const char* const JSON_MD5 = "md5";
 constexpr const char* const JSON_API_VERSION = "api_version";
