@@ -9,6 +9,7 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <rapidjson/document.h>
+#include <rapidjson/pointer.h>
 
 namespace strata::device::operation {
 
@@ -86,17 +87,17 @@ Type BaseDeviceOperation::type() const {
 
 QString BaseDeviceOperation::resolveErrorString(Result result)
 {
-    switch(result) {
+    switch (result) {
     case Result::Success: return QString();
     case Result::Reject: return QStringLiteral("Command rejected");
     case Result::Cancel: return QStringLiteral("Operation cancelled");
     case Result::Timeout: return QStringLiteral("No response from device");
-    case Result::Failure:return QStringLiteral("Faulty response from device");
+    case Result::Failure: return QStringLiteral("Faulty response from device");
     case Result::Error: return QStringLiteral("Error during operation");
     }
 
-    qCCritical(logCategoryDeviceOperations) << "unsupported result value";
-    return QString("Unknown error");
+    qCCritical(logCategoryDeviceOperations) << "Unsupported result value";
+    return QStringLiteral("Unknown error");
 }
 
 bool BaseDeviceOperation::bootloaderMode() {
@@ -180,8 +181,18 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
                 }
                 qCDebug(logCategoryDeviceOperations) << device_ << "Processed '" << command->name() << "' notification.";
 
-                if (command->result() == CommandResult::Failure) {
-                    qCWarning(logCategoryDeviceOperations) << device_ << "Received faulty notification: '" << data << "'.";
+                CommandResult result = command->result();
+                if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
+                    if (result == CommandResult::Failure) {
+                        qCWarning(logCategoryDeviceOperations) << device_ << "Received faulty notification: '" << data << "'.";
+                    }
+
+                    QByteArray path;
+                    path.append('/').append(JSON_NOTIFICATION).append('/').append(JSON_PAYLOAD).append('/').append(JSON_STATUS);
+                    if (const rapidjson::Value* status = rapidjson::Pointer(path.data(), path.size()).Get(doc)) {
+                        QByteArray statusMessage(status->GetString(), status->GetStringLength());
+                        qCInfo(logCategoryDeviceOperations) << device_ << "Command '" << command->name() << "' retruned '" << statusMessage << "'.";
+                    }
                 }
 
                 QTimer::singleShot(command->waitBeforeNextCommand(), this, [this](){ nextCommand(); });
