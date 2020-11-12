@@ -12,13 +12,12 @@ class ServerConnectorTest : public QObject {
     Q_OBJECT
 
 private slots:
-    void testServerConnector();
     void testOpenServerConnectorFaild();
-    void testClientConnector();
-    void testOpenClientConnectorFaild();
     void testServerAndClient();
+    void testMultipleClients();
+    void testFloodTheServer();
+    void testFloodTheClient();
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
-
 };
