@@ -1,9 +1,7 @@
 #include "CouchChat.h"
 #include "DatabaseManager.h"
-#include "CouchbaseDocument.h"
 
 #include <QDebug>
-#include <iostream>
 #include <thread>
 
 CouchChat::CouchChat(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
@@ -29,24 +27,25 @@ void CouchChat::loginAndStartReplication(const QString &user_name, const QString
         return;
     }
 
-    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
-        qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!";
+    auto changeListener = [](cbl::Replicator rep, const CBLReplicatorStatus) {
+        qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed, error code '" << rep.status().error.code << "'";
     };
 
-    auto documentListener = [this](cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
-        qDebug() << "CouchbaseDatabaseSampleApp documentListener -> document status changed!";
+    auto documentListener = [this](cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
+        qDebug() << "CouchbaseDatabaseSampleApp documentListener -> document status changed, error code '" << rep.status().error.code << "'";
         qDebug() << "---" << documents.size() << "docs" << (isPush ? "pushed:" : "pulled:");
-        for (unsigned i = 0; i < documents.size(); ++i) {
+        if (documents.size() == 2 && (documents[0].ID == documents[1].ID)) {
+            qDebug() << documents[0].ID;
+            auto result_obj = DB_->getDocumentAsJsonObj(documents[0].ID);
+            auto user = result_obj.value("user");
+            auto msg = result_obj.value("msg");
+            emit receivedMessage(user.toString(), msg.toString());
+        } else for (unsigned i = 0; i < documents.size(); ++i) {
             qDebug() << documents[i].ID;
             auto result_obj = DB_->getDocumentAsJsonObj(documents[i].ID);
-
-            auto msg = result_obj.value("msg");
-            auto msg_str = msg.toString();
-
             auto user = result_obj.value("user");
-            auto user_str = user.toString();
-
-            emit receivedMessage(user_str, msg_str);
+            auto msg = result_obj.value("msg");
+            emit receivedMessage(user.toString(), msg.toString());
         }
     };
 
@@ -59,8 +58,6 @@ void CouchChat::loginAndStartReplication(const QString &user_name, const QString
 
     // Wait until replication is connected
     unsigned int retries = 0;
-    const unsigned int REPLICATOR_RETRY_MAX = 50;
-    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
     while (DB_->getReplicatorStatus() != "Stopped" && DB_->getReplicatorStatus() != "Idle") {
         ++retries;
         std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);

@@ -5,7 +5,6 @@
 #include <QQmlApplicationEngine>
 
 #include "DatabaseManager.h"
-#include "CouchbaseDocument.h"
 
 class CouchChat: public QObject {
     Q_OBJECT
@@ -20,7 +19,6 @@ public:
     Q_INVOKABLE void logoutAndStopReplication();
 
     QQmlApplicationEngine* engine_;
-    QQmlComponent* component_;
 
     QString getUsername() const { return user_name_; }
     QString getChannel() const { return channel_name_; }
@@ -41,6 +39,9 @@ private:
     QString endpoint_url_ = "";
     const QString replicator_username_ = "";
     const QString replicator_password_ = "";
+
+    const unsigned int REPLICATOR_RETRY_MAX = 50;
+    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
 };
 
 #endif // COUCHCHAT_H

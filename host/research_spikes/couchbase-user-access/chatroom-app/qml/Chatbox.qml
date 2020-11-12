@@ -75,6 +75,7 @@ Item {
 
                     onClicked: {
                         stackContainerRef.currentIndex = 0
+                        chatBoxText.text = ""
                         couchChat.logoutAndStopReplication()
                     }
                 }
@@ -101,6 +102,12 @@ Item {
                 textFormat: TextEdit.RichText
                 font.pointSize: 12
                 readOnly: true
+            }
+
+            function append(user, message) {
+                chatBoxText.text += user === couchChat.user_name ? "<b>You</b> say:<br><b>" + message + "</b><br><br>" : "User <b>" + user + "</b> says:<br><b>" + message + "</b><br><br>"
+                var ratio = 1.0 - chatScrollView.visibleArea.heightRatio;
+                chatScrollView.contentY = chatScrollView.contentHeight * ratio; // scroll chatbox text area to bottom
             }
         }
 
@@ -176,7 +183,7 @@ Item {
                 console.info("Received incorrect message")
             } else {
                 console.info("Received message: " + message)
-                chatBoxText.text += user === couchChat.user_name ? "<b>You</b> say:<br><b>" + message + "</b><br><br>" : "User <b>" + user + "</b> says:<br><b>" + message + "</b><br><br>"
+                chatScrollView.append(user, message)
             }
         }
     }

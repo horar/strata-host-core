@@ -103,7 +103,7 @@ Item {
 
                 TextField {
                     id: chatserverTextfield
-                    text: "ws://localhost:4984/couch-chat-server"
+                    text: "ws://localhost:4984/chatroom-app"
                     selectByMouse: true
                     width: 540
                     height: 40

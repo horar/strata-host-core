@@ -13,10 +13,12 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-if test "$1" == "chatroom-app"; then
-    docker_compose_fileinput="docker-compose-chatroom-app.yml"
-elif test "$1" == "platform-list"; then
-    docker_compose_fileinput="docker-compose-platform-list.yml"
+COUCHBASE_BUCKET=$1
+
+if test "$COUCHBASE_BUCKET" == "chatroom-app"; then
+    DOCKER_COMPOSE_FILEINPUT="docker-compose-chatroom-app.yml"
+elif test "$COUCHBASE_BUCKET" == "platform-list"; then
+    DOCKER_COMPOSE_FILEINPUT="docker-compose-platform-list.yml"
 else
     echo "Error: unrecognized argument supplied, check documentation."
     exit 1
@@ -31,8 +33,8 @@ fi
 
 echo "Bringing up Couchbase containers..."
 
-./scripts/up.sh $docker_compose_fileinput
-couchbase_sg_docker_ps=$(docker-compose --file $docker_compose_fileinput ps -q couchbase)
+./scripts/up.sh $DOCKER_COMPOSE_FILEINPUT
+couchbase_sg_docker_ps=$(docker-compose --file $DOCKER_COMPOSE_FILEINPUT ps -q couchbase)
 
 if test "$?" != "0" || test "$couchbase_sg_docker_ps" == ""; then
     echo "Error bringing up Couchbase containers, aborting."
@@ -59,7 +61,7 @@ fi
 
 # Couchbase setup
 echo "Setting up Couchbase server and Sync Gateway for Strata... "
-./scripts/cb_setup.sh $COUCHBASE_ENDPOINT
+./scripts/cb_setup.sh $COUCHBASE_ENDPOINT $COUCHBASE_BUCKET
 
 curl_retries_counter=0
 res=""
@@ -74,6 +76,17 @@ if test "$res" != "0"; then
     echo "Error: Couchbase setup not successful, timed out."
     curl $SYNC_GATEWAY_ENDPOINT
     exit 1
+fi
+
+if test "$COUCHBASE_BUCKET" == "platform-list"; then
+    # Couchbase add docs
+    echo "Adding documents to Couchbase server (platform-list)... "
+    ./scripts/cb_add_docs.sh $COUCHBASE_ENDPOINT $SYNC_GATEWAY_ENDPOINT $COUCHBASE_BUCKET
+
+    if test "$?" != "0"; then
+        echo "Error: Couchbase did not successfully add docs."
+        exit 1
+    fi
 fi
 
 echo "Couchbase services successfully connected!"

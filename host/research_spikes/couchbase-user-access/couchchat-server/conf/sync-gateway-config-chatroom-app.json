@@ -7,9 +7,9 @@
     }
   },
   "databases": {
-    "couch-chat-server": {
+    "chatroom-app": {
       "server": "http://couchbase:8091",
-      "bucket": "couch-chat-server",
+      "bucket": "chatroom-app",
       "username": "sync_gateway",
       "password": "sync_gateway",
       "enable_shared_bucket_access": true,
@@ -40,27 +40,27 @@
 
           // Access safety: only allow access from list of valid channels
           // Data routing: translate external channel name into internal channel name, and vice-versa
-
-          // Chatroom 1
-          if (doc.StrataExternalChannelID == "chatroom_1") {
-            channel("chatroom_1");
-            channel("internal_ID_chatroom_1");
-          } else if (doc.StrataExternalChannelID == "internal_ID_chatroom_1") {
-            channel("chatroom_1");
-            channel("internal_ID_chatroom_1");
-          }
-
-          // Chatroom 2
-          if (doc.StrataExternalChannelID == "chatroom_2") {
-            channel("chatroom_2");
-            channel("internal_ID_chatroom_2");
-          } else if (doc.StrataExternalChannelID == "internal_ID_chatroom_2") {
-            channel("chatroom_2");
-            channel("internal_ID_chatroom_2");
-          }
-
-          // Invalid external channel ID
-          else {
+          switch(doc.StrataExternalChannelID) {
+            // Chatroom 1
+            case "chatroom_1":
+              channel("chatroom_1");
+              channel("internal_ID_chatroom_1");
+              break;
+            case "internal_ID_chatroom_1":
+              channel("chatroom_1");
+              channel("internal_ID_chatroom_1");
+              break;
+            // Chatroom 2
+            case "chatroom_2":
+              channel("chatroom_2");
+              channel("internal_ID_chatroom_2");
+              break;
+            case "internal_ID_chatroom_2":
+              channel("chatroom_2");
+              channel("internal_ID_chatroom_2");
+              break;
+            // Invalid external channel ID
+            default:
               throw({forbidden: "Invalid external channel ID!"})
           }
         }

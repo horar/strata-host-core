@@ -7,9 +7,9 @@
     }
   },
   "databases": {
-    "couch-chat-server": {
+    "platform-list": {
       "server": "http://couchbase:8091",
-      "bucket": "strata-user-access-server",
+      "bucket": "platform-list",
       "username": "sync_gateway",
       "password": "sync_gateway",
       "enable_shared_bucket_access": true,
