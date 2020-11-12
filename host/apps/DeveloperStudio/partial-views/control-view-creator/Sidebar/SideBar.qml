@@ -63,10 +63,13 @@ Rectangle {
 
                                 openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
                                 // Need to use callLater here because the model indices haven't been set yet
-                                Qt.callLater(treeView.selectItem, idx)
-                                break;
+                                Qt.callLater(treeView.selectItem, idx);
+                                return;
                             }
                         }
+
+                        // TODO in CS-1288: Handle this situation when a Control.qml is not found in the top level
+                        console.error("Project does not have control.qml at the top level")
                     }
                 }
 
