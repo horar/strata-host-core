@@ -50,15 +50,7 @@ Item {
             }
         }
 
-        TabButton {
-            id: userSettingsButton
-            KeyNavigation.right: this
-            KeyNavigation.left: this
-            text: qsTr("User Settings")
-            onClicked: {
-                controlContainer.currentIndex = 2
-            }
-        }
+
     }
 
     StackLayout {
@@ -78,9 +70,6 @@ Item {
             id: advanced
         }
 
-        UserSettingsControl {
-            id: userSettings
-        }
     }
 
     SGIcon {
@@ -111,11 +100,11 @@ Item {
         }
     }
 
-//    DebugMenu {
-//        // See description in control-views/DebugMenu.qml
-//        anchors {
-//            right: controlContainer.right
-//            bottom: controlContainer.bottom
-//        }
-//    }
+    //    DebugMenu {
+    //        // See description in control-views/DebugMenu.qml
+    //        anchors {
+    //            right: controlContainer.right
+    //            bottom: controlContainer.bottom
+    //        }
+    //    }
 }

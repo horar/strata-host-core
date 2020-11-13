@@ -11,6 +11,9 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
+    property alias firstCommand: firstCommand
+    property alias gpioSwitch: gpio
+    property bool gpioState: false
     //To set the my_cmd_simple_start_periodic_obj interval to show the example of the command been send.
     property var perodic_interval: 2000
 
@@ -44,7 +47,7 @@ Item {
     property var my_cmd_simple_obj: {
         "value": "my_cmd_simple",
         "payload": {
-            "io":gpio.checked,
+            "io": gpio.checked,
             "dac": parseFloat(dac.text)
         }
     }
@@ -115,8 +118,13 @@ Item {
                         SGSwitch {
                             id: gpio
                             width: 50
-                            onCheckedChanged:{
+
+                            onToggled:  {
                                 platformInterface.commands.my_cmd_simple.update(gpio.checked,parseFloat(dac.text))
+                                firstCommand.text = "Send: \n" + JSON.stringify(my_cmd_simple_obj,null,4) +
+                                        "\n Recevied: \n " + JSON.stringify(obj, null, 4)
+
+                                console.info("test",checked, JSON.stringify(my_cmd_simple_obj,null,4) )
                             }
                         }
                     }
@@ -139,6 +147,9 @@ Item {
                             //value: platformInterface.commands.my_cmd_simple.dac
                             onAccepted: {
                                 platformInterface.commands.my_cmd_simple.update(gpio.checked,parseFloat(dac.text))
+                                firstCommand.text = "Send: \n" + JSON.stringify(my_cmd_simple_obj,null,4) +
+                                        "\n Recevied: \n " + JSON.stringify(obj, null, 4)
+
                             }
                         }
                     }
@@ -158,6 +169,7 @@ Item {
                 //other properties
                 ScrollBar.vertical.policy: ScrollBar.AsNeeded
                 SGText {
+                    id: firstCommand
                     anchors.fill: parent
                     text: "Send: \n" + JSON.stringify(my_cmd_simple_obj,null,4) +
                           "\n Recevied: \n " + JSON.stringify(obj, null, 4)
@@ -242,7 +254,7 @@ Item {
                         anchors.centerIn: parent
                         spacing: 5
                         SGButton {
-                            text: "Start/stop \n Periodic Handler"
+                            text: "Start/stop Periodic \n Handler"
                             onClicked: {
                                 if(graphTimerAxis.running === true) {
                                     platformInterface.commands.my_cmd_simple_periodic_update.update(false,perodic_interval,-1)
@@ -255,7 +267,7 @@ Item {
                             }
                         }
                         SGButton {
-                            text: "Update \n Periodic Handler"
+                            text: "Update Periodic Handler \n Interval \n +1000"
                             onClicked: {
                                 perodic_interval+=1000
                                 platformInterface.commands.my_cmd_simple_periodic_update.update(true,perodic_interval,-1)

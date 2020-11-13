@@ -22,9 +22,9 @@ Widget09.SGResponsiveScrollView {
 
         Text {
             id: name
-            text: "Advanced Control View"
+            text: "Advanced Control View \n To show the  controls can be synced from any view. Example: GPIO Switch can be controlled/update in basic view"
             font {
-                pixelSize: 60
+                pixelSize: 20
             }
             color:"white"
             anchors {
@@ -45,6 +45,12 @@ Widget09.SGResponsiveScrollView {
             SGSwitch {
                 id: motorSwitch
                 width: 50
+                checked: basic.gpioSwitch.checked
+                onCheckedChanged: {
+                    basic.gpioSwitch.checked = checked
+                    basic.firstCommand.text = "Send: \n" + JSON.stringify(basic.my_cmd_simple_obj,null,4) +
+                            "\n Recevied: \n " + JSON.stringify(basic.obj, null, 4)
+                }
 
                 // 'checked' state is bound to and sets the
                 // _motor_running_control property in PlatformInterface
@@ -62,7 +68,7 @@ Widget09.SGResponsiveScrollView {
             height: 200
             width: 200
 
-           // value: platformInterface._motor_speed
+            // value: platformInterface._motor_speed
         }
     }
 }
