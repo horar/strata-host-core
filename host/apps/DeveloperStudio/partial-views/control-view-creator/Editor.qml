@@ -14,9 +14,9 @@ import "../"
 
 Item {
     id: editorRoot
-    property alias treeModel: treeModel
     property alias editorToolBar: editorToolBar
     property alias openFilesModel: openFilesModel
+    property alias fileTreeModel: treeModel
 
     SGQrcTreeModel {
         id: treeModel
@@ -36,6 +36,14 @@ Item {
 
     SGFileTabModel {
         id: openFilesModel
+
+        onTabOpened: {
+            treeModel.startWatchingPath(SGUtilsCpp.urlToLocalFile(filepath))
+        }
+
+        onTabClosed: {
+            treeModel.stopWatchingPath(SGUtilsCpp.urlToLocalFile(filepath))
+        }
     }
 
     SGSortFilterProxyModel {
@@ -180,21 +188,20 @@ Item {
                 }
             }
 
-            ScrollView {
+            Rectangle {
                 Layout.preferredHeight: 45
                 Layout.minimumHeight: 45
                 Layout.fillWidth: true
                 x: 2.5
-                clip: true
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-
-                background: Rectangle {
-                    color: "#ccc"
-                }
+                color: "#ccc"
 
                 ListView {
                     id: fileTabRepeater
                     model: openFilesModel
+
+                    anchors.fill: parent
+
+                    clip: true
                     orientation: ListView.Horizontal
                     layoutDirection: Qt.LeftToRight
                     spacing: 1

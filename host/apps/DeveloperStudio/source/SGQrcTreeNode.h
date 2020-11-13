@@ -91,6 +91,7 @@ public:
      */
     bool editing() const;
 
+
     // SETTERS
 
     /**
@@ -135,6 +136,7 @@ public:
      * @return Returns true if changed, false otherwise
      */
     bool setEditing(bool editing);
+
 
     /***
      * NODE UTILITIES

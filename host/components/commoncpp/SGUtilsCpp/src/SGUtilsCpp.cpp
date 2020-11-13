@@ -129,6 +129,7 @@ bool SGUtilsCpp::fileIsChildOfDir(const QString &filePath, QString dirPath)
     if (dirPath.length() > 0 && dirPath[dirPath.length() - 1] != QDir::separator()) {
         dirPath.append(QDir::separator());
     }
+
     if (filePath.startsWith(dirPath)) {
         return true;
     } else {

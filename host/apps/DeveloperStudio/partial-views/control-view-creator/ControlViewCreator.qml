@@ -209,9 +209,9 @@ Rectangle {
     }
 
     function recompileControlViewQrc () {
-        if (editor.treeModel.url.toString() !== '') {
+        if (editor.fileTreeModel.url.toString() !== '') {
             recompileRequested = true
-            sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
+            sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
         }
     }
 

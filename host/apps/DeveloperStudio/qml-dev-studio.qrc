@@ -149,6 +149,9 @@
         <file>partial-views/control-view-creator/Editor/UnsupportedFileType.qml</file>
         <file>partial-views/control-view-creator/navigation/SGSideNavItem.qml</file>
         <file>partial-views/control-view-creator/navigation/SideNavFooter.qml</file>
+        <file>partial-views/control-view-creator/Sidebar/SideBarDelegate.qml</file>
+        <file>partial-views/control-view-creator/Sidebar/FileContextMenu.qml</file>
+        <file>partial-views/control-view-creator/Sidebar/FolderContextMenu.qml</file>
         <file>partial-views/control-view-creator/ConfirmClosePopup.qml</file>
         <file>partial-views/control-view-creator/utils/template_selection.js</file>
         <file>partial-views/general/SGWebPopup.qml</file>

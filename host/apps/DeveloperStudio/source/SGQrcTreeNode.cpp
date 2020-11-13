@@ -13,6 +13,8 @@ SGQrcTreeNode::SGQrcTreeNode(QObject *parent) : QObject(parent)
     parent_ = nullptr;
     editing_ = false;
     children_ = QVector<SGQrcTreeNode*>();
+    filename_ = QString();
+    filepath_ = QUrl();
 }
 
 SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, QString uid, QObject *parent) :
@@ -25,8 +27,7 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isD
     filename_ = info.fileName();
     filetype_ = info.suffix();
 
-    filepath_.setScheme("file");
-    filepath_.setPath(info.filePath());
+    filepath_ = QUrl::fromLocalFile(info.filePath());
     children_ = QVector<SGQrcTreeNode*>();
     editing_ = false;
 }
@@ -35,6 +36,8 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, QString uid,
 {
     inQrc_ = false;
     children_ = QVector<SGQrcTreeNode*>();
+    filename_ = QString();
+    filepath_ = QUrl();
 }
 
 SGQrcTreeNode::~SGQrcTreeNode()
@@ -52,7 +55,7 @@ int SGQrcTreeNode::row() const
 {
     if (parent_) {
         for (int i = 0; i < parent_->childCount(); i++) {
-            if (parent_->childNode(i)->filepath() == this->filepath()) {
+            if (parent_->childNode(i) == this) {
                 return i;
             }
         }

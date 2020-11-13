@@ -9,8 +9,8 @@
 #include <QDomDocument>
 #include <QSet>
 #include <QFileInfo>
-#include <QQmlListProperty>
-#include <QSortFilterProxyModel>
+#include <QFileSystemWatcher>
+#include <QPair>
 
 class SGQrcTreeModel : public QAbstractItemModel
 {
@@ -19,6 +19,7 @@ class SGQrcTreeModel : public QAbstractItemModel
     Q_PROPERTY(SGQrcTreeNode* root READ root NOTIFY rootChanged)
     Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
     Q_PROPERTY(QVector<SGQrcTreeNode*> childNodes READ childNodes)
+    Q_PROPERTY(QModelIndex rootIndex READ rootIndex WRITE setRootIndex)
 public:
     explicit SGQrcTreeModel(QObject *parent = nullptr);
     ~SGQrcTreeModel();
@@ -33,7 +34,8 @@ public:
         ParentRole = Qt::UserRole + 7,
         UniqueIdRole = Qt::UserRole + 8,
         RowRole = Qt::UserRole + 9,
-        EditingRole = Qt::UserRole + 10
+        EditingRole = Qt::UserRole + 10,
+        Md5Role = Qt::UserRole + 11
     };
     Q_ENUM(RoleNames);
 
@@ -115,6 +117,18 @@ public:
     // Model Utilities
 
     /**
+     * @brief rootIndex Gets the root index
+     * @return Returns the QModelIndex for the root
+     */
+    QModelIndex rootIndex() const;
+
+    /**
+     * @brief setRootIndex Sets the root index
+     * @param index The root index to set
+     */
+    void setRootIndex(const QModelIndex &index);
+
+    /**
      * @brief url Returns the url to the .qrc file
      * @return The url to the .qrc file
      */
@@ -154,6 +168,26 @@ public:
      */
     Q_INVOKABLE bool deleteFile(const int row, const QModelIndex &parent = QModelIndex());
 
+    /**
+     * @brief stopWatchingPath Removes the `path` from internal QFileSystemWatcher
+     * @param path The path to the file or directory
+     */
+    Q_INVOKABLE void stopWatchingPath(const QString &path);
+
+    /**
+     * @brief startWatchingPath Adds the `path` to internal QFileSystemWatcher
+     * @param path The path to the file or directory
+     */
+    Q_INVOKABLE void startWatchingPath(const QString &path);
+
+    /**
+     * @brief startSave Starts a thread to save the qrc file.
+     */
+    Q_INVOKABLE void startSave();
+
+    /***
+     * SIGNALS
+     ***/
 signals:
     void urlChanged();
     void projectDirectoryChanged();
@@ -161,17 +195,60 @@ signals:
     void errorParsing(const QString error);
     void finishedReadingQrc(const QByteArray &fileText);
 
+    // This signal is emitted when the file at the specified path is modified
+    void fileChanged(const QUrl path);
+    // This signal is emitted when the file with the specified uid is deleted
+    void fileDeleted(const QString uid);
+    // This signal is emitted when a file is added to the project.
+    void fileAdded(const QUrl path, const QUrl parentPath);
+
+
+    /***
+     * SLOTS
+     ***/
 public slots:
-    void childrenChanged(const QModelIndex &index, int role);
+    void childrenChanged(const QModelIndex &index, int role);    
+
+    /***
+     * PRIVATE MEMBERS
+     ***/
 private slots:
     void startPopulating(const QByteArray &fileText);
+    /**
+     * @brief projectFilesModified This slot is connected to the QFileSystemWatcher::fileChanged signal
+     * @details This slot only deals with files (not directories). It handles individual files
+     * being deleted, renamed or modified.
+     * @param path The path of the file modified.
+     */
+    void projectFilesModified(const QString &path);
+
+    /**
+     * @brief directoryStructureChanged This slot is connected to the QFileSystemWatcher::directoryChanged signal
+     * @details This slot deals with changes to directories that are being tracked. For example,
+     * it handles directories being deleted, files being added to tracked directories and directories being added to directories.
+     * @param path The path of the directory that changed.
+     */
+    void directoryStructureChanged(const QString &path);
+
 private:
     void clear(bool emitSignals = true);
     void readQrcFile();
     bool createQrcXmlDocument(const QByteArray &fileText);
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
-    void startSave();
+    QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
+    /**
+     * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program
+     * @param path The path of the file/directory added
+     * @param parentPath The path of the parent that is added
+     */
+    void handleExternalFileAdded(const QUrl path, const QUrl parentPath);
+
+    /**
+     * @brief handleExternalFileDeleted Handles the situation when a file is deleted externally to the program
+     * @param uid The UID of the file deleted
+     */
+    void handleExternalFileDeleted(const QString uid);
     void save();
 
     SGQrcTreeNode *root_ = nullptr;
@@ -179,5 +256,8 @@ private:
     QUrl projectDir_;
     QDomDocument qrcDoc_;
     QHash<QString, SGQrcTreeNode*> uidMap_;
+    QSet<QUrl> pathsInTree_;
     QSet<QString> qrcItems_;
+    std::unique_ptr<QFileSystemWatcher> fsWatcher_;
+    QModelIndex rootIndex_;
 };
