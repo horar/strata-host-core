@@ -21,6 +21,15 @@ Window {
     minimumHeight: height
     title: "Local platform list manipulation"
 
+    onVisibleChanged: {
+        if(visible) {
+            initialModelLoad()
+        } else {
+            deviceModel.clear()
+            classModel.clear()
+        }
+    }
+
     ColumnLayout {
         id: mainColumn
         spacing: 5
@@ -244,7 +253,7 @@ Window {
             text: `Manipulate "available" flags`
             fontSizeMultiplier: 1.6
             Layout.alignment: Qt.AlignLeft
-            Layout.topMargin: 20
+            Layout.topMargin: 10
             font {
                 family: Fonts.franklinGothicBook
             }
@@ -293,34 +302,102 @@ Window {
 
         SGAlignedLabel {
             text: "Inject connected class_id:"
-            Layout.topMargin: 20
+            Layout.topMargin: 10
             fontSizeMultiplier: 1.5
             target: injectPlatform
-
-            RowLayout {
+            ColumnLayout {
                 id: injectPlatform
+                RowLayout {
+                        id: rowPlatform
+                    Button {
+                        text: "Inject"
+                        Layout.preferredHeight: 35
+                        onClicked: {
+                            loadAndStorePlatform(class_id.model[class_id.currentIndex])
+                        }
+                    }
 
-                Button {
-                    text: "Inject"
-                    onClicked: {
-                        let list = {
-                            "list": [
-                                {
-                                    "class_id": class_id.text,
-                                    "device_id": Constants.DEBUG_DEVICE_ID,
-                                    "firmware_version":"1.0.1"
+                    SGComboBox {
+                        id: class_id
+                        Layout.preferredHeight: 35
+                        Layout.preferredWidth: 300
+                        model: classModel
+                        placeholderText: "class_id..."
+
+                        delegate: SGText {
+                            color: delegateArea.containsMouse ? "#888" : "black"
+
+                            text: modelData
+                            leftPadding: 5
+
+                            MouseArea {
+                                id: delegateArea
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: true
+
+                                onClicked: {
+                                    class_id.setId(modelData.class_id)
+                                    class_id.popup.close()
                                 }
-                            ],
-                            "type":"connected_platforms"
+                            }
+
                         }
 
-                        PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                        function setId(class_){
+                            for(var i = 0; i < classModel.count; i++){
+                                if(class_ === classModel.get(i).platform.class_id){
+                                    class_id.currentIndex = i
+                                }
+                            }
+                        }
+                  }
+
+                    SGComboBox {
+                        id: device_id
+                        Layout.preferredHeight: 35
+                        Layout.preferredWidth: 150
+                        model: deviceModel
+                        placeholderText: "device id"
+
+                        delegate: SGText {
+                            color: deviceArea.containsMouse ? "#888" : "black"
+
+                            text: modelData
+                            leftPadding: 5
+
+
+                            MouseArea {
+                                id: deviceArea
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: true
+
+                                onClicked: {
+                                    device_id.setDevice(modelData)
+                                    device_id.popup.close()
+                                }
+                            }
+                        }
+
+                        function setDevice(device){
+                            for(var i = 0; i < deviceModel.count; i++){
+                                if(device === deviceModel.get(i).device){
+                                    device_id.currentIndex = i
+                                }
+                            }
+                        }
                     }
                 }
 
-                TextField {
-                    id: class_id
-                    Layout.preferredWidth: 400
+                Button {
+                    text: "Disconnect All Platforms"
+                    Layout.preferredWidth: 200
+                    Layout.preferredHeight: 35
+                    Layout.alignment: Qt.AlignHCenter
+                    onClicked: {
+                        //disconnect platforms
+                    }
                 }
             }
         }
@@ -328,6 +405,11 @@ Window {
         Settings {
             id: localPlatformSettings
             category: "LocalPlatformList"
+        }
+
+        Settings {
+            id: storeDeviceList
+            category: "StoreDevicesList"
         }
 
         function removeLocalPlatformList() {
@@ -349,4 +431,48 @@ Window {
             }
         }
     }
+
+    ListModel {
+        id: classModel
+    }
+
+    ListModel {
+        id: deviceModel
+    }
+
+    function initialModelLoad(){
+        for(var i = 0; i < PlatformSelection.platformSelectorModel.count; i++){
+            classModel.append({platform: PlatformSelection.platformSelectorModel.get(i).class_id})
+             deviceModel.append({device:`device_id ${i}`})
+        }
+
+        if(storeDeviceList.value("stored-list").device_id && storeDeviceList.value("stored-list").class_id){
+            class_id.currentIndex = storeDeviceList.value("stored-list").class_id
+            device_id.currentIndex = storeDeviceList.value("stored-list").device_id
+        }
+    }
+
+    function loadAndStorePlatform(classId){
+        const platforms = PlatformSelection.platformSelectorModel
+        for(var i = 0; i < platforms.count; i++){
+            if(classId === platforms.get(i).class_id){
+                let list = {
+                    "list": [
+                        {
+                            "class_id": platforms.get(i).class_id,
+                            "device_id": platforms.get(i).device_id,
+                            "firmware_version":platforms.get(i).firmware_version
+                        }
+                    ],
+                    "type":"connected_platforms"
+
+                }
+
+                PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+            }
+        }
+        storeDeviceList.setValue("stored-list",{device_id: device_id.currentIndex, class_id: class_id.currentIndex})
+    }
+
 }
+
