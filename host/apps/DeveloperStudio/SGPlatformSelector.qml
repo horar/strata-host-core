@@ -7,7 +7,6 @@ import QtGraphicalEffects 1.0
 import "partial-views"
 import "partial-views/platform-selector"
 import "partial-views/distribution-portal"
-import "./partial-views/general/"
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/help_layout_manager.js" as Help

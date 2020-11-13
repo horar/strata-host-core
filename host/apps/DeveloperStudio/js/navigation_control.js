@@ -70,8 +70,6 @@ var resource_loader_ = null
 var main_qml_object_ = null
 var platform_list = {}
 var userSettings = null
-var navigateToPlatform = null
-
 
 /*
   Navigation initialized with parent containers
@@ -359,10 +357,8 @@ function updateState(event, data)
                 // if in-view tab is closing, focus on tab to left. otherwise, close out-of-view tab and stay on present tab
                 if (stack_container_.currentIndex === l + 1 && l !== 1) {
                     updateState(events.SWITCH_VIEW_EVENT, {"index": l}) // focus on tab to left
-                } else if(stack_container_.currentIndex !== 0 && l !== 1) {
-                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1}) // adjust to stay on current tab
                 } else {
-                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex })
+                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1 })
                 }
 
                 break;

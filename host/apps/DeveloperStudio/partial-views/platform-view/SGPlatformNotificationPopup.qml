@@ -30,19 +30,6 @@ SGStrataPopup {
         NavigationControl.userSettings.saveSettings()
     }
 
-    DropShadow {
-        width: platformPopup.width
-        height: platformPopup.height
-        horizontalOffset: 1
-        verticalOffset: 3
-        radius: 15.0
-        samples: 30
-        color: "#cc000000"
-        source: platformPopup.background
-        z: -1
-        cached: true
-    }
-
     Rectangle {
         id:platformItem
         anchors.fill: parent

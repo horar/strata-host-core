@@ -20,7 +20,6 @@ ColumnLayout {
 
     property var firmwareListModel: null
     property int firmwareCount: firmwareListModel.count
-    property string currentVersion: ""
 
     onFirmwareCountChanged: {
         checkForNewerVersion()
