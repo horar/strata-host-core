@@ -358,7 +358,7 @@ function updateState(event, data)
                 if (stack_container_.currentIndex === l + 1 && l !== 1) {
                     updateState(events.SWITCH_VIEW_EVENT, {"index": l}) // focus on tab to left
                 } else {
-                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1 })
+                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1}) // adjust to stay on current tab
                 }
 
                 break;
