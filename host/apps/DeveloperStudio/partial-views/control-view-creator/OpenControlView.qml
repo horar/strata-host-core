@@ -86,7 +86,7 @@ Rectangle {
             }
         }
 
-        if (previousFileURL.projects.length > 5) {
+        if (previousFileURL.projects.length > 10) {
             previousFileURL.projects.pop()
             listModelForUrl.remove(listModelForUrl.count - 1)
         }
