@@ -53,3 +53,16 @@ bool ClientsController::unregisterClient(const QByteArray &clientID) {
         return true;
     }
 }
+
+QString ClientsController::getClientApiVersion(const QByteArray &clientID) {
+    qCInfo(logCategoryStrataClientsController) << "searching for clientID: " << clientID;
+    auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientID] (Client &client) {
+        return client.getClientID() == clientID;
+    });
+    if (it == clientsList_.end()) {
+        qCDebug(logCategoryStrataClientsController) << "Client is not registered. clientID: " << clientID;
+        return "";
+    }
+    qCDebug(logCategoryStrataClientsController) << "Client is registered. clientID: " << it->getClientID() << " API Version: " << it->getApiVersion();
+    return it->getApiVersion();
+}

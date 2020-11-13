@@ -82,3 +82,20 @@ void ClientsControllerTest::testNotifyAllCleints() {
     
     disconnect(&clientsController, &ClientsController::notifyClientSignal, this, &ClientsControllerTest::notifyClientMock);
 }
+
+void ClientsControllerTest::testGetApiVersion() {
+    ClientsController clientsController;
+    
+    clientsController.registerClient(Client("AA", "v1.0"));
+    clientsController.registerClient(Client("BB", "v2.0"));
+    clientsController.registerClient(Client("CC", "v3.0"));
+    clientsController.registerClient(Client("DD", "v4.0"));
+    clientsController.registerClient(Client("EE", "v5.0"));
+
+    QCOMPARE_(clientsController.getClientApiVersion("AA"), "v1.0");
+    QCOMPARE_(clientsController.getClientApiVersion("BB"), "v2.0");
+    QCOMPARE_(clientsController.getClientApiVersion("CC"), "v3.0");
+    QCOMPARE_(clientsController.getClientApiVersion("DD"), "v4.0");
+    QCOMPARE_(clientsController.getClientApiVersion("EE"), "v5.0");
+    QCOMPARE_(clientsController.getClientApiVersion("FF"), "");
+}
