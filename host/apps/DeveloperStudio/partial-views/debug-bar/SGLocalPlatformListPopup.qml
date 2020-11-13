@@ -313,7 +313,7 @@ Window {
                         text: "Inject"
                         Layout.preferredHeight: 35
                         onClicked: {
-                            loadAndStorePlatform(class_id.model[class_id.currentIndex])
+                            loadAndStorePlatform(class_id.classId)
                         }
                     }
 
@@ -323,6 +323,8 @@ Window {
                         Layout.preferredWidth: 300
                         model: classModel
                         placeholderText: "class_id..."
+
+                        property string classId: ""
 
                         delegate: SGText {
                             color: delegateArea.containsMouse ? "#888" : "black"
@@ -337,7 +339,7 @@ Window {
                                 hoverEnabled: true
 
                                 onClicked: {
-                                    class_id.setId(modelData.class_id)
+                                    class_id.setId(modelData)
                                     class_id.popup.close()
                                 }
                             }
@@ -345,9 +347,11 @@ Window {
                         }
 
                         function setId(class_){
+
                             for(var i = 0; i < classModel.count; i++){
-                                if(class_ === classModel.get(i).platform.class_id){
+                                if(class_ === classModel.get(i).platform){
                                     class_id.currentIndex = i
+                                    classId = class_
                                 }
                             }
                         }
@@ -445,11 +449,6 @@ Window {
             classModel.append({platform: PlatformSelection.platformSelectorModel.get(i).class_id})
              deviceModel.append({device:`device_id ${i}`})
         }
-
-        if(storeDeviceList.value("stored-list").device_id && storeDeviceList.value("stored-list").class_id){
-            class_id.currentIndex = storeDeviceList.value("stored-list").class_id
-            device_id.currentIndex = storeDeviceList.value("stored-list").device_id
-        }
     }
 
     function loadAndStorePlatform(classId){
@@ -459,8 +458,8 @@ Window {
                 let list = {
                     "list": [
                         {
-                            "class_id": platforms.get(i).class_id,
-                            "device_id": platforms.get(i).device_id,
+                            "class_id": classId,
+                            "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
                             "firmware_version":platforms.get(i).firmware_version
                         }
                     ],
@@ -471,7 +470,6 @@ Window {
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
             }
         }
-        storeDeviceList.setValue("stored-list",{device_id: device_id.currentIndex, class_id: class_id.currentIndex})
     }
 
 }
