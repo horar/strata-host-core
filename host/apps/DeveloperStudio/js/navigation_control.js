@@ -360,7 +360,6 @@ function updateState(event, data)
                 } else {
                     updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1}) // adjust to stay on current tab
                 }
-
                 break;
 
             case events.SWITCH_VIEW_EVENT:
@@ -381,4 +380,3 @@ function updateState(event, data)
             break;
     }
 }
-
