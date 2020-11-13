@@ -36,17 +36,23 @@ void Authenticator::renewSession()
             qCInfo(logCategoryPrtAuth) << "session renew failed";
         }
 
-        emit renewSessionFinished(isOk);
+        emit renewSessionFinished(isOk, "");
         writeSettings(true);
     });
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
-        qCInfo(logCategoryPrtAuth) << "session renew failed" << username_ << status << errorString;
+        qCInfo(logCategoryPrtAuth) << "session renewal failed" << username_ << status << errorString;
 
         setSessionId(QByteArray());
         setXAccessToken(QByteArray());
 
-        emit renewSessionFinished(false);
+        QString effectiveErrorString = "Session renewal failed\n" + errorString;
+        if (status >= 400 && status < 500) {
+            //properly refused request, no need to forward error
+            effectiveErrorString = "";
+        }
+
+        emit renewSessionFinished(false, effectiveErrorString);
     });
 }
 
@@ -89,12 +95,12 @@ void Authenticator::login(
         setSessionId(QByteArray());
         setXAccessToken(QByteArray());
 
-        QString newErrorString = errorString;
+        QString effectiveErrorString = "Login failed\n" + errorString;
         if (status >= 400 && status < 500) {
-            newErrorString = "Username or password is wrong";
+            effectiveErrorString = "Username or password is wrong";
         }
 
-        emit loginFinished(false, newErrorString);
+        emit loginFinished(false, effectiveErrorString);
     });
 }
 

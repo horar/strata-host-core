@@ -143,6 +143,7 @@ Item {
 
                 onClicked: {
                     localPlatformListDialog.setVisible(true)
+                    localPlatformListDialog.raise()
                 }
             }
 
