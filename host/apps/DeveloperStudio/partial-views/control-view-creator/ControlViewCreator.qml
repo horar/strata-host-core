@@ -178,6 +178,10 @@ Rectangle {
 
                     onStatusChanged: {
                         if (status === Loader.Ready) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
+
                             toolBarListView.recompiling = false
                             if (toolBarListView.currentIndex === toolBarListView.viewTab
                                     || source === NavigationControl.screens.LOAD_ERROR) {
@@ -232,6 +236,11 @@ Rectangle {
         }
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        controlViewLoader.setSource(qml_control)
+
+        Help.setClassId(debugPlatform.deviceId)
+        NavigationControl.context.class_id = debugPlatform.classId
+        NavigationControl.context.device_id = debugPlatform.deviceId
+
+        controlViewLoader.setSource(qml_control, NavigationControl.context)
     }
 }
