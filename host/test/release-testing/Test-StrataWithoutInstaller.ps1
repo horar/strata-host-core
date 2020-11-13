@@ -46,7 +46,8 @@ Test-StrataRelease.ps1
         [ValidateSet("DEV", "QA", "PROD")]
         [string]$DPEnv,
 
-        [switch]$IncludeOTA
+        [switch]$IncludeOTA,
+        [switch]$EnablePlatformIdentificationTest
     )
 
 # Define HCS TCP endpoint to be used
@@ -147,7 +148,7 @@ if ($TestsToRun -contains "all" -or $TestsToRun -contains "collateral") {
 #Run Test-PlatformIdentification
 # The test is disabled by default, The reason is that it requires having a platform and a JLink connected to the test machine.
 # To enable the test, pass this flag -EnablePlatformIdentificationTest when running Test-StrataRelease.ps script
-if ($TestsToRun -contains "platformIndentification") {
+if (($TestsToRun -contains "all" -and $EnablePlatformIdentificationTest -eq $True) -or $TestsToRun -contains "platformIndentification") {
     $PlatformIdentificationResults = Test-PlatformIdentification -PythonScriptPath $PythonPlatformIdentificationTest -ZmqEndpoint $HCSTCPEndpoint
 }
 
