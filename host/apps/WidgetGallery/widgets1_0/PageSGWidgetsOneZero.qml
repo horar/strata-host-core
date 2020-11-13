@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.commoncpp 1.0
 
 FocusScope {
 
@@ -102,6 +103,11 @@ FocusScope {
             page: "ExSGTextField.qml"
         }
 
+        ListElement {
+            name: "SGUserSettings"
+            page: "ExSGUserSettings.qml"
+        }
+
     }
 
     Component.onCompleted: {
@@ -186,8 +192,6 @@ FocusScope {
                 color: "white"
             }
         }
-
-
     }
 
     FocusScope {
@@ -224,8 +228,6 @@ FocusScope {
                 policy: ScrollBar.AlwaysOn
                 visible: flick.height < flick.contentHeight
             }
-
-
 
             clip: true
 
@@ -299,6 +301,13 @@ FocusScope {
         Loader {
             id: pageLoader
         }
+    }
+
+    SGUserSettings {
+        // placed here to replicate "built-in" manner of use for control views
+        id: sgUserSettings
+        classId: "ExUserSettings"   // Normally pre-set in SDS to link the settings to the current Control View class_id
+        user: ""                    // Normally pre-set in SDS to link the settings to the current user
     }
 
     function setPage(index) {
