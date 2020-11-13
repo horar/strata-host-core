@@ -1,26 +1,32 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import QtQml 2.12
 import tech.strata.sgwidgets 1.0
 
-//** Not Required To Include This To Use SGUserSettings In ControlView.qml *******************
-import tech.strata.commoncpp 1.0
-import "js/navigation_control.js" as NavigationControl
-//*******************************************************************************************//
-
-Rectangle {
+Item {
     id: container
-    color: "#cfc"
     width: 1000
     height: 700
 
-    //** Not Required To Include This To Use SGUserSettings In ControlView.qml *****************
-    SGUserSettings {
-        id: sgUserSettings
-        classId: "ExUserSetting"
-        user: NavigationControl.context.user_id
+    /*
+
+        SGUserSettings gives the ability to save and retrieve settings to and from JSON files on the disk.
+
+        An instance of this is supplied for every control view shown in Strata Developer Studio, which can
+        be accessed/referenced via the 'sgUserSettings' id. This example file mimics this setup and shows
+        how this 'sgUserSettings' can be used in this manner.
+
+    */
+
+    SGText {
+        id: description
+        text:"SGUserSettings gives the ability to save and retrieve settings to and from JSON files on the disk."
+        fontSizeMultiplier: 1.25
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+        }
     }
-    //*****************************************************************************************//
 
     Column {
         id: basicSettingsControl
@@ -28,10 +34,13 @@ Rectangle {
         anchors {
             left: parent.left
             leftMargin: 10
+            top: description.bottom
+            topMargin: 20
         }
         spacing: 3
 
-        // This example will place the settings in basicSliders.json. This is in the AppData path for this Application
+        // This example will place the settings in basicSliders.json
+        // This will be created in the AppData path for this Application
         property string configFileName: "basicSliders.json"
 
         Component.onCompleted: {
@@ -43,6 +52,7 @@ Rectangle {
         }
 
         // Saves the current slider position configuration
+        // You may design the structure of this JSON to be written/read however you like.
         function saveSettings() {
             let config = {
                 sliders: {
@@ -143,8 +153,10 @@ Rectangle {
     Rectangle {
         id: verticalDivider
         anchors {
-            centerIn: parent
+            horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
+            top: description.bottom
+            topMargin: 20
         }
         color: "#cecece"
         width: 1
@@ -157,6 +169,8 @@ Rectangle {
         anchors {
             left: parent.horizontalCenter
             leftMargin: 10
+            top: description.bottom
+            topMargin: 20
         }
         spacing: 5
 
