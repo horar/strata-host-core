@@ -28,7 +28,9 @@
       "sync":
       `
         function (doc, oldDoc) {
-
+          if(doc.channels_available) {
+            channel(doc.channels_available)
+          }
         }
       `
     }

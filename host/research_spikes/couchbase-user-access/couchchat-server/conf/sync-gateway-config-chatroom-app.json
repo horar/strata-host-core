@@ -41,27 +41,24 @@
           // Access safety: only allow access from list of valid channels
           // Data routing: translate external channel name into internal channel name, and vice-versa
           switch(doc.StrataExternalChannelID) {
+
             // Chatroom 1
             case "chatroom_1":
-              channel("chatroom_1");
-              channel("internal_ID_chatroom_1");
-              break;
             case "internal_ID_chatroom_1":
               channel("chatroom_1");
               channel("internal_ID_chatroom_1");
               break;
+
             // Chatroom 2
             case "chatroom_2":
-              channel("chatroom_2");
-              channel("internal_ID_chatroom_2");
-              break;
             case "internal_ID_chatroom_2":
               channel("chatroom_2");
               channel("internal_ID_chatroom_2");
               break;
+
             // Invalid external channel ID
             default:
-              throw({forbidden: "Invalid external channel ID!"})
+              throw({forbidden: "Invalid external channel ID: " + doc.StrataExternalChannelID})
           }
         }
       `

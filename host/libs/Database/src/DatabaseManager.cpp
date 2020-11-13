@@ -5,7 +5,8 @@
 
 DatabaseAccess* DatabaseManager::open(const QString &channel_access, const QString &database_prefix) {
     db_access_ = new DatabaseAccess();
-    db_access_->channel_access_ = channel_access;
+    db_access_->name_ = database_prefix;
+    db_access_->channel_access_ << channel_access;
 
     std::string database_name = channel_access.toStdString();
     if (!database_prefix.isEmpty()) {
@@ -13,7 +14,23 @@ DatabaseAccess* DatabaseManager::open(const QString &channel_access, const QStri
     }
 
     db_access_->database_ = std::make_unique<CouchbaseDatabase>(database_name);
+    if (db_access_->database_->open()) {
+        return db_access_;
+    }
+    return nullptr;
+}
 
+DatabaseAccess* DatabaseManager::open(const QString &name, const QStringList &channel_access, const QString &database_prefix) {
+    db_access_ = new DatabaseAccess();
+    db_access_->name_ = name;
+    db_access_->channel_access_ = channel_access;
+
+    std::string database_name = name.toStdString();
+    if (!database_prefix.isEmpty()) {
+        database_name = database_prefix.toStdString() + "_" + database_name;
+    }
+
+    db_access_->database_ = std::make_unique<CouchbaseDatabase>(database_name);
     if (db_access_->database_->open()) {
         return db_access_;
     }
@@ -25,17 +42,17 @@ bool DatabaseAccess::close() {
         qCCritical(logCategoryCouchbaseDatabase) << "Cannot close database (database does not exist).";
         return false;
     }
+    database_->stopReplicator();
     return database_->close();
 }
 
 bool DatabaseAccess::write(CouchbaseDocument *doc) {
-    // Tag 'channels' field
-    doc->tagChannelField(channel_access_.toStdString());
+    std::vector<std::string> channels;
+    for (const auto& channel : channel_access_) {
+        channels.push_back(channel.toStdString());
+    }
+    doc->tagChannelField(channels);
     return database_->save(doc);
-}
-
-QString DatabaseAccess::getChannelAccess() {
-    return channel_access_;
 }
 
 bool DatabaseAccess::deleteDoc(const QString &id) {
@@ -80,7 +97,10 @@ bool DatabaseAccess::startReplicator(const QString &url, const QString &username
     auto _username = username.toStdString();
     auto _password = password.toStdString();
 
-    std::vector<std::string> _channels{channel_access_.toStdString()};
+    std::vector<std::string> channels;
+    for (const auto& channel : channel_access_) {
+        channels.push_back(channel.toStdString());
+    }
 
     CouchbaseDatabase::ReplicatorType _replicator_type;
     if (replicator_type.isEmpty() || replicator_type == "pull") {
@@ -105,7 +125,7 @@ bool DatabaseAccess::startReplicator(const QString &url, const QString &username
         document_listener_callback = std::bind(&DatabaseAccess::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     }
 
-    if (database_->startReplicator(_url, _username, _password, _channels, _replicator_type, change_listener_callback, document_listener_callback, continuous)) {
+    if (database_->startReplicator(_url, _username, _password, channels, _replicator_type, change_listener_callback, document_listener_callback, continuous)) {
         return true;
     }
 

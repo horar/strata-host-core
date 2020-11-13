@@ -5,6 +5,8 @@ import QtQuick.Controls 2.12
 
 import com.onsemi 1.0
 
+import "user-access-map.js" as UserAccessMap
+
 Window {
     id: root
     visible: true
@@ -18,9 +20,10 @@ Window {
     title: qsTr("Strata User Access Browser")
 
     property bool loggedIn: false
+    property var channels: []
 
     Row {
-        spacing: 10
+        spacing: 5
 
         Rectangle {
             id: inputContainer
@@ -39,9 +42,9 @@ Window {
                         color: "black"
                         visible: true
                         text: "\"Strata Login\" Username"
-
+                        font.pointSize: 14
                         Layout.leftMargin: 5
-                        Layout.topMargin: 5
+                        Layout.topMargin: 10
                         Layout.preferredHeight: 30
                     }
 
@@ -58,6 +61,7 @@ Window {
                             selectByMouse: true
                             width: 290
                             height: 40
+                            font.pointSize: 14
                             enabled: !loggedIn
                         }
                     }
@@ -71,7 +75,7 @@ Window {
                         color: "black"
                         visible: true
                         text: "Couchbase server endpoint"
-
+                        font.pointSize: 14
                         Layout.leftMargin: 5
                         Layout.topMargin: 5
                         Layout.preferredHeight: 30
@@ -91,6 +95,7 @@ Window {
                             selectByMouse: true
                             width: 290
                             height: 40
+                            font.pointSize: 14
                             enabled: !loggedIn
                         }
                     }
@@ -101,14 +106,7 @@ Window {
                     height: 60
                     width: 150
                     x: 5
-
-                    enabled: {
-                        if (endpointTextfield.text !== "") {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
+                    enabled: strataLoginUsernameTextfield.text !== "" && endpointTextfield.text !== ""
 
                     background: Rectangle {
                         anchors.fill: parent
@@ -120,6 +118,7 @@ Window {
                         color: loginButton.enabled ? "white" : "lightgrey"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
+                        font.pointSize: 14
                     }
 
                     MouseArea {
@@ -130,8 +129,12 @@ Window {
 
                         onClicked: {
                             if (!loggedIn) {
-                                userAccessBrowser.loginAndStartReplication(strataLoginUsernameTextfield.text, endpointTextfield.text)
-                                loggedIn = true
+                                let channels = root.authenticate(strataLoginUsernameTextfield.text)
+                                if (channels) {
+                                    root.channels = channels
+                                    userAccessBrowser.loginAndStartReplication(strataLoginUsernameTextfield.text, root.channels, endpointTextfield.text)
+                                    loggedIn = true
+                                }
                             } else {
                                 userAccessBrowser.logoutAndStopReplication()
                                 resultText.text = ""
@@ -148,6 +151,7 @@ Window {
             width: root.width - inputContainer.width
             height: root.height
             color: "white"
+            y: -15
 
             Flickable {
                 id: resultScrollView
@@ -161,30 +165,72 @@ Window {
                     height: 300
                     width: root.width
                     textFormat: TextEdit.RichText
-                    font.pointSize: 12
+                    font.pointSize: 14
                     readOnly: true
                 }
 
                 function append(message) {
-                    // resultText.text += user === couchChat.user_name ? "<b>You</b> say:<br><b>" + message + "</b><br><br>" : "User <b>" + user + "</b> says:<br><b>" + message + "</b><br><br>"
-                    // resultText.text += "\nreceived\n"
-                    resultText.text += "\n" + message + "\n"
+                    resultText.text += message
                     var ratio = 1.0 - resultScrollView.visibleArea.heightRatio;
                     resultScrollView.contentY = resultScrollView.contentHeight * ratio; // scroll chatbox text area to bottom
+                }
+
+                function parseDocs(docIDs) {
+                    resultText.text = ""
+                    append("Successfully connected user.")
+                    resultText.append("Granted access to channels:")
+                    for (var i = 0; i < root.channels.length; i++) {
+                        resultText.append(root.channels[i])
+                    }
+
+                    append("Number of database documents received: " + docIDs.length)
+                    append("Document ID's:")
+                    for (var i = 0; i < docIDs.length; i++) {
+                        append(docIDs[i])
+                    }
+                }
+
+                function parseDocs_Empty() {
+                    resultText.text = ""
+                    append("Successfully connected user.")
+                    append("Received no database documents.")
                 }
             }
         }
     }
 
+    // Receives username, returns list of channels to which that user has access
+    function authenticate(username) {
+        resultText.text = ""
+        let users = UserAccessMap.user_access_map.users
+        if (!users.hasOwnProperty(username)) {
+            console.info("Username not found in access map!")
+            resultScrollView.append("Username not found in access map!")
+            return
+        }
+
+        let user = users[username]
+        if (!user.hasOwnProperty("user_access_channels")) {
+            console.info("Error: user does not have 'user_access_channels' field!")
+            resultText.append("Error: user does not have 'user_access_channels' field!")
+        }
+
+        let user_access_channels = user["user_access_channels"]
+        return user_access_channels
+    }
+
     Connections {
         target: userAccessBrowser
-
-        onReceivedMessage: {
-            if (!message) {
-                console.info("Received incorrect message")
+        onStatusUpdated: {
+            if (total_docs != 0) {
+                let docIDs = userAccessBrowser.getAllDocumentIDs()
+                if (docIDs) {
+                    resultScrollView.parseDocs(docIDs)
+                } else {
+                    console.info("Error: received no documents from getAllDocumentIDs().")
+                }
             } else {
-                console.info("Received message: " + message)
-                resultScrollView.append(message)
+                resultScrollView.parseDocs_Empty()
             }
         }
     }

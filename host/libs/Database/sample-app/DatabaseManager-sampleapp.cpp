@@ -27,9 +27,8 @@ int main() {
         return -1;
     }
 
-    // Get database name and channel access name
+    // Get database name
     qDebug() << "Database name: " << DB_NDA->getDatabaseName();
-    qDebug() << "DB_NDA channel access: " << DB_NDA->getChannelAccess();
 
     // Create a document
     CouchbaseDocument Doc("My_Doc");

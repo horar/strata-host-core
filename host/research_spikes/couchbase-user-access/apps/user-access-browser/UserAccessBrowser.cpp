@@ -9,13 +9,14 @@ UserAccessBrowser::UserAccessBrowser(QQmlApplicationEngine *engine, QObject *par
     engine_ = engine;
 }
 
-void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsername, const QString &endpointURL) {
+void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsername, const QStringList &strataChannelList, const QString &endpointURL) {
     strataLoginUsername_ = strataLoginUsername;
     endpointURL_ = endpointURL;
+    stopRequested_ = false;
 
     // Open database, provide desired username and chatroom
     DatabaseManager databaseManager;
-    DB_ = databaseManager.open(strataLoginUsername);
+    DB_ = databaseManager.open(strataLoginUsername, strataChannelList);
 
     // Object valid if database open successful
     if (DB_) {
@@ -25,17 +26,16 @@ void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsern
         return;
     }
 
-    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
-        qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!";
+    auto changeListener = [this](cbl::Replicator, const CBLReplicatorStatus) {
+        if (!stopRequested_) {
+            qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!";
+            auto db_obj = DB_->getDatabaseAsJsonObj();
+            emit statusUpdated(db_obj.size());
+        }
     };
 
-    auto documentListener = [this](cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
+    auto documentListener = [](cbl::Replicator, bool, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>>) {
         qDebug() << "CouchbaseDatabaseSampleApp documentListener -> document status changed!";
-        qDebug() << "---" << documents.size() << "docs" << (isPush ? "pushed:" : "pulled:");
-        for (unsigned i = 0; i < documents.size(); ++i) {
-            qDebug() << documents[i].ID;
-            emit receivedMessage(documents[i].ID);
-        }
     };
 
     // Start replicator
@@ -58,29 +58,13 @@ void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsern
     }
 }
 
-// void UserAccessBrowser::sendMessage(const QString &message) {
-//     CouchbaseDocument Doc("UserAccessBrowser_Message");
-
-//     QString body_string("{\"msg\":\"" + message + "\","
-//         "\"user\":\"" + user_name_ + "\"}");
-
-//     if (Doc.setBody(body_string)) {
-//         qDebug() << "Successfully set document contents.";
-//     } else {
-//         qDebug() << "Failed to set document contents, body must be in JSON format.";
-//     }
-
-//     if (DB_->write(&Doc)) {
-//         qDebug() << "Successfully saved to database document with msg:" << message;
-//     } else {
-//         qDebug() << "Error saving database.";
-//         return;
-//     }
-// }
-
 void UserAccessBrowser::logoutAndStopReplication() {
-    DB_->stopReplicator();
-    DB_->close();
+    stopRequested_ = true;
     strataLoginUsername_ = "";
     endpointURL_ = "";
+    DB_->close();
+}
+
+QStringList UserAccessBrowser::getAllDocumentIDs() {
+    return DB_->getDatabaseAsJsonObj().keys();
 }

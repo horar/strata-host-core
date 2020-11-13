@@ -76,6 +76,7 @@ Item {
                     onClicked: {
                         stackContainerRef.currentIndex = 0
                         chatBoxText.text = ""
+                        inputField.text = ""
                         couchChat.logoutAndStopReplication()
                     }
                 }
@@ -182,7 +183,6 @@ Item {
             if (!user || !message) {
                 console.info("Received incorrect message")
             } else {
-                console.info("Received message: " + message)
                 chatScrollView.append(user, message)
             }
         }

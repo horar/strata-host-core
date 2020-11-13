@@ -5,7 +5,6 @@
 
 CouchbaseDocument::CouchbaseDocument(const std::string id) {
     doc_ID_ = id;
-
     auto uuid = QUuid::createUuid();
     mutable_doc_ = std::make_unique<cbl::MutableDocument>("StrataDocID_" + uuid.toString(QUuid::WithoutBraces).toStdString());
 }
@@ -30,10 +29,13 @@ fleece::keyref<fleece::MutableDict, fleece::slice> CouchbaseDocument::operator[]
     return fleece_ref;
 }
 
-void CouchbaseDocument::tagChannelField(const std::string &channel) {
+void CouchbaseDocument::tagChannelField(const std::vector<std::string> &channels) {
     auto doc_ref = mutable_doc_.get();
-
     // TODO: might need to check if fields are already taken to avoid overwriting
-    (*doc_ref)["StrataExternalChannelID"] = channel;
+    if (channels.size() != 1) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: size of 'channels' field must be exactly 1.";
+        return;
+    }
+    (*doc_ref)["StrataExternalChannelID"] = channels.at(0);
     (*doc_ref)["StrataExternalDocID"] = doc_ID_;
 }

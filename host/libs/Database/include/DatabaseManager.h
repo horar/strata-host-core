@@ -11,6 +11,8 @@ class DatabaseManager
 public:
     DatabaseAccess* open(const QString &channel_access, const QString &database_prefix = "");
 
+    DatabaseAccess* open(const QString &name, const QStringList &channel_access, const QString &database_prefix = "");
+
 private:
     DatabaseAccess *db_access_;
 };
@@ -22,8 +24,6 @@ class DatabaseAccess
 
 public:
     bool close();
-
-    QString getChannelAccess();
 
     bool write(CouchbaseDocument *doc);
 
@@ -76,10 +76,13 @@ public:
     void stopReplicator();
 
     QString getReplicatorStatus();
+
     int getReplicatorError();
 
 private:
-    QString channel_access_;
+    QString name_;
+
+    QStringList channel_access_;
 
     std::unique_ptr<CouchbaseDatabase> database_;
 

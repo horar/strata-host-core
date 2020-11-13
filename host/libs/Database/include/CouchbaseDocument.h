@@ -21,7 +21,7 @@ public:
 
     fleece::keyref<fleece::MutableDict, fleece::slice> operator[] (const std::string &key);
 
-    void tagChannelField(const std::string &channel);
+    void tagChannelField(const std::vector<std::string> &channels);
 
 private:
     std::unique_ptr<cbl::MutableDocument> mutable_doc_;
