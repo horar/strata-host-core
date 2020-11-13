@@ -151,7 +151,6 @@ private:
     QString filePath_;
     const QString newFirmwareMD5_;
     QTemporaryFile tmpBackupFile_;
-    QString errorString_;
 
     enum class Action {
         None,

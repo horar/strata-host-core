@@ -3,6 +3,7 @@
 #include "CommandValidator.h"
 #include <rapidjson/writer.h>
 
+using strata::CommandValidator;
 
 void CommandValidatorTest::printJsonDoc(rapidjson::Document &doc)    {
     // print the doc
@@ -298,19 +299,7 @@ TEST_F(CommandValidatorTest, setPlatformIdResTest)
             "notification":{
                 "value":"set_platform_id",
                 "payload":{
-                    "status": "OK"
-                }
-            }
-        })";
-    EXPECT_TRUE(CommandValidator::parseJsonCommand(QByteArray::fromStdString(testCommand), doc));
-    EXPECT_TRUE(CommandValidator::validateNotification(CommandValidator::JsonType::setPlatformIdNotif, doc));
-
-    testCommand = R"(
-        {
-            "notification":{
-                "value":"set_platform_id",
-                "payload":{
-                    "status": "Else"
+                    "status": "ok"
                 }
             }
         })";
@@ -321,9 +310,21 @@ TEST_F(CommandValidatorTest, setPlatformIdResTest)
     testCommand = R"(
         {
             "notification":{
+                "value":"set_platform_id",
+                "payload":{
+                    "status": "Else"
+                }
+            }
+        })";
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(QByteArray::fromStdString(testCommand), doc));
+    EXPECT_FALSE(CommandValidator::validateNotification(CommandValidator::JsonType::setPlatformIdNotif, doc));
+
+    testCommand = R"(
+        {
+            "notification":{
                 "value":"set_plat",
                 "payload":{
-                    "status": "OK"
+                    "status": "ok"
                 }
             }
         })";

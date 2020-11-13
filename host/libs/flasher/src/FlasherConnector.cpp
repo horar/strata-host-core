@@ -150,24 +150,28 @@ void FlasherConnector::processStartupError(const QString& errorString) {
 void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QString errorString) {
     flasher_.reset();
 
+    QString errorMessage;
     State result = State::Failed;
     switch (flasherResult) {
     case Flasher::Result::Ok :
-    case Flasher::Result::NoFirmware :
         result = State::Finished;
+        break;
+    case Flasher::Result::NoFirmware :
+        result = State::Failed;
+        errorMessage = QStringLiteral("The board has no valid firmware.");
         break;
     case Flasher::Result::Error :
         result = State::Failed;
         if (errorString.isEmpty()) {
-            errorString_ = QStringLiteral("Unknown error");
+            errorMessage = QStringLiteral("Unknown error");
         } else {
-            qCDebug(logCategoryFlasherConnector).noquote() << "Flasher error:" << errorString;
-            errorString_ = errorString;
+            errorMessage = errorString;
+            qCDebug(logCategoryFlasherConnector).noquote() << "Flasher error:" << errorMessage;
         }
         break;
     case Flasher::Result::Timeout :
         result = State::Failed;
-        errorString_ = QStringLiteral("Timeout. No response from board.");
+        errorMessage = QStringLiteral("Timeout. No response from board.");
         break;
     case Flasher::Result::Cancelled :
         result = State::Cancelled;
@@ -175,7 +179,7 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         break;
     }
     if (result == State::Failed) {
-        emit operationStateChanged(operation_, result, errorString_);
+        emit operationStateChanged(operation_, result, errorMessage);
     } else {
         emit operationStateChanged(operation_, result);
     }

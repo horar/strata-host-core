@@ -114,11 +114,11 @@ Item {
             id: passwordField
             Layout.fillWidth: true
             activeFocusOnTab: true
-            echoMode: TextInput.Password
             selectByMouse: true
             KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
             placeholderText: qsTr("Password")
             showIcon: false
+            passwordMode: true
 
             Keys.onPressed: {
                 loginErrorRect.hide()
