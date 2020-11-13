@@ -107,11 +107,19 @@ SGWidgets.SGMainWindow {
                 delegate: SGPlatformView {}
             }
 
-            Item {
+            Loader {
                 id: controlViewDevContainer
                 objectName: "controlViewDevContainer"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                asynchronous: true
+
+                onStatusChanged: {
+                    if (status === Loader.Null || status === Loader.Error) {
+                        setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": "Could not load control view"})
+                    }
+                }
             }
         }
     }

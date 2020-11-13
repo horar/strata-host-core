@@ -167,8 +167,8 @@ FocusScope {
                         visible: scrollbackView.height < scrollbackView.contentHeight
                     }
 
-                    onMovementStarted: {
-                        automaticScroll = false
+                    onContentYChanged: {
+                        automaticScroll = scrollbackView.atYEnd
                     }
 
                     delegate: Item {
