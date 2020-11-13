@@ -86,6 +86,44 @@ Then you can install on your desired testing machine and test as needed.
 To install Strata in unattended mode run following command as an administrator to avoid installation permission prompts.
 
 * Windows:
-    * `strata-setup-offline.exe isSilent=true`
+    * `strata-setup-offline.exe install --accept-licenses --accept-messages`
 * Mac:
-    * `./strata-setup-offline.app/Contents/MacOS/strata-setup-offline isSilent=true`
+    * `./strata-setup-offline.app/Contents/MacOS/strata-setup-offline install --accept-licenses --accept-messages`
+
+## Additional Strata Arguments
+
+Here are some of the most usefull arguments that can be used with Installer and Maintenance Tool
+* `-?, -h, --help`
+    * Displays help.
+* `-d, --verbose`
+    * Verbose mode. Prints out more information.
+
+If Installer application is executed, it will be by default in [GUI] installer mode.
+If Maintenance Tool is executed, it will be by default in [GUI] package manager mode.
+It is possible to use the following settings to preselect other modes in Maintenance Tool:
+* `--su, --start-updater`
+    * [GUI] Start Maintenance Tool in updater mode.
+* `--sm, --start-package-manager`
+    * [GUI] Start Maintenance Tool in package manager mode.
+* `--sr, --start-uninstaller`
+    * [GUI] Start Maintenance Tool in uninstaller mode.
+
+For unnatended installation, it is necessary to use CLI mode instead of GUI mode:
+* `in, install`
+    * [CLI] Install the default package set.
+* `ch, check-updates`
+    * [CLI] Show information about available updates (xml format).
+* `up, update`
+    * [CLI] Install all available updates.
+* `pr, purge`
+    * [CLI] Uninstall all packages and remove the program directory.
+
+And it can be combined with automatic accepting of messages / licenses and installation directory (if needed):
+* `--accept-messages`
+    * [CLI] Accepts all message queries without user input.
+* `--accept-licenses`
+    * [CLI] Accepts all licenses without user input.
+* `-t, --root <directory>`
+    * [CLI] Set the installation root directory.
+
+Note that as of QTIFW 4.0 controller scripts in `installscript.qs` are not executed in [CLI] mode

@@ -1,40 +1,15 @@
-/****************************************************************************
-**
-** Copyright (C) 2017 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the FOO module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:GPL-EXCEPT$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 as published by the Free Software
-** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
+var restart_is_required = true;
 
 function Component()
 {
-    installer.installationFinished.connect(this, Component.prototype.installationOrUpdateFinished);    // called after installation, update and adding/removing components
-    installer.finishButtonClicked.connect(this, Component.prototype.finishButtonClicked);
+    installer.installationFinished.connect(this, Component.prototype.onInstallationOrUpdateFinished);    // called after installation, update and adding/removing components
     installer.installationStarted.connect(this, Component.prototype.onInstallationStarted);
 
-    if ((installer.isInstaller() == true) && (systemInfo.productType == "windows")) {
-        component.loaded.connect(this, Component.prototype.addShortcutWidget);
+    if(installer.isCommandLineInstance() == false) {
+        installer.finishButtonClicked.connect(this, Component.prototype.onFinishButtonClicked);
+        if ((installer.isInstaller() == true) && (systemInfo.productType == "windows")) {
+            component.loaded.connect(this, Component.prototype.addShortcutWidget);
+        }
     }
 }
 
@@ -43,7 +18,7 @@ Component.prototype.createOperations = function()
     // call default implementation to actually install the content
     component.createOperations();
 
-    if ((systemInfo.productType == "windows") && (installer.value("add_start_menu_shortcut") == "true")) {
+    if ((systemInfo.productType == "windows") && (installer.value("add_start_menu_shortcut", "true") == "true")) {
         var target_dir = installer.value("TargetDir").split("/").join("\\");
         var strata_mt_shortcut_dst = installer.value("StartMenuDir").split("/").join("\\") + "\\Strata Maintenance Tool.lnk";
         component.addOperation("CreateShortcut", target_dir + "\\Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
@@ -79,14 +54,14 @@ function isRestartRequired()
         installer.performOperation("Delete", vc_redist_temp_file);
 
         if (exit_code == "3010 ") {
-            installer.setValue("restart_is_required", "true");
+            restart_is_required = true;
             return true;
         }
 
-        installer.setValue("restart_is_required", "false");
+        restart_is_required = false;
         return false;
     } else {
-        installer.setValue("restart_is_required", "false");
+        restart_is_required = false;
         return false;
     }
 }
@@ -104,9 +79,9 @@ function isComponentInstalled(component_name)
     return false;
 }
 
-Component.prototype.installationOrUpdateFinished = function()
+Component.prototype.onInstallationOrUpdateFinished = function()
 {
-    console.log("installationOrUpdateFinished entered");
+    console.log("onInstallationOrUpdateFinished entered");
 
     if (isComponentInstalled("com.onsemi.strata.devstudio") && ((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true))) {
         if (systemInfo.productType == "windows") {
@@ -151,9 +126,9 @@ Component.prototype.installationOrUpdateFinished = function()
     }
 }
 
-Component.prototype.finishButtonClicked = function()
+Component.prototype.onFinishButtonClicked = function()
 {
-    if ((installer.value("restart_is_required") ==  "true") && (installer.value("isSilent_internal") != "true")) {
+    if (restart_is_required == true) {
         console.log("showing restart question to user");
         // Print a message for Windows users to tell them to restart the host machine, immediately or later
         var restart_reply = QMessageBox.question("restart.question", "Installer", "Your computer needs to restart to complete your software installation. Do you wish to restart Now?", QMessageBox.Yes | QMessageBox.No);
@@ -304,22 +279,20 @@ function uninstallPreviousStrataInstallation()
 
             // we should not find multiple entries here, but just in case, check the highest
             if ((display_name.length != 0) && ((display_name.length == display_version.length) && (display_name.length == uninstall_string.length))) {
-                var perform_uninstall = (installer.value("isSilent_internal") == "true");
-                if (perform_uninstall == false) {
-                    var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
+                var perform_uninstall = false;
+                var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
 
-                    // User has selected 'yes' to uninstall
-                    if (uninstall_reply == QMessageBox.Yes) {
-                        perform_uninstall = true;
-                        console.log("User reply to uninstall Strata: Yes");
-                    } else {
-                        console.log("User reply to uninstall Strata: No");
-                    }
+                // User has selected 'yes' to uninstall
+                if (uninstall_reply == QMessageBox.Yes) {
+                    perform_uninstall = true;
+                    console.log("User reply to uninstall Strata: Yes");
+                } else {
+                    console.log("User reply to uninstall Strata: No");
                 }
                 if (perform_uninstall == true) {
                     for (var i = 0; i < display_version.length; i++) {
                         console.log("executing Strata uninstall command: '" + uninstall_string[i] + "'");
-                        var e = installer.execute(uninstall_string[i], ["isSilent=true"]);
+                        var e = installer.execute(uninstall_string[i], ["purge"]);
                         console.log(e);
                     }
                 }
@@ -334,21 +307,19 @@ function uninstallPreviousStrataInstallation()
         var maintenance_tool = installer.value("TargetDir") + "/" + installer.value("MaintenanceToolName") + ".app";
         console.log("checking if '" + maintenance_tool + "' exists");
         if (installer.fileExists(maintenance_tool) == true) {
-            var perform_uninstall = (installer.value("isSilent_internal") == "true");
-            if (perform_uninstall == false) {
-                var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
+            var perform_uninstall = false;
+            var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
 
-                // User has selected 'yes' to uninstall
-                if (uninstall_reply == QMessageBox.Yes) {
-                    perform_uninstall = true;
-                    console.log("User reply to uninstall Strata: Yes");
-                } else {
-                    console.log("User reply to uninstall Strata: No");
-                }
+            // User has selected 'yes' to uninstall
+            if (uninstall_reply == QMessageBox.Yes) {
+                perform_uninstall = true;
+                console.log("User reply to uninstall Strata: Yes");
+            } else {
+                console.log("User reply to uninstall Strata: No");
             }
             if (perform_uninstall == true) {
                 console.log("executing Strata uninstall");
-                installer.execute(installer.value("TargetDir") + "/" + installer.value("MaintenanceToolName") + ".app/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["isSilent=true"]);
+                installer.execute(installer.value("TargetDir") + "/" + installer.value("MaintenanceToolName") + ".app/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["purge"]);
             }
         } else {
             console.log("program not found, will install new version");
