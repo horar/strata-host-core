@@ -9,7 +9,6 @@ Rectangle {
     id: root
     Layout.fillWidth: true
     Layout.preferredHeight: 300
-    Layout.maximumHeight: 500
     color: "#eee"
     z: 3
 
@@ -129,36 +128,6 @@ ColumnLayout {
                 Layout.fillHeight: true
             }
 
-            Rectangle {
-                id: chevronButton
-                height: 30
-                width: 30
-                color: chevronArea.containsMouse ? "#aaa" : "transparent"
-                SGIcon {
-                    anchors.centerIn: chevronButton
-                    height: 20
-                    width: height
-                    source: "qrc:/sgimages/chevron-down.svg"
-                    iconColor: "#ddd"
-                    rotation: root.state === "minimize" ? 180 : 0
-                }
-
-                MouseArea {
-                    id: chevronArea
-                    anchors.fill: chevronButton
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-
-                    onClicked: {
-                        if(root.state === "original") {
-                            root.state = "minimize"
-                        } else {
-                            root.state = "original"
-                        }
-                    }
-                }
-            }
-
             Rectangle{
                 id: closeButton
                 height: 30
@@ -184,36 +153,6 @@ ColumnLayout {
                 }
             }
         }
-    }
-
-    state: "original"
-    states: [
-        State {
-            name: "minimize"
-            PropertyChanges {
-                target: root
-                Layout.preferredHeight: topBar.height
-                Layout.fillWidth: true
-            }
-        },
-        State {
-            name: "original"
-            PropertyChanges {
-                target: root
-                Layout.preferredHeight: 300
-                Layout.fillWidth: true
-            }
-        }
-
-    ]
-
-    DragHandler {
-        id: dragHandler
-        target: root
-        xAxis.enabled: false
-        yAxis.enabled: root.state === "original"
-        yAxis.minimum: 0
-        yAxis.maximum: 100
     }
 
     Loader {

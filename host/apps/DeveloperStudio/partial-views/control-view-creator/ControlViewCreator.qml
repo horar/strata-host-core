@@ -137,7 +137,7 @@ Rectangle {
                     iconText: "Logs"
                     iconSource: "qrc:/sgimages/bars.svg"
                     color: logsLayout.visible ? "#33b13b" : "transparent"
-                    enabled: editor.treeModel.url.toString() !== "" && !startContainer.visible
+                    enabled: editor.fileTreeModel.url.toString() !== "" && !startContainer.visible
 
                     function onClicked() {
                         logsLayout.visible = !logsLayout.visible;
@@ -166,20 +166,17 @@ Rectangle {
         ColumnLayout {
             id: viewsLogsColumn
             spacing: 0
-        StackLayout {
-            id: viewStack
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+            StackLayout {
+                id: viewStack
 
-            Start {
-                id: startContainer
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-
-                onVisibleChanged: {
-                    if(visible) logsLayout.visible = !visible
+                Start {
+                    id: startContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    onVisibleChanged: {
+                        if(visible) logsLayout.visible = !visible
+                    }
                 }
-            }
 
                 Editor {
                     id: editor
@@ -189,9 +186,9 @@ Rectangle {
 
                 Rectangle {
                     id: controlViewContainer
+                    color: "lightcyan"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    color: "lightcyan"
 
                     SGText {
                         anchors {
@@ -205,9 +202,7 @@ Rectangle {
 
                 Loader {
                     id: controlViewLoader
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    // asynchronous: true
+                    asynchronous: true
 
                     onStatusChanged: {
                         if (status === Loader.Ready) {
@@ -221,22 +216,22 @@ Rectangle {
                             console.error("Error while loading control view")
                             setSource(NavigationControl.screens.LOAD_ERROR,
                                       { "error_message": "Failed to load control view" }
-                            );
+                                      );
                         }
                     }
                 }
-            }  
-        ConsoleContainer {
-            id: logsLayout
-            Layout.fillWidth: true
-            visible: false
 
-            ConsoleLogger {
-                id: cvc_console
-                anchors.fill: parent
             }
-         }
+                ConsoleContainer {
+                    id: logsLayout
+                    Layout.fillWidth: true
+                    visible: false
 
+                    ConsoleLogger {
+                        id: cvc_console
+                        anchors.fill: parent
+                    }
+                }
         }
     }
 
