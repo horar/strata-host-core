@@ -188,6 +188,10 @@ Rectangle {
                                 viewStack.currentIndex = 2
                             }
                         } else if (status === Loader.Error) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
+
                             toolBarListView.recompiling = false
                             console.error("Error while loading control view")
                             setSource(NavigationControl.screens.LOAD_ERROR,
@@ -241,6 +245,6 @@ Rectangle {
         NavigationControl.context.class_id = debugPlatform.classId
         NavigationControl.context.device_id = debugPlatform.deviceId
 
-        controlViewLoader.setSource(qml_control, NavigationControl.context)
+        controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
     }
 }
