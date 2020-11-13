@@ -42,8 +42,8 @@ Test-StrataRelease.ps1
         [Alias("t")]
         $TestsToRun,
 
-        [Parameter(Mandatory=$True, HelpMessage="Please specify either dev, prod, or qa for your DPEnv")]
-        [ValidateSet("DEV", "QA", "PROD")]
+        [Parameter(Mandatory=$True, HelpMessage="Please specify either DEV or QA for your DPEnv")]
+        [ValidateSet("DEV", "QA")]
         [string]$DPEnv,
 
         [switch]$IncludeOTA,
