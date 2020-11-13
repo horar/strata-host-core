@@ -41,6 +41,7 @@ hs-utils-release
 extern/qwt/*
 extern/qwt-*.zip
 extern/couchbase-lite-C
+*.rcc
 .venv*/
 3p/
 3p-d/

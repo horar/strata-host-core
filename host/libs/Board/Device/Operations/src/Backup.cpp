@@ -1,4 +1,5 @@
 #include <Device/Operations/Backup.h>
+#include <DeviceOperationsStatus.h>
 #include "Commands/include/DeviceCommands.h"
 
 #include "logging/LoggingQtCategories.h"
@@ -9,7 +10,7 @@ using command::CmdStartBackupFirmware;
 using command::CmdBackupFirmware;
 
 Backup::Backup(const device::DevicePtr& device) :
-    BaseDeviceOperation(device, Type::BackupFirmware)
+    BaseDeviceOperation(device, Type::BackupFirmware), totalChunks_(0)
 {
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<CmdStartBackupFirmware>(device_));
@@ -21,10 +22,10 @@ Backup::Backup(const device::DevicePtr& device) :
 
 void Backup::backupNextChunk()
 {
-    if (run_ == false || currentCommand_ == commandList_.end()) {
+    if (BaseDeviceOperation::hasStarted() == false || currentCommand_ == commandList_.end()) {
         QString errMsg(QStringLiteral("Cannot backup chunk, backup operation is not running."));
         qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
-        emit error(errMsg);
+        finishOperation(Result::Error, errMsg);
         return;
     }
 
@@ -50,11 +51,11 @@ QVector<quint8> Backup::recentBackupChunk() const
     return chunk_;
 }
 
-void Backup::setTotalChunks(command::CommandResult& result, int& data)
+void Backup::setTotalChunks(command::CommandResult& result, int& status)
 {
     Q_UNUSED(result)
 
-    if (data == operation::BACKUP_STARTED) {
+    if (status == operation::BACKUP_STARTED) {
          CmdStartBackupFirmware *cmdStartBackup = dynamic_cast<CmdStartBackupFirmware*>(currentCommand_->get());
          if (cmdStartBackup != nullptr) {
              totalChunks_ = cmdStartBackup->totalChunks();

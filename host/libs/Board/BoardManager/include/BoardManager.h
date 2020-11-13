@@ -16,7 +16,7 @@
 
 namespace strata::device::operation {
     class BaseDeviceOperation;
-    enum class Type: int;
+    enum class Result: int;
 }
 
 namespace strata {
@@ -104,8 +104,7 @@ namespace strata {
 
     protected slots:
         virtual void checkNewSerialDevices();
-        virtual void handleOperationFinished(device::operation::Type opType, int);
-        virtual void handleOperationError(QString message);
+        virtual void handleOperationFinished(device::operation::Result result, int status, QString errStr);
         virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
     protected:

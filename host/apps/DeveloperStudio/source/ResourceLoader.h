@@ -8,6 +8,7 @@
 #include <QUrl>
 #include <QQmlEngine>
 #include <QQuickItem>
+#include <QProcess>
 
 struct ResourceItem {
     ResourceItem(
@@ -70,14 +71,6 @@ public:
     Q_INVOKABLE bool isViewRegistered(const QString &class_id);
 
     /**
-     * @brief createViewObject Creates a QML object and attaches it to parent
-     * @param path The path to the QML file
-     * @param parent The parent to append this object to
-     * @return The created QQuickItem*
-     */
-    Q_INVOKABLE QQuickItem* createViewObject(const QString &path, QQuickItem *parent, QVariantMap initialProperties = QVariantMap());
-
-    /**
      * @brief getVersionRegistered Gets the version of the class_id registered
      * @param class_id The class id of the platform
      * @return The version registered to that class_id
@@ -97,6 +90,13 @@ public:
 
     Q_INVOKABLE void unregisterAllViews(QObject *parent);
 
+    Q_INVOKABLE void recompileControlViewQrc(QString qrcFilePath);
+
+    Q_INVOKABLE QString getLastLoggedError();
+
+signals:
+    void finishedRecompiling(QString filepath);
+
 private slots:
     /**
      * @brief unregisterDeleteViewResource Unregisters resource from qrc and optionally deletes it from disk.
@@ -108,6 +108,10 @@ private slots:
      * @return True if successful, false if unable to delete/unregister resource.
      */
     bool unregisterDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent, const bool removeFromSystem = true);
+
+    void onOutputRead();
+
+    void recompileFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
     void loadCoreResources();
@@ -123,4 +127,14 @@ private:
     QHash<QString, ResourceItem*> viewsRegistered_;
 
     static const QStringList coreResources_;
+
+    std::unique_ptr<QProcess> rccCompilerProcess_ = nullptr;
+
+    QString lastLoggedError = "";
+
+    QString lastCompiledRccResource = "";
+
+    void clearLastLoggedError();
+
+    void setLastLoggedError(QString &error_str);
 };

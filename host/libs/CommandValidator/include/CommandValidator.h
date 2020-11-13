@@ -8,6 +8,8 @@
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
 
+namespace strata {
+
 /**
  * Static class to validate commands.
  */
@@ -20,6 +22,7 @@ public:
         notification,
         reqPlatformIdNotif,
         setPlatformIdNotif,
+        setAssistedPlatformIdNotif,
         getFirmwareInfoNotif,
         startBootloaderNotif,
         startApplicationNotif,
@@ -43,6 +46,8 @@ private:
     static const rapidjson::SchemaDocument startBackupFirmware_nps_;
     static const rapidjson::SchemaDocument backupFirmware_nps_;
     static const rapidjson::SchemaDocument strataCommandSchema_;
+    static const rapidjson::SchemaDocument setPlatformId_nps_;
+    static const rapidjson::SchemaDocument setAssistedPlatformId_nps_;
 
     static const std::map<const JsonType, const rapidjson::SchemaDocument&> schemas_;
     static const std::map<const JsonType, const char*> notifications_;
@@ -102,6 +107,12 @@ public:
      */
     static bool parseJsonCommand(const QByteArray &command, rapidjson::Document &doc);
 
+    /**
+     * Get status message from notification.
+     * @param doc[in] The rapidjson::Document contatining JSON notification.
+     * @return status string (/notification/payload/status) or empty array
+     */
+    static QByteArray notificationStatus(const rapidjson::Document &doc);
 
 private:
     /**
@@ -113,5 +124,7 @@ private:
 
 
 };
+
+}  // namespace
 
 #endif // COMMANDVALIDATOR_H
