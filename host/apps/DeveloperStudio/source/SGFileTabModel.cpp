@@ -198,6 +198,7 @@ bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const
 
     setCurrentIndex(data_.count() - 1);
     emit countChanged();
+    emit tabOpened(filepath);
     return true;
 }
 
@@ -224,6 +225,7 @@ bool SGFileTabModel::closeTabAt(const int index)
     }
 
     const QString id = data_[index]->id();
+    const QUrl filepath = data_[index]->filepath();
     beginRemoveRows(QModelIndex(), index, index);
     delete data_[index];
     data_.removeAt(index);
@@ -250,6 +252,7 @@ bool SGFileTabModel::closeTabAt(const int index)
     }
 
     emit countChanged();
+    emit tabClosed(filepath);
     return true;
 }
 
@@ -328,7 +331,7 @@ void SGFileTabModel::setCurrentIndex(const int index)
         currentId_ = data_[index]->id();
         emit currentIndexChanged();
     } else if (data_.count() == 0) {
-        currentId_ = -1;
+        currentId_ = "";
         emit currentIndexChanged();
     } else if (currentId_ != data_[currentIndex_]->id()) {
         currentId_ = data_[index]->id();

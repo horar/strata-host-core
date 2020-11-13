@@ -9,36 +9,36 @@ import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
 
 import "../general"
-
-import "../"
+import "components/"
 
 Rectangle {
     id: openProjectContainer
+    color: "#ccc"
 
-    property alias fileUrl: filePath.text
     property url url
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
-    color: "#ccc"
-
-    onVisibleChanged: {
-        if(!openProjectContainer.visible) {
-            alertMessage.Layout.preferredHeight = 0
-        }
-    }
+    property alias projectContainer: openProjectContainer
 
     Component.onCompleted:  {
         loadSettings()
     }
 
+    onVisibleChanged: {
+        if (!openProjectContainer.visible) {
+            alertMessage.Layout.preferredHeight = 0
+        }
+    }
+
     onUrlChanged: {
         if (url.toString() !== "") {
-            editor.treeModel.url = url
+            editor.fileTreeModel.url = url
         }
     }
 
     function openProject(filepath, addToProjectList) {
         let path = filepath.trim();
+
         if (path.startsWith("file:///")) {
             // type is url
             path = SGUtilsCpp.urlToLocalFile(path);
@@ -81,11 +81,12 @@ Rectangle {
 
     function addToTheProjectList (fileUrl) {
         for (var i = 0; i < previousFileURL.projects.length; ++i) {
-            if(previousFileURL.projects[i] === fileUrl) {
+            if (previousFileURL.projects[i] === fileUrl) {
                 return
             }
         }
-        if(previousFileURL.projects.length > 5) {
+
+        if (previousFileURL.projects.length > 10) {
             previousFileURL.projects.pop()
             listModelForUrl.remove(listModelForUrl.count - 1)
         }
@@ -96,7 +97,7 @@ Rectangle {
 
     function removeFromProjectList(fileUrl) {
         for (var i = 0; i < previousFileURL.projects.length; ++i) {
-            if(previousFileURL.projects[i] === fileUrl) {
+            if (previousFileURL.projects[i] === fileUrl) {
                 listModelForUrl.remove(i)
                 previousFileURL.projects.splice(i,1)
                 saveSettings()
@@ -108,6 +109,7 @@ Rectangle {
     ConfirmClosePopup {
         id: confirmClosePopup
         parent: controlViewCreatorRoot
+
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
 
@@ -125,44 +127,38 @@ Rectangle {
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
                 editor.openFilesModel.saveAll()
             }
-
             controlViewCreatorRoot.isConfirmCloseOpen = false
-
             if (closeReason !== confirmClosePopup.cancelCloseReason) {
-                if (openProject(addToProjectList ? filePath.text : newUrl.toString(), addToProjectList)) {
-                    filePath.text = "Select a .QRC file..."
+                if (openProject(addToProjectList ? fileOutput.text : newUrl.toString(), addToProjectList)) {
+                    fileOutput.text = "Select a .QRC file..."
                 }
             }
         }
     }
 
     ColumnLayout {
-        id:recentProjColumn
+        id: recentProjColumn
         anchors {
             fill: parent
             margins: 20
         }
-        spacing: 10
-
-        SGText {
-            color: "#666"
-            fontSizeMultiplier: 2
-            text: "Open Control View Project"
-        }
-
-        Rectangle {
-            // divider line
-            color: "#333"
-            Layout.preferredHeight: 1
-            Layout.fillWidth: true
-        }
+        spacing: 20
 
         SGNotificationToast {
             id: alertMessage
-            Layout.preferredWidth: parent.width * 0.7
-            interval: 0
-            z: 100
+            Layout.preferredWidth: parent.width/1.5
             color: "red"
+        }
+
+        FileDialog {
+            id: fileDialog
+            nameFilters: ["*.qrc"]
+            folder: fileDialog.shortcuts.home
+            onAccepted: {
+                if (fileDialog.fileUrl.toString() !== "") {
+                    fileOutput.text = fileDialog.fileUrl
+                }
+            }
         }
 
         SGText {
@@ -174,21 +170,28 @@ Rectangle {
         }
 
         ListView {
+            id: listView
             implicitWidth: contentItem.childrenRect.width
             implicitHeight: contentItem.childrenRect.height
+            Layout.fillHeight: true
+            Layout.maximumHeight: implicitHeight
             orientation: ListView.Vertical
-            model:ListModel{
-                id: listModelForUrl
-            }
             highlightFollowsCurrentItem: true
             spacing: 10
+            clip: true
+
+            model: ListModel {
+                id: listModelForUrl
+            }
+
             delegate:  Rectangle {
                 id: projectUrlContainer
-                width: openProjectContainer.width - 40
                 height: 40
-                color: removeProjectMenu.opened  ? "lightgray" : "white"
+                width: recentProjColumn.width
+                color: removeProjectMenu.opened  ? "#aaa" : urlMouseArea.containsMouse ? "#eee" : "#ddd"
 
                 RowLayout {
+                    id: row
                     anchors {
                         fill: projectUrlContainer
                         margins: 5
@@ -201,13 +204,14 @@ Rectangle {
                     }
 
                     SGText {
-                        Layout.fillWidth:true
-                        text: model.url.toString()
-                        elide:Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
+                        Layout.fillWidth: true
+                        text: model.url
+                        elide: Text.ElideRight
+                        horizontalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
+                        font.underline: urlMouseArea.containsMouse
                         maximumLineCount: 1
-                        color:  urlMouseArea.containsMouse ?  "#bbb" : "black"
+                        color: urlMouseArea.containsPress ? "#555" : "black"
                     }
                 }
 
@@ -223,19 +227,20 @@ Rectangle {
                         }
                         return result + padding * 2;
                     }
+
                     MenuItem {
                         text: "Remove Projects From Recent Project"
                         onTriggered: {
-                            removeFromProjectList(model.url.toString())
+                            removeFromProjectList(model.url)
                         }
                     }
+
                     MenuItem {
                         text: "Clear Recent Project List"
                         onTriggered: {
                             previousFileURL.projects = []
                             listModelForUrl.clear()
                             saveSettings()
-
                         }
                     }
                 }
@@ -244,25 +249,19 @@ Rectangle {
                     id: urlMouseArea
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: {
-                        if(mouse.button === Qt.RightButton) {
+                        if (mouse.button === Qt.RightButton) {
                             removeProjectMenu.popup()
-                        }
-                        else  {
-                            if(!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(model.url))) {
-                                if (alertMessage.visible) {
-                                    alertMessage.Layout.preferredHeight = 0
-                                }
-
+                        } else {
+                            if (!SGUtilsCpp.exists(SGUtilsCpp.urlToLocalFile(model.url))) {
                                 alertMessage.text = "This project does not exist anymore. Removing it from your recent projects..."
                                 alertMessage.show()
-                                removeFromProjectList(model.url.toString())
-                            }
-                            else {
+                                removeFromProjectList(model.url)
+                            } else {
                                 let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
-                                if (unsavedFileCount > 0
-                                        && openProjectContainer.url.toString() !== model.url) {
+                                if (unsavedFileCount > 0 && openProjectContainer.url.toString() !== model.url) {
                                     if (!controlViewCreatorRoot.isConfirmCloseOpen) {
                                         confirmClosePopup.unsavedFileCount = unsavedFileCount
                                         confirmClosePopup.newUrl = model.url
@@ -282,94 +281,69 @@ Rectangle {
             }
         }
 
-        SGAlignedLabel {
-            Layout.topMargin: 20
+        SGText {
+            Layout.alignment: Qt.AlignLeft
+            text: "Select control view project .QRC file: "
             color: "#666"
             fontSizeMultiplier: 1.25
-            text: "Select control view project .QRC file:"
-            target: directoryInput
+        }
 
-            RowLayout {
-                id: directoryInput
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
 
-                SGButton {
-                    text: "Select"
-                    onClicked: {
-                        fileDialog.open()
-                    }
+            SGControlViewButton {
+                Layout.preferredHeight: 35
+                Layout.preferredWidth: 150
+                text: "Browse"
+
+                function onClicked() {
+                    fileDialog.open()
                 }
+            }
 
-                FileDialog {
-                    id: fileDialog
-                    nameFilters: ["*.qrc"]
-                    selectMultiple: false
-                    selectFolder: false
-                    onAccepted: {
-                        filePath.text = fileDialog.fileUrl
-                    }
-                }
+            Rectangle {
+                Layout.preferredHeight: 35
+                Layout.fillWidth: true
+                color: "#eee"
+                border.color: "#444"
+                border.width: 0.5
 
-                Rectangle {
-                    id: filePathContainer
-                    Layout.preferredWidth: 600
-                    Layout.preferredHeight: 40
-                    color: "#eee"
-                    border.color: "#333"
-                    border.width: 1
-                    clip: true
+                TextInput {
+                    id: fileOutput
 
-                    TextInput {
-                        id: filePath
-
-                        anchors {
-                            leftMargin: 10
-                            rightMargin: 5
-                            fill: parent
-                            verticalCenter: parent.verticalCenter
-                        }
-                        height: parent.height
-                        text: "Select a .QRC file..."
-                        color: "#333"
-                        verticalAlignment: Text.AlignVCenter
-                        selectByMouse: true
-                    }
+                    anchors.fill: parent
+                    text: "Select a .qrc file..."
+                    color: "#333"
+                    verticalAlignment: Text.AlignVCenter
+                    selectByMouse: true
+                    leftPadding: 10
                 }
             }
         }
 
-        RowLayout {
-            Layout.topMargin: 20
-            Layout.fillWidth: false
-            spacing: 20
+        SGControlViewButton {
+            id: openbutton
+            Layout.fillWidth: true
+            Layout.preferredHeight: 35
+            text: "Open Project"
 
-            SGButton {
-                text: "Open Project"
+            function onClicked() {
+                if (fileOutput.text !== "" && fileOutput.text !== "Select a .qrc file...") {
+                    let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
 
-                onClicked: {
-                    if (filePath.text !== "" && filePath.text !== "Select a .QRC file...") {
-                        let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
-                        if (unsavedFileCount > 0
-                                && openProjectContainer.url !== fileDialog.fileUrl) {
-                            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
-                                confirmClosePopup.unsavedFileCount = unsavedFileCount
-                                confirmClosePopup.addToProjectList = true
-                                confirmClosePopup.open()
-                                controlViewCreatorRoot.isConfirmCloseOpen = true
-                            }
-                        } else {
-                            if (openProject(filePath.text, true)) {
-                                filePath.text = "Select a .QRC file..."
-                            }
+                    if (unsavedFileCount > 0 && openProjectContainer.url !== fileDialog.fileUrl) {
+                        if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                            confirmClosePopup.unsavedFileCount = unsavedFileCount
+                            confirmClosePopup.addToProjectList = true
+                            confirmClosePopup.open()
+                            controlViewCreatorRoot.isConfirmCloseOpen = true
+                        }
+                    } else {
+                        if (openProject(fileOutput.text,true)) {
+                            fileOutput.text = "Select a .qrc file..."
                         }
                     }
-                }
-            }
-
-            SGButton {
-                text: "Cancel"
-
-                onClicked: {
-                    toolBarListView.currentIndex = -1
                 }
             }
         }

@@ -74,6 +74,8 @@ public:
 
 signals:
     void currentIndexChanged();
+    void tabClosed(const QUrl filepath);
+    void tabOpened(const QUrl filepath);
     void countChanged();
     void saveRequested(const int index);
     void saveAllRequested();

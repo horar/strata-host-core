@@ -21,6 +21,7 @@ Item {
     property string file: model.filename
     property int savedVersionId
     property int currentVersionId
+    property bool externalChanges: false
 
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
@@ -34,7 +35,10 @@ Item {
             alertToast.hide()
         }
 
-        let success = SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(model.filepath), channelObject.fileText);
+        const path = SGUtilsCpp.urlToLocalFile(model.filepath);
+        treeModel.stopWatchingPath(path);
+        const success = SGUtilsCpp.atomicWrite(path, channelObject.fileText);
+        treeModel.startWatchingPath(path);
 
         if (success) {
             savedVersionId = currentVersionId;
@@ -49,6 +53,18 @@ Item {
     Keys.onPressed: {
         if (event.matches(StandardKey.Save)) {
             saveFile()
+        }
+    }
+
+    Connections {
+        target: treeModel
+
+        onFileChanged: {
+            if (model.filepath === path) {
+                channelObject.fileText = openFile(model.filepath)
+                externalChanges = true
+                channelObject.setHtml(channelObject.fileText);
+            }
         }
     }
 
@@ -131,6 +147,12 @@ Item {
             if (!savedVersionId) {
                 savedVersionId = version
             }
+
+            if (externalChanges) {
+                savedVersionId = version
+                externalChanges = false
+            }
+
             currentVersionId = version
             model.unsavedChanges = (savedVersionId !== version)
         }

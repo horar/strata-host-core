@@ -78,30 +78,26 @@ Rectangle {
                 anchors.fill: parent
                 spacing: 5
 
-                property int currentIndex: -1
-                property int openTab: 0
-                property int newTab: 1
-                property int editTab: 2
-                property int viewTab: 3
+                property int currentIndex: 0
+                property int startTab: 0
+                property int editTab: 1
+                property int viewTab: 2
                 property bool recompiling: false
 
                 onCurrentIndexChanged: {
                     switch (currentIndex) {
-                    case openTab:
-                        viewStack.currentIndex = 1
-                        break;
-                    case newTab:
-                        viewStack.currentIndex = 2
+                    case startTab:
+                        viewStack.currentIndex = 0
                         break;
                     case editTab:
-                        viewStack.currentIndex = 3
+                        viewStack.currentIndex = 1
                         break;
                     case viewTab:
                         if (rccInitialized == false) {
                             toolBarListView.recompiling = true
                             recompileControlViewQrc();
                         } else {
-                            viewStack.currentIndex = 4
+                            viewStack.currentIndex = 2
                         }
 
                         break;
@@ -113,8 +109,7 @@ Rectangle {
 
                 /*****************************************
                   Main Navigation Items
-                    * Open Project
-                    * New Project
+                    * Start
                     * Editor
                     * View
                 *****************************************/
@@ -122,8 +117,7 @@ Rectangle {
                     id: mainNavItems
 
                     model: [
-                        { imageSource: "qrc:/sgimages/folder-open-solid.svg", imageText: "Open" },
-                        { imageSource: "qrc:/sgimages/folder-plus.svg", imageText: "New" },
+                        { imageSource: "qrc:/sgimages/list.svg", imageText: "Start" },
                         { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit" },
                         { imageSource: "qrc:/sgimages/eye.svg", imageText: "View" },
                     ]
@@ -143,7 +137,7 @@ Rectangle {
                     iconText: "Logs"
                     iconSource: "qrc:/sgimages/bars.svg"
                     color: logsLayout.visible ? "#33b13b" : "transparent"
-                    enabled: editor.treeModel.url.toString() !== "" && !openProjectContainer.visible && !newControlViewContainer.visible && !startContainer.visible
+                    enabled: editor.treeModel.url.toString() !== "" && !startContainer.visible
 
                     function onClicked() {
                         logsLayout.visible = !logsLayout.visible;
@@ -187,26 +181,6 @@ Rectangle {
                 }
             }
 
-                OpenControlView {
-                    id: openProjectContainer
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-
-                    onVisibleChanged: {
-                        if(visible) logsLayout.visible = !visible
-                    }
-                }
-
-                NewControlView {
-                    id: newControlViewContainer
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-
-                    onVisibleChanged: {
-                        if(visible) logsLayout.visible = !visible
-                    }
-                }
-
                 Editor {
                     id: editor
                     Layout.fillHeight: true
@@ -240,7 +214,7 @@ Rectangle {
                             toolBarListView.recompiling = false
                             if (toolBarListView.currentIndex === toolBarListView.viewTab
                                     || source === NavigationControl.screens.LOAD_ERROR) {
-                                viewStack.currentIndex = 4
+                                viewStack.currentIndex = 2
                             }
                         } else if (status === Loader.Error) {
                             toolBarListView.recompiling = false
@@ -279,9 +253,9 @@ Rectangle {
     }
 
     function recompileControlViewQrc () {
-        if (editor.treeModel.url.toString() !== '') {
+        if (editor.fileTreeModel.url.toString() !== '') {
             recompileRequested = true
-            sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
+            sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
         }
     }
 

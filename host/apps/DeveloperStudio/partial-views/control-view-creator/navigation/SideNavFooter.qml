@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
     implicitHeight: divider.height + recompileNavButton.height
@@ -82,7 +83,7 @@ Item {
 
         iconText: "Build"
         iconSource: "qrc:/sgimages/bolt.svg"
-        enabled: editor.treeModel.url.toString() !== "" && !toolBarListView.recompiling
+        enabled: editor.fileTreeModel.url.toString() !== "" && !toolBarListView.recompiling
         visible: !toolBarListView.recompiling
         color: "transparent"
 
