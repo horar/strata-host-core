@@ -162,7 +162,7 @@ Item {
             let RCCpath = sdsModel.resourceLoader.getStaticResourcesString() + "/views-" + name + ".rcc"
 
             usingStaticView = true
-            if (registerResource(RCCpath, controlViewContainer.staticVersion)) {
+            if (SGUtilsCpp.isFile(RCCpath) && registerResource(RCCpath, controlViewContainer.staticVersion)) {
                 return true;
             } else {
                 removeControl() // registerResource() failing creates an error screen, kill it to show OTA progress bar

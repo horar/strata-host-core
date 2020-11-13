@@ -54,6 +54,9 @@ class OpenControlView(unittest.TestCase):
         '''
         Tests opening a static version of a control view when no OTA control views are installed
         '''
+        # Remove the versionControl.json for this class_id
+        self.remove_version_control_json()
+
         args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()
         # assert on login page
@@ -97,6 +100,10 @@ class OpenControlView(unittest.TestCase):
 
         # Remove the static rcc
         self.remove_static_rcc()
+
+        # Remove the versionControl.json for this class_id
+        self.remove_version_control_json()
+
         args = Common.getCommandLineArguments(sys.argv)
 
         ui = StrataUI()
@@ -130,14 +137,14 @@ class OpenControlView(unittest.TestCase):
 
         # Open the control view
         ui.OpenControlView()
-        time.sleep(0.7)
+        time.sleep(0.4)
         strata.platformDocumentsMessage(classId="201",
             documents=docs["documents"],
             datasheets=docs["datasheets"],
             firmwares=docs["firmwares"],
             controlViews=docs["control_view"])
 
-        time.sleep(1)
+        time.sleep(0.5)
         currentDir = os.path.dirname(os.path.realpath(__file__))
         rccPath = os.path.abspath(currentDir + "/../views-logic-gate.rcc")
         strata.controlViewDownloadProgressMessage("201", docs["control_view"][1]["uri"], outputPath, rccPath)
@@ -203,6 +210,12 @@ class OpenControlView(unittest.TestCase):
         rccFilePath = (args.sdsRootDir + "/views-logic-gate.rcc").replace('\\', '/')
         if (os.path.exists(rccFilePath)):
             os.remove(rccFilePath)
+
+    def remove_version_control_json(self):
+        versionControlPath = os.getenv("APPDATA").replace('\\', '/')
+        versionControlPath += "/ON Semiconductor/Strata Developer Studio/settings/3402973885/201/versionControl.json"
+        if (os.path.exists(versionControlPath)):
+            os.remove(versionControlPath)
 
     def sample_platform_list(self):
         return [
