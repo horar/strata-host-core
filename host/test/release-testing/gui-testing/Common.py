@@ -137,6 +137,8 @@ def getCommandLineArguments(argv):
                         metavar="strata executable directory")
     parser.add_argument("--strataPath", action="store", type=str, help="Path to Strata executable (will open strata)",
                         metavar="strata path")
+    parser.add_argument("--hcsEnv", action="store", type=str, help="The HCS environment (DEV, QA, or PROD)",
+                        metavar="HCS Environment")
     parser.add_argument("--awaitStrata", action="store_true", help="Wait for strata to load before starting tests.")
     parser.add_argument("--strataIni", action="store", type=str, help="Path to Strata ini", metavar="strata ini path")
     parser.add_argument("--resultsPath", action="store", type=str, help="Specify that a results file should be written to with the given path", metavar="results file path")

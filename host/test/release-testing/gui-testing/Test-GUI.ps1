@@ -47,15 +47,19 @@ function Test-Gui()
     # Write to "Strata Developer Studio.ini"
     Set-Content "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" $token_string
 
-    #In case instances still remain
-    Stop-SDS
-    Stop-HCS
+    # Only run OTA tests if $IncludeOTA is set to $True
+    if ($IncludeOTA -eq $True) {
+        #In case instances still remain
+        Stop-SDS
+        Stop-HCS
 
-    Write-Host "TEST GROUP 0: OTA Strata Tests"
-    Remove-Item -Path "$Env:AppData\ON Semiconductor\Host Controller Service\DEV" -Recurse -Force
+        Write-Host "TEST GROUP 0: OTA Strata Tests"
+        Write-Host "HCS Environment: $HCSEnv"
 
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $OTATests --username $Username --password $Password --sdsRootDir `"$SDSRootDir`" --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+        Remove-Item -Path "$Env:AppData\ON Semiconductor\Host Controller Service\$HCSEnv" -Force -Recurse -ErrorAction Ignore
 
+        Start-Process $PythonExec -ArgumentList "$PythonGUIMain $OTATests --username $Username --password $Password --sdsRootDir `"$SDSRootDir`" --hcsEnv $HCSEnv --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+    }
     Stop-SDS
     Stop-HCS
 

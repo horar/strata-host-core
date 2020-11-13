@@ -146,12 +146,12 @@ function Start-SDSAndWait {
     Param (
         [Parameter(Mandatory = $false)][int]$seconds
     )
-    # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
+    # Set-Location $SDSRootDir is needed to resolve the ddl issue when running
     # HCS seperetly so that Windows will look into this directory for dlls
     Set-Location $SDSRootDir
     Start-Process -FilePath $SDSExecFile
     if ($seconds) {
-        Start-Sleep -Seconds 5
+        Start-Sleep -Seconds $seconds
     }
     Set-Location $TestRoot
 }

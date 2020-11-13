@@ -7,8 +7,10 @@ This is the main driver for the automated test script for the master test plan
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
 .INPUTS  
-SDSExecPath Mandatory. If not being passed as an argument to the script you will be prompted to choose the path
-Tests Optional. Space-separated list of tests to run
+-SDSExecPath Mandatory. If not being passed as an argument to the script you will be prompted to choose the path
+-TestsToRun Mandatory Comma-separated list of tests to run
+-DPEnv Mandatory The Deployment Portal environment. (PROD, OTA, or DEV)
+-IncludeOTA Optional switch to enable testing of OTA
 
 .OUTPUTS
 Result of the test
@@ -23,7 +25,7 @@ Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 platform Identification test requires JLink device and a platform connected.
 
 .Example
-Test-StrataRelease.ps1 -SDSExecPath "<PATH_TO_STRATA_EXE>" -Tests hcs,gui =,platformIdentification
+Test-StrataRelease.ps1 -SDSExecPath "<PATH_TO_STRATA_EXE>" -Tests hcs,gui,platformIdentification
 
 .Example
 Test-StrataRelease.ps1
@@ -38,60 +40,14 @@ Test-StrataRelease.ps1
         [ValidateSet("gui", "database", "collateral", "controlViews", "hcs", "platformIdentification", "tokenAndViews", "all")]
         [string[]]
         [Alias("t")]
-        $TestsToRun
+        $TestsToRun,
+
+        [Parameter(Mandatory=$True, HelpMessage="Please specify either dev, prod, or qa for your DPEnv")]
+        [ValidateSet("DEV", "QA", "PROD")]
+        [string]$DPEnv,
+
+        [switch]$IncludeOTA
     )
-
-    # [Parameter(Mandatory=$True, HelpMessage="Please specify either dev, prod, or qa for your DPEnv")]
-    # [ValidateSet("dev", "qa", "prod")]
-    # [string]$DPEnv
-
-# $hcsConfig = ''
-# if ($DPEnv -eq "prod") {
-#     $hcsConfig = '//
-#     // Host Controller Service configuration file [PROD]
-#     //
-#     //
-#     {
-#          "host_controller_service": {
-#            "subscriber_address": "tcp://*:5563"  // client subscribe address
-#         },
-#         "database":{
-#            "file_server":"https://api.strata.onsemi.com/api/v1/files/",
-#            "gateway_sync":"wss://api.strata.onsemi.com/strata"
-#         },
-#         "stage": "prod"
-#     }'
-# } elseif ($DPEnv -eq "qa") {
-#     $hcsConfig = '//
-#     // Host Controller Service configuration file [QA]
-#     //
-#     //
-#     {
-#          "host_controller_service": {
-#            "subscriber_address": "tcp://*:5563"  // client subscribe address
-#         },
-#         "database":{
-#            "file_server":"https://qa-api.strata.onsemi.com/api/v1/files/",
-#            "gateway_sync":"wss://qa-api.strata.onsemi.com/spyglass-qa"
-#         },
-#         "stage": "qa"
-#     }'
-# } else {
-#     $hcsConfig = '//
-#     // Host Controller Service configuration file [dev]
-#     //
-#     //
-#     {
-#          "host_controller_service": {
-#            "subscriber_address": "tcp://*:5563"  // client subscribe address
-#         },
-#         "database":{
-#            "file_server":"https://dev-api.strata.onsemi.com/api/v1/files/",
-#            "gateway_sync":"wss://dev-api.strata.onsemi.com/spyglass"
-#         },
-#         "stage": "dev"
-#     }'
-# }
 
 # Define HCS TCP endpoint to be used
 Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
@@ -102,8 +58,9 @@ Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\Host Controller Serv
 Set-Variable "StrataDeveloperStudioIniDir" "$Env:AppData\ON Semiconductor\"
 Set-Variable "HCSConfigFile" "$SDSRootDir\hcs.config"
 Set-Variable "HCSExecFile"   "$SDSRootDir\hcs.exe"
+Set-Variable "HCSEnv"        "$DPEnv"
 Set-Variable "SDSExecFile"   "$SDSExecPath"
-Set-Variable "HCSDbFile"     "$HCSAppDataDir\DEV\db\strata_db\db.sqlite3"
+Set-Variable "HCSDbFile"     "$HCSAppDataDir\$HCSEnv\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
 Set-Variable "JLinkExePath"  "${Env:ProgramFiles(x86)}\SEGGER\JLink\JLink.exe"
 Set-Variable "RequirementsFile" "$TestRoot\requirements.txt"
@@ -190,7 +147,7 @@ if ($TestsToRun -contains "all" -or $TestsToRun -contains "collateral") {
 #Run Test-PlatformIdentification
 # The test is disabled by default, The reason is that it requires having a platform and a JLink connected to the test machine.
 # To enable the test, pass this flag -EnablePlatformIdentificationTest when running Test-StrataRelease.ps script
-if ($TestsToRun -contains "all" -or $TestsToRun -contains "platformIndentification") {
+if ($TestsToRun -contains "platformIndentification") {
     $PlatformIdentificationResults = Test-PlatformIdentification -PythonScriptPath $PythonPlatformIdentificationTest -ZmqEndpoint $HCSTCPEndpoint
 }
 
@@ -221,7 +178,7 @@ if ($TestsToRun -contains "all" -or $TestsToRun -contains "gui") {
     Show-TestResult -TestName "Test-GUI" -TestResults $GUIResults
 }
 
-if ($TestsToRun -contains "all" -or $TestsToRun -contains "platformIndentification") {
+if ($TestsToRun -contains "platformIndentification") {
     Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults
 }
 

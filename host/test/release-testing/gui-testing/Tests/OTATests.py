@@ -24,17 +24,20 @@ class OpenControlView(unittest.TestCase):
 
     def setUp(self):
         global strataProcess
-        strataPath = os.path.abspath(os.getenv("SDSRootDir") + "/Strata Developer Studio.exe")
+        global hcs_endpoint
+        args = Common.getCommandLineArguments(sys.argv)
+        strataPath = os.path.abspath(args.sdsRootDir + "/Strata Developer Studio.exe")
         strataProcess = Popen(strataPath)
         strata.bindToStrata(hcs_endpoint)
-
         Common.awaitStrata()
 
         ui = StrataUI()
         ui.SetToLoginTab()
 
     def tearDown(self) -> None:
-        rccFilePath = (os.getenv("SDSRootDir") + "/views-logic-gate.rcc").replace('\\', '/')
+        args = Common.getCommandLineArguments(sys.argv)
+
+        rccFilePath = (args.sdsRootDir + "/views-logic-gate.rcc").replace('\\', '/')
         if (not os.path.exists(rccFilePath)):
             currentDir = os.path.dirname(os.path.realpath(__file__))
             copy2(os.path.abspath(currentDir + "/../views-logic-gate.rcc"), rccFilePath)
@@ -118,7 +121,7 @@ class OpenControlView(unittest.TestCase):
         docs = self.sample_platform_docs("201")
 
         outputPath = os.getenv("APPDATA")
-        outputPath += "/ON Semiconductor/Host Controller Service/DEV/documents/control_views/{}".format(docs["control_view"][1]["uri"])
+        outputPath += "/ON Semiconductor/Host Controller Service/{}/documents/control_views/{}".format(args.hcsEnv, docs["control_view"][1]["uri"])
         outputPath = outputPath.replace('\\', '/')
 
         # Remove the the previously downloaded rcc file if it exists
@@ -162,7 +165,7 @@ class OpenControlView(unittest.TestCase):
 
         docs = self.sample_platform_docs("201")
         downloadedPath = os.getenv("APPDATA")
-        downloadedPath += "/ON Semiconductor/Host Controller Service/DEV/documents/control_views/{}".format(docs["control_view"][1]["uri"])
+        downloadedPath += "/ON Semiconductor/Host Controller Service/{}/documents/control_views/{}".format(args.hcsEnv, docs["control_view"][1]["uri"])
         downloadedPath = downloadedPath.replace('\\', '/')
 
         # Set the filepath to the previously downloaded path 
@@ -196,7 +199,8 @@ class OpenControlView(unittest.TestCase):
     ##################### UTILITIES #####################
 
     def remove_static_rcc(self):
-        rccFilePath = (os.getenv("SDSRootDir") + "/views-logic-gate.rcc").replace('\\', '/')
+        args = Common.getCommandLineArguments(sys.argv)
+        rccFilePath = (args.sdsRootDir + "/views-logic-gate.rcc").replace('\\', '/')
         if (os.path.exists(rccFilePath)):
             os.remove(rccFilePath)
 

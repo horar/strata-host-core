@@ -9,6 +9,7 @@ https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+
 .INPUTS  SDSInstallerPath
 Mandatory. If not being passed as an argument to the script you will be prompted to choose the path
 -EnablePlatformIdentificationTest Optional switch to enable the platform Identification test.
+-IncludeOTA Optional switch to enable OTA testing
 
 .OUTPUTS
 Result of the test
@@ -29,14 +30,15 @@ Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>"
 Test-StrataRelease.ps1
 
 .Example
-Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>" -EnablePlatformIdentificationTest
+Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>" -EnablePlatformIdentificationTest -IncludeOTA
 #>
 
 [CmdletBinding()]
     param(
         [Parameter(Mandatory=$True, Position=0, HelpMessage="Please enter a path for Strata Installer")]
         [string]$SDSInstallerPath,
-        [switch]$EnablePlatformIdentificationTest
+        [switch]$EnablePlatformIdentificationTest,
+        [switch]$IncludeOTA
     )
 
 # Define HCS TCP endpoint to be used
@@ -50,6 +52,7 @@ Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer
 Set-Variable "HCSExecFile"   "$SDSRootDir\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
 Set-Variable "HCSDbFile"     "$HCSAppDataDir\PROD\db\strata_db\db.sqlite3"
+Set-Variable "HCSEnv"        "PROD"
 Set-Variable "TestRoot"      $PSScriptRoot
 Set-Variable "JLinkExePath"  "${Env:ProgramFiles(x86)}\SEGGER\JLink\JLink.exe"
 Set-Variable "RequirementsFile" "$TestRoot\requirements.txt"

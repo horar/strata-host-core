@@ -16,7 +16,7 @@ import Common
 from GUITestResult import GUITestResult
 
 if __name__ == "__main__":
-    
+
     args = Common.getCommandLineArguments(sys.argv)
     if args.verbose:
         with Common.TestLogger() as logger:
@@ -27,9 +27,6 @@ if __name__ == "__main__":
 
     if args.hcsAddress:
         strata.bindToStrata(args.hcsAddress)
-    
-    if args.sdsRootDir:
-        os.environ["SDSRootDir"] = args.sdsRootDir
         
     if args.awaitStrata:
         Common.awaitStrata()

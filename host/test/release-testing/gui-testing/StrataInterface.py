@@ -7,6 +7,7 @@ import threading
 import time
 import zmq
 from shutil import copy2
+from Common import TestLogger
 import os
 
 __client: zmq.Socket
@@ -128,7 +129,8 @@ def controlViewDownloadProgressMessage(classId, url, filepath, inputRccPath):
         time.sleep(1)
         bytesReceived += 334
         command["hcs::notification"]["bytes_received"] = bytesReceived
-        print("Sending bytes received: {}/{}".format(bytesReceived, 1000))
+        with TestLogger() as logger:
+            logger.info("Sending bytes received: {}/{}".format(bytesReceived, 1000))
         __client.send_multipart([__strataId, bytes(json.dumps(command), 'utf-8')])
 
     command = {
@@ -142,9 +144,10 @@ def controlViewDownloadProgressMessage(classId, url, filepath, inputRccPath):
 
     dirPath = os.path.dirname(filepath)
     os.makedirs(dirPath, exist_ok=True)
-    print("Copying {} to {}".format(inputRccPath, filepath))
-    copy2(inputRccPath, filepath)
-    print("Sending 'download_view_finished' notification")
+    with TestLogger() as logger:
+        logger.info("Copying {} to {}".format(inputRccPath, filepath))
+        copy2(inputRccPath, filepath)
+        logger.info("Sending 'download_view_finished' notification")
     __client.send_multipart([__strataId, bytes(json.dumps(command), 'utf-8')])
 
 
