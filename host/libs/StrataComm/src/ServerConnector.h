@@ -4,26 +4,21 @@
 #include <QSocketNotifier>
 #include <Connector.h>
 
-namespace strata::connector
-{
-class Connector;
-}
-
 namespace strata::strataComm {
 
 class ServerConnector : public QObject {
     Q_OBJECT
 
 public:
-    ServerConnector(std::string serverAddress, QObject *parent = nullptr) : QObject(parent), serverAddress_(serverAddress){}
+    ServerConnector(QString serverAddress, QObject *parent = nullptr) : QObject(parent), connector_(nullptr), serverAddress_(serverAddress){}
     ~ServerConnector();
 
     bool initilize();
     void readMessages();
-    void sendMessage(const QByteArray &clientId, const QString &message);
+    void sendMessage(const QByteArray &clientId, const QByteArray &message);
 
 signals:
-    void newMessageRecived(const QByteArray &clientId, const QString &message);
+    void newMessageRecived(const QByteArray &clientId, const QByteArray &message);
 
 private slots:
     void readNewMessages(/*int socket*/);
@@ -31,7 +26,7 @@ private slots:
 private:
     std::unique_ptr<strata::connector::Connector> connector_;
     QSocketNotifier *readSocketNotifier_;
-    std::string serverAddress_;
+    QString serverAddress_;
 };
 
 }   // namespace strata::strataComm

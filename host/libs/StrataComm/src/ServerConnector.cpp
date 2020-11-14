@@ -6,14 +6,17 @@ using namespace strata::strataComm;
 
 ServerConnector::~ServerConnector(){
     qCDebug(logCategoryStrataServerConnector) << "destroying the server";
-    connector_->close();
+
+    if (connector_) {
+        connector_->close();
+    }
 }
 
 bool ServerConnector::initilize() {
     using Connector = strata::connector::Connector;
     connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
 
-    if (false == connector_->open(serverAddress_)) {
+    if (false == connector_->open(serverAddress_.toStdString())) {
         qCCritical(logCategoryStrataServerConnector) << "Failed to open ServerConnector.";
         return false;
     }
@@ -31,8 +34,8 @@ void ServerConnector::readNewMessages(/*int socket*/) {
         if (connector_->read(message) == false) {
             break;
         }
-        qCDebug(logCategoryStrataServerConnector) << "message received. Client ID:" << QByteArray::fromStdString(connector_->getDealerID()).toHex() << "Message:" << QString::fromStdString(message);
-        emit newMessageRecived(QByteArray::fromStdString(connector_->getDealerID()), QString::fromStdString(message));
+        qCDebug(logCategoryStrataServerConnector) << "message received. Client ID:" << QByteArray::fromStdString(connector_->getDealerID()).toHex() << "Message:" << QByteArray::fromStdString(message);
+        emit newMessageRecived(QByteArray::fromStdString(connector_->getDealerID()), QByteArray::fromStdString(message));
     }
     readSocketNotifier_->setEnabled(true);
 }
@@ -43,14 +46,14 @@ void ServerConnector::readMessages() {
         if (connector_->read(message) == false) {
             break;
         }
-        qCDebug(logCategoryStrataServerConnector) << QString::fromStdString(connector_->getDealerID());
-        qCDebug(logCategoryStrataServerConnector) << QString::fromStdString(message);
+        qCDebug(logCategoryStrataServerConnector) << QByteArray::fromStdString(connector_->getDealerID());
+        qCDebug(logCategoryStrataServerConnector) << QByteArray::fromStdString(message);
     }
 }
 
-void ServerConnector::sendMessage(const QByteArray &clientId, const QString &message) {
+void ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &message) {
     qCDebug(logCategoryStrataServerConnector) << "Sending message. Client ID:" << clientId.toHex() << "Message:" << message;
-    
+
     // interesting design in connector. Assumes there is only one "dealer". i.e. one and only one client.
     connector_->setDealerID(clientId.toStdString());
     if (false == connector_->send(message.toStdString())) {

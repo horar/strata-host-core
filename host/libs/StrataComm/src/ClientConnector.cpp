@@ -12,9 +12,9 @@ ClientConnector::~ClientConnector() {
 bool ClientConnector::initilize() {
     using Connector = strata::connector::Connector;
     connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER);
-    connector_->setDealerID(dealerId_);
-    
-    if (false == connector_->open(serverAddress_)) {
+    connector_->setDealerID(dealerId_.toStdString());
+
+    if (false == connector_->open(serverAddress_.toStdString())) {
         qCCritical(logCategoryStrataClientConnector) << "Failed to open ClientConnector.";
         return false;
     }
@@ -37,16 +37,15 @@ void ClientConnector::readNewMessages(/*int socket*/) {
 void ClientConnector::readMessages() {
     std::string message;
     for(;;) {
-        // if (connector_->read(message, strata::connector::ReadMode::BLOCKING) == false) {
         if (connector_->read(message) == false) {
             break;
         }
-        qCDebug(logCategoryStrataClientConnector) << QString::fromStdString(message);
-        emit newMessageRecived(QString::fromStdString(message));
+        qCDebug(logCategoryStrataClientConnector) << QByteArray::fromStdString(message);
+        emit newMessageRecived(QByteArray::fromStdString(message));
     }
 }
 
-void ClientConnector::sendMessage(const QString &message) {
+void ClientConnector::sendMessage(const QByteArray &message) {
     qCDebug(logCategoryStrataClientConnector) << "Sending message. Message:" << message;
 
     if (false == connector_->send(message.toStdString())) {
