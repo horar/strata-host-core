@@ -5,6 +5,8 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 Item {
     id: platformInterface
 
+    property int apiVersion: 1
+
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

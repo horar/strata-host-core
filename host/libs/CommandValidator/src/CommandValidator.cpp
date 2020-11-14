@@ -5,6 +5,13 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/error/en.h>
 
+namespace strata {
+
+constexpr const char* const JSON_NOTIFICATION = "notification";
+constexpr const char* const JSON_PAYLOAD = "payload";
+constexpr const char* const JSON_VALUE = "value";
+constexpr const char* const JSON_STATUS = "status";
+
 // define the schemas
 
 const rapidjson::SchemaDocument CommandValidator::cmdSchema_(
@@ -308,13 +315,30 @@ const rapidjson::SchemaDocument CommandValidator::setPlatformId_nps_(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::setAssistedPlatformId_nps_(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": ["ok", "failed", "already_initialized", "board_not_connected"]
+                }
+            },
+            "required": [ "status" ]
+        })"
+    )
+);
+
 const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument&> CommandValidator::schemas_ = {
     {JsonType::cmd, cmdSchema_},
     {JsonType::ack, ackSchema_},
     {JsonType::notification, notificationSchema_},
     {JsonType::reqPlatformIdNotif, reqPlatformId_nps_},
     {JsonType::setPlatformIdNotif, setPlatformId_nps_},
-    {JsonType::setAssistedPlatformIdNotif, setPlatformId_nps_},
+    {JsonType::setAssistedPlatformIdNotif, setAssistedPlatformId_nps_},
     {JsonType::getFirmwareInfoNotif, getFirmwareInfo_nps_},
     {JsonType::startBootloaderNotif, notifPayloadStatusSchema_},
     {JsonType::startApplicationNotif, notifPayloadStatusSchema_},
@@ -424,9 +448,9 @@ bool CommandValidator::validateNotification(const JsonType type, const rapidjson
         return false;
     }
 
-    const rapidjson::Value& notification = doc["notification"];
-    const rapidjson::Value& value = notification["value"];
-    const rapidjson::Value& payload = notification["payload"];
+    const rapidjson::Value& notification = doc[JSON_NOTIFICATION];
+    const rapidjson::Value& value = notification[JSON_VALUE];
+    const rapidjson::Value& payload = notification[JSON_PAYLOAD];
     if (notifIt->second != value) {
         return false;
     }
@@ -453,3 +477,24 @@ bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Do
     }
     return true;
 }
+
+QByteArray CommandValidator::notificationStatus(const rapidjson::Document &doc) {
+    if (doc.HasMember(JSON_NOTIFICATION) == false) {
+        return QByteArray();
+    }
+    const rapidjson::Value& notification = doc[JSON_NOTIFICATION];
+    if (notification.HasMember(JSON_PAYLOAD) == false) {
+        return QByteArray();
+    }
+    const rapidjson::Value& payload = notification[JSON_PAYLOAD];
+    if (payload.HasMember(JSON_STATUS) == false) {
+        return QByteArray();
+    }
+    const rapidjson::Value& status = payload[JSON_STATUS];
+    if (status.IsString()) {
+        return QByteArray(status.GetString(), status.GetStringLength());
+    }
+    return QByteArray();
+}
+
+}  // namespace
