@@ -279,7 +279,7 @@ Window {
                         text: modelData
                         Layout.alignment: Qt.AlignVCenter
                     }
-                   }
+                }
             }
 
             SGButton {
@@ -308,7 +308,7 @@ Window {
             ColumnLayout {
                 id: injectPlatform
                 RowLayout {
-                        id: rowPlatform
+                    id: rowPlatform
                     Button {
                         text: "Inject"
                         Layout.preferredHeight: 35
@@ -323,8 +323,13 @@ Window {
                         Layout.preferredWidth: 300
                         model: classModel
                         placeholderText: "class_id..."
+                        editable: true
 
                         property string classId: ""
+
+                        onEditTextChanged: {
+                            classId = editText
+                        }
 
                         delegate: SGText {
                             color: delegateArea.containsMouse ? "#888" : "black"
@@ -355,7 +360,7 @@ Window {
                                 }
                             }
                         }
-                  }
+                    }
 
                     SGComboBox {
                         id: device_id
@@ -400,7 +405,9 @@ Window {
                     Layout.preferredHeight: 35
                     Layout.alignment: Qt.AlignHCenter
                     onClicked: {
-                        //disconnect platforms
+                        if(class_id.currentIndex > -1){
+                            PlatformSelection.disconnectPlatform(PlatformSelection.platformSelectorModel.get(class_id.currentIndex))
+                        }
                     }
                 }
             }
@@ -447,7 +454,13 @@ Window {
     function initialModelLoad(){
         for(var i = 0; i < PlatformSelection.platformSelectorModel.count; i++){
             classModel.append({platform: PlatformSelection.platformSelectorModel.get(i).class_id})
-             deviceModel.append({device:`device_id ${i}`})
+            deviceModel.append({device:`device_id ${i}`})
+        }
+
+        if(storeDeviceList.value("stored-platform") !== undefined && storeDeviceList.value("stored-platform").hasOwnProperty("device_id") && storeDeviceList.value("stored-platform").hasOwnProperty("class_id")){
+            device_id.currentIndex = storeDeviceList.value("stored-platform").device_id
+            class_id.currentIndex = storeDeviceList.value("stored-platform").class_id
+            class_id.classId = PlatformSelection.platformSelectorModel.get(class_id.currentIndex).class_id
         }
     }
 
@@ -468,9 +481,25 @@ Window {
                 }
 
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                storeDeviceList.setValue("stored-platform",{device_id: device_id.currentIndex, class_id: class_id.currentIndex})
+            } else {
+                if(classId !== ""){
+                    let list =
+                            {
+                                "class_id": classId,
+                                "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
+                                "firmware_version":platforms.get(i).firmware_version,
+                                "type":"connected_platforms"
+                            }
+
+
+
+                    PlatformSelection.addConnectedPlatform(JSON.stringify(list))
+                    PlatformSelection.platformSelectorModel.append(list)
+                    storeDeviceList.setValue("stored-platform",{device_id: device_id.currentIndex, class_id: class_id.currentIndex})
+                }
             }
         }
     }
-
 }
 
