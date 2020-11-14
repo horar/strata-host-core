@@ -27,7 +27,7 @@ public:
     QByteArray buildResponseApiv2(const ClientMessage &clientMessage, const QJsonObject &payload);
 
 public slots:
-    void newClientMessage(const QByteArray &clientId, const QString &message);
+    void newClientMessage(const QByteArray &clientId, const QByteArray &message);
     void notifyClient(const ClientMessage &clientMessage, const QJsonObject &jsonObject, ClientMessage::ResponseType respnseType);
     void notifyAllClients();
 

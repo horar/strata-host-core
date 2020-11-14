@@ -11,7 +11,7 @@ class StrataServerTest : public QObject {
     Q_OBJECT
 
 signals:
-    void mockNewMessageRecived(const QByteArray &clientId, const QString &message);
+    void mockNewMessageRecived(const QByteArray &clientId, const QByteArray &message);
 
 private slots:
     void testParseClientMessage();

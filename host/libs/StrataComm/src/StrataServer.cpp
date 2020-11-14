@@ -42,13 +42,13 @@ StrataServer::~StrataServer() {
 
 // }
 
-void StrataServer::newClientMessage(const QByteArray &clientId, const QString &message) {
+void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray &message) {
     qCDebug(logCategoryStrataServer) << "StrataServer newClientMessage";
     qCDebug(logCategoryStrataServer) << "Client ID:" << clientId << "Message:" << message;
 
     
     QJsonParseError jsonParseError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(message.toUtf8(), &jsonParseError);
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
 
     if (jsonParseError.error != QJsonParseError::NoError) {
         qCDebug(logCategoryStrataServer) << "invalid JSON message.";
@@ -113,7 +113,7 @@ bool StrataServer::buildClientMessage(const QByteArray &message, ClientMessage *
     qCDebug(logCategoryStrataServer) << "StrataServer buildClientMessage";
     
     QJsonParseError jsonParseError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(message.toUtf8(), &jsonParseError);
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
 
     if (jsonParseError.error != QJsonParseError::NoError) {
         qCDebug(logCategoryStrataServer) << "invalid JSON message.";
