@@ -17,6 +17,7 @@ add_library(${PROJECT_NAME}
     src/ServerConnector.cpp
     src/ClientConnector.cpp
     src/logging/LoggingQtCategories.cpp
+    include/StrataServer.h
 )
 
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
