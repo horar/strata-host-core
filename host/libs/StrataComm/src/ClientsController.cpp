@@ -20,12 +20,12 @@ bool ClientsController::isRegisteredClient(const QByteArray &clientID) {
         qCDebug(logCategoryStrataClientsController) << "Client is not registered. clientID: " << clientID;
         return false;
     }
-    qCDebug(logCategoryStrataClientsController) << "Client is registered. clientID: " << it->getClientID() << " API Version: " << it->getApiVersion();
+    qCDebug(logCategoryStrataClientsController) << "Client is registered. clientID: " << it->getClientID() << " API Version: " << static_cast<int>(it->getApiVersion());
     return true;
 }
 
 bool ClientsController::registerClient(const Client &client) {
-    qCInfo(logCategoryStrataClientsController) << "Registering Client: " << client.getClientID() << " " << client.getApiVersion();
+    qCInfo(logCategoryStrataClientsController) << "Registering Client: " << client.getClientID() << " " << static_cast<int>(client.getApiVersion());
 
     // find a better way.. maybe use different DS that vector or qlist? 
     if (true == isRegisteredClient(client.getClientID())) {
@@ -54,15 +54,26 @@ bool ClientsController::unregisterClient(const QByteArray &clientID) {
     }
 }
 
-QString ClientsController::getClientApiVersion(const QByteArray &clientID) {
+ApiVersion ClientsController::getClientApiVersion(const QByteArray &clientID) {
     qCInfo(logCategoryStrataClientsController) << "searching for clientID: " << clientID;
     auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientID] (Client &client) {
         return client.getClientID() == clientID;
     });
     if (it == clientsList_.end()) {
         qCDebug(logCategoryStrataClientsController) << "Client is not registered. clientID: " << clientID;
-        return "";
+        return ApiVersion::none;
     }
-    qCDebug(logCategoryStrataClientsController) << "Client is registered. clientID: " << it->getClientID() << " API Version: " << it->getApiVersion();
+    qCDebug(logCategoryStrataClientsController) << "Client is registered. clientID: " << it->getClientID() << " API Version: " << static_cast<int>(it->getApiVersion());
     return it->getApiVersion();
+}
+
+Client ClientsController::getClient(const QByteArray &clientID) {
+    auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientID] (Client &client) {
+        return client.getClientID() == clientID;
+    });
+    if (it == clientsList_.end()) {
+        qCDebug(logCategoryStrataClientsController) << "Client is not registered. clientID: " << clientID;
+        return Client("", ApiVersion::v2);
+    }
+    return clientsList_[std::distance(clientsList_.begin(), it)];
 }

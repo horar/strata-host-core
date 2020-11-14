@@ -5,17 +5,26 @@
 #include <QString>
 
 namespace strata::strataComm {
+    
+enum class ApiVersion {
+        v1,
+        v2,
+        none
+};
+
 class Client
 {
+    
+
 public:
-    Client(const QByteArray clientId, const QString APIVersion);
+    Client(const QByteArray clientId, const ApiVersion APIVersion);
     ~Client();
     QByteArray getClientID() const;
-    QString getApiVersion() const;
+    ApiVersion getApiVersion() const;
 
 private:
     QByteArray clientId_;
-    QString APIVersion_;
+    ApiVersion APIVersion_;
 };
 
 }   // namespace strata::strataComm

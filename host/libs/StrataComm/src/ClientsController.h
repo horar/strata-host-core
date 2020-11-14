@@ -19,8 +19,8 @@ public:
     bool isRegisteredClient(const QByteArray &clientID);
     bool registerClient(const Client &client);
     bool unregisterClient(const QByteArray &clientID);
-    QString getClientApiVersion(const QByteArray &clientID);
-
+    ApiVersion getClientApiVersion(const QByteArray &clientID);
+    Client getClient(const QByteArray &clientID);
 signals:
     void notifyClientSignal(const Client &client, const QJsonObject &payload);
 

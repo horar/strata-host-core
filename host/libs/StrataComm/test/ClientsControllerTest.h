@@ -23,6 +23,7 @@ private slots:
     void testUnregisterClient();
     void testNotifyAllCleints();
     void testGetApiVersion();
+    void testGetClient();
 
 private:
     ClientsController *clientsController_;

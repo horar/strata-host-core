@@ -1,13 +1,14 @@
 #include "ClientsControllerTest.h"
 
 void ClientsControllerTest::notifyClientMock(const Client &client, const QJsonObject &payload) {
-    qDebug() << "Sending " << payload << "To Client ID: " << client.getClientID() << " API Version: " << client.getApiVersion();
+    qDebug() << "Sending " << payload << "To Client ID: " << client.getClientID() << " API Version: " << static_cast<int>(client.getApiVersion());
 }
 
 void ClientsControllerTest::testIsRegisteredClient() {
     ClientsController clientsController;
-    Client client1("client_1", "v1.0.0");
-    Client client2("client_2", "v1.0.0");
+
+    Client client1("client_1", strata::strataComm::ApiVersion::v1);
+    Client client2("client_2", strata::strataComm::ApiVersion::v1);
 
     QCOMPARE_(clientsController.isRegisteredClient(client1.getClientID()), false);
     QCOMPARE_(clientsController.isRegisteredClient(client2.getClientID()), false);
@@ -25,7 +26,7 @@ void ClientsControllerTest::testRegisterClient() {
 
     // create a list of random clients and register them.
     for (int i=0; i<testClientListSize; i++) {
-        testClientsList.append({QByteArray::number(i), "v1.0.0"});
+        testClientsList.append({QByteArray::number(i), strata::strataComm::ApiVersion::v1});
         QCOMPARE_(clientsController.registerClient(testClientsList[i]), true);
     }
 
@@ -36,8 +37,8 @@ void ClientsControllerTest::testRegisterClient() {
 
 void ClientsControllerTest::testRegisterDublicateClient() {
     ClientsController clientsController;
-    Client client("client", "v1.0.0");
-    Client clientDuplicateID("client", "v2.0.0");
+    Client client("client", strata::strataComm::ApiVersion::v1);
+    Client clientDuplicateID("client", strata::strataComm::ApiVersion::v1);
 
     QCOMPARE_(clientsController.isRegisteredClient(client.getClientID()), false);
     QCOMPARE_(clientsController.isRegisteredClient(clientDuplicateID.getClientID()), false);
@@ -48,8 +49,8 @@ void ClientsControllerTest::testRegisterDublicateClient() {
 
 void ClientsControllerTest::testUnregisterClient() {
     ClientsController clientsController;
-    Client client1("client_1", "v1.0.0");
-    Client client2("client_2", "v1.0.0");
+    Client client1("client_1", strata::strataComm::ApiVersion::v1);
+    Client client2("client_2", strata::strataComm::ApiVersion::v1);
 
     QCOMPARE_(clientsController.registerClient(client1), true);
     QCOMPARE_(clientsController.registerClient(client2), true);
@@ -70,11 +71,11 @@ void ClientsControllerTest::testNotifyAllCleints() {
     
     connect(&clientsController, &ClientsController::notifyClientSignal, this, &ClientsControllerTest::notifyClientMock);
 
-    clientsController.registerClient(Client("AA", "v1.0"));
-    clientsController.registerClient(Client("BB", "v2.0"));
-    clientsController.registerClient(Client("CC", "v3.0"));
-    clientsController.registerClient(Client("DD", "v4.0"));
-    clientsController.registerClient(Client("EE", "v5.0"));
+    clientsController.registerClient(Client("AA", strata::strataComm::ApiVersion::v1));
+    clientsController.registerClient(Client("BB", strata::strataComm::ApiVersion::v2));
+    clientsController.registerClient(Client("CC", strata::strataComm::ApiVersion::v2));
+    clientsController.registerClient(Client("DD", strata::strataComm::ApiVersion::v1));
+    clientsController.registerClient(Client("EE", strata::strataComm::ApiVersion::v2));
 
     clientsController.notifyAllClients(QJsonObject({{"key", 1}}));
 
@@ -86,16 +87,29 @@ void ClientsControllerTest::testNotifyAllCleints() {
 void ClientsControllerTest::testGetApiVersion() {
     ClientsController clientsController;
     
-    clientsController.registerClient(Client("AA", "v1.0"));
-    clientsController.registerClient(Client("BB", "v2.0"));
-    clientsController.registerClient(Client("CC", "v3.0"));
-    clientsController.registerClient(Client("DD", "v4.0"));
-    clientsController.registerClient(Client("EE", "v5.0"));
+    clientsController.registerClient(Client("AA", strata::strataComm::ApiVersion::v1));
+    clientsController.registerClient(Client("BB", strata::strataComm::ApiVersion::v2));
+    clientsController.registerClient(Client("CC", strata::strataComm::ApiVersion::none));
 
-    QCOMPARE_(clientsController.getClientApiVersion("AA"), "v1.0");
-    QCOMPARE_(clientsController.getClientApiVersion("BB"), "v2.0");
-    QCOMPARE_(clientsController.getClientApiVersion("CC"), "v3.0");
-    QCOMPARE_(clientsController.getClientApiVersion("DD"), "v4.0");
-    QCOMPARE_(clientsController.getClientApiVersion("EE"), "v5.0");
-    QCOMPARE_(clientsController.getClientApiVersion("FF"), "");
+    QCOMPARE_(clientsController.getClientApiVersion("AA"), strata::strataComm::ApiVersion::v1);
+    QCOMPARE_(clientsController.getClientApiVersion("BB"), strata::strataComm::ApiVersion::v2);
+    QCOMPARE_(clientsController.getClientApiVersion("CC"), strata::strataComm::ApiVersion::none);
+}
+
+void ClientsControllerTest::testGetClient() {
+    ClientsController clientsController;
+    
+    clientsController.registerClient(Client("AA", strata::strataComm::ApiVersion::v1));
+    clientsController.registerClient(Client("BB", strata::strataComm::ApiVersion::v2));
+    clientsController.registerClient(Client("CC", strata::strataComm::ApiVersion::v2));
+    clientsController.registerClient(Client("DD", strata::strataComm::ApiVersion::v2));
+    clientsController.registerClient(Client("EE", strata::strataComm::ApiVersion::v2));
+
+    Client client = clientsController.getClient("AA");
+    QCOMPARE_(client.getClientID(), "AA");
+    QCOMPARE_(client.getApiVersion(), strata::strataComm::ApiVersion::v1);
+
+    clientsController.unregisterClient("AA");
+    QCOMPARE_(client.getClientID(), "AA");
+    QCOMPARE_(client.getApiVersion(), strata::strataComm::ApiVersion::v1);
 }
