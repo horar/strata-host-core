@@ -15,7 +15,7 @@ struct ClientMessage {
 
     QString handlerName;
     QJsonObject payload;
-    size_t messageID;
+    double messageID;
     QByteArray clientID;
     MessageType messageType;
 };
