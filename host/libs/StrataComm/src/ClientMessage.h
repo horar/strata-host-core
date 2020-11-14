@@ -13,6 +13,12 @@ struct ClientMessage {
         none
     };
 
+    enum ResponseType {
+        Response,
+        Notification,
+        Error
+    };
+
     QString handlerName;
     QJsonObject payload;
     double messageID;
