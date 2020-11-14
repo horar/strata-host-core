@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}-test
     TestHandlers.cpp
     ClientsControllerTest.cpp
     QzmqTest.cpp
+    StrataServerTest.cpp
     main.cpp
 )
 
