@@ -35,7 +35,7 @@ Item {
     }
 
     onViewChanged: {
-        goToView(view)
+        setSelectedButton()
     }
 
     function menuClicked(index) {
@@ -55,21 +55,10 @@ Item {
                 return
             } else {
                 model.view = selection.view
-                setSelectedButton()
             }
-        } else {
-            setSelectedButton()
         }
 
         bringIntoView()
-    }
-
-    function goToView(view){
-        for(let i = 0; i < buttonModel.count - 1; i++){
-            if(view === buttonModel.get(i).view){
-                menuClicked(i);
-            }
-        }
     }
 
     function bringIntoView() {
