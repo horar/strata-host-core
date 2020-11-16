@@ -82,10 +82,18 @@ Item {
 
             onStatusChanged: {
                 if (status === Loader.Ready) {
+                    // Tear Down creation context
+                    delete NavigationControl.context.class_id
+                    delete NavigationControl.context.device_id
+
                     controlLoaded = true
                     loadingBarContainer.visible = false;
                     loadingBar.value = 0.0;
                 } else if (status === Loader.Error) {
+                    // Tear Down creation context
+                    delete NavigationControl.context.class_id
+                    delete NavigationControl.context.device_id
+
                     createErrorScreen("Could not load file: " + source);
                 }
             }
@@ -146,10 +154,6 @@ Item {
         NavigationControl.context.device_id = platformStack.device_id
 
         controlLoader.setSource(control_filepath, Object.assign({}, NavigationControl.context))
-
-        // Tear Down creation context
-        delete NavigationControl.context.class_id
-        delete NavigationControl.context.device_id
     }
 
     /*
