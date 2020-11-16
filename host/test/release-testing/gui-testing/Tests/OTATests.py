@@ -61,7 +61,6 @@ class OpenControlView(unittest.TestCase):
             currentDir = os.path.dirname(os.path.realpath(__file__))
             copy2(os.path.abspath(currentDir + "/../views-logic-gate.rcc"), rccFilePath)
 
-        self.ui = StrataUI()
         self.ui.CloseControlView()
         Logout(self.ui)
         strata.closePlatforms()
@@ -76,8 +75,6 @@ class OpenControlView(unittest.TestCase):
         '''
         # Remove the versionControl.json for this class_id
         self.remove_version_control_json()
-
-        self.ui = StrataUI()
 
         # Open the control view
         self.openControlView()
@@ -104,8 +101,6 @@ class OpenControlView(unittest.TestCase):
 
         # Remove the versionControl.json for this class_id
         self.remove_version_control_json()
-
-        self.ui = StrataUI()
 
         docs = self.sample_platform_docs("201")
         outputPath = self.getControlViewDownloadPath(docs["control_view"][1]["uri"])
@@ -138,8 +133,6 @@ class OpenControlView(unittest.TestCase):
         control view without re-downloading it.
         '''
         self.remove_static_rcc()
-
-        self.ui = StrataUI()
 
         # Open the control view
         self.openControlView()
