@@ -103,12 +103,18 @@ Item {
 
         onSaveRequested: {
             if (index === fileContainerRoot.modelIndex) {
+                if (!model.exists) {
+                    model.exists = true
+                }
                 saveFile();
             }
         }
 
         onSaveAllRequested: {
             if (model.unsavedChanges) {
+                if (!model.exists) {
+                    model.exists = true
+                }
                 saveFile();
             }
         }

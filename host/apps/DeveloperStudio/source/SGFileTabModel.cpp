@@ -168,8 +168,6 @@ bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, in
     }
 
     SGFileTabItem* tab = data_.at(row);
-    qDebug() << "TAB" << tab->filename();
-    qDebug() << role - Qt::UserRole;
     bool success;
 
     switch (role) {
@@ -183,7 +181,6 @@ bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, in
         success = tab->setFiletype(value.toString());
         break;
     case UIdRole:
-        qDebug() << "Changing tab id from" << tab->id() << "to" << value.toString();
         tabIds_.remove(tab->id());
         if (currentId_ == tab->id()) {
             success = tab->setId(value.toString());
@@ -201,7 +198,6 @@ bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, in
         success = tab->setExists(value.toBool());
         break;
     default:
-        qDebug() << "Role not recognized";
         return false;
     }
 
@@ -344,7 +340,6 @@ void SGFileTabModel::clear(bool emitSignals)
 int SGFileTabModel::getIndexById(const QString &id) const
 {
     if (hasTab(id)) {
-        qDebug() << "It has the tab";
         for (int i = 0; i < data_.count(); ++i) {
             if (data_[i]->id() == id) {
                 return i;
@@ -357,7 +352,6 @@ int SGFileTabModel::getIndexById(const QString &id) const
 void SGFileTabModel::setExists(const QString &id, const bool &exists)
 {
     int index = getIndexById(id);
-    qDebug() << index;
     if (index >= 0) {
         if (data_[index]->unsavedChanges()) {
             setData(QAbstractListModel::index(index), exists, ExistsRole);

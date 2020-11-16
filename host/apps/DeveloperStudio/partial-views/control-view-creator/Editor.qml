@@ -268,6 +268,7 @@ Item {
                                         if (model.unsavedChanges && !controlViewCreatorRoot.isConfirmCloseOpen) {
                                             confirmClosePopup.filename = model.filename
                                             confirmClosePopup.index = index
+                                            confirmClosePopup.exists = model.exists
                                             confirmClosePopup.open()
                                             controlViewCreatorRoot.isConfirmCloseOpen = true
                                         } else {
@@ -330,11 +331,12 @@ Item {
                 x: (parent.width - width) / 2
                 y: (parent.height - height) / 2
 
-                titleText: "Do you want to save the changes made to " + filename + "?"
+                titleText: "Do you want to save the changes made to " + filename + (!exists ? " (deleted)?" : "?")
                 popupText: "Your changes will be lost if you choose to not save them."
 
                 property string filename: ""
                 property int index
+                property bool exists
 
                 onPopupClosed: {
                     if (closeReason === confirmClosePopup.closeFilesReason) {
