@@ -99,7 +99,7 @@ StackLayout {
     }
 
     SGPlatformNotificationPopup {
-        visible: (platformIsOutOfDate || firmwareIsOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate
+        visible: (platformIsOutOfDate || firmwareIsOutOfDate) && model.view !== "settings" && platformStack.visible && NavigationControl.userSettings.notifyOnFirmwareUpdate
     }
 
     SGUserSettings {
