@@ -7,6 +7,7 @@ import QtQuick.Controls 1.4 as QtQC1
 import QtQml.Models 2.12
 
 import tech.strata.SGQrcTreeModel 1.0
+import tech.strata.SGFileTabModel 1.0
 
 Rectangle {
     id: sideBarRoot
@@ -53,6 +54,14 @@ Rectangle {
                             }
                             treeView.selectItem(index)
                             treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
+                        } else {
+                            let idx = openFilesModel.findTabByFilepath(node.filepath);
+                            console.info(idx, node.filepath)
+                            if (idx >= 0) {
+                                let modelIndex = openFilesModel.index(idx, 0);
+                                openFilesModel.setData(modelIndex, node.uid, SGFileTabModel.UIdRole);
+                                openFilesModel.setData(modelIndex, true, SGFileTabModel.ExistsRole)
+                            }
                         }
                     }
 
@@ -75,7 +84,11 @@ Rectangle {
                     }
 
                     onFileDeleted: {
-                        openFilesModel.closeTab(uid)
+                        // If the file is open, then set the `exists` property of the tab to false
+                        let idx = openFilesModel.findTabByFilepath(path);
+                        if (idx >= 0) {
+                            openFilesModel.setData(openFilesModel.index(idx, 0), false, SGFileTabModel.ExistsRole)
+                        }
                     }
                 }
 

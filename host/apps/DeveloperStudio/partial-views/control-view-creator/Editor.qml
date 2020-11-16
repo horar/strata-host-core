@@ -229,7 +229,7 @@ Item {
 
                             SGText {
                                 id: tabText
-                                text: model.filename
+                                text: model.filename + (!model.exists ? " (deleted)" : "")
                                 color: "black"
                                 anchors {
                                     left: parent.left

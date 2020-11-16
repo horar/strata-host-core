@@ -11,6 +11,7 @@ import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 
 import "../../general"
+import "../"
 
 Item {
     id: fileContainerRoot
@@ -33,6 +34,13 @@ Item {
     function saveFile() {
         if (alertToast.visible) {
             alertToast.hide()
+        }
+
+        // If the file doesn't exist anymore, we need to notify the user with a confirmation dialog
+        if (!model.exists) {
+            controlViewCreatorRoot.isConfirmCloseOpen = true
+            deletedFileSavedConfirmation.open()
+            return
         }
 
         const path = SGUtilsCpp.urlToLocalFile(model.filepath);
@@ -103,6 +111,23 @@ Item {
             if (model.unsavedChanges) {
                 saveFile();
             }
+        }
+    }
+
+    ConfirmClosePopup {
+        id: deletedFileSavedConfirmation
+        titleText: "File no longer exists"
+        popupText: "This file has been deleted from disk. Are you sure you want to save this file?"
+
+        onPopupClosed: {
+            if (closeReason === acceptCloseReason) {
+                model.exists = true
+                saveFile()
+            } else if (closeReason === closeFilesReason) {
+                openFilesModel.closeTabAt(modelIndex)
+            }
+
+            controlViewCreatorRoot.isConfirmCloseOpen = false
         }
     }
 

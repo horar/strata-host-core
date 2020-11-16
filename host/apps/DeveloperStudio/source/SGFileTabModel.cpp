@@ -4,6 +4,10 @@
  * class SGFileTabItem
  ******************************************************************/
 
+SGFileTabItem::SGFileTabItem()
+{
+}
+
 SGFileTabItem::SGFileTabItem(const QString &filename, const QUrl &filepath, const QString &filetype, const QString id) :
     id_(id),
     filename_(filename),
@@ -11,6 +15,7 @@ SGFileTabItem::SGFileTabItem(const QString &filename, const QUrl &filepath, cons
     filetype_(filetype)
 {
     unsavedChanges_ = false;
+    exists_ = true;
 }
 
 QString SGFileTabItem::filename() const
@@ -31,6 +36,11 @@ QString SGFileTabItem::filetype() const
 bool SGFileTabItem::unsavedChanges() const
 {
     return unsavedChanges_;
+}
+
+bool SGFileTabItem::exists() const
+{
+    return exists_;
 }
 
 QString SGFileTabItem::id() const
@@ -65,10 +75,28 @@ bool SGFileTabItem::setFiletype(const QString &filetype)
     return false;
 }
 
+bool SGFileTabItem::setId(const QString &id)
+{
+    if (id_ != id) {
+        id_ = id;
+        return true;
+    }
+    return false;
+}
+
 bool SGFileTabItem::setUnsavedChanges(const bool &unsaved)
 {
     if (unsavedChanges_ != unsaved) {
         unsavedChanges_ = unsaved;
+        return true;
+    }
+    return false;
+}
+
+bool SGFileTabItem::setExists(const bool &exists)
+{
+    if (exists_ != exists) {
+        exists_ = exists;
         return true;
     }
     return false;
@@ -97,8 +125,9 @@ QHash<int, QByteArray> SGFileTabModel::roleNames() const
     roles.insert(FilenameRole, "filename");
     roles.insert(FilepathRole, "filepath");
     roles.insert(FiletypeRole, "filetype");
-    roles.insert(IdRole, "id");
+    roles.insert(UIdRole, "id");
     roles.insert(UnsavedChangesRole, "unsavedChanges");
+    roles.insert(ExistsRole, "exists");
     return roles;
 }
 
@@ -119,10 +148,12 @@ QVariant SGFileTabModel::data(const QModelIndex &index, int role) const
         return tab->filepath();
     case FiletypeRole:
         return tab->filetype();
-    case IdRole:
+    case UIdRole:
         return tab->id();
     case UnsavedChangesRole:
         return tab->unsavedChanges();
+    case ExistsRole:
+        return tab->exists();
     default:
         return QVariant();
     }
@@ -137,6 +168,8 @@ bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, in
     }
 
     SGFileTabItem* tab = data_.at(row);
+    qDebug() << "TAB" << tab->filename();
+    qDebug() << role - Qt::UserRole;
     bool success;
 
     switch (role) {
@@ -149,13 +182,26 @@ bool SGFileTabModel::setData(const QModelIndex &index, const QVariant &value, in
     case FiletypeRole:
         success = tab->setFiletype(value.toString());
         break;
-    case IdRole:
-        qWarning() << "Cannot set id of tab item";
-        return false;
+    case UIdRole:
+        qDebug() << "Changing tab id from" << tab->id() << "to" << value.toString();
+        tabIds_.remove(tab->id());
+        if (currentId_ == tab->id()) {
+            success = tab->setId(value.toString());
+            tabIds_.insert(tab->id());
+            setCurrentId(tab->id());
+        } else {
+            success = tab->setId(value.toString());
+            tabIds_.insert(tab->id());
+        }
+        break;
     case UnsavedChangesRole:
         success = tab->setUnsavedChanges(value.toBool());
         break;
+    case ExistsRole:
+        success = tab->setExists(value.toBool());
+        break;
     default:
+        qDebug() << "Role not recognized";
         return false;
     }
 
@@ -295,7 +341,43 @@ void SGFileTabModel::clear(bool emitSignals)
     }
 }
 
-int SGFileTabModel::getUnsavedCount()
+int SGFileTabModel::getIndexById(const QString &id) const
+{
+    if (hasTab(id)) {
+        qDebug() << "It has the tab";
+        for (int i = 0; i < data_.count(); ++i) {
+            if (data_[i]->id() == id) {
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
+void SGFileTabModel::setExists(const QString &id, const bool &exists)
+{
+    int index = getIndexById(id);
+    qDebug() << index;
+    if (index >= 0) {
+        if (data_[index]->unsavedChanges()) {
+            setData(QAbstractListModel::index(index), exists, ExistsRole);
+        } else {
+            closeTabAt(index);
+        }
+    }
+}
+
+int SGFileTabModel::findTabByFilepath(const QUrl &filepath)
+{
+    for (int i = 0; i < data_.count(); ++i) {
+        if (data_[i]->filepath() == filepath) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int SGFileTabModel::getUnsavedCount() const
 {
     int count = 0;
     for (SGFileTabItem* tab : data_) {

@@ -44,6 +44,10 @@ Popup {
 
     signal popupClosed(int closeReason);
 
+    onPopupClosed: {
+        close();
+    }
+
     DropShadow {
         width: root.width
         height: root.height
@@ -109,7 +113,7 @@ Popup {
                         }
                         onClicked: {
                             root.popupClosed(root.cancelCloseReason)
-                            root.close()
+                            close()
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
@@ -139,6 +143,7 @@ Popup {
                 Repeater {
                     id: buttonRepeater
                     model: buttons
+
                     delegate: Button {
                         id: delegateRoot
                         text: modelData.buttonText
@@ -162,7 +167,6 @@ Popup {
 
                         onClicked: {
                             root.popupClosed(modelData.closeReason)
-                            root.close()
                         }
 
                         Accessible.onPressAction: function() {
