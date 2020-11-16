@@ -25,12 +25,14 @@ namespace strata::device {
     typedef std::shared_ptr<Device> DevicePtr;
 
     enum class DeviceProperties {
-        deviceName,
-        verboseName,
-        platformId,
-        classId,
-        bootloaderVer,
-        applicationVer
+        Name,
+        BootloaderVer,
+        ApplicationVer,
+        PlatformId,
+        ClassId,
+        ControllerPlatformId,
+        ControllerClassId,
+        FirmwareClassId
     };
 
     class Device : public QObject
@@ -80,6 +82,11 @@ namespace strata::device {
             v2_0
         };
 
+        enum class ControllerType {
+            Embedded = 0x01,
+            Assisted = 0x02
+        };
+
         /**
          * Device constructor
          * @param deviceId device ID
@@ -125,6 +132,12 @@ namespace strata::device {
         virtual int deviceId() const final;
 
         /**
+         * Get device name given by system (e.g. COM3)
+         * @return Device name
+         */
+        virtual const QString deviceName() const final;
+
+        /**
          * Get device type.
          * @return Type of device
          */
@@ -135,6 +148,12 @@ namespace strata::device {
          * @return API version of device
          */
         virtual ApiVersion apiVersion() final;
+
+        /**
+         * Get device controller type (embedded, assisted).
+         * @return controller type of device
+         */
+        virtual ControllerType controllerType() final;
 
         friend QDebug operator<<(QDebug dbg, const Device* d);
         friend QDebug operator<<(QDebug dbg, const DevicePtr& d);
@@ -160,8 +179,10 @@ namespace strata::device {
         void deviceError(ErrorCode errCode, QString msg);
 
     private:
-        // *** functions used by friend classes BaseDeviceOperation and BaseDeviceCommand:
-        virtual void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) final;
+      // *** functions used by friend classes BaseDeviceOperation and BaseDeviceCommand:
+        virtual void setVersions(const char* bootloaderVer, const char* applicationVer) final;
+        virtual void setProperties(const char* name, const char* platformId, const char* classId, ControllerType type) final;
+        virtual void setAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) final;
         virtual bool lockDeviceForOperation(quintptr lockId) final;
         virtual void unlockDevice(quintptr lockId) final;
         virtual bool sendMessage(const QByteArray msg, quintptr lockId) = 0;
@@ -169,11 +190,11 @@ namespace strata::device {
         // Before calling bootloaderMode(), commands get_firmware_info and request_platform_id must be called.
         virtual bool bootloaderMode() final;
         virtual void setApiVersion(ApiVersion apiVersion) final;
-        // ***
+      // ***
 
     protected:
         const int deviceId_;
-        const QString deviceName_;
+        const QString deviceName_;  // name given by system (e.g. COM3)
         const Type deviceType_;
 
         // Mutex for protect access to operationLock_.
@@ -188,11 +209,15 @@ namespace strata::device {
 
         bool bootloaderMode_;
         ApiVersion apiVersion_;
-        QString platformId_;
-        QString classId_;
-        QString verboseName_;
+        ControllerType controllerType_;
         QString bootloaderVer_;
         QString applicationVer_;
+        QString name_;
+        QString platformId_;
+        QString classId_;
+        QString controllerPlatformId_;
+        QString controllerClassId_;
+        QString firmwareClassId_;
     };
 
 }  // namespace

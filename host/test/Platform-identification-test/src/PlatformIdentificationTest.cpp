@@ -129,8 +129,8 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
     
     // if device not recognized, doesn't have name, or doesn't have class id then it fails.
     if ( deviceRecognized == false
-         || testDevice->property(DeviceProperties::classId).isEmpty()
-         || testDevice->property(DeviceProperties::verboseName).isEmpty()) {
+         || testDevice->property(DeviceProperties::ClassId).isEmpty()
+         || testDevice->property(DeviceProperties::Name).isEmpty()) {
         testPassed = false;
     } else {
         testPassed = true;
@@ -138,22 +138,22 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
 
     if (testDevice != nullptr) {
         std::cout << "bin name: " << binaryFileNameList_[currentBinaryFileIndex_].toStdString() << std::endl;
-        std::cout << "class id: " << testDevice->property(DeviceProperties::classId).toStdString() << std::endl;
-        std::cout << "device name: " << testDevice->property(DeviceProperties::deviceName).toStdString() << std::endl;
-        std::cout << "platform id: " << testDevice->property(DeviceProperties::platformId).toStdString() << std::endl;
-        std::cout << "verbose name: " << testDevice->property(DeviceProperties::verboseName).toStdString() << std::endl;
-        std::cout << "bootloader version: " << testDevice->property(DeviceProperties::bootloaderVer).toStdString() << std::endl;
-        std::cout << "application version: " << testDevice->property(DeviceProperties::applicationVer).toStdString() << std::endl;
+        std::cout << "class id: " << testDevice->property(DeviceProperties::ClassId).toStdString() << std::endl;
+        std::cout << "device name: " << testDevice->deviceName().toStdString() << std::endl;
+        std::cout << "platform id: " << testDevice->property(DeviceProperties::PlatformId).toStdString() << std::endl;
+        std::cout << "name: " << testDevice->property(DeviceProperties::Name).toStdString() << std::endl;
+        std::cout << "bootloader version: " << testDevice->property(DeviceProperties::BootloaderVer).toStdString() << std::endl;
+        std::cout << "application version: " << testDevice->property(DeviceProperties::ApplicationVer).toStdString() << std::endl;
 
         // Append to the test summary list
         testSummaryList_.push_back({
                                        binaryFileNameList_[currentBinaryFileIndex_],
-                                       testDevice->property(DeviceProperties::deviceName),
-                                       testDevice->property(DeviceProperties::verboseName),
-                                       testDevice->property(DeviceProperties::classId),
-                                       testDevice->property(DeviceProperties::platformId),
-                                       testDevice->property(DeviceProperties::bootloaderVer),
-                                       testDevice->property(DeviceProperties::applicationVer),
+                                       testDevice->deviceName(),
+                                       testDevice->property(DeviceProperties::Name),
+                                       testDevice->property(DeviceProperties::ClassId),
+                                       testDevice->property(DeviceProperties::PlatformId),
+                                       testDevice->property(DeviceProperties::BootloaderVer),
+                                       testDevice->property(DeviceProperties::ApplicationVer),
                                        deviceRecognized,
                                        testPassed
                                    });

@@ -49,7 +49,7 @@ void BoardController::newConnection(int deviceId, bool recognized) {
         connect(device.get(), &Device::msgFromDevice, this, &BoardController::messageFromBoard);
         boards_.insert(deviceId, Board(device));
 
-        QString classId = device->property(DeviceProperties::classId);
+        QString classId = device->property(DeviceProperties::ClassId);
 
         qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
 
@@ -94,7 +94,7 @@ void BoardController::messageFromBoard(QString message)
     QJsonDocument wrapperDoc(notification);
     QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
 
-    QString platformId = device->property(DeviceProperties::platformId);
+    QString platformId = device->property(DeviceProperties::PlatformId);
 
     qCDebug(logCategoryHcsBoard).noquote() << "New board message." << logDeviceId(deviceId);
 
@@ -104,11 +104,18 @@ void BoardController::messageFromBoard(QString message)
 QString BoardController::createPlatformsList() {
     QJsonArray arr;
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
+        Device::ControllerType controllerType = it.value().device->controllerType();
         QJsonObject item {
-            { JSON_CLASS_ID, it.value().device->property(DeviceProperties::classId) },
+            { JSON_CLASS_ID, it.value().device->property(DeviceProperties::ClassId) },
             { JSON_DEVICE_ID, it.value().device->deviceId() },
-            { JSON_FW_VERSION, it.value().device->property(DeviceProperties::applicationVer) }
+            { JSON_CONTROLLER_TYPE, static_cast<int>(controllerType) },
+            { JSON_FW_VERSION, it.value().device->property(DeviceProperties::ApplicationVer) },
+            { JSON_BL_VERSION, it.value().device->property(DeviceProperties::BootloaderVer) }
         };
+        if (controllerType == Device::ControllerType::Assisted) {
+            item.insert(JSON_CONTROLLER_CLASS_ID, it.value().device->property(DeviceProperties::ControllerClassId));
+            item.insert(JSON_FW_CLASS_ID, it.value().device->property(DeviceProperties::FirmwareClassId));
+        }
         arr.append(item);
     }
     QJsonObject notif {
