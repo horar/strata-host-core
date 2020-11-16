@@ -23,27 +23,41 @@ Device::Device(const int deviceId, const QString& name, const Type type) :
 
 Device::~Device() { }
 
-QString Device::property(DeviceProperties property) {
+QString Device::stringProperty(StringProperties property) {
     QReadLocker rLock(&properiesLock_);
     switch (property) {
-        case DeviceProperties::Name :
+        case StringProperties::Name :
             return name_;
-        case DeviceProperties::BootloaderVer :
+        case StringProperties::BootloaderVer :
             return bootloaderVer_;
-        case DeviceProperties::ApplicationVer :
+        case StringProperties::ApplicationVer :
             return applicationVer_;
-        case DeviceProperties::PlatformId :
+        case StringProperties::PlatformId :
             return platformId_;
-        case DeviceProperties::ClassId :
+        case StringProperties::ClassId :
             return classId_;
-        case DeviceProperties::ControllerPlatformId :
+        case StringProperties::ControllerPlatformId :
             return controllerPlatformId_;
-        case DeviceProperties::ControllerClassId :
+        case StringProperties::ControllerClassId :
             return controllerClassId_;
-        case DeviceProperties::FirmwareClassId :
+        case StringProperties::FirmwareClassId :
             return firmwareClassId_;
     }
     return QString();
+}
+
+std::variant<Device::ApiVersion, Device::ControllerType> Device::enumProperty(EnumProperties property) {
+    std::variant<Device::ApiVersion, Device::ControllerType> result;
+    QReadLocker rLock(&properiesLock_);
+    switch (property) {
+    case EnumProperties::ApiVersion :
+        result = apiVersion_;
+        break;
+    case EnumProperties::ControllerType :
+        result = controllerType_;
+        break;
+    }
+    return result;
 }
 
 int Device::deviceId() const {
@@ -56,16 +70,6 @@ const QString Device::deviceName() const {
 
 Device::Type Device::deviceType() const {
     return deviceType_;
-}
-
-Device::ApiVersion Device::apiVersion() {
-    QReadLocker rLock(&properiesLock_);
-    return apiVersion_;
-}
-
-Device::ControllerType Device::controllerType() {
-    QReadLocker rLock(&properiesLock_);
-    return controllerType_;
 }
 
 void Device::setVersions(const char* bootloaderVer, const char* applicationVer) {

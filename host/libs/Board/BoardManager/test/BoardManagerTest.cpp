@@ -1,7 +1,7 @@
 #include "BoardManagerTest.h"
 #include "DeviceMock.h"
 
-using strata::device::DeviceProperties;
+using strata::device::StringProperties;
 
 void BoardManagerTest::initTestCase()
 {

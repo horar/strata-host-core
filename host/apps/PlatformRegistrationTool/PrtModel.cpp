@@ -80,7 +80,7 @@ QString PrtModel::deviceFirmwareVersion() const
         return "";
     }
 
-    return platformList_.first()->property(strata::device::DeviceProperties::ApplicationVer);
+    return platformList_.first()->stringProperty(strata::device::StringProperties::ApplicationVer);
 }
 
 QString PrtModel::deviceFirmwareVerboseName() const
@@ -89,7 +89,7 @@ QString PrtModel::deviceFirmwareVerboseName() const
         return "";
     }
 
-    return platformList_.first()->property(strata::device::DeviceProperties::Name);
+    return platformList_.first()->stringProperty(strata::device::StringProperties::Name);
 }
 
 void PrtModel::programDevice()

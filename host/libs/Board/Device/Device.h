@@ -2,6 +2,7 @@
 #define DEVICE_H_
 
 #include <memory>
+#include <variant>
 
 #include <QObject>
 #include <QString>
@@ -24,7 +25,7 @@ namespace strata::device {
 
     typedef std::shared_ptr<Device> DevicePtr;
 
-    enum class DeviceProperties {
+    enum class StringProperties {
         Name,
         BootloaderVer,
         ApplicationVer,
@@ -33,6 +34,11 @@ namespace strata::device {
         ControllerPlatformId,
         ControllerClassId,
         FirmwareClassId
+    };
+
+    enum class EnumProperties {
+        ApiVersion,
+        ControllerType
     };
 
     class Device : public QObject
@@ -123,7 +129,14 @@ namespace strata::device {
          * @param property value from enum DeviceProperties
          * @return QString filled with value of required property
          */
-        virtual QString property(DeviceProperties property) final;
+        virtual QString stringProperty(StringProperties property) final;
+
+        /**
+         * Get enum property.
+         * @param property value from enum EnumProperties
+         * @return std::variant filled with value of required enum
+         */
+        virtual std::variant<ApiVersion, ControllerType> enumProperty(EnumProperties property) final;
 
         /**
          * Get device ID.
@@ -142,18 +155,6 @@ namespace strata::device {
          * @return Type of device
          */
         virtual Type deviceType() const final;
-
-        /**
-         * Get version of device API.
-         * @return API version of device
-         */
-        virtual ApiVersion apiVersion() final;
-
-        /**
-         * Get device controller type (embedded, assisted).
-         * @return controller type of device
-         */
-        virtual ControllerType controllerType() final;
 
         friend QDebug operator<<(QDebug dbg, const Device* d);
         friend QDebug operator<<(QDebug dbg, const DevicePtr& d);

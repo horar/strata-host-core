@@ -10,7 +10,7 @@
 #include "DeviceMock.h"
 #include "DeviceOperationsTest.h"
 
-using strata::device::DeviceProperties;
+using strata::device::StringProperties;
 using strata::device::operation::BaseDeviceOperation;
 
 namespace operation = strata::device::operation;
@@ -109,16 +109,16 @@ void DeviceOperationsTest::identifyTest()
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
     expectedDoc.Parse(test_commands::request_platform_id_response.data());
-    QCOMPARE(device_->property(DeviceProperties::Name),
+    QCOMPARE(device_->stringProperty(StringProperties::Name),
              expectedDoc["notification"]["payload"]["name"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::PlatformId),
+    QCOMPARE(device_->stringProperty(StringProperties::PlatformId),
              expectedDoc["notification"]["payload"]["platform_id"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::ClassId),
+    QCOMPARE(device_->stringProperty(StringProperties::ClassId),
              expectedDoc["notification"]["payload"]["class_id"].GetString());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
-    QCOMPARE(device_->property(DeviceProperties::BootloaderVer),
+    QCOMPARE(device_->stringProperty(StringProperties::BootloaderVer),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::ApplicationVer),
+    QCOMPARE(device_->stringProperty(StringProperties::ApplicationVer),
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
 
     // TODO tests for error situations
@@ -138,16 +138,16 @@ void DeviceOperationsTest::switchToBootloaderAndBackTest()
 
     QVERIFY(device_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response_bootloader.data());
-    QCOMPARE(device_->property(DeviceProperties::Name),
+    QCOMPARE(device_->stringProperty(StringProperties::Name),
              expectedDoc["notification"]["payload"]["name"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::PlatformId),
+    QCOMPARE(device_->stringProperty(StringProperties::PlatformId),
              expectedDoc["notification"]["payload"]["platform_id"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::ClassId),
+    QCOMPARE(device_->stringProperty(StringProperties::ClassId),
              expectedDoc["notification"]["payload"]["class_id"].GetString());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
-    QCOMPARE(device_->property(DeviceProperties::BootloaderVer),
+    QCOMPARE(device_->stringProperty(StringProperties::BootloaderVer),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::ApplicationVer),
+    QCOMPARE(device_->stringProperty(StringProperties::ApplicationVer),
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
 
     deviceOperation_ = QSharedPointer<operation::StartApplication>(
@@ -158,16 +158,16 @@ void DeviceOperationsTest::switchToBootloaderAndBackTest()
 
     QVERIFY(!device_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response.data());
-    QCOMPARE(device_->property(DeviceProperties::Name),
+    QCOMPARE(device_->stringProperty(StringProperties::Name),
              expectedDoc["notification"]["payload"]["name"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::PlatformId),
+    QCOMPARE(device_->stringProperty(StringProperties::PlatformId),
              expectedDoc["notification"]["payload"]["platform_id"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::ClassId),
+    QCOMPARE(device_->stringProperty(StringProperties::ClassId),
              expectedDoc["notification"]["payload"]["class_id"].GetString());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
-    QCOMPARE(device_->property(DeviceProperties::BootloaderVer),
+    QCOMPARE(device_->stringProperty(StringProperties::BootloaderVer),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::ApplicationVer),
+    QCOMPARE(device_->stringProperty(StringProperties::ApplicationVer),
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
