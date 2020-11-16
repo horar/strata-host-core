@@ -92,10 +92,7 @@ QString SGUtilsCpp::dirName(const QString &path)
 QString SGUtilsCpp::parentDirectoryPath(const QString &filepath)
 {
     QFileInfo fi(filepath);
-    if (fi.isDir()) {
-        return fi.absolutePath();
-    }
-    return fi.dir().absolutePath();
+    return fi.absolutePath();
 }
 
 QUrl SGUtilsCpp::pathToUrl(const QString &path, const QString &scheme)
