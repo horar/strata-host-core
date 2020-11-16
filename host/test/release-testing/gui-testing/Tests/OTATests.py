@@ -14,36 +14,56 @@ from subprocess import Popen, check_output
 from shutil import copy2
 from GUIInterface.StrataUI import *
 
-hcs_endpoint = "tcp://127.0.0.1:5563"
 strataProcess = None
 
 class OpenControlView(unittest.TestCase):
     '''
     Test opening a control view via OTA
     '''
+    def __init__(self, *args, **kwargs):
+        super(OpenControlView, self).__init__(*args, **kwargs)
+        self.ui = StrataUI()
+
 
     def setUp(self):
         global strataProcess
-        global hcs_endpoint
+
         args = Common.getCommandLineArguments(sys.argv)
         strataPath = os.path.abspath(args.sdsRootDir + "/Strata Developer Studio.exe")
         strataProcess = Popen(strataPath)
-        strata.bindToStrata(hcs_endpoint)
+        strata.bindToStrata(args.hcsAddress)
         Common.awaitStrata()
 
-        ui = StrataUI()
-        ui.SetToLoginTab()
+        self.ui.SetToLoginTab()
+        # assert on login page
+        self.assertIsNotNone(self.ui.OnLoginScreen())
+
+        Login(self.ui, args.username, args.password, self)
+
+        time.sleep(0.5)
+        self.assertTrue(self.ui.OnPlatformView())
+
+        # Send the platform list notification
+        strata.initPlatformList(self.sample_platform_list())
+        time.sleep(3)
+
+        # Connect the platform
+        strata.openPlatform("201")
+        self.assertTrue(self.ui.ConnectedPlatforms() > 0)
+        time.sleep(1)
 
     def tearDown(self) -> None:
         args = Common.getCommandLineArguments(sys.argv)
 
         rccFilePath = (args.sdsRootDir + "/views-logic-gate.rcc").replace('\\', '/')
+
         if (not os.path.exists(rccFilePath)):
             currentDir = os.path.dirname(os.path.realpath(__file__))
             copy2(os.path.abspath(currentDir + "/../views-logic-gate.rcc"), rccFilePath)
-        ui = StrataUI()
-        ui.CloseControlView()
-        Logout(ui)
+
+        self.ui = StrataUI()
+        self.ui.CloseControlView()
+        Logout(self.ui)
         strata.closePlatforms()
         os.kill(strataProcess.pid, signal.SIGTERM)
         os.system("taskkill /f /im  hcs.exe")
@@ -57,29 +77,11 @@ class OpenControlView(unittest.TestCase):
         # Remove the versionControl.json for this class_id
         self.remove_version_control_json()
 
-        args = Common.getCommandLineArguments(sys.argv)
-        ui = StrataUI()
-        # assert on login page
-        self.assertIsNotNone(ui.OnLoginScreen())
-
-        Login(ui, args.username, args.password, self)
-
-        time.sleep(0.5)
-        self.assertTrue(ui.OnPlatformView())
-
-        # Send the platform list notification
-        strata.initPlatformList(self.sample_platform_list())
-
-        time.sleep(3)
-
-        # Connect the platform
-        strata.openPlatform("201")
-        self.assertTrue(ui.ConnectedPlatforms() > 0)
-        time.sleep(1)
+        self.ui = StrataUI()
 
         # Open the control view
-        ui.OpenControlView()
-        time.sleep(0.7)
+        self.openControlView()
+
         docs = self.sample_platform_docs("201")
 
         # Send the platform documents command with no control views
@@ -90,54 +92,31 @@ class OpenControlView(unittest.TestCase):
             controlViews=[])
 
         time.sleep(1)
-        self.assertTrue(ui.OnControlView())
+        self.assertTrue(self.ui.OnControlView())
         
 
     def test_open_2_ota_control_view(self):
         '''
         Tests opening an ota control view via "downloading" it
         '''
-
         # Remove the static rcc
         self.remove_static_rcc()
 
         # Remove the versionControl.json for this class_id
         self.remove_version_control_json()
 
-        args = Common.getCommandLineArguments(sys.argv)
-
-        ui = StrataUI()
-        # assert on login page
-        self.assertIsNotNone(ui.OnLoginScreen())
-
-        Login(ui, args.username, args.password, self)
-
-        time.sleep(0.5)
-        self.assertTrue(ui.OnPlatformView())
-
-        # Send platform list notification
-        strata.initPlatformList(self.sample_platform_list())
-
-        time.sleep(3)
-
-        # Connect the platform
-        strata.openPlatform("201")
-        self.assertTrue(ui.ConnectedPlatforms() > 0)
-        time.sleep(1)
+        self.ui = StrataUI()
 
         docs = self.sample_platform_docs("201")
-
-        outputPath = os.getenv("APPDATA")
-        outputPath += "/ON Semiconductor/Host Controller Service/{}/documents/control_views/{}".format(args.hcsEnv, docs["control_view"][1]["uri"])
-        outputPath = outputPath.replace('\\', '/')
+        outputPath = self.getControlViewDownloadPath(docs["control_view"][1]["uri"])
 
         # Remove the the previously downloaded rcc file if it exists
         if (os.path.exists(outputPath)):
             os.remove(outputPath)
 
         # Open the control view
-        ui.OpenControlView()
-        time.sleep(0.4)
+        self.openControlView()
+
         strata.platformDocumentsMessage(classId="201",
             documents=docs["documents"],
             datasheets=docs["datasheets"],
@@ -149,7 +128,7 @@ class OpenControlView(unittest.TestCase):
         rccPath = os.path.abspath(currentDir + "/../views-logic-gate.rcc")
         strata.controlViewDownloadProgressMessage("201", docs["control_view"][1]["uri"], outputPath, rccPath)
 
-        self.assertTrue(ui.OnControlView())
+        self.assertTrue(self.ui.OnControlView())
 
 
     def test_open_3_previously_downloaded_control_view(self):
@@ -160,37 +139,17 @@ class OpenControlView(unittest.TestCase):
         '''
         self.remove_static_rcc()
 
-        args = Common.getCommandLineArguments(sys.argv)
-        ui = StrataUI()
-        # assert on login page
-        self.assertIsNotNone(ui.OnLoginScreen())
-
-        Login(ui, args.username, args.password, self)
-
-        time.sleep(0.5)
-        self.assertTrue(ui.OnPlatformView())
-
-        docs = self.sample_platform_docs("201")
-        downloadedPath = os.getenv("APPDATA")
-        downloadedPath += "/ON Semiconductor/Host Controller Service/{}/documents/control_views/{}".format(args.hcsEnv, docs["control_view"][1]["uri"])
-        downloadedPath = downloadedPath.replace('\\', '/')
-
-        # Set the filepath to the previously downloaded path 
-        docs["control_view"][1]["filepath"] = downloadedPath
-
-        # Send the platform list notification
-        strata.initPlatformList(self.sample_platform_list())
-
-        time.sleep(3)
-
-        # Connect the platform
-        strata.openPlatform("201")
-        self.assertTrue(ui.ConnectedPlatforms() > 0)
-        time.sleep(1)
+        self.ui = StrataUI()
 
         # Open the control view
-        ui.OpenControlView()
-        time.sleep(0.7)
+        self.openControlView()
+
+        docs = self.sample_platform_docs("201")
+        downloadedPath = self.getControlViewDownloadPath(docs["control_view"][1]["uri"])
+
+        # Set the filepath to the previously downloaded path 
+        # Setting this `filepath` property indicates to strata that we have installed this version to the `downloadedPath` location
+        docs["control_view"][1]["filepath"] = downloadedPath
 
         # Send the platform documents notification
         strata.platformDocumentsMessage(classId="201",
@@ -200,10 +159,21 @@ class OpenControlView(unittest.TestCase):
             controlViews=docs["control_view"])
 
         time.sleep(1)
-        self.assertTrue(ui.OnControlView())
+        self.assertTrue(self.ui.OnControlView())
 
 
     ##################### UTILITIES #####################
+
+    def openControlView(self):
+        self.ui.OpenControlView()
+        time.sleep(1.0)
+
+    def getControlViewDownloadPath(self, uri):
+        args = Common.getCommandLineArguments(sys.argv)
+        outputPath = args.hcsAppDataDir
+        outputPath += "/{}/documents/control_views/{}".format(args.hcsEnv, uri)
+        outputPath = outputPath.replace('\\', '/')
+        return outputPath
 
     def remove_static_rcc(self):
         args = Common.getCommandLineArguments(sys.argv)

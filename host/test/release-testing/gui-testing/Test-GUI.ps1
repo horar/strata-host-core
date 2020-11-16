@@ -58,7 +58,7 @@ function Test-Gui()
 
         Remove-Item -Path "$Env:AppData\ON Semiconductor\Host Controller Service\$HCSEnv" -Force -Recurse -ErrorAction Ignore
 
-        Start-Process $PythonExec -ArgumentList "$PythonGUIMain $OTATests --username $Username --password $Password --sdsRootDir `"$SDSRootDir`" --hcsEnv $HCSEnv --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+        Start-Process $PythonExec -ArgumentList "$PythonGUIMain $OTATests --username $Username --password $Password --sdsRootDir `"$SDSRootDir`" --hcsEnv $HCSEnv --skipHcsBinding --hcsAddress $HCSTCPEndpoint --hcsAppDataDir `"$HCSAppDataDir`" --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
     }
     Stop-SDS
     Stop-HCS

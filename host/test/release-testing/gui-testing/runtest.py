@@ -10,7 +10,6 @@ import sys
 import subprocess
 import StrataInterface as strata
 import unittest
-import os
 
 import Common
 from GUITestResult import GUITestResult
@@ -25,7 +24,7 @@ if __name__ == "__main__":
     if args.strataPath:
         subprocess.Popen(args.strataPath)
 
-    if args.hcsAddress:
+    if not args.skipHcsBinding and args.hcsAddress:
         strata.bindToStrata(args.hcsAddress)
         
     if args.awaitStrata:
