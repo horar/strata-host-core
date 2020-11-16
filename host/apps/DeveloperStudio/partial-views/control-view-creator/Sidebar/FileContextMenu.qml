@@ -5,7 +5,7 @@ Menu {
 
     MenuItem {
         text: "Add to Qrc"
-        enabled: !model.inQrc
+        enabled: !model.inQrc && !model.filename.endsWith(".rcc")
         onTriggered: {
             treeModel.addToQrc(styleData.index);
             fileContextMenu.dismiss()
