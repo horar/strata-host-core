@@ -65,11 +65,11 @@ Item {
     }
 
     function goToView(view){
-            for(let i = 0; i < buttonModel.count - 1; i++){
-                if(view === buttonModel.get(i).view){
-                     menuClicked(i);
-                }
+        for(let i = 0; i < buttonModel.count - 1; i++){
+            if(view === buttonModel.get(i).view){
+                menuClicked(i);
             }
+        }
     }
 
     function bringIntoView() {

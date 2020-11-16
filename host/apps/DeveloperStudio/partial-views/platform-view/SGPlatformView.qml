@@ -9,7 +9,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 StackLayout {
     id: platformStack
 
-    currentIndex:  {
+    currentIndex: {
         switch (model.view) {
             case "collateral":
                 return 1
@@ -17,8 +17,7 @@ StackLayout {
                 return 2
             default: // case "control":
                 return 0
-       }
-
+        }
     }
 
     property var device_id: model.device_id // var type so Constants.DEVICE_IDs are not coerced to 32 bit signed ints
@@ -28,7 +27,7 @@ StackLayout {
     property string name: model.name
     property alias controlViewContainer: controlViewContainer
 
-    property bool platformIsOutOfDate: false
+    property bool controlViewIsOutOfDate: false
     property bool firmwareIsOutOfDate: false
     property bool platformDocumentsInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).initialized;
     property bool platformStackInitialized: false
@@ -64,7 +63,7 @@ StackLayout {
         }
     }
 
-    function navigateToPlatform() {
+    function openSettings() {
         model.view = "settings"
     }
 
@@ -73,7 +72,6 @@ StackLayout {
          Layout.fillHeight: true
          Layout.fillWidth: true
     }
-
 
     Item {
         id: collateralContainer
@@ -91,15 +89,14 @@ StackLayout {
         Layout.fillWidth: true
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
-        property alias platformSettings: platformSettings
 
         PlatformSettings {
             id: platformSettings
         }
     }
 
-    SGPlatformNotificationPopup {
-        visible: (platformIsOutOfDate || firmwareIsOutOfDate) && model.view !== "settings" && platformStack.visible && NavigationControl.userSettings.notifyOnFirmwareUpdate
+    SGUpdateNotificationPopup {
+        visible: (controlViewIsOutOfDate || firmwareIsOutOfDate) && model.view !== "settings" && platformStack.visible && NavigationControl.userSettings.notifyOnFirmwareUpdate
     }
 
     SGUserSettings {

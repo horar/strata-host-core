@@ -47,10 +47,10 @@ ColumnLayout {
                 activeVersion = latestVersion
                 upToDate = true
             } else {
-                platformIsOutOfDate = true
+                controlViewIsOutOfDate = true
             }
-
         }
+
         onDownloadControlViewProgress: {
             if (platformStack.currentIndex === settingsContainer.stackIndex && payload.url === activeDownloadUri) {
                 let progressPercent = payload.bytes_received / payload.bytes_total
@@ -100,7 +100,7 @@ ColumnLayout {
             }
             
             upToDate = isUpToDate();
-            platformIsOutOfDate = !upToDate
+            controlViewIsOutOfDate = !upToDate
         }
     }
 

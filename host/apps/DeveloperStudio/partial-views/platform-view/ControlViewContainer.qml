@@ -295,7 +295,6 @@ Item {
       Update the versionControl.json
     */
     function saveInstalledVersion(version, pathToRcc, versionsInstalled) {
-
         let user_id = NavigationControl.context.user_id;
         if (!versionsInstalled.hasOwnProperty(user_id)) {
             versionsInstalled[user_id] = {};

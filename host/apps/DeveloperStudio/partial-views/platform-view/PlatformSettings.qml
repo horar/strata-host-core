@@ -14,9 +14,6 @@ Rectangle {
         fill: parent
     }
 
-    property alias softwareManagement: softwareManagement
-    property alias firmwareManagement: firmwareManagement
-
     ColumnLayout {
         id: mainColumn
         anchors {
@@ -35,10 +32,11 @@ Rectangle {
 
         SGCheckBox {
             id: notifyCheck
-            text: "Notify me when firmware version updates"
-            checked: NavigationControl.userSettings.notifyOnFirmwareUpdate
+            text: "Notify me when newer versions of firmware or control views are available"
             Layout.alignment: Qt.AlignLeft
             leftPadding: 0
+            checked: NavigationControl.userSettings.notifyOnFirmwareUpdate
+
             onCheckedChanged: {
                 NavigationControl.userSettings.notifyOnFirmwareUpdate = notifyCheck.checked
                 NavigationControl.userSettings.saveSettings()

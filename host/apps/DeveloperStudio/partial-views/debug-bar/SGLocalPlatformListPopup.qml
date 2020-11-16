@@ -308,7 +308,7 @@ Window {
                                 {
                                     "class_id": class_id.text,
                                     "device_id": Constants.DEBUG_DEVICE_ID,
-                                    "firmware_version":"1.0.2"
+                                    "firmware_version":"1.0.1"
                                 }
                             ],
                             "type":"connected_platforms"
