@@ -67,6 +67,8 @@ Item {
                 }
             }
 
+            treeModel.stopWatchingPath(SGUtilsCpp.parentDirectoryPath(path));
+
             let success = SGUtilsCpp.createFile(path);
             if (!success) {
                 //handle error
@@ -75,6 +77,7 @@ Item {
                 model.editing = false
                 openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
             }
+            treeModel.startWatchingPath(SGUtilsCpp.parentDirectoryPath(path));
         }
 
         onVisibleChanged: {
