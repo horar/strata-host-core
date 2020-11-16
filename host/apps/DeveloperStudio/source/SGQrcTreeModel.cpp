@@ -465,6 +465,57 @@ bool SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
     return true;
 }
 
+bool SGQrcTreeModel::renameFile(const QModelIndex &index, const QString &newFilename)
+{
+    SGQrcTreeNode *node = getNode(index);
+    QString oldPath = SGUtilsCpp::urlToLocalFile(node->filepath());
+    QFileInfo oldFileInfo(oldPath);
+    QString newPath = SGUtilsCpp::joinFilePath(oldFileInfo.absolutePath(), newFilename);
+    QUrl oldUrl = QUrl::fromLocalFile(oldPath);
+    QUrl newUrl = QUrl::fromLocalFile(newPath);
+    bool wasWatchingOldPath = false;
+
+    if ( (oldFileInfo.isDir() && fsWatcher_->directories().contains(oldPath))
+            || (!oldFileInfo.isDir() && fsWatcher_->files().contains(oldPath)) ) {
+        stopWatchingPath(oldPath);
+        wasWatchingOldPath = true;
+    }
+
+    stopWatchingPath(oldFileInfo.absolutePath());
+    if (!QFile::rename(oldPath, newPath)) {
+        qCCritical(logCategoryControlViewCreator) << "Failed to rename" << (node->isDir() ? "folder" : "file") << "from" << oldPath << "to" << newPath;
+        if (wasWatchingOldPath) {
+            startWatchingPath(oldPath);
+        }
+        startWatchingPath(oldFileInfo.absolutePath());
+        return false;
+    } else {
+        pathsInTree_.remove(oldUrl);
+        pathsInTree_.insert(newUrl);
+        bool wasInQrc = node->inQrc();
+
+        if (wasInQrc) {
+            removeFromQrc(index, false);
+        }
+
+        setData(index, newUrl, FilepathRole);
+        setData(index, newFilename, FilenameRole);
+        if (!node->isDir()) {
+            setData(index, SGUtilsCpp::fileSuffix(newFilename), FileTypeRole);
+        }
+
+        if (wasInQrc) {
+            addToQrc(index, true);
+        }
+
+        if (wasWatchingOldPath) {
+            startWatchingPath(newPath);
+        }
+        startWatchingPath(oldFileInfo.absolutePath());
+        return true;
+    }
+}
+
 bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
 {
     SGQrcTreeNode *parentNode = getNode(parent);

@@ -58,22 +58,36 @@ Item {
                 path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), text);
 
             }
-            model.filename = text
-            model.filepath = SGUtilsCpp.pathToUrl(path);
-            if (!model.isDir) {
-                model.filetype = SGUtilsCpp.fileSuffix(text)
-                if (!model.inQrc) {
-                    treeModel.addToQrc(styleData.index);
-                }
-            }
 
-            let success = SGUtilsCpp.createFile(path);
-            if (!success) {
-                //handle error
-                console.error("Could not create file:", path)
+            // If we are creating a new file
+            if (model.filename === "") {
+                model.filename = text
+                model.filepath = SGUtilsCpp.pathToUrl(path);
+                if (!model.isDir) {
+                    model.filetype = SGUtilsCpp.fileSuffix(text)
+                    if (!model.inQrc) {
+                        treeModel.addToQrc(styleData.index);
+                    }
+                }
+
+                let success = SGUtilsCpp.createFile(path);
+                if (!success) {
+                    //handle error
+                    console.error("Could not create file:", path)
+                } else {
+                    model.editing = false
+                    openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                }
             } else {
-                model.editing = false
-                openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                // Else we are just renaming an already existing file
+                if (text.length > 0 && model.filename !== text) {
+                    // Don't attempt to rename the file if the text is the same as the original filename
+                    let success = treeModel.renameFile(styleData.index, text)
+                    if (success && openFilesModel.hasTab(model.uid)) {
+                        openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
+                    }
+                }
+                model.editing = false  
             }
         }
 

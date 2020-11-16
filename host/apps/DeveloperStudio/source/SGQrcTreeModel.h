@@ -161,6 +161,14 @@ public:
     Q_INVOKABLE bool removeFromQrc(const QModelIndex &index, bool save = true);
 
     /**
+     * @brief renameFile Renames a file or a folder
+     * @param index The index in the model
+     * @param newFilename The new file/folder name
+     * @return Returns true if successful, false otherwise
+     */
+    Q_INVOKABLE bool renameFile(const QModelIndex &index, const QString &newFilename);
+
+    /**
      * @brief deleteFile Deletes a file from the local filesystem and removes it from the qrc
      * @param row Row in parent
      * @param parent QModelIndex of the parent

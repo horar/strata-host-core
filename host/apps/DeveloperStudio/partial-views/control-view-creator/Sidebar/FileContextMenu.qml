@@ -22,6 +22,14 @@ Menu {
     }
 
     MenuItem {
+        text: "Rename File"
+        onTriggered: {
+            treeView.selectItem(styleData.index)
+            model.editing = true
+        }
+    }
+
+    MenuItem {
         text: "Delete File"
         onTriggered: {
             openFilesModel.closeTab(model.uid)
