@@ -64,7 +64,7 @@ Item {
                 model.filename = text
                 model.filepath = SGUtilsCpp.pathToUrl(path);
                 if (!model.isDir) {
-                    model.filetype = SGUtilsCpp.fileSuffix(text)
+                    model.filetype = SGUtilsCpp.fileSuffix(text).toLowerCase();
                     if (!model.inQrc) {
                         treeModel.addToQrc(styleData.index);
                     }
