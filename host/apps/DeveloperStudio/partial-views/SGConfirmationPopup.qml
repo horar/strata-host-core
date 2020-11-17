@@ -122,6 +122,7 @@ Popup {
             }
 
             Row {
+                width: confirmationContainer.width - 10
                 anchors {
                     horizontalCenter: column2.horizontalCenter
                 }
@@ -130,6 +131,9 @@ Popup {
                     id: confirmText
                     color: "black"
                     text: "Are you sure you would like to continue?"
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
                 }
             }
 
