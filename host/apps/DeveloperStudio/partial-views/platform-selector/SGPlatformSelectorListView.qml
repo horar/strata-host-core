@@ -111,9 +111,9 @@ Item {
                             found = true
                         }
                         item.parts_list.set(i, {
-                                                opn: item.parts_list.get(i).opn,
-                                                matchingIndex: idxMatched
-                                            });
+                            opn: item.parts_list.get(i).opn,
+                            matchingIndex: idxMatched
+                         });
                     }
                 }
                 return found
@@ -186,7 +186,6 @@ Item {
             color: "#DDD"
         }
 
-
         Row {
             id: filterRow
             anchors {
@@ -240,7 +239,6 @@ Item {
                     Text {
                         id: placeholderText
                         text: {
-
                             if (searchCategoryText.checked) {
                                 if (searchCategoryPartsList.checked) {
                                     return "Search Titles, Descriptions, and Part Numbers..."
@@ -251,7 +249,6 @@ Item {
                             } else {
                                 return "Please Select Search Options Below..."
                             }
-
                         }
                         color: filter.enabled? "#666" : "#ddd"
                         visible: filter.text === ""
