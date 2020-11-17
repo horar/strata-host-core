@@ -36,10 +36,21 @@ Item {
             alertToast.hide()
         }
 
+        if (!model.unsavedChanges) {
+            return
+        }
+
         // If the file doesn't exist anymore, we need to notify the user with a confirmation dialog
         if (!model.exists) {
             controlViewCreatorRoot.isConfirmCloseOpen = true
             deletedFileSavedConfirmation.open()
+            return
+        }
+
+        // If the file has been modified externally, notify the user with a confirmation dialog
+        if (externalChanges) {
+            controlViewCreatorRoot.isConfirmCloseOpen = true
+            externalChangesConfirmation.open()
             return
         }
 
@@ -69,9 +80,11 @@ Item {
 
         onFileChanged: {
             if (model.filepath === path) {
-                channelObject.fileText = openFile(model.filepath)
                 externalChanges = true
-                channelObject.setHtml(channelObject.fileText);
+                if (!model.unsavedChanges) {
+                    channelObject.fileText = openFile()
+                    channelObject.setHtml(channelObject.fileText)
+                }
             }
         }
     }
@@ -134,6 +147,26 @@ Item {
             }
 
             controlViewCreatorRoot.isConfirmCloseOpen = false
+        }
+    }
+
+    ConfirmClosePopup {
+        id: externalChangesConfirmation
+        titleText: "Newer version of this file is available!"
+        popupText: "This file has been modified externally. Would you like to overwrite the external changes or abandon your changes?"
+
+        acceptButtonText: "Overwrite"
+        closeButtonText: "Abandon my changes"
+
+        onPopupClosed: {
+            controlViewCreatorRoot.isConfirmCloseOpen = false
+            if (closeReason === acceptCloseReason) {
+                externalChanges = false
+                saveFile()
+            } else if (closeReason === closeFilesReason) {
+                openFilesModel.closeTabAt(modelIndex)
+            }
+
         }
     }
 
