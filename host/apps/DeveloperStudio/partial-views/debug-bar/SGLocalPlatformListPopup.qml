@@ -307,6 +307,8 @@ Window {
             target: injectPlatform
             ColumnLayout {
                 id: injectPlatform
+
+                property var list: []
                 RowLayout {
                     id: rowPlatform
                     Button {
@@ -361,6 +363,9 @@ Window {
                                 onClicked: {
                                     storeDeviceList.customPlatforms = []
                                     storeDeviceList.setValue("stored-platforms", {platforms: storeDeviceList.customPlatforms})
+                                    deviceModel.clear()
+                                    classModel.clear()
+                                    initialModelLoad()
                                 }
                             }
                         }
@@ -486,7 +491,7 @@ Window {
                     Layout.preferredHeight: 40
                     Layout.alignment: Qt.AlignHCenter
                     onClicked: {
-                        storeDeviceList.list = []
+                        injectPlatform.list = []
                         let list = {
                             "list": [],
                             "type":"connected_platforms"
@@ -509,7 +514,6 @@ Window {
             fileName: "storedDevices.ini"
             // will store custom platforms
             property var customPlatforms: []
-            property var list: []
 
         }
 
@@ -587,13 +591,13 @@ Window {
         const platforms = classModel
         for(var i = 0; i < platforms.count; i++){
             if(platform.class_id === platforms.get(i).platform.class_id && !custom){
-                storeDeviceList.list.push({
+                injectPlatform.list.push({
                                               "class_id": platform.class_id,
                                               "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
                                               "firmware_version": firmwareVer
                                           })
                 let list = {
-                    "list": storeDeviceList.list,
+                    "list": injectPlatform.list,
                     "type":"connected_platforms"
 
                 }
@@ -603,13 +607,13 @@ Window {
                 storeDeviceList.setValue("stored-platform",{platform: {class_id: platform.class_id, opn: platform.opn, firmware_version: firmwareVer, custom: custom } })
                 break
             } else {
-                storeDeviceList.list.push({
+                injectPlatform.list.push({
                                               "class_id": platform.class_id,
                                               "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
                                               "firmware_version": firmwareVer
                                           })
                 let list = {
-                    "list": storeDeviceList.list,
+                    "list": injectPlatform.list,
                     "type":"connected_platforms"
 
                 }
