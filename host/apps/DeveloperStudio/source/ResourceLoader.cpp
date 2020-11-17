@@ -120,7 +120,7 @@ bool ResourceLoader::registerControlViewResource(const QString &rccPath, const Q
         QString gitTaggedVersion = getVersionJson(class_id, version);
         ResourceItem *info = new ResourceItem(rccPath, version, gitTaggedVersion);
 
-        if (version != "static" && !SGVersionUtils::equalTo(version, gitTaggedVersion)) {
+        if (!SGVersionUtils::equalTo(version, gitTaggedVersion)) {
             // TODO: Handle the case where gitTaggedVersion is different from the OTA version
             qCWarning(logCategoryResourceLoader) << "Build version is different from OTA version for" << class_id << "- built in version:"
                                                  << gitTaggedVersion << ", OTA version:" << version;

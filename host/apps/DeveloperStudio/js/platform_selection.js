@@ -2,7 +2,6 @@
 .import "navigation_control.js" as NavigationControl
 .import "qrc:/js/platform_filters.js" as PlatformFilters
 .import "constants.js" as Constants
-.import "uuid_map.js" as UuidMap
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
@@ -236,12 +235,8 @@ function addConnectedPlatform(platform) {
 
     if (classMap.hasOwnProperty(class_id_string)) {
         connectListing(class_id_string, platform.device_id, platform.firmware_version)
-    } else if (class_id_string !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
-        // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
-        insertUnlistedListing(platform)
     } else {
-        // connected platform class_id not listed in UuidMap or DP platform list, or undefined
+        // connected platform class_id not listed in DP platform list, or undefined
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
         insertUnknownListing(platform)
     }
