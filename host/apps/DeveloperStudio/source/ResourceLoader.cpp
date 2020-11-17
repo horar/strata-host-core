@@ -149,10 +149,6 @@ void ResourceLoader::loadCoreResources()
     }
 }
 
-QString ResourceLoader::getStaticResourcesString() {
-    return ResourcePath::viewsResourcePath();
-}
-
 QUrl ResourceLoader::getStaticResourcesUrl() {
     QUrl url;
     url.setScheme("file");

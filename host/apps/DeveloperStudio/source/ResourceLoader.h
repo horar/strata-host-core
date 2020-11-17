@@ -84,8 +84,6 @@ public:
      */
     Q_INVOKABLE QString getGitTaggedVersion(const QString &class_id);
 
-    Q_INVOKABLE QString getStaticResourcesString();
-
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 
     Q_INVOKABLE void unregisterAllViews(QObject *parent);
