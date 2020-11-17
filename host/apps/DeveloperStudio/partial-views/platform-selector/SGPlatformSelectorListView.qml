@@ -113,7 +113,7 @@ Item {
                         item.parts_list.set(i, {
                             opn: item.parts_list.get(i).opn,
                             matchingIndex: idxMatched
-                         });
+                        });
                     }
                 }
                 return found
@@ -213,6 +213,7 @@ Item {
 
                 TextInput {
                     id: filter
+                    text: ""
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
                         left: searchIcon.right
@@ -225,7 +226,9 @@ Item {
                     selectByMouse: true
                     clip: true
                     enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
+
                     property string lowerCaseText: text.toLowerCase()
+
                     onLowerCaseTextChanged: {
                         Filters.keywordFilter = lowerCaseText
                         searchCategoriesDropdown.close()
