@@ -211,7 +211,6 @@ Item {
                     }
                 }
 
-
                 TextInput {
                     id: filter
                     text: ""
@@ -240,6 +239,8 @@ Item {
                         }
                         filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
                     }
+
+
                     Text {
                         id: placeholderText
                         text: {
