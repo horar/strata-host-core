@@ -211,6 +211,7 @@ Item {
                     }
                 }
 
+
                 TextInput {
                     id: filter
                     text: ""
