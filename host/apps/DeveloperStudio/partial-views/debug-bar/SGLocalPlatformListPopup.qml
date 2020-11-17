@@ -314,7 +314,7 @@ Window {
                         Layout.preferredHeight: 40
                         onClicked: {
                             if(device_id.currentIndex !== -1 && class_id.classId !== ""){
-                                loadAndStorePlatform({class_id: class_id.classId, opn: class_id.opn},textField.text, class_id.custom)
+                                loadAndStorePlatform({class_id: class_id.classId, opn: class_id.opn},textField.text, checkForCustomId(class_id.classId))
                             }
                         }
                     }
@@ -333,11 +333,12 @@ Window {
 
                         onEditTextChanged: {
                             classId = editText
-                            custom = true
                         }
+
 
                         onClassIdChanged: {
                             class_id.contentItem.text = classId
+
                         }
 
                         MouseArea {
@@ -352,6 +353,8 @@ Window {
 
                         Menu{
                             id: menu
+                            width: parent.width
+                            y: parent.y - parent.height
                             MenuItem {
                                 text: "Clear custom platforms"
 
@@ -408,11 +411,6 @@ Window {
                                     class_id.currentIndex = i
                                     classId = class_
                                     opn = classModel.get(i).platform.opn
-                                    if(opn === "Custom Platform"){
-                                        custom = true
-                                    } else {
-                                        custom = false
-                                    }
                                 }
                             }
                         }
@@ -488,6 +486,7 @@ Window {
                     Layout.preferredHeight: 40
                     Layout.alignment: Qt.AlignHCenter
                     onClicked: {
+                        storeDeviceList.list = []
                         let list = {
                             "list": [],
                             "type":"connected_platforms"
@@ -510,7 +509,7 @@ Window {
             fileName: "storedDevices.ini"
             // will store custom platforms
             property var customPlatforms: []
-
+            property var list: []
 
         }
 
@@ -588,14 +587,13 @@ Window {
         const platforms = classModel
         for(var i = 0; i < platforms.count; i++){
             if(platform.class_id === platforms.get(i).platform.class_id && !custom){
+                storeDeviceList.list.push({
+                                              "class_id": platform.class_id,
+                                              "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
+                                              "firmware_version": firmwareVer
+                                          })
                 let list = {
-                    "list": [
-                        {
-                            "class_id": platform.class_id,
-                            "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
-                            "firmware_version": firmwareVer
-                        }
-                    ],
+                    "list": storeDeviceList.list,
                     "type":"connected_platforms"
 
                 }
@@ -605,15 +603,13 @@ Window {
                 storeDeviceList.setValue("stored-platform",{platform: {class_id: platform.class_id, opn: platform.opn, firmware_version: firmwareVer, custom: custom } })
                 break
             } else {
+                storeDeviceList.list.push({
+                                              "class_id": platform.class_id,
+                                              "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
+                                              "firmware_version": firmwareVer
+                                          })
                 let list = {
-                    "list": [
-                        {
-                            "class_id": platform.class_id,
-                            "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
-                            "firmware_version": firmwareVer,
-                            "opn": "Custom Platform"
-                        }
-                    ],
+                    "list": storeDeviceList.list,
                     "type":"connected_platforms"
 
                 }
@@ -627,5 +623,15 @@ Window {
             }
         }
     }
+
+    function checkForCustomId(classId){
+        for(var i = 0; i < PlatformSelection.platformSelectorModel.count; i++){
+            if(classId === PlatformSelection.platformSelectorModel.get(i).class_id){
+                return false
+            }
+        }
+        return true
+    }
+
 }
 
