@@ -9,7 +9,6 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <rapidjson/document.h>
-#include <rapidjson/pointer.h>
 
 namespace strata::device::operation {
 
@@ -187,11 +186,9 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
                         qCWarning(logCategoryDeviceOperations) << device_ << "Received faulty notification: '" << data << "'.";
                     }
 
-                    QByteArray path;
-                    path.append('/').append(JSON_NOTIFICATION).append('/').append(JSON_PAYLOAD).append('/').append(JSON_STATUS);
-                    if (const rapidjson::Value* status = rapidjson::Pointer(path.data(), path.size()).Get(doc)) {
-                        QByteArray statusMessage(status->GetString(), status->GetStringLength());
-                        qCInfo(logCategoryDeviceOperations) << device_ << "Command '" << command->name() << "' retruned '" << statusMessage << "'.";
+                    const QByteArray status = CommandValidator::notificationStatus(doc);
+                    if (status.isEmpty() == false) {
+                        qCInfo(logCategoryDeviceOperations) << device_ << "Command '" << command->name() << "' retruned '" << status << "'.";
                     }
                 }
 
