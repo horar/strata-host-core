@@ -26,15 +26,14 @@ StackLayout {
     property bool connected: model.connected
     property string name: model.name
     property alias controlViewContainer: controlViewContainer
-
     property bool controlViewIsOutOfDate: false
     property bool firmwareIsOutOfDate: false
-    property bool platformDocumentsInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).initialized;
+    property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
     property bool fullyInitialized: platformStackInitialized &&
                                     userSettingsInitialized &&
-                                    platformDocumentsInitialized
+                                    platformMetaDataInitialized
 
     onFullyInitializedChanged: {
         initialize()
@@ -89,10 +88,6 @@ StackLayout {
         Layout.fillWidth: true
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
-
-        PlatformSettings {
-            id: platformSettings
-        }
     }
 
     SGUpdateNotificationPopup {
