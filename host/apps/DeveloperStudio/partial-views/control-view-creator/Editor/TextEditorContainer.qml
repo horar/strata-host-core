@@ -164,7 +164,9 @@ Item {
                 externalChanges = false
                 saveFile()
             } else if (closeReason === closeFilesReason) {
-                openFilesModel.closeTabAt(modelIndex)
+                channelObject.fileText = openFile()
+                channelObject.setHtml(channelObject.fileText)
+                externalChanges = false
             }
 
         }
