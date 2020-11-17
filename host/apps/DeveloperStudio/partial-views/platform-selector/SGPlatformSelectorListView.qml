@@ -111,9 +111,9 @@ Item {
                             found = true
                         }
                         item.parts_list.set(i, {
-                            opn: item.parts_list.get(i).opn,
-                            matchingIndex: idxMatched
-                        });
+                                                opn: item.parts_list.get(i).opn,
+                                                matchingIndex: idxMatched
+                                            });
                     }
                 }
                 return found
@@ -186,6 +186,7 @@ Item {
             color: "#DDD"
         }
 
+
         Row {
             id: filterRow
             anchors {
@@ -213,21 +214,19 @@ Item {
 
                 TextInput {
                     id: filter
-                    text: ""
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
                         left: searchIcon.right
                         leftMargin: 5
-                        right: textFilterContainer.right
+                        right: clearIcon.left
                         rightMargin: 10
                     }
                     color: "#33b13b"
                     font.bold: true
                     selectByMouse: true
+                    clip: true
                     enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
-
                     property string lowerCaseText: text.toLowerCase()
-
                     onLowerCaseTextChanged: {
                         Filters.keywordFilter = lowerCaseText
                         searchCategoriesDropdown.close()
@@ -238,11 +237,10 @@ Item {
                         }
                         filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
                     }
-
-
                     Text {
                         id: placeholderText
                         text: {
+
                             if (searchCategoryText.checked) {
                                 if (searchCategoryPartsList.checked) {
                                     return "Search Titles, Descriptions, and Part Numbers..."
@@ -253,6 +251,7 @@ Item {
                             } else {
                                 return "Please Select Search Options Below..."
                             }
+
                         }
                         color: filter.enabled? "#666" : "#ddd"
                         visible: filter.text === ""
@@ -269,6 +268,7 @@ Item {
                             searchCategoriesDropdown.close()
                             filter.focus = true
                         }
+                        acceptedButtons: Qt.NoButton
                         cursorShape: Qt.IBeamCursor
                     }
                 }
