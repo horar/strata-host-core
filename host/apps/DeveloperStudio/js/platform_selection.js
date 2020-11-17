@@ -154,7 +154,7 @@ function generatePlatform (platform) {
 
 /*
     Determine platform connection changes and update model accordingly.
-    Generate listings for duplicate/unlisted/unknown platforms.
+    Generate listings for duplicate/unknown platforms.
 */
 function parseConnectedPlatforms (connected_platform_list_json) {
     let currentlyConnected
@@ -228,7 +228,7 @@ function devicePreviouslyConnected(device_id) {
 }
 
 /*
-    Determine if connected platform exists in model or if unlisted/unrecognized
+    Determine if connected platform exists in model or if unrecognized
 */
 function addConnectedPlatform(platform) {
     let class_id_string = String(platform.class_id);
@@ -409,29 +409,6 @@ function closePlatformView (platform) {
 function insertUnknownListing (platform) {
     let platform_info = generateErrorListing(platform)
     insertErrorListing(platform_info)
-}
-
-/*
-    Insert listing for platform that is not in DB platform_list but does have a UI
-*/
-function insertUnlistedListing (platform) {
-    let platform_info = generateErrorListing(platform)
-    platform_info.available.control = true
-    platform_info.description = "No information to display."
-
-    let index = insertErrorListing(platform_info)
-
-    if(NavigationControl.userSettings.autoOpenView){
-        let data = {
-            "name": platform_info.verbose_name,
-            "available": platform_info.available,
-            "class_id": platform_info.class_id,
-            "device_id": platform_info.device_id,
-            "firmware_version": platform_info.firmware_version,
-            "index": index
-        }
-        openPlatformView(data)
-    }
 }
 
 function generateErrorListing (platform) {
