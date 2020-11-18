@@ -29,7 +29,6 @@ Item {
     property bool searchTagShown: false
     property var highlightColor
     property string hoverColor: "#a6c5f5"
-    property string lightHoverColor: "#ebebeb"
     property string markColor
     property alias contentX: logListView.contentX
     property alias contentY: logListView.contentY
@@ -537,7 +536,7 @@ Item {
                             return hoverColor
                         }
                         else {
-                            return lightHoverColor
+                            return Qt.lighter("gray")
                         }
                     }
 
