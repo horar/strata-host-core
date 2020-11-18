@@ -803,19 +803,11 @@ FocusScope {
                                     positionView(primaryLogView, sourceIndex)
                                 }
 
-                                onEntered: {
-                                    cellMark.color = "darkgray"
-                                }
-
-                                onExited: {
-                                    cellMark.color = "#eeeeee"
-                                }
-
                                 Rectangle {
                                     id: cellMark
                                     height: mark.height
                                     width: parent.width - 5
-                                    color: "#eeeeee"
+                                    color: markDelegateMouseArea.containsMouse ? "darkgray" : "#eeeeee"
                                 }
 
                                 SGWidgets.SGIcon {
