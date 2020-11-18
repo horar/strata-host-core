@@ -557,27 +557,25 @@ Item {
                         currentIndex = index
                     }
 
-                    SGWidgets.SGIconButton {
-                        id: markIconButton
+                    SGWidgets.SGIcon {
+                        id: markIconWithMouseArea
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 5
-                        icon.source: model.mark ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
-                        iconSize: parent.height - 4
+                        source: model.mark ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
+                        width: parent.height - 4
+                        height: width
                         iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.mark ? markColor : cell.color
-                        enabled: true
-                        visible: markIconButtonLabel.visible
-                        highlightImplicitColor: cell.color
+                        visible: markIconSpacer.visible
 
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            enabled: false
-                        }
 
-                        onClicked: {
-                            logViewWrapper.forceActiveFocus()
-                            delegate.isHovered ? logModel.toggleMark(index) : logModel.toggleMark(currentIndex)
+                            onClicked: {
+                                logViewWrapper.forceActiveFocus()
+                                delegate.isHovered ? logModel.toggleMark(index) : logModel.toggleMark(currentIndex)
+                            }
                         }
                     }
                 }
@@ -589,7 +587,7 @@ Item {
                 spacing: 18
 
                 Item {
-                    id: markIconButtonLabel
+                    id: markIconSpacer
                     width: textMetricsMark.boundingRect.width
                     height: textMetricsMark.boundingRect.height
                     visible: markIconVisible
