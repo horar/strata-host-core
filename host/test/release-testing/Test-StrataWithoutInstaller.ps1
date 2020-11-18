@@ -179,7 +179,7 @@ if ($TestsToRun -contains "all" -or $TestsToRun -contains "gui") {
     Show-TestResult -TestName "Test-GUI" -TestResults $GUIResults
 }
 
-if ($TestsToRun -contains "platformIndentification") {
+if (($TestsToRun -contains "all" -and $EnablePlatformIdentificationTest -eq $True) -or $TestsToRun -contains "platformIndentification") {
     Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults
 }
 
