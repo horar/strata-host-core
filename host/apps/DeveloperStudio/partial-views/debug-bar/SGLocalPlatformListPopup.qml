@@ -314,10 +314,9 @@ Window {
                     Button {
                         text: "Inject"
                         Layout.preferredHeight: 40
+                        enabled: device_id.currentIndex !== -1 && class_id.classId !== ""
                         onClicked: {
-                            if(device_id.currentIndex !== -1 && class_id.classId !== ""){
-                                loadAndStorePlatform({class_id: class_id.classId, opn: class_id.opn},textField.text, checkForCustomId(class_id.classId))
-                            }
+                            loadAndStorePlatform({class_id: class_id.classId, opn: class_id.opn},textField.text, checkForCustomId(class_id.classId))
                         }
                     }
 
