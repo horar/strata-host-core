@@ -829,7 +829,9 @@ FocusScope {
                                     anchors.leftMargin: 5
                                     anchors.verticalCenter: cellMark.verticalCenter
                                     text: {
+                                        //hackVariable is re-calculated once the sourceModel's count changes
                                         var hackVariable = markedModel.sourceModel.count
+                                        //re-evaluates the model.index once the hackVariable changes
                                         return markedModel.mapIndexToSource(model.index) + 1
                                     }
                                     elide: Text.ElideRight

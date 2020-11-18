@@ -597,6 +597,7 @@ Item {
                     id: indexText
                     width: indexHeader.width
                     text: {
+                        //hackVariable is re-calculated once the sourceModel's count changes so it catches the changes for model.index
                         var hackVariable = markedModel.sourceModel.count
                         if (showMarks) {
                             return markedModel.mapIndexToSource(logModelProxy.mapIndexToSource(model.index)) + 1
