@@ -89,6 +89,14 @@ Item {
         }
 
         buttonData = {
+            "text": "Settings",
+            "view": "settings",
+            "icon": "qrc:/sgimages/cog.svg",
+            "selected": false
+        }
+        buttonModel.append(buttonData)
+
+        buttonData = {
             "text": "Close Platform",
             "view": "close",
             "icon": "qrc:/sgimages/times.svg",
