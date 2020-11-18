@@ -86,9 +86,9 @@ Then you can install on your desired testing machine and test as needed.
 To install Strata in unattended mode run following command as an administrator to avoid installation permission prompts.
 
 * Windows:
-    * `strata-setup-offline.exe install --accept-licenses --accept-messages`
+    * `strata-setup-offline.exe install --accept-licenses --confirm-command`
 * Mac:
-    * `./strata-setup-offline.app/Contents/MacOS/strata-setup-offline install --accept-licenses --accept-messages`
+    * `./strata-setup-offline.app/Contents/MacOS/strata-setup-offline install --accept-licenses --confirm-command`
 
 ## Additional Strata Arguments
 
@@ -123,6 +123,8 @@ And it can be combined with automatic accepting of messages / licenses and insta
     * [CLI] Accepts all message queries without user input.
 * `--accept-licenses`
     * [CLI] Accepts all licenses without user input.
+* `--confirm-command`
+    * [CLI] Do not ask user to start installation / update / uninstallation.
 * `-t, --root <directory>`
     * [CLI] Set the installation root directory.
 

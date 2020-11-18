@@ -1,4 +1,4 @@
-var restart_is_required = true;
+var restart_is_required = false;
 
 function Component()
 {
