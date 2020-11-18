@@ -139,6 +139,7 @@ Item {
         onClicked: {
             if (model.filename !== "") {
                 if (mouse.button === Qt.RightButton) {
+                    treeView.selectItem(styleData.index)
                     contextMenu.item.popup()
                 } else if (mouse.button === Qt.LeftButton) {
                     if (!model.isDir) {
