@@ -55,14 +55,12 @@ function isRestartRequired()
 
         if (exit_code == "3010 ") {
             restart_is_required = true;
-            return true;
+            return;
         }
 
         restart_is_required = false;
-        return false;
     } else {
         restart_is_required = false;
-        return false;
     }
 }
 
@@ -123,6 +121,11 @@ Component.prototype.onInstallationOrUpdateFinished = function()
             console.log("unable to erase StrataUtils folder: " + strataUtilsFolder);
             console.log(e);
         }
+    }
+
+    if((installer.isUpdater() == true) && (installer.status == QInstaller.Success) && (installer.isCommandLineInstance() == true) && (installer.value("RunProgram") != "")) {
+        console.log("Executing: " + installer.value("RunProgram"));
+        installer.executeDetached(installer.value("RunProgram"));
     }
 }
 
@@ -279,20 +282,22 @@ function uninstallPreviousStrataInstallation()
 
             // we should not find multiple entries here, but just in case, check the highest
             if ((display_name.length != 0) && ((display_name.length == display_version.length) && (display_name.length == uninstall_string.length))) {
-                var perform_uninstall = false;
-                var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
+                var perform_uninstall = installer.isCommandLineInstance();
+                if(perform_uninstall == false) {
+                    var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
 
-                // User has selected 'yes' to uninstall
-                if (uninstall_reply == QMessageBox.Yes) {
-                    perform_uninstall = true;
-                    console.log("User reply to uninstall Strata: Yes");
-                } else {
-                    console.log("User reply to uninstall Strata: No");
+                    // User has selected 'yes' to uninstall
+                    if (uninstall_reply == QMessageBox.Yes) {
+                        perform_uninstall = true;
+                        console.log("User reply to uninstall Strata: Yes");
+                    } else {
+                        console.log("User reply to uninstall Strata: No");
+                    }
                 }
                 if (perform_uninstall == true) {
                     for (var i = 0; i < display_version.length; i++) {
                         console.log("executing Strata uninstall command: '" + uninstall_string[i] + "'");
-                        var e = installer.execute(uninstall_string[i], ["purge"]);
+                        var e = installer.execute(uninstall_string[i], ["purge", "--confirm-command"]);
                         console.log(e);
                     }
                 }
@@ -307,19 +312,21 @@ function uninstallPreviousStrataInstallation()
         var maintenance_tool = installer.value("TargetDir") + "/" + installer.value("MaintenanceToolName") + ".app";
         console.log("checking if '" + maintenance_tool + "' exists");
         if (installer.fileExists(maintenance_tool) == true) {
-            var perform_uninstall = false;
-            var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
+            var perform_uninstall = installer.isCommandLineInstance();
+            if(perform_uninstall == false) {
+                var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
 
-            // User has selected 'yes' to uninstall
-            if (uninstall_reply == QMessageBox.Yes) {
-                perform_uninstall = true;
-                console.log("User reply to uninstall Strata: Yes");
-            } else {
-                console.log("User reply to uninstall Strata: No");
+                // User has selected 'yes' to uninstall
+                if (uninstall_reply == QMessageBox.Yes) {
+                    perform_uninstall = true;
+                    console.log("User reply to uninstall Strata: Yes");
+                } else {
+                    console.log("User reply to uninstall Strata: No");
+                }
             }
             if (perform_uninstall == true) {
                 console.log("executing Strata uninstall");
-                installer.execute(installer.value("TargetDir") + "/" + installer.value("MaintenanceToolName") + ".app/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["purge"]);
+                installer.execute(installer.value("TargetDir") + "/" + installer.value("MaintenanceToolName") + ".app/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["purge", "--confirm-command"]);
             }
         } else {
             console.log("program not found, will install new version");

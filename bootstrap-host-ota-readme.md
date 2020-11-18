@@ -119,12 +119,14 @@ For unnatended installation, it is necessary to use CLI mode instead of GUI mode
     * [CLI] Uninstall all packages and remove the program directory.
 
 And it can be combined with automatic accepting of messages / licenses and installation directory (if needed):
-* `--accept-messages`
-    * [CLI] Accepts all message queries without user input.
 * `--accept-licenses`
     * [CLI] Accepts all licenses without user input.
 * `--confirm-command`
     * [CLI] Do not ask user to start installation / update / uninstallation.
+* `--accept-messages`
+    * [CLI] Accepts all message queries without user input.
+* `--default-answer`
+    * [CLI] Automatically answers to message queries with their default values.
 * `-t, --root <directory>`
     * [CLI] Set the installation root directory.
 
