@@ -395,7 +395,7 @@ FocusScope {
             checkable: true
             enabled: fileLoaded
             padding: buttonPadding/2
-            hintText: "Filter marks"
+            hintText: "Marks only"
             iconColor: markColor
 
             onClicked: {
