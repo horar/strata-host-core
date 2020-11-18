@@ -557,7 +557,7 @@ Window {
             }
         }
     }
-
+    // Loads the PlatformSelectionModel, a device model, and prepends the classModel with any saved custom platforms
     function initialModelLoad(){
         parseCustomSavedIds()
 
@@ -585,8 +585,8 @@ Window {
             }
         }
     }
-    // editable firmware version
-    function loadAndStorePlatform(platform, firmwareVer = "0.0.2", custom){
+    // loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
+    function loadAndStorePlatform(platform, firmwareVer, custom){
         const platforms = classModel
         for(var i = 0; i < platforms.count; i++){
             if(platform.class_id === platforms.get(i).platform.class_id && !custom){
@@ -602,7 +602,6 @@ Window {
                 }
 
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
-                // store actual class_id,
                 storeDeviceList.setValue("stored-platform",{platform: {class_id: platform.class_id, opn: platform.opn, firmware_version: firmwareVer, custom: custom } })
                 break
             } else {
@@ -626,7 +625,7 @@ Window {
             }
         }
     }
-
+    // checks for a custom class_id
     function checkForCustomId(classId){
         for(var i = 0; i < PlatformSelection.platformSelectorModel.count; i++){
             if(classId === PlatformSelection.platformSelectorModel.get(i).class_id){
