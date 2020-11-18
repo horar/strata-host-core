@@ -609,11 +609,11 @@ Item {
                         //hackVariable is re-calculated once the sourceModel's count changes so it catches the changes for model.index
                         var hackVariable = markedModel.sourceModel.count
                         if (showMarks) {
-                            return markedModel.mapIndexToSource(logModelProxy.mapIndexToSource(model.index)) + 1
+                            return markedModel.mapIndexToSource(searchResultModel.mapIndexToSource(model.index)) + 1
                         }
                         else {
                             if (searchingMode) {
-                                return logModelProxy.mapIndexToSource(model.index) + 1
+                                return searchResultModel.mapIndexToSource(model.index) + 1
                             }
                             return model.index + 1
                         }

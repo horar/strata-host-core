@@ -35,7 +35,7 @@ FocusScope {
     property bool searchTagShown: false
     property bool automaticScroll: true
     property bool timestampSimpleFormat: false
-    property int searchResultCount: logModelProxy.count
+    property int searchResultCount: searchResultModel.count
     property int statusBarHeight: statusBar.height
     property string borderColor: "darkgray"
     property string timestampFormat: "yyyy-MM-dd hh:mm:ss.zzz t"
@@ -170,7 +170,7 @@ FocusScope {
     }
 
     CommonCPP.SGSortFilterProxyModel {
-        id: logModelProxy
+        id: searchResultModel
         sourceModel: showMarks ? markedModel : logModel
         filterPattern: searchInput.text
         filterPatternSyntax: regExpButton.checked ? CommonCPP.SGSortFilterProxyModel.RegExp : CommonCPP.SGSortFilterProxyModel.FixedString
@@ -924,7 +924,7 @@ FocusScope {
                         id: secondaryLogView
                         anchors.fill: parent
                         anchors.margins: 2
-                        model: logModelProxy
+                        model: searchResultModel
 
                         indexColumnVisible: checkBoxIndex.checked
                         timestampColumnVisible: checkBoxTs.checked
@@ -947,9 +947,9 @@ FocusScope {
                         onCurrentIndexChanged: {
                             if (currentIndex >= 0 && secondaryLogView.activeFocus) {
                                 if (showMarks) {
-                                    var sourceIndex = markedModel.mapIndexToSource(logModelProxy.mapIndexToSource(currentIndex))
+                                    var sourceIndex = markedModel.mapIndexToSource(searchResultModel.mapIndexToSource(currentIndex))
                                 } else {
-                                    sourceIndex = logModelProxy.mapIndexToSource(currentIndex)
+                                    sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
                                 }
                                 primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
                                 primaryLogView.currentIndex = sourceIndex
