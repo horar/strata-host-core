@@ -415,11 +415,20 @@ Item {
             rightMargin: 5
         }
         visible: searchTagShown
-        text: showMarks ? "Mark Search Results: " + searchResultCount
-                          && searchResultCount == 1 ? "Mark Search Result: " + searchResultCount
-                                                    : "Mark Search Results: " + searchResultCount
-        : searchResultCount == 1 ? "Search Result: " + searchResultCount
-        : "Search Results: " + searchResultCount
+        text: {
+            if (showMarks) {
+                if (searchResultCount == 1) {
+                    return "Mark Search Result: " + searchResultCount
+                }
+                return "Mark Search Results: " + searchResultCount
+            } else {
+                if (searchResultCount == 1) {
+                    return "Search Result: " + searchResultCount
+                }
+                return "Search Results: " + searchResultCount
+            }
+
+        }
     }
 
     ListView {
@@ -602,10 +611,10 @@ Item {
                         if (showMarks) {
                             return markedModel.mapIndexToSource(logModelProxy.mapIndexToSource(model.index)) + 1
                         }
-                        if (!showMarks && searchingMode) {
-                            return logModelProxy.mapIndexToSource(model.index) + 1
-                        }
                         else {
+                            if (searchingMode) {
+                                return logModelProxy.mapIndexToSource(model.index) + 1
+                            }
                             return model.index + 1
                         }
                     }
@@ -624,10 +633,10 @@ Item {
                     font.family: "monospace"
                     text: {
                         if (visible) {
-                            if (timestampSimpleFormat == false) {
-                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
-                            } else {
+                            if (timestampSimpleFormat) {
                                 return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
+                            } else {
+                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
                             }
                         } else {
                             return ""

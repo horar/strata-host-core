@@ -846,11 +846,11 @@ FocusScope {
                                     anchors.right: cellMark.right
                                     anchors.verticalCenter: cellMark.verticalCenter
                                     text: {
-                                            if (timestampSimpleFormat == false) {
-                                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
-                                            } else {
-                                                return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
-                                            }
+                                        if (timestampSimpleFormat) {
+                                            return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
+                                        } else {
+                                            return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
+                                        }
                                     }
                                     elide: Text.ElideRight
                                 }
@@ -946,7 +946,11 @@ FocusScope {
 
                         onCurrentIndexChanged: {
                             if (currentIndex >= 0 && secondaryLogView.activeFocus) {
-                                var sourceIndex = showMarks ? markedModel.mapIndexToSource(logModelProxy.mapIndexToSource(currentIndex)) : logModelProxy.mapIndexToSource(currentIndex)
+                                if (showMarks) {
+                                    var sourceIndex = markedModel.mapIndexToSource(logModelProxy.mapIndexToSource(currentIndex))
+                                } else {
+                                    sourceIndex = logModelProxy.mapIndexToSource(currentIndex)
+                                }
                                 primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
                                 primaryLogView.currentIndex = sourceIndex
                             }
