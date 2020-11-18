@@ -96,11 +96,12 @@ export BUILD_ID
 APP_FORMAT=app
 DMG_FORMAT=dmg
 
+STRATA=strata
 STRATA_COMPONENTS=components
 STRATA_DS=devstudio
 STRATA_HCS=hcs
 
-MODULE_STRATA=com.onsemi.strata
+MODULE_STRATA=com.onsemi.$STRATA
 MODULE_STRATA_COMPONENTS=$MODULE_STRATA.$STRATA_COMPONENTS
 MODULE_STRATA_DS=$MODULE_STRATA.$STRATA_DS
 MODULE_STRATA_HCS=$MODULE_STRATA.$STRATA_HCS
@@ -118,7 +119,6 @@ SDS_BINARY_DIR=$PKG_STRATA_DS/$SDS_BINARY
 HCS_BINARY_DIR=$PKG_STRATA_HCS/$HCS_BINARY
 STRATA_DEPLOYMENT_DIR=../deployment/Strata
 STRATA_RESOURCES_DIR=../host/resources/qtifw
-STRATA_HCS_CONFIG_DIR=../host/assets/config/hcs
 
 STRATA_HCS_CONFIG_FILE_PROD=hcs_prod.config
 STRATA_HCS_CONFIG_FILE_QA=hcs_qa.config
@@ -136,7 +136,9 @@ elif [ $USE_DOCKER_CONFIG != 0 ] ; then
     STRATA_HCS_CONFIG_FILE=${STRATA_HCS_CONFIG_FILE_DOCKER}
 fi
 
-STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config.xml
+export STRATA_OTA_REPOSITORY_ENABLED=0
+export STRATA_OTA_REPOSITORY="http://10.238.54.227/s3com?fl=ota/darwin/modules/strata"
+STRATA_CONFIG_XML=config/config.xml
 MQTT_LIB=QtMqtt
 COMMON_CPP_LIB="libcomponent-commoncpp.so"
 INSTALLERBASE_BINARY=installerbase
@@ -270,6 +272,7 @@ if [ ! -d $PACKAGES_DIR ] ; then mkdir -pv $PACKAGES_DIR; fi
 cmake \
     -DCMAKE_BUILD_TYPE=OTA \
     -DAPPS_CORESW_HCS_CONFIG:STRING=${STRATA_HCS_CONFIG_FILE} \
+    -DSTRATA_OTA_REPOSITORY_ENABLED:BOOL=0 \
     -DAPPS_TOOLBOX=off \
     -DAPPS_UTILS=off \
     -DBUILD_TESTING=on \
@@ -466,35 +469,39 @@ echo "======================================================================="
 if [ -d $STRATA_ONLINE_REPOSITORY ] ; then rm -rf $STRATA_ONLINE_REPOSITORY; fi
 if [ ! -d $STRATA_ONLINE_REPOSITORY ] ; then mkdir -pv $STRATA_ONLINE_REPOSITORY; fi
 
-repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA $STRATA_ONLINE_REPOSITORY
+echo "-----------------------------------------------------------------------------"
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$STRATA.."
+echo "-----------------------------------------------------------------------------"
+
+repogen --verbose -p $PACKAGES_DIR --include $MODULE_STRATA $STRATA_ONLINE_REPOSITORY/$STRATA
 if [ $? != 0 ] ; then
     echo "======================================================================="
-    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY!"
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY/$STRATA!"
     echo "======================================================================="
     exit 3
 fi
 
 echo "-----------------------------------------------------------------------------"
-echo " Updating online repository $STRATA_ONLINE_REPOSITORY/Updates.xml.."
+echo " Updating online repository $STRATA_ONLINE_REPOSITORY/$STRATA/Updates.xml.."
 echo "-----------------------------------------------------------------------------"
 
-if [ ! -f "$STRATA_ONLINE_REPOSITORY/Updates.xml" ] ; then
+if [ ! -f "$STRATA_ONLINE_REPOSITORY/$STRATA/Updates.xml" ] ; then
     echo "======================================================================="
-    echo " Missing $STRATA_ONLINE_REPOSITORY/Updates.xml, repogen probably failed"
+    echo " Missing $STRATA_ONLINE_REPOSITORY/$STRATA/Updates.xml, repogen probably failed"
     echo "======================================================================="
     exit 2
 fi
 
-cp $STRATA_ONLINE_REPOSITORY/Updates.xml $STRATA_ONLINE_REPOSITORY/Updates.xml.bak
-sed '$ d' $STRATA_ONLINE_REPOSITORY/Updates.xml.bak > $STRATA_ONLINE_REPOSITORY/Updates.xml
-rm -f $STRATA_ONLINE_REPOSITORY/Updates.xml.bak
+cp $STRATA_ONLINE_REPOSITORY/$STRATA/Updates.xml $STRATA_ONLINE_REPOSITORY/$STRATA/Updates.xml.bak
+sed '$ d' $STRATA_ONLINE_REPOSITORY/$STRATA/Updates.xml.bak > $STRATA_ONLINE_REPOSITORY/$STRATA/Updates.xml
+rm -f $STRATA_ONLINE_REPOSITORY/$STRATA/Updates.xml.bak
 
 echo " <RepositoryUpdate>
-  <Repository action=\"add\" url=\"${STRATA_COMPONENTS}\" displayname=\"Module $MODULE_STRATA_COMPONENTS\"/>
-  <Repository action=\"add\" url=\"${STRATA_DS}\" displayname=\"Module $MODULE_STRATA_DS\"/>
-  <Repository action=\"add\" url=\"${STRATA_HCS}\" displayname=\"Module $MODULE_STRATA_HCS\"/>
+  <Repository action=\"add\" url=\"../${STRATA_COMPONENTS}\" displayname=\"Module $MODULE_STRATA_COMPONENTS\"/>
+  <Repository action=\"add\" url=\"../${STRATA_DS}\" displayname=\"Module $MODULE_STRATA_DS\"/>
+  <Repository action=\"add\" url=\"../${STRATA_HCS}\" displayname=\"Module $MODULE_STRATA_HCS\"/>
  </RepositoryUpdate>
-</Updates>" >> $STRATA_ONLINE_REPOSITORY/Updates.xml
+</Updates>" >> $STRATA_ONLINE_REPOSITORY/$STRATA/Updates.xml
 
 echo "-----------------------------------------------------------------------------"
 echo " Preparing online repository $STRATA_ONLINE_REPOSITORY/$STRATA_COMPONENTS.."

@@ -101,13 +101,16 @@ Rectangle {
                 onClicked:  {
                     Filters.clearActiveFilters()
 
-                    // filter on all of this platform's category filters to find all similar ones
-                    for (let j = 0; j < model.filters.count; j++){
-                        let filterName = model.filters.get(j).filterName
-                        if (Filters.mapping.hasOwnProperty(filterName)) {
-                            if (Filters.mapping[filterName].type === "category" && Filters.mapping[filterName].inUse === true) {
-                                Filters.categoryFilters.push(filterName)
-                                Filters.utility.categoryFiltersChanged()
+                    // do not set filters if filter controls not visible due to small window size
+                    if (leftFilters.responsiveVisible && rightFilters.responsiveVisible) {
+                        // filter on all of this platform's category filters to find all similar ones
+                        for (let j = 0; j < model.filters.count; j++){
+                            let filterName = model.filters.get(j).filterName
+                            if (Filters.mapping.hasOwnProperty(filterName)) {
+                                if (Filters.mapping[filterName].type === "category" && Filters.mapping[filterName].inUse === true) {
+                                    Filters.categoryFilters.push(filterName)
+                                    Filters.utility.categoryFiltersChanged()
+                                }
                             }
                         }
                     }
