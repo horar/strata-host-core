@@ -782,7 +782,7 @@ Item {
         else if (event.key === Qt.Key_End) {
             logListView.positionViewAtEnd()
         }
-        else if ((event.key === Qt.Key_D) && (event.modifiers & Qt.ControlModifier) && markIconVisible) {
+        else if ((event.key === Qt.Key_M) && markIconVisible) {
             logModel.toggleIsMarked(currentIndex)
         }
     }
