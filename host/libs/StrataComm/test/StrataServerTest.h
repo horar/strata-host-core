@@ -17,9 +17,17 @@ private slots:
     void testValidApiVer2Message();
     void testValidApiVer1Message();
     void testFloodTheServer();
-    void testBuildNotificationApiV2();
     void testServerFunctionality();
-    void testBuildPlatformMessageV1();
+    // void testBuildPlatformMessageV1();
+
+    void testBuildNotificationApiV2();
+    void testBuildResponseApiV2();
+    void testBuildErrorApiV2();
+    void testBuildPlatformMessageApiV2();
+
+    void testBuildNotificationApiV1();
+    void testBuildResponseApiV1();
+    void testBuildPlatformMessageApiV1();
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";

@@ -43,6 +43,9 @@ private:
     // QString buidNotification(const ClientMessage &ClientMessage, const QJsonObject &payload);   // maybe we need to change it to QByteArray based on what zmq requires
     // QString buildResponse(const ClientMessage &ClientMessage, const QJsonObject &payload);      // ^ same comment!
 
+    void registerNewClientHandler(const ClientMessage &clientMessage);
+    void unregisterClientHandler(const ClientMessage &clientMessage);
+
     Dispatcher dispatcher_;
     ClientsController clientsController_;
     ServerConnector connector_;

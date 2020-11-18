@@ -109,53 +109,6 @@ void StrataServerTest::testFloodTheServer() {
     QCOMPARE_(counter, testSize);
 }
 
-void StrataServerTest::testBuildNotificationApiV2() {
-    StrataServer server(address_);
-    server.init();
-
-    strata::strataComm::ClientConnector client(address_, "AA");
-    client.initilize();
-    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [](const QByteArray &message) {
-        qDebug() << "******* client:" << message;
-        // TODO: add validation to make this test meaningful.
-    });
-    client.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
-
-    server.registerHandler("test_response", [&server](const strata::strataComm::ClientMessage &cm){
-        // verify the thing here
-        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::Response);
-    });
-
-    server.registerHandler("test_notification", [&server](const strata::strataComm::ClientMessage &cm){
-        // verify the thing here
-        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::Notification);
-    });
-
-    server.registerHandler("test_error", [&server](const strata::strataComm::ClientMessage &cm){
-        // verify the thing here
-        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::Error);
-    });
-
-    server.registerHandler("test_platformMessage", [&server](const strata::strataComm::ClientMessage &cm){
-        // verify the thing here
-        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::PlatformMessage);
-    });
-
-    client.sendMessage(R"({"jsonrpc": "2.0","method":"test_response","params":{},"id":1})");
-    client.sendMessage(R"({"jsonrpc": "2.0","method":"test_notification","params":{},"id":1})");
-    client.sendMessage(R"({"jsonrpc": "2.0","method":"test_error","params":{},"id":1})");
-    client.sendMessage(R"({"jsonrpc": "2.0","method":"test_platformMessage","params":{},"id":1})");
-
-    // verify that the thing is valid in the handlers.
-    QTimer timer;
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
-}
-
 void StrataServerTest::testServerFunctionality() {
     StrataServer server(address_);
     server.init();
@@ -202,7 +155,287 @@ void StrataServerTest::testServerFunctionality() {
     QVERIFY_(clientGotResponse_2);
 }
 
-void StrataServerTest::testBuildPlatformMessageV1() {
+void StrataServerTest::testBuildNotificationApiV2() {
+    bool testExecuted = false;
     StrataServer server(address_);
-    // WIP
+    server.init();
+
+    strata::strataComm::ClientConnector client(address_, "AA");
+    client.initilize();
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [&testExecuted](const QByteArray &message) {
+        QJsonParseError jsonParseError;
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+        QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+        QJsonObject jsonObject = jsonDocument.object();
+
+        QVERIFY_(jsonObject.contains("jsonrpc"));
+        QVERIFY_(jsonObject.value("jsonrpc").isString());
+
+        QVERIFY_(jsonObject.contains("method"));
+        QVERIFY_(jsonObject.value("method").isString());
+
+        QVERIFY_(jsonObject.contains("params"));
+        QVERIFY_(jsonObject.value("params").isObject());
+        testExecuted = true;
+    });
+
+    client.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
+
+    server.registerHandler("test_notification", [&server](const strata::strataComm::ClientMessage &cm){
+        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::Notification);
+    });
+
+    client.sendMessage(R"({"jsonrpc": "2.0","method":"test_notification","params":{},"id":2})");
+
+    QTimer timer;
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(100);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+
+    QVERIFY_(testExecuted);
+}
+
+void StrataServerTest::testBuildResponseApiV2() {
+    bool testExecuted = false;
+    StrataServer server(address_);
+    server.init();
+
+    strata::strataComm::ClientConnector client(address_, "AA");
+    client.initilize();
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [&testExecuted](const QByteArray &message) {
+        QJsonParseError jsonParseError;
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+        QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+        QJsonObject jsonObject = jsonDocument.object();
+
+        QVERIFY_(jsonObject.contains("jsonrpc"));
+        QVERIFY_(jsonObject.value("jsonrpc").isString());
+
+        QVERIFY_(jsonObject.contains("id"));
+        QVERIFY_(jsonObject.value("id").isDouble());
+
+        QVERIFY_(jsonObject.contains("result"));
+        QVERIFY_(jsonObject.value("result").isObject());
+        testExecuted = true;
+    });
+
+    client.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
+
+    server.registerHandler("test_response", [&server](const strata::strataComm::ClientMessage &cm){
+        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::Response);
+    });
+
+    client.sendMessage(R"({"jsonrpc": "2.0","method":"test_response","params":{},"id":1})");
+
+    QTimer timer;
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(100);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+
+    QVERIFY_(testExecuted);
+}
+
+void StrataServerTest::testBuildErrorApiV2() {
+    bool testExecuted = false;
+    StrataServer server(address_);
+    server.init();
+
+    strata::strataComm::ClientConnector client(address_, "AA");
+    client.initilize();
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [&testExecuted](const QByteArray &message) {
+        QJsonParseError jsonParseError;
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+        QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+        QJsonObject jsonObject = jsonDocument.object();
+
+        QVERIFY_(jsonObject.contains("jsonrpc"));
+        QVERIFY_(jsonObject.value("jsonrpc").isString());
+
+        QVERIFY_(jsonObject.contains("id"));
+        QVERIFY_(jsonObject.value("id").isDouble());
+
+        QVERIFY_(jsonObject.contains("error"));
+        QVERIFY_(jsonObject.value("error").isObject());
+        testExecuted = true;
+    });
+
+    client.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
+
+    server.registerHandler("test_error", [&server](const strata::strataComm::ClientMessage &cm){
+        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::Error);
+    });
+
+    client.sendMessage(R"({"jsonrpc": "2.0","method":"test_error","params":{},"id":3})");
+
+    // verify that the thing is valid in the handlers.
+    QTimer timer;
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(100);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+
+    QVERIFY_(testExecuted);
+}
+
+void StrataServerTest::testBuildPlatformMessageApiV2() {
+    bool testExecuted = false;
+    StrataServer server(address_);
+    server.init();
+
+    strata::strataComm::ClientConnector client(address_, "AA");
+    client.initilize();
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [&testExecuted](const QByteArray &message) {
+        QJsonParseError jsonParseError;
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+        QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+        QJsonObject jsonObject = jsonDocument.object();
+
+        QVERIFY_(jsonObject.contains("jsonrpc"));
+        QVERIFY_(jsonObject.value("jsonrpc").isString());
+
+        QVERIFY_(jsonObject.contains("method"));
+        QVERIFY_(jsonObject.value("method").isString());
+        QVERIFY_(jsonObject.value("method") == "platform_notification");
+
+        QVERIFY_(jsonObject.contains("params"));
+        QVERIFY_(jsonObject.value("params").isObject());
+        testExecuted = true;
+    });
+
+    client.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
+
+    server.registerHandler("platform_notification", [&server](const strata::strataComm::ClientMessage &cm){
+        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::PlatformMessage);
+    });
+
+    client.sendMessage(R"({"jsonrpc": "2.0","method":"platform_notification","params":{},"id":4})");
+
+    QTimer timer;
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(100);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+    
+    QVERIFY_(testExecuted);
+}
+
+void StrataServerTest::testBuildNotificationApiV1() {
+    bool testExecuted = false;
+    StrataServer server(address_);
+    server.init();
+
+    strata::strataComm::ClientConnector client(address_, "AA");
+    client.initilize();
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [&testExecuted](const QByteArray &message) {
+        QJsonParseError jsonParseError;
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+        QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+        QJsonObject jsonObject = jsonDocument.object();
+
+        QVERIFY_(jsonObject.contains("hcs::notification"));
+        QVERIFY_(jsonObject.value("hcs::notification").isObject());
+        testExecuted = true;
+    });
+
+    client.sendMessage(R"({"cmd":"register_client", "payload":{}})");
+
+    server.registerHandler("test_notification", [&server](const strata::strataComm::ClientMessage &cm){
+        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::Notification);
+    });
+
+    client.sendMessage(R"({"hcs::cmd":"test_notification","payload":{}})");
+
+    QTimer timer;
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(100);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+
+    QVERIFY_(testExecuted);
+}
+
+void StrataServerTest::testBuildResponseApiV1() {
+    bool testExecuted = false;
+    StrataServer server(address_);
+    server.init();
+
+    strata::strataComm::ClientConnector client(address_, "AA");
+    client.initilize();
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [&testExecuted](const QByteArray &message) {
+        QJsonParseError jsonParseError;
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+        QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+        QJsonObject jsonObject = jsonDocument.object();
+
+        QVERIFY_(jsonObject.contains("hcs::notification"));
+        QVERIFY_(jsonObject.value("hcs::notification").isObject());
+        testExecuted = true;
+    });
+
+    client.sendMessage(R"({"cmd":"register_client", "payload":{}})");
+
+    server.registerHandler("test_response", [&server](const strata::strataComm::ClientMessage &cm){
+        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::Response);
+    });
+
+    client.sendMessage(R"({"hcs::cmd":"test_response","payload":{}})");
+
+    QTimer timer;
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(100);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+    
+    QVERIFY_(testExecuted);
+}
+
+void StrataServerTest::testBuildPlatformMessageApiV1() {
+    bool testExecuted = false;
+    StrataServer server(address_);
+    server.init();
+
+    strata::strataComm::ClientConnector client(address_, "AA");
+    client.initilize();
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [&testExecuted](const QByteArray &message) {
+        QJsonParseError jsonParseError;
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+        QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+        QJsonObject jsonObject = jsonDocument.object();
+
+        QVERIFY_(jsonObject.contains("notification"));
+        QVERIFY_(jsonObject.value("notification").isObject());
+        testExecuted = true;
+    });
+
+    client.sendMessage(R"({"cmd":"register_client", "payload":{}})");
+
+    server.registerHandler("platform_notification", [&server](const strata::strataComm::ClientMessage &cm){
+        server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ClientMessage::ResponseType::PlatformMessage);
+    });
+
+    client.sendMessage(R"({"hcs::cmd":"platform_notification","payload":{}})");
+
+    QTimer timer;
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(100);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+
+    QVERIFY_(testExecuted);
 }

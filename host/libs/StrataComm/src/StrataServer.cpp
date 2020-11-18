@@ -369,7 +369,7 @@ QByteArray StrataServer::buildErrorResponseApiv2(const ClientMessage &clientMess
 void StrataServer::notifyClient(const ClientMessage &clientMessage, const QJsonObject &jsonObject, ClientMessage::ResponseType respnseType) {
     // determine the Api version of the client.
     // determine the type of the response.
-    
+
     QByteArray serverMessage;
 
     switch (clientsController_.getClientApiVersion(clientMessage.clientID))
@@ -385,6 +385,7 @@ void StrataServer::notifyClient(const ClientMessage &clientMessage, const QJsonO
 
         case ClientMessage::ResponseType::PlatformMessage:
             serverMessage = buildPlatformMessageApiV1(jsonObject);
+            break;
 
         case ClientMessage::ResponseType::Error:
             qCDebug(logCategoryStrataServer) << "No Error support in V1 API";
@@ -422,7 +423,15 @@ void StrataServer::notifyClient(const ClientMessage &clientMessage, const QJsonO
 }
 
 void StrataServer::notifyAllClients() {
-    
+
+}
+
+void StrataServer::registerNewClientHandler(const ClientMessage &clientMessage) {
+
+}
+
+void StrataServer::unregisterClientHandler(const ClientMessage &clientMessage) {
+
 }
 
 
