@@ -124,7 +124,7 @@ void StrataServerTest::testServerFunctionality() {
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [&clientGotResponse](const QByteArray &message){
         QCOMPARE_(
             message,
-            "{\"id\":1,\"jsonrpc\":\"2.0\",\"method\":\"register_client\",\"result\":{\"status\":\"client registered.\"}}"
+            "{\"id\":1,\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"client registered.\"}}"
         );
         clientGotResponse = true;
     });
