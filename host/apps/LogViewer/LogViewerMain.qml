@@ -182,7 +182,7 @@ FocusScope {
     CommonCPP.SGSortFilterProxyModel{
         id: markedModel
         sourceModel: logModel
-        filterRole: "mark"
+        filterRole: "isMarked"
         filterPattern: "true"
         sortEnabled: false
     }

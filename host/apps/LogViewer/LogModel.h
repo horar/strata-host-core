@@ -28,7 +28,7 @@ public:
         TidRole,
         LevelRole,
         MessageRole,
-        MarkRole,
+        IsMarkedRole,
     };
 
     enum LogLevel {
@@ -42,7 +42,7 @@ public:
     Q_INVOKABLE QString followFile(const QString &path);
     Q_INVOKABLE void removeFile(const QString &path);
     Q_INVOKABLE void clear();
-    Q_INVOKABLE void toggleMark(int position);
+    Q_INVOKABLE void toggleIsMarked(int position);
 
     QString getRotatedFilePath(const QString &path) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -103,7 +103,7 @@ struct LogItem {
     QString message;
     LogModel::LogLevel level;
     uint filehash;
-    bool mark = false;
+    bool isMarked = false;
 };
 
 #endif

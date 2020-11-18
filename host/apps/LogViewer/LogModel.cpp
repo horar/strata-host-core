@@ -197,8 +197,8 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
         return item->level;
     case MessageRole:
         return item->message;
-    case MarkRole:
-        return item->mark;
+    case IsMarkedRole:
+        return item->isMarked;
     }
     return QVariant();
 }
@@ -211,7 +211,7 @@ QHash<int, QByteArray> LogModel::roleNames() const
     names[TidRole] = "tid";
     names[LevelRole] = "level";
     names[MessageRole] = "message";
-    names[MarkRole] = "mark";
+    names[IsMarkedRole] = "isMarked";
     return names;
 }
 
@@ -349,10 +349,10 @@ void LogModel::setNewestTimestamp(const QDateTime &timestamp)
     }
 }
 
-void LogModel::toggleMark(int position)
+void LogModel::toggleIsMarked(int position)
 {
-    data_.at(position)->mark = !data_.at(position)->mark;
-    emit dataChanged(index(position), index(position), QVector<int>() << MarkRole);
+    data_.at(position)->isMarked = !data_.at(position)->isMarked;
+    emit dataChanged(index(position), index(position), QVector<int>() << IsMarkedRole);
 }
 
 FileModel *LogModel::fileModel()

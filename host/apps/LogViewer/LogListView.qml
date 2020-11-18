@@ -571,10 +571,10 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 5
-                        source: model.mark ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
+                        source: model.isMarked ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
                         width: parent.height - 4
                         height: width
-                        iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.mark ? markColor : cell.color
+                        iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.isMarked ? markColor : cell.color
                         visible: markIconSpacer.visible
 
                         MouseArea {
@@ -583,7 +583,7 @@ Item {
 
                             onClicked: {
                                 logViewWrapper.forceActiveFocus()
-                                delegate.isHovered ? logModel.toggleMark(index) : logModel.toggleMark(currentIndex)
+                                delegate.isHovered ? logModel.toggleIsMarked(index) : logModel.toggleIsMarked(currentIndex)
                             }
                         }
                     }
@@ -783,7 +783,7 @@ Item {
             logListView.positionViewAtEnd()
         }
         else if ((event.key === Qt.Key_D) && (event.modifiers & Qt.ControlModifier) && markIconVisible) {
-            logModel.toggleMark(currentIndex)
+            logModel.toggleIsMarked(currentIndex)
         }
     }
 }
