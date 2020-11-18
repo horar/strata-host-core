@@ -6,6 +6,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QDebug>
 
 DebugMenuGenerator::DebugMenuGenerator(QObject *parent) : QObject(parent)
 {

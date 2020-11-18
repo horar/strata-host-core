@@ -11,13 +11,13 @@ public:
     explicit DebugMenuGenerator(QObject *parent = nullptr);
 
     /**
-     * @brief generate Generate the DebugMenu.qml file
+     * @brief generateWithData Generate the DebugMenu.qml file when a list of commands and notifications is already supplied
      * @param outputDirPath The directory to output
      * @param notifications The list of notifications
      * @param commands The list of commands
      * @return Return true if successful, false otherwise
      */
-    Q_INVOKABLE bool generate(const QString &outputDirPath, QList<QVariantMap> &notifications, QList<QVariantMap> &commands);
+    bool generate(const QString &outputDirPath, QList<QVariantMap> &notifications, QList<QVariantMap> &commands);
 
     /**
      * @brief generate Generate the DebugMenu.qml from an inputJSON file path
