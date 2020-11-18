@@ -956,15 +956,6 @@ FocusScope {
                             }
                         }
 
-                        onActiveFocusChanged: {
-                            if (secondaryLogView.activeFocus) {
-                                if (currentIndex > markedModel.count) {
-                                    currentIndex = 0 //resets the currentIndex of the secondaryLogView to zero if it previously had more items shown
-                                }
-                                currentIndexChanged() //re-evaluates the currentIndex for primaryLogView once clicked on item/changed focus using TAB key
-                            }
-                        }
-
                         KeyNavigation.tab: primaryLogView
                         KeyNavigation.backtab: searchInput
                         KeyNavigation.priority: KeyNavigation.BeforeItem
