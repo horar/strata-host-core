@@ -16,6 +16,7 @@ struct ClientMessage {
     enum ResponseType {
         Response,
         Notification,
+        PlatformMessage,
         Error
     };
 
