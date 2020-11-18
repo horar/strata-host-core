@@ -266,10 +266,6 @@ Item {
                     MouseArea {
                         id: mouseArea
                         anchors.fill: parent
-                        onClicked: {
-                            searchCategoriesDropdown.close()
-                            filter.focus = true
-                        }
                         acceptedButtons: Qt.NoButton
                         cursorShape: Qt.IBeamCursor
                     }
