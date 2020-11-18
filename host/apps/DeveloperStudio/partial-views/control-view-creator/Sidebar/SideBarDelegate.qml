@@ -35,6 +35,19 @@ Item {
         autoScroll: activeFocus
         readOnly: false
 
+        Keys.onEscapePressed: {
+            if (model.editing) {
+                model.editing = false
+
+                if (model.filename === "") {
+                    treeModel.removeRows(model.row, 1, styleData.index.parent);
+                    return;
+                }
+
+                text = model.filename
+            }
+        }
+
         onEditingFinished: {
             if (!model.editing) {
                 return;
@@ -70,7 +83,7 @@ Item {
                     }
                 }
 
-                let success = SGUtilsCpp.createFile(path);
+                const success = SGUtilsCpp.createFile(path);
                 if (!success) {
                     //handle error
                     console.error("Could not create file:", path)
@@ -82,7 +95,7 @@ Item {
                 // Else we are just renaming an already existing file
                 if (text.length > 0 && model.filename !== text) {
                     // Don't attempt to rename the file if the text is the same as the original filename
-                    let success = treeModel.renameFile(styleData.index, text)
+                    const success = treeModel.renameFile(styleData.index, text)
                     if (success && openFilesModel.hasTab(model.uid)) {
                         openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
                     }
@@ -142,8 +155,8 @@ Item {
                     treeView.selectItem(styleData.index)
                     contextMenu.item.popup()
                 } else if (mouse.button === Qt.LeftButton) {
+                    treeView.selectItem(styleData.index)
                     if (!model.isDir) {
-                        treeView.selectItem(styleData.index)
                         if (openFilesModel.hasTab(model.uid)) {
                             openFilesModel.currentId = model.uid
                         } else {
