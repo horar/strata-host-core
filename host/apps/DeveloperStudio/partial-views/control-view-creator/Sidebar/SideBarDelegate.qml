@@ -74,14 +74,6 @@ Item {
 
             // If we are creating a new file
             if (model.filename === "") {
-                model.filename = text
-                model.filepath = SGUtilsCpp.pathToUrl(path);
-                if (!model.isDir) {
-                    model.filetype = SGUtilsCpp.fileSuffix(text).toLowerCase();
-                    if (!model.inQrc) {
-                        treeModel.addToQrc(styleData.index);
-                    }
-                }
 
                 const success = SGUtilsCpp.createFile(path);
                 if (!success) {
@@ -89,6 +81,14 @@ Item {
                     console.error("Could not create file:", path)
                 } else {
                     model.editing = false
+                    model.filename = text
+                    model.filepath = SGUtilsCpp.pathToUrl(path);
+                    if (!model.isDir) {
+                        model.filetype = SGUtilsCpp.fileSuffix(text).toLowerCase();
+                        if (!model.inQrc) {
+                            treeModel.addToQrc(styleData.index);
+                        }
+                    }
                     openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
                 }
             } else {

@@ -161,6 +161,12 @@ public:
     Q_INVOKABLE bool removeFromQrc(const QModelIndex &index, bool save = true);
 
     /**
+     * @brief removeEmptyChildren Removes any children that don't have a filename
+     * @param parent The QModelIndex of the parent
+     */
+    Q_INVOKABLE void removeEmptyChildren(const QModelIndex &parent);
+
+    /**
      * @brief renameFile Renames a file or a folder
      * @param index The index in the model
      * @param newFilename The new file/folder name

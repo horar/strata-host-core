@@ -31,6 +31,10 @@ Rectangle {
                 onRootIndexChanged: {
                     treeModel.rootIndex = rootIndex
                 }
+
+                onCollapsed: {
+                    treeModel.removeEmptyChildren(index);
+                }
                 
                 function selectItem(index) {
                     treeView.selection.clearCurrentIndex();
