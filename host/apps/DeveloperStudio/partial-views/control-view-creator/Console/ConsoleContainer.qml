@@ -37,7 +37,7 @@ ColumnLayout {
                     id: comboBox
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 150
-                    model: [{"source":"qrc:/sgimages/zoom.svg", "text": "console", "index": 0},{"source":"qrc:/sgimages/tools.svg", "text": "tools", "index": 1 },{"source":"qrc:/sgimages/clock.svg", "text": "breakpoints", "index": 2}, {"source":"qrc:/sgimages/coding.svg", "text":"debugging", "index": 3}]
+                    model: [{"source":"qrc:/sgimages/zoom.svg", "text": "console", "index": 0}, {"source":"qrc:/sgimages/coding.svg", "text":"debugging", "index": 1}]
                     currentIndex: 0
                     background: Rectangle {
                         color: "#444"
@@ -170,20 +170,6 @@ ColumnLayout {
                 PropertyChanges {
                     target: loader
                     source: "ConsoleLogger.qml"
-                }
-            },
-            State {
-                name: "tools"
-                PropertyChanges {
-                    target: loader
-                    source: "ConsoleTools.qml"
-                }
-            },
-            State {
-                name: "breakpoints"
-                PropertyChanges {
-                    target: loader
-                    source: "ConsoleBreakpoints.qml"
                 }
             },
             State {
