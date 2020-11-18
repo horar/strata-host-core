@@ -96,10 +96,17 @@ Item {
                 if (text.length > 0 && model.filename !== text) {
                     // Don't attempt to rename the file if the text is the same as the original filename
                     const success = treeModel.renameFile(styleData.index, text)
-                    if (success && openFilesModel.hasTab(model.uid)) {
-                        openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
+                    if (success) {
+                        if (openFilesModel.hasTab(model.uid)) {
+                            openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
+                        }
+                    } else {
+                        text = model.filename
                     }
+                } else {
+                    text = model.filename
                 }
+
                 model.editing = false  
             }
         }
