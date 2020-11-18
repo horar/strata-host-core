@@ -118,6 +118,11 @@ function emptyListRetry() {
 */
 function generatePlatform (platform) {
     let class_id_string = String(platform.class_id)
+    // Enforce uuidMap presence due to removal of OTA features in v2.6.0
+    if (UuidMap.uuid_map.hasOwnProperty(class_id_string) === false && platform.available.control){
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Control 'available' flag set but no mapped UI for this class_id; overriding to deny access");
+        platform.available.control = false
+    }
 
     // Parse list of text filters and gather complete filter info from PlatformFilters
     if (platform.hasOwnProperty("filters")) {

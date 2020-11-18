@@ -8,6 +8,8 @@
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
 
+namespace strata {
+
 /**
  * Static class to validate commands.
  */
@@ -105,6 +107,12 @@ public:
      */
     static bool parseJsonCommand(const QByteArray &command, rapidjson::Document &doc);
 
+    /**
+     * Get status message from notification.
+     * @param doc[in] The rapidjson::Document contatining JSON notification.
+     * @return status string (/notification/payload/status) or empty array
+     */
+    static QByteArray notificationStatus(const rapidjson::Document &doc);
 
 private:
     /**
@@ -116,5 +124,7 @@ private:
 
 
 };
+
+}  // namespace
 
 #endif // COMMANDVALIDATOR_H
