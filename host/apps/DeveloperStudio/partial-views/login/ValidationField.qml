@@ -53,7 +53,7 @@ TextField {
             source: background
             horizontalOffset: 0
             verticalOffset: 2
-            radius: 8.0
+            radius: 5.0
             samples: 10
             z: -1
             color: "#40000000"
