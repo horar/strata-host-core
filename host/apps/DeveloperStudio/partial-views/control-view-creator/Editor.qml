@@ -64,14 +64,13 @@ Item {
         }
     }
 
-    RowLayout {
+    SGSplitView {
         anchors.fill: parent
-        spacing: 0
 
         SideBar {
             id: sideBar
             Layout.fillHeight: true
-            Layout.preferredWidth: 250
+            Layout.minimumWidth: 250
         }
 
         ColumnLayout {
