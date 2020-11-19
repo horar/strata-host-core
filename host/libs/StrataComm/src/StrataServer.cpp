@@ -33,15 +33,23 @@ void StrataServer::init() {
 
 // }
 
-void StrataServer::registerHandler(const QString &handlerName, StrataHandler handler) {
-    qCDebug(logCategoryStrataServer) << "StrataServer registerHandler";
-    dispatcher_.registerHandler(handlerName, handler);
+bool StrataServer::registerHandler(const QString &handlerName, StrataHandler handler) {
+    qCDebug(logCategoryStrataServer) << "Registering handler:" << handlerName;
+    if (false == dispatcher_.registerHandler(handlerName, handler)) {
+        qCCritical(logCategoryStrataServer) << "Failed to register handler";
+        return false;
+    }
+    return true;
 }
 
-// void StrataServer::unregisterHandler(){
-//     qCDebug(logCategoryStrataServer) << "StrataServer unregisterHandler";
-
-// }
+bool StrataServer::unregisterHandler(const QString &handlerName) {
+    qCDebug(logCategoryStrataServer) << "Unregistering handler:" << handlerName;
+    if (false == dispatcher_.unregisterHandler(handlerName)) {
+        qCCritical(logCategoryStrataServer) << "Failed to unregister handler";
+        return false;
+    }
+    return true;
+}
 
 void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray &message) {
     qCDebug(logCategoryStrataServer) << "StrataServer newClientMessage";
@@ -56,7 +64,6 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
         return;
     }
     QJsonObject jsonObject = jsonDocument.object();
-
 
     ClientMessage clientMessage;
     clientMessage.clientID = clientId;
@@ -95,11 +102,11 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
     }
 
     if (apiVersion == ApiVersion::v2) {
-        if (false == buildClientMessageApiV2(jsonObject, &clientMessage)) {
+        if (false == buildClientMessageAPIv2(jsonObject, &clientMessage)) {
             return;
         }
     } else {
-        if (false == buildClientMessageApiV1(jsonObject, &clientMessage)) {
+        if (false == buildClientMessageAPIv1(jsonObject, &clientMessage)) {
             return;
         }
     }
@@ -118,90 +125,7 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
     emit dispatchHandler(clientMessage);
 }
 
-bool StrataServer::buildClientMessage(const QByteArray &message, ClientMessage *clientMessage){
-    qCDebug(logCategoryStrataServer) << "StrataServer buildClientMessage";
-    
-    QJsonParseError jsonParseError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-
-    if (jsonParseError.error != QJsonParseError::NoError) {
-        qCDebug(logCategoryStrataServer) << "invalid JSON message.";
-        return false;
-    }
-
-    // Create the JsonObject
-    QJsonObject jsonObject = jsonDocument.object();
-
-    // Check if the json have "jsonrpc" or not?
-    if ((true == jsonObject.contains("jsonrpc")) && (jsonObject.value("jsonrpc") == "2.0")) {
-        qCDebug(logCategoryStrataServer) << "uses new api!";
-        // Parse this format
-        // {
-        //     "jsonrpc": "2.0",
-        //     "method":"register_client",
-        //     "params": {
-        //         "api_version": "1.0"
-        //     },
-        //     "id":1
-        // }
-
-        // populate the handlerName -> method
-        if ((true == jsonObject.contains("method")) && (jsonObject.value("method").isString())) {
-            clientMessage->handlerName = jsonObject.value("method").toString();
-        } else {
-            qCCritical(logCategoryStrataServer) << "Failed to process handler name.";
-            return false;
-        }
-
-        // populate the payload --> param
-        if ((true == jsonObject.contains("params")) && (true == jsonObject.value("params").isObject())) {
-            clientMessage->payload = jsonObject.value("params").toObject();
-        } else {
-            qCCritical(logCategoryStrataServer) << "Failed to process message payload.";
-            return false;
-        }
-
-        // populate messageID --> id
-        if ((true == jsonObject.contains("id") && (true == jsonObject.value("id").isDouble()))) {
-            clientMessage->messageID = jsonObject.value("id").toDouble();
-        } else {
-            qCCritical(logCategoryStrataServer) << "Failed to process message id.";
-            return false;
-        }
-
-        // populate message type --> request.
-        clientMessage->messageType = ClientMessage::MessageType::Command;
-
-    } else {
-        qCDebug(logCategoryStrataServer) << "uses old api.";
-
-        // fill the handler name 
-        if((true == jsonObject.contains("cmd")) && (true == jsonObject.value("cmd").isString())) {
-            clientMessage->handlerName = jsonObject.value("cmd").toString();
-        } else if ((true == jsonObject.contains("hcs::cmd")) && (true == jsonObject.value("hcs::cmd").isString())) {
-            clientMessage->handlerName = jsonObject.value("hcs::cmd").toString();
-        } else {
-            qCCritical(logCategoryStrataServer) << "Failed to process handler name.";
-            return false;
-        }
-
-        // populate the payload
-        // documentation show messages with no payload is valid.
-        if ((true == jsonObject.contains("payload")) && (jsonObject.value("payload").isObject())) {
-            clientMessage->payload = jsonObject.value("payload").toObject();
-        } else {
-            qCCritical(logCategoryStrataServer) << "Failed to process message payload.";
-            return false;
-        }
-
-        // no id here, and it is always request.
-        clientMessage->messageID = -1;
-        clientMessage->messageType = ClientMessage::MessageType::Command;
-    }
-    return true;
-}
-
-bool StrataServer::buildClientMessageApiV2(const QJsonObject &jsonObject, ClientMessage *clientMessage) {
+bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, ClientMessage *clientMessage) {
     if ((true == jsonObject.contains("jsonrpc")) && (true == jsonObject.value("jsonrpc").isString())) {
         if (jsonObject.value("jsonrpc") == "2.0") {
             qCDebug(logCategoryStrataServer) << "valid API Identifier";
@@ -243,9 +167,7 @@ bool StrataServer::buildClientMessageApiV2(const QJsonObject &jsonObject, Client
     return true;
 }
 
-bool StrataServer::buildClientMessageApiV1(const QJsonObject &jsonObject, ClientMessage *clientMessage) {
-    qCDebug(logCategoryStrataServer) << "uses old api :(";
-
+bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, ClientMessage *clientMessage) {
     // fill the handler name 
     if((true == jsonObject.contains("cmd")) && (true == jsonObject.value("cmd").isString())) {
         clientMessage->handlerName = jsonObject.value("cmd").toString();

@@ -18,8 +18,9 @@ public:
     void init();
     // void start();
     // void notifyClient();
-    void registerHandler(const QString &handlerName, StrataHandler handler);
-    // void unregisterHandler();
+    bool registerHandler(const QString &handlerName, StrataHandler handler);
+    bool unregisterHandler(const QString &handlerName);
+
 public slots:
     void newClientMessage(const QByteArray &clientId, const QByteArray &message);
     void notifyClient(const ClientMessage &clientMessage, const QJsonObject &jsonObject, ClientMessage::ResponseType responseType);
@@ -29,11 +30,9 @@ signals:
     void dispatchHandler(const ClientMessage &clientMessage);
 
 private:
-    bool buildClientMessage(const QByteArray &message, ClientMessage *clientMessage);
-    bool buildClientMessageApiV2(const QJsonObject &jsonObject, ClientMessage *clientMessage);
-    bool buildClientMessageApiV1(const QJsonObject &jsonObject, ClientMessage *clientMessage);
-    
-    
+    bool buildClientMessageAPIv2(const QJsonObject &jsonObject, ClientMessage *clientMessage);
+    bool buildClientMessageAPIv1(const QJsonObject &jsonObject, ClientMessage *clientMessage);
+
     QByteArray buildServerMessageAPIv2(const ClientMessage &clientMessage, const QJsonObject &payload, ClientMessage::ResponseType responseType);
     QByteArray buildServerMessageAPIv1(const ClientMessage &clientMessage, const QJsonObject &payload, ClientMessage::ResponseType responseType);
 
