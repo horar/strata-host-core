@@ -1,6 +1,6 @@
 #include "ClientsControllerTest.h"
 
-void ClientsControllerTest::notifyClientMock(const Client &client, const QJsonObject &payload) {
+void ClientsControllerTest::notifyClientMock(const Client &client, const QString &handlerName, const QJsonObject &payload) {
     qDebug() << "Sending " << payload << "To Client ID: " << client.getClientID() << " API Version: " << static_cast<int>(client.getApiVersion());
 }
 
@@ -77,7 +77,7 @@ void ClientsControllerTest::testNotifyAllCleints() {
     clientsController.registerClient(Client("DD", strata::strataComm::ApiVersion::v1));
     clientsController.registerClient(Client("EE", strata::strataComm::ApiVersion::v2));
 
-    clientsController.notifyAllClients(QJsonObject({{"key", 1}}));
+    clientsController.notifyAllClients("test", QJsonObject({{"key", 1}}));
 
     QCOMPARE_(signalSpy.count(), 5);
     

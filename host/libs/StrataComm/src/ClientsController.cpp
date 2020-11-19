@@ -2,13 +2,17 @@
 
 using namespace strata::strataComm;
 
-void ClientsController::notifyAllClients(const QJsonObject &payload) {
+void ClientsController::notifyAllClients(const QString &handlerName, const QJsonObject &payload) {
     qCInfo(logCategoryStrataClientsController) << "Notifying all clients.";
     qCInfo(logCategoryStrataClientsController) << "Payload: " << payload;
     for( const auto &client : clientsList_) {
         qCInfo(logCategoryStrataClientsController) << "Notifying Client ID: " << client.getClientID();
-        emit notifyClientSignal(client, payload);
+        emit notifyClientSignal(client, handlerName, payload);
     }
+}
+
+QList<Client> ClientsController::getAllClients() {
+    return clientsList_;
 }
 
 bool ClientsController::isRegisteredClient(const QByteArray &clientID) {

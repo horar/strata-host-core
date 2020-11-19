@@ -14,7 +14,7 @@ class ClientsControllerTest : public QObject {
 public:
 
 public slots:
-    void notifyClientMock(const Client &client, const QJsonObject &payload);
+    void notifyClientMock(const Client &client, const QString &handlerName, const QJsonObject &payload);
 
 private slots:
     void testIsRegisteredClient();
