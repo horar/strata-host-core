@@ -27,6 +27,8 @@ TextField {
         return TextField.Normal
     }
 
+
+
     property bool valid: field.text !== ""
     property bool showIcon: true
     property bool passwordMode: false
@@ -35,14 +37,17 @@ TextField {
     property bool revealPassword: false
     property bool hasRightIcons: showIcon || revelPasswordLoader.status ===  Loader.Ready
 
-    background: Item {
+    background: Rectangle {
         id: backgroundContainer
         implicitHeight: 32
+        border.width: field.activeFocus ? 1 : 0
+        border.color:  field.activeFocus ? "#33b13b" : "#40000000"
 
         Rectangle {
             id: background
             anchors.fill: backgroundContainer
             visible: false
+            z: -1
         }
 
         DropShadow {
@@ -50,9 +55,11 @@ TextField {
             source: background
             horizontalOffset: 0
             verticalOffset: 2
-            radius: 5.0
+            radius: 8.0
             samples: 10
+            z: -1
             color: "#40000000"
+
         }
 
         Row {

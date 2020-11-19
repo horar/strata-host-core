@@ -78,17 +78,18 @@ ComboBox {
         background: Rectangle {
             visible: root.enabled && root.editable && !root.flat
             color: root.boxColor
+            border.width: root.activeFocus ? 1 : 0
+            border.color:  root.activeFocus ? "#33b13b" : "#40000000"
         }
         onAccepted: parent.focus = false
         Keys.forwardTo: root
     }
 
-    background: Item {
+    background: Rectangle {
         id: backgroundContainer
         implicitHeight: 32
         implicitWidth: root.width
         height: root.height
-
 
         Rectangle {
             id: background
