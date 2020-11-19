@@ -327,6 +327,8 @@ Window {
                         model: classModel
                         placeholderText: "class_id..."
                         editable: true
+                        textRole: null
+                        wheelEnabled: true
 
                         property string classId: ""
                         property string opn: ""
@@ -338,7 +340,6 @@ Window {
 
                         onClassIdChanged: {
                             class_id.contentItem.text = classId
-
                         }
 
                         MouseArea {
@@ -450,6 +451,7 @@ Window {
                         Layout.preferredWidth: 150
                         model: deviceModel
                         placeholderText: "device id"
+                        textRole: null
 
                         delegate: SGText {
                             color: deviceArea.containsMouse ? "#888" : "black"
