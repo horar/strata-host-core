@@ -104,7 +104,7 @@ bool DownloadManager::verifyFileHash(
     QCryptographicHash hash(method);
     hash.addData(&file);
 
-    return checksum == hash.result().toHex();
+    return checksum.toLower() == hash.result().toHex();
 }
 
 /*
