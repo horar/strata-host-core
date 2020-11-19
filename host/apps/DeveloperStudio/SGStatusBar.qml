@@ -330,6 +330,7 @@ Rectangle {
             }
         }
     }
+
     Loader {
         id: feedLoader
         source: "qrc:/partial-views/status-bar/SGFeedbackPopup.qml"
