@@ -23,41 +23,54 @@ Device::Device(const int deviceId, const QString& name, const Type type) :
 
 Device::~Device() { }
 
-QString Device::stringProperty(StringProperties property) {
+QString Device::name() {
     QReadLocker rLock(&properiesLock_);
-    switch (property) {
-        case StringProperties::Name :
-            return name_;
-        case StringProperties::BootloaderVer :
-            return bootloaderVer_;
-        case StringProperties::ApplicationVer :
-            return applicationVer_;
-        case StringProperties::PlatformId :
-            return platformId_;
-        case StringProperties::ClassId :
-            return classId_;
-        case StringProperties::ControllerPlatformId :
-            return controllerPlatformId_;
-        case StringProperties::ControllerClassId :
-            return controllerClassId_;
-        case StringProperties::FirmwareClassId :
-            return firmwareClassId_;
-    }
-    return QString();
+    return name_;
 }
 
-std::variant<Device::ApiVersion, Device::ControllerType> Device::enumProperty(EnumProperties property) {
-    std::variant<Device::ApiVersion, Device::ControllerType> result;
+QString Device::bootloaderVer() {
     QReadLocker rLock(&properiesLock_);
-    switch (property) {
-    case EnumProperties::ApiVersion :
-        result = apiVersion_;
-        break;
-    case EnumProperties::ControllerType :
-        result = controllerType_;
-        break;
-    }
-    return result;
+    return bootloaderVer_;
+}
+
+QString Device::applicationVer() {
+    QReadLocker rLock(&properiesLock_);
+    return applicationVer_;
+}
+
+QString Device::platformId() {
+    QReadLocker rLock(&properiesLock_);
+    return platformId_;
+}
+
+QString Device::classId() {
+    QReadLocker rLock(&properiesLock_);
+    return classId_;
+}
+
+QString Device::controllerPlatformId() {
+    QReadLocker rLock(&properiesLock_);
+    return controllerPlatformId_;
+}
+
+QString Device::controllerClassId() {
+    QReadLocker rLock(&properiesLock_);
+    return controllerClassId_;
+}
+
+QString Device::firmwareClassId() {
+    QReadLocker rLock(&properiesLock_);
+    return firmwareClassId_;
+}
+
+Device::ApiVersion Device::apiVersion() {
+    QReadLocker rLock(&properiesLock_);
+    return apiVersion_;
+}
+
+Device::ControllerType Device::controllerType() {
+    QReadLocker rLock(&properiesLock_);
+    return controllerType_;
 }
 
 int Device::deviceId() const {

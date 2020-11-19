@@ -2,7 +2,6 @@
 #define DEVICE_H_
 
 #include <memory>
-#include <variant>
 
 #include <QObject>
 #include <QString>
@@ -24,22 +23,6 @@ namespace strata::device {
     class Device;
 
     typedef std::shared_ptr<Device> DevicePtr;
-
-    enum class StringProperties {
-        Name,
-        BootloaderVer,
-        ApplicationVer,
-        PlatformId,
-        ClassId,
-        ControllerPlatformId,
-        ControllerClassId,
-        FirmwareClassId
-    };
-
-    enum class EnumProperties {
-        ApiVersion,
-        ControllerType
-    };
 
     class Device : public QObject
     {
@@ -124,19 +107,69 @@ namespace strata::device {
          */
         virtual bool sendMessage(const QByteArray msg) = 0;
 
-        /**
-         * Get property.
-         * @param property value from enum DeviceProperties
-         * @return QString filled with value of required property
-         */
-        virtual QString stringProperty(StringProperties property) final;
+        // *** Device properties (start) ***
 
         /**
-         * Get enum property.
-         * @param property value from enum EnumProperties
-         * @return std::variant filled with value of required enum
+         * Get name property.
+         * @return name (device property)
          */
-        virtual std::variant<ApiVersion, ControllerType> enumProperty(EnumProperties property) final;
+        virtual QString name() final;
+
+        /**
+         * Get bootloader version property.
+         * @return bootloader version (device property)
+         */
+        virtual QString bootloaderVer() final;
+
+        /**
+         * Get application version property.
+         * @return application version (device property)
+         */
+        virtual QString applicationVer() final;
+
+        /**
+         * Get platform ID property.
+         * @return platform ID (device property)
+         */
+        virtual QString platformId() final;
+
+        /**
+         * Get class ID property.
+         * @return class ID (device property)
+         */
+        virtual QString classId() final;
+
+        /**
+         * Get controller platform ID property.
+         * @return controller platform ID (device property)
+         */
+        virtual QString controllerPlatformId() final;
+
+        /**
+         * Get controller class ID property.
+         * @return controller class ID (device property)
+         */
+        virtual QString controllerClassId() final;
+
+        /**
+         * Get firmware class ID property.
+         * @return firmware class ID (device property)
+         */
+        virtual QString firmwareClassId() final;
+
+        /**
+         * Get API version property.
+         * @return API version (device property)
+         */
+        virtual ApiVersion apiVersion() final;
+
+        /**
+         * Get controller type property.
+         * @return controller type (device property)
+         */
+        virtual ControllerType controllerType() final;
+
+        // *** Device properties (end) ***
 
         /**
          * Get device ID.

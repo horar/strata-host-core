@@ -10,8 +10,6 @@
 using strata::BoardManager;
 using strata::device::Device;
 using strata::device::DevicePtr;
-using strata::device::StringProperties;
-using strata::device::EnumProperties;
 
 BoardController::BoardController() {
     connect(&boardManager_, &BoardManager::boardReady, this, &BoardController::newConnection);
@@ -50,7 +48,7 @@ void BoardController::newConnection(int deviceId, bool recognized) {
         connect(device.get(), &Device::msgFromDevice, this, &BoardController::messageFromBoard);
         boards_.insert(deviceId, Board(device));
 
-        QString classId = device->stringProperty(StringProperties::ClassId);
+        QString classId = device->classId();
 
         qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
 
@@ -95,7 +93,7 @@ void BoardController::messageFromBoard(QString message)
     QJsonDocument wrapperDoc(notification);
     QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
 
-    QString platformId = device->stringProperty(StringProperties::PlatformId);
+    QString platformId = device->platformId();
 
     qCDebug(logCategoryHcsBoard).noquote() << "New board message." << logDeviceId(deviceId);
 
@@ -105,22 +103,17 @@ void BoardController::messageFromBoard(QString message)
 QString BoardController::createPlatformsList() {
     QJsonArray arr;
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
-        // std::get for std::variant is available from macOS 10.14, so std::get_if must be used
-        auto enumProperty = it.value().device->enumProperty(EnumProperties::ControllerType);
-        Device::ControllerType controllerType = Device::ControllerType::Embedded;
-        if (Device::ControllerType* type = std::get_if<Device::ControllerType>(&enumProperty)) {
-            controllerType = *type;
-        }
+        Device::ControllerType controllerType = it.value().device->controllerType();
         QJsonObject item {
-            { JSON_CLASS_ID, it.value().device->stringProperty(StringProperties::ClassId) },
+            { JSON_CLASS_ID, it.value().device->classId() },
             { JSON_DEVICE_ID, it.value().device->deviceId() },
             { JSON_CONTROLLER_TYPE, static_cast<int>(controllerType) },
-            { JSON_FW_VERSION, it.value().device->stringProperty(StringProperties::ApplicationVer) },
-            { JSON_BL_VERSION, it.value().device->stringProperty(StringProperties::BootloaderVer) }
+            { JSON_FW_VERSION, it.value().device->applicationVer() },
+            { JSON_BL_VERSION, it.value().device->bootloaderVer() }
         };
         if (controllerType == Device::ControllerType::Assisted) {
-            item.insert(JSON_CONTROLLER_CLASS_ID, it.value().device->stringProperty(StringProperties::ControllerClassId));
-            item.insert(JSON_FW_CLASS_ID, it.value().device->stringProperty(StringProperties::FirmwareClassId));
+            item.insert(JSON_CONTROLLER_CLASS_ID, it.value().device->controllerClassId());
+            item.insert(JSON_FW_CLASS_ID, it.value().device->firmwareClassId());
         }
         arr.append(item);
     }

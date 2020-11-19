@@ -15,7 +15,6 @@
 namespace strata {
 
 using device::DevicePtr;
-using device::StringProperties;
 
 namespace operation = device::operation;
 
@@ -147,7 +146,7 @@ void Flasher::performNextOperation(device::operation::BaseDeviceOperation* baseO
     case operation::Type::StartBootloader :
         emit switchToBootloader(true);
         qCInfo(logCategoryFlasher) << device_ << "Switched to bootloader (version '"
-                                   << device_->stringProperty(StringProperties::BootloaderVer) << "').";
+                                   << device_->bootloaderVer() << "').";
         if (status == operation::DEFAULT_STATUS) {
             // Operation SwitchToBootloader has status set to OPERATION_ALREADY_IN_BOOTLOADER (1) if board was
             // already in bootloader mode, otherwise status has default value DEFAULT_STATUS (INT_MIN).
@@ -201,10 +200,10 @@ void Flasher::performNextOperation(device::operation::BaseDeviceOperation* baseO
     case operation::Type::Identify :
         {
             QString version = (action_ == Action::FlashBootloader)
-                              ? device_->stringProperty(StringProperties::BootloaderVer)
-                              : device_->stringProperty(StringProperties::ApplicationVer);
+                              ? device_->bootloaderVer()
+                              : device_->applicationVer();
             qCInfo(logCategoryFlasher) << device_ << "Launching device software. Name: '"
-                                       << device_->stringProperty(StringProperties::Name)
+                                       << device_->name()
                                        << "', version: '" << version << "'.";
         }
         emit devicePropertiesChanged();

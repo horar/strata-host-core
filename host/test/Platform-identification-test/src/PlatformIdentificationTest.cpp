@@ -2,7 +2,6 @@
 
 using strata::BoardManager;
 using strata::device::DevicePtr;
-using strata::device::StringProperties;
 
 PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     : QObject(parent),
@@ -40,7 +39,7 @@ bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString
         return false;
     }
 
-    if (QFile::exists(jlinkExePath)) { 
+    if (QFile::exists(jlinkExePath)) {
         jlinkConnector_.setExePath(jlinkExePath);
         jlinkConnector_.setEraseBeforeProgram(true);
         jlinkConnector_.setDevice("EFM32GG380F1024");
@@ -69,7 +68,7 @@ void PlatformIdentificationTest::checkJLinkDeviceConnectionHandler(bool exitedNo
     if (exitedNormally && connected) {
         std::cout << "JLink device is connected" << std::endl;
         setState(PlatfortestState_::FlashingPlatform);
-    } 
+    }
     else {
         std::cerr << "Error connecting to JLink device" << std::endl;
         setState(PlatfortestState_::TestFinished);
@@ -126,11 +125,11 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
     DevicePtr testDevice = boardManager_.device(testDeviceId_);
     // determine if the test passed or not
     bool testPassed = false;
-    
+
     // if device not recognized, doesn't have name, or doesn't have class id then it fails.
     if ( deviceRecognized == false
-         || testDevice->stringProperty(StringProperties::ClassId).isEmpty()
-         || testDevice->stringProperty(StringProperties::Name).isEmpty()) {
+         || testDevice->classId().isEmpty()
+         || testDevice->name().isEmpty()) {
         testPassed = false;
     } else {
         testPassed = true;
@@ -138,26 +137,26 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
 
     if (testDevice != nullptr) {
         std::cout << "bin name: " << binaryFileNameList_[currentBinaryFileIndex_].toStdString() << std::endl;
-        std::cout << "class id: " << testDevice->stringProperty(StringProperties::ClassId).toStdString() << std::endl;
+        std::cout << "class id: " << testDevice->classId().toStdString() << std::endl;
         std::cout << "device name: " << testDevice->deviceName().toStdString() << std::endl;
-        std::cout << "platform id: " << testDevice->stringProperty(StringProperties::PlatformId).toStdString() << std::endl;
-        std::cout << "name: " << testDevice->stringProperty(StringProperties::Name).toStdString() << std::endl;
-        std::cout << "bootloader version: " << testDevice->stringProperty(StringProperties::BootloaderVer).toStdString() << std::endl;
-        std::cout << "application version: " << testDevice->stringProperty(StringProperties::ApplicationVer).toStdString() << std::endl;
+        std::cout << "platform id: " << testDevice->platformId().toStdString() << std::endl;
+        std::cout << "name: " << testDevice->name().toStdString() << std::endl;
+        std::cout << "bootloader version: " << testDevice->bootloaderVer().toStdString() << std::endl;
+        std::cout << "application version: " << testDevice->applicationVer().toStdString() << std::endl;
 
         // Append to the test summary list
         testSummaryList_.push_back({
                                        binaryFileNameList_[currentBinaryFileIndex_],
                                        testDevice->deviceName(),
-                                       testDevice->stringProperty(StringProperties::Name),
-                                       testDevice->stringProperty(StringProperties::ClassId),
-                                       testDevice->stringProperty(StringProperties::PlatformId),
-                                       testDevice->stringProperty(StringProperties::BootloaderVer),
-                                       testDevice->stringProperty(StringProperties::ApplicationVer),
+                                       testDevice->name(),
+                                       testDevice->classId(),
+                                       testDevice->platformId(),
+                                       testDevice->bootloaderVer(),
+                                       testDevice->applicationVer(),
                                        deviceRecognized,
                                        testPassed
                                    });
-    } 
+    }
     else {
         std::cerr << "TestDevicePtr is null. Aborting..." << std::endl;
         testFailed_ = true;

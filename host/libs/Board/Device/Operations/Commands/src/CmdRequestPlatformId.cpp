@@ -38,12 +38,7 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
                                         payload[JSON_FW_CLASS_ID].GetString());
         }
 
-        // std::get for std::variant is available from macOS 10.14, so std::get_if must be used
-        auto enumProperty = device_->enumProperty(EnumProperties::ApiVersion);
-        Device::ApiVersion apiVersion = Device::ApiVersion::Unknown;
-        if (Device::ApiVersion* apiVer = std::get_if<Device::ApiVersion>(&enumProperty)) {
-            apiVersion = *apiVer;
-        }
+        Device::ApiVersion apiVersion = device_->apiVersion();
         if (apiVersion == Device::ApiVersion::Unknown || apiVersion == Device::ApiVersion::v1_0) {
             if (std::strcmp(name, CSTR_NAME_BOOTLOADER) == 0) {
                 setDeviceBootloaderMode(true);

@@ -143,9 +143,9 @@ void SciPlatform::resetPropertiesFromDevice()
         return;
     }
 
-    QString verboseName = device_->stringProperty(strata::device::StringProperties::Name);
-    QString appVersion = device_->stringProperty(strata::device::StringProperties::ApplicationVer);
-    QString bootloaderVersion = device_->stringProperty(strata::device::StringProperties::BootloaderVer);
+    QString verboseName = device_->name();
+    QString appVersion = device_->applicationVer();
+    QString bootloaderVersion = device_->bootloaderVer();
 
     if (verboseName.isEmpty()) {
         if (appVersion.isEmpty() == false) {
