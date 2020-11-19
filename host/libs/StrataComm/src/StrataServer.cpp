@@ -221,8 +221,31 @@ void StrataServer::notifyClient(const ClientMessage &clientMessage, const QJsonO
     connector_.sendMessage(clientMessage.clientID, serverMessage);
 }
 
-void StrataServer::notifyAllClients() {
+void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject) {
+    ClientMessage tempClientMessage;
+    tempClientMessage.handlerName = handlerName;
 
+    QByteArray serverMessageAPI_v1 = buildServerMessageAPIv1(tempClientMessage, jsonObject, strataComm::ClientMessage::ResponseType::Notification);
+    QByteArray serverMessageAPI_v2 = buildServerMessageAPIv2(tempClientMessage, jsonObject, strataComm::ClientMessage::ResponseType::Notification);
+
+    // get all clients.
+    auto allClients = clientsController_.getAllClients();
+
+    for (const auto &client : allClients) {
+        switch (client.getApiVersion()) {
+            case ApiVersion::v1:
+                connector_.sendMessage(client.getClientID(), serverMessageAPI_v1);
+                break;
+
+            case ApiVersion::v2:
+                connector_.sendMessage(client.getClientID(), serverMessageAPI_v2);
+                break;
+
+            case ApiVersion::none:
+                qCCritical(logCategoryStrataServer) << "Unsupported client API version";
+                break;
+        }
+    }
 }
 
 void StrataServer::registerNewClientHandler(const ClientMessage &clientMessage) {

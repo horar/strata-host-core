@@ -24,7 +24,7 @@ public:
 public slots:
     void newClientMessage(const QByteArray &clientId, const QByteArray &message);
     void notifyClient(const ClientMessage &clientMessage, const QJsonObject &jsonObject, ClientMessage::ResponseType responseType);
-    void notifyAllClients();
+    void notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject);
 
 signals:
     void dispatchHandler(const ClientMessage &clientMessage);
