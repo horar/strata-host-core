@@ -82,10 +82,18 @@ Item {
 
             onStatusChanged: {
                 if (status === Loader.Ready) {
+                    // Tear Down creation context
+                    delete NavigationControl.context.class_id
+                    delete NavigationControl.context.device_id
+
                     controlLoaded = true
                     loadingBarContainer.visible = false;
                     loadingBar.value = 0.0;
                 } else if (status === Loader.Error) {
+                    // Tear Down creation context
+                    delete NavigationControl.context.class_id
+                    delete NavigationControl.context.device_id
+
                     createErrorScreen("Could not load file: " + source);
                 }
             }
@@ -109,21 +117,7 @@ Item {
                 }
                 loadControl()
             } else {
-                loadingBarContainer.visible = true;
-                loadingBar.value = 0.01;
-
-                // Try to load a previously installed OTA resource
-                if (controlViewList.getInstalledVersion() > -1) {
-                    usingStaticView = false;
-                    getOTAResource();
-                    return
-                }
-
-                // Try to load static resource, otherwise download/install a new OTA resource
-                if (getStaticResource() === false) {
-                    usingStaticView = false;
-                    getOTAResource();
-                }
+                getStaticResource()
             }
         }
     }
@@ -146,10 +140,6 @@ Item {
         NavigationControl.context.device_id = platformStack.device_id
 
         controlLoader.setSource(control_filepath, Object.assign({}, NavigationControl.context))
-
-        // Tear Down creation context
-        delete NavigationControl.context.class_id
-        delete NavigationControl.context.device_id
     }
 
     /*
@@ -164,9 +154,6 @@ Item {
             usingStaticView = true
             if (registerResource(RCCpath, controlViewContainer.staticVersion)) {
                 return true;
-            } else {
-                removeControl() // registerResource() failing creates an error screen, kill it to show OTA progress bar
-                usingStaticView = false
             }
         }
         return false
