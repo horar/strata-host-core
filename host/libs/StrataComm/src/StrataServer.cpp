@@ -166,10 +166,19 @@ bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Client
 }
 
 bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, ClientMessage *clientMessage) {
-    // fill the handler name 
-    if((true == jsonObject.contains("cmd")) && (true == jsonObject.value("cmd").isString())) {
-        clientMessage->handlerName = jsonObject.value("cmd").toString();
-    } else if ((true == jsonObject.contains("hcs::cmd")) && (true == jsonObject.value("hcs::cmd").isString())) {
+    bool isPlatformMessage = false;
+
+    if ((true == jsonObject.contains("cmd")) && (true == jsonObject.value("cmd").isString())) {
+        // Check if this command is meant to be sent to a platform
+        if (true == jsonObject.contains("device_id") &&
+            true == jsonObject.value("device_id").isDouble()) {
+            clientMessage->handlerName = "platform_message";
+            isPlatformMessage = true;
+        } else {
+            clientMessage->handlerName = jsonObject.value("cmd").toString();
+        }
+    } else if ((true == jsonObject.contains("hcs::cmd")) &&
+               (true == jsonObject.value("hcs::cmd").isString())) {
         clientMessage->handlerName = jsonObject.value("hcs::cmd").toString();
     } else {
         qCCritical(logCategoryStrataServer) << "Failed to process handler name.";
@@ -177,15 +186,27 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Client
     }
 
     // populate the payload
-    // documentation show messages with no payload is valid.
-    if ((true == jsonObject.contains("payload")) && (jsonObject.value("payload").isObject())) {
-        clientMessage->payload = jsonObject.value("payload").toObject();
+    // documentation show messages with no payload are valid.
+    bool hasPayload = (true == jsonObject.contains("payload")) && (jsonObject.value("payload").isObject());
+    QJsonObject payloadJsonObject{};
+
+    if (true == isPlatformMessage) {
+        payloadJsonObject.insert("device_id", jsonObject.value("device_id").toDouble());
+        QJsonObject messageJsonObject;
+        messageJsonObject.insert("cmd", jsonObject.value("cmd"));
+        if (true == hasPayload) {
+            messageJsonObject.insert("payload", jsonObject.value("payload").toObject());
+        } else {
+            messageJsonObject.insert("payload", QJsonObject{});
+        }
+        payloadJsonObject.insert("message", messageJsonObject);
     } else {
-        qCCritical(logCategoryStrataServer) << "Failed to process message payload.";
-        return false;
+        if (true == hasPayload) {
+            payloadJsonObject = jsonObject.value("payload").toObject();
+        }
     }
 
-    // no id here, and it is always request.
+    clientMessage->payload = payloadJsonObject;
     clientMessage->messageID = 0;
     clientMessage->messageType = ClientMessage::MessageType::Command;
 

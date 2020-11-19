@@ -15,19 +15,20 @@ signals:
 
 private slots:
     void testValidApiVer2Message();
-    void testValidApiVer1Message();
-    void testFloodTheServer();
-    void testServerFunctionality();
-    // void testBuildPlatformMessageV1();
-
     void testBuildNotificationApiV2();
     void testBuildResponseApiV2();
     void testBuildErrorApiV2();
     void testBuildPlatformMessageApiV2();
 
+    void testValidApiVer1Message();
+    void testParsePlatformMessageAPIv1();
     void testBuildNotificationApiV1();
     void testBuildResponseApiV1();
     void testBuildPlatformMessageApiV1();
+
+    void testFloodTheServer();
+    void testServerFunctionality();
+    void testNotifyAllClients();
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";

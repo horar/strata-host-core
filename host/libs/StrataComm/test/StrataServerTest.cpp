@@ -403,6 +403,39 @@ void StrataServerTest::testBuildResponseApiV1() {
     QVERIFY_(testExecuted);
 }
 
+void StrataServerTest::testParsePlatformMessageAPIv1() {
+    StrataServer server(address_);
+    bool handlerCalled = false;
+    QString currentCommandName  = "";
+
+    server.registerHandler("platform_message", [&handlerCalled, &currentCommandName](const strata::strataComm::ClientMessage &cm) {
+        QCOMPARE_(cm.payload.value("message").toObject().value("cmd").toString(), currentCommandName);
+        handlerCalled = true;
+    });
+    
+    server.init();
+
+    handlerCalled = false;
+    currentCommandName = "test_1";
+    server.newClientMessage("AA", R"({"cmd":"test_1","payload":{"enable":"off"},"device_id":-949921126})");
+    QVERIFY_(handlerCalled);
+
+    handlerCalled = false;
+    currentCommandName = "test_2";
+    server.newClientMessage("AA", R"({"cmd":"test_2","payload":"enable","device_id":-949921126})");
+    QVERIFY_(handlerCalled);
+    
+    handlerCalled = false;
+    currentCommandName = "test_3";
+    server.newClientMessage("AA", R"({"cmd":"test_3","device_id":-949921126})");
+    QVERIFY_(handlerCalled);
+    
+    handlerCalled = false;
+    currentCommandName = "test_4";
+    server.newClientMessage("AA", R"({"cmd":"test_4"})");
+    QVERIFY_(false == handlerCalled);
+}
+
 void StrataServerTest::testBuildPlatformMessageApiV1() {
     bool testExecuted = false;
     StrataServer server(address_);
