@@ -23,8 +23,7 @@ Item {
             firstNameField.focus = true
             passReqsPopup.close()
         }
-        else  passReqsPopup.close()
-        console.log("test")
+        else passReqsPopup.close()
     }
 
     ColumnLayout {
@@ -117,7 +116,6 @@ Item {
                     }
                 }
             }
-
 
             ValidationField {
                 id: confirmPasswordField

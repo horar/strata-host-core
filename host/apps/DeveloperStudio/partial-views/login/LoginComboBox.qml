@@ -85,11 +85,12 @@ ComboBox {
         Keys.forwardTo: root
     }
 
-    background: Rectangle {
+    background: Item {
         id: backgroundContainer
         implicitHeight: 32
         implicitWidth: root.width
         height: root.height
+
 
         Rectangle {
             id: background

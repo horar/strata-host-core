@@ -27,8 +27,6 @@ TextField {
         return TextField.Normal
     }
 
-
-
     property bool valid: field.text !== ""
     property bool showIcon: true
     property bool passwordMode: false
@@ -59,7 +57,6 @@ TextField {
             samples: 10
             z: -1
             color: "#40000000"
-
         }
 
         Row {
