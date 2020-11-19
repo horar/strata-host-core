@@ -40,32 +40,60 @@ Rectangle{
         spacing: 20
 
         RowLayout {
+            spacing: 10
+            Layout.fillHeight: false
 
             Item {
-                // filler to match DistributionButton
-                Layout.preferredHeight: distributionPortal.implicitHeight
+                Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.preferredWidth: distributionPortal.implicitWidth
+                Layout.preferredWidth: rightContainer.Layout.preferredWidth
+                Layout.preferredHeight: 150
+
+                Image {
+                    sourceSize.width: Math.min(parent.width, 275)
+                    fillMode: Image.PreserveAspectFit
+                    source: "qrc:/images/strata-logo.svg"
+                    mipmap: true
+                    anchors {
+                        centerIn: parent
+                    }
+                }
             }
 
             RecentlyReleased {
+                id: recentlyReleased
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 Layout.maximumWidth: implicitWidth
             }
 
             Item {
-                Layout.preferredHeight: distributionPortal.implicitHeight
+                id: rightContainer
+                Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.preferredWidth: distributionPortal.implicitWidth
+                Layout.preferredHeight: 150
 
-                SGBaseDistributionButton {
-                    id: distributionPortal
+                ColumnLayout {
+                    width: parent.width
                     anchors {
-                        verticalCenter: parent.verticalCenter
-                        right: parent.right
+                        centerIn: parent
                     }
-                    width: Math.min(parent.width, implicitWidth)
+
+                    Image {
+                        sourceSize.width: Math.min(parent.width, 250)
+                        fillMode: Image.PreserveAspectFit
+                        source: "qrc:/images/on-semi-logo-horiz.svg"
+                        mipmap: true
+                        Layout.alignment: Qt.AlignHCenter
+                    }
+
+                    SGBaseDistributionButton {
+                        id: distributionPortal
+                        Layout.fillWidth: false
+                        Layout.preferredWidth: Math.min(parent.width, implicitWidth)
+                        Layout.alignment: Qt.AlignHCenter
+                    }
                 }
             }
         }

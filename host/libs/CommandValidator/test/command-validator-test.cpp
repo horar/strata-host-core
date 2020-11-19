@@ -3,6 +3,7 @@
 #include "CommandValidator.h"
 #include <rapidjson/writer.h>
 
+using strata::CommandValidator;
 
 void CommandValidatorTest::printJsonDoc(rapidjson::Document &doc)    {
     // print the doc

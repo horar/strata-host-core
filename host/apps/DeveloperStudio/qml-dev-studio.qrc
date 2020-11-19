@@ -87,74 +87,12 @@
         <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
         <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
         <file>partial-views/login/LoginSettings.qml</file>
-        <file>partial-views/control-view-creator/ControlViewCreator.qml</file>
-        <file>partial-views/control-view-creator/Editor.qml</file>
-        <file>partial-views/control-view-creator/NewControlView.qml</file>
-        <file>partial-views/control-view-creator/OpenControlView.qml</file>
-        <file>partial-views/control-view-creator/Start.qml</file>
         <file>js/uuid_map.js</file>
         <file>partial-views/platform-view/ControlViewContainer.qml</file>
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
         <file>partial-views/general/SGNotificationToast.qml</file>
-        <file>partial-views/control-view-creator/Sidebar/SideBar.qml</file>
-        <file>partial-views/control-view-creator/editor.html</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/base/browser/ui/codiconLabel/codicon/codicon.ttf</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/base/worker/workerMain.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/basic-languages/cpp/cpp.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/basic-languages/css/css.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/basic-languages/html/html.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/basic-languages/javascript/javascript.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/basic-languages/typescript/typescript.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/basic-languages/xml/xml.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.css</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.de.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.es.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.fr.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.it.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.ja.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.ko.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.ru.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.zh-cn.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/editor/editor.main.nls.zh-tw.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/language/css/cssMode.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/language/css/cssWorker.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/language/html/htmlMode.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/language/html/htmlWorker.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/language/json/jsonMode.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/language/json/jsonWorker.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/language/typescript/tsMode.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/language/typescript/tsWorker.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min/vs/loader.js</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/base/worker/workerMain.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.de.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.es.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.fr.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.it.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.ja.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.ko.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.ru.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.zh-cn.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.zh-tw.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/loader.js.map</file>
-        <file>partial-views/control-view-creator/node_modules/monaco-editor/monaco.d.ts</file>
         <file>js/template_data.js</file>
-        <file>partial-views/control-view-creator/ImageLoadError.svg</file>
-        <file>partial-views/control-view-creator/Editor/TextEditorContainer.qml</file>
-        <file>partial-views/control-view-creator/Editor/ImageContainer.qml</file>
-        <file>partial-views/control-view-creator/Editor/UnsupportedFileType.qml</file>
-        <file>partial-views/control-view-creator/navigation/SGSideNavItem.qml</file>
-        <file>partial-views/control-view-creator/navigation/SideNavFooter.qml</file>
-        <file>partial-views/control-view-creator/Console/ConsoleLogger.qml</file>
-        <file>partial-views/control-view-creator/Sidebar/SideBarDelegate.qml</file>
-        <file>partial-views/control-view-creator/Sidebar/FileContextMenu.qml</file>
-        <file>partial-views/control-view-creator/Sidebar/FolderContextMenu.qml</file>
-        <file>partial-views/control-view-creator/ConfirmClosePopup.qml</file>
-        <file>partial-views/control-view-creator/utils/template_selection.js</file>
         <file>partial-views/general/SGWebPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsCheckbox.qml</file>
@@ -162,8 +100,5 @@
         <file>partial-views/platform-selector/PlatformImage.qml</file>
         <file>partial-views/general/WebPopup/SGWebControls.qml</file>
         <file>partial-views/general/WebPopup/SGWebView.qml</file>
-        <file>partial-views/control-view-creator/Console/ConsoleContainer.qml</file>
-        <file>partial-views/control-view-creator/Console/ConsoleDebugger.qml</file>
-        <file>partial-views/control-view-creator/components/SGControlViewButton.qml</file>
     </qresource>
 </RCC>

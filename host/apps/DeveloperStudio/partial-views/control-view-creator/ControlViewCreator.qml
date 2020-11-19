@@ -243,27 +243,11 @@ Rectangle {
         }
     }
 
-    Connections {
-        target: mainWindow
-
-        onAttemptedToCloseOnUnsavedChanges: {
-            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
-                confirmClosePopup.unsavedFileCount = unsavedCount;
-                confirmClosePopup.open();
-                controlViewCreatorRoot.isConfirmCloseOpen = true;
-            }
-        }
-    }
-
     function recompileControlViewQrc () {
         if (editor.fileTreeModel.url.toString() !== '') {
             recompileRequested = true
             sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
         }
-    }
-
-    function checkForUnsavedFiles() {
-        return editor.openFilesModel.getUnsavedCount();
     }
 
     function loadDebugView (compiledRccFile) {
@@ -285,6 +269,17 @@ Rectangle {
         NavigationControl.context.device_id = debugPlatform.deviceId
 
         controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
+    }
+
+    function blockWindowClose() {
+        let unsavedCount = editor.openFilesModel.getUnsavedCount();
+        if (unsavedCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
+            confirmClosePopup.unsavedFileCount = unsavedCount;
+            confirmClosePopup.open();
+            controlViewCreatorRoot.isConfirmCloseOpen = true;
+            return true
+        }
+        return false
     }
 }
 

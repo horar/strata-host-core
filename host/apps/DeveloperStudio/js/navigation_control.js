@@ -354,11 +354,11 @@ function updateState(event, data)
                     }
                 }
 
-                // if in-view tab is closing, focus on tab to left. otherwise, close out-of-view tab and stay on present tab
-                if (stack_container_.currentIndex === l + 1 && l !== 1) {
-                    updateState(events.SWITCH_VIEW_EVENT, {"index": l}) // focus on tab to left
-                } else {
-                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1}) // adjust to stay on current tab
+                // in-view tab > closed tab: decrement currentIndex to stay on same tab
+                // in-view tab === closed tab: decrement currentIndex to focus on new tab to left
+                // in-view tab < closed tab: do nothing to stay in place
+                if (stack_container_.currentIndex >= l + 1) { // +1 as platform selector is index 0 in stack_container_ & not in platform_view_model_
+                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1 })
                 }
                 break;
 
