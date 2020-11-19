@@ -36,7 +36,7 @@ QVariant SciScrollbackModel::data(const QModelIndex &index, int role) const
         return static_cast<int>(item.type);
     case TimestampRole:
         return item.timestamp;
-    case CondensedRole:
+    case IsCondensedRole:
         return item.condensed;
     case IsJsonValidRole:
         return item.isJsonValid;
@@ -109,10 +109,10 @@ void SciScrollbackModel::setAllCondensed(bool condensed)
     emit dataChanged(
                 createIndex(0, 0),
                 createIndex(data_.length() - 1, 0),
-                QVector<int>() << CondensedRole);
+                QVector<int>() << IsCondensedRole);
 }
 
-void SciScrollbackModel::setCondensed(int index, bool condensed)
+void SciScrollbackModel::setIsCondensed(int index, bool condensed)
 {
     if (index < 0 || index >= data_.count()) {
         qCCritical(logCategorySci) << "index out of range";
@@ -124,7 +124,7 @@ void SciScrollbackModel::setCondensed(int index, bool condensed)
     emit dataChanged(
                 createIndex(index, 0),
                 createIndex(index, 0),
-                QVector<int>() << CondensedRole);
+                QVector<int>() << IsCondensedRole);
 }
 
 void SciScrollbackModel::clear()
@@ -311,7 +311,7 @@ void SciScrollbackModel::setModelRoles()
     roleByEnumHash_.insert(MessageRole, "message");
     roleByEnumHash_.insert(TypeRole, "type");
     roleByEnumHash_.insert(TimestampRole, "timestamp");
-    roleByEnumHash_.insert(CondensedRole, "condensed");
+    roleByEnumHash_.insert(IsCondensedRole, "isCondensed");
     roleByEnumHash_.insert(IsJsonValidRole, "isJsonValid");
 
     QHash<int, QByteArray>::const_iterator i = roleByEnumHash_.constBegin();

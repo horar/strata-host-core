@@ -257,12 +257,12 @@ FocusScope {
 
                                     iconColor: cmdDelegate.helperTextColor
                                     hintText: qsTr("Condensed mode")
-                                    icon.source: model.condensed ? "qrc:/sgimages/chevron-right.svg" : "qrc:/sgimages/chevron-down.svg"
+                                    icon.source: model.isCondensed ? "qrc:/sgimages/chevron-right.svg" : "qrc:/sgimages/chevron-down.svg"
                                     iconSize: buttonRow.iconSize
 
                                     onClicked: {
                                         var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
-                                        var item = scrollbackModel.setCondensed(sourceIndex, !model.condensed)
+                                        var item = scrollbackModel.setIsCondensed(sourceIndex, !model.isCondensed)
                                     }
                                 }
                             }
@@ -285,7 +285,7 @@ FocusScope {
                             readOnly: true
 
                             text: {
-                                if (model.condensed === false && model.isJsonValid) {
+                                if (model.isCondensed === false && model.isJsonValid) {
                                     return CommonCpp.SGUtilsCpp.prettifyJson(model.message)
                                 }
 

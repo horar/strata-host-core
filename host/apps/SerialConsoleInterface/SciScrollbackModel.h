@@ -31,7 +31,7 @@ public:
         MessageRole = Qt::UserRole,
         TypeRole,
         TimestampRole,
-        CondensedRole,
+        IsCondensedRole,
         IsJsonValidRole,
     };
 
@@ -48,7 +48,7 @@ public:
     void append(const QByteArray &message, MessageType type);
 
     Q_INVOKABLE void setAllCondensed(bool condensed);
-    Q_INVOKABLE void setCondensed(int index, bool condensed);
+    Q_INVOKABLE void setIsCondensed(int index, bool condensed);
     Q_INVOKABLE void clear();
     Q_INVOKABLE void clearAutoExportError();
     Q_INVOKABLE QString exportToFile(QString filePath);
