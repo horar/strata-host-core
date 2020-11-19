@@ -71,6 +71,7 @@ Item {
             id: sideBar
             Layout.fillHeight: true
             Layout.minimumWidth: 250
+            Layout.maximumWidth: parent.width * 0.75
         }
 
         ColumnLayout {
