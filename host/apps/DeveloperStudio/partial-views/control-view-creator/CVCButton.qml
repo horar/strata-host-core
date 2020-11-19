@@ -9,6 +9,9 @@ import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
+// Temporary button in the SGStatusBar that opens control view creator.
+// If this is removed, remove CVCButtonFake as well.
+
 Rectangle {
     id: controlViewCreatorContainer
     anchors {
