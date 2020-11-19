@@ -36,10 +36,6 @@ Item {
             alertToast.hide()
         }
 
-        if (!model.unsavedChanges) {
-            return
-        }
-
         // If the file doesn't exist anymore, we need to notify the user with a confirmation dialog
         if (!model.exists) {
             controlViewCreatorRoot.isConfirmCloseOpen = true
@@ -54,6 +50,10 @@ Item {
             return
         }
 
+        if (!model.unsavedChanges) {
+            return
+        }
+
         const path = SGUtilsCpp.urlToLocalFile(model.filepath);
         treeModel.stopWatchingPath(path);
         const success = SGUtilsCpp.atomicWrite(path, channelObject.fileText);
@@ -62,6 +62,7 @@ Item {
         if (success) {
             savedVersionId = currentVersionId;
             model.unsavedChanges = false;
+            externalChanges = false;
         } else {
             alertToast.text = "Could not save file. Make sure the file has write permissions or try again."
             alertToast.show()
@@ -82,8 +83,7 @@ Item {
             if (model.filepath === path) {
                 externalChanges = true
                 if (!model.unsavedChanges) {
-                    channelObject.fileText = openFile()
-                    channelObject.setHtml(channelObject.fileText)
+                    channelObject.refreshEditorWithExternalChanges()
                 }
             }
         }
@@ -161,12 +161,13 @@ Item {
         onPopupClosed: {
             controlViewCreatorRoot.isConfirmCloseOpen = false
             if (closeReason === acceptCloseReason) {
+                // User chose to overwrite the external changes
                 externalChanges = false
-                saveFile()
+                model.unsavedChanges = true
+                saveFile();
             } else if (closeReason === closeFilesReason) {
-                channelObject.fileText = openFile()
-                channelObject.setHtml(channelObject.fileText)
-                externalChanges = false
+                // User chose to abandon their changes
+                channelObject.refreshEditorWithExternalChanges()
             }
 
         }
@@ -197,6 +198,7 @@ Item {
         WebChannel.id: "valueLink"
 
         property string fileText: ""
+        property bool reset: false
 
         signal setValue(string value);
         signal setContainerHeight(string height);
@@ -207,15 +209,20 @@ Item {
             setValue(value)
         }
 
+        function refreshEditorWithExternalChanges() {
+            reset = true
+            fileText = openFile()
+            setHtml(channelObject.fileText)
+            externalChanges = false
+        }
+
         function setVersionId(version) {
             // If this is the first change, then we have just initialized the editor
-            if (!savedVersionId) {
+            if (!savedVersionId || reset) {
                 savedVersionId = version
-            }
 
-            if (externalChanges) {
-                savedVersionId = version
-                externalChanges = false
+                if (reset)
+                    reset = false
             }
 
             currentVersionId = version
