@@ -188,12 +188,15 @@ Controller.prototype.FinishedPageCallback = function ()
                                     + "Thank you for using ON Semiconductor. If you have any questions or in need of support, please contact your local sales representative.\n\n"
                                     + "Copyright " + (new Date().getFullYear()) + "\n\n"
                                     );
-        if ((installer.isUpdater() == true) && (installer.status == QInstaller.Success) && (isSilent == true)) {
-            var runItCheckBox = widget.findChild("RunItCheckBox");
-            if ((runItCheckBox != null) && isComponentInstalled("com.onsemi.strata.devstudio") == true) {
+        var runItCheckBox = widget.findChild("RunItCheckBox");
+        if (runItCheckBox != null) {
+            if ((installer.isUpdater() == true) && (installer.status == QInstaller.Success) && (isSilent == true) && (isComponentInstalled("com.onsemi.strata.devstudio") == true)) {
                 runItCheckBox.setChecked(true);
+            } else {
+                runItCheckBox.setChecked(false);
             }
         }
+
         if ((installer.isInstaller() == true) && (installer.status != QInstaller.Success))
             installer.setValue("TargetDir", "");    // prohibit writing log into destination directory
     }
