@@ -87,9 +87,11 @@ Item {
         itemDelegate: SideBarDelegate { }
 
         QtQC1.TableViewColumn {
+            id: mainTreeColumn
             title: treeModel.root ? treeModel.root.filename : "Project Files"
             role: "filename"
-            width: treeView.width
+            width: treeView.width - 2
+            resizable: false
         }
     }
 

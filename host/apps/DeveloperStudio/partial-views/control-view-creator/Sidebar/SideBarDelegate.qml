@@ -18,7 +18,7 @@ Item {
         verticalAlignment: Text.AlignVCenter
         font.pointSize: 10
         color: "black"
-        elide: Text.ElideMiddle
+        elide: Text.ElideRight
     }
 
     TextInput {
