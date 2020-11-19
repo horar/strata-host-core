@@ -8,8 +8,9 @@ that will allow developers to quickly create a Strata OTA installer for the bran
 A standard development environment for building Strata with "Qt Installer Framework" is required.
 
 The simplest way to set up the basic configuration is to install Hello Strata.
-And then install the "Qt Installer Framework" component (version 3.2) through Qt Maintenance Tool.
-It also must be added to PATH ( paths could be slightly different):
+And then install the "Qt Installer Framework" component (version 3.2).
+
+It also must be added to PATH (paths could be slightly different):
 
 * Windows:
     * Qt Installer Framework `C:\Qt\Tools\QtInstallerFramework\3.2\bin`
@@ -83,24 +84,46 @@ Then you can install on your desired testing machine and test as needed.
 
 ## Automate Strata Installation
 
-To install Strata in unattended mode run following command as an administrator to avoid installation permission prompts.
+To install Strata in unattended mode run following command as an administrator to avoid installation permission prompts:
 
 * Windows:
-    * `strata-setup-offline.exe install --accept-licenses --confirm-command`
+    * `strata-setup-offline.exe isSilent=true`
 * Mac:
-    * `./strata-setup-offline.app/Contents/MacOS/strata-setup-offline install --accept-licenses --confirm-command`
+    * `./strata-setup-offline.app/Contents/MacOS/strata-setup-offline isSilent=true`
 
-## Additional Strata Arguments
+## Additional Strata Arguments (QTIFW 3.2)
 
-Here are some of the most usefull arguments that can be used with Installer and Maintenance Tool
-* `-?, -h, --help`
+Here are some of the most usefull arguments that can be used with Installer and Maintenance Tool:
+
+* `-h, --help`
     * Displays help.
-* `-d, --verbose`
+* `--verbose`
     * Verbose mode. Prints out more information.
 
-If Installer application is executed, it will be by default in [GUI] installer mode.
-If Maintenance Tool is executed, it will be by default in [GUI] package manager mode.
-It is possible to use the following settings to preselect other modes in Maintenance Tool:
+If Installer application is executed, it will be in [GUI] installer mode.
+If Maintenance Tool is executed, it has 3 modes user can select: package manager, updater and uninstaller.
+Maintenance Tool will be by default in [GUI] uninstaller mode and can be changed with the following settings:
+
+* `--updater`
+    * [GUI] Start Maintenance Tool in updater mode.
+* `--manage-packages`
+    * [GUI] Start Maintenance Tool in package manager mode.
+
+For unnatended installation, it is necessary to use `isSilent=true` argument.
+
+To check for presence of new versions, it is possible to use:
+
+* `--checkupdates`
+    * [CLI] Check for updates and return an XML description.
+
+## Additional Strata Arguments (QTIFW 4.0+)
+
+**Note that newer versions of QTIFW (4.0+) are not supported for the moment due to bugs.**
+
+With the new QTIFW 4.0+ there were some changes in behavior.
+
+Maintenance Tool will be by default in [GUI] package manager mode and can be changed with the following settings:
+
 * `--su, --start-updater`
     * [GUI] Start Maintenance Tool in updater mode.
 * `--sm, --start-package-manager`
@@ -108,11 +131,25 @@ It is possible to use the following settings to preselect other modes in Mainten
 * `--sr, --start-uninstaller`
     * [GUI] Start Maintenance Tool in uninstaller mode.
 
-For unnatended installation, it is necessary to use CLI mode instead of GUI mode:
-* `in, install`
-    * [CLI] Install the default package set.
+To check for presence of new versions, it is possible to use:
+
 * `ch, check-updates`
     * [CLI] Show information about available updates (xml format).
+
+For unnatended installation, it is still necessary to use `isSilent=true` argument.
+Using [CLI] mode instead of [GUI] mode for unnatended installation is not supported on customer installations.
+The reason being that it must be run in administrator console on Windows (it fails to elevate permissions).
+
+For developers, it is possible to use [CLI] mode in administrator console to avoid installation permission prompts:
+
+* Windows:
+    * `strata-setup-offline.exe install --accept-licenses --confirm-command`
+* Mac:
+    * `./strata-setup-offline.app/Contents/MacOS/strata-setup-offline install --accept-licenses --confirm-command`
+
+The following commands use the CLI mode:
+* `in, install`
+    * [CLI] Install the default package set.
 * `up, update`
     * [CLI] Install all available updates.
 * `pr, purge`
@@ -130,4 +167,4 @@ And it can be combined with automatic accepting of messages / licenses and insta
 * `-t, --root <directory>`
     * [CLI] Set the installation root directory.
 
-Note that as of QTIFW 4.0 controller scripts in `installscript.qs` are not executed in [CLI] mode
+Note that when using [CLI] mode, controller scripts in `installscript.qs` are not executed.

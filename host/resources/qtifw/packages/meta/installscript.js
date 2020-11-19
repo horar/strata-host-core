@@ -1,11 +1,19 @@
 var restart_is_required = false;
+var is_command_line_instance = false;
 
 function Component()
 {
     installer.installationFinished.connect(this, Component.prototype.onInstallationOrUpdateFinished);    // called after installation, update and adding/removing components
     installer.installationStarted.connect(this, Component.prototype.onInstallationStarted);
 
-    if(installer.isCommandLineInstance() == false) {
+    try {
+        is_command_line_instance = installer.isCommandLineInstance();
+    } catch(e) {
+        console.log("unable detect if command line instance is being used, fallback to false");
+        is_command_line_instance = false;
+    }
+
+    if(is_command_line_instance == false) {
         installer.finishButtonClicked.connect(this, Component.prototype.onFinishButtonClicked);
         if ((installer.isInstaller() == true) && (systemInfo.productType == "windows")) {
             component.loaded.connect(this, Component.prototype.addShortcutWidget);
@@ -123,7 +131,7 @@ Component.prototype.onInstallationOrUpdateFinished = function()
         }
     }
 
-    if((installer.isUpdater() == true) && (installer.status == QInstaller.Success) && (installer.isCommandLineInstance() == true) && (installer.value("RunProgram") != "")) {
+    if((installer.isUpdater() == true) && (installer.status == QInstaller.Success) && (is_command_line_instance == true) && (installer.value("RunProgram") != "")) {
         console.log("Executing: " + installer.value("RunProgram"));
         installer.executeDetached(installer.value("RunProgram"));
     }
@@ -131,7 +139,7 @@ Component.prototype.onInstallationOrUpdateFinished = function()
 
 Component.prototype.onFinishButtonClicked = function()
 {
-    if (restart_is_required == true) {
+    if ((restart_is_required == true) && (installer.value("isSilent_internal", "false") != "true")) {
         console.log("showing restart question to user");
         // Print a message for Windows users to tell them to restart the host machine, immediately or later
         var restart_reply = QMessageBox.question("restart.question", "Installer", "Your computer needs to restart to complete your software installation. Do you wish to restart Now?", QMessageBox.Yes | QMessageBox.No);
@@ -282,7 +290,7 @@ function uninstallPreviousStrataInstallation()
 
             // we should not find multiple entries here, but just in case, check the highest
             if ((display_name.length != 0) && ((display_name.length == display_version.length) && (display_name.length == uninstall_string.length))) {
-                var perform_uninstall = installer.isCommandLineInstance();
+                var perform_uninstall = is_command_line_instance || (installer.value("isSilent_internal", "false") == "true");
                 if(perform_uninstall == false) {
                     var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
 
@@ -297,7 +305,7 @@ function uninstallPreviousStrataInstallation()
                 if (perform_uninstall == true) {
                     for (var i = 0; i < display_version.length; i++) {
                         console.log("executing Strata uninstall command: '" + uninstall_string[i] + "'");
-                        var e = installer.execute(uninstall_string[i], ["purge", "--confirm-command"]);
+                        var e = installer.execute(uninstall_string[i], ["isSilent=true", "--start-uninstaller"]);
                         console.log(e);
                     }
                 }
@@ -312,7 +320,7 @@ function uninstallPreviousStrataInstallation()
         var maintenance_tool = installer.value("TargetDir") + "/" + installer.value("MaintenanceToolName") + ".app";
         console.log("checking if '" + maintenance_tool + "' exists");
         if (installer.fileExists(maintenance_tool) == true) {
-            var perform_uninstall = installer.isCommandLineInstance();
+            var perform_uninstall = is_command_line_instance || (installer.value("isSilent_internal", "false") == "true");
             if(perform_uninstall == false) {
                 var uninstall_reply = QMessageBox.question("uninstall.question", "Installer", "Previous " + installer.value("Name") + " installation detected. Do you wish to uninstall?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes);
 
@@ -326,7 +334,7 @@ function uninstallPreviousStrataInstallation()
             }
             if (perform_uninstall == true) {
                 console.log("executing Strata uninstall");
-                installer.execute(installer.value("TargetDir") + "/" + installer.value("MaintenanceToolName") + ".app/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["purge", "--confirm-command"]);
+                installer.execute(installer.value("TargetDir") + "/" + installer.value("MaintenanceToolName") + ".app/Contents/MacOS/" + installer.value("MaintenanceToolName"), ["isSilent=true", "--start-uninstaller"]);
             }
         } else {
             console.log("program not found, will install new version");
