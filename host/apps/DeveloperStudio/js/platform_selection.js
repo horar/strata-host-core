@@ -2,7 +2,6 @@
 .import "navigation_control.js" as NavigationControl
 .import "qrc:/js/platform_filters.js" as PlatformFilters
 .import "constants.js" as Constants
-.import "uuid_map.js" as UuidMap
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
@@ -155,7 +154,7 @@ function generatePlatform (platform) {
 
 /*
     Determine platform connection changes and update model accordingly.
-    Generate listings for duplicate/unlisted/unknown platforms.
+    Generate listings for duplicate/unknown platforms.
 */
 function parseConnectedPlatforms (connected_platform_list_json) {
     let currentlyConnected
@@ -229,19 +228,15 @@ function devicePreviouslyConnected(device_id) {
 }
 
 /*
-    Determine if connected platform exists in model or if unlisted/unrecognized
+    Determine if connected platform exists in model or if unrecognized
 */
 function addConnectedPlatform(platform) {
     let class_id_string = String(platform.class_id);
 
     if (classMap.hasOwnProperty(class_id_string)) {
         connectListing(class_id_string, platform.device_id, platform.firmware_version)
-    } else if (class_id_string !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
-        // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
-        insertUnlistedListing(platform)
     } else {
-        // connected platform class_id not listed in UuidMap or DP platform list, or undefined
+        // connected platform class_id not listed in DP platform list, or undefined
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
         insertUnknownListing(platform)
     }
@@ -414,29 +409,6 @@ function closePlatformView (platform) {
 function insertUnknownListing (platform) {
     let platform_info = generateErrorListing(platform)
     insertErrorListing(platform_info)
-}
-
-/*
-    Insert listing for platform that is not in DB platform_list but does have a UI
-*/
-function insertUnlistedListing (platform) {
-    let platform_info = generateErrorListing(platform)
-    platform_info.available.control = true
-    platform_info.description = "No information to display."
-
-    let index = insertErrorListing(platform_info)
-
-    if(NavigationControl.userSettings.autoOpenView){
-        let data = {
-            "name": platform_info.verbose_name,
-            "available": platform_info.available,
-            "class_id": platform_info.class_id,
-            "device_id": platform_info.device_id,
-            "firmware_version": platform_info.firmware_version,
-            "index": index
-        }
-        openPlatformView(data)
-    }
 }
 
 function generateErrorListing (platform) {
