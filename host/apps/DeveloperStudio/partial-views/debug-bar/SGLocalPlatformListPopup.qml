@@ -330,7 +330,6 @@ Window {
 
                         property string classId: ""
                         property string opn: ""
-                        property bool custom: false
 
                         onEditTextChanged: {
                             classId = editText
@@ -451,8 +450,6 @@ Window {
                         Layout.preferredWidth: 150
                         model: deviceModel
                         placeholderText: "device id"
-                        currentIndex: 0
-
 
                         delegate: SGText {
                             color: deviceArea.containsMouse ? "#888" : "black"
@@ -568,6 +565,8 @@ Window {
         for(var j = 0; j < 10; j++){
             deviceModel.append({device: `device_id ${j}`})
         }
+
+        device_id.currentIndex = 0
 
         if(storeDeviceList.value("stored-platform") !== undefined){
             if(storeDeviceList.value("stored-platform").hasOwnProperty("platform")){
