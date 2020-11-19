@@ -298,7 +298,7 @@ Item {
         id: passReqsPopup
         width: confirmPasswordField.width + passwordField.width
         height: passReqs.height
-        visible:  (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid
+        visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid
         x: newPasswordRow.x
         y: newPasswordRow.y + passwordField.height + 5
         padding: 0
