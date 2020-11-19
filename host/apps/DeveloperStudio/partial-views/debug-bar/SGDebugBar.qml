@@ -9,7 +9,6 @@ import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
-import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/platform_selection.js" as PlatformSelection
 
@@ -55,13 +54,9 @@ Item {
 
                     onCurrentIndexChanged: {
                         // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
-                        if (currentText === "") {
-                            let fileName = viewFolderModel.get(currentIndex, "fileName");
-                            if (fileName !== undefined) {
-                                displayText = viewFolderModel.get(currentIndex, "fileName").replace("views-", "").slice(0, -4)
-                            }
-                        } else {
-                            displayText = currentText.replace("views-", "").slice(0, -4)
+                        let fileName = viewFolderModel.get(currentIndex, "fileName");
+                        if (fileName !== undefined) {
+                            displayText = fileName.replace("views-", "").slice(0, -4)
                         }
                     }
 
@@ -100,38 +95,10 @@ Item {
                             }
 
                             onClicked: {
-                                if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
-                                }
-
+                                // Todo: change this combobox to browse/scan qrc's in the components/views directories
+                                // and then open them/load the RCC applicable. https://ons-sec.atlassian.net/browse/CS-1301
                                 let name = selectButton.text;
-                                let class_id;
-                                for (let key of Object.keys(UuidMap.uuid_map)) {
-                                    if (UuidMap.uuid_map[key] === name) {
-                                        class_id = key;
-                                        break;
-                                    }
-                                }
-
-                                let data = {
-                                    "device_id": Constants.DEBUG_DEVICE_ID,
-                                    "class_id": class_id,
-                                    "name": name,
-                                    "index": null,
-                                    "view": "control",
-                                    "connected": true,
-                                    "available": {
-                                        "control": true,
-                                        "documents": true,
-                                        "unlisted": false,
-                                        "order": false
-                                    },
-                                    "firmware_version": ""
-                                }
-                                let repeaterCount = platformViewRepeater.count
-                                PlatformSelection.openPlatformView(data)
                                 viewCombobox.currentIndex = index
-                                platformViewRepeater.itemAt(repeaterCount).platformDocumentsInitialized = true
                             }
                         }
                     }

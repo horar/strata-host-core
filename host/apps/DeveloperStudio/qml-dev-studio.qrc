@@ -87,7 +87,6 @@
         <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
         <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
         <file>partial-views/login/LoginSettings.qml</file>
-        <file>js/uuid_map.js</file>
         <file>partial-views/platform-view/ControlViewContainer.qml</file>
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>

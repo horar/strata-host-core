@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
-import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -12,14 +11,11 @@ import tech.strata.commoncpp 1.0
 Item {
     id: controlViewContainer
 
-    property bool usingStaticView: true
     property string activeDownloadUri: ""
     property var otaVersionsToRemove: []
     property var controlViewList: sdsModel.documentManager.getClassDocuments(platformStack.class_id).controlViewListModel
     property int controlViewListCount: controlViewList.count
     property bool controlLoaded: false
-
-    readonly property string staticVersion: "static"
 
     SGText {
         anchors.centerIn: parent
@@ -82,10 +78,18 @@ Item {
 
             onStatusChanged: {
                 if (status === Loader.Ready) {
+                    // Tear Down creation context
+                    delete NavigationControl.context.class_id
+                    delete NavigationControl.context.device_id
+
                     controlLoaded = true
                     loadingBarContainer.visible = false;
                     loadingBar.value = 0.0;
                 } else if (status === Loader.Error) {
+                    // Tear Down creation context
+                    delete NavigationControl.context.class_id
+                    delete NavigationControl.context.device_id
+
                     createErrorScreen("Could not load file: " + source);
                 }
             }
@@ -104,26 +108,13 @@ Item {
 
             if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)
                     && (versionInstalled === null || versionInstalled.version === sdsModel.resourceLoader.getVersionRegistered(platformStack.class_id))) {
-                if (sdsModel.resourceLoader.getVersionRegistered(platformStack.class_id) !== controlViewContainer.staticVersion) {
-                    usingStaticView = false;
-                }
+
                 loadControl()
             } else {
                 loadingBarContainer.visible = true;
                 loadingBar.value = 0.01;
 
-                // Try to load a previously installed OTA resource
-                if (controlViewList.getInstalledVersion() > -1) {
-                    usingStaticView = false;
-                    getOTAResource();
-                    return
-                }
-
-                // Try to load static resource, otherwise download/install a new OTA resource
-                if (getStaticResource() === false) {
-                    usingStaticView = false;
-                    getOTAResource();
-                }
+                getOTAResource();
             }
         }
     }
@@ -132,11 +123,9 @@ Item {
       Loads Control.qml from the installed resource file into controlContainer
     */
     function loadControl () {
-        let version = controlViewContainer.staticVersion
-        if (usingStaticView === false) {
-            let installedVersion = getInstalledVersion(NavigationControl.context.user_id);
-            version = installedVersion.version
-        }
+
+        let installedVersion = getInstalledVersion(NavigationControl.context.user_id);
+        let version = installedVersion.version
 
         let control_filepath = NavigationControl.getQMLFile("Control", platformStack.class_id, version)
 
@@ -146,30 +135,6 @@ Item {
         NavigationControl.context.device_id = platformStack.device_id
 
         controlLoader.setSource(control_filepath, Object.assign({}, NavigationControl.context))
-
-        // Tear Down creation context
-        delete NavigationControl.context.class_id
-        delete NavigationControl.context.device_id
-    }
-
-    /*
-        Try to find/register a static resource file
-        Todo: remove this when fully OTA
-    */
-    function getStaticResource() {
-        if (UuidMap.uuid_map.hasOwnProperty(platformStack.class_id)){
-            let name = UuidMap.uuid_map[platformStack.class_id];
-            let RCCpath = sdsModel.resourceLoader.getStaticResourcesString() + "/views-" + name + ".rcc"
-
-            usingStaticView = true
-            if (SGUtilsCpp.isFile(RCCpath) && registerResource(RCCpath, controlViewContainer.staticVersion)) {
-                return true;
-            } else {
-                removeControl() // registerResource() failing creates an error screen, kill it to show OTA progress bar
-                usingStaticView = false
-            }
-        }
-        return false
     }
 
     /*
@@ -243,7 +208,6 @@ Item {
                     otaVersionsToRemove.push(versionToRemove);
                 }
             }
-            usingStaticView = false;
 
             if (platformStack.connected) {
                 // Can update from software mgmt while not connected, but don't want to create control view
@@ -260,14 +224,6 @@ Item {
       Unregister and delete all resources that are not the new installed one
     */
     function cleanUpResources() {
-        // Remove any static resources if available
-
-        if (UuidMap.uuid_map.hasOwnProperty(platformStack.class_id)) {
-            let name = UuidMap.uuid_map[platformStack.class_id];
-            let RCCpath = sdsModel.resourceLoader.getStaticResourcesString() + "/views-" + name + ".rcc"
-            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, RCCpath, controlViewContainer.staticVersion, controlContainer);
-        }
-
         for (let i = 0; i < otaVersionsToRemove.length; i++) {
             sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlContainer);
         }

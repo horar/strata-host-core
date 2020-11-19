@@ -102,8 +102,6 @@ public slots:
             const QString &classId,
             const QJsonArray &datasheetList,
             const QJsonArray &documentList,
-            const QJsonArray &firmwareList,
-            const QJsonArray &controlViewList,
             const QString &error);
 
     void sendDownloadControlViewFinishedMessage(
@@ -118,6 +116,13 @@ public slots:
             const QString &filePath,
             qint64 bytesReceived,
             qint64 bytesTotal);
+
+    void sendPlatformMetaData(
+            const QByteArray &clientId,
+            const QString &classId,
+            const QJsonArray &controlViewList,
+            const QJsonArray &firmwareList,
+            const QString &error);
 
 
 private:
