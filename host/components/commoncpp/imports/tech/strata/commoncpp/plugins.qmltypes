@@ -402,5 +402,21 @@ Module {
             type: "string"
             Parameter { name: "number"; type: "qlonglong" }
         }
+        Method {
+            name: "prettifyJson"
+            type: "QByteArray"
+            Parameter { name: "json"; type: "QByteArray" }
+            Parameter { name: "indentSize"; type: "int" }
+        }
+        Method {
+            name: "prettifyJson"
+            type: "QByteArray"
+            Parameter { name: "json"; type: "QByteArray" }
+        }
+        Method {
+            name: "minifyJson"
+            type: "QByteArray"
+            Parameter { name: "json"; type: "QByteArray" }
+        }
     }
 }
