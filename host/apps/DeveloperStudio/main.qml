@@ -7,11 +7,12 @@ import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
-import "partial-views"
-import "partial-views/debug-bar"
-import "partial-views/platform-view"
-import "partial-views/control-view-creator"
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "qrc:/partial-views/platform-view"
+
+// imports below must be qrc:/ due to qrc aliases for debug/release differences
+import "qrc:/partial-views/control-view-creator"
+import "qrc:/partial-views/debug-bar"
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
