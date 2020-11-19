@@ -32,6 +32,7 @@ public:
         TypeRole,
         TimestampRole,
         CondensedRole,
+        IsJsonValidRole,
     };
 
     enum class MessageType {
@@ -103,6 +104,7 @@ struct ScrollbackModelItem {
     SciScrollbackModel::MessageType type;
     QDateTime timestamp;
     bool condensed;
+    bool isJsonValid;
 };
 
 Q_DECLARE_METATYPE(SciScrollbackModel::MessageType)

@@ -177,7 +177,6 @@ FocusScope {
                         height: divider.y + divider.height
 
                         property color helperTextColor: "#333333"
-                        property bool jsonIsValid
 
                         Rectangle {
                             anchors {
@@ -189,7 +188,7 @@ FocusScope {
                             color: {
                                 if (model.type === Sci.SciScrollbackModel.Request) {
                                     return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.3)
-                                } else if (cmdDelegate.jsonIsValid === false) {
+                                } else if (model.isJsonValid === false) {
                                     return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
                                 }
 
@@ -286,16 +285,12 @@ FocusScope {
                             readOnly: true
 
                             text: {
-                                var prettyText = prettifyJson(model.message, model.condensed)
-                                if (prettyText.length > 0) {
-                                    cmdDelegate.jsonIsValid = true
-                                    return prettyText
+                                if (model.condensed === false && model.isJsonValid) {
+                                    return CommonCpp.SGUtilsCpp.prettifyJson(model.message)
                                 }
 
-                                cmdDelegate.jsonIsValid = false
                                 return model.message
                             }
-
 
                             MouseArea {
                                 anchors.fill: parent
@@ -629,25 +624,6 @@ FocusScope {
     function showExportView() {
         stackView.push(exportComponent)
     }
-
-    function prettifyJson(message, condensed) {
-        if (condensed === undefined) {
-            condensed = true
-        }
-
-        try {
-            var messageObj =  JSON.parse(message)
-        } catch(error) {
-            return ""
-        }
-
-        if (condensed) {
-            return JSON.stringify(messageObj)
-        }
-
-        return JSON.stringify(messageObj, undefined, 4)
-    }
-
 
     function prettifyHintText(hintText, shortcut) {
         return hintText + " - " + shortcut

@@ -1,10 +1,9 @@
 #include "SciPlatform.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <SGUtilsCpp.h>
+
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonValue>
 #include <QStandardPaths>
 #include <QDir>
 #include <QSaveFile>
@@ -183,7 +182,7 @@ bool SciPlatform::sendMessage(const QByteArray &message)
         return false;
     }
 
-    QByteArray compactMessage = doc.toJson(QJsonDocument::Compact);
+    QByteArray compactMessage = SGUtilsCpp::minifyJson(message);
 
     bool result = device_->sendMessage(compactMessage);
     if (result) {
