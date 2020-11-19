@@ -3,8 +3,8 @@
 #include <QObject>
 
 #include "../src/ClientsController.h"
-#include "../src/ServerConnector.h"
 #include "../src/Dispatcher.h"
+#include "../src/ServerConnector.h"
 
 namespace strata::strataComm {
 
@@ -14,7 +14,7 @@ class StrataServer : public QObject {
 public:
     StrataServer(QString address, QObject *parent = nullptr);
     ~StrataServer();
-    
+
     void init();
     // void start();
     // void notifyClient();
@@ -45,7 +45,6 @@ private:
     Dispatcher dispatcher_;
     ClientsController clientsController_;
     ServerConnector connector_;
-
 };
 
 }   // namespace strata::strataComm
