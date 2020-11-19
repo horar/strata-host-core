@@ -51,10 +51,18 @@ Rectangle {
         Help.destroyHelp()
     }
 
+    RowLayout{
+        id: tabRow
+        anchors {
+            left: container.left
+            right: profileIconContainer.left
+        }
+        spacing: 1
+
     Item {
         id: logoContainer
-        height: container.height
-        width: 70
+        Layout.preferredHeight: container.height
+        Layout.preferredWidth: 70
 
         Image {
             source: "qrc:/images/strata-logo-reverse.svg"
@@ -67,17 +75,10 @@ Rectangle {
         }
     }
 
-    Row {
-        id: tabRow
-        anchors {
-            left: logoContainer.right
-        }
-        spacing: 1
-
         Rectangle {
             id: platformSelector
-            height: 40
-            width: 120
+            Layout.preferredHeight:40
+            Layout.preferredWidth: 120
 
             color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? "#33b13b" : "#444"
 
@@ -105,11 +106,17 @@ Rectangle {
             }
         }
 
-        Repeater {
-            id: platformTabRepeater
-            delegate: SGPlatformTab {}
-            model: NavigationControl.platform_view_model_
-        }
+            ListView {
+                id: platformTabRepeater
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                delegate: SGPlatformTab {}
+                orientation: ListView.Horizontal
+                spacing: 1
+                clip: true
+
+                model: NavigationControl.platform_view_model_
+            }
 
         SGPlatformTab {
             // demonstration tab set for help tour
@@ -149,13 +156,14 @@ Rectangle {
 
     Item {
         id: profileIconContainer
+        width: height
+
         anchors {
             right: container.right
             rightMargin: 2
             top: container.top
             bottom: container.bottom
         }
-        width: height
 
         Rectangle {
             id: profileIcon
@@ -322,7 +330,6 @@ Rectangle {
             }
         }
     }
-
     Loader {
         id: feedLoader
         source: "qrc:/partial-views/status-bar/SGFeedbackPopup.qml"
