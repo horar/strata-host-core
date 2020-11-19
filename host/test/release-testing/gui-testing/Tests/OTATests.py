@@ -11,7 +11,7 @@ import zmq
 import signal
 import os
 from subprocess import Popen, check_output
-from shutil import copy2
+from shutil import copy2, rmtree
 from GUIInterface.StrataUI import *
 
 strataProcess = None
@@ -76,6 +76,9 @@ class OpenControlView(unittest.TestCase):
         # Remove the versionControl.json for this class_id
         self.remove_version_control_json()
 
+        # Remove any previously installed control views
+        self.remove_installed_control_view("201")
+
         # Open the control view
         self.openControlView()
 
@@ -101,6 +104,9 @@ class OpenControlView(unittest.TestCase):
 
         # Remove the versionControl.json for this class_id
         self.remove_version_control_json()
+
+        # Remove any previously installed control views
+        self.remove_installed_control_view("201")
 
         docs = self.sample_platform_docs("201")
         outputPath = self.getControlViewDownloadPath(docs["control_view"][1]["uri"])
@@ -179,6 +185,13 @@ class OpenControlView(unittest.TestCase):
         versionControlPath += "/ON Semiconductor/Strata Developer Studio/settings/3402973885/201/versionControl.json"
         if (os.path.exists(versionControlPath)):
             os.remove(versionControlPath)
+
+    def remove_installed_control_view(self, class_id):
+        args = Common.getCommandLineArguments(sys.argv)
+        hcsPath = args.hcsAppDataDir.replace('\\', '/')
+        hcsPath += "/" + args.hcsEnv + "/documents"
+        if (os.path.exists(hcsPath)):
+            rmtree(hcsPath)
 
     def sample_platform_list(self):
         return [

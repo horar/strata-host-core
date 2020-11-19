@@ -31,7 +31,7 @@ The below example runs the installer executable.
 `.\Test-StrataRelease.ps1 -SDSInstallerPath <PATH-TO-THE-INSTALLER> [-EnablePlatformIdentificationTest] [-IncludeOTA]`
 
 ## Testing a pre-built executable
-To run a pre-built `Strata Developer Studio.exe`, run the `Test-StrataWithoutInstaller.ps1` script. This script also allows you to choose which tests you want to run by specifying them in a comma-separated list inside of the `-TestsToRun` argument. The options are:
+To run a pre-built `Strata Developer Studio.exe`, run the `Test-StrataRelease.ps1` script with the `-SDSExecPath` argument instead of `-SDSInstallerPath`. This script also allows you to choose which tests you want to run by specifying them in a comma-separated list inside of the `-TestsToRun` argument. The options are:
 * `all` - Runs all tests
 * `gui` - Runs the GUI tests
 * `database` - Runs the database tests
@@ -45,7 +45,7 @@ It should be noted that in order to run OTA tests, the `-IncludeOTA` argument mu
 
 Example:
 
-`.\Test-StrataWithoutInstaller.ps1 -SDSExecPath <PATH-TO-THE-EXECUTABLE-FILE> -TestsToRun gui,database,hcs -DPEnv [DEV | QA] [-EnablePlatformIdentificationTest] [-IncludeOTA]`
+`.\Test-StrataRelease.ps1 -SDSExecPath <PATH-TO-THE-EXECUTABLE-FILE> -TestsToRun gui,database,hcs -DPEnv [DEV | QA] [-EnablePlatformIdentificationTest] [-IncludeOTA]`
 
 # Notes
 1. This test was made to work with Windows. However, it is possible to run it on mac with some modifications on the paths and executables locations.
@@ -54,4 +54,4 @@ Example:
   * This test assumes that JLink software is installed in the default location `C:\Program Files (x86)\SEGGER\JLink\JLink.exe`.
   * This test requires connecting a platform and a JLink device to the test machine.
 4. OTA tests are disabled by default unless the `-IncludeOTA` argument is provided
-5. For the `Test-StrataWithoutInstaller` script, make sure that your `-DPEnv` is set to the environment that you built the executable in. For example, if HCS is configured to be communicating with the DEV deployment portal, make sure that you pass in `-DPEnv DEV`.
+5. For the testing an executable, make sure that your `-DPEnv` is set to the environment that you built the executable in. For example, if HCS is configured to be communicating with the DEV deployment portal, make sure that you pass in `-DPEnv DEV`.

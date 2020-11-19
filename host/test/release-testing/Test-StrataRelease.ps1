@@ -7,7 +7,10 @@ This is the main driver for the automated test script for the master test plan
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
 .INPUTS  SDSInstallerPath
-Mandatory. If not being passed as an argument to the script you will be prompted to choose the path
+Optional. If not being passed as an argument to the script you will be prompted to choose the path
+-SDSExecPath Optional. If not being passed as an argument to the script you will be prompted to choose the path
+-TestsToRun Optional Comma-separated list of tests to run
+-DPEnv Optional The Deployment Portal environment. (PROD, OTA, or DEV)
 -EnablePlatformIdentificationTest Optional switch to enable the platform Identification test.
 -IncludeOTA Optional switch to enable OTA testing
 
@@ -31,12 +34,30 @@ Test-StrataRelease.ps1
 
 .Example
 Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>" -EnablePlatformIdentificationTest -IncludeOTA
+
+.Example
+Test-StrataRelease.ps1 -SDSExecPath "<PATH_TO_STRATA_EXE>" -Tests hcs,gui,platformIdentification
+
 #>
 
 [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$True, Position=0, HelpMessage="Please enter a path for Strata Installer")]
+        [Parameter(Mandatory=$False, Position=0, HelpMessage="Please enter a path for Strata Installer")]
         [string]$SDSInstallerPath,
+        
+        [Parameter(Mandatory=$False, HelpMessage="Please enter the path to a SDS executable.")]
+        [string]$SDSExecPath,
+
+        [Parameter(Mandatory=$False, ValueFromPipeline=$True, ValueFromPipelineByPropertyName=$True, ValueFromRemainingArguments=$True)]
+        [ValidateSet("gui", "database", "collateral", "controlViews", "hcs", "platformIdentification", "tokenAndViews", "all")]
+        [string[]]
+        [Alias("t")]
+        $TestsToRun = ("all"),
+
+        [Parameter(Mandatory=$False, HelpMessage="Please specify either DEV or QA for your DPEnv")]
+        [ValidateSet("DEV", "QA")]
+        [string]$DPEnv = "QA",
+
         [switch]$EnablePlatformIdentificationTest,
         [switch]$IncludeOTA
     )
@@ -44,15 +65,34 @@ Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>" -EnablePla
 # Define HCS TCP endpoint to be used
 Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
 
+Set-Variable "TestingExecutable" $PSBoundParameters.ContainsKey('SDSExecPath')
+
 # Define paths
-Set-Variable "SDSRootDir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
+if ($TestingExecutable -eq $True) {
+    Set-Variable "SDSRootDir"    "$SDSExecPath\.."
+} else {
+    Set-Variable "SDSRootDir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
+}
+
 Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\Host Controller Service"
 Set-Variable "StrataDeveloperStudioIniDir" "$Env:AppData\ON Semiconductor\"
-Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
+
+if ($TestingExecutable -eq $True) {
+    Set-Variable "HCSConfigFile" "$SDSRootDir\hcs.config"
+} else {
+    Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
+}
+
 Set-Variable "HCSExecFile"   "$SDSRootDir\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
-Set-Variable "HCSDbFile"     "$HCSAppDataDir\PROD\db\strata_db\db.sqlite3"
-Set-Variable "HCSEnv"        "PROD"
+
+if ($TestingExecutable -eq $True) {
+    Set-Variable "HCSEnv"        "$DPEnv"
+} else {
+    Set-Variable "HCSEnv"        "PROD"
+}
+
+Set-Variable "HCSDbFile"     "$HCSAppDataDir\$HCSEnv\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
 Set-Variable "JLinkExePath"  "${Env:ProgramFiles(x86)}\SEGGER\JLink\JLink.exe"
 Set-Variable "RequirementsFile" "$TestRoot\requirements.txt"
@@ -101,7 +141,9 @@ Write-Host "`n`nPerforming initial checks...`n"
 Assert-UACAndAdmin
 
 # Validate Strata installer path
-Assert-SDSInstallerPath
+if ($TestingExectuable -eq $False) {
+    Assert-SDSInstallerPath
+}
 
 # Search for PSSQLite
 Assert-PSSQLite
@@ -117,35 +159,45 @@ Assert-PythonScripts
 Write-Host "`nStarting tests...`n"
 
 # Run Test-SDSInstaller
-$SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
+if ($TestingExecutable -eq $False) {
+    $SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
+}
 
 # Search for SDS and HCS
 Assert-StrataAndHCS
 
 # Run Test-Database (HCS database testing)
-$DatabaseResults = Test-Database
-
+if ($TestingExecutable -eq $False -or $TestsToRun -contains "all" -or $TestsToRun -contains "database") {
+    $DatabaseResults = Test-Database
+}
 # Run Test-TokenAndViewsDownload
-$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
+if ($TestingExecutable -eq $False -or $TestsToRun -contains "all" -or $TestsToRun -contains "tokenAndViews") {
+    $TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
+}
 
 #Run Test-GUI
-$GUIResults = Test-GUI
+if ($TestingExecutable -eq $False -or $TestsToRun -contains "all" -or $TestsToRun -contains "gui") {
+    $GUIResults = Test-GUI
+}
 
 #Run Test-CollateralDownload (HCS collateral download testing)
-$CollateralDownloadResults = Test-CollateralDownload
+if ($TestingExectuable -eq $False -or $TestsToRun -contains "all" -or $TestsToRun -contains "collateral") {
+    $CollateralDownloadResults = Test-CollateralDownload
+}
 
 #Run Test-PlatformIdentification
 # The test is disabled by default, The reason is that it requires having a platform and a JLink connected to the test machine.
 # To enable the test, pass this flag -EnablePlatformIdentificationTest when running Test-StrataRelease.ps script
-If ($EnablePlatformIdentificationTest -eq $true) {
+if (($EnablePlatformIdentificationTest -and ($TestingExectuable -eq $False -or $TestsToRun -contains "all")) -or $TestsToRun -contains "platformIndentification") {
     $PlatformIdentificationResults = Test-PlatformIdentification -PythonScriptPath $PythonPlatformIdentificationTest -ZmqEndpoint $HCSTCPEndpoint
 }
 
 # Run Test-SDSControlViews (SDS control view testing)
 # Because the recent changes in the Navigation of Strata Developer Studio, this test is not working as expected.
 # These issues will be resolved in CS-626
-#$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
-
+if ($TestingExecutable -eq $False -or $TestsToRun -contains "all" -or $TestsToRun -contains "controlViews") {
+    #$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
+}
 Show-TestSummary
 
 #------------------------------------------------------------[Clean up]-------------------------------------------------------------
