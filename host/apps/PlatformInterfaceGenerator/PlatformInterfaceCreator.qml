@@ -200,7 +200,7 @@ Rectangle {
                 if (valid && payload.get(i).type === "object") {
                     let objectPropertiesModel = payload.get(i).object;
                     for (let k = 0; k < objectPropertiesModel.count; k++) {
-                        let tmpValid = checkForDuplicateObjectPropertyNames(payload.get(i).object)
+                        let tmpValid = checkForDuplicateObjectPropertyNames(objectPropertiesModel, k)
                         if (!tmpValid) {
                             valid = false
                             allValid = false
