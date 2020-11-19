@@ -6,5 +6,7 @@
         <file>AlertToast.qml</file>
         <file>PayloadPropertyDelegate.qml</file>
         <file>CommandNotificationDelegate.qml</file>
+        <file>PayloadObjectPropertyDelegate.qml</file>
+        <file>PayloadArrayPropertyDelegate.qml</file>
     </qresource>
 </RCC>

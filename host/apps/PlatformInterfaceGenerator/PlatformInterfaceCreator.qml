@@ -35,7 +35,8 @@ Rectangle {
         "name": "", // The name of the property
         "type": "int", // Type of the property, "array", "int", "string", etc.
         "valid": false,
-        "array": [] // This is only filled if the type == "array"
+        "array": [], // This is only filled if the type == "array"
+        "object": []
     });
 
     /**
@@ -64,15 +65,22 @@ Rectangle {
                 for (let k = 0; k < command.payload.count; k++) {
                     let payloadProperty = command.payload.get(k);
 
-                    if (payloadProperty.type !== "array") {
-                        commandObj["payload"][payloadProperty.name] = payloadProperty.type;
-                    } else {
+                    if (payloadProperty.type === "array") {
                         let arrayElements = [];
                         for (let m = 0; m < payloadProperty.array.count; m++) {
                             let arrayElement = payloadProperty.array.get(m);
                             arrayElements.push(arrayElement.type)
                         }
                         commandObj["payload"][payloadProperty.name] = arrayElements;
+                    } else if (payloadProperty.type === "object") {
+                        let object = {};
+                        for (let m = 0; m < payloadProperty.object.count; m++) {
+                            let objectProperty = payloadProperty.object.get(m);
+                            object[objectProperty.key] = objectProperty.type
+                        }
+                        commandObj["payload"][payloadProperty.name] = object;
+                    } else {
+                        commandObj["payload"][payloadProperty.name] = payloadProperty.type;
                     }
                 }
                 commands.push(commandObj)
@@ -188,9 +196,48 @@ Rectangle {
                         break;
                     }
                 }
+
+                if (valid && payload.get(i).type === "object") {
+                    let objectPropertiesModel = payload.get(i).object;
+                    for (let k = 0; k < objectPropertiesModel.count; k++) {
+                        let tmpValid = checkForDuplicateObjectPropertyNames(payload.get(i).object)
+                        if (!tmpValid) {
+                            valid = false
+                            allValid = false
+                            objectPropertiesModel.setProperty(k, "valid", false)
+                            if (shortCircuit) {
+                                console.error("Duplicate property key in payload property '" + payload.get(i).name + "' found")
+                                return false
+                            }
+                        }
+                    }
+                }
+
                 payload.setProperty(i, "valid", valid)
             }
             return allValid;
+        }
+
+        /**
+          * This function checks for duplicate keys in a give payload property that is of 'object' type
+         **/
+        function checkForDuplicateObjectPropertyNames(objectPropertiesModel, index) {
+            let key = objectPropertiesModel.get(index).key
+
+            if (key === "") {
+                return false
+            }
+
+            for (let i = 0; i < objectPropertiesModel.count; i++) {
+                if (i !== index) {
+                    let item = objectPropertiesModel.get(i);
+                    if (item.key === key) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         /**
