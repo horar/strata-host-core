@@ -43,6 +43,11 @@ QString Device::platformId() {
     return platformId_;
 }
 
+bool Device::hasClassId() {
+    QReadLocker rLock(&properiesLock_);
+    return (classId_.isNull() == false);
+}
+
 QString Device::classId() {
     QReadLocker rLock(&properiesLock_);
     return classId_;
@@ -86,24 +91,38 @@ Device::Type Device::deviceType() const {
 }
 
 void Device::setVersions(const char* bootloaderVer, const char* applicationVer) {
+    // Do not change property if parameter is nullptr.
     QWriteLocker wLock(&properiesLock_);
     if (bootloaderVer)  { bootloaderVer_ = bootloaderVer; }
     if (applicationVer) { applicationVer_ = applicationVer; }
 }
 
 void Device::setProperties(const char* name, const char* platformId, const char* classId, ControllerType type) {
+    // Clear property of parameter is nullptr.
     QWriteLocker wLock(&properiesLock_);
-    if (name)       { name_ = name; }
+    if (name) { name_ = name; }
+    else { name_.clear(); }
+
     if (platformId) { platformId_ = platformId; }
-    if (classId)    { classId_ = classId; }
+    else { platformId_.clear(); }
+
+    if (classId) { classId_ = classId; }
+    else { classId_.clear(); }
+
     controllerType_ = type;
 }
 
 void Device::setAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) {
+    // Clear property of parameter is nullptr.
     QWriteLocker wLock(&properiesLock_);
     if (platformId) { controllerPlatformId_ = platformId; }
-    if (classId)    { controllerClassId_ = classId; }
-    if (fwClassId)  { firmwareClassId_ = classId; }
+    else { controllerPlatformId_.clear(); }
+
+    if (classId) { controllerClassId_ = classId; }
+    else { controllerClassId_.clear(); }
+
+    if (fwClassId) { firmwareClassId_ = classId; }
+    else { firmwareClassId_.clear(); }
 }
 
 bool Device::lockDeviceForOperation(quintptr lockId) {

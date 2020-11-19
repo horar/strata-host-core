@@ -134,6 +134,12 @@ namespace strata::device {
         virtual QString platformId() final;
 
         /**
+         * Check if class ID property is set.
+         * @return true if class ID is set (true is returned also if class ID is empty string)
+         */
+        virtual bool hasClassId() final;
+
+        /**
          * Get class ID property.
          * @return class ID (device property)
          */
@@ -214,8 +220,11 @@ namespace strata::device {
 
     private:
       // *** functions used by friend classes BaseDeviceOperation and BaseDeviceCommand:
+        // Does not change property if parameter is nullptr.
         virtual void setVersions(const char* bootloaderVer, const char* applicationVer) final;
+        // Clears property if parameter is nullptr.
         virtual void setProperties(const char* name, const char* platformId, const char* classId, ControllerType type) final;
+        // Clears property if parameter is nullptr.
         virtual void setAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) final;
         virtual bool lockDeviceForOperation(quintptr lockId) final;
         virtual void unlockDevice(quintptr lockId) final;
