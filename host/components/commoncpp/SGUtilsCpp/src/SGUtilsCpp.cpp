@@ -80,7 +80,7 @@ QString SGUtilsCpp::fileName(const QString &file)
 QString SGUtilsCpp::fileAbsolutePath(const QString &file)
 {
     QFileInfo fi(file);
-    return fi.absolutePath();
+    return fi.absoluteFilePath();
 }
 
 QString SGUtilsCpp::dirName(const QString &path)
