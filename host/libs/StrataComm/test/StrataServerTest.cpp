@@ -66,7 +66,6 @@ void StrataServerTest::testValidApiVer1Message() {
     emit mockNewMessageRecived("AAA", R"({"cmd":"load_documents","payload":{}})");
     QVERIFY_(validMessage);
 
-
     validMessage = false;
     emit mockNewMessageRecived("AAA", R"({"sscmd":"load_documents","payload":{}})");
     QVERIFY_(false == validMessage);
@@ -136,7 +135,7 @@ void StrataServerTest::testServerFunctionality() {
     connect(&client_2, &strata::strataComm::ClientConnector::newMessageRecived, this, [&clientGotResponse_2](const QByteArray &message){
         QCOMPARE_(
             message,
-            "{\"hcs::notification\":{\"status\":\"client registered.\"}}"
+            "{\"hcs::notification\":{\"status\":\"client registered.\",\"type\":\"register_client\"}}"
         );
         clientGotResponse_2 = true;
     });
@@ -344,6 +343,7 @@ void StrataServerTest::testBuildNotificationApiV1() {
 
         QVERIFY_(jsonObject.contains("hcs::notification"));
         QVERIFY_(jsonObject.value("hcs::notification").isObject());
+        QVERIFY_(jsonObject.value("hcs::notification").toObject().contains("type"));
         testExecuted = true;
     });
 
@@ -381,6 +381,7 @@ void StrataServerTest::testBuildResponseApiV1() {
 
         QVERIFY_(jsonObject.contains("hcs::notification"));
         QVERIFY_(jsonObject.value("hcs::notification").isObject());
+        QVERIFY_(jsonObject.value("hcs::notification").toObject().contains("type"));
         testExecuted = true;
     });
 
@@ -471,4 +472,103 @@ void StrataServerTest::testBuildPlatformMessageApiV1() {
     } while (timer.isActive());
 
     QVERIFY_(testExecuted);
+}
+
+void StrataServerTest::testNotifyAllClients() {
+    QTimer timer;
+    StrataServer server(address_);
+    std::vector<strata::strataComm::ClientConnector *> clientsList;
+    int counter = 0;
+    int clientsCount = 10;
+
+    server.init();
+
+    // half the clients use API v2
+    for (int i = 0; i < clientsCount/2; i++) {
+        clientsList.push_back(new strata::strataComm::ClientConnector(address_, QByteArray::number(i)));
+        clientsList.back()->initilize();
+        connect(clientsList.back(), &strata::strataComm::ClientConnector::newMessageRecived, this, [i, &counter](const QByteArray &message) {
+            // validate for API v2
+            // expected response format: 
+            // {
+            //     "jsonrpc": "2.0",
+            //     "method": "test_broadcast",
+            //     "params": {
+            //         "test": "test"
+            //     }
+            // }
+
+            QJsonDocument jsonDocument = QJsonDocument::fromJson(message);
+            QJsonObject jsonObject = jsonDocument.object();
+
+            QVERIFY_(jsonObject.contains("jsonrpc"));
+            QVERIFY_(jsonObject.contains("method"));
+            QVERIFY_(jsonObject.contains("params"));
+            QVERIFY_(jsonObject.value("params").isObject());
+
+            QCOMPARE_(jsonObject.value("jsonrpc").toString(), "2.0");
+            QCOMPARE_(jsonObject.value("method").toString(), "test_broadcast");
+
+            QJsonObject tempExpectedPayload{{"test", "test"}};
+            QCOMPARE_(jsonObject.value("params").toObject(), tempExpectedPayload);
+            counter++;
+        });
+        clientsList[i]->sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
+    }
+
+    // other half uses API v1
+    for (int i = clientsCount/2; i < clientsCount; i++) {
+        clientsList.push_back(new strata::strataComm::ClientConnector(address_, QByteArray::number(i)));
+        clientsList.back()->initilize();
+        connect(clientsList.back(), &strata::strataComm::ClientConnector::newMessageRecived, this, [i, &counter](const QByteArray &message) {
+            // validate for API v1
+            // expected response format: 
+            // {
+            //     "hcs::notification": {
+            //         "type": "test_broadcast",
+            //         "test": "test"
+            //     }
+            // }
+
+            QJsonDocument jsonDocument = QJsonDocument::fromJson(message);
+            QJsonObject jsonObject = jsonDocument.object();
+
+            QVERIFY_(jsonObject.contains("hcs::notification"));
+            QVERIFY_(jsonObject.value("hcs::notification").isObject());
+
+            QJsonObject payloadJsonObject = jsonObject.value("hcs::notification").toObject();
+
+            QVERIFY_(payloadJsonObject.contains("type"));
+            QVERIFY_(payloadJsonObject.contains("test"));
+
+            QCOMPARE_(payloadJsonObject.value("type").toString(), "test_broadcast");
+            QCOMPARE_(payloadJsonObject.value("test").toString(), "test");
+
+            counter++;
+        });
+        clientsList[i]->sendMessage(R"({"cmd":"register_client", "payload":{}})");
+    }
+
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(100);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+
+    server.notifyAllClients("test_broadcast", {{"test", "test"}});
+
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(200);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+        if(counter == clientsCount) {
+            break;
+        }
+    } while (timer.isActive());
+
+    for (auto client : clientsList) {
+        delete client;
+    }
 }

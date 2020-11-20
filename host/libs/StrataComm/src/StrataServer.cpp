@@ -311,6 +311,7 @@ QByteArray StrataServer::buildServerMessageAPIv2(const ClientMessage &clientMess
 QByteArray StrataServer::buildServerMessageAPIv1(const ClientMessage &clientMessage, const QJsonObject &payload, ClientMessage::ResponseType responseType) {
     QJsonObject jsonObject;
     QString notificationType = "";
+    QJsonObject tempPayload(payload);
 
     switch (responseType) {
         case strata::strataComm::ClientMessage::ResponseType::Notification:
@@ -324,7 +325,8 @@ QByteArray StrataServer::buildServerMessageAPIv1(const ClientMessage &clientMess
             } else {
                 notificationType = "hcs::notification";
             }
-            jsonObject.insert(notificationType, payload);
+            tempPayload.insert("type", clientMessage.handlerName);
+            jsonObject.insert(notificationType, tempPayload);
             break;
 
         case strata::strataComm::ClientMessage::ResponseType::Error:
