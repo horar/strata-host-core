@@ -8,6 +8,7 @@ function Component()
 
     try {
         is_command_line_instance = installer.isCommandLineInstance();
+        console.log("detected command line instance: " + is_command_line_instance);
     } catch(e) {
         console.log("unable detect if command line instance is being used, fallback to false");
         is_command_line_instance = false;
@@ -89,11 +90,15 @@ Component.prototype.onInstallationOrUpdateFinished = function()
 {
     console.log("onInstallationOrUpdateFinished entered");
 
+    var target_dir = installer.value("TargetDir");
+    if (systemInfo.productType == "windows") {
+            target_dir = target_dir.split("/").join("\\");
+    }
     if (isComponentInstalled("com.onsemi.strata.devstudio") && ((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true))) {
         if (systemInfo.productType == "windows") {
-            installer.setValue("RunProgram", installer.value("TargetDir").split("/").join("\\") + "\\Strata Developer Studio.exe");
+            installer.setValue("RunProgram", target_dir + "\\Strata Developer Studio.exe");
         } else if (systemInfo.productType == "osx") {
-            installer.setValue("RunProgram", installer.value("TargetDir") + "/Strata Developer Studio.app/Contents/MacOS/Strata Developer Studio");
+            installer.setValue("RunProgram", target_dir + "/Strata Developer Studio.app/Contents/MacOS/Strata Developer Studio");
         } else {
             installer.setValue("RunProgram", "");
         }
@@ -107,27 +112,49 @@ Component.prototype.onInstallationOrUpdateFinished = function()
     }
 
     console.log("RunProgram: " + installer.value("RunProgram"));
-    if ((systemInfo.productType == "windows") && ((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true)) && (installer.status == QInstaller.Success)) {
-        isRestartRequired();
-    }
 
-    // erase StrataUtils folder
-    var strataUtilsFolder = installer.value("TargetDir") + "\\StrataUtils";
-    strataUtilsFolder = strataUtilsFolder.split("/").join("\\");
-    if ((systemInfo.productType == "windows") && (installer.fileExists(strataUtilsFolder) == true)) {
-        try {
-            console.log("erasing StrataUtils folder: " + strataUtilsFolder);
-            installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
-            if (installer.fileExists(strataUtilsFolder) == true) {
-                if (installer.gainAdminRights() == true) {    // needed when it is in Program Files directory on Win10
-                    console.log("gained admin rights, executing cmd in admin mode");
-                    installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
+    if (systemInfo.productType == "windows") {
+        if (((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true)) && (installer.status == QInstaller.Success)) {
+            isRestartRequired();
+        }
+
+        // erase StrataUtils folder
+        var requiresAdminRights = false;
+        var strataUtilsFolder = target_dir + "\\StrataUtils";
+        if (installer.fileExists(strataUtilsFolder) == true) {
+            try {
+                console.log("erasing StrataUtils folder: " + strataUtilsFolder);
+                installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
+                if (installer.fileExists(strataUtilsFolder) == true) {
+                    requiresAdminRights = true;
+                    if (installer.gainAdminRights() == true) {    // needed when it is in Program Files directory on Win10
+                        console.log("gained admin rights, executing cmd in admin mode");
+                        installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
+                        installer.dropAdminRights();
+                    }
+                }
+            } catch(e) {
+                console.log("unable to erase StrataUtils folder: " + strataUtilsFolder);
+                console.log(e);
+            }
+        }
+
+        // correct access rights to allow use [CLI] mode checkupdates
+        // needed when it is in Program Files directory on Win10
+        if ((installer.isInstaller() == true) && (requiresAdminRights == true)) {
+            var maintenance_tool_ini = target_dir + "\\" + installer.value("MaintenanceToolName") + ".ini";
+            try {
+                if (installer.gainAdminRights() == true) {
+                    if (installer.fileExists(target_dir) == true) {
+                        console.log("changing acces rights for Strata folder: " + target_dir);
+                        installer.execute("cmd", ["/c", "icacls", target_dir, "/grant", "Users:M", "/t"]);
+                    }
                     installer.dropAdminRights();
                 }
+            } catch(e) {
+                console.log("unable to change acces rights for Strata");
+                console.log(e);
             }
-        } catch(e) {
-            console.log("unable to erase StrataUtils folder: " + strataUtilsFolder);
-            console.log(e);
         }
     }
 
