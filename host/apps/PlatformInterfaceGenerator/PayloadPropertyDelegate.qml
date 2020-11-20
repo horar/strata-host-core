@@ -9,8 +9,29 @@ ColumnLayout {
     Layout.leftMargin: 20
     spacing: 5
 
-    property ListModel payloadArrayModel: model.array
-    property ListModel payloadObjectModel: model.object
+    property ListModel subArrayListModel: model.array
+    property ListModel subObjectListModel: model.object
+
+    function changePropertyType(index) {
+        if (index === 4) {
+            if (subArrayListModel.count === 0) {
+                subObjectListModel.clear()
+                subArrayListModel.append({"type": "int", "indexSelected": 0, "array": [], "object": [], "parent": subArrayListModel})
+                commandsListView.contentY += 50
+            }
+        } else if (index === 5) {
+            if (subObjectListModel.count === 0) {
+                subArrayListModel.clear()
+                subObjectListModel.append({"key": "", "type": "int", "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": subObjectListModel})
+            }
+        } else {
+            subArrayListModel.clear()
+            subObjectListModel.clear()
+        }
+
+        model.type = propertyType.currentText
+        model.indexSelected = index
+    }
 
     RowLayout {
         id: propertyBox
@@ -89,39 +110,14 @@ ColumnLayout {
             }
         }
 
-        ComboBox {
+        TypeSelectorComboBox {
             id: propertyType
-            Layout.preferredWidth: 150
-            Layout.preferredHeight: 30
-            model: ["int", "double", "string", "bool", "array", "object"]
-
             Component.onCompleted: {
-                let idx = find(model.type);
-                if (idx === -1) {
-                    currentIndex = 0;
-                } else {
-                    currentIndex = idx
-                }
+                currentIndex = indexSelected
             }
 
             onActivated: {
-                if (index === 4) {
-                    if (payloadContainer.payloadArrayModel.count === 0) {
-                        payloadContainer.payloadObjectModel.clear()
-                        payloadContainer.payloadArrayModel.append({"type": "int", "indexSelected": 0})
-                        commandsListView.contentY += 50
-                    }
-                } else if (index === 5) {
-                    if (payloadContainer.payloadObjectModel.count === 0) {
-                        payloadContainer.payloadArrayModel.clear()
-                        payloadContainer.payloadObjectModel.append({"key": "", "type": "int", "indexSelected": 0, "valid": true})
-                    }
-                } else {
-                    payloadContainer.payloadArrayModel.clear()
-                    payloadContainer.payloadObjectModel.clear()
-                }
-
-                type = currentText // This refers to model.type, but since there is a naming conflict with this ComboBox, we have to use type
+                changePropertyType(index)
             }
         }
     }
@@ -131,7 +127,7 @@ ColumnLayout {
     *****************************************/
     Repeater {
         id: payloadArrayRepeater
-        model: payloadContainer.payloadArrayModel
+        model: payloadContainer.subArrayListModel
 
         delegate: PayloadArrayPropertyDelegate {
             modelIndex: index
@@ -143,7 +139,7 @@ ColumnLayout {
     *****************************************/
     Repeater {
         id: payloadObjectRepeater
-        model: payloadContainer.payloadObjectModel
+        model: payloadContainer.subObjectListModel
 
         delegate: PayloadObjectPropertyDelegate {
             modelIndex: index

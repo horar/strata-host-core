@@ -8,5 +8,6 @@
         <file>CommandNotificationDelegate.qml</file>
         <file>PayloadObjectPropertyDelegate.qml</file>
         <file>PayloadArrayPropertyDelegate.qml</file>
+        <file>TypeSelectorComboBox.qml</file>
     </qresource>
 </RCC>

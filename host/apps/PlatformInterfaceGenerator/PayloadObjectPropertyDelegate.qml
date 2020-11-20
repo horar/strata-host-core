@@ -2,132 +2,199 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
-RowLayout {
-    id: objectRowLayout
-    Layout.preferredHeight: 30
+ColumnLayout {
+    id: objectPropertyContainer
+
     Layout.leftMargin: 20
-    Layout.fillHeight: true
     spacing: 5
 
+    property ListModel parentListModel: model.parent
+    property ListModel subArrayListModel: model.array
+    property ListModel subObjectListModel: model.object
     property int modelIndex
 
-    RoundButton {
-        Layout.preferredHeight: 15
-        Layout.preferredWidth: 15
-        padding: 0
-        hoverEnabled: true
-
-        icon {
-            source: "qrc:/sgimages/times.svg"
-            color: removeObjectFromPayloadMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
-            height: 7
-            width: 7
-            name: "add"
-        }
-
-        Accessible.name: "Remove property from object in payload"
-        Accessible.role: Accessible.Button
-        Accessible.onPressAction: {
-            removeObjectFromPayloadMouseArea.clicked()
-        }
-
-        MouseArea {
-            id: removeObjectFromPayloadMouseArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-            onClicked: {
-                payloadContainer.payloadObjectModel.remove(modelIndex)
+    function changePropertyType(index) {
+        if (index === 4) {
+            if (subArrayListModel.count === 0) {
+                subObjectListModel.clear()
+                subArrayListModel.append({"type": "int", "indexSelected": 0, "array": [], "object": [], "parent": subArrayListModel})
+                commandsListView.contentY += 50
             }
+        } else if (index === 5) {
+            if (subObjectListModel.count === 0) {
+                subArrayListModel.clear()
+                subObjectListModel.append({"key": "", "type": "int", "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": subObjectListModel})
+            }
+        } else {
+            subArrayListModel.clear()
+            subObjectListModel.clear()
         }
+
+        model.type = propertyType.currentText
+        model.indexSelected = index
     }
 
-    TextField {
-        id: propertyKey
-        Layout.preferredWidth: 150
+    RowLayout {
+        id: objectRowLayout
         Layout.preferredHeight: 30
-        placeholderText: "Key"
-        validator: RegExpValidator {
-            regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
-        }
+        Layout.leftMargin: 20
+        Layout.fillHeight: true
+        spacing: 5
 
-        background: Rectangle {
-            border.color: {
-                if (!model.valid) {
-                    border.width = 2
-                    return "#D10000";
-                } else if (propertyKey.activeFocus) {
-                    border.width = 2
-                    return palette.highlight
-                } else {
-                    border.width = 1
-                    return "lightgrey"
+        RoundButton {
+            Layout.preferredHeight: 15
+            Layout.preferredWidth: 15
+            padding: 0
+            hoverEnabled: true
+
+            icon {
+                source: "qrc:/sgimages/times.svg"
+                color: removeObjectFromPayloadMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
+                height: 7
+                width: 7
+                name: "add"
+            }
+
+            Accessible.name: "Remove property from object in payload"
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                removeObjectFromPayloadMouseArea.clicked()
+            }
+
+            MouseArea {
+                id: removeObjectFromPayloadMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                onClicked: {
+                    parentListModel.remove(modelIndex)
                 }
             }
-            border.width: 2
         }
 
-        Component.onCompleted: {
-            forceActiveFocus()
+        TextField {
+            id: propertyKey
+            Layout.preferredWidth: 150
+            Layout.preferredHeight: 30
+            placeholderText: "Key"
+            validator: RegExpValidator {
+                regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
+            }
+
+            background: Rectangle {
+                border.color: {
+                    if (!model.valid) {
+                        border.width = 2
+                        return "#D10000";
+                    } else if (propertyKey.activeFocus) {
+                        border.width = 2
+                        return palette.highlight
+                    } else {
+                        border.width = 1
+                        return "lightgrey"
+                    }
+                }
+                border.width: 2
+            }
+
+            Component.onCompleted: {
+                forceActiveFocus()
+            }
+
+            onTextChanged: {
+                model.key = text
+
+                if (text.length > 0) {
+                    model.valid = finishedModel.checkForDuplicateObjectPropertyNames(parentListModel, modelIndex)
+                } else {
+                    model.valid = false
+                }
+            }
         }
 
-        onTextChanged: {
-            model.key = text
+        TypeSelectorComboBox {
+            id: propertyType
+            Component.onCompleted: {
+                currentIndex = indexSelected
+            }
 
-            if (text.length > 0) {
-                model.valid = finishedModel.checkForDuplicateObjectPropertyNames(payloadContainer.payloadObjectModel, modelIndex)
-            } else {
-                model.valid = false
+            onActivated: {
+                changePropertyType(index)
+            }
+        }
+
+        RoundButton {
+            id: addPropertyToObjectButton
+            Layout.preferredHeight: 25
+            Layout.preferredWidth: 25
+            hoverEnabled: true
+            visible: modelIndex === parentListModel.count - 1
+
+            icon {
+                source: "qrc:/sgimages/plus.svg"
+                color: addPropToButtonMouseArea.containsMouse ? Qt.darker("green", 1.25) : "green"
+                height: 20
+                width: 20
+                name: "add"
+            }
+
+            Accessible.name: "Add property to Object"
+            Accessible.role: Accessible.Button
+            Accessible.onPressAction: {
+                addPropToButtonMouseArea.clicked()
+            }
+
+            MouseArea {
+                id: addPropToButtonMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                onClicked: {
+                    parentListModel.append({"key": "", "type": "int", "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
+                    commandsListView.contentY += 40
+                }
             }
         }
     }
 
-    ComboBox {
-        id: objectPropertyType
-        Layout.fillWidth: true
-        Layout.preferredHeight: 30
-        z: 2
-        model: ["int", "double", "string", "bool"]
+    /*****************************************
+    * This Repeater corresponds to the elements in a property of type "array"
+    *****************************************/
+    Repeater {
+        id: subArrayRepeater
+        model: subArrayListModel
 
-        Component.onCompleted: {
-            currentIndex = indexSelected
-        }
+        delegate: Component {
+            Loader {
+                Layout.leftMargin: 20
 
-        onActivated: {
-            type = currentText
-            indexSelected = modelIndex
+                source: "./PayloadArrayPropertyDelegate.qml"
+                onStatusChanged: {
+                    if (status === Loader.Ready) {
+                        item.modelIndex = Qt.binding(() => index)
+                    }
+                }
+            }
         }
     }
 
-    RoundButton {
-        id: addPropertyToObjectButton
-        Layout.preferredHeight: 25
-        Layout.preferredWidth: 25
-        hoverEnabled: true
-        visible: modelIndex === payloadContainer.payloadObjectModel.count - 1
+    /*****************************************
+    * This Repeater corresponds to the elements in a property of type "object"
+    *****************************************/
+    Repeater {
+        id: subObjectRepeater
+        model: subObjectListModel
 
-        icon {
-            source: "qrc:/sgimages/plus.svg"
-            color: addPropToButtonMouseArea.containsMouse ? Qt.darker("green", 1.25) : "green"
-            height: 20
-            width: 20
-            name: "add"
-        }
+        delegate: Component {
+            Loader {
+                Layout.leftMargin: 20
 
-        Accessible.name: "Add item to array"
-        Accessible.role: Accessible.Button
-        Accessible.onPressAction: {
-            addPropToButtonMouseArea.clicked()
-        }
-
-        MouseArea {
-            id: addPropToButtonMouseArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-            onClicked: {
-                payloadContainer.payloadObjectModel.append({"key": "", "type": "int", "indexSelected": 0})
-                commandsListView.contentY += 40
+                source: "./PayloadObjectPropertyDelegate.qml"
+                onStatusChanged: {
+                    if (status === Loader.Ready) {
+                        item.modelIndex = Qt.binding(() => index)
+                    }
+                }
             }
         }
     }
