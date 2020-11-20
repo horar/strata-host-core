@@ -1,12 +1,14 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
+import QtQuick.Window 2.12
 
 import tech.strata.sgwidgets 1.0
 
 
 Rectangle {
     id: root
+    Layout.fillHeight: true
     Layout.fillWidth: true
     color: "#eee"
     z: 3
@@ -137,7 +139,7 @@ Rectangle {
                         width: height
                         source: "qrc:/sgimages/chevron-up.svg"
                         iconColor: "#ddd"
-                        rotation: logsLayout.state === "max" ? 180 : 0
+                        rotation: consoleContainer.state !== "normal" || !(consoleContainer.height < 350) ? 180 : 0
                     }
 
                     MouseArea {
@@ -147,14 +149,28 @@ Rectangle {
                         hoverEnabled: true
 
                         onClicked: {
-                            if(logsLayout.state === "max"){
-                                logsLayout.state = "normal"
+                            if(consoleContainer.state === "drag"){
+                                if(consoleContainer.height > 350){
+                                    consoleContainer.state = "normal"
+                                } else {
+                                    consoleContainer.state = "max"
+                                }
+                            } else if(consoleContainer.state === "max") {
+                                consoleContainer.state = "normal"
                             } else {
-                                logsLayout.state = "max"
+                                consoleContainer.state = "max"
                             }
                         }
                     }
                 }
+            }
+
+            DragHandler {
+                id: dragHandler
+                target:root
+                xAxis.enabled: false
+                yAxis.minimum: Screen.desktopAvailableHeight - consoleContainer.height
+                yAxis.maximum: Screen.desktopAvailableHeight - 150
             }
 
         }

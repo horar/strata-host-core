@@ -136,11 +136,11 @@ Rectangle {
                     Layout.preferredHeight: 70
                     iconText: "Logs"
                     iconSource: "qrc:/sgimages/bars.svg"
-                    color: logsLayout.visible ? "#33b13b" : "transparent"
+                    color: consoleContainer.visible ? "#33b13b" : "transparent"
                     enabled: editor.fileTreeModel.url.toString() !== "" && !startContainer.visible
 
                     function onClicked() {
-                        logsLayout.visible = !logsLayout.visible;
+                        consoleContainer.visible = !consoleContainer.visible;
                     }
                 }
                 /*****************************************
@@ -174,7 +174,7 @@ Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     onVisibleChanged: {
-                        if(visible) logsLayout.visible = !visible
+                        if(visible) consoleContainer.visible = !visible
                     }
                 }
 
@@ -232,15 +232,18 @@ Rectangle {
             }
 
             ConsoleContainer {
-                id: logsLayout
-
+                id: consoleContainer
+                Layout.minimumHeight: 150
+                Layout.maximumHeight: 750
+                Layout.preferredHeight: 350
+                Layout.fillWidth: true
                 visible: false
                 state: "normal"
                 states: [
                     State {
                         name: "max"
                         PropertyChanges {
-                            target: logsLayout
+                            target: consoleContainer
                             Layout.preferredHeight: 750
                             Layout.fillWidth: true
                         }
@@ -249,10 +252,17 @@ Rectangle {
                     State {
                         name: "normal"
                         PropertyChanges {
-                            target: logsLayout
+                            target: consoleContainer
                             Layout.preferredHeight: 350
                             Layout.fillWidth: true
+                        }
+                    },
 
+                    State {
+                        name: "drag"
+                        PropertyChanges {
+                            target: consoleContainer
+                            Layout.fillWidth: true
                         }
                     }
 
