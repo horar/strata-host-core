@@ -157,7 +157,12 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         result = State::Finished;
         break;
     case Flasher::Result::NoFirmware :
-        result = State::NoFirmware;
+        if (operation_ == Operation::BackupBeforeFlash || operation_ == Operation::Backup) {
+            result = State::NoFirmware;
+        } else {
+            result = State::Failed;
+        }
+
         errorMessage = QStringLiteral("The board has no valid firmware.");
         break;
     case Flasher::Result::Error :
