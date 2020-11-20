@@ -74,7 +74,9 @@ ColumnLayout {
     // Get newest version information from DB
     function populateLatestVersion() {
         const latestVersionIndex = platformStack.controlViewContainer.controlViewList.getLatestVersionIndex();
-        latestVersion = platformStack.controlViewContainer.controlViewList.get(latestVersionIndex);
+        if (latestVersionIndex >= 0) {
+            latestVersion = platformStack.controlViewContainer.controlViewList.get(latestVersionIndex);
+        }
     }
 
     function populateInstalledVersion() {
