@@ -32,9 +32,7 @@ ColumnLayout {
                 if (payload.error_string.length > 0) {
                     downloadError = true
                 } else {
-                    if (connected) {
-                        platformStack.controlViewContainer.installResource(latestVersion.version, payload.filepath)
-                    }
+                    platformStack.controlViewContainer.installResource(latestVersion.version, payload.filepath)
                     installedVersion = latestVersion
                     upToDate = true
                     controlViewIsOutOfDate = false
