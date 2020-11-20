@@ -26,7 +26,7 @@ bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc) {
             if (std::strcmp(jsonStatus, CSTR_NO_FIRMWARE) == 0) {
                 qCWarning(logCategoryDeviceOperations) << device_ << "Nothing to backup, board has no firmware.";
                 result_ = CommandResult::FinaliseOperation;
-                status_ = operation::BACKUP_NO_FIRMWARE;
+                status_ = operation::NO_FIRMWARE;
             } else {
                 qCWarning(logCategoryDeviceOperations) << device_ << "Bad notification status: '" << jsonStatus << "'.";
                 result_ = CommandResult::Failure;
