@@ -103,7 +103,7 @@ struct ScrollbackModelItem {
     QByteArray message;
     SciScrollbackModel::MessageType type;
     QDateTime timestamp;
-    bool condensed;
+    bool isCondensed;
     bool isJsonValid;
 };
 
