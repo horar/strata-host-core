@@ -37,7 +37,7 @@ QVariant SciScrollbackModel::data(const QModelIndex &index, int role) const
     case TimestampRole:
         return item.timestamp;
     case IsCondensedRole:
-        return item.condensed;
+        return item.isCondensed;
     case IsJsonValidRole:
         return item.isJsonValid;
     }
@@ -80,7 +80,7 @@ void SciScrollbackModel::append(const QByteArray &message, MessageType type)
     item.message = messageToStore;
     item.type = type;
     item.timestamp = QDateTime::currentDateTime();
-    item.condensed = condensedMode_;
+    item.isCondensed = condensedMode_;
     item.isJsonValid = isJsonValid;
     data_.append(item);
 
@@ -103,7 +103,7 @@ void SciScrollbackModel::append(const QByteArray &message, MessageType type)
 void SciScrollbackModel::setAllCondensed(bool condensed)
 {
     for (auto &item : data_) {
-        item.condensed = condensed;
+        item.isCondensed = condensed;
     }
 
     emit dataChanged(
@@ -119,7 +119,7 @@ void SciScrollbackModel::setIsCondensed(int index, bool condensed)
         return;
     }
 
-    data_[index].condensed = condensed;
+    data_[index].isCondensed = condensed;
 
     emit dataChanged(
                 createIndex(index, 0),
