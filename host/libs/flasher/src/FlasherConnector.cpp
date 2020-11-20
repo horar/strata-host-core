@@ -157,7 +157,7 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         result = State::Finished;
         break;
     case Flasher::Result::NoFirmware :
-        result = State::Failed;
+        result = State::NoFirmware;
         errorMessage = QStringLiteral("The board has no valid firmware.");
         break;
     case Flasher::Result::Error :
@@ -178,11 +178,8 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         qCWarning(logCategoryFlasherConnector) << "Firmware operation was cancelled.";
         break;
     }
-    if (result == State::Failed) {
-        emit operationStateChanged(operation_, result, errorMessage);
-    } else {
-        emit operationStateChanged(operation_, result);
-    }
+
+    emit operationStateChanged(operation_, result, errorMessage);
 
     switch (action_) {
     case Action::None :

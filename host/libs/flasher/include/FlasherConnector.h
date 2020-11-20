@@ -91,7 +91,8 @@ public:
         Started,
         Finished,
         Cancelled,
-        Failed
+        Failed,
+        NoFirmware
     };
     Q_ENUM(State)
 
