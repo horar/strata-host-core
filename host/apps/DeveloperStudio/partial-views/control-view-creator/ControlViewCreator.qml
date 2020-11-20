@@ -18,9 +18,9 @@ Rectangle {
     property bool rccInitialized: false
     property bool recompileRequested: false
     property var debugPlatform: ({
-      deviceId: Constants.NULL_DEVICE_ID,
-      classId: ""
-    })
+                                     deviceId: Constants.NULL_DEVICE_ID,
+                                     classId: ""
+                                 })
 
     onDebugPlatformChanged: {
         recompileControlViewQrc();
@@ -230,16 +230,34 @@ Rectangle {
                 }
 
             }
-                ConsoleContainer {
-                    id: logsLayout
-                    Layout.fillWidth: true
-                    visible: false
 
-                    ConsoleLogger {
-                        id: cvc_console
-                        anchors.fill: parent
+            ConsoleContainer {
+                id: logsLayout
+
+                visible: false
+                state: "normal"
+                states: [
+                    State {
+                        name: "max"
+                        PropertyChanges {
+                            target: logsLayout
+                            Layout.preferredHeight: 750
+                            Layout.fillWidth: true
+                        }
+                    },
+
+                    State {
+                        name: "normal"
+                        PropertyChanges {
+                            target: logsLayout
+                            Layout.preferredHeight: 350
+                            Layout.fillWidth: true
+
+                        }
                     }
-                }
+
+                ]
+            }
         }
     }
 
