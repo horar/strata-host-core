@@ -12,6 +12,9 @@ constexpr uint MAX_GET_FW_INFO_RETRIES(5);
 
 constexpr uint MAX_CHUNK_RETRIES(1);
 
+constexpr int CONTROLLER_TYPE_EMBEDDED(1);
+constexpr int CONTROLLER_TYPE_ASSISTED(2);
+
 constexpr const char* const JSON_ACK = "ack";
 constexpr const char* const JSON_CMD = "cmd";
 constexpr const char* const JSON_FLASH_FIRMWARE = "flash_firmware";
@@ -32,6 +35,7 @@ constexpr const char* const JSON_FW_CLASS_ID = "fw_class_id";
 constexpr const char* const JSON_CNTRL_PLATFORM_ID = "controller_platform_id";
 constexpr const char* const JSON_CNTRL_CLASS_ID = "controller_class_id";
 constexpr const char* const JSON_CNTRL_BOARD_COUNT = "controller_board_count";
+constexpr const char* const JSON_CONTROLLER_TYPE = "controller_type";
 constexpr const char* const JSON_CHUNK = "chunk";
 constexpr const char* const JSON_CHUNKS = "chunks";
 constexpr const char* const JSON_NUMBER = "number";
