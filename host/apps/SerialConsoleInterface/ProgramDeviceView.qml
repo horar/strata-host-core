@@ -67,6 +67,9 @@ FocusScope {
                 } else if (state === FlasherConnector.Failed) {
                     backupNode.nodeState = StatusNode.Failed
                     backupNode.subText = "Error: " + errorString
+                } else if (state === FlasherConnector.NoFirmware) {
+                    backupNode.nodeState = StatusNode.Succeed
+                    backupProgress = -1;
                 }
             } else if (operation === FlasherConnector.Flash) {
                 if (state === FlasherConnector.Started) {
@@ -204,7 +207,11 @@ FocusScope {
                 text: {
                     var t = "Backup"
                     if (processingStatus !== ProgramDeviceView.Setup) {
-                        t += " (" + backupProgress + "% completed)"
+                        if (backupProgress < 0) {
+                            t += " (no firmware to backup)"
+                        } else {
+                            t += " (" + backupProgress + "% completed)"
+                        }
                     }
                     return t
                 }
