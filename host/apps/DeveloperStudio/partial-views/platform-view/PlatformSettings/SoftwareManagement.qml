@@ -20,6 +20,22 @@ ColumnLayout {
     property bool downloadError: false
     property string activeDownloadUri: ""
 
+    Component.onCompleted: {
+        if (platformMetaDataInitialized) {
+            initialize()
+        }
+    }
+
+    Connections {
+        target: platformStack
+
+        onPlatformMetaDataInitializedChanged: {
+            if (platformMetaDataInitialized) {
+                initialize()
+            }
+        }
+    }
+
     Connections {
         target: coreInterface
 
@@ -55,14 +71,6 @@ ColumnLayout {
         }
     }
 
-    Connections {
-        target: platformStack
-
-        onPlatformMetaDataInitializedChanged: {
-            initialize()
-        }
-    }
-
     function initialize() {
         populateLatestVersion()
         populateInstalledVersion()
@@ -78,21 +86,22 @@ ColumnLayout {
     }
 
     function populateInstalledVersion() {
-        // check for preferred version and find it on disk
+        // Check for preferred version and find it on disk
         const userPreferredVersion = controlViewContainer.getInstalledVersion(NavigationControl.context.user_id);
-
         if (userPreferredVersion) {
             for (let i = 0; i < controlViewContainer.controlViewList.count; i++) {
                 const listing = controlViewContainer.controlViewList.get(i)
                 if (listing.version === userPreferredVersion.version && listing.filepath === userPreferredVersion.path) {
-                    // successfully found user's preferred version on disk
+                    // Successfully found user's preferred version on disk
                     installedVersion = {
                         "version": userPreferredVersion.version
                     }
                     return
                 }
             }
-            // Preferred version not found on disk is likely due to manual DB clear but version user settings uncleared
+
+            // Preferred version not found on disk
+            // Possible if HCS DB manually cleared but version user settings uncleared
             console.warn(Logger.devStudioCategory, "User's preferred version not found on disk, removing preferred version setting")
             let versionsInstalled = versionSettings.readFile("versionControl.json");
             controlViewContainer.saveInstalledVersion(false, "", versionsInstalled);
