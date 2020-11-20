@@ -162,14 +162,14 @@ Window {
                     loadDebugView(filepath)
                 } else {
                     let error_str = sdsModel.resourceLoader.getLastLoggedError()
-                    sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewDevContainer, {"error_message": error_str});
+                    controlViewDevContainer.setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": error_str})
                 }
             }
         }
     }
 
     function loadDebugView (compiledRccFile) {
-        NavigationControl.removeView(controlViewDevContainer)
+        controlViewDevContainer.setSource("")
 
         let uniquePrefix = new Date().getTime().valueOf()
         uniquePrefix = "/" + uniquePrefix
@@ -181,11 +181,6 @@ Window {
         }
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewDevContainer);
-        if (obj === null) {
-            console.error("Could not load view.")
-            let error_str = sdsModel.resourceLoader.getLastLoggedError()
-            sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewDevContainer, {"error_message": error_str});
-        }
+        controlViewDevContainer.setSource(qml_control);
     }
 }

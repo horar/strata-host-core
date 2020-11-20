@@ -382,6 +382,10 @@ Item {
                         }
                     }
                 }
+                
+                NoActiveFile {
+                    id: noActiveFile
+                }
             }
         }
     }

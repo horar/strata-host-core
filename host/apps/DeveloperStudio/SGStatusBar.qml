@@ -15,6 +15,7 @@ import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
 import "qrc:/partial-views/profile-popup"
 import "qrc:/js/help_layout_manager.js" as Help
+import "partial-views/control-view-creator"
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
@@ -147,52 +148,7 @@ Rectangle {
         }
     }
 
-    Rectangle {
-        id: controlViewCreatorContainer
-        anchors {
-            right: profileIconContainer.left
-            rightMargin: 10
-        }
-        height: container.height
-        width: controlViewCreatorRow.implicitWidth + 20
-        color: controlViewCreatorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
-
-        MouseArea {
-            id: controlViewCreatorMouse
-            anchors {
-                fill: parent
-            }
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-
-            onClicked: {
-                let data = {"index": NavigationControl.stack_container_.count-2}
-                NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
-            }
-        }
-
-        RowLayout {
-            id: controlViewCreatorRow
-            spacing: 10
-            anchors {
-                centerIn: parent
-            }
-
-            SGText {
-                id: controlViewCreatorText
-                text: "Create Control View"
-                color: "white"
-            }
-
-            SGIcon {
-                id: plusSignIcon
-                Layout.preferredWidth: 25
-                Layout.preferredHeight: Layout.preferredWidth
-                source: "qrc:/sgimages/plus.svg"
-                iconColor: controlViewCreatorText.color
-            }
-        }
-    }
+    CVCButton { }
 
     Item {
         id: profileIconContainer
