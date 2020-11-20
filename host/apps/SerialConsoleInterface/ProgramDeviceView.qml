@@ -68,7 +68,7 @@ FocusScope {
                     backupNode.nodeState = StatusNode.Failed
                     backupNode.subText = "Error: " + errorString
                 } else if (state === FlasherConnector.NoFirmware) {
-                    backupNode.nodeState = StatusNode.Succeed
+                    backupNode.nodeState = StatusNode.SucceedWithWarning
                     backupProgress = -1;
                 }
             } else if (operation === FlasherConnector.Flash) {
