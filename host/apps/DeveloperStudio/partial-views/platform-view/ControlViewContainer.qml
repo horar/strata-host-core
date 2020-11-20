@@ -153,15 +153,15 @@ Item {
         }
 
         // Find index of any installed version
-        let installedVersionIndex = controlViewList.getInstalledVersion();
+        let installedVersionIndex = controlViewList.getInstalledVersionIndex();
 
         if (installedVersionIndex >= 0) {
             saveInstalledVersion(controlViewList.version(installedVersionIndex), controlViewList.filepath(installedVersionIndex), versionControl);
             registerResource(controlViewList.filepath(installedVersionIndex), controlViewList.version(installedVersionIndex));
         } else {
-            let latestVersionindex = controlViewList.getLatestVersion();
+            let latestVersionIndex = controlViewList.getLatestVersionIndex();
 
-            if (controlViewList.uri(latestVersionindex) === "" || controlViewList.md5(latestVersionindex) === "") {
+            if (controlViewList.uri(latestVersionIndex) === "" || controlViewList.md5(latestVersionIndex) === "") {
                 createErrorScreen("Found no local control view and none for download.")
                 return
             }
@@ -169,13 +169,13 @@ Item {
             let downloadCommand = {
                 "hcs::cmd": "download_view",
                 "payload": {
-                    "url": controlViewList.uri(latestVersionindex),
-                    "md5": controlViewList.md5(latestVersionindex),
+                    "url": controlViewList.uri(latestVersionIndex),
+                    "md5": controlViewList.md5(latestVersionIndex),
                     "class_id": platformStack.class_id
                 }
             };
 
-            activeDownloadUri = controlViewList.uri(latestVersionindex)
+            activeDownloadUri = controlViewList.uri(latestVersionIndex)
 
             coreInterface.sendCommand(JSON.stringify(downloadCommand));
         }
