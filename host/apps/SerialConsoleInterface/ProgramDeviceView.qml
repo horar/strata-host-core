@@ -36,15 +36,15 @@ FocusScope {
         target: model.platform
 
         onFlasherProgramProgress: {
-            programProgress = Math.floor(chunk / total * 100)
+            programProgress = total < 1 ? 0 : Math.floor(chunk / total * 100)
         }
 
         onFlasherBackupProgress: {
-            backupProgress = Math.floor(chunk / total * 100)
+            backupProgress = total < 1 ? 0 : Math.floor(chunk / total * 100)
         }
 
         onFlasherRestoreProgress: {
-            programBackupProgress = Math.floor(chunk / total * 100)
+            programBackupProgress = total < 1 ? 0 : Math.floor(chunk / total * 100)
         }
 
         onFlasherOperationStateChanged: {
