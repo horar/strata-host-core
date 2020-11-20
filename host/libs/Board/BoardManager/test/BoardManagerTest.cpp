@@ -1,8 +1,6 @@
 #include "BoardManagerTest.h"
 #include "DeviceMock.h"
 
-using strata::device::DeviceProperties;
-
 void BoardManagerTest::initTestCase()
 {
 }
@@ -98,11 +96,11 @@ void BoardManagerTest::connectMultipleTest()
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
-    QCOMPARE(boardManager_->device(1)->property(DeviceProperties::deviceName), "Mock device 1");
-    QCOMPARE(boardManager_->device(2)->property(DeviceProperties::deviceName), "Mock device 2");
-    QCOMPARE(boardManager_->device(3)->property(DeviceProperties::deviceName), "Mock device 3");
-    QCOMPARE(boardManager_->device(4)->property(DeviceProperties::deviceName), "Mock device 4");
-    QCOMPARE(boardManager_->device(5)->property(DeviceProperties::deviceName), "Mock device 5");
+    QCOMPARE(boardManager_->device(1)->deviceName(), "Mock device 1");
+    QCOMPARE(boardManager_->device(2)->deviceName(), "Mock device 2");
+    QCOMPARE(boardManager_->device(3)->deviceName(), "Mock device 3");
+    QCOMPARE(boardManager_->device(4)->deviceName(), "Mock device 4");
+    QCOMPARE(boardManager_->device(5)->deviceName(), "Mock device 5");
 
     QCOMPARE(onBoardDisconnectedCalls_, 0);
     removeMockDevice(1);
@@ -127,10 +125,10 @@ void BoardManagerTest::connectMultipleTest()
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
-    QCOMPARE(boardManager_->device(1)->property(DeviceProperties::deviceName), "Mock device 1");
-    QCOMPARE(boardManager_->device(2)->property(DeviceProperties::deviceName), "Mock device 2");
-    QCOMPARE(boardManager_->device(4)->property(DeviceProperties::deviceName), "Mock device 4");
-    QCOMPARE(boardManager_->device(6)->property(DeviceProperties::deviceName), "Mock device 6");
+    QCOMPARE(boardManager_->device(1)->deviceName(), "Mock device 1");
+    QCOMPARE(boardManager_->device(2)->deviceName(), "Mock device 2");
+    QCOMPARE(boardManager_->device(4)->deviceName(), "Mock device 4");
+    QCOMPARE(boardManager_->device(6)->deviceName(), "Mock device 6");
 }
 
 // TODO tests for BoardManager signals:

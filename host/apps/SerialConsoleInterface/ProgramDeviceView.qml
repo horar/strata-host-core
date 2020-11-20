@@ -13,9 +13,9 @@ FocusScope {
     property int processingStatus: ProgramDeviceView.Setup
     property bool doBackup: true
 
-    property real backupProgress: 0.0
-    property real programProgress: 0.0
-    property real programBackupProgress: 0.0
+    property int backupProgress: 0
+    property int programProgress: 0
+    property int programBackupProgress: 0
     property int baseSpacing: 16
 
     property bool editable: processingStatus === ProgramDeviceView.Setup
@@ -36,15 +36,15 @@ FocusScope {
         target: model.platform
 
         onFlasherProgramProgress: {
-            programProgress = chunk / total
+            programProgress = Math.floor(chunk / total * 100)
         }
 
         onFlasherBackupProgress: {
-            backupProgress = chunk / total;
+            backupProgress = Math.floor(chunk / total * 100)
         }
 
         onFlasherRestoreProgress: {
-            programBackupProgress = chunk / total
+            programBackupProgress = Math.floor(chunk / total * 100)
         }
 
         onFlasherOperationStateChanged: {
@@ -67,6 +67,9 @@ FocusScope {
                 } else if (state === FlasherConnector.Failed) {
                     backupNode.nodeState = StatusNode.Failed
                     backupNode.subText = "Error: " + errorString
+                } else if (state === FlasherConnector.NoFirmware) {
+                    backupNode.nodeState = StatusNode.SucceedWithWarning
+                    backupProgress = -1;
                 }
             } else if (operation === FlasherConnector.Flash) {
                 if (state === FlasherConnector.Started) {
@@ -204,7 +207,11 @@ FocusScope {
                 text: {
                     var t = "Backup"
                     if (processingStatus !== ProgramDeviceView.Setup) {
-                        t += " (" + Math.floor(backupProgress * 100) + "% completed)"
+                        if (backupProgress < 0) {
+                            t += " (no firmware to backup)"
+                        } else {
+                            t += " (" + backupProgress + "% completed)"
+                        }
                     }
                     return t
                 }
@@ -216,7 +223,7 @@ FocusScope {
                 text:  {
                     var t = "Program"
                     if (processingStatus !== ProgramDeviceView.Setup) {
-                        t += " (" + Math.floor(programProgress * 100) + "% completed)"
+                        t += " (" + programProgress + "% completed)"
                     }
                     return t
                 }
@@ -225,7 +232,7 @@ FocusScope {
 
             StatusNode {
                 id: programBackupNode
-                text:  "Restore (" + Math.floor(programBackupProgress * 100) + "% completed)"
+                text:  "Restore (" + programBackupProgress + "% completed)"
                 highlight: processingStatus === ProgramDeviceView.ProgramBackupInProgress
                 visible: false
             }
@@ -303,9 +310,9 @@ FocusScope {
 
         programBackupNode.visible = false
 
-        backupProgress = 0.0
-        programProgress = 0.0
-        programBackupProgress = 0.0
+        backupProgress = 0
+        programProgress = 0
+        programBackupProgress = 0
 
         var ok = model.platform.programDevice(firmwareBinaryPath, doBackup)
         if (ok) {
