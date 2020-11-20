@@ -98,7 +98,13 @@ StackLayout {
         visible: (controlViewIsOutOfDate || firmwareIsOutOfDate) &&
                  NavigationControl.userSettings.notifyOnFirmwareUpdate &&
                  model.view !== "settings" &&  // don't show when PlatformSettings already in view
-                 platformStack.visible         // show only when platform's view is visible
+                 platformStack.visible         // show only when this PlatformView is visible
+
+        onVisibleChanged: {
+            if (visible) {
+                visible = true // break above binding so it only shows once per PlatformView instantiation
+            }
+        }
     }
 
     SGUserSettings {
