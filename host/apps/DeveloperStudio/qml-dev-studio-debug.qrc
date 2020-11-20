@@ -62,6 +62,7 @@
         <file>partial-views/control-view-creator/node_modules/monaco-editor/monaco.d.ts</file>
         <file>partial-views/control-view-creator/ImageLoadError.svg</file>
         <file>partial-views/control-view-creator/Editor/TextEditorContainer.qml</file>
+        <file>partial-views/control-view-creator/Editor/NoActiveFile.qml</file>
         <file>partial-views/control-view-creator/Editor/ImageContainer.qml</file>
         <file>partial-views/control-view-creator/Editor/UnsupportedFileType.qml</file>
         <file>partial-views/control-view-creator/navigation/SGSideNavItem.qml</file>
