@@ -33,6 +33,8 @@ bool StrataClient::disconnectServer()
     connector_.sendMessage(R"({"jsonrpc": "2.0","method":"unregister","params":{},"id":1})");
     disconnect(&connector_, &ClientConnector::newMessageRecived, this, &StrataClient::newServerMessage);
     // TODO: implement disconnect function in the connectors
+
+    return true;
 }
 
 void StrataClient::newServerMessage(const QByteArray &serverMessage)
