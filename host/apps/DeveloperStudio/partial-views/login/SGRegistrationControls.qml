@@ -23,7 +23,9 @@ Item {
             firstNameField.focus = true
             passReqsPopup.close()
         }
-        else passReqsPopup.close()
+        else {
+            passReqsPopup.close()
+        }
     }
 
     ColumnLayout {
@@ -106,9 +108,11 @@ Item {
                             hoverEnabled: true
                             onPressedChanged: {
                                 if (passwordField.echoMode === TextInput.Password) {
-                                    passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Normal
+                                    passwordField.echoMode = confirmPasswordField.echoMode
+                                    passwordField.echoMode = TextInput.Normal
                                 } else {
-                                    passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Password
+                                    passwordField.echoMode = confirmPasswordField.echoMode
+                                    passwordField.echoMode = TextInput.Password
                                 }
                             }
                             cursorShape: Qt.PointingHandCursor
