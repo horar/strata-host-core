@@ -6,7 +6,9 @@ using namespace strata::strataComm;
 
 ClientConnector::~ClientConnector() {
     qCDebug(logCategoryStrataClientConnector) << "destroying the client";
-    connector_->close();
+    if (connector_) {
+        connector_->close();
+    }
 }
 
 bool ClientConnector::initilize() {
