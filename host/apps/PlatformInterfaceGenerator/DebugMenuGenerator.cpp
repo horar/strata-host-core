@@ -23,13 +23,11 @@ bool DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMa
     outputStream << generateImports();
 
     // Generate the base object and its main properties
-    outputStream << writeLine("Window {");
+    outputStream << writeLine("Rectangle {");
 
     indentLevel++;
 
-    outputStream << writeLine("height: 600");
     outputStream << writeLine("id: root");
-    outputStream << writeLine("width: 600");
 
     // Generate header
     outputStream << writeLine("Text {");
