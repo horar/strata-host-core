@@ -297,11 +297,11 @@ Rectangle {
                 } else if (item.type === "object") {
                     for (let k = 0; k < item.object.count; k++) {
                         if (item.object.get(k).type === "array") {
-                            if (!checkForArrayValid(item.array.get(k).array)) {
+                            if (!checkForArrayValid(item.object.get(k).array)) {
                                 return false
                             }
-                        } else if (item.array.get(k).type === "object") {
-                            let subObject = item.array.get(k).object;
+                        } else if (item.object.get(k).type === "object") {
+                            let subObject = item.object.get(k).object;
                             for (let m = 0; m < subObject.count; m++) {
                                 if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
                                     return false;
