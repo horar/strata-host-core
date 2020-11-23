@@ -28,7 +28,7 @@ Item {
                 delete NavigationControl.context.device_id
 
                 console.error("Error while loading control view")
-                setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": "Could not load control view"})
+                setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": "Could not load control view: " + sourceComponent.errorString()})
             }
         }
     }
