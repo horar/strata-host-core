@@ -127,6 +127,9 @@ Rectangle {
                         open: pdfAccordion.visible
                         visible: classDocuments.pdfListModel.count > 0
 
+                        Accessible.role: Accessible.Button
+                        Accessible.name: title
+
                         onOpenChanged: {
                             if(open){
                                 pdfAccordion.openContent.start();

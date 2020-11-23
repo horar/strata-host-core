@@ -146,12 +146,12 @@ function Start-SDSAndWait {
     Param (
         [Parameter(Mandatory = $false)][int]$seconds
     )
-    # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
+    # Set-Location $SDSRootDir is needed to resolve the ddl issue when running
     # HCS seperetly so that Windows will look into this directory for dlls
     Set-Location $SDSRootDir
     Start-Process -FilePath $SDSExecFile
     if ($seconds) {
-        Start-Sleep -Seconds 5
+        Start-Sleep -Seconds $seconds
     }
     Set-Location $TestRoot
 }
@@ -216,17 +216,27 @@ function Show-TestSummary {
     Write-Host "Test Summary"
     Write-Separator
 
-    Show-TestResult -TestName "Test-SDSInstaller" -TestResults $SDSInstallerResults
+    if ($TestingExecutable -eq $False) {
+        Show-TestResult -TestName "Test-SDSInstaller" -TestResults $SDSInstallerResults
+    }
 
-    Show-TestResult -TestName "Test-Database" -TestResults $DatabaseResults
+    if ($TestingExecutable -eq $False -or $TestsToRun -contains "all" -or $TestsToRun -contains "database") {
+        Show-TestResult -TestName "Test-Database" -TestResults $DatabaseResults
+    }
 
-    Show-TestResult -TestName "Test-TokenAndViewsDownload" -TestResults $TokenAndViewsDownloadResults
-
-    Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
-
-    Show-TestResult -TestName "Test-GUI" -TestResults $GUIResults
-
-    If ($EnablePlatformIdentificationTest -eq $true) { 
+    if ($TestingExecutable -eq $False -or $TestsToRun -contains "all" -or $TestsToRun -contains "tokenAndViews") {
+        Show-TestResult -TestName "Test-TokenAndViewsDownload" -TestResults $TokenAndViewsDownloadResults
+    }
+    
+    if ($TestingExecutable -eq $False -or $TestsToRun -contains "all" -or $TestsToRun -contains "collateral") {
+        Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
+    }
+    
+    if ($TestingExecutable -eq $False -or $TestsToRun -contains "all" -or $TestsToRun -contains "gui") {
+        Show-TestResult -TestName "Test-GUI" -TestResults $GUIResults
+    }
+    
+    if (($EnablePlatformIdentificationTest -and ($TestingExectuable -eq $False -or $TestsToRun -contains "all")) -or $TestsToRun -contains "platformIndentification") {
         Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults
     }
     

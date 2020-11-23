@@ -19,15 +19,16 @@ if __name__ == "__main__":
     args = Common.getCommandLineArguments(sys.argv)
     if args.verbose:
         with Common.TestLogger() as logger:
-            logger.setLevel("INFO")
+            logger.setLevel("DEBUG")
 
     if args.strataPath:
         subprocess.Popen(args.strataPath)
 
-    if args.hcsAddress:
+    if not args.skipHcsBinding and args.hcsAddress:
         strata.bindToStrata(args.hcsAddress)
-
-    Common.awaitStrata()
+        
+    if args.awaitStrata:
+        Common.awaitStrata()
 
     tests = unittest.defaultTestLoader.loadTestsFromNames(args.testNames)
     runner = unittest.TextTestRunner(verbosity=2, descriptions=True, resultclass= GUITestResult)

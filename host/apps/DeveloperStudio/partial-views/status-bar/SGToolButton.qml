@@ -21,6 +21,13 @@ Rectangle {
     }
     clip: true
 
+    Accessible.name: model.text
+    Accessible.role: Accessible.Button
+    Accessible.selected: model.selected
+    Accessible.onPressAction: {
+        delegateMouse.clicked(mouse)
+    }
+
     Rectangle {
         id: selectedSideHighlight
         color: "black"

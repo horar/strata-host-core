@@ -122,6 +122,8 @@ ColumnLayout {
 
     Text {
         text: "Software Settings:"
+        Accessible.name: text
+        Accessible.role: Accessible.StaticText
         font.bold: true
         font.pixelSize: 18
     }

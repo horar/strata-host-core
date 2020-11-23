@@ -63,6 +63,8 @@ ColumnLayout {
 
     SGText {
         text: "Firmware Settings:"
+        Accessible.name: text
+        Accessible.editable: false
         font.bold: true
         fontSizeMultiplier: 1.38
     }

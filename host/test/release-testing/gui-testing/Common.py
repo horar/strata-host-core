@@ -78,6 +78,7 @@ RESET_PASSWORD_EDIT = "example@onsemi.com"
 RESET_PASSWORD_SUBMIT_BUTTON = "Submit"
 
 PLATFORM_CONTROLS_BUTTON = "Open Platform Controls"
+PLATFORM_TAB_BUTTON = "Open Platform Tab"
 
 STRATA_PROCESS = "Strata Developer Studio.exe"
 LOGIC_GATE_CLASS_ID = "201"
@@ -130,10 +131,17 @@ def getCommandLineArguments(argv):
     parser.add_argument("testNames", nargs='*', type=str, help="Unittest modules or test classes")
     parser.add_argument("--username", action="store", type=str, help="Valid username", metavar="username")
     parser.add_argument("--password", action="store", type=str, help="Valid password", metavar="password")
+    parser.add_argument("--skipHcsBinding", action="store_true", help="Skip the initial binding of HCS to strata")
     parser.add_argument("--hcsAddress", action="store", type=str, help="HCS address (will override hcs with script hcs)",
                         metavar="hcs address")
+    parser.add_argument("--sdsRootDir", action="store", type=str, help="Path to the SDS executable directory",
+                        metavar="strata executable directory")
     parser.add_argument("--strataPath", action="store", type=str, help="Path to Strata executable (will open strata)",
                         metavar="strata path")
+    parser.add_argument("--hcsEnv", action="store", type=str, help="The HCS environment (DEV, QA, or PROD)",
+                        metavar="HCS Environment")
+    parser.add_argument("--hcsAppDataDir", action="store", type=str, help="The path to the AppData directory for HCS.")
+    parser.add_argument("--awaitStrata", action="store_true", help="Wait for strata to load before starting tests.")
     parser.add_argument("--strataIni", action="store", type=str, help="Path to Strata ini", metavar="strata ini path")
     parser.add_argument("--resultsPath", action="store", type=str, help="Specify that a results file should be written to with the given path", metavar="results file path")
     parser.add_argument("--appendResults", action="store_true", help = "Append results to result file instead of making a new one.")

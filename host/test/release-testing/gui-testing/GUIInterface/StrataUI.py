@@ -2,12 +2,13 @@ import _ctypes
 import unittest
 
 from functools import reduce
+import sys
 
 from uiautomation import WindowControl, Control, PropertyId, ControlType, ButtonControl, ToggleState, CheckBoxControl, PatternId
 
 from Common import STRATA_WINDOW, PASSWORD_EDIT, FIRST_NAME_EDIT, USER_ICON_BUTTON, FEEDBACK_SUCCESS_TEXT, LOGIN_TAB, \
     REGISTER_TAB, REMEMBER_ME_CHECKBOX, PLATFORM_CONTROLS_BUTTON, USERNAME_EDIT, EMAIL_EDIT, CONFIRM_PASSWORD_EDIT, \
-    LAST_NAME_EDIT, COMPANY_EDIT, TITLE_EDIT, LOGOUT_BUTTON, TestLogger
+    LAST_NAME_EDIT, COMPANY_EDIT, TITLE_EDIT, LOGOUT_BUTTON, TestLogger, PLATFORM_TAB_BUTTON
 
 class StrataUI:
     '''
@@ -104,6 +105,72 @@ class StrataUI:
         userIcon = self.app.ButtonControl(Compare=self.__hasProperty(PropertyId.NameProperty, USER_ICON_BUTTON))
 
         return self.__existsCatchComError(userIcon)
+
+    def OnPlatformSettings(self):
+        '''
+        True if on Platform Settings view
+        '''
+        text = self.app.TextControl(Compare=self.__hasProperty(PropertyId.NameProperty, "Software Settings:"))
+        return self.__existsCatchComError(text, maxSearchSeconds=1)
+
+    def OnPlatformDocuments(self):
+        '''
+        True if on Platform documents view
+        '''
+        button = self.app.ButtonControl(Compare=self.__hasProperty(PropertyId.NameProperty, "Platform Docments"))
+        return self.__existsCatchComError(button, maxSearchSeconds=1)
+
+    def OnControlView(self):
+        '''
+        True if on control view
+        '''
+        with TestLogger() as logger:
+            logger.info("Locating control view")
+
+        button = self.findButtonByHeight(PLATFORM_TAB_BUTTON, lambda c, l: c < l)
+        if (not self.__existsCatchComError(button, maxSearchSeconds=2)):
+            return False
+
+        if (self.OnPlatformSettings() or self.OnPlatformDocuments()):
+            print("On platform settings or on platform documents")
+            return False
+
+        return True
+
+    def OpenControlView(self):
+        '''
+        Opens a control view
+        '''
+        if (not self.OnPlatformView()):
+            return False
+
+        with TestLogger() as logger:
+            logger.info("Opening control view")
+
+        self.PressButton(PLATFORM_CONTROLS_BUTTON)
+
+
+    def CloseControlView(self):
+        '''
+        Closes a control view
+        '''
+        if (self.OnControlView()):
+            with TestLogger() as logger:
+                logger.info("Closing control view")
+            
+            self.PressButton(PLATFORM_TAB_BUTTON)
+            platformTab = self.app.ButtonControl(searchDepth=1, Name=PLATFORM_TAB_BUTTON)
+            if (not self.__existsCatchComError(platformTab)):
+                with TestLogger() as logger:
+                    logger.error("Could not find platform tab button")
+            
+            # This is the only way I could find to actually clicked the "Close Platform button"
+            # Popups are not able to be found when a control view is open for some reason.
+            # TODO: Figure out why when a control view is open, we are unable to find any popups
+            # self.PressButton("Close Platform")
+            buttonIndex = 3
+            platformTab.Click(y=15 + buttonIndex*30)
+
 
     def OnFeedback(self):
         '''
@@ -305,6 +372,7 @@ def Logout(ui: StrataUI):
     '''
     ui.PressButton(USER_ICON_BUTTON)
     ui.PressButton(LOGOUT_BUTTON)
+
 
 def LogoutIfNeeded(ui):
     if ui.OnPlatformView():

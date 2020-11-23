@@ -31,6 +31,7 @@ function Test-Gui()
     Write-Separator
     $ResultsFile = "$TestRoot\gui-testing\results.txt"
     $BasicTests = "Tests.BoardTests Tests.FeedbackTests Tests.InvalidInputTests Tests.NewRegisterTests Tests.PasswordResetTests"
+    $OTATests = "Tests.OTATests"
     $NoNetworkTests = "Tests.NoNetworkTests"
     $StrataRestartTests = "Tests.StrataRestartTests"
 
@@ -46,18 +47,28 @@ function Test-Gui()
     # Write to "Strata Developer Studio.ini"
     Set-Content "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" $token_string
 
+    # Only run OTA tests if $IncludeOTA is set to $True
+    if ($IncludeOTA -eq $True) {
+        #In case instances still remain
+        Stop-SDS
+        Stop-HCS
 
-    #In case instances still remain
+        Write-Host "TEST GROUP 0: OTA Strata Tests"
+        Write-Host "HCS Environment: $HCSEnv"
+
+        Remove-Item -Path "$Env:AppData\ON Semiconductor\Host Controller Service\$HCSEnv" -Force -Recurse -ErrorAction Ignore
+
+        Start-Process $PythonExec -ArgumentList "$PythonGUIMain $OTATests --username $Username --password $Password --sdsRootDir `"$SDSRootDir`" --hcsEnv $HCSEnv --skipHcsBinding --hcsAddress $HCSTCPEndpoint --hcsAppDataDir `"$HCSAppDataDir`" --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+    }
     Stop-SDS
     Stop-HCS
-
 
     Write-Host "TEST GROUP 1: Normal Strata Tests"
 
     #run basic tests
     Start-SDSAndWait
     Write-Host "Starting test suite"
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $BasicTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $BasicTests --username $Username --password $Password --awaitStrata --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
     Stop-SDS
     Stop-HCS
@@ -73,7 +84,7 @@ function Test-Gui()
 
     Start-SDSAndWait
 
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $NoNetworkTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $NoNetworkTests --username $Username --password $Password --awaitStrata --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
 #    Stop-Process -Name "Strata Developer Studio" -Force
 #    Stop-Process -Name "hcs" -Force
@@ -89,7 +100,7 @@ function Test-Gui()
     Write-Host "`n`nTEST GROUP 3: Strata After Logging In and Restarting"
 
     Start-SDSAndWait
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMainLoginTestPre --username $Username --password $Password" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMainLoginTestPre --username $Username --password $Password --awaitStrata" -NoNewWindow -Wait
 
     Stop-SDS
     Stop-HCS
@@ -97,7 +108,7 @@ function Test-Gui()
     #Test for Strata automatically going to the platform view
     Write-Host "Starting test suite"
     Start-SDSAndWait
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $StrataRestartTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $StrataRestartTests --username $Username --password $Password --awaitStrata --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
     Stop-SDS
     Stop-HCS
