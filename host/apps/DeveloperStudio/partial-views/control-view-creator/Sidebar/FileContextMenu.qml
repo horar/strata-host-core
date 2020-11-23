@@ -23,6 +23,7 @@ Menu {
 
     MenuItem {
         text: "Rename File"
+        enabled: !(model.filename === "Control.qml" && model.parentNode.filepath === treeModel.url)
         onTriggered: {
             treeView.selectItem(styleData.index)
             model.editing = true
