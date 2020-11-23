@@ -44,7 +44,7 @@ Test-StrataRelease.ps1 -SDSExecPath "<PATH_TO_STRATA_EXE>" -Tests hcs,gui,platfo
     param(
         [Parameter(Mandatory=$False, Position=0, HelpMessage="Please enter a path for Strata Installer")]
         [string]$SDSInstallerPath,
-        
+
         [Parameter(Mandatory=$False, HelpMessage="Please enter the path to a SDS executable.")]
         [string]$SDSExecPath,
 
