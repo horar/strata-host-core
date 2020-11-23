@@ -12,14 +12,6 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0
 
-/*
-[Austin Foy/ CS-1294] Hacky solution, this should be the worst case scenario solution, I have determined that the SDS/HCS returns all data before component Loads,
-                      but the Image is loading before component is Completed due to onModelSourceChanged
-
-                      added a initialized bool
-                      added a new timer 0.5 second delay
-*/
-
 Rectangle {
     id: imageContainer
     implicitHeight: width * aspectRatio
