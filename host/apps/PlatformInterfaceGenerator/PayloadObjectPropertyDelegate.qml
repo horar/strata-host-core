@@ -13,27 +13,6 @@ ColumnLayout {
     property ListModel subObjectListModel: model.object
     property int modelIndex
 
-    function changePropertyType(index) {
-        if (index === 4) {
-            if (subArrayListModel.count === 0) {
-                subObjectListModel.clear()
-                subArrayListModel.append({"type": "int", "indexSelected": 0, "array": [], "object": [], "parent": subArrayListModel})
-                commandsListView.contentY += 50
-            }
-        } else if (index === 5) {
-            if (subObjectListModel.count === 0) {
-                subArrayListModel.clear()
-                subObjectListModel.append({"key": "", "type": "int", "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": subObjectListModel})
-            }
-        } else {
-            subArrayListModel.clear()
-            subObjectListModel.clear()
-        }
-
-        model.type = propertyType.currentText
-        model.indexSelected = index
-    }
-
     RowLayout {
         id: objectRowLayout
         Layout.preferredHeight: 30
@@ -119,7 +98,8 @@ ColumnLayout {
             }
 
             onActivated: {
-                changePropertyType(index)
+                type = payloadContainer.changePropertyType(index, subObjectListModel, subArrayListModel)
+                indexSelected = index
             }
         }
 

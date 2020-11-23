@@ -4,9 +4,8 @@ import QtQuick.Layouts 1.12
 
 ComboBox {
     id: propertyType
-    Layout.preferredWidth: 200
-    Layout.preferredHeight: 30
-    model: [
+
+    property var items: [
         { name: "Int", value: "int", description: "Type int" },
         { name: "Double", value: "double", description: "Type double" },
         { name: "String", value: "string", description: "Type string" },
@@ -16,6 +15,10 @@ ComboBox {
         { name: "Object - Known Properties", value: "object", description: "With this you are able to listen to changes made to individual properties in the object" },
         { name: "Object - Unknown Properties", value: "object-dynamic", description: "With this you are unable to listen to changes made to individual properties in the object. You are only able to listen to when the entire object changes." }
     ]
+
+    Layout.preferredWidth: 200
+    Layout.preferredHeight: 30
+    model: items
     textRole: "name"
 
     delegate: ItemDelegate {

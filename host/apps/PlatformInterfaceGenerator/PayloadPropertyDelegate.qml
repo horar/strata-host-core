@@ -12,26 +12,26 @@ ColumnLayout {
     property ListModel subArrayListModel: model.array
     property ListModel subObjectListModel: model.object
 
-    function changePropertyType(index) {
+    function changePropertyType(index, objectListModel, arrayListModel) {
         if (index === 4) {
             // static array
-            if (subArrayListModel.count === 0) {
-                subObjectListModel.clear()
-                subArrayListModel.append({"type": "int", "indexSelected": 0, "array": [], "object": [], "parent": subArrayListModel})
+            if (arrayListModel.count === 0) {
+                objectListModel.clear()
+                arrayListModel.append({"type": "int", "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel})
                 commandsListView.contentY += 50
             }
         } else if (index === 6) {
-            if (subObjectListModel.count === 0) {
-                subArrayListModel.clear()
-                subObjectListModel.append({"key": "", "type": "int", "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": subObjectListModel})
+            // Object with known properties
+            if (objectListModel.count === 0) {
+                arrayListModel.clear()
+                objectListModel.append({"key": "", "type": "int", "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel})
             }
         } else {
-            subArrayListModel.clear()
-            subObjectListModel.clear()
+            arrayListModel.clear()
+            objectListModel.clear()
         }
 
-        model.type = propertyType.currentText
-        model.indexSelected = index
+        return propertyType.items[index].value
     }
 
     RowLayout {
@@ -118,7 +118,8 @@ ColumnLayout {
             }
 
             onActivated: {
-                changePropertyType(index)
+                type = changePropertyType(index, subObjectListModel, subArrayListModel)
+                indexSelected = index
             }
         }
     }
