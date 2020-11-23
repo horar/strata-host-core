@@ -9,6 +9,9 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/constants.js" as Constants
 
 Window {
     id: root
@@ -24,9 +27,32 @@ Window {
     property bool controlViewVisible: controlViewDevContainer.visible
     property bool recompileRequested: false
 
+    property var debugPlatform: ({
+                                    "deviceId": Constants.NULL_DEVICE_ID,
+                                    "classId": ""
+                                 })
+
+    onDebugPlatformChanged: {
+        if (root.qrcFilePath.length > 0) {
+            recompileResource()
+        } else {
+            console.error("Error with QRC file path")
+        }
+    }
+
     Settings {
         category: "ControlViewDev"
         property alias qrcFilePath: root.qrcFilePath
+    }
+
+    SGSortFilterProxyModel {
+        id: connectedPlatforms
+        sourceModel: []
+        invokeCustomFilter: true
+
+        function filterAcceptsRow(index) {
+            return sourceModel.get(index).connected;
+        }
     }
 
     ColumnLayout {
@@ -50,6 +76,7 @@ Window {
             Layout.preferredHeight: 1
             Layout.fillWidth: true
         }
+
 
         SGText {
             text: "Current QRC Path:<br>" + root.qrcFilePath
@@ -99,6 +126,26 @@ Window {
             }
         }
 
+
+
+        SGComboBox {
+            Layout.preferredHeight: 30
+            Layout.preferredWidth: 350
+
+            model: connectedPlatforms
+            placeholderText: "Select a platform to connect to..."
+            enabled: model.count > 0
+            textRole: "verbose_name"
+
+            onCurrentIndexChanged: {
+                let platform = connectedPlatforms.get(currentIndex)
+                debugPlatform = {
+                    deviceId: platform.device_id,
+                    classId: platform.class_id
+                }
+            }
+        }
+
         Button {
             id: recompileButton
             text: "Recompile QRC file"
@@ -115,11 +162,7 @@ Window {
 
                 onClicked: {
                     if (root.qrcFilePath.length > 0) {
-                        recompileRequested = true
-                        sdsModel.resourceLoader.recompileControlViewQrc(root.qrcFilePath)
-                        if (!root.controlViewVisible) {
-                            stackContainer.currentIndex = stackContainer.count - 1
-                        }
+                        recompileResource()
                     } else {
                         console.error("Error with QRC file path")
                     }
@@ -168,6 +211,22 @@ Window {
         }
     }
 
+    Connections {
+        target: mainWindow
+
+        onInitialized: {
+            connectedPlatforms.sourceModel = PlatformSelection.platformSelectorModel
+        }
+    }
+
+    function recompileResource() {
+        recompileRequested = true
+        sdsModel.resourceLoader.recompileControlViewQrc(root.qrcFilePath)
+        if (!root.controlViewVisible) {
+            stackContainer.currentIndex = stackContainer.count - 1
+        }
+    }
+
     function loadDebugView (compiledRccFile) {
         controlViewDevContainer.setSource("")
 
@@ -181,6 +240,11 @@ Window {
         }
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        controlViewDevContainer.setSource(qml_control);
+
+        Help.setClassId(debugPlatform.deviceId);
+        NavigationControl.context.class_id = debugPlatform.classId
+        NavigationControl.context.device_id = debugPlatform.deviceId
+
+        controlViewDevContainer.setSource(qml_control, Object.assign({}, NavigationControl.context));
     }
 }
