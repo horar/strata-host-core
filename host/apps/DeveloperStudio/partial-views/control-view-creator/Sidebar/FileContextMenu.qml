@@ -1,4 +1,5 @@
 import QtQuick.Controls 2.12
+import tech.strata.commoncpp 1.0
 
 Menu {
     id: fileContextMenu
@@ -23,7 +24,7 @@ Menu {
 
     MenuItem {
         text: "Rename File"
-        enabled: !(model.filename === "Control.qml" && model.parentNode.filepath === treeModel.url)
+        enabled: !(model.filename === "Control.qml" && SGUtilsCpp.parentDirectoryPath(SGUtilsCpp.urlToLocalFile(model.filepath)) === SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory))
         onTriggered: {
             treeView.selectItem(styleData.index)
             model.editing = true
