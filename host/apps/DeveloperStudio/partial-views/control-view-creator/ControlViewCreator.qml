@@ -204,6 +204,8 @@ Rectangle {
                 DebugPanel {
                     Layout.fillHeight: true
                     Layout.preferredWidth: implicitWidth
+
+                    expandWidth: 400
                 }
             }
         }

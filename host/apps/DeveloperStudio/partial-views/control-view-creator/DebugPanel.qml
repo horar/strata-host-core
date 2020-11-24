@@ -6,9 +6,11 @@ Rectangle {
     id: root
 
     implicitWidth: expandButtonColumn.width + mainContainer.width
+    visible: debugMenuSource.toString() !== ""
 
     property bool expanded: mainContainer.width > 0
-    property string debugMenuSource: editor.fileTreeModel.debugMenuSource
+    property url debugMenuSource: editor.fileTreeModel.debugMenuSource
+    property int expandWidth: 400
 
     Item {
         id: expandButtonColumn
@@ -80,7 +82,7 @@ Rectangle {
         property: "width"
         duration: 200
         easing.type: Easing.InOutQuad
-        to: 400
+        to: root.expandWidth
     }
 
     function expand() {
