@@ -106,17 +106,17 @@ Rectangle {
             }
         }
 
-            ListView {
-                id: platformTabRepeater
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                delegate: SGPlatformTab {}
-                orientation: ListView.Horizontal
-                spacing: 1
-                clip: true
+        ListView {
+            id: platformTabRepeater
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            delegate: SGPlatformTab {}
+            orientation: ListView.Horizontal
+            spacing: 1
+            clip: true
 
-                model: NavigationControl.platform_view_model_
-            }
+            model: NavigationControl.platform_view_model_
+        }
 
         SGPlatformTab {
             // demonstration tab set for help tour
