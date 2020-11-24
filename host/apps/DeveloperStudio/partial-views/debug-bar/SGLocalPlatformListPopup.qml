@@ -323,7 +323,7 @@ Window {
                     SGComboBox {
                         id: class_id
                         Layout.preferredHeight: 40
-                        Layout.preferredWidth: 300
+                        Layout.preferredWidth: 310
                         model: classModel
                         placeholderText: "class_id..."
                         editable: true
@@ -337,14 +337,12 @@ Window {
                             classId = editText
                         }
 
-
                         onClassIdChanged: {
                             class_id.contentItem.text = classId
                         }
 
                         MouseArea {
                             anchors.fill: parent
-
                             acceptedButtons: Qt.RightButton
 
                             onClicked: {
@@ -369,8 +367,7 @@ Window {
                             }
                         }
 
-                        delegate: ListView {
-                            model: classModel.platform
+                        delegate: Item {
                             height: 40
                             width: parent.width
                             SGText {
