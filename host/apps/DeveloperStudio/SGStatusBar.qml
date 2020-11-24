@@ -51,7 +51,7 @@ Rectangle {
         Help.destroyHelp()
     }
 
-    RowLayout{
+    RowLayout {
         id: tabRow
         anchors {
             left: container.left
@@ -59,21 +59,21 @@ Rectangle {
         }
         spacing: 1
 
-    Item {
-        id: logoContainer
-        Layout.preferredHeight: container.height
-        Layout.preferredWidth: 70
+    	Item {
+        	id: logoContainer
+        	Layout.preferredHeight: container.height
+        	Layout.preferredWidth: 70
 
-        Image {
-            source: "qrc:/images/strata-logo-reverse.svg"
-            height: 30
-            width: 60
-            mipmap: true
-            anchors {
-                centerIn: logoContainer
-            }
-        }
-    }
+        	Image {
+            	source: "qrc:/images/strata-logo-reverse.svg"
+            	height: 30
+            	width: 60
+            	mipmap: true
+            	anchors {
+                	centerIn: logoContainer
+            	}
+        	}
+    	}
 
         Rectangle {
             id: platformSelector
