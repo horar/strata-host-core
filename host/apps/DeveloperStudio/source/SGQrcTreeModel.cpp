@@ -551,6 +551,7 @@ void SGQrcTreeModel::clear(bool emitSignals)
 
     uidMap_.clear();
     qrcItems_.clear();
+    setDebugMenuSource(QUrl());
     if (fsWatcher_->files().count() > 0) {
         fsWatcher_->removePaths(fsWatcher_->files());
     }
