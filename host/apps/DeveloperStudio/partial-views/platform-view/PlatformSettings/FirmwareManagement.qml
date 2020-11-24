@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 ColumnLayout {
     id: firmwareColumn
@@ -20,7 +21,7 @@ ColumnLayout {
     property int firmwareCount: firmwareListModel.count
 
     onFirmwareCountChanged: {
-        matchVersion()
+        checkForNewerVersion()
     }
 
     Connections {
@@ -35,20 +36,29 @@ ColumnLayout {
     Connections {
         target: platformStack
         onConnectedChanged: {
-            matchVersion()
+            checkForNewerVersion()
         }
         onFirmware_versionChanged: {
-            matchVersion()
+            checkForNewerVersion()
         }
+
     }
 
     function matchVersion() {
         for (let i = 0; i < firmwareListModel.count; i++) {
-            let version = firmwareListModel.version(i)
-            if (version === platformStack.firmware_version) {
+            if (SGVersionUtils.equalTo(firmwareListModel.version(i), platformStack.firmware_version)) {
                 firmwareListModel.setInstalled(i, true)
             } else {
                 firmwareListModel.setInstalled(i, false)
+            }
+        }
+    }
+
+    function checkForNewerVersion() {
+        matchVersion()
+        for (let i = 0; i < firmwareListModel.count; i++) {
+            if (SGVersionUtils.lessThan(platformStack.firmware_version, firmwareListModel.version(i))) {
+                firmwareIsOutOfDate = true
             }
         }
     }

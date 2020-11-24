@@ -8,14 +8,15 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 StackLayout {
     id: platformStack
+
     currentIndex: {
         switch (model.view) {
-        case "collateral":
-            return 1
-        case "settings":
-            return 2
-        default: // case "control":
-            return 0
+            case "collateral":
+                return 1
+            case "settings":
+                return 2
+            default: // case "control":
+                return 0
         }
     }
 
@@ -25,7 +26,8 @@ StackLayout {
     property bool connected: model.connected
     property string name: model.name
     property alias controlViewContainer: controlViewContainer
-
+    property bool controlViewIsOutOfDate: false
+    property bool firmwareIsOutOfDate: false
     property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
@@ -60,6 +62,10 @@ StackLayout {
         }
     }
 
+    function openSettings() {
+        model.view = "settings"
+    }
+
     ControlViewContainer {
          id: controlViewContainer
          Layout.fillHeight: true
@@ -85,6 +91,19 @@ StackLayout {
 
         PlatformSettings {
             id: platformSettings
+        }
+    }
+
+    SGUpdateNotificationPopup {
+        visible: (controlViewIsOutOfDate || firmwareIsOutOfDate) &&
+                 NavigationControl.userSettings.notifyOnFirmwareUpdate &&
+                 model.view !== "settings" &&  // don't show when PlatformSettings already in view
+                 platformStack.visible         // show only when this PlatformView is visible
+
+        onVisibleChanged: {
+            if (visible) {
+                visible = true // break above binding so it only shows once per PlatformView instantiation
+            }
         }
     }
 

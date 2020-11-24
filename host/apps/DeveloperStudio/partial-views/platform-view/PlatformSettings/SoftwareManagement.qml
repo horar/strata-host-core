@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
-import tech.strata.logger 1.0 as Logger
+import tech.strata.logger 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -12,43 +12,55 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 ColumnLayout {
     id: software
 
-    property bool upToDate
-    property var activeVersion: null
+    property bool upToDate: true
+    property var installedVersion: {
+        "version": ""
+    }
     property var latestVersion: ({})
-    property string downloadFilepath: ""
     property bool downloadError: false
     property string activeDownloadUri: ""
+
+    Component.onCompleted: {
+        if (platformMetaDataInitialized) {
+            initialize()
+        }
+    }
+
+    Connections {
+        target: platformStack
+
+        onPlatformMetaDataInitializedChanged: {
+            if (platformMetaDataInitialized) {
+                initialize()
+            }
+        }
+    }
 
     Connections {
         target: coreInterface
 
         onDownloadViewFinished: {
             if (payload.url === activeDownloadUri) {
+                // View download requested here by user
                 activeDownloadUri = ""
                 progressUpdateText.percent = 1.0
 
                 if (payload.error_string.length > 0) {
                     downloadError = true
-                    progressBar.color = "red"
-                    upToDate = false
                 } else {
-                    downloadError = false;
-                    downloadFilepath = payload.filepath;
-                    progressBar.color = "#57d445"
+                    platformStack.controlViewContainer.installResource(latestVersion.version, payload.filepath)
+                    installedVersion = latestVersion
                     upToDate = true
-                    platformStack.controlViewContainer.installResource(latestVersion.version, downloadFilepath)
-                    activeVersion = latestVersion
+                    controlViewIsOutOfDate = false
                 }
-                downloadFilepath = ""
-                downloadButtonMouseArea.enabled = true
-                downloadIcon.opacity = 1
-                downloadButtonMouseArea.cursorShape = Qt.PointingHandCursor
             } else if (latestVersion.hasOwnProperty("uri") && payload.url === latestVersion.uri) {
-                activeVersion = latestVersion
+                // Latest view auto downloaded on first connection of device
+                installedVersion = latestVersion
                 upToDate = true
+                controlViewIsOutOfDate = false
             }
-
         }
+
         onDownloadControlViewProgress: {
             if (platformStack.currentIndex === settingsContainer.stackIndex && payload.url === activeDownloadUri) {
                 let progressPercent = payload.bytes_received / payload.bytes_total
@@ -59,65 +71,64 @@ ColumnLayout {
         }
     }
 
-    Connections {
-        target: platformStack
+    function initialize() {
+        populateLatestVersion()
+        populateInstalledVersion()
+        determineUpToDate()
+    }
 
-        onConnectedChanged: {
-            if (platformStack.connected){
-                matchVersion()
-            }
-        }
-
-        onCurrentIndexChanged: {
-            matchVersion()
+    // Get newest version information from DB
+    function populateLatestVersion() {
+        const latestVersionIndex = platformStack.controlViewContainer.controlViewList.getLatestVersionIndex();
+        if (latestVersionIndex >= 0) {
+            latestVersion = platformStack.controlViewContainer.controlViewList.get(latestVersionIndex);
         }
     }
 
-    function matchVersion() {
-        // when the active view is this view, then match the version
-        if (platformStack.currentIndex === settingsContainer.stackIndex) {
-            let installedVersion = controlViewContainer.getInstalledVersion(NavigationControl.context.user_id);
-
-            if (installedVersion) {
-                activeVersion = {
-                    "version": installedVersion.version
-                }
-                upToDate = isUpToDate();
-                return;
-            } else {
-                const activeIdx = controlViewContainer.controlViewList.getInstalledVersion()
-
-                if (activeIdx >= 0) {
-                    activeVersion = platformStack.controlViewContainer.controlViewList.get(activeIdx)
-                } else {
-                    // Using a local view, so set the active version to the git tagged version
-                    activeVersion = {
-                        "version": sdsModel.resourceLoader.getGitTaggedVersion(platformStack.class_id)
+    function populateInstalledVersion() {
+        // Check for preferred version and find it on disk
+        const userPreferredVersion = controlViewContainer.getInstalledVersion(NavigationControl.context.user_id);
+        if (userPreferredVersion) {
+            for (let i = 0; i < controlViewContainer.controlViewList.count; i++) {
+                const listing = controlViewContainer.controlViewList.get(i)
+                if (listing.version === userPreferredVersion.version && listing.filepath === userPreferredVersion.path) {
+                    // Successfully found user's preferred version on disk
+                    installedVersion = {
+                        "version": userPreferredVersion.version
                     }
+                    return
                 }
             }
-            
-            upToDate = isUpToDate();
+
+            // Preferred version not found on disk
+            // Possible if HCS DB manually cleared but version user settings uncleared
+            console.warn(Logger.devStudioCategory, "User's preferred version not found on disk, removing preferred version setting")
+            let versionsInstalled = versionSettings.readFile("versionControl.json");
+            controlViewContainer.saveInstalledVersion(false, "", versionsInstalled);
+        }
+    }
+
+    function determineUpToDate() {
+        if (objectIsEmpty(latestVersion)) {
+            // upToDate remains true
+            console.warn(Logger.devStudioCategory, "Could not find any control views on server for class id:", platformStack.class_id)
+            return;
+        }
+
+        if (SGVersionUtils.greaterThan(latestVersion.version, installedVersion.version)) {
+            upToDate = false
+            controlViewIsOutOfDate = true
+        }
+
+        if (installedVersion.version === "") {
+            upToDate = false
+            // No need to modify controlViewIsOutOfDate when no installed version:
+            // View will automatically be downloaded/installed on first platform connection
         }
     }
 
     function objectIsEmpty(obj) {
         return Object.keys(obj).length === 0 && obj.constructor === Object
-    }
-
-    function isUpToDate() {
-        const latestVersionIdx = platformStack.controlViewContainer.controlViewList.getLatestVersion();
-        latestVersion = platformStack.controlViewContainer.controlViewList.get(latestVersionIdx);
-
-        if (objectIsEmpty(latestVersion)) {
-            console.warn(Logger.devStudioCategory, "Could not find any control views on server for class id:", platformStack.class_id)
-            return true;
-        }
-
-        if (activeVersion.version === "" || SGVersionUtils.greaterThan(latestVersion.version, activeVersion.version)) {
-            return false;
-        }
-        return true;
     }
 
     Text {
@@ -144,8 +155,8 @@ ColumnLayout {
 
     Text {
         text: {
-            if (activeVersion !== null && activeVersion.version !== "") {
-                return activeVersion.version;
+            if (installedVersion.version !== "") {
+                return installedVersion.version;
             } else {
                 return "Not installed";
             }
@@ -264,13 +275,16 @@ ColumnLayout {
                             source: "qrc:/sgimages/download.svg"
                             Layout.preferredHeight: 30
                             Layout.preferredWidth: 30
+                            opacity: downloadColumn.downloadInProgress ? .5 : 1
                         }
                     }
 
                     ColumnLayout {
-                        id: downloadColumn1
+                        id: downloadColumn
                         width: parent.width
-                        visible: false
+                        visible: downloadInProgress || downloadError
+
+                        property bool downloadInProgress: activeDownloadUri !== ""
 
                         Text {
                             id: progressUpdateText
@@ -303,12 +317,11 @@ ColumnLayout {
 
                             Rectangle {
                                 id: progressBar
-                                color: "#57d445"
+                                color: downloadError ? "red" : "#57d445"
                                 height: barBackground1.height
                                 width: 0
 
                                 function reset() {
-                                    color = "#57d445"
                                     width = 0
                                     downloadError = false
                                     progressUpdateText.percent = 0.0
@@ -327,7 +340,6 @@ ColumnLayout {
                             }
                             activeDownloadUri = software.latestVersion.uri
                             progressBar.reset();
-
                             coreInterface.sendCommand(JSON.stringify(updateCommand));
                         }
                     }
@@ -339,14 +351,11 @@ ColumnLayout {
                         fill: parent
                     }
                     hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape: downloadColumn.downloadInProgress ? Qt.ArrowCursor : Qt.PointingHandCursor
+                    enabled: downloadColumn.downloadInProgress === false
+
                     onClicked: {
-                        progressUpdateText.percent = 0.0
-                        downloadColumn1.visible = true
-                        enabled = false
-                        downloadIcon.opacity = 0.5
-                        cursorShape = Qt.ArrowCursor
-                        downloadColumn1.startDownload();
+                        downloadColumn.startDownload();
                     }
                 }
             }

@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import "PlatformSettings"
 import "../"
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Rectangle {
     id: platformSettings
@@ -12,8 +13,6 @@ Rectangle {
     anchors {
         fill: parent
     }
-
-    property alias softwareManagement: softwareManagement
 
     ColumnLayout {
         id: mainColumn
@@ -31,11 +30,18 @@ Rectangle {
             id: firmwareManagement
         }
 
-        // Todo: determine notification UX, to be implemented in CS-880 - re-use warningPop?
-//        CheckBox {
-//            id: reminderCheck
-//            text: "Notify me when newer versions of firmware or controls are available"
-//        }
+        SGCheckBox {
+            id: notifyCheck
+            text: "Notify me when newer versions of firmware or control views are available"
+            Layout.alignment: Qt.AlignLeft
+            leftPadding: 0
+            checked: NavigationControl.userSettings.notifyOnFirmwareUpdate
+
+            onCheckedChanged: {
+                NavigationControl.userSettings.notifyOnFirmwareUpdate = notifyCheck.checked
+                NavigationControl.userSettings.saveSettings()
+            }
+        }
 
         Item {
             // fills extra space

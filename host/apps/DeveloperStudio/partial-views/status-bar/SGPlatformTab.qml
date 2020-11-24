@@ -34,8 +34,13 @@ Item {
         setControlIcon()
     }
 
+    onViewChanged: {
+        setSelectedButton()
+    }
+
     function menuClicked(index) {
         let selection = buttonModel.get(index)
+
         if (selection.view !== view) {
             dropDownPopup.close()
 
@@ -50,7 +55,6 @@ Item {
                 return
             } else {
                 model.view = selection.view
-                setSelectedButton()
             }
         }
 
