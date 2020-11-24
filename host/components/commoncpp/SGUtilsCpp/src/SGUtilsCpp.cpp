@@ -10,6 +10,7 @@
 #include <QDateTime>
 #include <cmath>
 #include <QUuid>
+#include <cctype>
 
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
