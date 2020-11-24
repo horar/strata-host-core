@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtQml.Models 2.12
 
 import tech.strata.sgwidgets 1.0
@@ -21,19 +22,21 @@ Item {
         elide: Text.ElideRight
     }
 
-    TextInput {
+    TextField {
         id: itemFilenameEdit
         width: inQrcIcon.x - x - 10
-        height: 15
+        height: parent.height
         visible: styleData.selected && model.editing
         anchors.verticalCenter: parent.verticalCenter
         verticalAlignment: TextInput.AlignVCenter
         font.pointSize: 10
         color: "black"
-        text: styleData.value
+        text: filenameWithoutExt
         clip: true
         autoScroll: activeFocus
         readOnly: false
+
+        property string filenameWithoutExt: model.filename.replace("." + model.filetype, "")
 
         Keys.onEscapePressed: {
             if (model.editing) {
@@ -44,7 +47,7 @@ Item {
                     return;
                 }
 
-                text = model.filename
+                text = filenameWithoutExt
             }
         }
 
@@ -54,7 +57,7 @@ Item {
             }
 
             if (text.indexOf('/') >= 0) {
-                text = model.filename
+                text = filenameWithoutExt
             }
 
             // If a new file was created, and its filename is still empty
@@ -64,12 +67,12 @@ Item {
             }
 
             let path;
+            let realFileName = model.filename === "" ? text : text + "." + model.filetype
             // Below handles the case where the parentNode is the .qrc file
             if (model.parentNode && !model.parentNode.isDir) {
-                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), text);
+                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), realFileName);
             } else {
-                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), text);
-
+                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), realFileName);
             }
 
             // If we are creating a new file
@@ -81,10 +84,10 @@ Item {
                     console.error("Could not create file:", path)
                 } else {
                     model.editing = false
-                    model.filename = text
+                    model.filename = realFileName
                     model.filepath = SGUtilsCpp.pathToUrl(path);
                     if (!model.isDir) {
-                        model.filetype = SGUtilsCpp.fileSuffix(text).toLowerCase();
+                        model.filetype = SGUtilsCpp.fileSuffix(realFileName).toLowerCase();
                         if (!model.inQrc) {
                             treeModel.addToQrc(styleData.index);
                         }
@@ -93,21 +96,21 @@ Item {
                 }
             } else {
                 // Else we are just renaming an already existing file
-                if (text.length > 0 && model.filename !== text) {
+                if (realFileName.length > 0 && model.filename !== realFileName) {
                     // Don't attempt to rename the file if the text is the same as the original filename
-                    const success = treeModel.renameFile(styleData.index, text)
+                    const success = treeModel.renameFile(styleData.index, realFileName)
                     if (success) {
                         if (openFilesModel.hasTab(model.uid)) {
                             openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
                         }
                     } else {
-                        text = model.filename
+                        text = filenameWithoutExt
                     }
                 } else {
-                    text = model.filename
+                    text = filenameWithoutExt
                 }
 
-                model.editing = false  
+                model.editing = false
             }
         }
 
