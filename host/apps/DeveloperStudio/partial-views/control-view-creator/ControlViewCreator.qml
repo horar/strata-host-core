@@ -165,15 +165,15 @@ Rectangle {
                 Layout.fillWidth: true
             }
 
-            Rectangle {
+            RowLayout {
                 id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "white"
 
                 Loader {
                     id: controlViewLoader
-                    anchors.fill: parent
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     asynchronous: true
 
                     onStatusChanged: {
@@ -199,6 +199,11 @@ Rectangle {
                             );
                         }
                     }
+                }
+
+                DebugPanel {
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: implicitWidth
                 }
             }
         }

@@ -251,6 +251,11 @@ SGQrcTreeNode* SGQrcTreeModel::root() const
     return root_;
 }
 
+QUrl SGQrcTreeModel::debugMenuSource() const
+{
+    return debugMenuSource_;
+}
+
 QVector<SGQrcTreeNode*> SGQrcTreeModel::childNodes()
 {
     return root_->children();
@@ -642,12 +647,25 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
             if (QUrl::fromLocalFile(info.filePath()) == url_) {
                 continue;
             }
+
+            if (info.fileName() == "DebugMenu.qml") {
+                setDebugMenuSource(QUrl::fromLocalFile(info.filePath()));
+            }
+
             SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()), uid);
             QQmlEngine::setObjectOwnership(node, QQmlEngine::CppOwnership);
             parentNode->insertChild(node, parentNode->childCount());
             uidMap_.insert(uid, node);
             pathsInTree_.insert(node->filepath());
         }
+    }
+}
+
+void SGQrcTreeModel::setDebugMenuSource(const QUrl &path)
+{
+    if (path != debugMenuSource_) {
+        debugMenuSource_ = path;
+        emit debugMenuSourceChanged();
     }
 }
 

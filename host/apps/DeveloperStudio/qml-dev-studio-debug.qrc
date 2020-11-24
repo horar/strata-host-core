@@ -9,7 +9,7 @@
         <file alias="SGQmlErrorListButton.qml">partial-views/debug-bar/SGQmlErrorListButton.qml</file>
         <file alias="SGControlViewDevPopup.qml">partial-views/debug-bar/SGControlViewDevPopup.qml</file>
     </qresource>
-    <qresource prefix="">
+    <qresource prefix="/">
         <file>partial-views/control-view-creator/ControlViewCreator.qml</file>
         <file>partial-views/control-view-creator/Editor.qml</file>
         <file>partial-views/control-view-creator/NewControlView.qml</file>
@@ -74,6 +74,6 @@
         <file>partial-views/control-view-creator/utils/template_selection.js</file>
         <file>partial-views/control-view-creator/components/SGControlViewButton.qml</file>
         <file>partial-views/control-view-creator/CVCButton.qml</file>
+        <file>partial-views/control-view-creator/DebugPanel.qml</file>
     </qresource>
-    <qresource prefix="/"/>
 </RCC>

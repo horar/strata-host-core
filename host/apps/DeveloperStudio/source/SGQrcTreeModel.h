@@ -17,6 +17,7 @@ class SGQrcTreeModel : public QAbstractItemModel
     Q_OBJECT
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
     Q_PROPERTY(SGQrcTreeNode* root READ root NOTIFY rootChanged)
+    Q_PROPERTY(QUrl debugMenuSource READ debugMenuSource NOTIFY debugMenuSourceChanged)
     Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
     Q_PROPERTY(QVector<SGQrcTreeNode*> childNodes READ childNodes)
     Q_PROPERTY(QModelIndex rootIndex READ rootIndex WRITE setRootIndex)
@@ -64,6 +65,12 @@ public:
      * @return Returns the root node
      */
     SGQrcTreeNode* root() const;
+
+    /**
+     * @brief debugMenuSource Gets the debug menu source
+     * @return Returns the path to the debug menu. If it doesn't exist, it returns "".
+     */
+    QUrl debugMenuSource() const;
 
     /**
      * @brief childNodes Gets the children for the root node
@@ -192,6 +199,7 @@ signals:
     void urlChanged();
     void projectDirectoryChanged();
     void rootChanged();
+    void debugMenuSourceChanged();
     void errorParsing(const QString error);
     void finishedReadingQrc(const QByteArray &fileText);
 
@@ -236,6 +244,7 @@ private:
     bool createQrcXmlDocument(const QByteArray &fileText);
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
+    void setDebugMenuSource(const QUrl &path);
     QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
     /**
      * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program
@@ -260,4 +269,5 @@ private:
     QSet<QString> qrcItems_;
     std::unique_ptr<QFileSystemWatcher> fsWatcher_;
     QModelIndex rootIndex_;
+    QUrl debugMenuSource_;
 };
