@@ -6,7 +6,6 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
-import "./Console"
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -130,19 +129,6 @@ Rectangle {
                     }
                 }
 
-                SGSideNavItem {
-                    id: logsToggle
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 70
-                    iconText: "Logs"
-                    iconSource: "qrc:/sgimages/bars.svg"
-                    color: consoleContainer.visible ? "#33b13b" : "transparent"
-                    enabled: editor.fileTreeModel.url.toString() !== "" && !startContainer.visible
-
-                    function onClicked() {
-                        consoleContainer.visible = !consoleContainer.visible;
-                    }
-                }
                 /*****************************************
                   Additional items go below here, but above filler
                 *****************************************/
@@ -163,111 +149,66 @@ Rectangle {
             }
         }
 
-        ColumnLayout {
-            id: viewsLogsColumn
-            spacing: 0
-            StackLayout {
-                id: viewStack
+        StackLayout {
+            id: viewStack
 
-                Start {
-                    id: startContainer
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    onVisibleChanged: {
-                        if(visible) consoleContainer.visible = !visible
-                    }
-                }
-
-                Editor {
-                    id: editor
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                }
-
-                Rectangle {
-                    id: controlViewContainer
-                    color: "lightcyan"
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-
-                    SGText {
-                        anchors {
-                            centerIn: parent
-                        }
-                        fontSizeMultiplier: 2
-                        text: "Control view from RCC loaded here"
-                        opacity: .25
-                    }
-                }
-
-                Loader {
-                    id: controlViewLoader
-                    asynchronous: true
-
-                    onStatusChanged: {
-                        if (status === Loader.Ready) {
-                            // Tear Down creation context
-                            delete NavigationControl.context.class_id
-                            delete NavigationControl.context.device_id
-
-                            toolBarListView.recompiling = false
-                            if (toolBarListView.currentIndex === toolBarListView.viewTab
-                                    || source === NavigationControl.screens.LOAD_ERROR) {
-                                viewStack.currentIndex = 2
-                            }
-                        } else if (status === Loader.Error) {
-                            // Tear Down creation context
-                            delete NavigationControl.context.class_id
-                            delete NavigationControl.context.device_id
-
-                            toolBarListView.recompiling = false
-                            console.error("Error while loading control view")
-                            setSource(NavigationControl.screens.LOAD_ERROR,
-                                      { "error_message": "Failed to load control view" }
-                                      );
-                        }
-                    }
-                }
-
-            }
-
-            ConsoleContainer {
-                id: consoleContainer
-                Layout.minimumHeight: 150
-                Layout.maximumHeight: 750
-                Layout.preferredHeight: 350
+            Start {
+                id: startContainer
+                Layout.fillHeight: true
                 Layout.fillWidth: true
-                visible: false
-                state: "normal"
-                states: [
-                    State {
-                        name: "max"
-                        PropertyChanges {
-                            target: consoleContainer
-                            Layout.preferredHeight: 750
-                            Layout.fillWidth: true
-                        }
-                    },
-
-                    State {
-                        name: "normal"
-                        PropertyChanges {
-                            target: consoleContainer
-                            Layout.preferredHeight: 350
-                            Layout.fillWidth: true
-                        }
-                    },
-
-                    State {
-                        name: "drag"
-                        PropertyChanges {
-                            target: consoleContainer
-                            Layout.fillWidth: true
-                        }
-                    }
-
-                ]
             }
+
+            Editor {
+                id: editor
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+            }
+
+            Rectangle {
+                id: controlViewContainer
+                color: "lightcyan"
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                SGText {
+                    anchors {
+                        centerIn: parent
+                    }
+                    fontSizeMultiplier: 2
+                    text: "Control view from RCC loaded here"
+                    opacity: .25
+                }
+            }
+
+            Loader {
+                id: controlViewLoader
+                asynchronous: true
+
+                onStatusChanged: {
+                    if (status === Loader.Ready) {
+                        // Tear Down creation context
+                        delete NavigationControl.context.class_id
+                        delete NavigationControl.context.device_id
+
+                        toolBarListView.recompiling = false
+                        if (toolBarListView.currentIndex === toolBarListView.viewTab
+                                || source === NavigationControl.screens.LOAD_ERROR) {
+                            viewStack.currentIndex = 2
+                        }
+                    } else if (status === Loader.Error) {
+                        // Tear Down creation context
+                        delete NavigationControl.context.class_id
+                        delete NavigationControl.context.device_id
+
+                        toolBarListView.recompiling = false
+                        console.error("Error while loading control view")
+                        setSource(NavigationControl.screens.LOAD_ERROR,
+                                  { "error_message": "Failed to load control view" }
+                                  );
+                    }
+                }
+            }
+
         }
     }
 

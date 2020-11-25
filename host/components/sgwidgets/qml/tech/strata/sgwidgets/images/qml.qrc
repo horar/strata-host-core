@@ -54,7 +54,6 @@
         <file>folder-plus.svg</file>
         <file>redo.svg</file>
         <file>undo.svg</file>
-        <file>coding.svg</file>
         <file>minus.svg</file>
     </qresource>
 </RCC>

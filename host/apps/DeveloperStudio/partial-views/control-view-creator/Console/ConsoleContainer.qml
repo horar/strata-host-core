@@ -139,7 +139,7 @@ Rectangle {
                         width: height
                         source: "qrc:/sgimages/chevron-up.svg"
                         iconColor: "#ddd"
-                        rotation: consoleContainer.state !== "normal" || !(consoleContainer.height < 350) ? 180 : 0
+                        rotation: consoleContainer.state !== "normal" ? 180 : 0
                     }
 
                     MouseArea {
@@ -149,30 +149,17 @@ Rectangle {
                         hoverEnabled: true
 
                         onClicked: {
-                            if(consoleContainer.state === "drag"){
-                                if(consoleContainer.height > 350){
-                                    consoleContainer.state = "normal"
-                                } else {
-                                    consoleContainer.state = "max"
-                                }
-                            } else if(consoleContainer.state === "max") {
+                            if(consoleContainer.state !== "normal"){
+                                consoleContainer.height = 200
                                 consoleContainer.state = "normal"
                             } else {
-                                consoleContainer.state = "max"
+                                consoleContainer.state = "maximize"
+                                consoleContainer.height = 750
                             }
                         }
                     }
                 }
             }
-
-            DragHandler {
-                id: dragHandler
-                target:root
-                xAxis.enabled: false
-                yAxis.minimum: Screen.desktopAvailableHeight - consoleContainer.height
-                yAxis.maximum: Screen.desktopAvailableHeight - 150
-            }
-
         }
 
         ConsoleLogger {

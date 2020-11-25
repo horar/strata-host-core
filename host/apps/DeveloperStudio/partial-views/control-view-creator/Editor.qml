@@ -9,6 +9,7 @@ import tech.strata.SGFileTabModel 1.0
 
 import "Editor/"
 import "Sidebar/"
+import "Console/"
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "../"
 
@@ -347,40 +348,73 @@ Item {
                 }
             }
 
-            StackLayout {
-                id: fileStack
-                Layout.fillHeight: visible
+            SGSplitView{
+                id: splitView
                 Layout.fillWidth: true
-                currentIndex: openFilesModel.currentIndex
-                visible: !parsingErrorRect.visible
+                Layout.fillHeight: true
+                orientation: Qt.Vertical
+                visible: true
 
-                Repeater {
-                    id: fileEditorRepeater
-                    model: openFilesModel
+                StackLayout {
+                    id: fileStack
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    currentIndex: openFilesModel.currentIndex
+                    visible: !parsingErrorRect.visible
 
-                    delegate: Component {
-                        Loader {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
 
-                            source: switch(model.filetype) {
-                                case "svg":
-                                case "jpg":
-                                case "jpeg":
-                                case "png":
-                                case "gif":
-                                    return "./Editor/ImageContainer.qml"
-                                case "qml":
-                                case "csv":
-                                case "html":
-                                case "txt":
-                                case "json":
-                                    return "./Editor/TextEditorContainer.qml"
-                                default:
-                                    return "./Editor/UnsupportedFileType.qml"
+                    Repeater {
+                        id: fileEditorRepeater
+                        model: openFilesModel
+
+                        delegate: Component {
+                            Loader {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                source: switch(model.filetype) {
+                                        case "svg":
+                                        case "jpg":
+                                        case "jpeg":
+                                        case "png":
+                                        case "gif":
+                                            return "./Editor/ImageContainer.qml"
+                                        case "qml":
+                                        case "csv":
+                                        case "html":
+                                        case "txt":
+                                        case "json":
+                                            return "./Editor/TextEditorContainer.qml"
+                                        default:
+                                            return "./Editor/UnsupportedFileType.qml"
+                                        }
                             }
                         }
                     }
+                }
+
+                ConsoleContainer {
+                    id: consoleContainer
+                    Layout.minimumHeight: 200
+                    Layout.maximumHeight: 750
+                    Layout.fillWidth: true
+                    visible: true
+                    state: "normal"
+                    states:[
+                        State {
+                            name: "maximize"
+                            PropertyChanges {
+                                target: consoleContainer
+                                Layout.preferredHeight: 750
+                            }
+                        }, State {
+                            name: "normal"
+                            PropertyChanges {
+                                target: consoleContainer
+                                Layout.preferredHeight: 200
+                            }
+                        }
+                    ]
                 }
             }
         }
