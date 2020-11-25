@@ -5,7 +5,6 @@
 #include "Database.h"
 #include "CouchbaseDatabase.h"
 
-class Database;
 class CouchbaseDatabase;
 
 class CouchbaseDocument

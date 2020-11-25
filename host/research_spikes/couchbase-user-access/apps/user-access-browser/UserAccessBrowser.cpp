@@ -3,7 +3,6 @@
 #include "CouchbaseDocument.h"
 
 #include <QDebug>
-#include <thread>
 
 UserAccessBrowser::UserAccessBrowser(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
@@ -12,7 +11,6 @@ UserAccessBrowser::UserAccessBrowser(QQmlApplicationEngine *engine, QObject *par
 void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsername, const QStringList &strataChannelList, const QString &endpointURL) {
     strataLoginUsername_ = strataLoginUsername;
     endpointURL_ = endpointURL;
-    stopRequested_ = false;
 
     // Open database, provide desired username and chatroom
     DatabaseManager databaseManager;
@@ -26,9 +24,9 @@ void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsern
         return;
     }
 
-    auto changeListener = [this](cbl::Replicator, const CBLReplicatorStatus) {
-        if (!stopRequested_) {
-            qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!";
+    auto changeListener = [this](cbl::Replicator, const CBLReplicatorStatus status) {
+        qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!";
+        if (status.activity == kCBLReplicatorStopped) {
             auto db_obj = DB_->getDatabaseAsJsonObj();
             emit statusUpdated(db_obj.size());
         }
@@ -39,27 +37,14 @@ void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsern
     };
 
     // Start replicator
-    if (DB_->startReplicator(endpointURL_, "", "", "pull", changeListener, documentListener, true)) {
+    if (DB_->startReplicator(endpointURL_, "", "", "pull", changeListener, documentListener, false)) {
         qDebug() << "Replicator successfully started.";
     } else {
         qDebug() << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid.";
     }
-
-    // Wait until replication is connected
-    unsigned int retries = 0;
-    while (DB_->getReplicatorStatus() != "Stopped" && DB_->getReplicatorStatus() != "Idle") {
-        ++retries;
-        std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
-        if (DB_->getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
-            DB_->stopReplicator();
-            qDebug() << "Error with execution of replicator. Verify endpoint URL" << endpointURL_ << "is valid.";
-            break;
-        }
-    }
 }
 
 void UserAccessBrowser::logoutAndStopReplication() {
-    stopRequested_ = true;
     strataLoginUsername_ = "";
     endpointURL_ = "";
     DB_->close();

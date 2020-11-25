@@ -17,7 +17,7 @@ void CouchChat::loginAndStartReplication(const QString &user_name, const QString
 
     // Open database, provide desired username and chatroom
     DatabaseManager databaseManager;
-    DB_ = databaseManager.open(channel_name, user_name);
+    DB_ = databaseManager.open(user_name, channel_name);
 
     // Object valid if database open successful
     if (DB_) {

@@ -2,21 +2,23 @@
 
 #include "CouchbaseDatabase.h"
 
+#include <vector>
+
 class DatabaseAccess;
 
 class DatabaseManager
 {
-    friend class CouchbaseDocument;
 
 public:
-    DatabaseAccess* open(const QString &channel_access, const QString &database_prefix = "");
+    DatabaseAccess* open(const QString &name, const QString &channel_access = "");
 
-    DatabaseAccess* open(const QString &name, const QStringList &channel_access, const QString &database_prefix = "");
+    DatabaseAccess* open(const QString &name, const QStringList &channel_access);
 
 private:
     DatabaseAccess *db_access_;
-};
 
+    QString createUserDirectory(const QString &name);
+};
 
 class DatabaseAccess
 {
@@ -25,31 +27,23 @@ class DatabaseAccess
 public:
     bool close();
 
-    bool write(CouchbaseDocument *doc);
+    bool write(CouchbaseDocument *doc, const QString &bucket = "");
 
-    bool deleteDoc(const QString &id);
+    bool write(CouchbaseDocument *doc, const QStringList &buckets);
 
-    /**
-     * Returns a document by given ID
-     * @param id document ID
-     * @return returns document body as QString in JSON format, or empty QString if not found
-     */
-    QString getDocumentAsStr(const QString &id);
+    bool deleteDoc(const QString &id, const QString &bucket = "");
 
-    /**
-     * Returns a document by given ID
-     * @param id document ID
-     * @return returns document body as QJsonObject, or empty QJsonObject if not found
-     */
-    QJsonObject getDocumentAsJsonObj(const QString &id);
+    QString getDocumentAsStr(const QString &id, const QString &bucket = "");
 
-    QJsonObject getDatabaseAsJsonObj();
+    QJsonObject getDocumentAsJsonObj(const QString &id, const QString &bucket = "");
+
+    QJsonObject getDatabaseAsJsonObj(const QString &bucket = "");
 
     QString getDatabaseName();
 
     QString getDatabasePath();
 
-    QStringList getAllDocumentKeys();
+    QStringList getAllDocumentKeys(const QString &bucket);
 
     /********************************************
      * REPLICATOR API *
@@ -58,11 +52,12 @@ public:
     /**
      * Initializes and starts the DB replicator
      * @param url replicator / sync-gateway URL to connect to
-     * @param username sync-gateway username (optional)
-     * @param password sync-gateway password (optional)
-     * @param type push/pull/push and pull (optional)
-     * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
-     * @param reconnection_policy default behavior or automatically try to reconnect (optional)
+     * @param username sync-gateway username (optional, default to empty)
+     * @param password sync-gateway password (optional, default to empty)
+     * @param replicator_type push/pull/push and pull (optional, default to pull only)
+     * @param changeListener function handle (optional, default is used)
+     * @param documentListener function handle (optional, default is used)
+     * @param continuous replicator continuous (optional, default to one-shot)
      * @return true when succeeded, otherwise false
      */
     bool startReplicator(const QString &url,
@@ -75,16 +70,18 @@ public:
 
     void stopReplicator();
 
-    QString getReplicatorStatus();
+    QString getReplicatorStatus(const QString &bucket = "");
 
-    int getReplicatorError();
+    int getReplicatorError(const QString &bucket = "");
 
 private:
-    QString name_;
+    QString name_, user_directory_;
 
     QStringList channel_access_;
 
-    std::unique_ptr<CouchbaseDatabase> database_;
+    std::vector<std::unique_ptr<CouchbaseDatabase>> database_map_;
+
+    CouchbaseDatabase* getBucket(const QString &bucketName);
 
     std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr;
 

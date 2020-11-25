@@ -16,6 +16,7 @@ bool CouchbaseDocument::setBody(const std::string &body) {
         return false;
     }
     mutable_doc_->setProperties(fleece_doc);
+    (*mutable_doc_.get())["StrataExternalDocID"] = doc_ID_;
     return true;
 }
 
@@ -31,11 +32,9 @@ fleece::keyref<fleece::MutableDict, fleece::slice> CouchbaseDocument::operator[]
 
 void CouchbaseDocument::tagChannelField(const std::vector<std::string> &channels) {
     auto doc_ref = mutable_doc_.get();
-    // TODO: might need to check if fields are already taken to avoid overwriting
     if (channels.size() != 1) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: size of 'channels' field must be exactly 1.";
         return;
     }
     (*doc_ref)["StrataExternalChannelID"] = channels.at(0);
-    (*doc_ref)["StrataExternalDocID"] = doc_ID_;
 }
