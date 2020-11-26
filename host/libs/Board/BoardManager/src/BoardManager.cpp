@@ -243,12 +243,12 @@ void BoardManager::startDeviceOperations(const DevicePtr device) {
 
     connect(device.get(), &Device::msgFromDevice, this, &BoardManager::checkNotification);
 
-    deviceOperations_.insert(device->deviceId(), operation);
+    identifyOperations_.insert(device->deviceId(), operation);
 }
 
 // mutex_ must be locked before calling this function (due to modification openedDevices_)
 bool BoardManager::closeDevice(const int deviceId) {
-    deviceOperations_.remove(deviceId);
+    identifyOperations_.remove(deviceId);
     auto it = openedDevices_.find(deviceId);
     if (it != openedDevices_.end()) {
         it.value()->close();
@@ -276,7 +276,7 @@ void BoardManager::handleOperationFinished(operation::Result result, int status,
         int deviceId = baseOp->deviceId();
 
         // operation has finished, we do not need BaseDeviceOperation object anymore
-        deviceOperations_.remove(deviceId);
+        identifyOperations_.remove(deviceId);
 
         bool boardRecognized = (result == operation::Result::Success) ? true : false;
 
@@ -357,22 +357,16 @@ void BoardManager::checkNotification(QByteArray message) {
 }
 
 void BoardManager::handlePlatformIdChanged(const int deviceId, QPrivateSignal) {
-    DevicePtr device = nullptr;
-    {
-        QMutexLocker lock(&mutex_);
-        // usage of openedDevices_ - call it while mutex_ is locked
-        if (openedDevices_.contains(deviceId)) {
-            device = openedDevices_.value(deviceId);
-        }
-    }
-
+    // method device() uses mutex_
+    DevicePtr device = this->device(deviceId);
     if (device == nullptr) {
         return;
     }
 
-    if (deviceOperations_.contains(deviceId)) {
-        deviceOperations_.value(deviceId)->cancelOperation();
-        deviceOperations_.remove(deviceId);
+    auto it = identifyOperations_.find(deviceId);
+    if (it != identifyOperations_.end()) {
+        it.value()->cancelOperation();
+        identifyOperations_.erase(it);
     }
 
     std::shared_ptr<operation::BaseDeviceOperation> operation (
@@ -385,7 +379,7 @@ void BoardManager::handlePlatformIdChanged(const int deviceId, QPrivateSignal) {
     operation::Identify *identify = dynamic_cast<operation::Identify*>(operation.get());
     identify->run();
 
-    deviceOperations_.insert(device->deviceId(), operation);
+    identifyOperations_.insert(device->deviceId(), operation);
 }
 
 void BoardManager::operationLaterDeleter(operation::BaseDeviceOperation *operation) {

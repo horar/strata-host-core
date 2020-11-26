@@ -131,7 +131,7 @@ namespace strata {
         QHash<int, QString> serialIdToName_;
         QHash<int, device::DevicePtr> openedDevices_;
 
-        QHash<int, std::shared_ptr<device::operation::BaseDeviceOperation>> deviceOperations_;
+        QHash<int, std::shared_ptr<device::operation::BaseDeviceOperation>> identifyOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;
