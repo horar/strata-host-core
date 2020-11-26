@@ -19,6 +19,8 @@ public:
     ~ClientConnector();
 
     bool initilize();
+    bool disconnectClient();
+    bool connectClient();
     void readMessages();
     void sendMessage(const QByteArray &message);
 
@@ -30,7 +32,7 @@ private slots:
 
 private:
     std::unique_ptr<strata::connector::Connector> connector_;
-    QSocketNotifier *readSocketNotifier_;
+    std::unique_ptr<QSocketNotifier> readSocketNotifier_;
     QString serverAddress_;
     QByteArray dealerId_;
 };

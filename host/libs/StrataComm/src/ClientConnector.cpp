@@ -6,9 +6,7 @@ using namespace strata::strataComm;
 
 ClientConnector::~ClientConnector() {
     qCDebug(logCategoryStrataClientConnector) << "destroying the client";
-    if (connector_) {
-        connector_->close();
-    }
+    disconnectClient();
 }
 
 bool ClientConnector::initilize() {
@@ -16,13 +14,46 @@ bool ClientConnector::initilize() {
     connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER);
     connector_->setDealerID(dealerId_.toStdString());
 
+    if (false == connectClient()) {
+        qCCritical(logCategoryStrataClientConnector) << "Failed to open ClientConnector.";
+        return false;
+    }
+
+    return true;
+}
+
+bool ClientConnector::disconnectClient() 
+{
+    qCDebug(logCategoryStrataClientConnector) << "Disconnecting client.";
+
+    if (connector_ && true == connector_->close()) {    
+        if (readSocketNotifier_) {
+            disconnect(readSocketNotifier_.get(), &QSocketNotifier::activated, this, &ClientConnector::readNewMessages);
+            readSocketNotifier_.reset();
+        }
+        return true;
+    }
+    
+    qCCritical(logCategoryStrataClientConnector) << "Failed to disconnect client.";
+    return false;
+}
+
+bool ClientConnector::connectClient() 
+{
+    qCDebug(logCategoryStrataClientConnector) << "Connecting to the server.";
+    if(true == connector_->isConnected()) {
+        qCCritical(logCategoryStrataClientConnector) << "Client already connected";
+        return false;
+    }
+
     if (false == connector_->open(serverAddress_.toStdString())) {
         qCCritical(logCategoryStrataClientConnector) << "Failed to open ClientConnector.";
         return false;
     }
 
-    readSocketNotifier_ = new QSocketNotifier(connector_->getFileDescriptor(), QSocketNotifier::Type::Read, this);
-    connect(readSocketNotifier_, &QSocketNotifier::activated, this, &ClientConnector::readNewMessages);
+    qCDebug(logCategoryStrataClientConnector) << "Connected to the server.";
+    readSocketNotifier_ = std::make_unique<QSocketNotifier>(connector_->getFileDescriptor(), QSocketNotifier::Type::Read, this);
+    connect(readSocketNotifier_.get(), &QSocketNotifier::activated, this, &ClientConnector::readNewMessages);
 
     readMessages();
 

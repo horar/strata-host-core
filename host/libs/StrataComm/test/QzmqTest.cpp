@@ -2,6 +2,18 @@
 
 #include <QVector>
 
+void ServerConnectorTest::waitForZmqMessages(int delay) 
+{
+    QTimer timer;
+
+    // wait for the messages
+    timer.setSingleShot(true);
+    timer.start(delay);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+}
+
 void ServerConnectorTest::testOpenServerConnectorFaild() {
     strata::strataComm::ServerConnector connector(address_);
     QCOMPARE(connector.initilize(), true);
@@ -46,8 +58,6 @@ void ServerConnectorTest::testServerAndClient() {
 }
 
 void ServerConnectorTest::testMultipleClients() {
-    QTimer timer;
-
     strata::strataComm::ServerConnector server(address_);
     QCOMPARE_(server.initilize(), true);
 
@@ -69,12 +79,7 @@ void ServerConnectorTest::testMultipleClients() {
         client->sendMessage("testClient");
     }
 
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
 
     // clean-up
     for (auto client : clientsList) {
@@ -83,8 +88,6 @@ void ServerConnectorTest::testMultipleClients() {
 }
 
 void ServerConnectorTest::testFloodTheServer() {
-    QTimer timer;
-
     strata::strataComm::ServerConnector server(address_);
     QCOMPARE_(server.initilize(), true);
 
@@ -107,12 +110,7 @@ void ServerConnectorTest::testFloodTheServer() {
 
     client.sendMessage("Start Test");
 
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
 }
 
 void ServerConnectorTest::testFloodTheClient() {
@@ -145,4 +143,55 @@ void ServerConnectorTest::testFloodTheClient() {
     do {
         QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
     } while (timer.isActive());
+}
+
+void ServerConnectorTest::testDisconnectClient() 
+{
+    bool serverRecivedMessage = false;
+    strata::strataComm::ServerConnector server(address_);
+    QCOMPARE_(server.initilize(), true);
+
+    connect(&server, &strata::strataComm::ServerConnector::newMessageRecived, this, [&serverRecivedMessage, &server](const QByteArray &clientId, const QByteArray &messgae) {
+        serverRecivedMessage = true;
+        server.sendMessage("AA", "test from the server");
+    });
+
+    bool clientRecivedMessage = false;
+    strata::strataComm::ClientConnector client(address_, "AA");
+    QCOMPARE_(client.initilize(), true);
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this, [&clientRecivedMessage](const QByteArray &message) {
+        clientRecivedMessage = true;
+    });
+
+    serverRecivedMessage = false;
+    clientRecivedMessage = false;
+    client.sendMessage("test from the client");
+    waitForZmqMessages();
+    QVERIFY_(true == serverRecivedMessage);
+    QVERIFY_(true == clientRecivedMessage);
+
+    QCOMPARE_(client.disconnectClient(), true);
+    waitForZmqMessages();
+
+    QCOMPARE_(client.connectClient(), true);
+
+    serverRecivedMessage = false;
+    clientRecivedMessage = false;
+    client.sendMessage("test from the client");
+    waitForZmqMessages();
+    QVERIFY_(true == serverRecivedMessage);
+    QVERIFY_(true == clientRecivedMessage);
+
+    serverRecivedMessage = false;
+    clientRecivedMessage = false;
+    QCOMPARE_(client.disconnectClient(), true);
+    server.sendMessage("AA", "test from the server");
+    waitForZmqMessages();
+    QVERIFY_(false == serverRecivedMessage);
+    QVERIFY_(false == clientRecivedMessage);
+
+    QCOMPARE_(client.disconnectClient(), false);
+    QCOMPARE_(client.connectClient(), true);
+    QCOMPARE_(client.connectClient(), false);
+    QCOMPARE_(client.disconnectClient(), true);
 }
