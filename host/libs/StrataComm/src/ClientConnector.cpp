@@ -4,12 +4,14 @@
 
 using namespace strata::strataComm;
 
-ClientConnector::~ClientConnector() {
+ClientConnector::~ClientConnector()
+{
     qCDebug(logCategoryStrataClientConnector) << "destroying the client";
     disconnectClient();
 }
 
-bool ClientConnector::initilize() {
+bool ClientConnector::initilize()
+{
     using Connector = strata::connector::Connector;
     connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER);
     connector_->setDealerID(dealerId_.toStdString());
@@ -22,26 +24,27 @@ bool ClientConnector::initilize() {
     return true;
 }
 
-bool ClientConnector::disconnectClient() 
+bool ClientConnector::disconnectClient()
 {
     qCDebug(logCategoryStrataClientConnector) << "Disconnecting client.";
 
-    if (connector_ && true == connector_->close()) {    
+    if (connector_ && true == connector_->close()) {
         if (readSocketNotifier_) {
-            disconnect(readSocketNotifier_.get(), &QSocketNotifier::activated, this, &ClientConnector::readNewMessages);
+            disconnect(readSocketNotifier_.get(), &QSocketNotifier::activated, this,
+                       &ClientConnector::readNewMessages);
             readSocketNotifier_.reset();
         }
         return true;
     }
-    
+
     qCCritical(logCategoryStrataClientConnector) << "Failed to disconnect client.";
     return false;
 }
 
-bool ClientConnector::connectClient() 
+bool ClientConnector::connectClient()
 {
     qCDebug(logCategoryStrataClientConnector) << "Connecting to the server.";
-    if(true == connector_->isConnected()) {
+    if (true == connector_->isConnected()) {
         qCCritical(logCategoryStrataClientConnector) << "Client already connected";
         return false;
     }
@@ -52,24 +55,28 @@ bool ClientConnector::connectClient()
     }
 
     qCDebug(logCategoryStrataClientConnector) << "Connected to the server.";
-    readSocketNotifier_ = std::make_unique<QSocketNotifier>(connector_->getFileDescriptor(), QSocketNotifier::Type::Read, this);
-    connect(readSocketNotifier_.get(), &QSocketNotifier::activated, this, &ClientConnector::readNewMessages);
+    readSocketNotifier_ = std::make_unique<QSocketNotifier>(connector_->getFileDescriptor(),
+                                                            QSocketNotifier::Type::Read, this);
+    connect(readSocketNotifier_.get(), &QSocketNotifier::activated, this,
+            &ClientConnector::readNewMessages);
 
     readMessages();
 
     return true;
 }
 
-void ClientConnector::readNewMessages(/*int socket*/) {
+void ClientConnector::readNewMessages(/*int socket*/)
+{
     qCDebug(logCategoryStrataClientConnector) << "message received.";
     readSocketNotifier_->setEnabled(false);
     readMessages();
     readSocketNotifier_->setEnabled(true);
 }
 
-void ClientConnector::readMessages() {
+void ClientConnector::readMessages()
+{
     std::string message;
-    for(;;) {
+    for (;;) {
         if (connector_->read(message) == false) {
             break;
         }
@@ -78,7 +85,8 @@ void ClientConnector::readMessages() {
     }
 }
 
-void ClientConnector::sendMessage(const QByteArray &message) {
+void ClientConnector::sendMessage(const QByteArray &message)
+{
     qCDebug(logCategoryStrataClientConnector) << "Sending message. Message:" << message;
 
     if (false == connector_->send(message.toStdString())) {
