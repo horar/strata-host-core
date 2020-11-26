@@ -297,6 +297,10 @@ FocusScope {
                                 cursorShape: Qt.IBeamCursor
                                 acceptedButtons: Qt.NoButton
                             }
+
+                            CommonCpp.SGJsonSyntaxHighlighter {
+                                textDocument: cmdText.textDocument
+                            }
                         }
 
                         Rectangle {
