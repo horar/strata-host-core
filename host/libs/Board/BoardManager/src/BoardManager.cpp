@@ -350,6 +350,9 @@ void BoardManager::checkNotification(QByteArray message) {
         return;
     }
 
+    qCInfo(logCategoryBoardManager).nospace() << "Received 'platform_id_changed' notification for device 0x"
+                                              << hex << static_cast<uint>(device->deviceId());
+
     emit platformIdChanged(device->deviceId(), QPrivateSignal());
 }
 
