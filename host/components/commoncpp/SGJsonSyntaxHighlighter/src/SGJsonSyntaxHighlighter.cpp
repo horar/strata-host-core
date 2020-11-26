@@ -3,8 +3,8 @@
 SGJsonSyntaxHighlighter::SGJsonSyntaxHighlighter(QObject *parent)
     : QSyntaxHighlighter(parent)
 {
-    attributeFormat_.setForeground(QColor(143,48,140));
-    stringFormat_.setForeground(QColor(159,41,24));
+    attributeFormat_.setForeground(QColor(110,37,108));
+    stringFormat_.setForeground(QColor(207,53,31));
     numberFormat_.setForeground(QColor(23,60,233));
 }
 
