@@ -30,16 +30,24 @@ bool StrataClient::connectServer()
 
 bool StrataClient::disconnectServer() 
 {
+    qCDebug(logCategoryStrataClient) << "Disconnecting client";
+
     connector_.sendMessage(R"({"jsonrpc": "2.0","method":"unregister","params":{},"id":1})");
     disconnect(&connector_, &ClientConnector::newMessageRecived, this, &StrataClient::newServerMessage);
-    // TODO: implement disconnect function in the connectors
-
+    
+    if (false == connector_.disconnectClient()) {
+        qCCritical(logCategoryStrataClient) << "Failed to disconnect client";
+        return false;
+    }
+    
     return true;
 }
 
 void StrataClient::newServerMessage(const QByteArray &serverMessage)
 {
     qCDebug(logCategoryStrataClient) << "New message from the server:" << serverMessage;
+
+    emit dispatchHandler(ClientMessage());
 }
 
 bool StrataClient::registerHandler(const QString &handlerName, StrataHandler handler)

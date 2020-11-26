@@ -2,14 +2,28 @@
 
 #include "../src/ServerConnector.h"
 
-void StrataClientTest::testRegisterAndUnregisterHandlers() 
+void StrataClientTest::waitForZmqMessages(int delay)
+{
+    QTimer timer;
+    timer.setSingleShot(true);
+    timer.start(delay);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+}
+
+void StrataClientTest::testRegisterAndUnregisterHandlers()
 {
     StrataClient client(address_);
-    
+
     // register new handler
-    QVERIFY_(client.registerHandler("handler_1", [](const strata::strataComm::ClientMessage &cm){return;}));
-    QVERIFY_(client.registerHandler("handler_2", [](const strata::strataComm::ClientMessage &cm){return;}));
-    QVERIFY_(false == client.registerHandler("handler_2", [](const strata::strataComm::ClientMessage &cm){return;}));
+    QVERIFY_(client.registerHandler("handler_1",
+                                    [](const strata::strataComm::ClientMessage &cm) { return; }));
+    QVERIFY_(client.registerHandler("handler_2",
+                                    [](const strata::strataComm::ClientMessage &cm) { return; }));
+    QVERIFY_(false ==
+             client.registerHandler("handler_2",
+                                    [](const strata::strataComm::ClientMessage &cm) { return; }));
 
     QVERIFY_(client.unregisterHandler("handler_1"));
     QVERIFY_(client.unregisterHandler("handler_2"));
@@ -17,43 +31,54 @@ void StrataClientTest::testRegisterAndUnregisterHandlers()
     QVERIFY_(client.unregisterHandler("not_registered_handler"));
 }
 
-void StrataClientTest::testConnectDisconnectToTheServer() 
+void StrataClientTest::testConnectDisconnectToTheServer()
 {
-    QTimer timer;
-    // create a serverConnector
-    // init the serverConnector
+    // serverConnector set up
     strata::strataComm::ServerConnector server(address_);
     server.initilize();
+    bool serverRevicedMessage = false;
+    connect(
+        &server, &strata::strataComm::ServerConnector::newMessageRecived, this,
+        [&server, &serverRevicedMessage](const QByteArray &clientId, const QByteArray &message) {
+            qDebug() << "ServerConnector new message handler. client id:" << clientId << "message"
+                     << message;
+            serverRevicedMessage = true;
+            server.sendMessage(clientId, message);
+        });
 
-    // create a handler for the server
-    connect(&server, &strata::strataComm::ServerConnector::newMessageRecived, this, [&server](const QByteArray &clientId, const QByteArray &message) {
-        qDebug() << "ServerConnector new message handler. client id:" << clientId << "message" << message;
-        server.sendMessage(clientId, message);
-    });
-
-    // create a StrataClient
-    // connect to the server
+    // StrataClient set up
     StrataClient client(address_);
+
+    bool clientRecivedMessage = false;
+    connect(&client, &StrataClient::dispatchHandler, this,
+            [&clientRecivedMessage] { clientRecivedMessage = true; });
+
+    serverRevicedMessage = false;
+    clientRecivedMessage = false;
     QVERIFY_(client.connectServer());
+    waitForZmqMessages();
+    QVERIFY_(serverRevicedMessage);
+    QVERIFY_(clientRecivedMessage);
 
-    // verify that the server got the message
-    // send a message to the client
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    serverRevicedMessage = false;
+    clientRecivedMessage = false;
+    QVERIFY_(client.disconnectServer());
+    waitForZmqMessages();
+    QVERIFY_(serverRevicedMessage);
+    QVERIFY_(false == clientRecivedMessage);
 
-    // disconnect the client from the server
-    // verify that the server got the message
-    // not functional
-    client.disconnectServer();
+    serverRevicedMessage = false;
+    clientRecivedMessage = false;
+    server.sendMessage("StrataClient", "test message");
+    waitForZmqMessages();
+    QVERIFY_(false == serverRevicedMessage);
+    QVERIFY_(false == clientRecivedMessage);
 
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    serverRevicedMessage = false;
+    clientRecivedMessage = false;
+    QVERIFY_(client.connectServer());
+    waitForZmqMessages();
+    QVERIFY_(serverRevicedMessage);
+    QVERIFY_(clientRecivedMessage);
+
 }
