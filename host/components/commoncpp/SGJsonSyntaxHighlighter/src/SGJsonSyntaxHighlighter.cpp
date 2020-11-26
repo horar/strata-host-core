@@ -251,7 +251,7 @@ void SGJsonSyntaxHighlighter::resolveNextToken(const QString &text, int startInd
     }
 }
 
-bool SGJsonSyntaxHighlighter::isCorrectRightChar(const QChar &c)
+bool SGJsonSyntaxHighlighter::isCorrectRightChar(const QChar &c) const
 {
     return c == '}' || c == ']' || c == ',' || c.isSpace();
 }

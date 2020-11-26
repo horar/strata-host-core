@@ -69,5 +69,5 @@ private:
     QQuickTextDocument *textDocument_ = nullptr;
 
     void resolveNextToken(const QString &text, int startIndex, Token &nextToken);
-    bool isCorrectRightChar(const QChar &c);
+    bool isCorrectRightChar(const QChar &c) const;
 };
