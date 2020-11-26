@@ -74,6 +74,15 @@ Module {
         Method { name: "invalidate" }
     }
     Component {
+        name: "QSyntaxHighlighter"
+        prototype: "QObject"
+        Method { name: "rehighlight" }
+        Method {
+            name: "rehighlightBlock"
+            Parameter { name: "block"; type: "QTextBlock" }
+        }
+    }
+    Component {
         name: "SGJLinkConnector"
         prototype: "QObject"
         exports: ["tech.strata.commoncpp/SGJLinkConnector 1.0"]
