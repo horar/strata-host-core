@@ -284,7 +284,7 @@ void BoardManager::handleOperationFinished(operation::Result result, int status,
             emit boardError(deviceId, errStr);
         }
 
-        emit boardReady(deviceId, boardRecognized);
+        emit boardInfoChanged(deviceId, boardRecognized);
     }
 }
 

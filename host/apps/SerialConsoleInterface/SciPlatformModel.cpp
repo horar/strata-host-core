@@ -6,7 +6,7 @@ SciPlatformModel::SciPlatformModel(strata::BoardManager *boardManager, QObject *
       boardManager_(boardManager)
 {
     connect(boardManager_, &strata::BoardManager::boardConnected, this, &SciPlatformModel::boardConnectedHandler);
-    connect(boardManager_, &strata::BoardManager::boardReady, this, &SciPlatformModel::boardReadyHandler);
+    connect(boardManager_, &strata::BoardManager::boardInfoChanged, this, &SciPlatformModel::boardReadyHandler);
     connect(boardManager_, &strata::BoardManager::boardDisconnected, this, &SciPlatformModel::boardDisconnectedHandler);
 }
 
