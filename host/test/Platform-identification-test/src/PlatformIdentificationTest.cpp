@@ -185,7 +185,7 @@ void PlatformIdentificationTest::connectToPlatform() {
             testDeviceId_ = connectedDevicesList.front();
         }
     }
-    boardManager_.reconnect(testDeviceId_);
+    boardManager_.reconnectDevice(testDeviceId_);
 }
 
 void PlatformIdentificationTest::flashPlatform(const QString& binaryFileName) {

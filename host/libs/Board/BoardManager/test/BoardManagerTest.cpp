@@ -50,7 +50,7 @@ void BoardManagerTest::removeMockDevice(const int deviceId)
     auto devicesCount = boardManager_->readyDeviceIds().count();
     auto device = boardManager_->device(deviceId);
     auto mockDevice = std::dynamic_pointer_cast<DeviceMock>(boardManager_->device(deviceId));
-    if (boardManager_->disconnect(deviceId)) {
+    if (boardManager_->disconnectDevice(deviceId)) {
         boardManager_->mockRemoveDevice(deviceId);
         QVERIFY(mockDevice.get() != nullptr);
         QCOMPARE_(boardManager_->readyDeviceIds().count(), --devicesCount);

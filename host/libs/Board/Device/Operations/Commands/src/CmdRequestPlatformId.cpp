@@ -19,8 +19,8 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         const char *name = payload[JSON_NAME].GetString();
-        const char *platformId = "";
-        const char *classId = "";
+        const char *platformId = nullptr;
+        const char *classId = nullptr;
         Device::ControllerType controllerType = Device::ControllerType::Embedded;
         if (payload.HasMember(JSON_PLATFORM_ID)) {
             platformId = payload[JSON_PLATFORM_ID].GetString();
