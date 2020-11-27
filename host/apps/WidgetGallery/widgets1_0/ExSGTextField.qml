@@ -106,6 +106,29 @@ Item {
                 }
             }
         }
+
+        Column {
+            SGWidgets.SGText {
+                text: "With password mode"
+                fontSizeMultiplier: 1.3
+            }
+
+            SGWidgets.SGTextField {
+                passwordMode: true
+                text: "password"
+            }
+        }
+
+        Column {
+            SGWidgets.SGText {
+                text: "With clear option"
+                fontSizeMultiplier: 1.3
+            }
+
+            SGWidgets.SGTextField {
+                showClearButton: true
+            }
+        }
     }
 
     SGWidgets.SGCheckBox {
