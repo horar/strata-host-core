@@ -84,6 +84,11 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGSpinBox"
+            page: "ExSGSpinBox.qml"
+        }
+
+        ListElement {
             name: "SGStatusLight"
             page: "ExSGStatusLight.qml"
         }
@@ -107,7 +112,6 @@ FocusScope {
             name: "SGUserSettings"
             page: "ExSGUserSettings.qml"
         }
-
     }
 
     Component.onCompleted: {
