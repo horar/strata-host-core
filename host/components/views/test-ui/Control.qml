@@ -17,6 +17,7 @@ Item {
     property alias class_id: basic.class_id
     property alias user_id : basic.user_id
     property alias first_name : basic.first_name
+    property alias last_name : basic.last_name
 
 
     BasicControl {

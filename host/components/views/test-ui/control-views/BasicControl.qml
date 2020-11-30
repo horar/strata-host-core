@@ -15,15 +15,18 @@ Item {
     property string class_id: ""
     property string user_id: ""
     property string first_name: ""
-
-
+    property string last_name: ""
 
     Item {
         id: classId
         Text {
-
+            Accessible.name: "class_id: " + text
+            Accessible.role: Accessible.StaticText
+            text: class_id
             Component.onCompleted: {
-                console.info("Class ID", text)
+                if(text != "") {
+                    console.info("Class ID", text)
+                }
             }
         }
     }
@@ -48,6 +51,18 @@ Item {
             text: first_name
             Component.onCompleted: {
                 console.info("First Name", text)
+            }
+        }
+    }
+
+    Item {
+        id: lastName
+        Text {
+            Accessible.name: "last_name:" + text
+            Accessible.role: Accessible.StaticText
+            text: last_name
+            Component.onCompleted: {
+                console.info("Last Name", text)
             }
         }
     }
@@ -172,10 +187,27 @@ Item {
                 }
 
             }
-            //            Item {
-            //                Layout.fillHeight: true
-            //                Layout.fillWidth: true
-            //            }
+            Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                RowLayout {
+                    SGIcon {
+                        id: helpIcon5
+                        width: 20
+                        height: 20
+                        source:  "qrc:/sgimages/times-circle.svg"
+                        iconColor: "red"
+
+                    }
+                    SGText {
+                        id: lastNameText
+                        Layout.fillWidth: true
+                        wrapMode: Text.Wrap
+                        text: "Check last_name"
+
+                    }
+                }
+            }
 
             //            Item {
             //                Layout.fillHeight: true
@@ -213,16 +245,28 @@ Item {
                     userIDText.text += ": " + user_id +  "\n FAILED"
                 }
                 if(first_name) {
-                    console.info("user_id", first_name)
+                    console.info("first_name", first_name)
                     helpIcon4.source = "qrc:/sgimages/check-circle.svg"
                     helpIcon4.iconColor = "green"
                     firstNameText.text += ": " + first_name +  "\n PASSED"
                 }
                 else {
-                    helpIcon3.source = "qrc:/sgimages/times-circle.svg"
-                    helpIcon3.iconColor = "red"
+                    helpIcon4.source = "qrc:/sgimages/times-circle.svg"
+                    helpIcon4.iconColor = "red"
                     firstNameText.text += ": " + first_name +  "\n FAILED"
                 }
+                if(last_name) {
+                    console.info("last_name", last_name)
+                    helpIcon5.source = "qrc:/sgimages/check-circle.svg"
+                    helpIcon5.iconColor = "green"
+                    lastNameText.text += ": " + last_name +  "\n PASSED"
+                }
+                else {
+                    helpIcon5.source = "qrc:/sgimages/times-circle.svg"
+                    helpIcon5.iconColor = "red"
+                    lastNameText.text += ": " + last_name +  "\n FAILED"
+                }
+
             }
         }
     }
