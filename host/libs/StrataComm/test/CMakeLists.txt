@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}-test
     QzmqTest.cpp
     StrataServerTest.cpp
     StrataClientTest.cpp
+    RequestsControllerTest.cpp
     main.cpp
 )
 
