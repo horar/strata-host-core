@@ -181,6 +181,13 @@ public:
     Q_INVOKABLE void startWatchingPath(const QString &path);
 
     /**
+     * @brief addPathToTree Adds a path to the pathsInTree private member
+     * @param path The QUrl to the file
+     * @return Returns true if successful, false if it already exists
+     */
+    Q_INVOKABLE bool addPathToTree(const QUrl &path);
+
+    /**
      * @brief startSave Starts a thread to save the qrc file.
      */
     Q_INVOKABLE void startSave();

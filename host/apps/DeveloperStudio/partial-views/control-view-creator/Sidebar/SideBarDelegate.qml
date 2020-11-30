@@ -76,6 +76,7 @@ Item {
             } else {
                 model.editing = false
                 openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                treeModel.addPathToTree(model.filepath)
             }
             treeModel.startWatchingPath(SGUtilsCpp.parentDirectoryPath(path));
         }

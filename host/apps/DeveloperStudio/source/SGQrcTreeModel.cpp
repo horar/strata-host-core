@@ -510,6 +510,15 @@ void SGQrcTreeModel::startWatchingPath(const QString &path)
     fsWatcher_->addPath(path);
 }
 
+bool SGQrcTreeModel::addPathToTree(const QUrl &path)
+{
+    if (pathsInTree_.contains(path)) {
+        return false;
+    }
+    pathsInTree_.insert(path);
+    return true;
+}
+
 /***
  * PRIVATE FUNCTIONS
  ***/
