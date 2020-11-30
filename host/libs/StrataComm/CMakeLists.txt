@@ -16,6 +16,7 @@ add_library(${PROJECT_NAME}
     src/ClientsController.cpp
     src/ServerConnector.cpp
     src/ClientConnector.cpp
+    src/RequestsController.cpp
     src/logging/LoggingQtCategories.cpp
     include/StrataServer.h
     include/StrataClient.h
