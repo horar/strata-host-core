@@ -31,12 +31,11 @@ Item {
         verticalAlignment: TextInput.AlignVCenter
         font.pointSize: 10
         color: "black"
-        text: filenameWithoutExt
+        selectionColor: "#ACCEF7"
+        text: model ? model.filename : ""
         clip: true
         autoScroll: activeFocus
         readOnly: false
-
-        property string filenameWithoutExt: model.filename.replace("." + model.filetype, "")
 
         Keys.onEscapePressed: {
             if (model.editing) {
@@ -47,7 +46,7 @@ Item {
                     return;
                 }
 
-                text = filenameWithoutExt
+                text = model.filename
             }
         }
 
@@ -57,7 +56,7 @@ Item {
             }
 
             if (text.indexOf('/') >= 0) {
-                text = filenameWithoutExt
+                text = model.filename
             }
 
             // If a new file was created, and its filename is still empty
@@ -67,12 +66,11 @@ Item {
             }
 
             let path;
-            let realFileName = model.filename === "" ? text : text + "." + model.filetype
             // Below handles the case where the parentNode is the .qrc file
             if (model.parentNode && !model.parentNode.isDir) {
-                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), realFileName);
+                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), text);
             } else {
-                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), realFileName);
+                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), text);
             }
 
             // If we are creating a new file
@@ -84,10 +82,10 @@ Item {
                     console.error("Could not create file:", path)
                 } else {
                     model.editing = false
-                    model.filename = realFileName
+                    model.filename = text
                     model.filepath = SGUtilsCpp.pathToUrl(path);
                     if (!model.isDir) {
-                        model.filetype = SGUtilsCpp.fileSuffix(realFileName).toLowerCase();
+                        model.filetype = SGUtilsCpp.fileSuffix(text).toLowerCase();
                         if (!model.inQrc) {
                             treeModel.addToQrc(styleData.index);
                         }
@@ -96,18 +94,18 @@ Item {
                 }
             } else {
                 // Else we are just renaming an already existing file
-                if (realFileName.length > 0 && model.filename !== realFileName) {
+                if (text.length > 0 && model.filename !== text) {
                     // Don't attempt to rename the file if the text is the same as the original filename
-                    const success = treeModel.renameFile(styleData.index, realFileName)
+                    const success = treeModel.renameFile(styleData.index, text)
                     if (success) {
                         if (openFilesModel.hasTab(model.uid)) {
                             openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
                         }
                     } else {
-                        text = filenameWithoutExt
+                        text = model.filename
                     }
                 } else {
-                    text = filenameWithoutExt
+                    text = model.filename
                 }
 
                 model.editing = false
@@ -122,6 +120,9 @@ Item {
 
         onActiveFocusChanged: {
             cursorPosition = activeFocus ? length : 0
+            if (model.filename !== "") {
+                select(0, model.filename.replace("." + model.filetype, "").length)
+            }
         }
     }
 
