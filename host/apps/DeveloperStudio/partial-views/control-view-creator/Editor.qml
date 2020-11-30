@@ -391,6 +391,9 @@ Item {
                             }
                         }
                     }
+                    NoActiveFile {
+                        id: noActiveFile
+                    }
                 }
 
                 ConsoleContainer {
@@ -398,7 +401,7 @@ Item {
                     Layout.minimumHeight: 200
                     Layout.maximumHeight: 750
                     Layout.fillWidth: true
-                    visible: true
+                    visible: !noActiveFile.visible
                     state: "normal"
                     states:[
                         State {
@@ -416,7 +419,7 @@ Item {
                         }
                     ]
                 }
-            }
         }
     }
+}
 }
