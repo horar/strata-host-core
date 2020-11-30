@@ -10,7 +10,7 @@ ComboBox {
         { name: "Double", value: "double", description: "Type double" },
         { name: "String", value: "string", description: "Type string" },
         { name: "Bool", value: "bool", description: "Type bool" },
-        { name: "Array - Static Sized", value: "array", description: "With this you are able to listen to each changes made to each individual element in the array" },
+        { name: "Array - Static Sized", value: "array", description: "With this you are able to listen to changes made to each individual element in the array" },
         { name: "Array - Dynamic Sized", value: "array-dynamic", description: "With this you are unable to listen to changes to the individual elements in the array. You are only able to listen to when the entire array changes" },
         { name: "Object - Known Properties", value: "object", description: "With this you are able to listen to changes made to individual properties in the object" },
         { name: "Object - Unknown Properties", value: "object-dynamic", description: "With this you are unable to listen to changes made to individual properties in the object. You are only able to listen to when the entire object changes." }
