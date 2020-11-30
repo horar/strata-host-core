@@ -12,6 +12,7 @@ LogModel::LogModel(QObject *parent)
     : QAbstractListModel(parent),
       fileModel_()
 {
+    setModelRoles();
     timer_ = new QTimer(this);
     connect (timer_, &QTimer::timeout, this, &LogModel::checkFile);
 }
@@ -203,16 +204,32 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+QVariant LogModel::data(int row, const QByteArray &role) const
+{
+    int enumRole = roleByNameHash_.value(role, -1);
+    return data(this->index(row), enumRole);
+}
+
 QHash<int, QByteArray> LogModel::roleNames() const
 {
-    QHash<int, QByteArray> names;
-    names[TimestampRole] = "timestamp";
-    names[PidRole] = "pid";
-    names[TidRole] = "tid";
-    names[LevelRole] = "level";
-    names[MessageRole] = "message";
-    names[IsMarkedRole] = "isMarked";
-    return names;
+    return roleByEnumHash_;
+}
+
+void LogModel::setModelRoles()
+{
+    roleByEnumHash_.clear();
+    roleByEnumHash_.insert(TimestampRole, "timestamp");
+    roleByEnumHash_.insert(PidRole, "pid");
+    roleByEnumHash_.insert(TidRole, "tid");
+    roleByEnumHash_.insert(LevelRole, "level");
+    roleByEnumHash_.insert(MessageRole, "message");
+    roleByEnumHash_.insert(IsMarkedRole, "isMarked");
+
+    QHash<int, QByteArray>::const_iterator i = roleByEnumHash_.constBegin();
+    while (i != roleByEnumHash_.constEnd()) {
+        roleByNameHash_.insert(i.value(), i.key());
+        ++i;
+    }
 }
 
 int LogModel::count() const

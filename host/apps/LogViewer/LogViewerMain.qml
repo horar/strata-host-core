@@ -171,12 +171,29 @@ FocusScope {
 
     CommonCPP.SGSortFilterProxyModel {
         id: searchResultModel
-        sourceModel: showMarks ? markedModel : logModel
+        sourceModel: logModel
         filterPattern: searchInput.text
         filterPatternSyntax: regExpButton.checked ? CommonCPP.SGSortFilterProxyModel.RegExp : CommonCPP.SGSortFilterProxyModel.FixedString
         caseSensitive: caseSensButton.checked ? true : false
         filterRole: "message"
+        invokeCustomFilter: true
         sortEnabled: false
+
+        function filterAcceptsRow(row) {
+            var isMarked = logModel.data(row, "isMarked")
+            var message = logModel.data(row, "message")
+            var matches = searchResultModel.matches(message)
+
+            if (matches) {
+                if (showMarksButton.checked) {
+                    return isMarked
+                } else {
+                    return matches
+                }
+            } else {
+                return false
+            }
+        }
     }
 
     CommonCPP.SGSortFilterProxyModel{
@@ -399,6 +416,7 @@ FocusScope {
             iconColor: markColor
 
             onClicked: {
+                searchResultModel.invalidate()
                 showMarks = !showMarks
             }
         }
@@ -947,7 +965,7 @@ FocusScope {
                         onCurrentIndexChanged: {
                             if (currentIndex >= 0 && secondaryLogView.activeFocus) {
                                 if (showMarks) {
-                                    var sourceIndex = markedModel.mapIndexToSource(searchResultModel.mapIndexToSource(currentIndex))
+                                    var sourceIndex = markedModel.mapIndexToSource(currentIndex)
                                 } else {
                                     sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
                                 }

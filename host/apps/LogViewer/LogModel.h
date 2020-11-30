@@ -22,7 +22,7 @@ public:
     explicit LogModel(QObject *parent = nullptr);
     virtual ~LogModel() override;
 
-    enum {
+    enum ModelRole {
         TimestampRole = Qt::UserRole,
         PidRole,
         TidRole,
@@ -46,6 +46,7 @@ public:
 
     QString getRotatedFilePath(const QString &path) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    Q_INVOKABLE QVariant data(int row, const QByteArray &role) const;
     QDateTime oldestTimestamp() const;
     QDateTime newestTimestamp() const;
     int count() const;
@@ -80,6 +81,9 @@ private:
     FileModel fileModel_;
     void setOldestTimestamp(const QDateTime &timestamp);
     void setNewestTimestamp(const QDateTime &timestamp);
+    void setModelRoles();
+    QHash<QByteArray, int> roleByNameHash_;
+    QHash<int, QByteArray> roleByEnumHash_;
 };
 
 struct LogItem {
