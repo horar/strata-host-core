@@ -391,6 +391,7 @@ Item {
                             }
                         }
                     }
+
                     NoActiveFile {
                         id: noActiveFile
                     }
@@ -419,7 +420,7 @@ Item {
                         }
                     ]
                 }
+            }
         }
     }
-}
 }
