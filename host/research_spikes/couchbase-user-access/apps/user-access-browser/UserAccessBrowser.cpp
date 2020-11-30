@@ -8,6 +8,34 @@ UserAccessBrowser::UserAccessBrowser(QQmlApplicationEngine *engine, QObject *par
     engine_ = engine;
 }
 
+void UserAccessBrowser::getUserAccessMap(const QString &endpointURL) {
+    DatabaseManager databaseManager;
+    auto userAccessDB = databaseManager.open("user_access_map", "user_access_map");
+
+    // Object valid if database open successful
+    if (userAccessDB) {
+        qDebug() << "Successfully opened database. Path: " << userAccessDB->getDatabasePath();
+    } else {
+        qDebug() << "Error: Failed to open database.";
+        return;
+    }
+
+    auto changeListener = [this, userAccessDB](cbl::Replicator, const CBLReplicatorStatus status) {
+        qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!";
+        if (status.activity == kCBLReplicatorStopped) {
+            auto db_obj = userAccessDB->getDatabaseAsJsonObj();
+            emit userAccessMapReceived(db_obj);
+        }
+    };
+
+    // Start replicator
+    if (userAccessDB->startReplicator(endpointURL, "", "", "pull", changeListener)) {
+        qDebug() << "Replicator successfully started.";
+    } else {
+        qDebug() << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid.";
+    }
+}
+
 void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsername, const QStringList &strataChannelList, const QString &endpointURL) {
     strataLoginUsername_ = strataLoginUsername;
     endpointURL_ = endpointURL;

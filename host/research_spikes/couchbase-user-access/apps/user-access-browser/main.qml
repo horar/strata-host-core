@@ -5,8 +5,6 @@ import QtQuick.Controls 2.12
 
 import com.onsemi 1.0
 
-import "user-access-map.js" as UserAccessMap
-
 Window {
     id: root
     visible: true
@@ -20,10 +18,16 @@ Window {
     title: qsTr("Strata User Access Browser")
 
     property bool loggedIn: false
-    property var channels: []
+
+    property var channels: null
+    property var user_access_map: null
 
     Row {
         spacing: 5
+
+        Component.onCompleted: {
+            userAccessBrowser.getUserAccessMap(endpointTextfield.text)
+        }
 
         Rectangle {
             id: inputContainer
@@ -202,16 +206,25 @@ Window {
     // Receives username, returns list of channels to which that user has access
     function authenticate(username) {
         resultText.text = ""
-        let users = UserAccessMap.user_access_map.users
+
+        if (!root.user_access_map) {
+            console.error("Do not have a valid user access map!")
+        }
+
+        let users = root.user_access_map["user_access_map"]["users"]
+        if (!users) {
+            console.error("Do not have a valid user access map!")
+        }
+
         if (!users.hasOwnProperty(username)) {
-            console.info("Username not found in access map!")
+            console.error("Username not found in access map!")
             resultScrollView.append("Username not found in access map!")
             return
         }
 
         let user = users[username]
         if (!user.hasOwnProperty("user_access_channels")) {
-            console.info("Error: user does not have 'user_access_channels' field!")
+            console.error("Error: user does not have 'user_access_channels' field!")
             resultText.append("Error: user does not have 'user_access_channels' field!")
         }
 
@@ -221,6 +234,16 @@ Window {
 
     Connections {
         target: userAccessBrowser
+
+        onUserAccessMapReceived: {
+            if (user_access_map) {
+                root.user_access_map = user_access_map
+            } else {
+                console.error("Received invalid user access map!")
+                resultScrollView.append("Received invalid user access map!")
+            }
+        }
+
         onStatusUpdated: {
             if (total_docs != 0) {
                 let docIDs = userAccessBrowser.getAllDocumentIDs()

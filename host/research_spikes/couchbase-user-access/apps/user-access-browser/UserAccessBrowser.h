@@ -13,6 +13,8 @@ public:
 
     explicit UserAccessBrowser(QQmlApplicationEngine *engine = nullptr, QObject *parent = nullptr);
 
+    Q_INVOKABLE void getUserAccessMap(const QString &endpointURL);
+
     Q_INVOKABLE void loginAndStartReplication(const QString &strataLoginUsername, const QStringList &strataChannelList, const QString &endpointURL);
 
     Q_INVOKABLE void logoutAndStopReplication();
@@ -20,6 +22,8 @@ public:
     Q_INVOKABLE QStringList getAllDocumentIDs();
 
 signals:
+    void userAccessMapReceived(QJsonObject user_access_map);
+
     void statusUpdated(int total_docs);
 
 private:

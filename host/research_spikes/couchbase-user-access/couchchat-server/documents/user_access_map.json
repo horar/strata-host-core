@@ -1,6 +1,4 @@
-.pragma library
-
-var user_access_map = {
+{
   "users": {
     "user_1": {
       "user_access_channels": [
@@ -22,5 +20,6 @@ var user_access_map = {
     "admin": {
       "user_access_channels": ["*"]
     }
-  }
+  },
+  "channels_available": "user_access_map"
 }
