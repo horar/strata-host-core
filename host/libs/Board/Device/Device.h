@@ -195,6 +195,14 @@ namespace strata::device {
          */
         virtual Type deviceType() const final;
 
+        /**
+         * Check if controller is connected to platform (dongle is connected to board).
+         * This method must be called after Identify operation finishes or after signal
+         * boardInfoChanged is received from BoardManager.
+         * @return true if controller is connected to platform, false otherwise
+         */
+        virtual bool isControllerConnectedToPlatform() final;
+
         friend QDebug operator<<(QDebug dbg, const Device* d);
         friend QDebug operator<<(QDebug dbg, const DevicePtr& d);
 

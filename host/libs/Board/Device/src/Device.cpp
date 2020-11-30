@@ -90,6 +90,10 @@ Device::Type Device::deviceType() const {
     return deviceType_;
 }
 
+bool Device::isControllerConnectedToPlatform() {
+    return ((this->controllerType() == ControllerType::Assisted) && this->hasClassId());
+}
+
 void Device::setVersions(const char* bootloaderVer, const char* applicationVer) {
     // Do not change property if parameter is nullptr.
     QWriteLocker wLock(&properiesLock_);

@@ -12,7 +12,7 @@ using strata::device::Device;
 using strata::device::DevicePtr;
 
 BoardController::BoardController() {
-    connect(&boardManager_, &BoardManager::boardReady, this, &BoardController::newConnection);
+    connect(&boardManager_, &BoardManager::boardInfoChanged, this, &BoardController::newConnection);
     connect(&boardManager_, &BoardManager::boardDisconnected, this, &BoardController::closeConnection);
 }
 

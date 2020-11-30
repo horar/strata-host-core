@@ -78,11 +78,11 @@ namespace strata {
         void boardDisconnected(int deviceId);
 
         /**
-         * Emitted when board is ready for communication.
+         * Emitted when board properties has changed (and board is ready for communication).
          * @param deviceId device ID
          * @param recognized true when board was recognized (identified), otherwise false
          */
-        void boardReady(int deviceId, bool recognized);
+        void boardInfoChanged(int deviceId, bool recognized);
 
         /**
          * Emitted when error occures during communication with the board.
@@ -97,7 +97,7 @@ namespace strata {
         void readyDeviceIdsChanged();
 
         /**
-         * Emitted when Platform ID Changed notification was received (signal only for internal use).
+         * Emitted when platform_id_changed notification was received (signal only for internal use).
          * @param deviceId devide ID
          */
         void platformIdChanged(const int deviceId, QPrivateSignal);

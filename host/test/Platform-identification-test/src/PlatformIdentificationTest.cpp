@@ -24,10 +24,10 @@ PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
 
 void PlatformIdentificationTest::enableBoardManagerSignals(bool enable) {
     if (enable) {
-        connect(&boardManager_, &BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
+        connect(&boardManager_, &BoardManager::boardInfoChanged, this, &PlatformIdentificationTest::newConnectionHandler);
         connect(&boardManager_, &BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     } else {
-        disconnect(&boardManager_, &BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
+        disconnect(&boardManager_, &BoardManager::boardInfoChanged, this, &PlatformIdentificationTest::newConnectionHandler);
         disconnect(&boardManager_, &BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     }
 }
