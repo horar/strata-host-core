@@ -90,7 +90,6 @@ Rectangle {
                 rowDelegate: Rectangle {
                     height: 30
                     color: styleData.selected && !model.editing ? "#CCCCCC" : "transparent"
-                    focus: styleData.selected
                     onFocusChanged: {
                         forceActiveFocus()
                     }

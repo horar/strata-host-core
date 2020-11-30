@@ -120,8 +120,8 @@ Item {
 
         onActiveFocusChanged: {
             cursorPosition = activeFocus ? length : 0
-            if (model.filename !== "") {
-                select(0, model.filename.replace("." + model.filetype, "").length)
+            if (styleData.value !== "") {
+                select(0, styleData.value.replace("." + model.filetype, "").length)
             }
         }
     }
