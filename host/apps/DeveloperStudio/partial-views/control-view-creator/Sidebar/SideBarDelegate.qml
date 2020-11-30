@@ -32,7 +32,7 @@ Item {
         font.pointSize: 10
         color: "black"
         selectionColor: "#ACCEF7"
-        text: model ? model.filename : ""
+        text: styleData.value
         clip: true
         autoScroll: activeFocus
         readOnly: false
