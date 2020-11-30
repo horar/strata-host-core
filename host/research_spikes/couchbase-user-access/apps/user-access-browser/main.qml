@@ -206,29 +206,28 @@ Window {
     // Receives username, returns list of channels to which that user has access
     function authenticate(username) {
         resultText.text = ""
-
         if (!root.user_access_map) {
             console.error("Do not have a valid user access map!")
         }
 
-        let users = root.user_access_map["user_access_map"]["users"]
-        if (!users) {
+        const all_channels = root.user_access_map["user_access_map"]
+        if (!all_channels) {
             console.error("Do not have a valid user access map!")
         }
 
-        if (!users.hasOwnProperty(username)) {
+        let user_access_channels = []
+        Object.keys(all_channels).forEach(function(key) {
+            const this_channel = all_channels[key]
+            if (this_channel.includes(username)) {
+                user_access_channels.push(key)
+            }
+        })
+
+        if (user_access_channels.length == 0) {
             console.error("Username not found in access map!")
             resultScrollView.append("Username not found in access map!")
             return
         }
-
-        let user = users[username]
-        if (!user.hasOwnProperty("user_access_channels")) {
-            console.error("Error: user does not have 'user_access_channels' field!")
-            resultText.append("Error: user does not have 'user_access_channels' field!")
-        }
-
-        let user_access_channels = user["user_access_channels"]
         return user_access_channels
     }
 

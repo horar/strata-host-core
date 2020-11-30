@@ -28,8 +28,14 @@
       "sync":
       `
         function (doc, oldDoc) {
-          if(doc.channels_available) {
+          if (doc._id == "user_access_map") {
+            channel("user_access_map")
+            return
+          }
+
+          if (doc.channels_available) {
             channel(doc.channels_available)
+            return
           }
         }
       `
