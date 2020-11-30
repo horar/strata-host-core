@@ -106,6 +106,11 @@ Rectangle {
             }
         }
 
+        CVCButton {
+            id: cvcButton
+            visible: false
+        }
+
         Repeater {
             id: platformTabRepeater
             delegate: SGPlatformTab {}
@@ -147,8 +152,6 @@ Rectangle {
             }
         }
     }
-
-    CVCButton { }
 
     Item {
         id: profileIconContainer
@@ -306,6 +309,13 @@ Rectangle {
                     width: profileMenu.width - 20
                     anchors {
                         horizontalCenter: profileColumn.horizontalCenter
+                    }
+                }
+
+                SGMenuItem {
+                    text: qsTr("C.V.C")
+                    onClicked: {
+                      cvcButton.toggleVisibility()
                     }
                 }
 

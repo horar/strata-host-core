@@ -53,8 +53,12 @@ Rectangle {
             id: plusSignIcon
             Layout.preferredWidth: 25
             Layout.preferredHeight: Layout.preferredWidth
-            source: "qrc:/sgimages/plus.svg"
+            source: "qrc:/sgimages/times.svg"
             iconColor: controlViewCreatorText.color
         }
+    }
+
+    function toggleVisibility(){
+        visible = true
     }
 }
