@@ -50,8 +50,8 @@ bool DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMa
     // Generate the list model
     outputStream << generateListModel(notifications, commands);
 
-    // Generate the two columns
-    outputStream << writeLine("RowLayout {");
+    // Generate the two rows
+    outputStream << writeLine("ColumnLayout {");
     indentLevel++;
     outputStream << writeLine("id: columnContainer");
     outputStream << writeLine("anchors {");
@@ -78,6 +78,16 @@ bool DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMa
     outputStream << writeLine("Layout.fillHeight: true");
     outputStream << writeLine("Layout.fillWidth: true");
     outputStream << writeLine("property ListModel commandsModel: model.data");
+
+    // Generate either "Notifications" or "Commands"
+    outputStream << writeLine();
+    outputStream << writeLine("Text {");
+    indentLevel++;
+    outputStream << writeLine("font.pointSize: 16");
+    outputStream << writeLine("font.bold: true");
+    outputStream << writeLine("text: (model.name === \"commands\" ? \"Commands\" : \"Notifications\")");
+    indentLevel--;
+    outputStream << writeLine("}");
 
     outputStream << generateMainListView();
 
@@ -132,7 +142,7 @@ QString DebugMenuGenerator::generateImports()
     imports += "import QtQuick.Controls 2.12\n";
     imports += "import QtQuick.Layouts 1.12\n";
     imports += "import QtQuick.Window 2.12\n";
-    imports += "import \"qrc:/js/core_platform_interface.js\" as CorePlatformInterface\n\n";
+    imports += "import \"qrc:/js/constants.js\" as Constants\n\n";
     return imports;
 }
 
@@ -413,19 +423,19 @@ QString DebugMenuGenerator::generateMainListView()
     indentLevel--;
     text += writeLine("}");
 
-    text += writeLine("let wrapper = { \"device_id\": CorePlatformInterface.device_id, \"message\": JSON.stringify(notification) }");
-    text += writeLine("CorePlatformInterface.data_source_handler(JSON.stringify(wrapper));");
+    text += writeLine("let wrapper = { \"device_id\": Constants.NULL_DEVICE_ID, \"message\": JSON.stringify(notification) }");
+    text += writeLine("coreInterface.notification(JSON.stringify(wrapper))");
 
     indentLevel--;
     text += writeLine("} else {");
     indentLevel++;
-    text += writeLine("let command = { \"cmd\": model.name }");
+    text += writeLine("let command = { \"cmd\": model.name, \"device_id\": Constants.NULL_DEVICE_ID }");
     text += writeLine("if (payload) {");
     indentLevel++;
     text += writeLine("command[\"payload\"] = payload;");
     indentLevel--;
     text += writeLine("}");
-    text += writeLine("CorePlatformInterface.send(command)");
+    text += writeLine("coreInterface.sendCommand(JSON.stringify(command))");
     indentLevel--;
     text += writeLine("}");
 
