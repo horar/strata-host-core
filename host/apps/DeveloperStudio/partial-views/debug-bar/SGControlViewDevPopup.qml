@@ -22,6 +22,7 @@ Window {
 
     property string qrcFilePath: ""
     property bool controlViewVisible: controlViewDevContainer.visible
+    property bool recompileRequested: false
 
     Settings {
         category: "ControlViewDev"
@@ -114,6 +115,7 @@ Window {
 
                 onClicked: {
                     if (root.qrcFilePath.length > 0) {
+                        recompileRequested = true
                         sdsModel.resourceLoader.recompileControlViewQrc(root.qrcFilePath)
                         if (!root.controlViewVisible) {
                             stackContainer.currentIndex = stackContainer.count - 1
@@ -154,17 +156,20 @@ Window {
         target: sdsModel.resourceLoader
 
         onFinishedRecompiling: {
-            if (filepath !== '') {
-                loadDebugView(filepath)
-            } else {
-                let error_str = sdsModel.resourceLoader.getLastLoggedError()
-                sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewDevContainer, {"error_message": error_str});
+            if (recompileRequested) { // enforce that this popup requested the recompile
+                recompileRequested = false
+                if (filepath !== '') {
+                    loadDebugView(filepath)
+                } else {
+                    let error_str = sdsModel.resourceLoader.getLastLoggedError()
+                    controlViewDevContainer.setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": error_str})
+                }
             }
         }
     }
 
     function loadDebugView (compiledRccFile) {
-        NavigationControl.removeView(controlViewDevContainer)
+        controlViewDevContainer.setSource("")
 
         let uniquePrefix = new Date().getTime().valueOf()
         uniquePrefix = "/" + uniquePrefix
@@ -176,11 +181,6 @@ Window {
         }
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewDevContainer);
-        if (obj === null) {
-            console.error("Could not load view.")
-            let error_str = sdsModel.resourceLoader.getLastLoggedError()
-            sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewDevContainer, {"error_message": error_str});
-        }
+        controlViewDevContainer.setSource(qml_control);
     }
 }

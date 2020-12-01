@@ -17,6 +17,7 @@ Item {
     property string side: ""
     property alias model: repeater.model
     property alias repeater: repeater
+    property alias responsiveVisible: topTextContainer.visible
 
     Item {
         id: topTextContainer

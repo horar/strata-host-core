@@ -10,7 +10,6 @@
 #include "DeviceMock.h"
 #include "DeviceOperationsTest.h"
 
-using strata::device::DeviceProperties;
 using strata::device::operation::BaseDeviceOperation;
 
 namespace operation = strata::device::operation;
@@ -38,8 +37,6 @@ void DeviceOperationsTest::cleanup()
     if (operation != nullptr) {
         disconnect(operation, &BaseDeviceOperation::finished, this,
                    &DeviceOperationsTest::handleOperationFinished);
-        disconnect(operation, &BaseDeviceOperation::error, this,
-                   &DeviceOperationsTest::handleOperationError);
         deviceOperation_.reset();
     }
     if (device_.get() != nullptr) {
@@ -47,14 +44,12 @@ void DeviceOperationsTest::cleanup()
     }
 }
 
-void DeviceOperationsTest::handleOperationFinished(operation::Type, int)
+void DeviceOperationsTest::handleOperationFinished(operation::Result result, int, QString)
 {
     operationFinishedCount_++;
-}
-
-void DeviceOperationsTest::handleOperationError(QString)
-{
-    operationErrorCount_++;
+    if (result == operation::Result::Error) {
+        operationErrorCount_++;
+    }
 }
 
 void DeviceOperationsTest::printJsonDoc(rapidjson::Document &doc)
@@ -92,7 +87,6 @@ void DeviceOperationsTest::verifyMessage(const QByteArray &msg, const QByteArray
 
 void DeviceOperationsTest::connectHandlers(BaseDeviceOperation *operation) {
     connect(operation, &BaseDeviceOperation::finished, this, &DeviceOperationsTest::handleOperationFinished);
-    connect(operation, &BaseDeviceOperation::error, this, &DeviceOperationsTest::handleOperationError);
 }
 
 void DeviceOperationsTest::identifyTest()
@@ -106,7 +100,7 @@ void DeviceOperationsTest::identifyTest()
     connectHandlers(deviceOperation_.data());
     deviceOperation_->run();
     QCOMPARE(deviceOperation_->deviceId(), 1234);
-    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
@@ -114,16 +108,16 @@ void DeviceOperationsTest::identifyTest()
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
     expectedDoc.Parse(test_commands::request_platform_id_response.data());
-    QCOMPARE(device_->property(DeviceProperties::verboseName),
+    QCOMPARE(device_->name(),
              expectedDoc["notification"]["payload"]["name"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::platformId),
+    QCOMPARE(device_->platformId(),
              expectedDoc["notification"]["payload"]["platform_id"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::classId),
+    QCOMPARE(device_->classId(),
              expectedDoc["notification"]["payload"]["class_id"].GetString());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
-    QCOMPARE(device_->property(DeviceProperties::bootloaderVer),
+    QCOMPARE(device_->bootloaderVer(),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::applicationVer),
+    QCOMPARE(device_->applicationVer(),
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
 
     // TODO tests for error situations
@@ -139,40 +133,40 @@ void DeviceOperationsTest::switchToBootloaderAndBackTest()
         new operation::StartBootloader(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 6000);
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 6000);
 
     QVERIFY(device_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response_bootloader.data());
-    QCOMPARE(device_->property(DeviceProperties::verboseName),
+    QCOMPARE(device_->name(),
              expectedDoc["notification"]["payload"]["name"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::platformId),
+    QCOMPARE(device_->platformId(),
              expectedDoc["notification"]["payload"]["platform_id"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::classId),
+    QCOMPARE(device_->classId(),
              expectedDoc["notification"]["payload"]["class_id"].GetString());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
-    QCOMPARE(device_->property(DeviceProperties::bootloaderVer),
+    QCOMPARE(device_->bootloaderVer(),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::applicationVer),
+    QCOMPARE(device_->applicationVer(),
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
 
     deviceOperation_ = QSharedPointer<operation::StartApplication>(
         new operation::StartApplication(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(!device_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response.data());
-    QCOMPARE(device_->property(DeviceProperties::verboseName),
+    QCOMPARE(device_->name(),
              expectedDoc["notification"]["payload"]["name"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::platformId),
+    QCOMPARE(device_->platformId(),
              expectedDoc["notification"]["payload"]["platform_id"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::classId),
+    QCOMPARE(device_->classId(),
              expectedDoc["notification"]["payload"]["class_id"].GetString());
     expectedDoc.Parse(test_commands::get_firmware_info_response.data());
-    QCOMPARE(device_->property(DeviceProperties::bootloaderVer),
+    QCOMPARE(device_->bootloaderVer(),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
-    QCOMPARE(device_->property(DeviceProperties::applicationVer),
+    QCOMPARE(device_->applicationVer(),
              expectedDoc["notification"]["payload"]["application"]["version"].GetString());
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
@@ -206,6 +200,8 @@ void DeviceOperationsTest::cancelOperationTest()
 
     deviceOperation_->cancelOperation();
 
+    QCOMPARE(deviceOperation_->hasStarted(), true);
+    QCOMPARE(deviceOperation_->isSuccessfullyFinished(), false);
     QCOMPARE(deviceOperation_->isFinished(), true);
 
     recordedMessages = device_->mockGetRecordedMessages();

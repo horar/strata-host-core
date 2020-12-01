@@ -17,18 +17,35 @@ TextField {
         family: Fonts.franklinGothicBook
     }
     selectionColor:"lightgrey"
+    rightPadding: hasRightIcons ? rightIcons.width + 5+5 : 5
+
+    echoMode: {
+        if (passwordMode && revealPassword === false) {
+            return TextField.Password
+        }
+
+        return TextField.Normal
+    }
 
     property bool valid: field.text !== ""
-    property alias showIcon: validIcon.visible
+    property bool showIcon: true
+    property bool passwordMode: false
 
-    background: Item {
+    /* private */
+    property bool revealPassword: false
+    property bool hasRightIcons: showIcon || revelPasswordLoader.status ===  Loader.Ready
+
+    background: Rectangle {
         id: backgroundContainer
         implicitHeight: 32
+        border.width: field.activeFocus ? 1 : 0
+        border.color:  field.activeFocus ? "#33b13b" : "#40000000"
 
         Rectangle {
             id: background
             anchors.fill: backgroundContainer
             visible: false
+            z: -1
         }
 
         DropShadow {
@@ -38,21 +55,74 @@ TextField {
             verticalOffset: 2
             radius: 5.0
             samples: 10
+            z: -1
             color: "#40000000"
+        }
+
+        Row {
+            id: rightIcons
+            height: parent.height
+            anchors {
+                right: parent.right
+                rightMargin: 5
+            }
+
+            spacing: 5
+
+            Loader {
+                id: revelPasswordLoader
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+
+                sourceComponent: passwordMode ? revealPasswordComponent : undefined
+            }
+
+            Loader {
+                id: validationIconLoader
+                anchors {
+                    top: rightIcons.top
+                    topMargin: 5
+                }
+
+                sourceComponent: showIcon ? validationIconComponent : undefined
+            }
         }
     }
 
-    SGIcon {
-        id: validIcon
-        source: field.valid ? "qrc:/sgimages/check.svg" : "qrc:/sgimages/asterisk.svg"
-        iconColor: field.valid ? "#30c235" : "#ddd"
-        anchors {
-            top: field.top
-            topMargin: 5
-            rightMargin: 5
-            right: field.right
+    Component {
+        id: validationIconComponent
+
+        SGIcon {
+            id: validIcon
+            height: field.valid ? field.height * .33 : field.height * .25
+            width: height
+
+            source: field.valid ? "qrc:/sgimages/check.svg" : "qrc:/sgimages/asterisk.svg"
+            iconColor: field.valid ? "#30c235" : "#ddd"
         }
-        height: field.valid ? field.height * .33 : field.height * .25
-        width: height
+    }
+
+    Component {
+        id: revealPasswordComponent
+
+        SGIcon {
+            id: showPasswordIcon
+            height: field.height * 0.75
+            width: height
+
+            source: field.revealPassword ? "qrc:/sgimages/eye-slash.svg" : "qrc:/sgimages/eye.svg"
+            iconColor: showPasswordMouseArea.containsMouse ? "lightgrey" : "#ddd"
+
+            MouseArea {
+                id: showPasswordMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onPressedChanged: {
+                    revealPassword = pressed
+                }
+            }
+        }
     }
 }

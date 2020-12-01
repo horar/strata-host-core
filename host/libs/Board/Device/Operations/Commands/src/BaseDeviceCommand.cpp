@@ -1,11 +1,12 @@
 #include "BaseDeviceCommand.h"
 
-#include <DeviceOperationsFinished.h>
+#include <DeviceOperationsStatus.h>
 
 namespace strata::device::command {
 
-BaseDeviceCommand::BaseDeviceCommand(const device::DevicePtr& device, const QString& commandName) :
-    cmdName_(commandName), device_(device), ackReceived_(false), result_(CommandResult::InProgress) { }
+BaseDeviceCommand::BaseDeviceCommand(const DevicePtr& device, const QString& commandName) :
+    cmdName_(commandName), device_(device), ackReceived_(false),
+    result_(CommandResult::InProgress), status_(operation::DEFAULT_STATUS) { }
 
 BaseDeviceCommand::~BaseDeviceCommand() { }
 
@@ -17,9 +18,13 @@ bool BaseDeviceCommand::ackReceived() const {
     return ackReceived_;
 }
 
+void BaseDeviceCommand::setCommandRejected() {
+    result_ = CommandResult::Reject;
+}
+
 void BaseDeviceCommand::onTimeout() {
     // Default result is 'InProgress' - command timed out, finish operation with failure.
-    // In some cases timeout is not a problem, result is 'Done' or 'Retry' then.
+    // If timeout is not a problem, reimplement this method and set result to 'Done' or 'Retry'.
     result_ = CommandResult::InProgress;
 }
 
@@ -31,10 +36,6 @@ std::chrono::milliseconds BaseDeviceCommand::waitBeforeNextCommand() const {
     return std::chrono::milliseconds(0);
 }
 
-int BaseDeviceCommand::dataForFinish() const {
-    return operation::DEFAULT_DATA;  // default value for finished() signal
-}
-
 const QString BaseDeviceCommand::name() const {
     return cmdName_;
 }
@@ -43,15 +44,27 @@ CommandResult BaseDeviceCommand::result() const {
     return result_;
 }
 
-void BaseDeviceCommand::setDeviceProperties(const char* name, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) {
-    device_->setProperties(name, platformId, classId, btldrVer, applVer);
+int BaseDeviceCommand::status() const {
+    return status_;
+}
+
+void BaseDeviceCommand::setDeviceVersions(const char* bootloaderVer, const char* applicationVer) {
+    device_->setVersions(bootloaderVer, applicationVer);
+}
+
+void BaseDeviceCommand::setDeviceProperties(const char* name, const char* platformId, const char* classId, Device::ControllerType type) {
+    device_->setProperties(name, platformId, classId, type);
+}
+
+void BaseDeviceCommand::setDeviceAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) {
+    device_->setAssistedProperties(platformId, classId, fwClassId);
 }
 
 void BaseDeviceCommand::setDeviceBootloaderMode(bool inBootloaderMode) {
     device_->setBootloaderMode(inBootloaderMode);
 }
 
-void BaseDeviceCommand::setDeviceApiVersion(device::Device::ApiVersion apiVersion) {
+void BaseDeviceCommand::setDeviceApiVersion(Device::ApiVersion apiVersion) {
     device_->setApiVersion(apiVersion);
 }
 

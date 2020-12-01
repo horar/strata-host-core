@@ -15,7 +15,7 @@ public:
     void backupNextChunk();
     QVector<quint8> recentBackupChunk() const;
 private:
-    void setTotalChunks(command::CommandResult& result, int& data);
+    void setTotalChunks(command::CommandResult& result, int& status);
     int totalChunks_;
     QVector<quint8> chunk_;
 };

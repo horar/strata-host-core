@@ -218,12 +218,13 @@ Item {
                         verticalCenter: textFilterContainer.verticalCenter
                         left: searchIcon.right
                         leftMargin: 5
-                        right: textFilterContainer.right
+                        right: clearIcon.left
                         rightMargin: 10
                     }
                     color: "#33b13b"
                     font.bold: true
                     selectByMouse: true
+                    clip: true
                     enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
 
                     property string lowerCaseText: text.toLowerCase()
@@ -242,7 +243,18 @@ Item {
 
                     Text {
                         id: placeholderText
-                        text: "Search..."
+                        text: {
+                            if (searchCategoryText.checked) {
+                                if (searchCategoryPartsList.checked) {
+                                    return "Search Titles, Descriptions, and Part Numbers..."
+                                }
+                                return "Search Titles and Descriptions..."
+                            } else if (searchCategoryPartsList.checked) {
+                                return "Search Part Numbers in Bill of Materials..."
+                            } else {
+                                return "Please Select Search Options Below..."
+                            }
+                        }
                         color: filter.enabled? "#666" : "#ddd"
                         visible: filter.text === ""
                         anchors {
@@ -254,10 +266,7 @@ Item {
                     MouseArea {
                         id: mouseArea
                         anchors.fill: parent
-                        onClicked: {
-                            searchCategoriesDropdown.close()
-                            filter.focus = true
-                        }
+                        acceptedButtons: Qt.NoButton
                         cursorShape: Qt.IBeamCursor
                     }
                 }
@@ -269,7 +278,7 @@ Item {
                     width: height
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
-                        right: cogIcon.left
+                        right: settingsIcon.left
                         rightMargin: (textFilterContainer.height - height) / 2
                     }
                     iconColor: textFilterClearMouse.containsMouse ?  "#bbb" : "#999"
@@ -287,16 +296,16 @@ Item {
                 }
 
                 SGIcon {
-                    id: cogIcon
-                    source: "qrc:/sgimages/cog.svg"
-                    height: parent.height * .75
+                    id: settingsIcon
+                    source: "qrc:/sgimages/chevron-down.svg"
+                    height: 20
                     width: height
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
                         right: textFilterContainer.right
                         rightMargin: (textFilterContainer.height - height) / 2
                     }
-                    iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ?  "#bbb" : "#999"
+                    iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ? "#444" : "#666"
 
                     MouseArea {
                         id: cogMouse
@@ -332,23 +341,37 @@ Item {
                         id: checkboxCol
                         anchors.fill: parent
 
-                        CheckBox {
-                            id: searchCategoryText
-                            text: qsTr("Platform Titles and Descriptions")
-                            checked: true
+                        RowLayout {
+                            CheckBox {
+                                id: searchCategoryText
+                                checked: true
+                                enabled: searchCategoryPartsList.checked
 
-                            onCheckedChanged: {
-                                filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                onCheckedChanged: {
+                                    filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                }
+                            }
+
+                            SGText {
+                                id: titlesDescriptions
+                                text: qsTr("Platform Titles and Descriptions")
                             }
                         }
 
-                        CheckBox {
-                            id: searchCategoryPartsList
-                            text: qsTr("Part Numbers in Bill of Materials")
-                            checked: true
+                        RowLayout {
+                            CheckBox {
+                                id: searchCategoryPartsList
+                                checked: true
+                                enabled: searchCategoryText.checked
 
-                            onCheckedChanged: {
-                                filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                onCheckedChanged: {
+                                    filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                }
+                            }
+
+                            SGText {
+                                id: partNumbers
+                                text: qsTr("Part Numbers in Bill of Materials")
                             }
                         }
                     }

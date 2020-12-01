@@ -167,8 +167,8 @@ FocusScope {
                         visible: scrollbackView.height < scrollbackView.contentHeight
                     }
 
-                    onMovementStarted: {
-                        automaticScroll = false
+                    onContentYChanged: {
+                        automaticScroll = scrollbackView.atYEnd
                     }
 
                     delegate: Item {
@@ -177,7 +177,6 @@ FocusScope {
                         height: divider.y + divider.height
 
                         property color helperTextColor: "#333333"
-                        property bool jsonIsValid
 
                         Rectangle {
                             anchors {
@@ -188,9 +187,9 @@ FocusScope {
                             }
                             color: {
                                 if (model.type === Sci.SciScrollbackModel.Request) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.3)
-                                } else if (cmdDelegate.jsonIsValid === false) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
+                                    return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.4)
+                                } else if (model.isJsonValid === false) {
+                                    return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.4)
                                 }
 
                                 return "transparent"
@@ -258,12 +257,12 @@ FocusScope {
 
                                     iconColor: cmdDelegate.helperTextColor
                                     hintText: qsTr("Condensed mode")
-                                    icon.source: model.condensed ? "qrc:/sgimages/chevron-right.svg" : "qrc:/sgimages/chevron-down.svg"
+                                    icon.source: model.isCondensed ? "qrc:/sgimages/chevron-right.svg" : "qrc:/sgimages/chevron-down.svg"
                                     iconSize: buttonRow.iconSize
 
                                     onClicked: {
                                         var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
-                                        var item = scrollbackModel.setCondensed(sourceIndex, !model.condensed)
+                                        var item = scrollbackModel.setIsCondensed(sourceIndex, !model.isCondensed)
                                     }
                                 }
                             }
@@ -286,21 +285,21 @@ FocusScope {
                             readOnly: true
 
                             text: {
-                                var prettyText = prettifyJson(model.message, model.condensed)
-                                if (prettyText.length > 0) {
-                                    cmdDelegate.jsonIsValid = true
-                                    return prettyText
+                                if (model.isCondensed === false && model.isJsonValid) {
+                                    return CommonCpp.SGUtilsCpp.prettifyJson(model.message)
                                 }
 
-                                cmdDelegate.jsonIsValid = false
                                 return model.message
                             }
-
 
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.IBeamCursor
                                 acceptedButtons: Qt.NoButton
+                            }
+
+                            CommonCpp.SGJsonSyntaxHighlighter {
+                                textDocument: cmdText.textDocument
                             }
                         }
 
@@ -510,6 +509,7 @@ FocusScope {
                     suggestionCloseOnDown: true
                     suggestionDelegateRemovable: true
                     showCursorPosition: true
+                    showClearButton: true
 
                     onTextChanged: {
                         model.platform.errorString = "";
@@ -629,25 +629,6 @@ FocusScope {
     function showExportView() {
         stackView.push(exportComponent)
     }
-
-    function prettifyJson(message, condensed) {
-        if (condensed === undefined) {
-            condensed = true
-        }
-
-        try {
-            var messageObj =  JSON.parse(message)
-        } catch(error) {
-            return ""
-        }
-
-        if (condensed) {
-            return JSON.stringify(messageObj)
-        }
-
-        return JSON.stringify(messageObj, undefined, 4)
-    }
-
 
     function prettifyHintText(hintText, shortcut) {
         return hintText + " - " + shortcut

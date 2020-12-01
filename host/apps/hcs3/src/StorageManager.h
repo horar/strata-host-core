@@ -89,7 +89,8 @@ signals:
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
     void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray datasheetList, QJsonArray documentList,
-                                            QJsonArray firmwareList, QJsonArray controlViewList, QString error);
+                                            QString error);
+    void platformMetaData(QByteArray clientId, QString classId, QJsonArray firmwareList, QJsonArray controlViewList, QString error);
 
 private slots:
     void filePathChangedHandler(QString groupId,
@@ -149,7 +150,6 @@ private:
      * @return returns full filePath
      */
     QString createFilePathFromItem(const QString& item, const QString& prefix) const;
-
 
     QUrl baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files

@@ -12,6 +12,9 @@ constexpr uint MAX_GET_FW_INFO_RETRIES(5);
 
 constexpr uint MAX_CHUNK_RETRIES(1);
 
+constexpr int CONTROLLER_TYPE_EMBEDDED(1);
+constexpr int CONTROLLER_TYPE_ASSISTED(2);
+
 constexpr const char* const JSON_ACK = "ack";
 constexpr const char* const JSON_CMD = "cmd";
 constexpr const char* const JSON_FLASH_FIRMWARE = "flash_firmware";
@@ -27,6 +30,12 @@ constexpr const char* const JSON_VERSION = "version";
 constexpr const char* const JSON_NAME = "name";
 constexpr const char* const JSON_PLATFORM_ID = "platform_id";
 constexpr const char* const JSON_CLASS_ID = "class_id";
+constexpr const char* const JSON_BOARD_COUNT = "board_count";
+constexpr const char* const JSON_FW_CLASS_ID = "fw_class_id";
+constexpr const char* const JSON_CNTRL_PLATFORM_ID = "controller_platform_id";
+constexpr const char* const JSON_CNTRL_CLASS_ID = "controller_class_id";
+constexpr const char* const JSON_CNTRL_BOARD_COUNT = "controller_board_count";
+constexpr const char* const JSON_CONTROLLER_TYPE = "controller_type";
 constexpr const char* const JSON_CHUNK = "chunk";
 constexpr const char* const JSON_CHUNKS = "chunks";
 constexpr const char* const JSON_NUMBER = "number";
@@ -35,6 +44,9 @@ constexpr const char* const JSON_CRC = "crc";
 constexpr const char* const JSON_DATA = "data";
 constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
+constexpr const char* const JSON_FAILED = "failed";
+constexpr const char* const JSON_ALREADY_INITIALIZED = "already_initialized";
+constexpr const char* const JSON_BOARD_NOT_CONNECTED = "board_not_connected";
 constexpr const char* const JSON_RESEND_CHUNK = "resend_chunk";
 constexpr const char* const JSON_MD5 = "md5";
 constexpr const char* const JSON_API_VERSION = "api_version";

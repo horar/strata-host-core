@@ -102,8 +102,6 @@ public slots:
             const QString &classId,
             const QJsonArray &datasheetList,
             const QJsonArray &documentList,
-            const QJsonArray &firmwareList,
-            const QJsonArray &controlViewList,
             const QString &error);
 
     void sendDownloadControlViewFinishedMessage(
@@ -118,6 +116,13 @@ public slots:
             const QString &filePath,
             qint64 bytesReceived,
             qint64 bytesTotal);
+
+    void sendPlatformMetaData(
+            const QByteArray &clientId,
+            const QString &classId,
+            const QJsonArray &controlViewList,
+            const QJsonArray &firmwareList,
+            const QString &error);
 
     void sendVersionInfoMessage(
             const QByteArray &clientId,
@@ -150,7 +155,7 @@ private:
     void onCmdDownloadControlView(const rapidjson::Value* );
     void onCmdGetVersionInfo(const rapidjson::Value* );
 
-    void platformConnected(const int deviceId, const QString &classId);
+    void platformConnected(const int deviceId, bool hasAnyClassId);
     void platformDisconnected(const int deviceId);
 
     Client* getSenderClient() const { return current_client_; }     //TODO: only one client

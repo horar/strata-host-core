@@ -212,6 +212,8 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadViewFinished(payload);
     } else if (type == "control_view_download_progress") {
         emit downloadControlViewProgress(payload);
+    } else if (type == "platform_meta_data") {
+        emit platformMetaData(payload);
     } else if (type == "version_info") {
         emit versionInfoReceived(payload);
     } else {
