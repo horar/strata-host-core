@@ -40,7 +40,7 @@ PrtModel::PrtModel(QObject *parent)
 
     boardManager_.init();
 
-    connect(&boardManager_, &strata::BoardManager::boardReady, this, &PrtModel::boardReadyHandler);
+    connect(&boardManager_, &strata::BoardManager::boardInfoChanged, this, &PrtModel::boardReadyHandler);
     connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PrtModel::boardDisconnectedHandler);
 
     connect(&downloadManager_, &strata::DownloadManager::groupDownloadFinished, this, &PrtModel::downloadFinishedHandler);

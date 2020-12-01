@@ -14,6 +14,7 @@ public:
 
     Q_INVOKABLE QString urlToLocalFile(const QUrl &url);
     Q_INVOKABLE bool isFile(const QString &file);
+    Q_INVOKABLE bool isValidImage(const QString &file);
     Q_INVOKABLE bool isExecutable(const QString &file);
     Q_INVOKABLE QString fileName(const QString &file);
     Q_INVOKABLE QString fileAbsolutePath(const QString &file);

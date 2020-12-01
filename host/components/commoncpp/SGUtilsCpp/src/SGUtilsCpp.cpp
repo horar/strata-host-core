@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QDateTime>
+#include <QImageReader>
 #include <cmath>
 #include <QUuid>
 #include <cctype>
@@ -36,6 +37,15 @@ bool SGUtilsCpp::isFile(const QString &file)
 {
     QFileInfo info(file);
     return info.isFile();
+}
+
+bool SGUtilsCpp::isValidImage(const QString &file)
+{
+    QImageReader reader(file);
+    if(reader.canRead()){
+        return true;
+    }
+    return false;
 }
 
 bool SGUtilsCpp::isExecutable(const QString &file)

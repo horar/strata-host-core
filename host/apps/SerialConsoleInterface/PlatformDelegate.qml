@@ -187,9 +187,9 @@ FocusScope {
                             }
                             color: {
                                 if (model.type === Sci.SciScrollbackModel.Request) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.3)
+                                    return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.4)
                                 } else if (model.isJsonValid === false) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
+                                    return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.4)
                                 }
 
                                 return "transparent"
@@ -296,6 +296,10 @@ FocusScope {
                                 anchors.fill: parent
                                 cursorShape: Qt.IBeamCursor
                                 acceptedButtons: Qt.NoButton
+                            }
+
+                            CommonCpp.SGJsonSyntaxHighlighter {
+                                textDocument: cmdText.textDocument
                             }
                         }
 
@@ -505,6 +509,7 @@ FocusScope {
                     suggestionCloseOnDown: true
                     suggestionDelegateRemovable: true
                     showCursorPosition: true
+                    showClearButton: true
 
                     onTextChanged: {
                         model.platform.errorString = "";
