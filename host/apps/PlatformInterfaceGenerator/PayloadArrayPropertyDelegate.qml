@@ -62,7 +62,12 @@ ColumnLayout {
         TypeSelectorComboBox {
             id: propertyType
             Component.onCompleted: {
-                currentIndex = indexSelected
+                if (indexSelected === -1) {
+                    currentIndex = getIndexOfType(type)
+                    indexSelected = currentIndex
+                } else {
+                    currentIndex = indexSelected
+                }
             }
 
             onActivated: {
@@ -98,7 +103,7 @@ ColumnLayout {
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
-                    parentListModel.append({"type": "int", "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
+                    parentListModel.append({"type": generator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": parentListModel})
                     commandsListView.contentY += 40
                 }
             }

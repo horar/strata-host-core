@@ -33,53 +33,14 @@ Rectangle {
 
     readonly property var templatePayload: ({
         "name": "", // The name of the property
-        "type": "int", // Type of the property, "array", "int", "string", etc.
+        "type": generator.TYPE_INT, // Type of the property, "array", "int", "string", etc.
         "indexSelected": 0,
         "valid": false,
         "array": [], // This is only filled if the type == "array"
         "object": []
     });
 
-    /**
-      * This function creates the JSON object to output
-     **/
-    function createJsonObject() {
-        let obj = {};
-
-        for (let i = 0; i < finishedModel.count; i++) {
-            let type = finishedModel.get(i);
-            let commands = [];
-
-            for(let j = 0; j < type.data.count; j++) {
-                let command = type.data.get(j);
-                let commandObj = {};
-                commandObj[command.type] = command.name;
-
-                if (command.payload.count === 0) {
-                    commandObj["payload"] = null;
-                    commands.push(commandObj);
-                    continue;
-                } else {
-                    commandObj["payload"] = {};
-                }
-
-                for (let k = 0; k < command.payload.count; k++) {
-                    let payloadProperty = command.payload.get(k);
-
-                    if (payloadProperty.type === "array") {
-                        commandObj["payload"][payloadProperty.name] = createJsonObjectFromArrayProperty(payloadProperty.array, []);
-                    } else if (payloadProperty.type === "object") {
-                        commandObj["payload"][payloadProperty.name] = createJsonObjectFromObjectProperty(payloadProperty.object, {});
-                    } else {
-                        commandObj["payload"][payloadProperty.name] = payloadProperty.type;
-                    }
-                }
-                commands.push(commandObj)
-            }
-            obj[type.name] = commands;
-        }
-        return obj;
-    }
+    property string inputFilePath
 
     function createJsonObjectFromArrayProperty(arrayModel, outputArr) {
         for (let m = 0; m < arrayModel.count; m++) {
@@ -370,6 +331,29 @@ Rectangle {
         }
     }
 
+    SGConfirmationDialog {
+        id: confirmDeleteInProgress
+        acceptButtonText: "Ok"
+        rejectButtonText: "Cancel"
+        title: "About to lose in progress work"
+        text: "You currently have unsaved changes. If you continue, you will lose all progress made. Do you want to continue?"
+
+        onAccepted: {
+            let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
+            try {
+                const jsonObject = JSON.parse(fileText)
+                createModelFromJson(jsonObject)
+            } catch (e) {
+                console.error(e)
+                alertToast.text = "Failed to parse input JSON file: " + e
+                alertToast.textColor = "white"
+                alertToast.color = "#D10000"
+                alertToast.interval = 0
+                alertToast.show()
+            }
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
 
@@ -377,12 +361,63 @@ Rectangle {
             id: alertToast
         }
 
+        Text {
+            Layout.alignment: Qt.AlignHCenter
+            text: "Platform Interface Generator"
+            padding: 0
+            font {
+                bold: true
+                pointSize: 24
+            }
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Rectangle {
+            id: hLine
+            Layout.preferredHeight: 1
+            Layout.fillWidth: true
+            Layout.bottomMargin: 20
+            color: "black"
+        }
+
         RowLayout {
             Layout.fillWidth: true
+            Layout.maximumWidth: 900
             Layout.preferredHeight: 30
             Layout.bottomMargin: 15
-            Layout.alignment: Qt.AlignTop
+            Layout.alignment: Qt.AlignHCenter
             spacing: 5
+
+            Button {
+                id: importJsonFileButton
+                Layout.preferredHeight: 30
+
+                icon {
+                    source: "qrc:/sgimages/file-import.svg"
+                    color: importJsonMouseArea.containsMouse ? Qt.darker("grey", 1.25) : "grey"
+                    name: "Import JSON file"
+                }
+
+                text: "Import"
+                display: Button.TextBesideIcon
+                hoverEnabled: true
+
+                Accessible.name: "Open file dialog for importing a JSON file"
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: {
+                    importJsonMouseArea.clicked()
+                }
+
+                MouseArea {
+                    id: importJsonMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        inputFileDialog.open()
+                    }
+                }
+            }
 
             Button {
                 id: selectOutFolderButton
@@ -508,9 +543,11 @@ Rectangle {
             id: generateButton
 
             Layout.fillWidth: true
+            Layout.maximumWidth: 600
             Layout.preferredHeight: 30
-            text: "Generate"
+            Layout.alignment: Qt.AlignHCenter
 
+            text: "Generate"
             enabled: outputFileText.text !== ""
 
             Accessible.name: generateButton.text
@@ -578,5 +615,272 @@ Rectangle {
         onAccepted: {
             outputFileText.text = SGUtilsCpp.urlToLocalFile(fileUrl)
         }
+    }
+
+    FileDialog {
+        id: inputFileDialog
+        selectFolder: false
+        selectExisting: true
+        selectMultiple: false
+        nameFilters: ["*.json"]
+
+        onAccepted: {
+            inputFilePath = SGUtilsCpp.urlToLocalFile(fileUrl)
+            if (!hasMadeChanges()) {
+                let fileText = SGUtilsCpp.readTextFileContent(inputFilePath)
+                try {
+                    const jsonObject = JSON.parse(fileText)
+                    createModelFromJson(jsonObject)
+                } catch (e) {
+                    console.error(e)
+                    alertToast.text = "Failed to parse input JSON file: " + e
+                    alertToast.textColor = "white"
+                    alertToast.color = "#D10000"
+                    alertToast.interval = 0
+                    alertToast.show()
+                }
+            }
+        }
+    }
+
+    /**
+      * This function checks to see if either the commands or notifications has been populated
+     **/
+    function hasMadeChanges() {
+        for (let i = 0; i < finishedModel.count; i++) {
+            if (finishedModel.get(i).data.count > 0) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    /**
+      * This function creates the model from a JSON object (used when importing a JSON file)
+     **/
+    function createModelFromJson(jsonObject) {
+        let topLevelKeys = Object.keys(jsonObject); // This contains "commands" / "notifications" arrays
+
+        finishedModel.modelAboutToBeReset()
+        finishedModel.clear();
+
+        for (let i = 0; i < topLevelKeys.length; i++) {
+            const topLevelType = topLevelKeys[i];
+            const arrayOfCommandsOrNotifications = jsonObject[topLevelType];
+            let listOfCommandsOrNotifications = {
+                "name": topLevelType, // "commands" / "notifications"
+                "data": []
+            }
+
+            finishedModel.append(listOfCommandsOrNotifications);
+
+            for (let j = 0; j < arrayOfCommandsOrNotifications.length; j++) {
+                let commandsModel = finishedModel.get(i).data;
+
+                let cmd = arrayOfCommandsOrNotifications[j];
+                let commandName;
+                let commandType;
+                let commandObject = {};
+
+                if (topLevelType === "commands") {
+                    // If we are dealing with commands, then look for the "cmd" key
+                    commandName = cmd["cmd"];
+                    commandType = "cmd";
+                } else {
+                    commandName = cmd["value"];
+                    commandType = "value";
+                }
+
+                commandObject["type"] = commandType;
+                commandObject["name"] = commandName;
+                commandObject["valid"] = true;
+                commandObject["payload"] = [];
+                commandObject["editing"] = false;
+
+                commandsModel.append(commandObject);
+
+                const payload = cmd.hasOwnProperty("payload") ? cmd["payload"] : null;
+                let payloadPropertiesArray = [];
+
+                if (payload) {
+                    let payloadProperties = Object.keys(payload);
+                    let payloadModel = commandsModel.get(j).payload;
+                    for (let k = 0; k < payloadProperties.length; k++) {
+
+                        const key = payloadProperties[k];
+                        const type = getType(payload[key]);
+                        let payloadPropObject = Object.assign({}, templatePayload);
+                        payloadPropObject["name"] = key;
+                        payloadPropObject["type"] = type;
+                        payloadPropObject["valid"] = true;
+                        payloadPropObject["indexSelected"] = -1;
+
+                        payloadModel.append(payloadPropObject);
+
+                        let propertyArray = [];
+                        let propertyObject = [];
+
+                        if (type === "array") {
+                            generateArrayModel(payload[key], payloadModel.get(k).array);
+                        } else if (type === "object") {
+                            generateObjectModel(payload[key], payloadModel.get(k).object);
+                        }
+                    }
+                }
+            }
+        }
+
+        finishedModel.modelReset()
+    }
+
+    /**
+      * This function takes an Array and transforms it into an array readable by our delegates
+     **/
+    function generateArrayModel(arr, parentListModel) {
+        for (let i = 0; i < arr.length; i++) {
+            const type = getType(arr[i]);
+            let obj = {"type": type, "indexSelected": -1, "array": [], "object": [], "parent": parentListModel};
+
+            parentListModel.append(obj);
+
+            if (type === "array") {
+                generateArrayModel(arr[i], parentListModel.get(i).array)
+            } else if (type === "object") {
+                generateObjectModel(arr[i], parentListModel.get(i).object)
+            }
+        }
+    }
+
+    /**
+      * This function takes an Object and transforms it into an array readable by our delegates
+     **/
+    function generateObjectModel(object, parentListModel) {
+        let keys = Object.keys(object);
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            const type = getType(object[key]);
+
+            let obj = {"key": key, "type": type, "indexSelected": -1, "valid": true, "array": [], "object": [], "parent": parentListModel};
+            parentListModel.append(obj);
+
+            if (type === "array") {
+                generateArrayModel(object[key], parentListModel.get(i).array)
+            } else if (type === "object") {
+                generateObjectModel(object[key], parentListModel.get(i).object)
+            }
+        }
+    }
+
+    /**
+      * This function returns the type of an item
+     **/
+    function getType(item) {
+        if (Array.isArray(item)) {
+            return "array";
+        } else if (typeof item === "object") {
+            return "object";
+        } else {
+            return item;
+        }
+    }
+
+    /**
+      * This function creates the JSON object to output
+     **/
+    function createJsonObject() {
+        let obj = {};
+
+        for (let i = 0; i < finishedModel.count; i++) {
+            let type = finishedModel.get(i);
+            let commands = [];
+
+            for(let j = 0; j < type.data.count; j++) {
+                let command = type.data.get(j);
+                let commandObj = {};
+                commandObj[command.type] = command.name;
+
+                if (command.payload.count === 0) {
+                    commandObj["payload"] = null;
+                    commands.push(commandObj);
+                    continue;
+                } else {
+                    commandObj["payload"] = {};
+                }
+
+                for (let k = 0; k < command.payload.count; k++) {
+                    let payloadProperty = command.payload.get(k);
+
+                    if (payloadProperty.type === "array") {
+                        commandObj["payload"][payloadProperty.name] = createJsonObjectFromArrayProperty(payloadProperty.array, []);
+                    } else if (payloadProperty.type === "object") {
+                        commandObj["payload"][payloadProperty.name] = createJsonObjectFromObjectProperty(payloadProperty.object, {});
+                    } else {
+                        commandObj["payload"][payloadProperty.name] = payloadProperty.type;
+                    }
+                }
+                commands.push(commandObj)
+            }
+            obj[type.name] = commands;
+        }
+        return obj;
+    }
+
+    function createJsonObjectFromArrayProperty(arrayModel, outputArr) {
+        for (let m = 0; m < arrayModel.count; m++) {
+            let arrayElement = arrayModel.get(m);
+
+            if (arrayElement.type === "object") {
+                outputArr.push(createJsonObjectFromObjectProperty(arrayElement.object, {}))
+            } else if (arrayElement.type === "array") {
+                outputArr.push(createJsonObjectFromArrayProperty(arrayElement.array, []))
+            } else {
+                outputArr.push(arrayElement.type)
+            }
+        }
+        return outputArr;
+    }
+
+    function createJsonObjectFromObjectProperty(objectModel, outputObj) {
+        for (let i = 0; i < objectModel.count; i++) {
+            let objectProperty = objectModel.get(i);
+
+            // Recurse through array
+            if (objectProperty.type === "array") {
+                outputObj[objectProperty.key] = createJsonObjectFromArrayProperty(objectProperty.array, [])
+            } else if (objectProperty.type === "object") {
+                outputObj[objectProperty.key] = createJsonObjectFromObjectProperty(objectProperty.object, {})
+            } else {
+                outputObj[objectProperty.key] = objectProperty.type
+            }
+        }
+        return outputObj;
+    }
+
+    function generatePlatformInterface() {
+        let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
+
+        let jsonObject = createJsonObject();
+        let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
+
+        let result = generator.generate(jsonInputFilePath, outputFileText.text);
+        if (!result) {
+            alertToast.text = "Generation Failed: " + generator.lastError
+            alertToast.textColor = "white"
+
+            alertToast.color = "#D10000"
+            alertToast.interval = 0
+        } else if (generator.lastError.length > 0) {
+            alertToast.text = "Generation Succeeded, but with warnings: " + generator.lastError
+            alertToast.textColor = "black"
+            alertToast.color = "#DFDF43"
+            alertToast.interval = 0
+        } else {
+            alertToast.textColor = "white"
+            alertToast.text = "Successfully generated PlatformInterface.qml"
+            alertToast.color = "green"
+            alertToast.interval = 4000
+        }
+        alertToast.show();
     }
 }

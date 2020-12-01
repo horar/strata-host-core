@@ -72,6 +72,7 @@ ColumnLayout {
             }
 
             Component.onCompleted: {
+                text = model.name
                 forceActiveFocus()
             }
 

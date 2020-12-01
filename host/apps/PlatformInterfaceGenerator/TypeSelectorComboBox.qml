@@ -6,15 +6,25 @@ ComboBox {
     id: propertyType
 
     property var items: [
-        { name: "Int", value: "int", description: "Type int" },
-        { name: "Double", value: "double", description: "Type double" },
-        { name: "String", value: "string", description: "Type string" },
-        { name: "Bool", value: "bool", description: "Type bool" },
+        { name: "Int", value: generator.TYPE_INT, description: "Type int" },
+        { name: "Double", value: generator.TYPE_DOUBLE, description: "Type double" },
+        { name: "String", value: generator.TYPE_STRING, description: "Type string" },
+        { name: "Bool", value: generator.TYPE_BOOL, description: "Type bool" },
         { name: "Array - Static Sized", value: "array", description: "With this you are able to listen to changes made to each individual element in the array" },
-        { name: "Array - Dynamic Sized", value: "array-dynamic", description: "With this you are unable to listen to changes to the individual elements in the array. You are only able to listen to when the entire array changes" },
+        { name: "Array - Dynamic Sized", value: generator.TYPE_ARRAY_DYNAMIC, description: "With this you are unable to listen to changes to the individual elements in the array. You are only able to listen to when the entire array changes" },
         { name: "Object - Known Properties", value: "object", description: "With this you are able to listen to changes made to individual properties in the object" },
-        { name: "Object - Unknown Properties", value: "object-dynamic", description: "With this you are unable to listen to changes made to individual properties in the object. You are only able to listen to when the entire object changes." }
+        { name: "Object - Unknown Properties", value: generator.TYPE_OBJECT_DYNAMIC, description: "With this you are unable to listen to changes made to individual properties in the object. You are only able to listen to when the entire object changes." }
     ]
+
+    function getIndexOfType(text) {
+        for (let i = 0; i < items.length; i++) {
+            if (items[i]["value"] === text) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 
     Layout.preferredWidth: 200
     Layout.preferredHeight: 30
