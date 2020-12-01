@@ -48,11 +48,9 @@ void BoardController::newConnection(int deviceId, bool recognized) {
         connect(device.get(), &Device::msgFromDevice, this, &BoardController::messageFromBoard);
         boards_.insert(deviceId, Board(device));
 
-        bool hasAnyClassId = (device->classId().isEmpty() == false) || (device->controllerClassId().isEmpty() == false);
-
         qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
 
-        emit boardConnected(deviceId, hasAnyClassId);
+        emit boardConnected(deviceId);
     } else {
         qCWarning(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logDeviceId(deviceId);
     }

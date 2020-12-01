@@ -226,8 +226,13 @@ bool BoardManager::openDevice(const DevicePtr device) {
     return true;
 }
 
-// mutex_ must be locked before calling this function (due to modification deviceOperations_)
 void BoardManager::startDeviceOperations(const DevicePtr device) {
+    startIdentifyOperation(device);
+
+    connect(device.get(), &Device::msgFromDevice, this, &BoardManager::checkNotification);
+}
+
+void BoardManager::startIdentifyOperation(const DevicePtr device) {
     // shared_ptr because QHash::insert() calls copy constructor (unique_ptr has deleted copy constructor)
     // We need deleteLater() because DeviceOperations object is deleted
     // in slot connected to signal from it (BoardManager::handleOperationFinished).
@@ -239,9 +244,9 @@ void BoardManager::startDeviceOperations(const DevicePtr device) {
     connect(operation.get(), &operation::BaseDeviceOperation::finished, this, &BoardManager::handleOperationFinished);
 
     operation::Identify *identify = dynamic_cast<operation::Identify*>(operation.get());
-    identify->runWithDelay(IDENTIFY_LAUNCH_DELAY);  // Some boards need time for booting
-
-    connect(device.get(), &Device::msgFromDevice, this, &BoardManager::checkNotification);
+    // Some boards need time for booting.
+    // If board is rebooted it also takes some time to start.
+    identify->runWithDelay(IDENTIFY_LAUNCH_DELAY);
 
     identifyOperations_.insert(device->deviceId(), operation);
 }
@@ -278,13 +283,16 @@ void BoardManager::handleOperationFinished(operation::Result result, int status,
         // operation has finished, we do not need BaseDeviceOperation object anymore
         identifyOperations_.remove(deviceId);
 
-        bool boardRecognized = (result == operation::Result::Success) ? true : false;
-
         if (result == operation::Result::Error) {
             emit boardError(deviceId, errStr);
         }
 
-        emit boardInfoChanged(deviceId, boardRecognized);
+        // If identify operation is cancelled, another identify operation will be started soon.
+        // So there is no need for emitting boardInfoChanged signal.
+        if (result != operation::Result::Cancel) {
+            bool boardRecognized = (result == operation::Result::Success);
+            emit boardInfoChanged(deviceId, boardRecognized);
+        }
     }
 }
 
@@ -356,7 +364,7 @@ void BoardManager::checkNotification(QByteArray message) {
     emit platformIdChanged(device->deviceId(), QPrivateSignal());
 }
 
-void BoardManager::handlePlatformIdChanged(const int deviceId, QPrivateSignal) {
+void BoardManager::handlePlatformIdChanged(const int deviceId) {
     // method device() uses mutex_
     DevicePtr device = this->device(deviceId);
     if (device == nullptr) {
@@ -366,20 +374,11 @@ void BoardManager::handlePlatformIdChanged(const int deviceId, QPrivateSignal) {
     auto it = identifyOperations_.find(deviceId);
     if (it != identifyOperations_.end()) {
         it.value()->cancelOperation();
-        identifyOperations_.erase(it);
+        // If operation is cancelled, finished is signal will be received (with Result::Cancel)
+        // and operation will be removed from identifyOperations_ in handleOperationFinished slot.
     }
 
-    std::shared_ptr<operation::BaseDeviceOperation> operation (
-        new operation::Identify(device, true),
-        operationLaterDeleter
-    );
-
-    connect(operation.get(), &operation::BaseDeviceOperation::finished, this, &BoardManager::handleOperationFinished);
-
-    operation::Identify *identify = dynamic_cast<operation::Identify*>(operation.get());
-    identify->run();
-
-    identifyOperations_.insert(device->deviceId(), operation);
+    startIdentifyOperation(device);
 }
 
 void BoardManager::operationLaterDeleter(operation::BaseDeviceOperation *operation) {

@@ -171,13 +171,29 @@ function parseConnectedPlatforms (connected_platform_list_json) {
         return
     }
 
-    for (let platform of currentlyConnected) {
-        if (platform.class_id === undefined || platform.device_id === undefined) {
+    let i = currentlyConnected.length
+    while (i--) {
+        let platform = currentlyConnected[i]
+        if ((platform.class_id === undefined && platform.controller_class_id === undefined) || platform.device_id === undefined) {
             console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Connected platform has undefined class_id or device_id, skipping")
+            // remove bad platform from list
+            currentlyConnected.splice(i, 1)
             continue
         }
 
-        if (devicePreviouslyConnected(platform.device_id)) {
+        // If unregistered board (empty class_id) is connected we want to show it in platform list.
+
+        // * If Strata assisted is connected without assisted board (only dongle is connected)
+        //   platform has only 'controller_class_id' (does not have 'class_id').
+        // * Temporary workaround until support for assisted Strata will be implemented.
+        if (platform.class_id === undefined) {
+          platform.class_id = ""
+        }
+
+        let previousIndex = previousDeviceIndex(platform.device_id)
+        if (previousIndex > -1) {
+            // device previously connected: keep status, remove from previouslyConnected list
+            previouslyConnected.splice(previousIndex, 1);
             refreshFirmwareVersion(platform)
             continue
         } else {
@@ -222,15 +238,13 @@ function refreshFirmwareVersion(platform) {
 /*
     Determine if device was already connected (present in most recent connected_platform_list_json)
 */
-function devicePreviouslyConnected(device_id) {
+function previousDeviceIndex(device_id) {
     for (let i = 0; i < previouslyConnected.length; i++) {
         if (previouslyConnected[i].device_id === device_id) {
-            // device previously connected: keep status, remove from previouslyConnected list
-            previouslyConnected.splice(i, 1);
-            return true
+            return i
         }
     }
-    return false
+    return -1
 }
 
 /*
