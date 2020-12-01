@@ -17,12 +17,24 @@ Item {
     property string first_name: ""
     property string last_name: ""
 
+    property string configFileName: "userSettingTest.json"
+    function saveSettings() {
+        let config = {
+            api_test: {
+                result: "Passed!",
+            }
+        };
+        return sgUserSettings.writeFile(configFileName, config)
+
+    }
+
     Item {
         id: classId
         Text {
             Accessible.name: "class_id: " + text
             Accessible.role: Accessible.StaticText
             text: class_id
+            visible: false
             Component.onCompleted: {
                 if(text != "") {
                     console.info("Class ID", text)
@@ -34,6 +46,7 @@ Item {
     Item {
         id: userId
         Text {
+            visible: false
             Accessible.name: "user_id: " + text
             Accessible.role: Accessible.StaticText
             text: user_id
@@ -46,6 +59,7 @@ Item {
     Item {
         id: firstName
         Text {
+            visible: false
             Accessible.name: "first_name:" + text
             Accessible.role: Accessible.StaticText
             text: first_name
@@ -58,6 +72,7 @@ Item {
     Item {
         id: lastName
         Text {
+            visible: false
             Accessible.name: "last_name:" + text
             Accessible.role: Accessible.StaticText
             text: last_name
@@ -139,6 +154,7 @@ Item {
 
                     }
                     SGText {
+                        id: userSetting
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
                         text: "Setting SGUSerSetting"
@@ -216,7 +232,7 @@ Item {
         }
         SGButton{
             width: 100
-            height: 100
+            height:50
             text: "RUN"
             anchors.top: container.bottom
             anchors.topMargin: 10
@@ -232,6 +248,18 @@ Item {
                     helpIcon1.iconColor = "red"
                     firstTest.text += ": " + class_id + "\n FAILED"
                 }
+                if(saveSettings()) {
+                    helpIcon2.source = "qrc:/sgimages/check-circle.svg"
+                    helpIcon2.iconColor = "green"
+                    userSetting.text += ":" + "true" + "\n PASSED"
+                }
+                else {
+                    helpIcon2.source = "qrc:/sgimages/check-circle.svg"
+                    helpIcon2.iconColor = "red"
+                    userSetting.text += ":" + "false" + "\n FAILED"
+                }
+
+
 
                 if(user_id) {
                     console.info("user_id", user_id)
