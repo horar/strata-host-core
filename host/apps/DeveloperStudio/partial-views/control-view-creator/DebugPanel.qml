@@ -10,7 +10,7 @@ Rectangle {
 
     readonly property bool expanded: mainContainer.width > 0 && visible
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
-    property int expandWidth: 400
+    property int expandWidth: 500
     property alias mainContainer: mainContainer
 
     Button {

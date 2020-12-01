@@ -44,7 +44,7 @@ Rectangle {
             Layout.fillWidth: true
 
             // This color adds .40 alpha to white
-            iconColor: parent.enabled ? "white" : Qt.rgba(255, 255, 255, 0.4)
+            iconColor: (parent.enabled || toolBarListView.currentIndex === modelIndex ? "white" : Qt.rgba(255, 255, 255, 0.4))
             source: modelData.imageSource
         }
 
@@ -67,18 +67,8 @@ Rectangle {
         enabled: parent.enabled
 
         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-
-        onContainsMouseChanged: {
-            if (containsMouse && iconTextGroup.enabled && modelIndex !== toolBarListView.currentIndex) {
-                tabIcon.iconColor = Qt.darker(tabIcon.iconColor, 1.4)
-            } else if (iconTextGroup.enabled) {
-                tabIcon.iconColor = "white"
-            }
-        }
-
         onClicked: {
             parent.onClicked()
-            tabIcon.iconColor = "white"
         }
     }
 }

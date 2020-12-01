@@ -81,6 +81,7 @@ Rectangle {
                 property int startTab: 0
                 property int editTab: 1
                 property int viewTab: 2
+                property int debugTab: 3
                 property bool recompiling: false
 
                 onCurrentIndexChanged: {
@@ -132,6 +133,24 @@ Rectangle {
                 /*****************************************
                   Additional items go below here, but above filler
                 *****************************************/
+
+                SGSideNavItem {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 70
+                    modelIndex: toolBarListView.debugTab
+                    iconText: "Debug"
+                    iconSource: "qrc:/sgimages/tools.svg"
+                    enabled: viewStack.currentIndex === 2 && debugPanel.visible
+                    color: debugPanel.expanded ? "#33b13b" : "transparent"
+
+                    function onClicked() {
+                        if (debugPanel.expanded) {
+                            debugPanel.collapse()
+                        } else {
+                            debugPanel.expand()
+                        }
+                    }
+                }
 
                 Item {
                     id: filler
