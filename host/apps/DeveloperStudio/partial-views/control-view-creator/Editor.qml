@@ -229,7 +229,7 @@ Item {
 
                             SGText {
                                 id: tabText
-                                text: model.filename + (!model.exists ? " (deleted)" : "")
+                                text: model.filename + (!model.exists ? " <font color='red'>(deleted)</font>" : "")
                                 color: "black"
                                 anchors {
                                     left: parent.left
@@ -238,6 +238,7 @@ Item {
                                 }
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
+                                textFormat: Text.RichText
                             }
 
                             SGIcon {
