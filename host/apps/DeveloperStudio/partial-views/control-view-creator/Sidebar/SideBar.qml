@@ -71,7 +71,7 @@ Rectangle {
                         }
 
                         console.error("Project does not have Control.qml at the top level")
-                        editor.errorRectangle.errorMessage = "Project does not have Control.qml at the top level. This means that you will be unable to view the control view."
+                        editor.errorRectangle.errorMessage = "Project does not have Control.qml at the top level. This means that the control view cannot be built or viewed."
                         editor.errorRectangle.visible = true
                     }
 
