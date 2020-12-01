@@ -111,10 +111,16 @@ ColumnLayout {
             addPropertyButton.clicked()
         }
 
-        onClicked: {
-            commandsColumn.payloadModel.append(templatePayload)
-            if (commandsColumn.modelIndex === commandsListView.count - 1) {
-                commandsListView.contentY += 70
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+
+            onClicked: {
+                commandsColumn.payloadModel.append(templatePayload)
+                if (commandsColumn.modelIndex === commandsListView.count - 1) {
+                    commandsListView.contentY += 70
+                }
             }
         }
     }

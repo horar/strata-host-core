@@ -639,6 +639,8 @@ Rectangle {
                     alertToast.interval = 0
                     alertToast.show()
                 }
+            } else {
+                confirmDeleteInProgress.open()
             }
         }
     }
