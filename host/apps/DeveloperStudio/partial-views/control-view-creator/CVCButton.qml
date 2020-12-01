@@ -76,4 +76,8 @@ Rectangle {
             }
         }
     }
+
+    function toggleVisibility(){
+        visible = true
+    }
 }
