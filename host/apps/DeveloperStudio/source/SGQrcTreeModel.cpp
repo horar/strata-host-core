@@ -515,13 +515,18 @@ bool SGQrcTreeModel::renameFile(const QModelIndex &index, const QString &newFile
 
         setData(index, newUrl, FilepathRole);
         setData(index, newFilename, FilenameRole);
-        if (!node->isDir()) {
+
+        if (node->isDir()) {
+            renameAllChildren(index, newPath);
+        } else {
             setData(index, SGUtilsCpp::fileSuffix(newFilename), FileTypeRole);
         }
 
         if (wasInQrc) {
-            addToQrc(index, true);
+            addToQrc(index, false);
         }
+
+        startSave();
 
         if (wasWatchingOldPath) {
             startWatchingPath(newPath);
@@ -717,6 +722,35 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
             parentNode->insertChild(node, parentNode->childCount());
             uidMap_.insert(uid, node);
             pathsInTree_.insert(node->filepath());
+        }
+    }
+}
+
+void SGQrcTreeModel::renameAllChildren(const QModelIndex &parentIndex, const QString &newPath)
+{
+    QDir parentDir(newPath);
+    SGQrcTreeNode *parentNode = getNode(parentIndex);
+    for (int i = 0; i < parentNode->childCount(); ++i) {
+        SGQrcTreeNode *child = parentNode->childNode(i);
+        QString newFilePath = parentDir.filePath(child->filename());
+        QUrl newFileUrl = QUrl::fromLocalFile(newFilePath);
+        QModelIndex childIndex = index(i, 0, parentIndex);
+        bool wasInQrc = child->inQrc();
+
+        if (wasInQrc) {
+            removeFromQrc(childIndex, false);
+        }
+
+        pathsInTree_.remove(child->filepath());
+        pathsInTree_.insert(newFileUrl);
+
+        setData(childIndex, newFileUrl, FilepathRole);
+
+        if (wasInQrc) {
+            addToQrc(childIndex, false);
+        }
+        if (child->isDir()) {
+            renameAllChildren(childIndex, newFilePath);
         }
     }
 }

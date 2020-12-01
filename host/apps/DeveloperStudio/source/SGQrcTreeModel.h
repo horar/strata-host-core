@@ -250,6 +250,7 @@ private:
     bool createQrcXmlDocument(const QByteArray &fileText);
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
+    void renameAllChildren(const QModelIndex &parentIndex, const QString &newPath);
     QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
     /**
      * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program

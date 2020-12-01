@@ -75,7 +75,6 @@ Item {
 
             // If we are creating a new file
             if (model.filename === "") {
-
                 const success = SGUtilsCpp.createFile(path);
                 if (!success) {
                     //handle error
@@ -100,6 +99,8 @@ Item {
                     if (success) {
                         if (openFilesModel.hasTab(model.uid)) {
                             openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
+                        } else if (model.isDir) {
+                            handleRenameForOpenFiles(treeModel.getNode(styleData.index))
                         }
                     } else {
                         text = model.filename
@@ -175,6 +176,21 @@ Item {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /**
+      * This function handles when directories are renamed.
+      * The purpose is to make sure that all open tabs that are underneath the directory are updated
+     **/
+    function handleRenameForOpenFiles(node) {
+        for (let i = 0; i < node.childCount(); i++) {
+            let childNode = node.childNode(i);
+            if (childNode.isDir) {
+                handleRenameForOpenFiles(childNode)
+            } else if (openFilesModel.hasTab(childNode.uid)) {
+                openFilesModel.updateTab(childNode.uid, childNode.filename, childNode.filepath, childNode.filetype)
             }
         }
     }
