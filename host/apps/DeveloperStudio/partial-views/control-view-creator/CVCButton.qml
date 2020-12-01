@@ -20,7 +20,7 @@ Rectangle {
     }
     height: container.height
     width: controlViewCreatorRow.implicitWidth + 20
-    color: controlViewCreatorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
+    color: controlViewCreatorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#34883b"
 
     MouseArea {
         id: controlViewCreatorMouse
@@ -49,12 +49,31 @@ Rectangle {
             color: "white"
         }
 
-        SGIcon {
-            id: plusSignIcon
-            Layout.preferredWidth: 25
+        Rectangle{
+            Layout.preferredWidth: 30
             Layout.preferredHeight: Layout.preferredWidth
-            source: "qrc:/sgimages/plus.svg"
-            iconColor: controlViewCreatorText.color
+            color: closeArea.containsMouse ? "#34993b" : "transparent"
+
+            SGIcon {
+                id: plusSignIcon
+                width: 25
+                height: width
+                anchors.centerIn: parent
+                source: "qrc:/sgimages/times.svg"
+                iconColor: controlViewCreatorText.color
+            }
+
+            MouseArea {
+                id: closeArea
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                anchors.fill: parent
+
+                onClicked: {
+                    let data = {"index": 0}
+                    NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+                }
+            }
         }
     }
 }
