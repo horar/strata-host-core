@@ -33,7 +33,7 @@ bool DebugMenuGenerator::generate(const QString &outputDirPath, QList<QVariantMa
     outputStream << writeLine("Text {");
     indentLevel++;
     outputStream << writeLine("id: header");
-    outputStream << writeLine("text: \"Debug Menu\"");
+    outputStream << writeLine("text: \"Debug Commands and Notifications\"");
     outputStream << writeLine("font.bold: true");
     outputStream << writeLine("font.pointSize: 18");
     outputStream << writeLine("anchors {");
@@ -340,6 +340,7 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine("Layout.preferredWidth: 200");
     text += writeLine("text: placeholderText");
     text += writeLine("placeholderText: generatePlaceholder(model.type, model.array)\n");
+    text += writeLine("selectByMouse: true");
     text += writeLine("Component.onCompleted: {");
     indentLevel++;
     text += writeLine("model.value = text");
