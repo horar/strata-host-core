@@ -27,6 +27,67 @@ Item {
         return sgUserSettings.writeFile(configFileName, config)
 
     }
+    Component.onCompleted: {
+        setTheCaseCheck()
+    }
+
+    function setTheCaseCheck() {
+        if(class_id) {
+            console.info("Class_id",class_id)
+            helpIcon1.source = "qrc:/sgimages/check-circle.svg"
+            helpIcon1.iconColor = "green"
+            firstTest.text += ": " + class_id + "\n PASSED"
+        }
+        else {
+            helpIcon1.source =  "qrc:/sgimages/times-circle.svg"
+            helpIcon1.iconColor = "red"
+            firstTest.text += ": " + class_id + "\n FAILED"
+        }
+        if(saveSettings()) {
+            helpIcon2.source = "qrc:/sgimages/check-circle.svg"
+            helpIcon2.iconColor = "green"
+            userSetting.text += ":" + "true" + "\n PASSED"
+        }
+        else {
+            helpIcon2.source = "qrc:/sgimages/check-circle.svg"
+            helpIcon2.iconColor = "red"
+            userSetting.text += ":" + "false" + "\n FAILED"
+        }
+
+        if(user_id) {
+            console.info("user_id", user_id)
+            helpIcon3.source = "qrc:/sgimages/check-circle.svg"
+            helpIcon3.iconColor = "green"
+            userIDText.text += ": " + user_id +  "\n PASSED"
+        }
+        else {
+            helpIcon3.source = "qrc:/sgimages/times-circle.svg"
+            helpIcon3.iconColor = "red"
+            userIDText.text += ": " + user_id +  "\n FAILED"
+        }
+        if(first_name) {
+            console.info("first_name", first_name)
+            helpIcon4.source = "qrc:/sgimages/check-circle.svg"
+            helpIcon4.iconColor = "green"
+            firstNameText.text += ": " + first_name +  "\n PASSED"
+        }
+        else {
+            helpIcon4.source = "qrc:/sgimages/times-circle.svg"
+            helpIcon4.iconColor = "red"
+            firstNameText.text += ": " + first_name +  "\n FAILED"
+        }
+        if(last_name) {
+            console.info("last_name", last_name)
+            helpIcon5.source = "qrc:/sgimages/check-circle.svg"
+            helpIcon5.iconColor = "green"
+            lastNameText.text += ": " + last_name +  "\n PASSED"
+        }
+        else {
+            helpIcon5.source = "qrc:/sgimages/times-circle.svg"
+            helpIcon5.iconColor = "red"
+            lastNameText.text += ": " + last_name +  "\n FAILED"
+        }
+    }
 
     Item {
         id: classId
@@ -157,7 +218,7 @@ Item {
                         id: userSetting
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
-                        text: "Setting SGUSerSetting"
+                        text: "Check SGUSerSetting"
                     }
                 }
             }
@@ -230,73 +291,17 @@ Item {
             //                Layout.fillWidth: true
             //            }
         }
-        SGButton{
-            width: 100
-            height:50
-            text: "RUN"
-            anchors.top: container.bottom
-            anchors.topMargin: 10
-            onClicked: {
-                if(class_id) {
-                    console.info("Class_id",class_id)
-                    helpIcon1.source = "qrc:/sgimages/check-circle.svg"
-                    helpIcon1.iconColor = "green"
-                    firstTest.text += ": " + class_id + "\n PASSED"
-                }
-                else {
-                    helpIcon1.source =  "qrc:/sgimages/times-circle.svg"
-                    helpIcon1.iconColor = "red"
-                    firstTest.text += ": " + class_id + "\n FAILED"
-                }
-                if(saveSettings()) {
-                    helpIcon2.source = "qrc:/sgimages/check-circle.svg"
-                    helpIcon2.iconColor = "green"
-                    userSetting.text += ":" + "true" + "\n PASSED"
-                }
-                else {
-                    helpIcon2.source = "qrc:/sgimages/check-circle.svg"
-                    helpIcon2.iconColor = "red"
-                    userSetting.text += ":" + "false" + "\n FAILED"
-                }
+        //        SGButton{
+        //            width: 100
+        //            height:50
+        //            text: "RUN"
+        //            anchors.top: container.bottom
+        //            anchors.topMargin: 10
+        //            onClicked: {
 
 
-
-                if(user_id) {
-                    console.info("user_id", user_id)
-                    helpIcon3.source = "qrc:/sgimages/check-circle.svg"
-                    helpIcon3.iconColor = "green"
-                    userIDText.text += ": " + user_id +  "\n PASSED"
-                }
-                else {
-                    helpIcon3.source = "qrc:/sgimages/times-circle.svg"
-                    helpIcon3.iconColor = "red"
-                    userIDText.text += ": " + user_id +  "\n FAILED"
-                }
-                if(first_name) {
-                    console.info("first_name", first_name)
-                    helpIcon4.source = "qrc:/sgimages/check-circle.svg"
-                    helpIcon4.iconColor = "green"
-                    firstNameText.text += ": " + first_name +  "\n PASSED"
-                }
-                else {
-                    helpIcon4.source = "qrc:/sgimages/times-circle.svg"
-                    helpIcon4.iconColor = "red"
-                    firstNameText.text += ": " + first_name +  "\n FAILED"
-                }
-                if(last_name) {
-                    console.info("last_name", last_name)
-                    helpIcon5.source = "qrc:/sgimages/check-circle.svg"
-                    helpIcon5.iconColor = "green"
-                    lastNameText.text += ": " + last_name +  "\n PASSED"
-                }
-                else {
-                    helpIcon5.source = "qrc:/sgimages/times-circle.svg"
-                    helpIcon5.iconColor = "red"
-                    lastNameText.text += ": " + last_name +  "\n FAILED"
-                }
-
-            }
-        }
+        //            }
+        //        }
     }
 
 }
