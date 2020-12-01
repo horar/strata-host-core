@@ -12,12 +12,13 @@ Item {
     anchors.fill: parent
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1400/900
+
     property string class_id: ""
     property string user_id: ""
     property string first_name: ""
     property string last_name: ""
-
     property string configFileName: "userSettingTest.json"
+
     function saveSettings() {
         let config = {
             api_test: {
@@ -40,18 +41,18 @@ Item {
         else {
             helpIcon1.source =  "qrc:/sgimages/times-circle.svg"
             helpIcon1.iconColor = "red"
-            firstTest.text += ": " + class_id + "\n FAILED"
+            firstTest.text += "\n FAILED"
         }
 
         if(saveSettings()) {
             helpIcon2.source = "qrc:/sgimages/check-circle.svg"
             helpIcon2.iconColor = "green"
-            userSetting.text += ":" + "true" + "\n PASSED"
+            userSetting.text += ":" + " True" + "\n PASSED"
         }
         else {
             helpIcon2.source = "qrc:/sgimages/check-circle.svg"
             helpIcon2.iconColor = "red"
-            userSetting.text += ":" + "false" + "\n FAILED"
+            userSetting.text += "\n FAILED"
         }
 
         if(user_id) {
@@ -62,7 +63,7 @@ Item {
         else {
             helpIcon3.source = "qrc:/sgimages/times-circle.svg"
             helpIcon3.iconColor = "red"
-            userIDText.text += ": " + user_id +  "\n FAILED"
+            userIDText.text += "\n FAILED"
         }
 
         if(first_name) {
@@ -73,17 +74,17 @@ Item {
         else {
             helpIcon4.source = "qrc:/sgimages/times-circle.svg"
             helpIcon4.iconColor = "red"
-            firstNameText.text += ": " + first_name +  "\n FAILED"
+            firstNameText.text +=  "\n FAILED"
         }
         if(last_name) {
             helpIcon5.source = "qrc:/sgimages/check-circle.svg"
             helpIcon5.iconColor = "green"
-            lastNameText.text += ": " + last_name +  "\n PASSED"
+           lastNameText.text += ": " + last_name +  "\n PASSED"
         }
         else {
             helpIcon5.source = "qrc:/sgimages/times-circle.svg"
             helpIcon5.iconColor = "red"
-            lastNameText.text += ": " + last_name +  "\n FAILED"
+            lastNameText.text +=  "\n FAILED"
         }
     }
 
