@@ -28,12 +28,11 @@ Item {
 
     }
     Component.onCompleted: {
-        setTheCaseCheck()
+        testingControlView()
     }
 
-    function setTheCaseCheck() {
+    function testingControlView() {
         if(class_id) {
-            console.info("Class_id",class_id)
             helpIcon1.source = "qrc:/sgimages/check-circle.svg"
             helpIcon1.iconColor = "green"
             firstTest.text += ": " + class_id + "\n PASSED"
@@ -43,6 +42,7 @@ Item {
             helpIcon1.iconColor = "red"
             firstTest.text += ": " + class_id + "\n FAILED"
         }
+
         if(saveSettings()) {
             helpIcon2.source = "qrc:/sgimages/check-circle.svg"
             helpIcon2.iconColor = "green"
@@ -55,7 +55,6 @@ Item {
         }
 
         if(user_id) {
-            console.info("user_id", user_id)
             helpIcon3.source = "qrc:/sgimages/check-circle.svg"
             helpIcon3.iconColor = "green"
             userIDText.text += ": " + user_id +  "\n PASSED"
@@ -65,8 +64,8 @@ Item {
             helpIcon3.iconColor = "red"
             userIDText.text += ": " + user_id +  "\n FAILED"
         }
+
         if(first_name) {
-            console.info("first_name", first_name)
             helpIcon4.source = "qrc:/sgimages/check-circle.svg"
             helpIcon4.iconColor = "green"
             firstNameText.text += ": " + first_name +  "\n PASSED"
@@ -77,7 +76,6 @@ Item {
             firstNameText.text += ": " + first_name +  "\n FAILED"
         }
         if(last_name) {
-            console.info("last_name", last_name)
             helpIcon5.source = "qrc:/sgimages/check-circle.svg"
             helpIcon5.iconColor = "green"
             lastNameText.text += ": " + last_name +  "\n PASSED"
@@ -86,60 +84,6 @@ Item {
             helpIcon5.source = "qrc:/sgimages/times-circle.svg"
             helpIcon5.iconColor = "red"
             lastNameText.text += ": " + last_name +  "\n FAILED"
-        }
-    }
-
-    Item {
-        id: classId
-        Text {
-            Accessible.name: "class_id: " + text
-            Accessible.role: Accessible.StaticText
-            text: class_id
-            visible: false
-            Component.onCompleted: {
-                if(text != "") {
-                    console.info("Class ID", text)
-                }
-            }
-        }
-    }
-
-    Item {
-        id: userId
-        Text {
-            visible: false
-            Accessible.name: "user_id: " + text
-            Accessible.role: Accessible.StaticText
-            text: user_id
-            Component.onCompleted: {
-                console.info("User ID", text)
-            }
-        }
-    }
-
-    Item {
-        id: firstName
-        Text {
-            visible: false
-            Accessible.name: "first_name:" + text
-            Accessible.role: Accessible.StaticText
-            text: first_name
-            Component.onCompleted: {
-                console.info("First Name", text)
-            }
-        }
-    }
-
-    Item {
-        id: lastName
-        Text {
-            visible: false
-            Accessible.name: "last_name:" + text
-            Accessible.role: Accessible.StaticText
-            text: last_name
-            Component.onCompleted: {
-                console.info("Last Name", text)
-            }
         }
     }
 
@@ -175,9 +119,9 @@ Item {
                             topMargin: 7
                         }
                     }
-
                 }
             }
+
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -188,7 +132,6 @@ Item {
                         height: 20
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
-
                     }
 
                     SGText {
@@ -200,8 +143,8 @@ Item {
                         text: "Check class_id"
                     }
                 }
-
             }
+
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -242,6 +185,7 @@ Item {
                     }
                 }
             }
+
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -252,18 +196,16 @@ Item {
                         height: 20
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
-
                     }
                     SGText {
                         id: firstNameText
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
                         text: "Check first_name"
-
                     }
                 }
-
             }
+
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -285,23 +227,6 @@ Item {
                     }
                 }
             }
-
-            //            Item {
-            //                Layout.fillHeight: true
-            //                Layout.fillWidth: true
-            //            }
         }
-        //        SGButton{
-        //            width: 100
-        //            height:50
-        //            text: "RUN"
-        //            anchors.top: container.bottom
-        //            anchors.topMargin: 10
-        //            onClicked: {
-
-
-        //            }
-        //        }
     }
-
 }
