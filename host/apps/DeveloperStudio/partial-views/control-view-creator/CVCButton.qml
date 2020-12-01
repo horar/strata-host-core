@@ -14,13 +14,9 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 Rectangle {
     id: controlViewCreatorContainer
-    anchors {
-        right: profileIconContainer.left
-        rightMargin: 10
-    }
     height: container.height
     width: controlViewCreatorRow.implicitWidth + 20
-    color: controlViewCreatorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#34883b"
+    color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
 
     MouseArea {
         id: controlViewCreatorMouse
@@ -40,23 +36,30 @@ Rectangle {
         id: controlViewCreatorRow
         spacing: 10
         anchors {
-            centerIn: parent
+            fill: parent
         }
 
         SGText {
             id: controlViewCreatorText
-            text: "Create Control View"
+            text: "Control View Creator"
             color: "white"
+            leftPadding: 10
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        Item {
+            Layout.fillWidth: true
         }
 
         Rectangle{
-            Layout.preferredWidth: 30
-            Layout.preferredHeight: Layout.preferredWidth
-            color: closeArea.containsMouse ? "#34993b" : "transparent"
+            Layout.preferredHeight: controlViewCreatorContainer.height
+            Layout.preferredWidth: Layout.preferredHeight
+            Layout.alignment: Qt.AlignRight
+            color:controlViewCreatorMouse.containsMouse ? "#33b13b" : closeArea.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
 
             SGIcon {
                 id: plusSignIcon
-                width: 25
+                width: 20
                 height: width
                 anchors.centerIn: parent
                 source: "qrc:/sgimages/times.svg"
@@ -72,6 +75,7 @@ Rectangle {
                 onClicked: {
                     let data = {"index": 0}
                     NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+                    controlViewCreatorContainer.visible = false
                 }
             }
         }
@@ -79,5 +83,7 @@ Rectangle {
 
     function toggleVisibility(){
         visible = true
+        let data = {"index": NavigationControl.stack_container_.count-2}
+        NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
     }
 }

@@ -316,6 +316,7 @@ Rectangle {
                     text: qsTr("C.V.C")
                     onClicked: {
                       cvcButton.toggleVisibility()
+                      profileMenu.close()
                     }
                 }
 
