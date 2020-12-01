@@ -33,7 +33,7 @@ HostControllerService::HostControllerService(QObject* parent)
     hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("get_component_version_info"), std::bind(&HostControllerService::onCmdGetVersionInfo, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { std::string("check_for_updates"), std::bind(&HostControllerService::onCmdGetUpdateInfo, this, std::placeholders::_1) });
 }
 
 HostControllerService::~HostControllerService()
@@ -97,8 +97,8 @@ bool HostControllerService::initialize(const QString& config)
 
     connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
 
-    connect(this, &HostControllerService::versionInfoRequested, &componentVersionInfo_, &ComponentVersionInfo::requestVersionInfo, Qt::QueuedConnection);
-    connect(&componentVersionInfo_, &ComponentVersionInfo::versionInfoResponseRequested, this, &HostControllerService::sendVersionInfoMessage);
+    connect(this, &HostControllerService::updateInfoRequested, &componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfo, Qt::QueuedConnection);
+    connect(&componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfoFinished, this, &HostControllerService::sendUpdateInfoMessage);
 
     connect(&boardsController_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
     connect(&boardsController_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
@@ -122,8 +122,6 @@ bool HostControllerService::initialize(const QString& config)
 
     storageManager_.setBaseUrl(baseUrl);
     storageManager_.setDatabase(&db_);
-
-    componentVersionInfo_.setDatabase(&db_);
 
     db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
 
@@ -759,19 +757,20 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     }
 }
 
-void HostControllerService::onCmdGetVersionInfo(const rapidjson::Value * ) {
-    emit versionInfoRequested(getSenderClient()->getClientId());
+void HostControllerService::onCmdGetUpdateInfo(const rapidjson::Value * ) {
+    emit updateInfoRequested(getSenderClient()->getClientId());
 }
 
-void HostControllerService::sendVersionInfoMessage(const QByteArray &clientId, const QString &currentVersion, const QString &latestVersion, const QString &errorString) {
+void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, const QJsonArray &componentList, const QString &errorString) {
     QJsonDocument doc;
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "version_info");
-    payload.insert("current_version", currentVersion);
-    payload.insert("latest_version", latestVersion);
-    payload.insert("error_string", errorString);
+    payload.insert("type", "updates_available");
+    if (!componentList.isEmpty() || errorString.isEmpty())  // if list is empty, but no error is set, it means we have no updates available
+        payload.insert("component_list", componentList);
+    if (!errorString.isEmpty())
+        payload.insert("error_string", errorString);
 
     message.insert("hcs::notification", payload);
     doc.setObject(message);

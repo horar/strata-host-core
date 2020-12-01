@@ -10,6 +10,9 @@ class CoreUpdate : public QObject
 public:
     Q_INVOKABLE QString requestUpdateApplication();
 
+Q_SIGNALS:
+    void applicationTerminationRequested();
+
 private:
     QString locateMaintenanceTool(const QDir &applicationDir, QString &absPathMaintenanceTool);
 

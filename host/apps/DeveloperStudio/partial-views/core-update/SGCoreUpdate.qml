@@ -18,14 +18,13 @@ SGStrataPopup {
     closePolicy: Popup.CloseOnEscape
     implicitWidth: width
 
-    property string latest_version: ""
-    property string current_version: ""
+    property string update_info_string: ""
     property string error_string: ""
     property bool dontaskagain_checked: false
 
     contentItem: ColumnLayout {
         id: mainColumn
-        spacing: 20
+        spacing: 10
 
         Rectangle {
             id: updateContainer
@@ -54,11 +53,11 @@ SGStrataPopup {
                 }
 
                 Column {
-                    spacing: 20
+                    spacing: 10
 
                     Text {
-                        id: newVersionText
-                        text: "New version of Developer Studio available!"
+                        id: updatesText
+                        text: "Updates are available!"
                         font {
                             pixelSize: 20
                             family: Fonts.franklinGothicBook
@@ -66,20 +65,19 @@ SGStrataPopup {
                         }
                     }
 
-                    Text {
-                        id: currentVersionText
-                        text: "Installed Version: " + "<b>" + current_version + "</b>"
-                        font {
-                            pixelSize: 18
-                            family: Fonts.franklinGothicBook
-                        }
-                    }
-                    Text {
-                        id: latestVersionText
-                        text: "Latest Version: " + "<b>" + latest_version + "</b>"
-                        font {
-                            pixelSize: 18
-                            family: Fonts.franklinGothicBook
+                    ScrollView {
+                        id: scrollView
+                        height: 100
+                        width: 350
+                        TextArea {
+                            id: updateInfoTextArea
+                            text: update_info_string
+                            textFormat: TextEdit.RichText
+                            readOnly: true
+                            font {
+                                pixelSize: 18
+                                family: Fonts.franklinGothicBook
+                            }
                         }
                     }
                 }
@@ -88,19 +86,19 @@ SGStrataPopup {
 
         SGCheckBox {
             id: backupCheckbox
-            Layout.alignment: Qt.AlignHCenter
-            text: "Don't ask me again for this version"
+            anchors.left: buttonsRow.left
+            text: "Don't ask me again for these versions"
             checked: dontaskagain_checked
         }
 
         Row {
+            id: buttonsRow
             spacing: 20
             Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 50
 
             Button {
                 id: updateButton
-                text: "Update (will close Strata)"
+                text: "Update all (will close Strata)"
 
                 background: Rectangle {
                     color: !updateButton.enabled ? "#dbdbdb" : updateButton.down ? "#666" : "#888"
@@ -128,10 +126,7 @@ SGStrataPopup {
                         }
                     }
 
-                    var askagain = backupCheckbox.checked ? "DontAskAgain" : "AskAgainLater"
-                    CoreUpdate.setUserNotificationMode(askagain)
                     var reply = coreUpdate.requestUpdateApplication()
-
                     checkReply(reply)
                     root.close()
                 }
@@ -159,12 +154,15 @@ SGStrataPopup {
                 }
 
                 onClicked: {
-                    var askagain = backupCheckbox.checked ? "DontAskAgain" : "AskAgainLater"
-                    CoreUpdate.setUserNotificationMode(askagain)
                     root.close()
                 }
             }
         }
+    }
+
+    onAboutToHide: {
+        var askagain = backupCheckbox.checked ? "DontAskAgain" : "AskAgainLater"
+        CoreUpdate.setUserNotificationMode(askagain)
     }
 
     SGConfirmationPopup {

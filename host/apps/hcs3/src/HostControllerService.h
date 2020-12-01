@@ -20,7 +20,7 @@
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
 #include "DownloadManager.h"
-#include "ComponentVersionInfo.h"
+#include "ComponentUpdateInfo.h"
 
 struct PlatformMessage;
 
@@ -62,7 +62,7 @@ signals:
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
     void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
-    void versionInfoRequested(QByteArray clientId);
+    void updateInfoRequested(QByteArray clientId);
 
 public slots:
     void onAboutToQuit();
@@ -124,10 +124,9 @@ public slots:
             const QJsonArray &firmwareList,
             const QString &error);
 
-    void sendVersionInfoMessage(
+    void sendUpdateInfoMessage(
             const QByteArray &clientId,
-            const QString &currentVersion,
-            const QString &latestVersion,
+            const QJsonArray &componentList,
             const QString &errorString);
 
 
@@ -153,7 +152,7 @@ private:
     void onCmdDynamicPlatformList(const rapidjson::Value* );
     void onCmdUpdateFirmware(const rapidjson::Value* );
     void onCmdDownloadControlView(const rapidjson::Value* );
-    void onCmdGetVersionInfo(const rapidjson::Value* );
+    void onCmdGetUpdateInfo(const rapidjson::Value* );
 
     void platformConnected(const int deviceId, bool hasAnyClassId);
     void platformDisconnected(const int deviceId);
@@ -171,7 +170,7 @@ private:
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
-    ComponentVersionInfo componentVersionInfo_;
+    ComponentUpdateInfo componentUpdateInfo_;
 
     std::shared_ptr<HCS_Dispatcher> dispatcher_;
     std::thread dispatcherThread_;

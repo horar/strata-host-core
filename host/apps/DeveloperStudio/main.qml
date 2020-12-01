@@ -156,9 +156,9 @@ SGWidgets.SGMainWindow {
             }
         }
 
-        onVersionInfoReceived: {
+        onUpdateInfoReceived: {
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
-                CoreUpdate.parseVersionInfo(payload)
+                CoreUpdate.parseUpdateInfo(payload)
             }
         }
     }

@@ -53,7 +53,7 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/PlatformDocument.cpp
     src/FirmwareUpdateController.cpp
     src/FirmwareUpdater.cpp
-    src/ComponentVersionInfo.cpp
+    src/ComponentUpdateInfo.cpp
 
     src/RunGuard.cpp
 

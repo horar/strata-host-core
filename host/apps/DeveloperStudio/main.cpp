@@ -108,7 +108,6 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<DocumentListModel>("tech.strata.DocumentListModel", 1, 0, "DocumentListModel", "You can't instantiate DocumentListModel in QML");
     qmlRegisterUncreatableType<ClassDocuments>("tech.strata.ClassDocuments", 1, 0, "ClassDocuments", "You can't instantiate ClassDocuments in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
-
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
 
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>()};
@@ -118,6 +117,9 @@ int main(int argc, char *argv[])
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,
+                     sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
+
+    QObject::connect(coreUpdate.get(), &CoreUpdate::applicationTerminationRequested,
                      sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
 
     QQmlApplicationEngine engine;

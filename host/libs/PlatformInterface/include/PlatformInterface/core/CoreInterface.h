@@ -82,7 +82,7 @@ signals:
     void downloadPlatformSingleFileFinished(QJsonObject payload);
     void downloadPlatformFilesFinished(QJsonObject payload);
 
-    void versionInfoReceived(QJsonObject payload);
+    void updateInfoReceived(QJsonObject payload);
     void updateApplicationReceived(QJsonObject payload);
 
     void firmwareProgress(QJsonObject payload);
