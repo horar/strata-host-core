@@ -11,7 +11,7 @@ class RequestsController : public QObject {
     Q_OBJECT
 
 public:
-    RequestsController(/* args */);
+    RequestsController();
     ~RequestsController();
     void addNewRequest(const QString &method, const QJsonObject &payload);
     bool isPendingRequest(int id);

@@ -3,7 +3,7 @@
 
 using namespace strata::strataComm;
 
-RequestsController::RequestsController(/* args */)
+RequestsController::RequestsController()
 {
     currentRequestId_ = 0;
 }
@@ -24,9 +24,9 @@ void RequestsController::addNewRequest(const QString &method, const QJsonObject 
 
     qCDebug(logCategoryRequestsController)
         << "Building request. id:" << currentRequestId_ << "method:" << method;
-    const auto request = requestsList_.insert(
-        currentRequestId_,
-        Request{.method = method, .payload = payload, .messageId = currentRequestId_});
+
+    const auto request =
+        requestsList_.insert(currentRequestId_, Request(method, payload, currentRequestId_));
 
     emit sendRequest(request.value().toJson());
 }
