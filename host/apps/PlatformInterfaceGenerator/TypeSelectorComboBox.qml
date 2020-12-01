@@ -45,10 +45,4 @@ ComboBox {
         }
         highlighted: propertyType.highlightedIndex === index
     }
-
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-    }
 }
