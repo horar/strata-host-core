@@ -13,6 +13,7 @@ class StrataClientTest : public QObject {
 private slots:
     void testRegisterAndUnregisterHandlers();
     void testConnectDisconnectToTheServer();
+    void testBuildRequest();
 
 private:
     void waitForZmqMessages(int delay=100);

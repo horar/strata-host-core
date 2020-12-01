@@ -1,6 +1,10 @@
 #include "StrataClient.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <QJsonDocument>
+
+#include "Request.h"
+
 using namespace strata::strataComm;
 
 StrataClient::StrataClient(QString serverAddress, QObject *parent) : QObject(parent), dispatcher_(this), connector_(serverAddress)
@@ -21,9 +25,7 @@ bool StrataClient::connectServer()
     connect(&connector_, &ClientConnector::newMessageRecived, this, &StrataClient::newServerMessage);
     connect(this, &StrataClient::dispatchHandler, &dispatcher_, &Dispatcher::dispatchHandler);
 
-    // send register command to the server.
-    // TODO: update this when implementing build request function
-    connector_.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
+    sendRequest("register_client", {{"api_version", "1.0"}});
 
     return true;
 }
@@ -34,12 +36,12 @@ bool StrataClient::disconnectServer()
 
     connector_.sendMessage(R"({"jsonrpc": "2.0","method":"unregister","params":{},"id":1})");
     disconnect(&connector_, &ClientConnector::newMessageRecived, this, &StrataClient::newServerMessage);
-    
+
     if (false == connector_.disconnectClient()) {
         qCCritical(logCategoryStrataClient) << "Failed to disconnect client";
         return false;
     }
-    
+
     return true;
 }
 
@@ -47,7 +49,22 @@ void StrataClient::newServerMessage(const QByteArray &serverMessage)
 {
     qCDebug(logCategoryStrataClient) << "New message from the server:" << serverMessage;
 
-    emit dispatchHandler(ClientMessage());
+    // parse the message.
+    ClientMessage message;
+    if (false == buildServerMessage(serverMessage, &message)) {
+        qCCritical(logCategoryStrataClient) << "Failed to build server message.";
+        return;
+    }
+
+    qCDebug(logCategoryStrataClient) << "#########################################";
+    qCDebug(logCategoryStrataClient) << "messgae:" << serverMessage;
+    qCDebug(logCategoryStrataClient) << "messgae id:" << message.messageID;
+    qCDebug(logCategoryStrataClient) << "method:" << message.handlerName;
+    qCDebug(logCategoryStrataClient) << "payload:" << message.payload;
+    qCDebug(logCategoryStrataClient) << "message type:" << static_cast<int>(message.messageType);
+    qCDebug(logCategoryStrataClient) << "#########################################";
+
+    emit dispatchHandler(message);
 }
 
 bool StrataClient::registerHandler(const QString &handlerName, StrataHandler handler)
@@ -67,5 +84,116 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
         qCCritical(logCategoryStrataClient) << "Failed to unregister handler.";
         return false;
     }
+    return true;
+}
+
+bool StrataClient::sendRequest(const QString &method, const QJsonObject &payload)
+{
+    qCDebug(logCategoryStrataClient) << "building request: " << method;
+
+    auto message = requestController_.addNewRequest(method, payload);
+
+    if (true == message.isEmpty()) {
+        qCCritical(logCategoryStrataClient) << "Failed to add request.";
+        return false;
+    }
+
+    connector_.sendMessage(message);
+    return true;
+}
+
+bool StrataClient::buildServerMessage(const QByteArray &serverMessage, ClientMessage *clientMessage)
+{
+    // Parse the message
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(serverMessage, &jsonParseError);
+
+    if (jsonParseError.error != QJsonParseError::NoError) {
+        qCDebug(logCategoryStrataServer) << "invalid JSON message.";
+        return false;
+    }
+    QJsonObject jsonObject = jsonDocument.object();
+
+    // Is it valid API?
+    if (true == jsonObject.contains("jsonrpc") && true == jsonObject.value("jsonrpc").isString() &&
+        jsonObject.value("jsonrpc").toString() == "2.0") {
+        qCDebug(logCategoryStrataClient) << "API v2.0";
+    } else {
+        qCDebug(logCategoryStrataClient) << "Invalid API.";
+        return false;
+    }
+
+    // Type? Response, Notification, Error?
+    // outline -->
+
+    // {
+    //     "jsonrpc": "2.0",
+    //     "result": {},
+    //     "id": 1
+    // }
+
+    // {
+    //     "jsonrpc": "2.0",
+    //     "error": {},
+    //     "id": "1"
+    // }
+
+    // {
+    //     "jsonrpc": "2.0",
+    //     "method":"Handler Name",
+    //     "params": {}
+    // }
+
+    // {
+    //     "jsonrpc": "2.0",
+    //     "method": "platform_notification",
+    //     "params": { }
+    // }
+
+    // check if the message has an id
+    if (true == jsonObject.contains("id") && true == jsonObject.value("id").isDouble()) {
+        clientMessage->messageID = jsonObject.value("id").toDouble();
+        clientMessage->messageType = ClientMessage::MessageType::Command;
+
+        if (QString handlerName =
+                requestController_.getMethodName(jsonObject.value("id").toDouble());
+            false == handlerName.isEmpty()) {
+            clientMessage->handlerName = handlerName;
+        } else {
+            qCritical(logCategoryStrataClient) << "Failed to get handler name.";
+            return false;
+        }
+
+        if (false == requestController_.removePendingRequest(jsonObject.value("id").toDouble())) {
+            qCCritical(logCategoryStrataClient) << "Failed to remove pending request.";
+            return false;
+        }
+
+        if (true == jsonObject.contains("result") &&
+            true == jsonObject.value("result").isObject()) {
+            clientMessage->payload = jsonObject.value("result").toObject();
+        } else if (true == jsonObject.contains("error") &&
+                   true == jsonObject.value("error").isObject()) {
+            clientMessage->payload = jsonObject.value("error").toObject();
+        } else {
+            qCDebug(logCategoryStrataClient) << "No payload.";
+            clientMessage->payload = QJsonObject{};
+        }
+
+    } else if (true == jsonObject.contains("method") &&
+               true == jsonObject.value("method").isString()) {
+        clientMessage->handlerName = jsonObject.value("method").toString();
+
+        if (true == jsonObject.contains("params") &&
+            true == jsonObject.value("params").isObject()) {
+            clientMessage->payload = jsonObject.value("params").toObject();
+            clientMessage->messageType = ClientMessage::MessageType::Notifiation;
+        }
+
+    } else {
+        qCritical(logCategoryStrataClient) << "Invalid API.";
+        return false;
+    }
+
     return true;
 }

@@ -12,14 +12,14 @@ RequestsController::~RequestsController()
 {
 }
 
-void RequestsController::addNewRequest(const QString &method, const QJsonObject &payload)
+QByteArray RequestsController::addNewRequest(const QString &method, const QJsonObject &payload)
 {
     ++currentRequestId_;
 
     const auto it = requestsList_.find(currentRequestId_);
     if (it != requestsList_.end()) {
         qCCritical(logCategoryRequestsController) << "Dublicate request id.";
-        return;
+        return "";
     }
 
     qCDebug(logCategoryRequestsController)
@@ -28,7 +28,7 @@ void RequestsController::addNewRequest(const QString &method, const QJsonObject 
     const auto request =
         requestsList_.insert(currentRequestId_, Request(method, payload, currentRequestId_));
 
-    emit sendRequest(request.value().toJson());
+    return request.value().toJson();
 }
 
 bool RequestsController::isPendingRequest(int id)
@@ -45,4 +45,15 @@ bool RequestsController::removePendingRequest(int id)
         return false;
     }
     return requestsList_.remove(id) > 0;
+}
+
+QString RequestsController::getMethodName(int id) 
+{
+    auto it = requestsList_.find(id);
+    if (it == requestsList_.end()) {
+        qCDebug(logCategoryRequestsController) << "Request id not found.";
+        return "";
+    }
+    qCDebug(logCategoryRequestsController) << "request id" << it->messageId << "method" << it->method;
+    return it->method;
 }

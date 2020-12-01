@@ -13,9 +13,10 @@ class RequestsController : public QObject {
 public:
     RequestsController();
     ~RequestsController();
-    void addNewRequest(const QString &method, const QJsonObject &payload);
+    QByteArray addNewRequest(const QString &method, const QJsonObject &payload);
     bool isPendingRequest(int id);
     bool removePendingRequest(int id);
+    QString getMethodName(int id);
 
 signals:
     void sendRequest(const QByteArray &request);

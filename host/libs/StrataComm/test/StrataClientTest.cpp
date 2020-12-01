@@ -82,3 +82,58 @@ void StrataClientTest::testConnectDisconnectToTheServer()
     QVERIFY_(clientRecivedMessage);
 
 }
+
+void StrataClientTest::testBuildRequest()
+{
+    // some variables used for validation.
+    bool serverRevicedMessage = false;
+    QString expectedMethod = "";
+    int expectedId = 0;
+
+    strata::strataComm::ServerConnector server(address_);
+    server.initilize();
+    connect(
+        &server, &strata::strataComm::ServerConnector::newMessageRecived, this,
+        [&expectedId, &expectedMethod, &serverRevicedMessage](const QByteArray &, const QByteArray &message) {
+            QJsonObject jsonObject(QJsonDocument::fromJson(message).object());
+
+            QVERIFY_(jsonObject.contains("jsonrpc"));
+            QVERIFY_(jsonObject.value("jsonrpc").isString());
+
+            QVERIFY_(jsonObject.contains("id"));
+            QVERIFY_(jsonObject.value("id").isDouble());
+            QCOMPARE_(jsonObject.value("id").toDouble(), expectedId);
+
+            QVERIFY_(jsonObject.contains("method"));
+            QVERIFY_(jsonObject.value("method").isString());
+            QCOMPARE_(jsonObject.value("method").toString(), expectedMethod);
+
+            QVERIFY_(jsonObject.contains("params"));
+            QVERIFY_(jsonObject.value("params").isObject());
+
+            serverRevicedMessage = true;
+        });
+
+    StrataClient client(address_);
+
+    expectedMethod = "register_client";
+    expectedId = 1;
+    serverRevicedMessage = false;
+    client.connectServer();
+    waitForZmqMessages();
+    QVERIFY_(serverRevicedMessage);
+
+    expectedMethod = "method_1";
+    expectedId = 2;
+    serverRevicedMessage = false;
+    client.sendRequest("method_1", {{"param_1", 0}});
+    waitForZmqMessages();
+    QVERIFY_(serverRevicedMessage);
+
+    expectedMethod = "method_2";
+    expectedId = 3;
+    serverRevicedMessage = false;
+    client.sendRequest("method_2", {});
+    waitForZmqMessages();
+    QVERIFY_(serverRevicedMessage);
+}

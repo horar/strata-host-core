@@ -6,6 +6,7 @@
 
 namespace strata::strataComm {
 
+// TODO: This can be used in both the server and client. find a good way to reuse this.
 struct ClientMessage {
     enum MessageType {
         Notifiation,

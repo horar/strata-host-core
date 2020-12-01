@@ -2,12 +2,14 @@
 
 #include <QObject>
 
-#include "../src/Dispatcher.h"
 #include "../src/ClientConnector.h"
+#include "../src/Dispatcher.h"
+#include "../src/RequestsController.h"
 
-namespace strata::strataComm {
-
-class StrataClient : public QObject {
+namespace strata::strataComm
+{
+class StrataClient : public QObject
+{
     Q_OBJECT
 
 public:
@@ -18,17 +20,20 @@ public:
     bool disconnectServer();
     bool registerHandler(const QString &handlerName, StrataHandler handler);
     bool unregisterHandler(const QString &handlerName);
+    bool sendRequest(const QString &method, const QJsonObject &payload);
 
 signals:
-    void dispatchHandler(const ClientMessage &ClientMessage); // maybe implement an overload or find an alternative way to do this.
+    void dispatchHandler(const ClientMessage &ClientMessage);
     void sendMessage(const QByteArray &message);
 
 private slots:
     void newServerMessage(const QByteArray &serverMessage);
 
 private:
+    bool buildServerMessage(const QByteArray &serverMessage, ClientMessage *clientMessage);
+
     Dispatcher dispatcher_;
     ClientConnector connector_;
+    RequestsController requestController_;
 };
-
-}   // namespace strata::strataComm
+}  // namespace strata::strataComm

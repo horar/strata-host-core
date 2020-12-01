@@ -73,3 +73,24 @@ void RequestsControllerTest::testNonExistanteRequestId()
     QVERIFY_(false == rc.removePendingRequest(-1));
     QVERIFY_(false == rc.removePendingRequest(2));
 }
+
+void RequestsControllerTest::testGetMethodName() 
+{
+    strata::strataComm::RequestsController rc;
+    
+    rc.addNewRequest("method_handler_1", {});
+    rc.addNewRequest("method_handler_2", {});
+
+    QVERIFY_(rc.isPendingRequest(1));
+    QCOMPARE_(rc.getMethodName(1), "method_handler_1");
+
+    QVERIFY_(rc.isPendingRequest(2));
+    QCOMPARE_(rc.getMethodName(2), "method_handler_2");
+
+    QVERIFY_(false == rc.isPendingRequest(3));
+    QCOMPARE_(rc.getMethodName(3), "");
+
+    QVERIFY_(rc.removePendingRequest(1));
+    QVERIFY_(false == rc.isPendingRequest(1));
+    QCOMPARE_(rc.getMethodName(1), "");
+}

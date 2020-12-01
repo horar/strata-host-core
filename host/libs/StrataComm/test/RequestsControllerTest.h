@@ -12,4 +12,5 @@ private slots:
     void testAddRequest();
     void testLargeNumberOfPendingRequests();
     void testNonExistanteRequestId();
+    void testGetMethodName();
 };
