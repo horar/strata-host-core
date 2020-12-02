@@ -69,6 +69,7 @@ var stack_container_ = null
 var resource_loader_ = null
 var main_qml_object_ = null
 var platform_list = {}
+var userSettings = null
 
 /*
   Navigation initialized with parent containers
@@ -318,7 +319,12 @@ function updateState(event, data)
                     connected_view.device_id = data.device_id
                     connected_view.firmware_version = data.firmware_version
                     connected_view.connected = true
+
+                    if (userSettings.autoOpenView) {
+                        updateState(events.SWITCH_VIEW_EVENT, {"index": view_index + 1})
+                    }
                 }
+
                 break;
 
             case events.PLATFORM_DISCONNECTED_EVENT:
@@ -329,6 +335,10 @@ function updateState(event, data)
                     if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
                         disconnected_view.connected = false
                         disconnected_view.firmware_version = ""
+
+                        if (userSettings.closeOnDisconnect) {
+                            updateState(events.CLOSE_PLATFORM_VIEW_EVENT, data)
+                        }
                         break
                     }
                 }
@@ -344,7 +354,12 @@ function updateState(event, data)
                     }
                 }
 
-                updateState(events.SWITCH_VIEW_EVENT, {"index": l}) // focus on tab to left
+                // in-view tab > closed tab: decrement currentIndex to stay on same tab
+                // in-view tab === closed tab: decrement currentIndex to focus on new tab to left
+                // in-view tab < closed tab: do nothing to stay in place
+                if (stack_container_.currentIndex >= l + 1) { // +1 as platform selector is index 0 in stack_container_ & not in platform_view_model_
+                    updateState(events.SWITCH_VIEW_EVENT, {"index": stack_container_.currentIndex - 1 })
+                }
                 break;
 
             case events.SWITCH_VIEW_EVENT:

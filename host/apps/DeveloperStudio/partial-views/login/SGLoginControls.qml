@@ -114,11 +114,11 @@ Item {
             id: passwordField
             Layout.fillWidth: true
             activeFocusOnTab: true
-            echoMode: TextInput.Password
             selectByMouse: true
-            KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
+            KeyNavigation.tab: rememberCheckBox
             placeholderText: qsTr("Password")
             showIcon: false
+            passwordMode: true
 
             Keys.onPressed: {
                 loginErrorRect.hide()
@@ -142,6 +142,7 @@ Item {
                 id: rememberCheckBox
                 text: qsTr("Remember Me")
                 checked: Authenticator.settings.rememberMe
+                KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
                 onCheckedChanged: {
                     Authenticator.settings.rememberMe = checked
                 }

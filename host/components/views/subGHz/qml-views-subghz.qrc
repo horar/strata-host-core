@@ -18,11 +18,6 @@
         <file>sgwidgets/SGLayoutDebug.qml</file>
         <file>sgwidgets/SGLayoutDivider.qml</file>
         <file>sgwidgets/SGOutputLogBox.qml</file>
-        <file>sgwidgets/SGPopout.qml</file>
-        <file>sgwidgets/SGRadioButton.qml</file>
-        <file>sgwidgets/SGRadioButtonContainer.qml</file>
-        <file>sgwidgets/SGSegmentedButton.qml</file>
-        <file>sgwidgets/SGSegmentedButtonStrip.qml</file>
         <file>sgwidgets/SGSlider.qml</file>
         <file>sgwidgets/SGStatusListBox.qml</file>
         <file>sgwidgets/SGSubmitInfoBox.qml</file>
@@ -58,12 +53,9 @@
         <file>views/basic-partial-views/Sensor.qml</file>
         <file>views/basic-partial-views/SignalStrengthIndicator.qml</file>
         <file>views/advanced-partial-views/Overview.qml</file>
-        <file>views/advanced-partial-views/Port.qml</file>
         <file>views/advanced-partial-views/PortInfo.qml</file>
         <file>views/advanced-partial-views/PortInfoMini.qml</file>
-        <file>views/advanced-partial-views/PortSettings.qml</file>
         <file>views/advanced-partial-views/PortStatBox.qml</file>
         <file>views/advanced-partial-views/PortStatBoxMini.qml</file>
-        <file>views/advanced-partial-views/SystemSettings.qml</file>
     </qresource>
 </RCC>

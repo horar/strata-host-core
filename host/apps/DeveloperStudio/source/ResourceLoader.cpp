@@ -180,42 +180,6 @@ bool ResourceLoader::isViewRegistered(const QString &class_id) {
     return false;
 }
 
-QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *parent, QVariantMap initialProperties) {
-    QQmlEngine *e = qmlEngine(parent);
-    if (e) {
-        QQmlComponent component = QQmlComponent(e, path, QQmlComponent::CompilationMode::PreferSynchronous, parent);
-        if (component.errors().count() > 0) {
-            qCCritical(logCategoryResourceLoader) << component.errors();
-            return NULL;
-        }
-        QQmlContext *context = qmlContext(parent);
-
-        // From the Qt Docs:
-        /*
-         * When QQmlComponent constructs an instance, it occurs in three steps:
-         *  1. The object hierarchy is created, and constant values are assigned.
-         *  2. Property bindings are evaluated for the first time.
-         *  3. If applicable, QQmlParserStatus::componentComplete() is called on objects.
-         *
-         * QQmlComponent::beginCreate() differs from QQmlComponent::create() in that it only performs step 1.
-         * QQmlComponent::completeCreate() must be called to complete steps 2 and 3.
-         */
-        QObject* object = component.beginCreate(context);
-        for (QString key : initialProperties.keys()) {
-            object->setProperty(key.toLocal8Bit().data(), initialProperties.value(key));
-        }
-        component.completeCreate();
-
-        QQuickItem* item = qobject_cast<QQuickItem*>( object );
-        QQmlEngine::setObjectOwnership(item, QQmlEngine::JavaScriptOwnership);
-
-        item->setParentItem(parent);
-        return item;
-    } else {
-        return NULL;
-    }
-}
-
 QString ResourceLoader::getVersionRegistered(const QString &class_id) {
     QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
     if (itr != viewsRegistered_.end()) {
@@ -272,4 +236,108 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
     } else {
         return "/" + class_id + (version.isEmpty() ? "" : "/" + version);
     }
+}
+
+void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
+#ifdef QT_RCC_EXECUTABLE
+    const QString rccExecutablePath = QT_RCC_EXECUTABLE;
+#else // Triggers if Release build -- in Release builds, for now this will not work unless RCC compiler executable is manually placed in the application directory
+// Will be completed in CS-1093
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+    #ifdef Q_OS_MACOS
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+    #endif
+    const QString rccExecutablePath = applicationDir.filePath("rcc");
+#endif
+
+    qrcFilePath.replace("file://", "");
+    if (qrcFilePath.at(0) == "/" && qrcFilePath.at(0) != QDir::separator()) {
+        qrcFilePath.remove(0, 1);
+    }
+
+    QFile rccExecutable(rccExecutablePath);
+    QFile qrcFile(qrcFilePath);
+
+    clearLastLoggedError();
+
+    if (!rccExecutable.exists()) {
+        QString error_str = "Could not find RCC executable at " + rccExecutablePath;
+        qCWarning(logCategoryStrataDevStudio) << error_str;
+        setLastLoggedError(error_str);
+        emit finishedRecompiling(QString());
+        return;
+    }
+
+    if (!qrcFile.exists()) {
+        QString error_str = "Could not find QRC file at " + qrcFilePath;
+        qCWarning(logCategoryStrataDevStudio) << error_str;
+        setLastLoggedError(error_str);
+        emit finishedRecompiling(QString());
+        return;
+    }
+
+    QFileInfo qrcFileInfo = QFileInfo(qrcFile);
+    QDir qrcFileParent = qrcFileInfo.dir();
+    QString compiledRccFile = qrcFileParent.path() + QDir::separator() + "DEV-CONTROLVIEW" + QDir::separator();
+    QDir qrcDevControlView(compiledRccFile);
+
+    if (qrcDevControlView.exists()) {
+        if (!qrcDevControlView.removeRecursively()) {
+            QString error_str = "Could not delete directory at " + compiledRccFile;
+            qCWarning(logCategoryStrataDevStudio) << error_str;
+            setLastLoggedError(error_str);
+            emit finishedRecompiling(QString());
+            return;
+        }
+    }
+
+    // Make directory for compiled RCC files
+    QDir().mkdir(compiledRccFile);
+
+    // Split qrcFile base name and add ".rcc" extension
+    compiledRccFile += qrcFileInfo.baseName() + ".rcc";
+    lastCompiledRccResource = compiledRccFile;
+
+    // Set and launch rcc compiler process
+    const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
+
+    rccCompilerProcess_ = std::make_unique<QProcess>();
+    rccCompilerProcess_->setProgram(rccExecutablePath);
+    rccCompilerProcess_->setArguments(arguments);
+    connect(rccCompilerProcess_.get(), SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
+    connect(rccCompilerProcess_.get(), QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ResourceLoader::recompileFinished);
+
+    rccCompilerProcess_->start();
+}
+
+void ResourceLoader::onOutputRead() {
+    QString error_str = rccCompilerProcess_->readAllStandardError();
+    qCCritical(logCategoryStrataDevStudio) << error_str;
+    setLastLoggedError(error_str);
+}
+
+void ResourceLoader::recompileFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    Q_UNUSED(exitCode);
+
+    if (exitStatus == QProcess::CrashExit || lastLoggedError != "") {
+        emit finishedRecompiling(QString());
+    } else {
+        qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << lastCompiledRccResource;
+        emit finishedRecompiling(lastCompiledRccResource);
+    }
+}
+
+void ResourceLoader::clearLastLoggedError() {
+    lastLoggedError = "";
+}
+
+void ResourceLoader::setLastLoggedError(QString &error_str) {
+    lastLoggedError = error_str;
+}
+
+QString ResourceLoader::getLastLoggedError() {
+    return lastLoggedError;
 }

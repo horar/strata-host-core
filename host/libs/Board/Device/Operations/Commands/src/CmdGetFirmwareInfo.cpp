@@ -9,14 +9,9 @@
 
 namespace strata::device::command {
 
-CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse) :
+CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse, uint maxRetries) :
     BaseDeviceCommand(device, QStringLiteral("get_firmware_info")),
-    requireResponse_(requireResponse), maxRetries_(0), retriesCount_(0)
-{ }
-
-CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, uint maxRetries) :
-    BaseDeviceCommand(device, QStringLiteral("get_firmware_info")),
-    requireResponse_(true), maxRetries_(maxRetries), retriesCount_(0)
+    requireResponse_(requireResponse), maxRetries_(maxRetries), retriesCount_(0)
 { }
 
 QByteArray CmdGetFirmwareInfo::message() {
@@ -48,12 +43,12 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
         }
 
         if (bootloader.MemberCount() > 0) {  // JSON_BOOTLOADER object has some members -> it is not empty
-            setDeviceProperties(nullptr, nullptr, nullptr, bootloader[JSON_VERSION].GetString(), "");
+            setDeviceVersions(bootloader[JSON_VERSION].GetString(), "");
             result_ = CommandResult::Done;
         }
 
         if (application.MemberCount() > 0) {  // JSON_APPLICATION object has some members -> it is not empty
-            setDeviceProperties(nullptr, nullptr, nullptr, nullptr, application[JSON_VERSION].GetString());
+            setDeviceVersions(nullptr, application[JSON_VERSION].GetString());
             result_ = CommandResult::Done;
         }
 
@@ -73,7 +68,7 @@ void CmdGetFirmwareInfo::onTimeout() {
             result_ = CommandResult::InProgress;
         }
     } else {
-        setDeviceProperties(nullptr, nullptr, nullptr, nullptr, "");
+        setDeviceVersions(nullptr, "");
         result_ = CommandResult::Done;
     }
 }

@@ -8,6 +8,8 @@
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
 
+namespace strata {
+
 /**
  * Static class to validate commands.
  */
@@ -20,6 +22,7 @@ public:
         notification,
         reqPlatformIdNotif,
         setPlatformIdNotif,
+        setAssistedPlatformIdNotif,
         getFirmwareInfoNotif,
         startBootloaderNotif,
         startApplicationNotif,
@@ -43,13 +46,30 @@ private:
     static const rapidjson::SchemaDocument startBackupFirmware_nps_;
     static const rapidjson::SchemaDocument backupFirmware_nps_;
     static const rapidjson::SchemaDocument strataCommandSchema_;
+    static const rapidjson::SchemaDocument setPlatformId_nps_;
+    static const rapidjson::SchemaDocument setAssistedPlatformId_nps_;
 
     static const std::map<const JsonType, const rapidjson::SchemaDocument&> schemas_;
     static const std::map<const JsonType, const char*> notifications_;
 
+public:
+    /**
+     * Parse JSON schema into rapidjson::SchemaDocument.
+     * @param schema[in] JSON schema
+     * @param isOk[out] true if schema was parsed successfully, false otherwise
+     * @return rapidjson::SchemaDocument
+     */
     static rapidjson::SchemaDocument parseSchema(const QByteArray &schema, bool *isOk = nullptr);
 
-public:
+    /**
+     * Validate json document against schema.
+     * @param schema[in] The rapidjson::SchemaDocument containing schema.
+     * @param json[in] The rapidjson::Value contatining JSON (accepts also rapidjson::Document).
+     * @param quiet[in] If set to true, nothing is written to log.
+     * @return true if the the command is valid, false otherwise.
+     */
+    static bool validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json, bool quiet = false);
+
     /**
      * Validate the command.
      * @post If the command is valid it will be parsed in doc.
@@ -98,20 +118,19 @@ public:
      * @post If the command is valid JSON it will be parsed in doc.
      * @param command[in] The string containing JSON command.
      * @param doc[out] The rapidjson::Document where command will be parsed.
+     * @param quiet[in] If set to true, nothing is written to log.
      * @return true if the the command is valid JSON, false otherwise.
      */
-    static bool parseJsonCommand(const QByteArray &command, rapidjson::Document &doc);
+    static bool parseJsonCommand(const QByteArray &command, rapidjson::Document &doc, bool quiet = false);
 
-
-private:
     /**
-     * Validate json document against schema.
-     *
-     * @return true if the the command is valid, false otherwise.
+     * Get status message from notification.
+     * @param doc[in] The rapidjson::Document contatining JSON notification.
+     * @return status string (/notification/payload/status) or empty array
      */
-    static bool validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json);
-
-
+    static QByteArray notificationStatus(const rapidjson::Document &doc);
 };
+
+}  // namespace
 
 #endif // COMMANDVALIDATOR_H

@@ -1,5 +1,7 @@
 #include <Device/Operations/StartBootloader.h>
+#include <DeviceOperationsStatus.h>
 #include "Commands/include/DeviceCommands.h"
+#include "DeviceOperationsConstants.h"
 
 #include "logging/LoggingQtCategories.h"
 
@@ -14,11 +16,11 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     BaseDeviceOperation(device, Type::StartBootloader)
 {
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));  // 0
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));       // 1
-    commandList_.emplace_back(std::make_unique<CmdStartBootloader>(device_));         // 2
-    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));  // 3
-    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));       // 4
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true, MAX_GET_FW_INFO_RETRIES)); // 0
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 1
+    commandList_.emplace_back(std::make_unique<CmdStartBootloader>(device_));        // 2
+    commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true));  // 3
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 4
 
     currentCommand_ = commandList_.end();
 
@@ -30,14 +32,14 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     postCommandHandler_ = std::bind(&StartBootloader::skipCommands, this, std::placeholders::_1, std::placeholders::_2);
 }
 
-void StartBootloader::skipCommands(CommandResult& result, int& data)
+void StartBootloader::skipCommands(CommandResult& result, int& status)
 {
     if ((currentCommand_ == beforeStartBootloader_) && (result == CommandResult::Done)) {
-        if (device_->bootloaderMode() == true) {
+        if (BaseDeviceOperation::bootloaderMode() == true) {
             // skip rest of commands - set result to 'FinaliseOperation'
             result = CommandResult::FinaliseOperation;
-            // set data for 'finished' signal
-            data = ALREADY_IN_BOOTLOADER;
+            // set status for 'finished' signal
+            status = ALREADY_IN_BOOTLOADER;
             qCInfo(logCategoryDeviceOperations) << device_ << "Platform already in bootloader mode.";
         }
     }

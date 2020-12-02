@@ -19,6 +19,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 Rectangle {
     id: container
@@ -38,6 +39,7 @@ Rectangle {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
+        userSettings.loadSettings()
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -49,33 +51,34 @@ Rectangle {
         Help.destroyHelp()
     }
 
-    Item {
-        id: logoContainer
-        height: container.height
-        width: 70
-
-        Image {
-            source: "qrc:/images/strata-logo-reverse.svg"
-            height: 30
-            width: 60
-            mipmap: true
-            anchors {
-                centerIn: logoContainer
-            }
-        }
-    }
-
-    Row {
+    RowLayout {
         id: tabRow
         anchors {
-            left: logoContainer.right
+            left: container.left
+            right: profileIconContainer.left
         }
         spacing: 1
 
+    	Item {
+        	id: logoContainer
+        	Layout.preferredHeight: container.height
+        	Layout.preferredWidth: 70
+
+        	Image {
+            	source: "qrc:/images/strata-logo-reverse.svg"
+            	height: 30
+            	width: 60
+            	mipmap: true
+            	anchors {
+                	centerIn: logoContainer
+            	}
+        	}
+    	}
+
         Rectangle {
             id: platformSelector
-            height: 40
-            width: 120
+            Layout.preferredHeight:40
+            Layout.preferredWidth: 120
 
             color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? "#33b13b" : "#444"
 
@@ -103,9 +106,15 @@ Rectangle {
             }
         }
 
-        Repeater {
+        ListView {
             id: platformTabRepeater
+            Layout.fillHeight: true
+            Layout.fillWidth: true
             delegate: SGPlatformTab {}
+            orientation: ListView.Horizontal
+            spacing: 1
+            clip: true
+
             model: NavigationControl.platform_view_model_
         }
 
@@ -147,13 +156,14 @@ Rectangle {
 
     Item {
         id: profileIconContainer
+        width: height
+
         anchors {
             right: container.right
             rightMargin: 2
             top: container.top
             bottom: container.bottom
         }
-        width: height
 
         Rectangle {
             id: profileIcon
@@ -284,6 +294,15 @@ Rectangle {
                     width: profileMenu.width
                 }
 
+                SGMenuItem {
+                    text: qsTr("Settings")
+                    onClicked: {
+                        profileMenu.close()
+                        settingsLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
                 Rectangle {
                     id: menuDivider
                     color: "white"
@@ -322,6 +341,45 @@ Rectangle {
         id: profileLoader
         source: "qrc:/partial-views/profile-popup/SGProfilePopup.qml"
         active: false
+    }
+
+    Loader {
+        id: settingsLoader
+        source: "qrc:/partial-views/status-bar/SGSettingsPopup.qml"
+        active: false
+    }
+
+    SGUserSettings {
+        id: userSettings
+        classId: "general-settings"
+        user: NavigationControl.context.user_id
+
+        property bool autoOpenView: false
+        property bool closeOnDisconnect: false
+        property bool notifyOnFirmwareUpdate: false
+
+        property int selectedDistributionPortal: 0
+
+        function loadSettings() {
+            const settings = readFile("general-settings.json")
+            if (settings.hasOwnProperty("autoOpenView")) {
+                autoOpenView = settings.autoOpenView
+                closeOnDisconnect = settings.closeOnDisconnect
+                notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+                selectedDistributionPortal = settings.selectedDistributionPortal
+            }
+            NavigationControl.userSettings = userSettings
+        }
+
+        function saveSettings() {
+            const settings = {
+                autoOpenView: autoOpenView,
+                closeOnDisconnect: closeOnDisconnect,
+                notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
+                selectedDistributionPortal: selectedDistributionPortal
+            }
+            userSettings.writeFile("general-settings.json", settings)
+        }
     }
 
     function showAboutWindow(){

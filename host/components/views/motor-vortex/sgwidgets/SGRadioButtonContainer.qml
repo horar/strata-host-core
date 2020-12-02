@@ -27,7 +27,7 @@ Item {
     }
 
     ButtonGroup{
-        buttons: radioButtons.children[0].children
+        buttons: radioButtons.status !== Loader.Ready ? [] : radioButtons.children[0].children
         exclusive: root.exclusive
     }
 

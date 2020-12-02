@@ -135,6 +135,8 @@ bool SciCommandHistoryModel::removeAt(int row)
 
     platform_->storeCommandHistory(getCommandList());
 
+    emit countChanged();
+
     return true;
 }
 

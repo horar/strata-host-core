@@ -25,7 +25,7 @@ class ClassDocuments : public QObject
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
     Q_PROPERTY(int loadingProgressPercentage READ loadingProgressPercentage NOTIFY loadingProgressPercentageChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
-    Q_PROPERTY(bool initialized READ initialized NOTIFY initializedChanged)
+    Q_PROPERTY(bool metaDataInitialized READ metaDataInitialized NOTIFY metaDataInitializedChanged)
 
 
 public:
@@ -39,7 +39,7 @@ public:
 
     QString errorString() const;
     bool loading() const;
-    bool initialized() const;
+    bool metaDataInitialized() const;
     int loadingProgressPercentage() const;
 
     Q_INVOKABLE void loadPlatformDocuments();
@@ -47,12 +47,13 @@ public:
 
     void updateLoadingProgress(QJsonObject data);
     void populateModels(QJsonObject data);
+    void populateMetaData(QJsonObject data);
 
 signals:
     void errorStringChanged();
     void loadingChanged();
     void loadingProgressPercentageChanged();
-    void initializedChanged();
+    void metaDataInitializedChanged();
 
 private slots:
 
@@ -69,12 +70,12 @@ private:
 
     QString errorString_;
     bool loading_ = false;
-    bool initialized_ = false;
+    bool metaDataInitialized_ = false;
     int loadingProgressPercentage_ = 0;
 
     void setErrorString(QString errorString);
     void setLoading(bool loading);
-    void setInitialized(bool initialized);
+    void setMetaDataInitialized(bool init);
     void setLoadingProgressPercentage(int loadingProgressPercentage);
     void populateDatasheetList(const QString &path, QList<DocumentItem* > &list);
 };

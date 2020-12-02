@@ -131,7 +131,7 @@ Item {
                                 let repeaterCount = platformViewRepeater.count
                                 PlatformSelection.openPlatformView(data)
                                 viewCombobox.currentIndex = index
-                                platformViewRepeater.itemAt(repeaterCount).platformDocumentsInitialized = true
+                                platformViewRepeater.itemAt(repeaterCount).platformMetaDataInitialized = true
                             }
                         }
                     }
@@ -143,6 +143,7 @@ Item {
 
                 onClicked: {
                     localPlatformListDialog.setVisible(true)
+                    localPlatformListDialog.raise()
                 }
             }
 
@@ -222,6 +223,19 @@ Item {
             }
 
             SGLogLevelSelector {
+            }
+
+            Button {
+                text: "Control View Dev"
+
+                onClicked: {
+                    controlViewDevDialog.setVisible(true)
+                    controlViewDevDialog.raise()
+                }
+            }
+
+            SGControlViewDevPopup {
+                id: controlViewDevDialog
             }
         }
     }

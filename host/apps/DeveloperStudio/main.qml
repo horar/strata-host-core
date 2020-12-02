@@ -87,6 +87,7 @@ SGWidgets.SGMainWindow {
             id: stackContainer
 
             property alias mainContainer: mainContainer
+            property alias controlViewDevContainer: controlViewDevContainer
             property alias platformViewModel: platformViewModel
             property alias platformViewRepeater: platformViewRepeater
 
@@ -104,6 +105,21 @@ SGWidgets.SGMainWindow {
                 id: platformViewRepeater
                 model: platformViewModel
                 delegate: SGPlatformView {}
+            }
+
+            Loader {
+                id: controlViewDevContainer
+                objectName: "controlViewDevContainer"
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                asynchronous: true
+
+                onStatusChanged: {
+                    if (status === Loader.Null || status === Loader.Error) {
+                        setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": "Could not load control view"})
+                    }
+                }
             }
         }
     }

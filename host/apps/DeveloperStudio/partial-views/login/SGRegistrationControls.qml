@@ -21,6 +21,10 @@ Item {
         if (visible) {
             focus = true
             firstNameField.focus = true
+            passReqsPopup.close()
+        }
+        else {
+            passReqsPopup.close()
         }
     }
 
@@ -79,55 +83,59 @@ Item {
             }
         }
 
-        ValidationField {
-            id: passwordField
-            Layout.fillWidth: true
-            echoMode: TextInput.Password
-            placeholderText: "Password"
-            showIcon: false
+        RowLayout{
+            id: newPasswordRow
+            spacing: 15
 
-            SGIcon {
-                id: showPasswordIcon
-                source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
-                iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
-                anchors {
-                    verticalCenter: passwordField.verticalCenter
-                    rightMargin: 5
-                    right: passwordField.right
-                }
-                height: passwordField.height*.75
-                width: height
+            ValidationField {
+                id: passwordField
+                placeholderText: "Password"
+                showIcon: false
+                passwordMode: true
+                Layout.preferredWidth: 50
+                Component {
+                    id: revealPasswordComponent
+                    SGIcon {
+                        id: showPasswordIcon
+                        source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
+                        iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
+                        height: passwordField.height*.75
+                        width: height
 
-                MouseArea {
-                    id: showPassword
-                    anchors.fill: showPasswordIcon
-                    hoverEnabled: true
-                    onClicked: {
-                        if (passwordField.echoMode === TextInput.Password) {
-                            passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Normal
-                        } else {
-                            passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Password
+                        MouseArea {
+                            id: showPassword
+                            anchors.fill: showPasswordIcon
+                            hoverEnabled: true
+                            onPressedChanged: {
+                                if (passwordField.echoMode === TextInput.Password) {
+                                    passwordField.echoMode = confirmPasswordField.echoMode
+                                    passwordField.echoMode = TextInput.Normal
+                                } else {
+                                    passwordField.echoMode = confirmPasswordField.echoMode
+                                    passwordField.echoMode = TextInput.Password
+                                }
+                            }
+                            cursorShape: Qt.PointingHandCursor
                         }
                     }
-                    cursorShape: Qt.PointingHandCursor
                 }
             }
-        }
 
-        ValidationField {
-            id: confirmPasswordField
-            echoMode: TextInput.Password
-            KeyNavigation.tab: policyCheck
-            valid: passReqs.passwordValid
-            placeholderText: "Confirm Password"
+            ValidationField {
+                id: confirmPasswordField
+                echoMode: passwordField.echoMode
+                KeyNavigation.tab: policyCheck
+                valid: passReqs.passwordValid
+                placeholderText: "Confirm Password"
+                Layout.preferredWidth: 50
+            }
+
         }
 
         RowLayout{
             Layout.fillWidth: true
             Layout.columnSpan: 2
-            Layout.leftMargin: 10
-            Layout.rightMargin: 10
-            spacing: 10
+            spacing: 13
 
             CheckBox {
                 id: policyCheck
@@ -292,13 +300,14 @@ Item {
 
     Popup {
         id: passReqsPopup
-        width: confirmPasswordField.width
+        width: confirmPasswordField.width + passwordField.width
         height: passReqs.height
-        visible: passwordField.focus || confirmPasswordField.focus
-        x: confirmPasswordField.x
-        y: confirmPasswordField.y + confirmPasswordField.height + 5
+        visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid
+        x: newPasswordRow.x
+        y: newPasswordRow.y + passwordField.height + 5
         padding: 0
         background: Item {}
+        closePolicy: Popup.NoAutoClose
 
         PasswordRequirements {
             id: passReqs

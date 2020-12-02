@@ -40,7 +40,7 @@ signals:
     void loginStarted();
     void loginFinished(bool status, QString errorString);
     void renewSessionStarted();
-    void renewSessionFinished(bool status);
+    void renewSessionFinished(bool status, QString errorString);
     void logoutStarted();
     void logoutFinished(bool status);
     void sessionIdChanged();
