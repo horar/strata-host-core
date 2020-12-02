@@ -57,8 +57,6 @@ var uuid_map = {
     "227" : "eFuse",
     "228" : "eFuse",
     "229" : "eFuse",
-    "225": "smart-speaker",
-    "226": "hello-strata",
     "230" : "eFuse",
     "231": "ACF-PSU", // change this to actual AC - DC UUID which is 231
     "232": "subGHz2",
