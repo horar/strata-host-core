@@ -116,15 +116,16 @@ Rectangle {
                     id: mainNavItems
 
                     model: [
-                        { imageSource: "qrc:/sgimages/list.svg", imageText: "Start" },
-                        { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit" },
-                        { imageSource: "qrc:/sgimages/eye.svg", imageText: "View" },
+                        { imageSource: "qrc:/sgimages/list.svg", imageText: "Start", description: "Go to the start screen." },
+                        { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit", description: "Edit your control view project." },
+                        { imageSource: "qrc:/sgimages/eye.svg", imageText: "View", description: "View your control view" },
                     ]
 
                     delegate: SGSideNavItem {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 70
                         modelIndex: index
+                        tooltipDescription: modelData.description
                         iconLeftMargin: index === toolBarListView.editTab ? 7 : 0
                     }
                 }

@@ -20,6 +20,7 @@ class SGQrcTreeModel : public QAbstractItemModel
     Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
     Q_PROPERTY(QVector<SGQrcTreeNode*> childNodes READ childNodes)
     Q_PROPERTY(QModelIndex rootIndex READ rootIndex WRITE setRootIndex)
+    Q_PROPERTY(bool needsCleaning READ needsCleaning NOTIFY needsCleaningChanged)
 public:
     explicit SGQrcTreeModel(QObject *parent = nullptr);
     ~SGQrcTreeModel();
@@ -141,6 +142,12 @@ public:
     void setUrl(QUrl url);
 
     /**
+     * @brief needsCleaning Returns whether or not the qrc needs cleaning
+     * @return Returns true if the qrc needs cleaning, otherwise false
+     */
+    bool needsCleaning() const;
+
+    /**
      * @brief projectDirectory Returns the url to the project root directory
      * @return The url to the project root directory
      */
@@ -159,6 +166,11 @@ public:
      * @param save If the changes should be saved or not. Default is true
      */
     Q_INVOKABLE bool removeFromQrc(const QModelIndex &index, bool save = true);
+
+    /**
+     * @brief removeDeletedFilesFromQrc Removes all files in the Qrc that have been deleted from the filesystem
+     */
+    Q_INVOKABLE void removeDeletedFilesFromQrc();
 
     /**
      * @brief deleteFile Deletes a file from the local filesystem and removes it from the qrc
@@ -192,6 +204,7 @@ signals:
     void urlChanged();
     void projectDirectoryChanged();
     void rootChanged();
+    void needsCleaningChanged();
     void errorParsing(const QString error);
     void finishedReadingQrc(const QByteArray &fileText);
 
@@ -250,6 +263,7 @@ private:
      */
     void handleExternalFileDeleted(const QString uid);
     void save();
+    void setNeedsCleaning(const bool needsCleaning);
 
     SGQrcTreeNode *root_ = nullptr;
     QUrl url_;
@@ -260,4 +274,5 @@ private:
     QSet<QString> qrcItems_;
     std::unique_ptr<QFileSystemWatcher> fsWatcher_;
     QModelIndex rootIndex_;
+    bool needsCleaning_;
 };
