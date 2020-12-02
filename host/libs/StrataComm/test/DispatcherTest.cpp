@@ -118,13 +118,13 @@ void DispatcherTest::testDispatchHandlersInDispatcherThread()
     qRegisterMetaType<ClientMessage>("ClientMessage");
     connect(this, &DispatcherTest::disp, dispatcher, &Dispatcher::dispatchHandler);
 
-    QVERIFY_(dispatcher.registerHandler(
+    QVERIFY_(dispatcher->registerHandler(
         "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)));
-    QVERIFY_(dispatcher.registerHandler(
+    QVERIFY_(dispatcher->registerHandler(
         "handler_2", std::bind(&TestHandlers::handler_2, th_, std::placeholders::_1)));
-    QVERIFY_(dispatcher.registerHandler(
+    QVERIFY_(dispatcher->registerHandler(
         "handler_3", std::bind(&TestHandlers::handler_3, th_, std::placeholders::_1)));
-    QVERIFY_(dispatcher.registerHandler(
+    QVERIFY_(dispatcher->registerHandler(
         "handler_4", std::bind(&TestHandlers::handler_4, th_, std::placeholders::_1)));
 
     ClientMessage cm;

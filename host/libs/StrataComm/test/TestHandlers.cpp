@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "TestHandlers.h"
 
 void TestHandlers::handler_1(const ClientMessage &clientMessage)
