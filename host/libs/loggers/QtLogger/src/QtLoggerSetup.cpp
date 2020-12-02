@@ -3,6 +3,7 @@
 #include "moc_QtLoggerSetup.cpp"
 
 #include "LoggingQtCategories.h"
+#include "QtLogger.h"
 
 #include <SpdLogger.h>
 
@@ -16,31 +17,6 @@
 
 namespace strata::loggers
 {
-void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, const QString& msg)
-{
-    const QString formattedMsg{qFormatLogMessage(type, context, msg)};
-
-    switch (type) {
-        case QtDebugMsg:
-            spdlog::debug(formattedMsg.toStdString());
-            break;
-        case QtInfoMsg:
-            spdlog::info(formattedMsg.toStdString());
-            break;
-        case QtWarningMsg:
-            spdlog::warn(formattedMsg.toStdString());
-            break;
-        case QtCriticalMsg:
-            spdlog::error(formattedMsg.toStdString());
-            break;
-        case QtFatalMsg:
-            spdlog::critical(formattedMsg.toStdString());
-            break;
-    }
-    // XXX: Qt doesn't have macro like qTrace() ...
-    // spdlog::trace(formattedMsg.toStdString());
-}
-
 void QtLoggerSetup::reload()
 {
     QSettings settings;
@@ -78,7 +54,7 @@ QtLoggerSetup::~QtLoggerSetup()
 
 QtMessageHandler QtLoggerSetup::getQtLogCallback() const
 {
-    return &qtLogCallback;
+    return &QtLogger::MsgHandler;
 }
 
 void QtLoggerSetup::generateDefaultSettings() const
@@ -163,7 +139,7 @@ void QtLoggerSetup::setupQtLog()
     qSetMessagePattern(messagePattern);
     QLoggingCategory::setFilterRules(filterRules);
 
-    qInstallMessageHandler(qtLogCallback);
+    qInstallMessageHandler(QtLogger::MsgHandler);
 
     qCDebug(logCategoryQtLogger) << "Qt logging initiated...";
 
@@ -175,4 +151,4 @@ void QtLoggerSetup::setupQtLog()
     qCDebug(logCategoryQtLogger) << "\tlogger message pattern:" << messagePattern;
 }
 
-}  // namespace starta::loggers
+}  // namespace strata::loggers

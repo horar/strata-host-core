@@ -15,7 +15,6 @@
 namespace strata {
 
 using device::DevicePtr;
-using device::DeviceProperties;
 
 namespace operation = device::operation;
 
@@ -147,7 +146,7 @@ void Flasher::performNextOperation(device::operation::BaseDeviceOperation* baseO
     case operation::Type::StartBootloader :
         emit switchToBootloader(true);
         qCInfo(logCategoryFlasher) << device_ << "Switched to bootloader (version '"
-                                   << device_->property(DeviceProperties::bootloaderVer) << "').";
+                                   << device_->bootloaderVer() << "').";
         if (status == operation::DEFAULT_STATUS) {
             // Operation SwitchToBootloader has status set to OPERATION_ALREADY_IN_BOOTLOADER (1) if board was
             // already in bootloader mode, otherwise status has default value DEFAULT_STATUS (INT_MIN).
@@ -191,17 +190,24 @@ void Flasher::performNextOperation(device::operation::BaseDeviceOperation* baseO
             break;
         }
         break;
-    case operation::Type::Identify :
     case operation::Type::StartApplication :
         if (status == operation::NO_FIRMWARE) {
             finish(Result::NoFirmware);
-        } else {
-            qCInfo(logCategoryFlasher) << device_ << "Launching device software. Name: '"
-                                       << device_->property(DeviceProperties::verboseName) << "', version: '"
-                                       << device_->property(DeviceProperties::applicationVer) << "'.";
-            emit devicePropertiesChanged();
-            finish(Result::Ok);
+            break;
         }
+        // if status is not 'NO_FIRMWARE' continue with code for 'Identify' operation
+        [[fallthrough]];
+    case operation::Type::Identify :
+        {
+            QString version = (action_ == Action::FlashBootloader)
+                              ? device_->bootloaderVer()
+                              : device_->applicationVer();
+            qCInfo(logCategoryFlasher) << device_ << "Launching device software. Name: '"
+                                       << device_->name()
+                                       << "', version: '" << version << "'.";
+        }
+        emit devicePropertiesChanged();
+        finish(Result::Ok);
         break;
     default :
         {
