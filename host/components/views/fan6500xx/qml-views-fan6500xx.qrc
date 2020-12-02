@@ -1,10 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/BasicControl.qml</file>
         <file>control-views/PlatformInterface.qml</file>
         <file>control-views/MultiplePlatform.qml</file>
     </qresource>
-    <qresource prefix="/"/>
 </RCC>
