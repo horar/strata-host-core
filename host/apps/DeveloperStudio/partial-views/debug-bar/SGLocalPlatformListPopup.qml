@@ -27,6 +27,8 @@ Window {
         } else {
             deviceModel.clear()
             classModel.clear()
+            listModel.clear()
+            injectPlatform.list = []
         }
     }
 
@@ -309,190 +311,310 @@ Window {
                 id: injectPlatform
 
                 property var list: []
+
                 RowLayout {
-                    id: rowPlatform
-                    Button {
-                        text: "Inject"
-                        Layout.preferredHeight: 40
-                        enabled: device_id.currentIndex !== -1 && class_id.classId !== ""
-                        onClicked: {
-                            loadAndStorePlatform({class_id: class_id.classId, opn: class_id.opn},textField.text, checkForCustomId(class_id.classId))
-                        }
+
+                    Item {
+                        Layout.preferredWidth: 40
                     }
 
-                    SGComboBox {
-                        id: class_id
-                        Layout.preferredHeight: 40
+                    Text {
                         Layout.preferredWidth: 310
-                        model: classModel
-                        placeholderText: "class_id..."
-                        editable: true
-                        textRole: null
-                        wheelEnabled: true
+                        text: 'Class ID'
+                    }
 
-                        property string classId: ""
-                        property string opn: ""
+                    Text {
+                        Layout.preferredWidth: 140
+                        text: "Version"
+                    }
 
-                        onEditTextChanged: {
-                            classId = editText
-                        }
+                    Text {
+                        Layout.preferredWidth: 150
+                        text: "Device ID"
+                    }
 
-                        onClassIdChanged: {
-                            class_id.contentItem.text = classId
-                        }
+                    Text {
+                        text: "Connected"
+                    }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            acceptedButtons: Qt.RightButton
+                }
 
-                            onClicked: {
-                                menu.open()
-                            }
-                        }
+                ListView {
+                    id: listView
+                    model: listModel
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: contentHeight
+                    Layout.maximumHeight: 300
+                    clip: true
+                    spacing: 5
 
-                        Menu{
-                            id: menu
-                            width: parent.width
-                            y: parent.y - parent.height
-                            MenuItem {
-                                text: "Clear custom platforms"
+                    delegate: RowLayout {
+                        id: rowPlatform
+                        Layout.fillWidth: true
 
-                                onClicked: {
-                                    storeDeviceList.customPlatforms = []
-                                    storeDeviceList.setValue("stored-platforms", {platforms: storeDeviceList.customPlatforms})
-                                    deviceModel.clear()
-                                    classModel.clear()
-                                    initialModelLoad()
-                                }
-                            }
-                        }
+                        property string class_id: model.class_id
+                        property string opn: model.opn
+                        property int device_id: model.device_id
+                        property string firmware_version: model.firmware_version
 
-                        delegate: Item {
-                            height: 40
-                            width: parent.width
-                            SGText {
-                                id: opnText
-                                color: delegateArea.containsMouse ? "#888" : "black"
-                                anchors.left: parent.left
-                                anchors.top: parent.top
-                                text: modelData.opn
-                                leftPadding: 5
-                            }
+                        Rectangle {
+                            Layout.preferredHeight: 40
+                            Layout.preferredWidth: Layout.preferredHeight
+                            color: "red"
 
-                            SGText {
-                                id: classText
-                                color: delegateArea.containsMouse ? "#888" : "#333"
-                                anchors.left: parent.left
-                                anchors.top: opnText.bottom
-                                text: modelData.class_id
-                                leftPadding: 10
+                            SGIcon {
+                                source:"qrc:/sgimages/times.svg"
+                                anchors.centerIn: parent
+                                width: 30
+                                height: width
+
+                                iconColor: "white"
                             }
 
                             MouseArea {
-                                id: delegateArea
+                                id: closeArea
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 hoverEnabled: true
 
-                                acceptedButtons: Qt.LeftButton | Qt.RightButton
-
                                 onClicked: {
-                                    if(mouse.button === Qt.LeftButton) {
-                                        class_id.setId(modelData.class_id)
-                                        class_id.popup.close()
+                                    unloadAndRemovePlatform(class_id.classId)
+                                    deletePlatform(model.index)
+                                }
+
+                            }
+                        }
+
+                        SGComboBox {
+                            id: class_id
+                            Layout.preferredHeight: 40
+                            Layout.preferredWidth: 310
+                            model: classModel
+                            editable: true
+                            textRole: null
+                            wheelEnabled: true
+
+                            property string classId: rowPlatform.class_id
+                            property string opn: rowPlatform.opn
+
+                            onClassIdChanged: {
+                                class_id.contentItem.classId = classId
+                            }
+
+                            contentItem: RowLayout{
+                                anchors.fill: parent
+                                spacing: 0
+
+                                property string classId: class_id.classId
+
+                                SGTextField {
+                                    placeholderText: "class_id..."
+                                    text: parent.classId
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: 40
+
+                                    onTextChanged: {
+                                        class_id.classId = text
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.preferredHeight: 40
+                                    Layout.preferredWidth: 70
+                                    border.color: "lightGrey"
+                                    border.width: 0.5
+
+                                    color: "white"
+
+                                    SGIcon {
+                                        source: "qrc:/sgimages/chevron-down.svg"
+                                        iconColor: "lightGrey"
+                                        anchors.centerIn: parent
+                                        width: 60
+                                        height: 25
+                                    }
+
+                                    MouseArea {
+                                        id: mouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+
+                                        onClicked: {
+                                            if(!class_id.popup.opened){
+                                                class_id.popup.open()
+                                            } else {
+                                                class_id.popup.close()
+                                            }
+                                        }
                                     }
                                 }
                             }
 
-                        }
-
-                        function setId(class_){
-                            for(var i = 0; i < classModel.count; i++){
-                                if(class_ === classModel.get(i).platform.class_id){
-                                    class_id.currentIndex = i
-                                    classId = class_
-                                    opn = classModel.get(i).platform.opn
-                                }
-                            }
-                        }
-                    }
-                    Rectangle {
-                        Layout.preferredHeight: 40
-                        Layout.preferredWidth: 140
-                        color: "transparent"
-                        border.width: 0.5
-                        border.color: "lightgrey"
-                        SGText {
-                            id: textBox
-                            anchors.left: parent.left
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: "ver."
-                            leftPadding: 5
-                            rightPadding: 5
-                        }
-
-                        SGTextField {
-                            id: textField
-                            anchors.left: textBox.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.right: parent.right
-                            placeholderText: "firmware_version"
-
-                            text: "0.0.2"
-                        }
-                    }
-
-                    SGComboBox {
-                        id: device_id
-                        Layout.preferredHeight: 40
-                        Layout.preferredWidth: 150
-                        model: deviceModel
-                        placeholderText: "device id"
-                        textRole: null
-
-                        delegate: SGText {
-                            color: deviceArea.containsMouse ? "#888" : "black"
-
-                            text: modelData
-                            leftPadding: 5
-
-
                             MouseArea {
-                                id: deviceArea
                                 anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                hoverEnabled: true
+                                acceptedButtons: Qt.RightButton
 
                                 onClicked: {
-                                    device_id.setDevice(modelData)
-                                    device_id.popup.close()
+                                    menu.open()
+                                }
+                            }
+
+                            Menu{
+                                id: menu
+                                width: parent.width
+                                y: parent.y - parent.height
+                                MenuItem {
+                                    text: "Clear custom platforms"
+
+                                    onClicked: {
+                                        storeDeviceList.customPlatforms = []
+                                        storeDeviceList.setValue("custom-platforms", {platforms: storeDeviceList.customPlatforms})
+                                        deviceModel.clear()
+                                        classModel.clear()
+                                        initialModelLoad()
+                                    }
+                                }
+                            }
+
+                            delegate: Item {
+                                height: 40
+                                width: parent.width
+                                SGText {
+                                    id: opnText
+                                    color: delegateArea.containsMouse ? "#888" : "black"
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    text: modelData.opn
+                                    leftPadding: 5
+                                }
+
+                                SGText {
+                                    id: classText
+                                    color: delegateArea.containsMouse ? "#888" : "#333"
+                                    anchors.left: parent.left
+                                    anchors.top: opnText.bottom
+                                    text: modelData.class_id
+                                    leftPadding: 10
+                                }
+
+                                MouseArea {
+                                    id: delegateArea
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                                    onClicked: {
+                                        if(mouse.button === Qt.LeftButton) {
+                                            class_id.setId(modelData.class_id)
+                                            class_id.popup.close()
+                                        }
+                                    }
+                                }
+                            }
+
+                            function setId(class_){
+                                for(var i = 0; i < classModel.count; i++){
+                                    if(class_ === classModel.get(i).platform.class_id){
+                                        class_id.currentIndex = i
+                                        classId = class_
+                                        opn = classModel.get(i).platform.opn
+                                    }
                                 }
                             }
                         }
 
-                        function setDevice(device){
-                            for(var i = 0; i < deviceModel.count; i++){
-                                if(device === deviceModel.get(i).device){
-                                    device_id.currentIndex = i
+                        Rectangle {
+                            Layout.preferredHeight: 40
+                            Layout.preferredWidth: 140
+                            color: "transparent"
+                            border.width: 0.5
+                            border.color: "lightgrey"
+
+                            SGText {
+                                id: textBox
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "ver."
+                                leftPadding: 5
+                                rightPadding: 5
+                            }
+
+                            SGTextField {
+                                id: textField
+                                anchors.left: textBox.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.right: parent.right
+                                placeholderText: "firmware_version"
+
+                                text: rowPlatform.firmware_version
+                            }
+                        }
+
+                        SGComboBox {
+                            id: device_id
+                            Layout.preferredHeight: 40
+                            Layout.preferredWidth: 150
+                            model: deviceModel
+                            placeholderText: "device id"
+                            textRole: null
+                            currentIndex: rowPlatform.device_id
+
+                            delegate: SGText {
+                                color: deviceArea.containsMouse ? "#888" : "black"
+
+                                text: modelData
+                                leftPadding: 5
+
+
+                                MouseArea {
+                                    id: deviceArea
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+
+                                    onClicked: {
+                                        device_id.setDevice(modelData)
+                                        device_id.popup.close()
+                                    }
+                                }
+                            }
+
+                            function setDevice(device){
+                                for(var i = 0; i < deviceModel.count; i++){
+                                    if(device === deviceModel.get(i).device){
+                                        device_id.currentIndex = i
+                                    }
                                 }
                             }
                         }
+
+                        Switch {
+                            checked: model.connected
+                            onCheckedChanged: {
+                                model.connected = checked
+                                if(model.connected){
+                                    loadAndStorePlatform({class_id:class_id.classId, opn: class_id.opn},device_id.currentIndex,textField.text, checkForCustomId(class_id.classId))
+                                } else {
+                                    unloadAndRemovePlatform(class_id.classId)
+                                }
+                            }
+                        }
+
                     }
                 }
 
                 Button {
-                    text: "Disconnect All Platforms"
-                    Layout.preferredWidth: 200
+                    text: "Add Platform"
+                    Layout.fillWidth: true
                     Layout.preferredHeight: 40
-                    Layout.alignment: Qt.AlignHCenter
-                    onClicked: {
-                        injectPlatform.list = []
-                        let list = {
-                            "list": [],
-                            "type":"connected_platforms"
-                        }
+                    Layout.alignment: Qt.AlignLeft
+                    leftPadding: 40
 
-                        PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                    onClicked: {
+                        listModel.append({class_id: "", opn: "" ,device_id: 0, firmware_version: "0.0.2", connected: false})
                     }
                 }
             }
@@ -506,9 +628,10 @@ Window {
         Settings {
             id: storeDeviceList
             category: "StoreDevicesList"
-            fileName: "storedDevices.ini"
+            fileName: "storedDevices"
             // will store custom platforms
             property var customPlatforms: []
+            property var storedPlatforms: []
 
         }
 
@@ -533,6 +656,10 @@ Window {
     }
 
     ListModel {
+        id: listModel
+    }
+
+    ListModel {
         id: classModel
     }
 
@@ -541,8 +668,8 @@ Window {
     }
 
     function parseCustomSavedIds(){
-        if(storeDeviceList.value("stored-platforms") !== undefined){
-            const storedPlatform = storeDeviceList.value("stored-platforms")
+        if(storeDeviceList.value("custom-platforms") !== undefined){
+            const storedPlatform = storeDeviceList.value("custom-platforms")
             if(storedPlatform.hasOwnProperty("platforms")){
                 const customPlatforms = storedPlatform.platforms
                 for(var i = 0; i < customPlatforms.length; i++){
@@ -558,41 +685,35 @@ Window {
         parseCustomSavedIds()
 
         for(var i = 0; i < PlatformSelection.platformSelectorModel.count; i++){
-                classModel.append({platform: {class_id: PlatformSelection.platformSelectorModel.get(i).class_id, opn: PlatformSelection.platformSelectorModel.get(i).opn}})
+            classModel.append({platform: {class_id: PlatformSelection.platformSelectorModel.get(i).class_id, opn: PlatformSelection.platformSelectorModel.get(i).opn}})
         }
 
         for(var j = 0; j < 10; j++){
             deviceModel.append({device: `device_id ${j}`})
         }
 
-        device_id.currentIndex = 0
 
-        if(storeDeviceList.value("stored-platform") !== undefined){
-            if(storeDeviceList.value("stored-platform").hasOwnProperty("platform")){
-                class_id.classId = storeDeviceList.value("stored-platform").platform.class_id
-                class_id.opn = storeDeviceList.value("stored-platform").platform.opn
-                if(class_id.classId){
-                    for(var n = 0; n < classModel.count; n++){
-                        if(class_id.classId === classModel.get(n).platform.class_id){
-                            class_id.contentItem.text = class_id.classId
-                            textField.text = storeDeviceList.value("stored-platform").platform.firmware_version
-                            break;
-                        }
-                    }
+        if(storeDeviceList.value("stored-platforms") !== undefined){
+            if(storeDeviceList.value("stored-platforms").hasOwnProperty("platforms")){
+                const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
+                for(var x = 0; x < storedPlatforms.length; x++){
+                    listModel.append({class_id: storedPlatforms[x].platform.class_id, opn: storedPlatforms[x].platform.opn, device_id: storedPlatforms[x].platform.device_id, firmware_version: storedPlatforms[x].platform.firmware_version, connected: false})
+                    //listModel.append({class_id: storedPlatform.platform.class_id, opn: storedPlatform.platform.opn ,device_id: storedPlatform.platform.device_id, firmware_version: storedPlatform.platform.firmware_version, connected: false})
                 }
             }
         }
     }
     // loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
-    function loadAndStorePlatform(platform, firmwareVer, custom){
+    function loadAndStorePlatform(platform, device_deviation ,firmwareVer, custom){
         const platforms = classModel
         for(var i = 0; i < platforms.count; i++){
             if(platform.class_id === platforms.get(i).platform.class_id && !custom){
+
                 injectPlatform.list.push({
-                                              "class_id": platform.class_id,
-                                              "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
-                                              "firmware_version": firmwareVer
-                                          })
+                                             "class_id": platform.class_id,
+                                             "device_id": Constants.DEBUG_DEVICE_ID + device_deviation,
+                                             "firmware_version": firmwareVer
+                                         })
                 let list = {
                     "list": injectPlatform.list,
                     "type":"connected_platforms"
@@ -600,14 +721,25 @@ Window {
                 }
 
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
-                storeDeviceList.setValue("stored-platform",{platform: {class_id: platform.class_id, opn: platform.opn, firmware_version: firmwareVer, custom: custom } })
+                var flag = false
+                for( var j = 0; j < storeDeviceList.value("stored-platforms").platforms.length; j++){
+                    const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
+                    if(storedPlatforms[j].platform.class_id === platform.class_id){
+                        flag = true
+                        break
+                    }
+                }
+                if(!flag){
+                    storeDeviceList.storedPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
+                    storeDeviceList.setValue("stored-platforms",{platforms: storeDeviceList.storedPlatforms})
+                }
                 break
             } else {
                 injectPlatform.list.push({
-                                              "class_id": platform.class_id,
-                                              "device_id": Constants.DEBUG_DEVICE_ID + device_id.currentIndex,
-                                              "firmware_version": firmwareVer
-                                          })
+                                             "class_id": platform.class_id,
+                                             "device_id": Constants.DEBUG_DEVICE_ID + device_deviation,
+                                             "firmware_version": firmwareVer
+                                         })
                 let list = {
                     "list": injectPlatform.list,
                     "type":"connected_platforms"
@@ -615,14 +747,63 @@ Window {
                 }
 
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
-                storeDeviceList.setValue("stored-platform",{platform: {class_id: platform.class_id, opn: "Custom Platform", firmware_version: firmwareVer, custom: custom } })
-
-                storeDeviceList.customPlatforms.push({platform: {class_id: platform.class_id, opn: "Custom Platform", firmware_version: firmwareVer, custom: custom }})
-                storeDeviceList.setValue("stored-platforms",{platforms: storeDeviceList.customPlatforms})
+                let flag = false
+                for( var y = 0; y < storeDeviceList.value("stored-platforms").platforms.length; y++){
+                    const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
+                    if(storedPlatforms[y].platform.class_id === platform.class_id){
+                        flag = true
+                        break
+                    }
+                }
+                if(!flag){
+                    storeDeviceList.storedPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
+                    storeDeviceList.setValue("stored-platforms",{platforms: storeDeviceList.storedPlatforms})
+                }
+                flag = false
+                for( let x = 0; x < storeDeviceList.value("custom-platforms").platforms.length; x++){
+                    const storedPlatforms = storeDeviceList.value("custom-platforms").platforms
+                    if(storedPlatforms[x].platform.class_id === platform.class_id){
+                        flag = true
+                        break
+                    }
+                }
+                if(!flag){
+                    storeDeviceList.storedPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
+                    storeDeviceList.setValue("custom-platforms",{platforms: storeDeviceList.storedPlatforms})
+                }
                 break
             }
         }
     }
+
+    function unloadAndRemovePlatform(classId){
+        for(var i = 0; i < injectPlatform.list.length; i++){
+            if(injectPlatform.list[i].class_id === classId){
+                injectPlatform.list.splice(i,1)
+                let list = {
+                    "list": injectPlatform.list,
+                    "type": "connected_platforms"
+                }
+
+                PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                break
+            }
+        }
+    }
+
+    function deletePlatform(index){
+        if(storeDeviceList.value("stored-platforms") !== undefined){
+            if(storeDeviceList.value("stored-platforms").hasOwnProperty("platforms")){
+                let storedPlatforms = storeDeviceList.value("stored-platforms").platforms
+                listModel.remove(index)
+                storedPlatforms.splice(index,1)
+                injectPlatform.list.splice(index, 1)
+                storeDeviceList.setValue("stored-platforms",{platforms: []})
+                storeDeviceList.setValue("stored-platforms", {platforms: storedPlatforms})
+            }
+        }
+    }
+
     // checks for a custom class_id
     function checkForCustomId(classId){
         for(var i = 0; i < PlatformSelection.platformSelectorModel.count; i++){
@@ -632,6 +813,4 @@ Window {
         }
         return true
     }
-
 }
-
