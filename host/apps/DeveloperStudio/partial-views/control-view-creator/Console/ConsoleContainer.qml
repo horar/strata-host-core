@@ -60,6 +60,10 @@ Rectangle {
                         anchors.fill: parent
                         placeholderText: "search here..."
                         leftPadding: 5
+
+                        onTextChanged: {
+                            consoleLogger.searchText = text
+                        }
                     }
                 }
 
@@ -168,4 +172,5 @@ Rectangle {
             Layout.fillWidth: true
         }
     }
+
 }
