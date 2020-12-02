@@ -182,14 +182,30 @@ FocusScope {
                             anchors {
                                 top: parent.top
                                 left: parent.left
+                                right: buttonRow.right
+                                bottom: divider.top
+                            }
+
+                            color: {
+                                if (model.type === Sci.SciScrollbackModel.Request) {
+                                    return Qt.lighter(SGWidgets.SGColorsJS.TANGO_CHOCOLATE1, 1.3)
+                                }
+
+                                return "transparent"
+                            }
+                        }
+
+                        Rectangle {
+                            anchors {
+                                top: parent.top
+                                left: messageTypeBg.right
                                 right: parent.right
                                 bottom: divider.top
                             }
+
                             color: {
-                                if (model.type === Sci.SciScrollbackModel.Request) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.4)
-                                } else if (model.isJsonValid === false) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.4)
+                                if (model.isJsonValid === false) {
+                                    return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
                                 }
 
                                 return "transparent"
