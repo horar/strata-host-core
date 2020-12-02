@@ -1,13 +1,14 @@
 #pragma once
 
 #include <QObject>
-#include "../src/Dispatcher.h"
-#include "../src/ClientMessage.h"
-#include "TestHandlers.h"
-#include "QtTest.h"
 
-using strata::strataComm::Dispatcher;
+#include "../src/ClientMessage.h"
+#include "../src/Dispatcher.h"
+#include "QtTest.h"
+#include "TestHandlers.h"
+
 using strata::strataComm::ClientMessage;
+using strata::strataComm::Dispatcher;
 
 class DispatcherTest : public QObject
 {
@@ -16,18 +17,16 @@ public:
     DispatcherTest();
 
 private slots:
-    void testFunction1();
-    void testFunction2();
+    void testStartDispatcher();
+    void testStopDispatcher();
     void testRegisteringHandlers();
     void testDispatchHandlers();
-    void testDispatchHandlers_2();
-    void testDispatchHandlers_3();
-//    void testDispatchHandlers_4();
-    void testDispatchHandlers_5();
+    void testDispatchHandlersUsingSignal();
+    void testDispatchHandlersInDispatcherThread();
+    void testDispatchHandlersLocalClientMessage();
 
     void testLargeNumberOfHandlers();
-    void testLargeNumberOfHandlers_1();
-
+    void testLargeNumberOfHandlersUsingDispatcherThread();
 
 private:
     TestHandlers th_;
@@ -36,4 +35,3 @@ private:
 signals:
     void disp(const ClientMessage &clientMessage);
 };
-
