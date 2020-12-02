@@ -314,6 +314,7 @@ Rectangle {
 
                 SGMenuItem {
                     text: qsTr("C.V.C")
+                    visible: cvcButton.state === "debug"
                     onClicked: {
                       cvcButton.toggleVisibility()
                     }
