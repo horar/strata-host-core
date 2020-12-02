@@ -20,7 +20,7 @@ Button {
             family: Fonts.franklinGothicBold
         }
 
-        fontSizeMultiplier: 1.25
+        fontSizeMultiplier: 1
     }
 
     background: Rectangle {

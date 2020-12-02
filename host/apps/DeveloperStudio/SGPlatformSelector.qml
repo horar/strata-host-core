@@ -79,6 +79,7 @@ Rectangle{
                     anchors {
                         centerIn: parent
                     }
+                    spacing: 7
 
                     Image {
                         sourceSize.width: Math.min(parent.width, 250)
@@ -86,6 +87,44 @@ Rectangle{
                         source: "qrc:/images/on-semi-logo-horiz.svg"
                         mipmap: true
                         Layout.alignment: Qt.AlignHCenter
+                    }
+
+                    Rectangle {
+                        // Strata Onsemi.com landing page button
+                        color: !mouse.containsMouse
+                               ? SGColorsJS.STRATA_GREEN : mouse.pressed
+                                 ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+                        radius: 10
+                        Layout.preferredWidth: providerText.implicitWidth + providerText.height
+                        Layout.maximumWidth: Layout.preferredWidth
+                        Layout.preferredHeight: providerText.height * 2
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignHCenter
+
+                        SGText {
+                            id: providerText
+                            text: "Visit Strata at ONSemi.com"
+                            color: "white"
+                            font.family: Fonts.franklinGothicBold
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                            }
+                            width: parent.width
+                            horizontalAlignment: Text.AlignHCenter
+                            elide: Text.ElideRight
+                            fontSizeMultiplier: 1
+                        }
+
+                        MouseArea {
+                            id: mouse
+                            anchors {
+                                fill: parent
+                            }
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: Qt.openUrlExternally("http://www.onsemi.com/strata")
+                        }
                     }
 
                     SGBaseDistributionButton {

@@ -79,7 +79,7 @@ RowLayout {
             elide: Text.ElideRight
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
-            fontSizeMultiplier: 1.25
+            fontSizeMultiplier: 1
         }
 
         MouseArea {
@@ -203,7 +203,7 @@ RowLayout {
 
     TextMetrics {
         id: textSize
-        font.pixelSize: SGSettings.fontPixelSize * 1.25
+        font.pixelSize: SGSettings.fontPixelSize
         font.family: Fonts.franklinGothicBold
         text: "Distribution Portal..."
     }
