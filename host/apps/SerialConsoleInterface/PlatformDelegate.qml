@@ -297,7 +297,15 @@ FocusScope {
                                 cursorShape: Qt.IBeamCursor
                                 acceptedButtons: Qt.NoButton
                             }
+                        }
 
+                        Loader {
+                            id: syntaxHighlighterLoader
+                            sourceComponent: model.isJsonValid ? syntaxHighlighterComponent : null
+                        }
+
+                        Component {
+                            id: syntaxHighlighterComponent
                             CommonCpp.SGJsonSyntaxHighlighter {
                                 textDocument: cmdText.textDocument
                             }
