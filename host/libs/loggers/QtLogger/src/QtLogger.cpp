@@ -1,5 +1,7 @@
 #include "QtLogger.h"
 
+#include "moc_QtLogger.cpp"
+
 #include <SpdLogger.h>
 
 #include <QLoggingCategory>
