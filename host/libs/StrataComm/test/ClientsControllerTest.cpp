@@ -1,7 +1,7 @@
 #include "ClientsControllerTest.h"
 
 void ClientsControllerTest::notifyClientMock(const Client &client, const QString &handlerName, const QJsonObject &payload) {
-    qDebug() << "Sending " << payload << "To Client ID: " << client.getClientID() << " API Version: " << static_cast<int>(client.getApiVersion());
+    qDebug() << "Sending " << payload << "To Client ID: " << client.getClientID() << " API Version: " << static_cast<int>(client.getApiVersion()) << " Handler: " << handlerName;
 }
 
 void ClientsControllerTest::testIsRegisteredClient() {

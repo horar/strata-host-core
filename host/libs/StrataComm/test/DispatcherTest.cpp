@@ -179,9 +179,10 @@ void DispatcherTest::testLargeNumberOfHandlers()
 {
     Dispatcher dispatcher;
 
+    // TODO: Add validation to this test!!
     for (int i = 0; i < 1000; i++) {
         dispatcher.registerHandler(QString::number(i),
-                                   [i](const ClientMessage &clientMessage) { qDebug() << i; });
+                                   [i](const ClientMessage &) { qDebug() << i; });
     }
 
     for (int i = 0; i < 1000; i++) {
@@ -203,7 +204,7 @@ void DispatcherTest::testLargeNumberOfHandlersUsingDispatcherThread()
 
     for (int i = 0; i < 1000; i++) {
         dispatcher->registerHandler(QString::number(i),
-                                    [i](const ClientMessage &clientMessage) { qDebug() << i; });
+                                    [i](const ClientMessage &) { qDebug() << i; });
     }
 
     for (int i = 0; i < 1000; i++) {

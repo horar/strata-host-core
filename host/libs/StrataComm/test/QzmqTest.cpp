@@ -163,16 +163,16 @@ void ServerConnectorTest::testDisconnectClient()
 
     connect(
         &server, &strata::strataComm::ServerConnector::newMessageRecived, this,
-        [&serverRecivedMessage, &server](const QByteArray &clientId, const QByteArray &messgae) {
+        [&serverRecivedMessage, &server](const QByteArray &clientId, const QByteArray &) {
             serverRecivedMessage = true;
-            server.sendMessage("AA", "test from the server");
+            server.sendMessage(clientId, "test from the server");
         });
 
     bool clientRecivedMessage = false;
     strata::strataComm::ClientConnector client(address_, "AA");
     QCOMPARE_(client.initilize(), true);
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
-            [&clientRecivedMessage](const QByteArray &message) { clientRecivedMessage = true; });
+            [&clientRecivedMessage](const QByteArray &) { clientRecivedMessage = true; });
 
     serverRecivedMessage = false;
     clientRecivedMessage = false;

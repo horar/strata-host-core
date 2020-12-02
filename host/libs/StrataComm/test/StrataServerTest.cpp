@@ -487,7 +487,7 @@ void StrataServerTest::testNotifyAllClients() {
     for (int i = 0; i < clientsCount/2; i++) {
         clientsList.push_back(new strata::strataComm::ClientConnector(address_, QByteArray::number(i)));
         clientsList.back()->initilize();
-        connect(clientsList.back(), &strata::strataComm::ClientConnector::newMessageRecived, this, [i, &counter](const QByteArray &message) {
+        connect(clientsList.back(), &strata::strataComm::ClientConnector::newMessageRecived, this, [&counter](const QByteArray &message) {
             // validate for API v2
             // expected response format: 
             // {
@@ -520,7 +520,7 @@ void StrataServerTest::testNotifyAllClients() {
     for (int i = clientsCount/2; i < clientsCount; i++) {
         clientsList.push_back(new strata::strataComm::ClientConnector(address_, QByteArray::number(i)));
         clientsList.back()->initilize();
-        connect(clientsList.back(), &strata::strataComm::ClientConnector::newMessageRecived, this, [i, &counter](const QByteArray &message) {
+        connect(clientsList.back(), &strata::strataComm::ClientConnector::newMessageRecived, this, [&counter](const QByteArray &message) {
             // validate for API v1
             // expected response format: 
             // {

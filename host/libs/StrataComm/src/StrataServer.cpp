@@ -270,11 +270,11 @@ void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObjec
 }
 
 void StrataServer::registerNewClientHandler(const ClientMessage &clientMessage) {
-
+    qCDebug(logCategoryStrataServer) << "Handle New Client Registeration. Client ID:" << clientMessage.clientID;
 }
 
 void StrataServer::unregisterClientHandler(const ClientMessage &clientMessage) {
-
+    qCDebug(logCategoryStrataServer) << "Handle Client Unregisteration. Client ID:" << clientMessage.clientID;
 }
 
 QByteArray StrataServer::buildServerMessageAPIv2(const ClientMessage &clientMessage, const QJsonObject &payload, ClientMessage::ResponseType responseType) {
