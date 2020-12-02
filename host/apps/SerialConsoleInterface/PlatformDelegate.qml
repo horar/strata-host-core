@@ -259,7 +259,7 @@ FocusScope {
                                         icon.source: "qrc:/images/redo.svg"
                                         iconSize: buttonRow.iconSize
                                         onClicked: {
-                                            cmdInput.text = JSON.stringify(JSON.parse(model.message))
+                                            cmdInput.text = model.message
                                         }
                                     }
                                 }
