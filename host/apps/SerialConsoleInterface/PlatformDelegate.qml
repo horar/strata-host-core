@@ -179,6 +179,7 @@ FocusScope {
                         property color helperTextColor: "#333333"
 
                         Rectangle {
+                            id: messageTypeBg
                             anchors {
                                 top: parent.top
                                 left: parent.left
@@ -196,6 +197,7 @@ FocusScope {
                         }
 
                         Rectangle {
+                            id: messageValidityBg
                             anchors {
                                 top: parent.top
                                 left: messageTypeBg.right
@@ -346,7 +348,7 @@ FocusScope {
 
             FocusScope {
                 id: inputWrapper
-                height: cmdInput.y + cmdInput.height + 6
+                height: validateCheckBox.y + validateCheckBox.height + 6
                 anchors {
                     bottom: parent.bottom
                     left: parent.left
@@ -359,6 +361,7 @@ FocusScope {
                     id: toolButtonRow
                     anchors {
                         top: parent.top
+                        topMargin: 2
                         left: cmdInput.left
                     }
 
@@ -564,6 +567,20 @@ FocusScope {
                     }
                 }
 
+                SGWidgets.SGCheckBox {
+                    id: validateCheckBox
+                    anchors {
+                        top: cmdInput.bottom
+                        topMargin: 2
+                        left: cmdInput.left
+                    }
+
+                    focusPolicy: Qt.NoFocus
+                    padding: 0
+                    checked: true
+                    text: "Send only valid JSON message"
+                }
+
                 SGWidgets.SGButton {
                     id: btnSend
                     anchors {
@@ -583,7 +600,7 @@ FocusScope {
             }
 
             function sendTextInputTextAsComand() {
-                var result = model.platform.sendMessage(cmdInput.text)
+                var result = model.platform.sendMessage(cmdInput.text, validateCheckBox.checked)
                 if (result) {
                     cmdInput.clear()
                 }
