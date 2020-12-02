@@ -15,7 +15,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 Rectangle {
     id: controlViewCreatorContainer
     height: container.height
-    width: controlViewCreatorRow.implicitWidth + 20
+    width: controlViewCreatorRow.implicitWidth
     color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
 
     MouseArea {
@@ -55,7 +55,7 @@ Rectangle {
             Layout.preferredHeight: controlViewCreatorContainer.height
             Layout.preferredWidth: Layout.preferredHeight
             Layout.alignment: Qt.AlignRight
-            color:controlViewCreatorMouse.containsMouse ? "#33b13b" : closeArea.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
+            color:controlViewCreatorMouse.containsMouse ? "#33b13b" : closeArea.containsMouse  ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
 
             SGIcon {
                 id: plusSignIcon
