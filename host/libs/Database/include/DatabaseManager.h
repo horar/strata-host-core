@@ -8,16 +8,19 @@ class DatabaseAccess;
 
 class DatabaseManager
 {
-
 public:
     DatabaseAccess* open(const QString &name, const QString &channel_access = "");
 
     DatabaseAccess* open(const QString &name, const QStringList &channel_access);
 
-private:
-    DatabaseAccess *db_access_;
+    QString getDbDirName();
 
-    QString createUserDirectory(const QString &name);
+private:
+    const QString dbDirName_ = "databases";
+
+    DatabaseAccess *dbAccess_ = nullptr;
+
+    QString manageUserDir(const QString &name, const QStringList &channel_access);
 };
 
 class DatabaseAccess
@@ -44,6 +47,8 @@ public:
     QString getDatabasePath();
 
     QStringList getAllDocumentKeys(const QString &bucket);
+
+    void clearUserDir(const QString &userName, const QString &dbDirName);
 
     /********************************************
      * REPLICATOR API *

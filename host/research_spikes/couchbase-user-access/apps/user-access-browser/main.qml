@@ -224,6 +224,7 @@ Window {
         })
 
         if (user_access_channels.length == 0) {
+            userAccessBrowser.clearUserDir(username)
             console.error("Username not found in access map!")
             resultScrollView.append("Username not found in access map!")
             return

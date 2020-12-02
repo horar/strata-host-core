@@ -19,6 +19,8 @@ public:
 
     Q_INVOKABLE void logoutAndStopReplication();
 
+    Q_INVOKABLE void clearUserDir(const QString &strataLoginUsername);
+
     Q_INVOKABLE QStringList getAllDocumentIDs();
 
 signals:
@@ -27,9 +29,11 @@ signals:
     void statusUpdated(int total_docs);
 
 private:
-    DatabaseAccess* DB_;
+    DatabaseAccess* DB_ = nullptr;
 
     QString strataLoginUsername_ = "";
 
     QString endpointURL_ = "";
+
+    QString dbDirName_ = "";
 };
