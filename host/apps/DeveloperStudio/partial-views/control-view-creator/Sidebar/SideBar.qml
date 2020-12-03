@@ -31,6 +31,10 @@ Rectangle {
                 onRootIndexChanged: {
                     treeModel.rootIndex = rootIndex
                 }
+
+                onCollapsed: {
+                    treeModel.removeEmptyChildren(index);
+                }
                 
                 function selectItem(index) {
                     treeView.selection.clearCurrentIndex();
@@ -85,9 +89,8 @@ Rectangle {
                 }
 
                 rowDelegate: Rectangle {
-                    height: 25
-                    color: styleData.selected ? "#CCCCCC" : "transparent"
-                    focus: styleData.selected
+                    height: 30
+                    color: styleData.selected && !model.editing ? "#CCCCCC" : "transparent"
                     onFocusChanged: {
                         forceActiveFocus()
                     }
