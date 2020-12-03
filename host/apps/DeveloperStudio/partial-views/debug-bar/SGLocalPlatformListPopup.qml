@@ -28,7 +28,6 @@ Window {
             deviceModel.clear()
             classModel.clear()
             listModel.clear()
-            injectPlatform.list = []
         }
     }
 
@@ -560,7 +559,7 @@ Window {
                             model: deviceModel
                             placeholderText: "device id"
                             textRole: null
-                            currentIndex: rowPlatform.device_id
+                            currentIndex: 0
 
                             delegate: SGText {
                                 color: deviceArea.containsMouse ? "#888" : "black"
