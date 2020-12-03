@@ -231,7 +231,7 @@ Rectangle {
                             toolBarListView.recompiling = false
                             console.error("Error while loading control view")
                             setSource(NavigationControl.screens.LOAD_ERROR,
-                                      { "error_message": "Failed to load control view" }
+                                      { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
                             );
                         }
                     }

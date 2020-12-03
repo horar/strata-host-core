@@ -66,6 +66,16 @@ public:
     Q_INVOKABLE void clear(bool emitSignals = true);
     Q_INVOKABLE int getUnsavedCount();
 
+    /**
+     * @brief updateTab Updates the filename, filepath, and filetype of the tab with id equal to `id`
+     * @param id The tab to change
+     * @param filename The filename
+     * @param filepath The filepath
+     * @param filetype The filetype
+     * @return Returns true if the tab was found, else false
+     */
+    Q_INVOKABLE bool updateTab(const QString &id, const QString &filename, const QUrl &filepath, const QString &filetype);
+
     int count() const;
     int currentIndex() const;
     QString currentId() const;
