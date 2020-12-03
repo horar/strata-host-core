@@ -31,24 +31,26 @@ Item {
         return fileText.replace(/\t/g, '    ')
     }
 
-    function saveFile(closeFile = false) {
+    function saveFile(closeFile = false, forceOverwrite = false) {
         if (alertToast.visible) {
             alertToast.hide()
         }
 
-        // If the file doesn't exist anymore, we need to notify the user with a confirmation dialog
-        if (!model.exists) {
-            controlViewCreatorRoot.isConfirmCloseOpen = true
-            deletedFileSavedConfirmation.open()
-            return
-        }
+        if (!forceOverwrite) {
+            // If the file doesn't exist anymore, we need to notify the user with a confirmation dialog
+            if (!model.exists) {
+                controlViewCreatorRoot.isConfirmCloseOpen = true
+                deletedFileSavedConfirmation.open()
+                return
+            }
 
-        // If the file has been modified externally, notify the user with a confirmation dialog
-        if (externalChanges) {
-            controlViewCreatorRoot.isConfirmCloseOpen = true
-            externalChangesConfirmation.closeOnSave = closeFile
-            externalChangesConfirmation.open()
-            return
+            // If the file has been modified externally, notify the user with a confirmation dialog
+            if (externalChanges) {
+                controlViewCreatorRoot.isConfirmCloseOpen = true
+                externalChangesConfirmation.closeOnSave = closeFile
+                externalChangesConfirmation.open()
+                return
+            }
         }
 
         if (!model.unsavedChanges) {
@@ -146,7 +148,7 @@ Item {
                 if (!model.exists) {
                     model.exists = true
                 }
-                saveFile(true);
+                saveFile(true, true);
             }
         }
     }
