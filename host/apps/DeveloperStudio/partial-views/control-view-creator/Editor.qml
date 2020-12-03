@@ -17,6 +17,7 @@ Item {
     property alias editorToolBar: editorToolBar
     property alias openFilesModel: openFilesModel
     property alias fileTreeModel: treeModel
+    property alias errorRectangle: parsingErrorRect
 
     SGQrcTreeModel {
         id: treeModel
@@ -384,6 +385,10 @@ Item {
                             }
                         }
                     }
+                }
+                
+                NoActiveFile {
+                    id: noActiveFile
                 }
             }
         }

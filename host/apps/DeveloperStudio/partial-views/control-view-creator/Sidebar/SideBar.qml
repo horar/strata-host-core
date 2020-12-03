@@ -32,6 +32,10 @@ Rectangle {
                 onRootIndexChanged: {
                     treeModel.rootIndex = rootIndex
                 }
+
+                onCollapsed: {
+                    treeModel.removeEmptyChildren(index);
+                }
                 
                 function selectItem(index) {
                     treeView.selection.clearCurrentIndex();
@@ -79,8 +83,9 @@ Rectangle {
                             }
                         }
 
-                        // TODO in CS-1288: Handle this situation when a Control.qml is not found in the top level
-                        console.error("Project does not have control.qml at the top level")
+                        console.error("Project does not have Control.qml at the top level")
+                        editor.errorRectangle.errorMessage = "Project does not have Control.qml at the top level. This means that the control view cannot be built or viewed."
+                        editor.errorRectangle.visible = true
                     }
 
                     onFileDeleted: {
@@ -97,9 +102,8 @@ Rectangle {
                 }
 
                 rowDelegate: Rectangle {
-                    height: 25
-                    color: styleData.selected ? "#CCCCCC" : "transparent"
-                    focus: styleData.selected
+                    height: 30
+                    color: styleData.selected && !model.editing ? "#CCCCCC" : "transparent"
                     onFocusChanged: {
                         forceActiveFocus()
                     }
