@@ -1,8 +1,6 @@
-<!DOCTYPE RCC><RCC version="1.0">
+<RCC>
     <qresource prefix="/tech/strata/theme">
         <file>Theme.qml</file>
         <file>qmldir</file>
-        <file>+mac/Theme.qml</file>
-        <file>+mac/qmldir</file>
     </qresource>
 </RCC>
