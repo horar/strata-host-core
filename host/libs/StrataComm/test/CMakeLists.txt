@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}-test
     StrataServerTest.cpp
     StrataClientTest.cpp
     RequestsControllerTest.cpp
+    StrataClientServerIntegrationTest.cpp
     main.cpp
 )
 
