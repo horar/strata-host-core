@@ -8,17 +8,20 @@ QtObject {
     readonly property color blue:           "#1f5087"
     readonly property color orange:         "#f57900"
     readonly property color plum:           "#ad7fa8"
+    readonly property color red:            "#cc0000"
+    readonly property color yellow:         "#edd400"
 
-    readonly property color error:          "#cc0000"
+    readonly property color error:          red
     readonly property color warning:        "#ffc107"
     readonly property color success:        "#28a745"
+    readonly property color highlight:      "#accef7" // Default Chrome Highlight
 
     readonly property color light:          "#f8f9fa"
     readonly property color dark:           "#252627"
     readonly property color lightGray:      Qt.lighter(gray, 1.2)
     readonly property color gray:           "#adb5bd"
     readonly property color darkGray:       Qt.darker(gray, 1.4)
-    readonly property color white:          "#fff000"
+    readonly property color white:          "#ffffff"
     readonly property color black:          "#000000"
 
     readonly property int basePixelSize: 10
