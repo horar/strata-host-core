@@ -303,13 +303,13 @@ void SGFileTabModel::closeAll()
     clear();
 }
 
-void SGFileTabModel::saveFileAt(const int index)
+void SGFileTabModel::saveFileAt(const int index, bool close)
 {
     if (index < 0 || index >= data_.count()) {
         return;
     }
 
-    emit saveRequested(index);
+    emit saveRequested(index, close);
 }
 
 void SGFileTabModel::saveAll()

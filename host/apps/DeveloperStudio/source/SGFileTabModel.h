@@ -68,7 +68,7 @@ public:
     Q_INVOKABLE bool closeTab(const QString &id);
     Q_INVOKABLE bool closeTabAt(const int index);
     Q_INVOKABLE void closeAll();
-    Q_INVOKABLE void saveFileAt(const int index);
+    Q_INVOKABLE void saveFileAt(const int index, bool close);
     Q_INVOKABLE void saveAll();
     Q_INVOKABLE bool hasTab(const QString &id) const;
     Q_INVOKABLE void clear(bool emitSignals = true);
@@ -98,7 +98,7 @@ signals:
     void tabClosed(const QUrl filepath);
     void tabOpened(const QUrl filepath);
     void countChanged();
-    void saveRequested(const int index);
+    void saveRequested(const int index, bool close);
     void saveAllRequested();
 
 private:

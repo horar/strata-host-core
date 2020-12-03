@@ -344,12 +344,12 @@ Item {
                     if (closeReason === confirmClosePopup.closeFilesReason) {
                         openFilesModel.closeTabAt(index)
                     } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                        openFilesModel.saveFileAt(index)
-                        openFilesModel.closeTabAt(index)
+                        openFilesModel.saveFileAt(index, true)
                     }
                     controlViewCreatorRoot.isConfirmCloseOpen = false
                 }
             }
+
 
             StackLayout {
                 id: fileStack

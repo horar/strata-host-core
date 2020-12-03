@@ -31,7 +31,7 @@ Item {
         return fileText.replace(/\t/g, '    ')
     }
 
-    function saveFile() {
+    function saveFile(closeFile = false) {
         if (alertToast.visible) {
             alertToast.hide()
         }
@@ -46,6 +46,7 @@ Item {
         // If the file has been modified externally, notify the user with a confirmation dialog
         if (externalChanges) {
             controlViewCreatorRoot.isConfirmCloseOpen = true
+            externalChangesConfirmation.closeOnSave = closeFile
             externalChangesConfirmation.open()
             return
         }
@@ -63,6 +64,9 @@ Item {
             savedVersionId = currentVersionId;
             model.unsavedChanges = false;
             externalChanges = false;
+            if (closeFile) {
+                openFilesModel.closeTabAt(modelIndex)
+            }
         } else {
             alertToast.text = "Could not save file. Make sure the file has write permissions or try again."
             alertToast.show()
@@ -133,7 +137,7 @@ Item {
                 if (!model.exists) {
                     model.exists = true
                 }
-                saveFile();
+                saveFile(close);
             }
         }
 
@@ -142,7 +146,7 @@ Item {
                 if (!model.exists) {
                     model.exists = true
                 }
-                saveFile();
+                saveFile(true);
             }
         }
     }
@@ -172,16 +176,21 @@ Item {
         acceptButtonText: "Overwrite"
         closeButtonText: "Abandon my changes"
 
+        property bool closeOnSave
+
         onPopupClosed: {
             controlViewCreatorRoot.isConfirmCloseOpen = false
             if (closeReason === acceptCloseReason) {
                 // User chose to overwrite the external changes
                 externalChanges = false
                 model.unsavedChanges = true
-                saveFile();
+                saveFile(closeOnSave);
             } else if (closeReason === closeFilesReason) {
                 // User chose to abandon their changes
                 channelObject.refreshEditorWithExternalChanges()
+                if (closeOnSave) {
+                    openFilesModel.closeTabAt(modelIndex)
+                }
             }
 
         }
