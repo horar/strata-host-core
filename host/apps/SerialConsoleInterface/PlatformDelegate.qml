@@ -537,6 +537,7 @@ FocusScope {
                     suggestionDelegateRemovable: true
                     showCursorPosition: true
                     showClearButton: true
+                    suggestionDelegateTextWrap: true
 
                     onTextChanged: {
                         model.platform.errorString = "";
