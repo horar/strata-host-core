@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtQml.Models 2.12
 
 import tech.strata.sgwidgets 1.0
@@ -21,19 +22,33 @@ Item {
         elide: Text.ElideRight
     }
 
-    TextInput {
+    TextField {
         id: itemFilenameEdit
         width: inQrcIcon.x - x - 10
-        height: 15
+        height: parent.height
         visible: styleData.selected && model.editing
         anchors.verticalCenter: parent.verticalCenter
         verticalAlignment: TextInput.AlignVCenter
         font.pointSize: 10
         color: "black"
+        selectionColor: "#ACCEF7"
         text: styleData.value
         clip: true
         autoScroll: activeFocus
         readOnly: false
+
+        Keys.onEscapePressed: {
+            if (model.editing) {
+                model.editing = false
+
+                if (model.filename === "") {
+                    treeModel.removeRows(model.row, 1, styleData.index.parent);
+                    return;
+                }
+
+                text = model.filename
+            }
+        }
 
         onEditingFinished: {
             if (!model.editing) {
@@ -56,27 +71,46 @@ Item {
                 path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), text);
             } else {
                 path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), text);
-
-            }
-            model.filename = text
-            model.filepath = SGUtilsCpp.pathToUrl(path);
-            if (!model.isDir) {
-                model.filetype = SGUtilsCpp.fileSuffix(text).toLowerCase()
-                if (!model.inQrc) {
-                    treeModel.addToQrc(styleData.index);
-                }
             }
 
             treeModel.stopWatchingPath(SGUtilsCpp.parentDirectoryPath(path));
-
-            let success = SGUtilsCpp.createFile(path);
-            if (!success) {
-                //handle error
-                console.error("Could not create file:", path)
+            // If we are creating a new file
+            if (model.filename === "") {
+                const success = SGUtilsCpp.createFile(path);
+                if (!success) {
+                    //handle error
+                    console.error("Could not create file:", path)
+                } else {
+                    model.editing = false
+                    model.filename = text
+                    model.filepath = SGUtilsCpp.pathToUrl(path);
+                    if (!model.isDir) {
+                        model.filetype = SGUtilsCpp.fileSuffix(text).toLowerCase();
+                        if (!model.inQrc) {
+                            treeModel.addToQrc(styleData.index);
+                        }
+                    }
+                    openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                }
             } else {
+                // Else we are just renaming an already existing file
+                if (text.length > 0 && model.filename !== text) {
+                    // Don't attempt to rename the file if the text is the same as the original filename
+                    const success = treeModel.renameFile(styleData.index, text)
+                    if (success) {
+                        if (openFilesModel.hasTab(model.uid)) {
+                            openFilesModel.updateTab(model.uid, model.filename, model.filepath, model.filetype)
+                        } else if (model.isDir) {
+                            handleRenameForOpenFiles(treeModel.getNode(styleData.index))
+                        }
+                    } else {
+                        text = model.filename
+                    }
+                } else {
+                    text = model.filename
+                }
+
                 model.editing = false
-                openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-                treeModel.addPathToTree(model.filepath)
             }
             treeModel.startWatchingPath(SGUtilsCpp.parentDirectoryPath(path));
         }
@@ -89,6 +123,9 @@ Item {
 
         onActiveFocusChanged: {
             cursorPosition = activeFocus ? length : 0
+            if (styleData.value !== "") {
+                select(0, styleData.value.replace("." + model.filetype, "").length)
+            }
         }
     }
 
@@ -129,10 +166,11 @@ Item {
         onClicked: {
             if (model.filename !== "") {
                 if (mouse.button === Qt.RightButton) {
+                    treeView.selectItem(styleData.index)
                     contextMenu.item.popup()
                 } else if (mouse.button === Qt.LeftButton) {
+                    treeView.selectItem(styleData.index)
                     if (!model.isDir) {
-                        treeView.selectItem(styleData.index)
                         if (openFilesModel.hasTab(model.uid)) {
                             openFilesModel.currentId = model.uid
                         } else {
@@ -140,6 +178,21 @@ Item {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /**
+      * This function handles when directories are renamed.
+      * The purpose is to make sure that all open tabs that are underneath the directory are updated
+     **/
+    function handleRenameForOpenFiles(node) {
+        for (let i = 0; i < node.childCount(); i++) {
+            let childNode = node.childNode(i);
+            if (childNode.isDir) {
+                handleRenameForOpenFiles(childNode)
+            } else if (openFilesModel.hasTab(childNode.uid)) {
+                openFilesModel.updateTab(childNode.uid, childNode.filename, childNode.filepath, childNode.filetype)
             }
         }
     }

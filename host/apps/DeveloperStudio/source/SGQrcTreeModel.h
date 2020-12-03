@@ -161,6 +161,20 @@ public:
     Q_INVOKABLE bool removeFromQrc(const QModelIndex &index, bool save = true);
 
     /**
+     * @brief removeEmptyChildren Removes any children that don't have a filename
+     * @param parent The QModelIndex of the parent
+     */
+    Q_INVOKABLE void removeEmptyChildren(const QModelIndex &parent);
+
+    /**
+     * @brief renameFile Renames a file or a folder
+     * @param index The index in the model
+     * @param newFilename The new file/folder name
+     * @return Returns true if successful, false otherwise
+     */
+    Q_INVOKABLE bool renameFile(const QModelIndex &index, const QString &newFilename);
+
+    /**
      * @brief deleteFile Deletes a file from the local filesystem and removes it from the qrc
      * @param row Row in parent
      * @param parent QModelIndex of the parent
@@ -243,6 +257,7 @@ private:
     bool createQrcXmlDocument(const QByteArray &fileText);
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
+    void renameAllChildren(const QModelIndex &parentIndex, const QString &newPath);
     QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
     /**
      * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program
