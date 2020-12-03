@@ -2,6 +2,7 @@ import QtQuick.Controls 2.12
 import QtQuick 2.12
 import QtGraphicalEffects 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Dialog {
     id: dialog
@@ -33,7 +34,7 @@ Dialog {
         Rectangle {
             id: headerBg
             anchors.fill: parent
-            color: SGWidgets.SGColorsJS.STRATA_BLUE
+            color: Theme.blue
         }
 
         SGWidgets.SGIcon {

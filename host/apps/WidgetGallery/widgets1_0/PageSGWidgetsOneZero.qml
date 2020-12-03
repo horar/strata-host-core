@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 FocusScope {
 
@@ -140,7 +141,7 @@ FocusScope {
 
             Rectangle {
                 anchors.fill: parent
-                color: SGWidgets.SGColorsJS.STRATA_BLUE
+                color: Theme.blue
             }
 
             SGWidgets.SGIconButton {
@@ -154,7 +155,7 @@ FocusScope {
                 icon.source: "qrc:/sgimages/chevron-left.svg"
                 backgroundOnlyOnHovered: true
                 iconColor: "white"
-                highlightImplicitColor: SGWidgets.SGColorsJS.STRATA_GREEN
+                highlightImplicitColor: Theme.strataGreen
 
                 onClicked: {
                     pop()
@@ -185,7 +186,7 @@ FocusScope {
 
             Rectangle {
                 anchors.fill: parent
-                color: SGWidgets.SGColorsJS.STRATA_BLUE
+                color: Theme.blue
             }
 
             SGWidgets.SGText {
@@ -213,7 +214,7 @@ FocusScope {
 
         Rectangle {
             anchors.fill: parent
-            color: SGWidgets.SGColorsJS.STRATA_BLUE
+            color: Theme.blue
         }
 
         Flickable {
@@ -263,7 +264,7 @@ FocusScope {
                             checkable: true
                             ButtonGroup.group: group
                             minimumContentWidth: 180
-                            color: SGWidgets.SGColorsJS.STRATA_GREEN
+                            color: Theme.strataGreen
 
                             onClicked: {
                                 setPage(index)

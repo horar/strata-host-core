@@ -1,6 +1,7 @@
 import QtQuick.Controls 2.12
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 TextField {
     id: control
@@ -87,7 +88,7 @@ TextField {
         implicitHeight: 40
         color: {
             if (isValidAffectsBackground && !isValid) {
-                return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 1.9)
+                return Qt.lighter(Theme.error, 1.9)
             }
 
             return darkMode ? "#5e5e5e" : control.palette.base
@@ -99,7 +100,7 @@ TextField {
             } else if (isValid) {
                 return darkMode ? "black" : control.palette.mid
             } else {
-                return SGWidgets.SGColorsJS.ERROR_COLOR
+                return Theme.error
             }
         }
 

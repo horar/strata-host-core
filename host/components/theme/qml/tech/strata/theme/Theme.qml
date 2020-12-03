@@ -4,30 +4,25 @@ import QtQuick 2.12
 import tech.strata.fonts 1.0
 
 QtObject {
-    readonly property color StrataGreen:    "#33b13b"
-    readonly property color Blue:           "#1f5087"
-    readonly property color Orange:         "#f57900"
-    readonly property color Plum:           "#ad7fa8"
+    readonly property color strataGreen:    "#33b13b"
+    readonly property color blue:           "#1f5087"
+    readonly property color orange:         "#f57900"
+    readonly property color plum:           "#ad7fa8"
 
-    readonly property color Error:          "#cc0000"
-    readonly property color Warning:        "#ffc107"
-    readonly property color Success:        "#28a745"
+    readonly property color error:          "#cc0000"
+    readonly property color warning:        "#ffc107"
+    readonly property color success:        "#28a745"
 
-    readonly property color Light:          "#f8f9fa"
-    readonly property color Dark:           "#252627"
-    readonly property color LightGray:       Qt.lighter(Gray, 1.2)
-    readonly property color Gray:           "#adb5bd"
-    readonly property color DarkGray:       Qt.darker(Gray, 1.4)
-    readonly property color White:          "#fff000"
-    readonly property color Black:          "#000000"
+    readonly property color light:          "#f8f9fa"
+    readonly property color dark:           "#252627"
+    readonly property color lightGray:      Qt.lighter(gray, 1.2)
+    readonly property color gray:           "#adb5bd"
+    readonly property color darkGray:       Qt.darker(gray, 1.4)
+    readonly property color white:          "#fff000"
+    readonly property color black:          "#000000"
 
     readonly property int basePixelSize: 10
-    readonly property int h1FontSize: Math.round(baseFontSize * 1.5)
-    readonly property int h2FontSize: Math.round(baseFontSize * 1.4)
-    readonly property int h3FontSize: Math.round(baseFontSize * 1.3)
-
-    property Font BaseFont: Font {
-        family: Fonts.franklinGothicBook
-        pixelSize: basePixelSize
-    }
+    readonly property int h1FontSize: Math.round(basePixelSize * 1.5)
+    readonly property int h2FontSize: Math.round(basePixelSize * 1.4)
+    readonly property int h3FontSize: Math.round(basePixelSize * 1.3)
 }

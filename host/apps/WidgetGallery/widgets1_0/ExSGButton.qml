@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 Item {
 
@@ -100,17 +101,17 @@ Item {
                 spacing: 6
                 SGWidgets.SGButton {
                     text: "button7"
-                    color: SGWidgets.SGColorsJS.STRATA_GREEN
+                    color: Theme.strataGreen
                 }
 
                 SGWidgets.SGButton {
                     text: "button8"
-                    color: SGWidgets.SGColorsJS.WARNING_COLOR
+                    color: Theme.warning
                 }
 
                 SGWidgets.SGButton {
                     text: "button9"
-                    color: SGWidgets.SGColorsJS.ERROR_COLOR
+                    color: Theme.error
                     alternativeColorEnabled: true
                 }
             }
