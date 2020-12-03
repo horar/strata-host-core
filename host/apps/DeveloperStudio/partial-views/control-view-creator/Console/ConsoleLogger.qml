@@ -6,6 +6,7 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
 ScrollView {
+    id: root
     width: parent.width
     height: parent.height
     clip: true
@@ -13,10 +14,11 @@ ScrollView {
 
     property double fontMultiplier: 1.3
     property string searchText: ""
+    property int defaultRole: 1
+    property int hit: -1
 
     onSearchTextChanged: {
-        console.log(searchText)
-        consoleItems.setFilterFixedString(searchText)
+
     }
 
     ListView {
@@ -26,13 +28,12 @@ ScrollView {
 
         clip: true
 
-
-
         delegate: Rectangle {
             width: parent.width
-            height: row.height
+            height: consoleItems.filterAcceptsRow(model.index) ? row.height : 0
             color: "#eee"
             anchors.leftMargin: 10
+            visible: consoleItems.filterAcceptsRow(model.index)
 
             RowLayout {
                 id: row
@@ -141,6 +142,26 @@ ScrollView {
     SGSortFilterProxyModel {
         id: consoleItems
         sourceModel: consoleModel
+        sortEnabled: true
+        invokeCustomFilter: true
+
+        function filterAcceptsRow(row){
+            var item = sourceModel.get(row)
+            return containsFilterText(item)
+        }
+
+        function containsFilterText(item){
+            if(searchText === ""){
+                return true
+            } else {
+                var searchMsg = item.msg
+                if(searchMsg.includes(searchText)){
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
     }
 
     ListModel {
