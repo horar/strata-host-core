@@ -17,125 +17,36 @@ ScrollView {
     property int defaultRole: 1
     property int hit: -1
 
-    onSearchTextChanged: {
-
+    onFontMultiplierChanged: {
+        if(fontMultiplier >= 2.0){
+            fontMultiplier = 2.0
+        } else if(fontMultiplier <= 1.0){
+            fontMultiplier = 1.0
+        }
     }
 
     ListView {
         id: consoleLogs
         anchors.fill: parent
         model: consoleItems
-
         clip: true
+        spacing: 0
 
         delegate: Rectangle {
-            width: parent.width
-            height: consoleItems.filterAcceptsRow(model.index) ? row.height : 0
+            width: parent.width - 50
+            height: consoleItems.filterAcceptsRow(model.index) ? msgText.height * fontMultiplier : 0
             color: "#eee"
             anchors.leftMargin: 10
             visible: consoleItems.filterAcceptsRow(model.index)
 
-            RowLayout {
-                id: row
-
-                SGText {
-                    text: model.time
-                    fontSizeMultiplier: fontMultiplier
-                    leftPadding: 5
-                    rightPadding: 5
-                }
-
-                Item{
-                    Layout.preferredWidth: 100
-                    Layout.preferredHeight: 20
-
-                    SGText {
-                        text: "["
-                        anchors.left: parent.left
-                        anchors.leftMargin: 10
-                        fontSizeMultiplier: fontMultiplier
-                        color: switch(model.type){
-                               case 2:
-                                   return "red"
-                               case 1:
-                                   return "yellow"
-                               case 0:
-                                   return "cyan"
-                               case 4:
-                                   return "green"
-                               case 3:
-                                   return "grey"
-                               }
-                    }
-
-
-                    SGText {
-                        id: errorTxt
-                        anchors.centerIn: parent
-
-                        color: switch(model.type){
-                               case 2:
-                                   return "red"
-                               case 1:
-                                   return "yellow"
-                               case 0:
-                                   return "cyan"
-                               case 4:
-                                   return "green"
-                               case 3:
-                                   return "grey"
-                               }
-                        text: switch(model.type){
-                              case 2:
-                                  return "error"
-                              case 1:
-                                  return "warning"
-                              case 0:
-                                  return "debug"
-                              case 4:
-                                  return "info"
-                              case 3:
-                                  return "log"
-                              }
-
-                        fontSizeMultiplier: fontMultiplier
-                    }
-
-                    SGText {
-                        text: "]"
-                        anchors.right: parent.right
-                        anchors.rightMargin: 10
-                        fontSizeMultiplier: fontMultiplier
-                        color: switch(model.type){
-                               case 2:
-                                   return "red"
-                               case 1:
-                                   return "yellow"
-                               case 0:
-                                   return "cyan"
-                               case 4:
-                                   return "green"
-                               case 3:
-                                   return "grey"
-                               }
-                    }
-                }
-
-                SGText {
-                    text: model.msg
-                    fontSizeMultiplier: fontMultiplier
-                    Layout.preferredWidth: 1100
-                    Layout.maximumHeight: 40
-                    wrapMode: Text.WordWrap
-                    leftPadding: 5
-                    rightPadding: 5
-                    Layout.alignment: Qt.AlignVCenter
-                }
-
-                Item {
-                    Layout.preferredWidth: 10
-                }
+            SGText {
+                id: msgText
+                fontSizeMultiplier: fontMultiplier
+                wrapMode: Text.WordWrap
+                width: parent.width
+                text: `${model.time} \t ${getMsgType(type)} \t ${model.msg}`
             }
+
         }
     }
 
@@ -173,8 +84,49 @@ ScrollView {
         target: logger
         onLogMsg: {
             if(parent.visible){
-                consoleModel.append({time: new Date(Date.now()).toUTCString(), type: type, msg: msg})
+                consoleModel.append({time: timestamp(), type: type, msg: msg})
             }
         }
+    }
+
+    function getMsgType(type){
+        switch(type){
+        case 0: return "<font color=\"cyan\" > \t[\tdebug\t]\t </font>"
+        case 1: return "<font color=\"yellow\"> \t[warning]\t </font>"
+        case 2: return "<font color=\"red\"> \t[\terror\t]\t </font>"
+        case 4: return "<font color=\"green\"> \t[\tinfo\t]\t </font>"
+        }
+    }
+
+
+    function timestamp(){
+        var date = new Date(Date.now())
+        let hours = date.getHours()
+        let minutes = date.getMinutes()
+        let seconds = date.getSeconds()
+        let millisecs = date.getMilliseconds()
+
+
+        if(hours < 10){
+            hours = `0${hours}`
+        }
+
+        if(minutes < 10){
+            minutes = `0${minutes}`
+        }
+
+        if(seconds < 10){
+            seconds = `0${seconds}`
+        }
+
+        if(millisecs < 100){
+            if(millisecs < 10){
+                millisecs =`00${millisecs}`
+            } else {
+                millisecs = `0${millisecs}`
+            }
+        }
+
+        return `${hours}:${minutes}:${seconds}.${millisecs}`
     }
 }
