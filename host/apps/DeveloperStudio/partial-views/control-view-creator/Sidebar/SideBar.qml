@@ -60,11 +60,10 @@ Rectangle {
                             treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
                         } else {
                             let idx = openFilesModel.findTabByFilepath(node.filepath);
-                            console.info(idx, node.filepath)
                             if (idx >= 0) {
                                 let modelIndex = openFilesModel.index(idx, 0);
                                 openFilesModel.setData(modelIndex, node.uid, SGFileTabModel.UIdRole);
-                                openFilesModel.setData(modelIndex, true, SGFileTabModel.ExistsRole)
+                                openFilesModel.setData(modelIndex, true, SGFileTabModel.ExistsRole);
                             }
                         }
                     }

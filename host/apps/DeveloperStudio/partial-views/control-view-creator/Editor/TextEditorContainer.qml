@@ -79,6 +79,20 @@ Item {
     Connections {
         target: treeModel
 
+        onFileAdded: {
+            // Here we handle the situation where a file that was previously deleted is now recreated.
+            // We want to check to see if the files have different contents
+            if (model.filepath === path) {
+                let newFileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
+                if (newFileText !== channelObject.fileText) {
+                    externalChanges = true;
+                    if (!model.unsavedChanges) {
+                        channelObject.refreshEditorWithExternalChanges();
+                    }
+                }
+            }
+        }
+
         onFileChanged: {
             if (model.filepath === path) {
                 externalChanges = true
