@@ -34,7 +34,7 @@ bool StrataClient::disconnectServer()
 {
     qCDebug(logCategoryStrataClient) << "Disconnecting client";
 
-    connector_.sendMessage(R"({"jsonrpc": "2.0","method":"unregister","params":{},"id":1})");
+    sendRequest("unregister", {});
     disconnect(&connector_, &ClientConnector::newMessageRecived, this, &StrataClient::newServerMessage);
 
     if (false == connector_.disconnectClient()) {
