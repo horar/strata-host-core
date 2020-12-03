@@ -11,6 +11,7 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: imageContainer
@@ -118,7 +119,7 @@ Rectangle {
     }
 
     Rectangle {
-        color: "#33b13b"
+        color: Theme.strataGreen
         width: imageContainer.width
         anchors {
             bottom: imageContainer.bottom

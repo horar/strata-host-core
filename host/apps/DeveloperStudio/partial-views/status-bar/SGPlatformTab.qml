@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/navigation_control.js" as NavigationControl
@@ -12,7 +13,7 @@ Item {
     height: 40
     width: 200
 
-    property color menuColor: "#33b13b"
+    property color menuColor: Theme.strataGreen
 
     property string view: model.view
     property string name: model.name

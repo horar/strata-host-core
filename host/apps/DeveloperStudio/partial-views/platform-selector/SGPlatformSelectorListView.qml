@@ -10,6 +10,7 @@ import "qrc:/js/constants.js" as Constants
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -221,7 +222,7 @@ Item {
                         right: clearIcon.left
                         rightMargin: 10
                     }
-                    color: "#33b13b"
+                    color: Theme.strataGreen
                     font.bold: true
                     selectByMouse: true
                     clip: true
@@ -401,7 +402,7 @@ Item {
 
                 Text {
                     id: activeSegmentFilterText
-                    color: "#33b13b"
+                    color: Theme.strataGreen
                     font.bold: true
                     anchors {
                         left: segmentFilterContainer.left

@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
-
+import tech.strata.theme 1.0
 
 Rectangle {
     id: root
@@ -72,7 +72,7 @@ Rectangle {
            }
            return root.editing ? "Save" : "Edit"
        }
-       color: "#33b13b"
+       color: Theme.strataGreen
 
        MouseArea {
            anchors.fill: parent

@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 import "qrc:/js/platform_filters.js" as Filters
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -25,7 +26,7 @@ Item {
     property real fullWidth: (icon.width/2) + textBackground.width
     property real minimizedWidth: icon.width
     property bool pressed: false
-    property color green: "#33b13b"
+    property color green: Theme.strataGreen
 
     property alias iconSource: icon.source
     property alias text: text.text
