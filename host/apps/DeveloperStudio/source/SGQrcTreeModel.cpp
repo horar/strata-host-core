@@ -490,6 +490,17 @@ void SGQrcTreeModel::removeDeletedFilesFromQrc()
     startSave();
 }
 
+QList<QString> SGQrcTreeModel::getMissingFiles()
+{
+    QList<QString> missingFiles;
+    for (QString filepath : qrcItems_.toList()) {
+        if (!QFileInfo::exists(filepath)) {
+            missingFiles.append(filepath);
+        }
+    }
+    return missingFiles;
+}
+
 bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
 {
     SGQrcTreeNode *parentNode = getNode(parent);

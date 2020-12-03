@@ -173,6 +173,12 @@ public:
     Q_INVOKABLE void removeDeletedFilesFromQrc();
 
     /**
+     * @brief getMissingFiles Gets the list of missing files in the qrc
+     * @return Returns a list of filepaths for missing files
+     */
+    Q_INVOKABLE QList<QString> getMissingFiles();
+
+    /**
      * @brief deleteFile Deletes a file from the local filesystem and removes it from the qrc
      * @param row Row in parent
      * @param parent QModelIndex of the parent

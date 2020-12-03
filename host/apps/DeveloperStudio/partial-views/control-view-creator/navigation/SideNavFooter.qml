@@ -21,8 +21,8 @@ Item {
         visible: editor.fileTreeModel.needsCleaning
         color: "transparent"
 
-        function onClicked (){
-            editor.fileTreeModel.removeDeletedFilesFromQrc()
+        function onClicked () {
+            confirmCleanFiles.open()
         }
     }
 
@@ -40,7 +40,7 @@ Item {
     BusyIndicator {
         id: buildingIndicator
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: recompileNavButton.verticalCenter
         height: 30
         width: 30
         visible: toolBarListView.recompiling

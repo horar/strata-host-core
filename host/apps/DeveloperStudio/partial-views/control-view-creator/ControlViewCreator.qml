@@ -4,8 +4,10 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
+import "../"
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -54,6 +56,39 @@ Rectangle {
                 mainWindow.close()
             }
             isConfirmCloseOpen = false
+        }
+    }
+
+    SGConfirmationPopup {
+        id: confirmCleanFiles
+        modal: true
+        padding: 0
+        closePolicy: Popup.NoAutoClose
+
+        acceptButtonColor: SGColorsJS.STRATA_GREEN
+        acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
+        acceptButtonText: "Clean"
+        cancelButtonText: "Cancel"
+        titleText: "Remove missing files"
+        popupText: {
+            let text = "Are you sure you want to remove the following files from this project's QRC?<br><ul type=\"bullet\">";
+            for (let i = 0; i < missingFiles.length; i++) {
+                text += "<li>" + missingFiles[i] + "</li>"
+            }
+            text += "</ul>"
+            return text
+        }
+
+        property var missingFiles: []
+
+        onOpened: {
+            missingFiles = editor.fileTreeModel.getMissingFiles()
+        }
+
+        onPopupClosed: {
+            if (closeReason === acceptCloseReason) {
+                editor.fileTreeModel.removeDeletedFilesFromQrc()
+            }
         }
     }
 
