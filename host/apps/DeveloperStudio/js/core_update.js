@@ -42,7 +42,7 @@ function getUpdateInformation () {
 function parseUpdateInfo (payload) {
     if (payload.hasOwnProperty("component_list")) {
         var current_timestamp = new Date().getTime()
-        if(payload.component_list.length == 0) {
+        if(payload.component_list.length === 0) {
             console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received no updates available notification")
             update_info_string = ""
             compact_update_info_string = ""
@@ -87,17 +87,17 @@ function processUpdateInfo (component_list) {
     compact_update_info_string = ""
     var componentLength = component_list.length;
     for (var i = 0; i < componentLength; i++) {
-        if ((component_list[i].hasOwnProperty("name") == false) || (component_list[i].name.length == 0)) {
+        if ((component_list[i].hasOwnProperty("name") === false) || (component_list[i].name.length === 0)) {
             console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'name' property");
             continue;
         }
 
-        if ((component_list[i].hasOwnProperty("latest_version") == false) || (component_list[i].latest_version.length == 0)) {
+        if ((component_list[i].hasOwnProperty("latest_version") === false) || (component_list[i].latest_version.length === 0)) {
             console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'latest_version' property");
             continue;
         }
 
-        if ((component_list[i].hasOwnProperty("current_version") == false) || (component_list[i].current_version.length == 0)) {
+        if ((component_list[i].hasOwnProperty("current_version") === false) || (component_list[i].current_version.length === 0)) {
             console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'current_version' property");
             continue;
         }
@@ -130,7 +130,7 @@ function createUpdatePopup () {
 function getUserNotificationModeFromINIFile () {
     if (settings_object.value("userNotificationMode")) {
         notification_mode = settings_object.value("userNotificationMode")
-        if (notification_mode == "DontAskAgain") {
+        if (notification_mode === "DontAskAgain") {
             dontaskagain_checked = true
         } else {
             dontaskagain_checked = false

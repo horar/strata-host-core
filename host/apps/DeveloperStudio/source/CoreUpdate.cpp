@@ -35,7 +35,7 @@ QString CoreUpdate::locateMaintenanceTool(const QDir &applicationDir, QString &a
 
     if (!applicationDir.exists(maintenanceToolFilename)) {
         qCCritical(logCategoryCoreUpdate) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
-        return QString(maintenanceToolFilename + " not found.");
+        return QString("Strata Maintenance Tool not found.");
     }
 
     return QString();

@@ -86,7 +86,8 @@ SGStrataPopup {
 
         SGCheckBox {
             id: backupCheckbox
-            anchors.left: buttonsRow.left
+            Layout.alignment: Qt.AlignLeft
+            Layout.leftMargin: 74
             text: "Don't ask me again for these versions"
             checked: dontaskagain_checked
         }

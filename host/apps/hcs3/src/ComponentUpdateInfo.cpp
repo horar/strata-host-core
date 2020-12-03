@@ -174,7 +174,7 @@ QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, Q
 
     if (!applicationDir.exists(maintenanceToolFilename)) {
         qCCritical(logCategoryHcs) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
-        return QString(maintenanceToolFilename + " not found.");
+        return QString("Strata Maintenance Tool not found.");
     }
 
     return QString();
@@ -216,12 +216,13 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
     int endIdx = updateData.indexOf(updatesEndStr);
 
     if((beginIdx == -1) || (endIdx == -1) || (endIdx < beginIdx)) {
-        return "Error parsing maintenance tool output: " + updateData;
+        qCCritical(logCategoryHcs) << "Error parsing maintenance tool output:" << updateData;
+        return "Error parsing maintenance tool output";
     }
 
     // extract only desired part in case we acquire more information
     updateMetadata = updateData.mid(beginIdx, (endIdx - beginIdx) + updatesEndStr.size());
-    qCInfo(logCategoryHcs) << "Updates available: " + updateMetadata;
+    qCInfo(logCategoryHcs) << "Updates available:" << updateMetadata;
     return QString();
 }
 
