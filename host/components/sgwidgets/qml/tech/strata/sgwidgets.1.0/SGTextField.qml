@@ -29,6 +29,7 @@ TextField {
     property int suggestionMaxHeight: 120
     property bool suggestionDelegateNumbering: false
     property bool suggestionDelegateRemovable: false
+    property bool suggestionDelegateTextWrap: false
     property alias suggestionPopup: suggestionPopupLoader.item
 
     signal suggestionDelegateSelected(int index)
@@ -173,6 +174,7 @@ TextField {
             maxHeight: suggestionMaxHeight
             delegateNumbering: suggestionDelegateNumbering
             delegateRemovable: suggestionDelegateRemovable
+            delegateTextWrap: suggestionDelegateTextWrap
 
             onDelegateSelected: {
                 control.suggestionDelegateSelected(index)

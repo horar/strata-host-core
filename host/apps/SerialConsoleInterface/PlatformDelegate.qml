@@ -524,19 +524,20 @@ FocusScope {
 
                     focus: true
                     font.family: "monospace"
-                    placeholderText: "Enter Command..."
+                    placeholderText: "Enter Message..."
                     isValidAffectsBackground: true
                     suggestionListModel: commandHistoryModel
                     suggestionModelTextRole: "message"
                     suggestionPosition: Item.Top
                     suggestionEmptyModelText: qsTr("No commands.")
-                    suggestionHeaderText: qsTr("Command history")
+                    suggestionHeaderText: qsTr("Message history")
                     suggestionOpenWithAnyKey: false
                     suggestionMaxHeight: 250
                     suggestionCloseOnDown: true
                     suggestionDelegateRemovable: true
                     showCursorPosition: true
                     showClearButton: true
+                    suggestionDelegateTextWrap: true
 
                     onTextChanged: {
                         model.platform.errorString = "";
