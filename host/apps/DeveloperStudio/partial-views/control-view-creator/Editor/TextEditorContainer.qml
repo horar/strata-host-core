@@ -227,6 +227,7 @@ Item {
 
         signal setValue(string value);
         signal setContainerHeight(string height);
+        signal setContainerWidth(string width);
         signal undo();
         signal redo();
 
@@ -279,6 +280,10 @@ Item {
 
         onHeightChanged: {
             channelObject.setContainerHeight(height.toString())
+        }
+
+        onWidthChanged: {
+            channelObject.setContainerWidth(width.toString())
         }
 
         onLoadingChanged: {
