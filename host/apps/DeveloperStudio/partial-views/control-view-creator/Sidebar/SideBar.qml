@@ -49,7 +49,6 @@ Item {
                         treeView.expand(parent)
                     }
                     treeView.selectItem(index)
-                    treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
                 } else {
                     let idx = openFilesModel.findTabByFilepath(node.filepath);
                     if (idx >= 0) {
@@ -115,9 +114,6 @@ Item {
         rowDelegate: Rectangle {
             height: 30
             color: styleData.selected && !model.editing ? "#CCCCCC" : "transparent"
-            onFocusChanged: {
-                forceActiveFocus()
-            }
         }
 
         itemDelegate: SideBarDelegate { }

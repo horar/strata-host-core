@@ -237,7 +237,7 @@ bool SGQrcTreeModel::hasChildren(const QModelIndex &parent) const
     }
     SGQrcTreeNode *node = getNode(parent);
     if (node) {
-        return node->childCount() > 0;
+        return node->isDir();
     }
     return false;
 }
