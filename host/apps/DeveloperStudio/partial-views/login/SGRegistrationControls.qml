@@ -169,7 +169,7 @@ Item {
             }
 
             Text {
-                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='https://www.onsemi.com/PowerSolutions/content.do?id=1109'>Privacy Policy</a>."
+                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='https://www.onsemi.com/privacy-policy'>Privacy Policy</a>."
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
                 linkColor: "#545960"
