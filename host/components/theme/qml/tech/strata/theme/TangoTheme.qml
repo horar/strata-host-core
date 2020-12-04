@@ -6,9 +6,5 @@ import QtQml 2.12
 import "palettes"
 
 QtObject {
-    property StrataPalette palette: StrataPalette {}
+    property TangoPalette palette: TangoPalette {}
 }
-
-
-
-
