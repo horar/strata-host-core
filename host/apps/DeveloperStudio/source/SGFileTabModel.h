@@ -10,25 +10,31 @@
 class SGFileTabItem
 {
 public:
+    SGFileTabItem();
     SGFileTabItem(const QString &filename, const QUrl &filepath, const QString &filetype, const QString id);
 
     QString filename() const;
     QUrl filepath() const;
     QString filetype() const;
     bool unsavedChanges() const;
-
+    bool exists() const;
     QString id() const;
+
     bool setFilename(const QString &filename);
     bool setFilepath(const QUrl &filepath);
     bool setFiletype(const QString &filetype);
+    bool setId(const QString &id);
     bool setUnsavedChanges(const bool &unsaved);
+    bool setExists(const bool &exists);
 private:
     QString id_;
     QString filename_;
     QUrl filepath_;
     QString filetype_;
     bool unsavedChanges_;
+    bool exists_;
 };
+Q_DECLARE_METATYPE(SGFileTabItem*);
 
 class SGFileTabModel : public QAbstractListModel
 {
@@ -44,9 +50,11 @@ public:
         FilenameRole = Qt::UserRole + 1,
         FilepathRole = Qt::UserRole + 2,
         FiletypeRole = Qt::UserRole + 3,
-        IdRole = Qt::UserRole + 4,
-        UnsavedChangesRole = Qt::UserRole + 5
+        UIdRole = Qt::UserRole + 4,
+        UnsavedChangesRole = Qt::UserRole + 5,
+        ExistsRole = Qt::UserRole + 6
     };
+    Q_ENUMS(RoleNames);
 
     // OVERRIDES
     QHash<int, QByteArray> roleNames() const override;
@@ -60,11 +68,14 @@ public:
     Q_INVOKABLE bool closeTab(const QString &id);
     Q_INVOKABLE bool closeTabAt(const int index);
     Q_INVOKABLE void closeAll();
-    Q_INVOKABLE void saveFileAt(const int index);
+    Q_INVOKABLE void saveFileAt(const int index, bool close);
     Q_INVOKABLE void saveAll();
     Q_INVOKABLE bool hasTab(const QString &id) const;
     Q_INVOKABLE void clear(bool emitSignals = true);
-    Q_INVOKABLE int getUnsavedCount();
+    Q_INVOKABLE int getUnsavedCount() const;
+    Q_INVOKABLE int getIndexById(const QString &id) const;
+    Q_INVOKABLE void setExists(const QString &id, const bool &exists);
+    Q_INVOKABLE int findTabByFilepath(const QUrl &filepath);
 
     /**
      * @brief updateTab Updates the filename, filepath, and filetype of the tab with id equal to `id`
@@ -87,7 +98,7 @@ signals:
     void tabClosed(const QUrl filepath);
     void tabOpened(const QUrl filepath);
     void countChanged();
-    void saveRequested(const int index);
+    void saveRequested(const int index, bool close);
     void saveAllRequested();
 
 private:
