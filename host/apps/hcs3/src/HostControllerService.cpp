@@ -767,9 +767,9 @@ void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, co
     QJsonObject payload;
 
     payload.insert("type", "updates_available");
-    if (!componentList.isEmpty() || errorString.isEmpty())  // if list is empty, but no error is set, it means we have no updates available
+    if ((componentList.isEmpty() == false) || errorString.isEmpty())    // if list is empty, but no error is set, it means we have no updates available
         payload.insert("component_list", componentList);
-    if (!errorString.isEmpty())
+    if (errorString.isEmpty() == false)
         payload.insert("error_string", errorString);
 
     message.insert("hcs::notification", payload);

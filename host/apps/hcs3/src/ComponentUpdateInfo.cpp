@@ -39,7 +39,7 @@ QString ComponentUpdateInfo::acquireUpdateInfo(const QString &updateMetadata, QJ
         QString errorMsg;
         int errorColumn = 0;
         QDomDocument xmlDocument("MaintenanceToolOutput");
-        if (!xmlDocument.setContent(updateMetadata, false, &errorMsg, &errorColumn)) {
+        if (xmlDocument.setContent(updateMetadata, false, &errorMsg, &errorColumn) == false) {
             qCCritical(logCategoryHcs) << "Could not parse updateMetadata: " << errorMsg << ", errorColumn: " << errorColumn;
             return "Error parsing update metadata: " + errorMsg;
         }
@@ -54,20 +54,20 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
     const QDir applicationDir(QCoreApplication::applicationDirPath());
     const QString absPathComponentsXmlFile = applicationDir.filePath("components.xml");
 
-    if (!QFileInfo::exists(absPathComponentsXmlFile) || !QFileInfo(absPathComponentsXmlFile).isFile()) {
+    if ((QFileInfo::exists(absPathComponentsXmlFile) == false) || (QFileInfo(absPathComponentsXmlFile).isFile() == false)) {
         qCCritical(logCategoryHcs) << "File components.xml not found at " << absPathComponentsXmlFile;
         return "File components.xml not found at " + absPathComponentsXmlFile;
     }
     // Load 'components.xml' file
     QFile file(absPathComponentsXmlFile);
-    if (!file.open(QIODevice::ReadOnly)) {
+    if (file.open(QIODevice::ReadOnly) == false) {
         return "Unable to open " + absPathComponentsXmlFile;
     }
 
     QString errorMsg;
     int errorColumn = 0;
     QDomDocument xmlDocument("components");
-    if (!xmlDocument.setContent(&file, false, &errorMsg, &errorColumn)) {
+    if (xmlDocument.setContent(&file, false, &errorMsg, &errorColumn) == false) {
         file.close();
         qCCritical(logCategoryHcs) << "Could not parse components.xml: " << errorMsg << ", errorColumn: " << errorColumn;
         return "Error parsing components.xml: " + errorMsg;
@@ -76,29 +76,29 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
 
     QDomElement componentInfoRoot = xmlDocument.documentElement();
     QDomNode componentInfoNode = componentInfoRoot.firstChild();
-    while(!componentInfoNode.isNull()) {
+    while (componentInfoNode.isNull() == false) {
         QDomElement componentInfoElement = componentInfoNode.toElement(); // try to convert the node to an element.
-        if (!componentInfoElement.isNull()) {
+        if (componentInfoElement.isNull() == false) {
             if (componentInfoElement.tagName() == "Package") {
                 QString packageName; bool packageNameFound = false;
                 QString packageVersion; bool packageVersionFound = false;
                 QDomNode packageInfoNode = componentInfoElement.firstChild();
-                while(!packageInfoNode.isNull()) {
+                while (packageInfoNode.isNull() == false) {
                     QDomElement packageInfoElement = packageInfoNode.toElement(); // try to convert the node to an element.
-                    if (!packageInfoElement.isNull()) {
+                    if (packageInfoElement.isNull() == false) {
                         if ((packageInfoElement.tagName() == "Title") && (packageNameFound == false)) {
                             packageName = packageInfoElement.text();
-                            if(!packageName.isEmpty())
+                            if (packageName.isEmpty() == false)
                                 packageNameFound = true;
                         } else if (packageInfoElement.tagName() == "Version" && (packageVersionFound == false)) {
                             packageVersion = packageInfoElement.text();
-                            if(!packageVersion.isEmpty())
+                            if (packageVersion.isEmpty() == false)
                                 packageVersionFound = true;
                         }
                     }
                     packageInfoNode = packageInfoNode.nextSibling();
                 }
-                if((packageNameFound == true) && (packageVersionFound == true)) {
+                if ((packageNameFound == true) && (packageVersionFound == true)) {
                     componentMap.insert(packageName, packageVersion);
                     qCInfo(logCategoryHcs) << "Found mandatory elements (Title / Version) in components.xml: " << packageName << ", " << packageVersion;
                 } else {
@@ -108,19 +108,20 @@ QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString
         }
         componentInfoNode = componentInfoNode.nextSibling();
     }
-    if(componentMap.isEmpty())
+    if (componentMap.isEmpty()) {
         return "No components loaded from components.xml";
-    else
+    } else {
         return QString();
+    }
 }
 
 QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument, const QMap<QString, QString>& componentMap, QJsonArray &updateInfo) {
 
     QDomElement updateInfoRoot = xmlDocument.documentElement();
     QDomNode updateInfoNode = updateInfoRoot.firstChild();
-    while(!updateInfoNode.isNull()) {
+    while (updateInfoNode.isNull() == false) {
         QDomElement updateInfoElement = updateInfoNode.toElement(); // try to convert the node to an element.
-        if (!updateInfoElement.isNull()) {
+        if (updateInfoElement.isNull() == false) {
             if (updateInfoElement.tagName() == "update") {
                 if (updateInfoElement.hasAttribute("name") && updateInfoElement.hasAttribute("version")) {
                     QString updateName = updateInfoElement.attribute("name");
@@ -172,7 +173,7 @@ QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, Q
 #endif
     absPathMaintenanceTool = applicationDir.filePath(maintenanceToolFilename);
 
-    if (!applicationDir.exists(maintenanceToolFilename)) {
+    if (applicationDir.exists(maintenanceToolFilename) == false) {
         qCCritical(logCategoryHcs) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
         return QString("Strata Maintenance Tool not found.");
     }
@@ -194,7 +195,7 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
     // Wait until the update tool is finished
     maintenanceToolProcess.waitForFinished();
 
-    if(maintenanceToolProcess.error() != QProcess::UnknownError) {
+    if (maintenanceToolProcess.error() != QProcess::UnknownError) {
         return "Error checking for updates: " + QString::number(maintenanceToolProcess.error());
     }
 
@@ -204,7 +205,7 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
     // No output means no updates available
     // Note that the exit code will also be 1, but we don't use that
     // Also note that we should parse the output instead of just checking if it is empty if we want specific update info
-    if(maintenanceToolOutput.isEmpty()) {
+    if (maintenanceToolOutput.isEmpty()) {
         qCInfo(logCategoryHcs) << "No updates available";
         return QString();
     }
@@ -215,7 +216,7 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
     int beginIdx = updateData.indexOf(updatesBeginStr);
     int endIdx = updateData.indexOf(updatesEndStr);
 
-    if((beginIdx == -1) || (endIdx == -1) || (endIdx < beginIdx)) {
+    if ((beginIdx == -1) || (endIdx == -1) || (endIdx < beginIdx)) {
         qCCritical(logCategoryHcs) << "Error parsing maintenance tool output:" << updateData;
         return "Error parsing maintenance tool output";
     }

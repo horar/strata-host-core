@@ -42,7 +42,7 @@ function getUpdateInformation () {
 function parseUpdateInfo (payload) {
     if (payload.hasOwnProperty("component_list")) {
         var current_timestamp = new Date().getTime()
-        if(payload.component_list.length === 0) {
+        if (payload.component_list.length === 0) {
             console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received no updates available notification")
             update_info_string = ""
             compact_update_info_string = ""
@@ -53,7 +53,7 @@ function parseUpdateInfo (payload) {
         console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received updates available notification")
         processUpdateInfo(payload.component_list)
 
-        if(compact_update_info_string.length > 0) {
+        if (compact_update_info_string.length > 0) {
             enableMenuItemAndAlertIcon()
         } else {
             console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received invalid updates notification")
@@ -104,7 +104,7 @@ function processUpdateInfo (component_list) {
 
         update_info_string += "<p><b>" + component_list[i].name + "</b><br>"
         update_info_string += "New Version: <b>" + component_list[i].latest_version + "</b>";
-        if(component_list[i].current_version !== "N/A")
+        if (component_list[i].current_version !== "N/A")
             update_info_string += " (<b>" + component_list[i].current_version + "</b>)";
         update_info_string += "</p>"
         compact_update_info_string += "/" + component_list[i].name + "/" + component_list[i].latest_version
