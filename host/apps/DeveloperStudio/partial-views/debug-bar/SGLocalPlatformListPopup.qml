@@ -378,6 +378,12 @@ Window {
 
                                 onClicked: {
                                     unloadAndRemovePlatform(class_id.classId)
+                                    for(var i = 0; i < currDeviceModel.count; i++){
+                                        if(currDeviceModel.get(i).device_id === device_id.currentIndex){
+                                            currDeviceModel.remove(i)
+                                        }
+                                    }
+
                                     deletePlatform(model.index)
                                 }
 
@@ -414,6 +420,12 @@ Window {
 
                                     onTextChanged: {
                                         class_id.classId = text
+                                    }
+
+                                    onEditingFinished: {
+                                        if(model.connected){
+                                            loadAndStorePlatform({class_id: class_id.classId, opn: class_id.opn},device_id.currentIndex,rowPlatform.firmware_version,checkForCustomId(class_id.classId))
+                                        }
                                     }
                                 }
 
@@ -549,6 +561,16 @@ Window {
                                 placeholderText: "firmware_version"
 
                                 text: rowPlatform.firmware_version
+
+                                onTextChanged: {
+                                    rowPlatform.firmware_version = text
+                                }
+
+                                onEditingFinished: {
+                                    if(model.connected){
+                                        loadAndStorePlatform({class_id: class_id.classId, opn: class_id.opn},device_id.currentIndex,rowPlatform.firmware_version,checkForCustomId(class_id.classId))
+                                    }
+                                }
                             }
                         }
 
@@ -557,22 +579,25 @@ Window {
                             Layout.preferredHeight: 40
                             Layout.preferredWidth: 150
                             model: deviceModel
-                            placeholderText: "device id"
+                            placeholderText: "device_id..."
                             textRole: null
-                            currentIndex: 0
+
 
                             delegate: SGText {
-                                color: deviceArea.containsMouse ? "#888" : "black"
+                                id: deviceText
+                                color: deviceArea.containsMouse ? "#888" : enabled ? "black" : "#bbb"
 
                                 text: modelData
                                 leftPadding: 5
-
+                                enabled: device_id.checkIfNotUsed(model.index)
 
                                 MouseArea {
                                     id: deviceArea
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
                                     hoverEnabled: true
+                                    enabled: parent.enabled
+
 
                                     onClicked: {
                                         device_id.setDevice(modelData)
@@ -582,20 +607,52 @@ Window {
                             }
 
                             function setDevice(device){
+
                                 for(var i = 0; i < deviceModel.count; i++){
                                     if(device === deviceModel.get(i).device){
-                                        device_id.currentIndex = i
+                                        if(checkIfNotUsed(i)) {
+                                            if(currDeviceModel.count === listModel.count){
+                                                for( var n = 0; n < currDeviceModel.count; n++){
+                                                    if(currDeviceModel.get(n).device_id === device_id.currentIndex){
+                                                        currDeviceModel.set(n, {device_id: i})
+                                                    }
+                                                }
+                                            } else {
+                                                currDeviceModel.append({device_id: i})
+                                            }
+                                            device_id.currentIndex = i
+                                            break
+                                        } else {
+                                            for (var j = 0; j < currDeviceModel.count; j++){
+                                                if(currDeviceModel.get(j).device_id === device_id.currentIndex){
+                                                    currDeviceModel.remove(j)
+                                                    currDeviceModel.set(j, {device_id: i})
+                                                    device_id.currentIndex = i
+                                                    break
+                                                }
+                                            }
+                                        }
                                     }
                                 }
+                            } 
+
+                            function checkIfNotUsed(device_id) {
+                                for(var i = 0; i < currDeviceModel.count; i++){
+                                    if(currDeviceModel.get(i).device_id === device_id){
+                                        return false
+                                    }
+                                }
+                                return true
                             }
                         }
 
                         Switch {
                             checked: model.connected
+                            enabled: device_id.currentIndex >= 0 && textField.text !== "" && class_id.classId !== ""
                             onCheckedChanged: {
                                 model.connected = checked
                                 if(model.connected){
-                                    loadAndStorePlatform({class_id:class_id.classId, opn: class_id.opn},device_id.currentIndex,textField.text, checkForCustomId(class_id.classId))
+                                    loadAndStorePlatform({class_id:class_id.classId, opn: class_id.opn},device_id.currentIndex,rowPlatform.firmware_version, checkForCustomId(class_id.classId))
                                 } else {
                                     unloadAndRemovePlatform(class_id.classId)
                                 }
@@ -666,6 +723,10 @@ Window {
         id: deviceModel
     }
 
+    ListModel {
+        id: currDeviceModel
+    }
+
     function parseCustomSavedIds(){
         if(storeDeviceList.value("custom-platforms") !== undefined){
             const storedPlatform = storeDeviceList.value("custom-platforms")
@@ -695,11 +756,16 @@ Window {
         if(storeDeviceList.value("stored-platforms") !== undefined){
             if(storeDeviceList.value("stored-platforms").hasOwnProperty("platforms")){
                 const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
-                for(var x = 0; x < storedPlatforms.length; x++){
-                    listModel.append({class_id: storedPlatforms[x].platform.class_id, opn: storedPlatforms[x].platform.opn, device_id: storedPlatforms[x].platform.device_id, firmware_version: storedPlatforms[x].platform.firmware_version, connected: false})
-                    //listModel.append({class_id: storedPlatform.platform.class_id, opn: storedPlatform.platform.opn ,device_id: storedPlatform.platform.device_id, firmware_version: storedPlatform.platform.firmware_version, connected: false})
+                if(storedPlatforms.length > 0){
+                    for(var x = 0; x < storedPlatforms.length; x++){
+                        listModel.append({class_id: storedPlatforms[x].platform.class_id, opn: storedPlatforms[x].platform.opn, device_id: storedPlatforms[x].platform.device_id, firmware_version: storedPlatforms[x].platform.firmware_version, connected: false})
+                    }
+                } else {
+                    listModel.append({class_id: "", opn: "" ,device_id: 0, firmware_version: "0.0.2", connected: false})
                 }
             }
+        } else {
+            listModel.append({class_id: "", opn: "" ,device_id: 0, firmware_version: "0.0.2", connected: false})
         }
     }
     // loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
@@ -721,11 +787,13 @@ Window {
 
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
                 var flag = false
-                for( var j = 0; j < storeDeviceList.value("stored-platforms").platforms.length; j++){
-                    const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
-                    if(storedPlatforms[j].platform.class_id === platform.class_id){
-                        flag = true
-                        break
+                if(storeDeviceList.value("stored-platforms") !== undefined) {
+                    for( var j = 0; j < storeDeviceList.value("stored-platforms").platforms.length; j++){
+                        const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
+                        if(storedPlatforms[j].platform.class_id === platform.class_id){
+                            flag = true
+                            break
+                        }
                     }
                 }
                 if(!flag){
@@ -747,11 +815,13 @@ Window {
 
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
                 let flag = false
-                for( var y = 0; y < storeDeviceList.value("stored-platforms").platforms.length; y++){
-                    const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
-                    if(storedPlatforms[y].platform.class_id === platform.class_id){
-                        flag = true
-                        break
+                if(storeDeviceList.value("stored-platforms") !== undefined) {
+                    for( var y = 0; y < storeDeviceList.value("stored-platforms").platforms.length; y++){
+                        const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
+                        if(storedPlatforms[y].platform.class_id === platform.class_id){
+                            flag = true
+                            break
+                        }
                     }
                 }
                 if(!flag){
@@ -759,11 +829,13 @@ Window {
                     storeDeviceList.setValue("stored-platforms",{platforms: storeDeviceList.storedPlatforms})
                 }
                 flag = false
-                for( let x = 0; x < storeDeviceList.value("custom-platforms").platforms.length; x++){
-                    const storedPlatforms = storeDeviceList.value("custom-platforms").platforms
-                    if(storedPlatforms[x].platform.class_id === platform.class_id){
-                        flag = true
-                        break
+                if(storeDeviceList.value("custom-platforms") !== undefined) {
+                    for( let x = 0; x < storeDeviceList.value("custom-platforms").platforms.length; x++){
+                        const storedPlatforms = storeDeviceList.value("custom-platforms").platforms
+                        if(storedPlatforms[x].platform.class_id === platform.class_id){
+                            flag = true
+                            break
+                        }
                     }
                 }
                 if(!flag){
@@ -800,6 +872,8 @@ Window {
                 storeDeviceList.setValue("stored-platforms",{platforms: []})
                 storeDeviceList.setValue("stored-platforms", {platforms: storedPlatforms})
             }
+        } else {
+            listModel.remove(index)
         }
     }
 
