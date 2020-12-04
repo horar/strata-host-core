@@ -77,8 +77,6 @@ Rectangle {
 
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
-
-
     }
 
     Connections {
@@ -176,8 +174,22 @@ Rectangle {
                                 pdfAccordion.closeContent.start();
                             }
                         }
+                        onContentOpenSignal: {
+                            console.info("open1")
+                            Help.liveResize()
+                        }
+                        Connections {
+                            target: Help.utility
+                            onInternal_tour_indexChanged: {
+                                if(Help.current_tour_targets[index]["target"] === pdfAccordion){
+                                    pdfAccordion.open = true
+                                }
+                            }
+                        }
+
                         Component.onCompleted: {
                             Help.registerTarget(pdfAccordion,"test1",0,"contentViewHelp")
+
                         }
                     }
 
@@ -196,6 +208,9 @@ Rectangle {
                             } else {
                                 datasheetAccordion.closeContent.start();
                             }
+                        }
+                        onContentOpenSignal: {
+                            Help.liveResize()
                         }
                         Connections {
                             target: Help.utility
@@ -228,12 +243,15 @@ Rectangle {
                         onOpenChanged: {
                             if(open){
                                 console.info("open")
-                                Help.liveResize()
+
                                 downloadAccordion.openContent.start();
 
                             } else {
                                 downloadAccordion.closeContent.start();
                             }
+                        }
+                        onContentOpenSignal: {
+                            Help.liveResize()
                         }
 
                         Connections {
@@ -320,8 +338,8 @@ Rectangle {
             Item {
                 id: pdfViewerContainer
                 width: parent.width
-                height: parent.height/1.5
-                anchors.centerIn: parent
+                height: parent.height/1.2
+                anchors.bottom: pdfViewer.bottom
 
             }
             Component.onCompleted: {
