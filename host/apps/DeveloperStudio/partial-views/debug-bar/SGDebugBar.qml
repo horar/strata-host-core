@@ -23,6 +23,7 @@ Item {
         width: parent.width
         height: flow.height
         color: "lightgrey"
+
         anchors {
             bottom: parent.bottom
         }
@@ -44,6 +45,7 @@ Item {
                 Label {
                     text: qsTr("View:")
                     leftPadding: 10
+                    visible: debugSettings.viewsUrl.toString() !== ""
                 }
 
                 ComboBox {
@@ -51,21 +53,20 @@ Item {
                     delegate: viewButtonDelegate
                     model: viewFolderModel
                     textRole: "fileName"
+                    visible: debugSettings.viewsUrl.toString() !== ""
 
                     onCurrentIndexChanged: {
                         // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
-                        let fileName = viewFolderModel.get(currentIndex, "fileName");
-                        if (fileName !== undefined) {
-                            displayText = fileName.replace("views-", "").slice(0, -4)
+                        let folder = viewFolderModel.get(currentIndex, "fileName");
+                        if (folder !== undefined) {
+                            displayText = folder
                         }
                     }
 
                     FolderListModel {
                         id: viewFolderModel
-                        showDirs: false
-                        showFiles: true
-                        nameFilters: "views-*.rcc"
-                        folder: sdsModel.resourceLoader.getStaticResourcesUrl()
+                        showDirs: true
+                        folder: debugSettings.viewsUrl
 
                         onCountChanged: {
                             viewCombobox.currentIndex = viewFolderModel.count - 1
@@ -75,7 +76,7 @@ Item {
                             if (viewFolderModel.status === FolderListModel.Ready) {
                                 // [LC] - this FolderListModel is from Lab; a side effects in 5.12
                                 //      - if 'folder' url doesn't exists the it loads app folder content
-                                comboboxRow.visible = (viewFolderModel.folder.toString() === sdsModel.resourceLoader.getStaticResourcesUrl().toString())
+                                comboboxRow.visible = true
                             }
                         }
                     }
@@ -88,7 +89,7 @@ Item {
                             width: viewCombobox.width
                             height: 20
                             // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
-                            text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
+                            text: model.fileName
                             hoverEnabled: true
                             background: Rectangle {
                                 color: hovered ? "white" : "lightgrey"
@@ -99,6 +100,11 @@ Item {
                                 // and then open them/load the RCC applicable. https://ons-sec.atlassian.net/browse/CS-1301
                                 let name = selectButton.text;
                                 viewCombobox.currentIndex = index
+
+                                let path = SGUtilsCpp.returnViewsPath(model.filePath);
+                                sdsModel.resourceLoader.recompileControlViewQrc(path);
+                                stackContainer.currentIndex = stackContainer.count - 1
+
                             }
                         }
                     }
@@ -145,6 +151,13 @@ Item {
                     id: settings
                     category: "Login"
                     property alias loginAsGuest: alwaysLogin.checked
+                }
+
+                QtLabsSettings.Settings {
+                    id: debugSettings
+                    category: "DebugViews"
+                    fileName: "ViewsUrl"
+                    property url viewsUrl: ""
                 }
 
                 Connections {
@@ -203,6 +216,40 @@ Item {
 
             SGControlViewDevPopup {
                 id: controlViewDevDialog
+            }
+
+            Button {
+                text: "Set views folder"
+                onClicked: {
+                    folderDialog.open()
+                }
+            }
+
+            TextField {
+                placeholderText: "set to views folder location.."
+                text: debugSettings.viewsUrl
+
+                onEditingFinished: {
+                    debugSettings.viewsUrl = text
+                }
+            }
+
+            Text {
+                text: "Note: Set the views folder -> to host/components/views"
+                topPadding: 10
+                visible: !viewCombobox.visible
+                color: "red"
+            }
+        }
+
+        FileDialog {
+            id: folderDialog
+            folder: shortcuts.home
+            selectFolder: true
+            title: "First debug set the views folder"
+
+            onAccepted: {
+                debugSettings.viewsUrl = fileUrl
             }
         }
     }
@@ -282,6 +329,20 @@ Item {
                 qmlErrorModel.append({"data" : notifyQmlError})
             }
         }
+
+        Connections {
+            target: sdsModel.resourceLoader
+
+            onFinishedRecompiling: {
+
+                if (filepath !== '') {
+                    loadDebugView(filepath)
+                } else {
+                    let error_str = sdsModel.resourceLoader.getLastLoggedError()
+                    controlViewDevContainer.setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": error_str})
+                }
+            }
+        }
     }
 
     SGQmlErrorListPopUp {
@@ -299,5 +360,21 @@ Item {
 
 
         qmlErrorListModel: qmlErrorModel
+    }
+
+    function loadDebugView(path){
+        controlViewDevContainer.setSource("")
+
+        let uniquePrefix = new Date().getTime().valueOf()
+        uniquePrefix = "/" + uniquePrefix
+
+        // Register debug control view object
+        if (!sdsModel.resourceLoader.registerResource(path, uniquePrefix)) {
+            console.error("Failed to register resource")
+            return
+        }
+
+        let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
+        controlViewDevContainer.setSource(qml_control);
     }
 }

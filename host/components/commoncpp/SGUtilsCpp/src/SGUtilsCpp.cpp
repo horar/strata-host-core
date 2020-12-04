@@ -70,6 +70,21 @@ QUrl SGUtilsCpp::pathToUrl(const QString &path, const QString &scheme)
     return url;
 }
 
+QString SGUtilsCpp::returnViewsPath(const QString &filePath){
+    QDirIterator dir(filePath);
+    QString str = "";
+
+    while(dir.hasNext()){
+        QFileInfo fi(dir.next());
+        if(fi.fileName().endsWith(".qrc")){
+            str = fi.absoluteFilePath();
+            break;
+        }
+    }
+
+    return str;
+}
+
 bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
 {
     QSaveFile file(path);
