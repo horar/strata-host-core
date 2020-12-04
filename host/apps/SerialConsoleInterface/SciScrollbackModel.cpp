@@ -1,7 +1,10 @@
 #include "SciScrollbackModel.h"
 #include "logging/LoggingQtCategories.h"
 #include "SciPlatform.h"
+#include <SGUtilsCpp.h>
+
 #include <QSaveFile>
+#include <QJsonDocument>
 
 SciScrollbackModel::SciScrollbackModel(SciPlatform *platform)
     : QAbstractListModel(platform),
@@ -33,8 +36,10 @@ QVariant SciScrollbackModel::data(const QModelIndex &index, int role) const
         return static_cast<int>(item.type);
     case TimestampRole:
         return item.timestamp;
-    case CondensedRole:
-        return item.condensed;
+    case IsCondensedRole:
+        return item.isCondensed;
+    case IsJsonValidRole:
+        return item.isJsonValid;
     }
 
     return QVariant();
@@ -59,13 +64,24 @@ int SciScrollbackModel::count() const
 
 void SciScrollbackModel::append(const QByteArray &message, MessageType type)
 {
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
+
+    bool isJsonValid = parseError.error == QJsonParseError::NoError;
+
+    QByteArray messageToStore = message;
+    if (isJsonValid) {
+        messageToStore = SGUtilsCpp::minifyJson(message);
+    }
+
     beginInsertRows(QModelIndex(), data_.length(), data_.length());
 
     ScrollbackModelItem item;
-    item.message = message;
+    item.message = messageToStore;
     item.type = type;
     item.timestamp = QDateTime::currentDateTime();
-    item.condensed = condensedMode_;
+    item.isCondensed = condensedMode_;
+    item.isJsonValid = isJsonValid;
     data_.append(item);
 
     endInsertRows();
@@ -87,28 +103,28 @@ void SciScrollbackModel::append(const QByteArray &message, MessageType type)
 void SciScrollbackModel::setAllCondensed(bool condensed)
 {
     for (auto &item : data_) {
-        item.condensed = condensed;
+        item.isCondensed = condensed;
     }
 
     emit dataChanged(
                 createIndex(0, 0),
                 createIndex(data_.length() - 1, 0),
-                QVector<int>() << CondensedRole);
+                QVector<int>() << IsCondensedRole);
 }
 
-void SciScrollbackModel::setCondensed(int index, bool condensed)
+void SciScrollbackModel::setIsCondensed(int index, bool condensed)
 {
     if (index < 0 || index >= data_.count()) {
         qCCritical(logCategorySci) << "index out of range";
         return;
     }
 
-    data_[index].condensed = condensed;
+    data_[index].isCondensed = condensed;
 
     emit dataChanged(
                 createIndex(index, 0),
                 createIndex(index, 0),
-                QVector<int>() << CondensedRole);
+                QVector<int>() << IsCondensedRole);
 }
 
 void SciScrollbackModel::clear()
@@ -295,7 +311,8 @@ void SciScrollbackModel::setModelRoles()
     roleByEnumHash_.insert(MessageRole, "message");
     roleByEnumHash_.insert(TypeRole, "type");
     roleByEnumHash_.insert(TimestampRole, "timestamp");
-    roleByEnumHash_.insert(CondensedRole, "condensed");
+    roleByEnumHash_.insert(IsCondensedRole, "isCondensed");
+    roleByEnumHash_.insert(IsJsonValidRole, "isJsonValid");
 
     QHash<int, QByteArray>::const_iterator i = roleByEnumHash_.constBegin();
     while (i != roleByEnumHash_.constEnd()) {

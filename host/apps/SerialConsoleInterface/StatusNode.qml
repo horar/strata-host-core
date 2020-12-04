@@ -32,6 +32,7 @@ Item {
     enum FinishState {
         NotSet,
         Succeed,
+        SucceedWithWarning,
         Failed
     }
 
@@ -144,6 +145,8 @@ Item {
                         return "white"
                     } else if (nodeState === StatusNode.Succeed) {
                         return SGWidgets.SGColorsJS.STRATA_GREEN
+                    } else if (nodeState === StatusNode.SucceedWithWarning) {
+                        return SGWidgets.SGColorsJS.WARNING_COLOR
                     } else if (nodeState === StatusNode.Failed) {
                         return  SGWidgets.SGColorsJS.ERROR_COLOR
                     }
@@ -152,7 +155,7 @@ Item {
                 }
 
                 source: {
-                    if (nodeState === StatusNode.Succeed) {
+                    if (nodeState === StatusNode.Succeed || nodeState === StatusNode.SucceedWithWarning) {
                         return succeedIcon
                     } else if (nodeState === StatusNode.Failed) {
                         return failedIcon
