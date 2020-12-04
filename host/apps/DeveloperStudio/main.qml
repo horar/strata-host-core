@@ -13,6 +13,7 @@ import "qrc:/js/platform_filters.js" as PlatformFilters
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 SGWidgets.SGMainWindow {
     id: mainWindow

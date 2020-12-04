@@ -17,7 +17,7 @@ Rectangle {
         } else if (model.selected) {
             return "#34993b"
         } else {
-            return Theme.strataGreen
+            return Theme.palette.green
         }
     }
     clip: true

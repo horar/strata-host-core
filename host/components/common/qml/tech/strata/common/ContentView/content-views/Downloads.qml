@@ -214,7 +214,7 @@ Item {
                                     bottom: parent.bottom
                                 }
 
-                                color: Theme.strataGreen
+                                color: Theme.palette.green
                             }
                         }
 
@@ -229,7 +229,7 @@ Item {
                             height: infoItem.contentHeight + 2
 
                             radius: 2
-                            color: Theme.error
+                            color: Theme.palette.error
                             visible: model.status === DownloadDocumentListModel.FinishedWithError
                         }
 

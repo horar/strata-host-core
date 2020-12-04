@@ -197,7 +197,7 @@ Item {
                 readOnly: false
                 font {
 //                    family: inconsolata.name // inconsolata is monospaced and has clear chars for O/0 etc
-                    pixelSize: Theme.basePixelSize
+                    pixelSize: 10
                 }
                 horizontalAlignment: TextInput.AlignRight
                 validator: realNumberValidator

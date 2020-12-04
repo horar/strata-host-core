@@ -47,7 +47,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "Not Connected"
             textColor: "white"
-            color: Theme.error
+            color: Theme.palette.error
             fontSizeMultiplier: 2.0
             radius: 12
             verticalPadding: 6

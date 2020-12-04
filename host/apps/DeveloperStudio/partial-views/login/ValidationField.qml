@@ -40,7 +40,7 @@ TextField {
         id: backgroundContainer
         implicitHeight: 32
         border.width: field.activeFocus ? 1 : 0
-        border.color:  field.activeFocus ? Theme.strataGreen : "#40000000"
+        border.color:  field.activeFocus ? Theme.palette.green : "#40000000"
 
         Rectangle {
             id: background

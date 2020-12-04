@@ -50,12 +50,12 @@ SGDialog {
 
     headerBgColor: {
         if (dialog.type === SGMessageDialog.Warning) {
-            return Theme.warning
+            return Theme.palette.warning
         } else if (dialog.type === SGMessageDialog.Error) {
-            return Theme.error
+            return Theme.palette.error
         }
 
-        return Theme.blue
+        return Theme.palette.blue
     }
 
     headerIcon: {

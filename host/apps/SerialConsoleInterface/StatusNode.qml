@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
-
+import tech.strata.theme 1.0
 
 Item {
     id: statusNode
@@ -109,9 +109,9 @@ Item {
                 radius: Math.round(width/2)
                 color: {
                     if (nodeState === StatusNode.Succeed) {
-                        return SGWidgets.SGColorsJS.STRATA_GREEN
+                        return TangoTheme.palette.green
                     } else if (nodeState === StatusNode.Failed) {
-                        return  SGWidgets.SGColorsJS.ERROR_COLOR
+                        return  TangoTheme.palette.error
                     }
 
                     return "transparent"
@@ -144,11 +144,11 @@ Item {
                     if (isFinal) {
                         return "white"
                     } else if (nodeState === StatusNode.Succeed) {
-                        return SGWidgets.SGColorsJS.STRATA_GREEN
+                        return TangoTheme.palette.green
                     } else if (nodeState === StatusNode.SucceedWithWarning) {
-                        return SGWidgets.SGColorsJS.WARNING_COLOR
+                        return TangoTheme.palette.warning
                     } else if (nodeState === StatusNode.Failed) {
-                        return  SGWidgets.SGColorsJS.ERROR_COLOR
+                        return  TangoTheme.palette.error
                     }
 
                     return "grey"
@@ -182,7 +182,7 @@ Item {
 
         SGWidgets.SGTag {
             id: nodeSubtext
-            color: nodeState === StatusNode.Failed && isFinal === false ? SGWidgets.SGColorsJS.ERROR_COLOR : "transparent"
+            color: nodeState === StatusNode.Failed && isFinal === false ? TangoTheme.palette.error : "transparent"
             textColor: nodeState === StatusNode.Failed && isFinal === false ? "white" : "black"
             visible: text.length > 0
             verticalPadding: 2

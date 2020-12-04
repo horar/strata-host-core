@@ -141,7 +141,7 @@ FocusScope {
 
             Rectangle {
                 anchors.fill: parent
-                color: Theme.blue
+                color: Theme.palette.blue
             }
 
             SGWidgets.SGIconButton {
@@ -155,7 +155,7 @@ FocusScope {
                 icon.source: "qrc:/sgimages/chevron-left.svg"
                 backgroundOnlyOnHovered: true
                 iconColor: "white"
-                highlightImplicitColor: Theme.strataGreen
+                highlightImplicitColor: Theme.palette.green
 
                 onClicked: {
                     pop()
@@ -186,7 +186,7 @@ FocusScope {
 
             Rectangle {
                 anchors.fill: parent
-                color: Theme.blue
+                color: Theme.palette.blue
             }
 
             SGWidgets.SGText {
@@ -214,7 +214,7 @@ FocusScope {
 
         Rectangle {
             anchors.fill: parent
-            color: Theme.blue
+            color: Theme.palette.blue
         }
 
         Flickable {
@@ -264,7 +264,7 @@ FocusScope {
                             checkable: true
                             ButtonGroup.group: group
                             minimumContentWidth: 180
-                            color: Theme.strataGreen
+                            color: Theme.palette.green
 
                             onClicked: {
                                 setPage(index)

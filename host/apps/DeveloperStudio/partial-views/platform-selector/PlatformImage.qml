@@ -119,7 +119,7 @@ Rectangle {
     }
 
     Rectangle {
-        color: Theme.strataGreen
+        color: Theme.palette.green
         width: imageContainer.width
         anchors {
             bottom: imageContainer.bottom

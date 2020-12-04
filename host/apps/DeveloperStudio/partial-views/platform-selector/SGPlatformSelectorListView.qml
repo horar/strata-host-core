@@ -222,7 +222,7 @@ Item {
                         right: clearIcon.left
                         rightMargin: 10
                     }
-                    color: Theme.strataGreen
+                    color: Theme.palette.green
                     font.bold: true
                     selectByMouse: true
                     clip: true
@@ -402,7 +402,7 @@ Item {
 
                 Text {
                     id: activeSegmentFilterText
-                    color: Theme.strataGreen
+                    color: Theme.palette.green
                     font.bold: true
                     anchors {
                         left: segmentFilterContainer.left

@@ -26,7 +26,7 @@ Item {
     property real fullWidth: (icon.width/2) + textBackground.width
     property real minimizedWidth: icon.width
     property bool pressed: false
-    property color green: Theme.strataGreen
+    property color green: Theme.palette.green
 
     property alias iconSource: icon.source
     property alias text: text.text

@@ -90,7 +90,7 @@ Rectangle {
                 readOnly: false
                 font {
                     family: Fonts.inconsolata // inconsolata is monospaced and has clear chars for O/0 etc
-                    pixelSize: Theme.basePixelSize
+                    pixelSize: 10
                 }
                 horizontalAlignment: leftJustify ? TextInput.AlignLeft : TextInput.AlignRight
                 onAccepted: root.applied(infoText.text)

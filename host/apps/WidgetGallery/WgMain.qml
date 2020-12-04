@@ -41,7 +41,7 @@ Item {
                         minimumContentHeight: 100
                         minimumContentWidth: 200
                         fontSizeMultiplier: 1.6
-                        color: Theme.strataGreen
+                        color: Theme.palette.green
                         text: model.name
                         onClicked: {
                             stackView.push(model.page)

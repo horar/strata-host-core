@@ -313,7 +313,7 @@ Popup {
 
                 iconColor: "white"
                 icon.source: "qrc:/sgimages/times.svg"
-                highlightImplicitColor: Theme.error
+                highlightImplicitColor: Theme.palette.error
                 onClicked: {
                     removeRequested(index)
                 }

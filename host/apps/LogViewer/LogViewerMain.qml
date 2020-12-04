@@ -6,6 +6,7 @@ import QtQuick.Shapes 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
+import tech.strata.theme 1.0
 import Qt.labs.settings 1.1 as QtLabsSettings
 
 FocusScope {
@@ -625,7 +626,7 @@ FocusScope {
                                         anchors.verticalCenter: parent.verticalCenter
                                         iconSize: fileName.contentHeight + 1
                                         icon.source: "qrc:/sgimages/times-circle.svg"
-                                        iconColor: SGWidgets.SGColorsJS.ERROR_COLOR
+                                        iconColor: TangoTheme.palette.error
                                         alternativeColorEnabled: true
 
                                         onClicked: {
@@ -744,7 +745,7 @@ FocusScope {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     Layout.minimumHeight: parent.height/4
-                    border.color: SGWidgets.SGColorsJS.TANGO_BUTTER1
+                    border.color: TangoTheme.palette.butter
                     border.width: 2
                     visible: searchingMode
 

@@ -29,7 +29,7 @@ Button {
         opacity: enabled ? 1 : 0.3
         color: !itemRoot.hovered ?
                    "#007a1f" : itemRoot.pressed ?
-                       Qt.lighter(Theme.strataGreen, 1.1) : Theme.strataGreen
+                       Qt.lighter(Theme.palette.green, 1.1) : Theme.palette.green
         clip: true
     }
 

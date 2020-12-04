@@ -34,7 +34,7 @@ Dialog {
         Rectangle {
             id: headerBg
             anchors.fill: parent
-            color: Theme.blue
+            color: Theme.palette.blue
         }
 
         SGWidgets.SGIcon {

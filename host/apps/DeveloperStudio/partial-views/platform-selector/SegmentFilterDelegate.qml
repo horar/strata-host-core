@@ -29,7 +29,7 @@ Item {
 
         Rectangle {
             id: iconBackground
-            color: root.checked ? Theme.strataGreen : "black"
+            color: root.checked ? Theme.palette.green : "black"
             width: 75
             height: 75
             radius: width/2

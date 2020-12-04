@@ -160,7 +160,7 @@ Item {
 
                     Rectangle {
                         color: "transparent"
-                        border.color: Theme.strataGreen
+                        border.color: Theme.palette.green
                         anchors.centerIn: parent
                         visible: policyCheck.focus
                         width: parent.width + 4

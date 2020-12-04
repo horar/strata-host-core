@@ -19,7 +19,7 @@ Item {
 
     Rectangle {
         width: 50
-        color: "#29e335"//Theme.strataGreen
+        color: "#29e335"//Theme.palette.green
         opacity: 1
         height: parent.height-1
         visible: model.connected
@@ -238,7 +238,7 @@ Item {
                         centerIn: icon
                     }
                     radius: height/2
-                    color: Theme.strataGreen
+                    color: Theme.palette.green
                     opacity: delegate.PathView.delOpacity ? delegate.PathView.delOpacity : 0.7 // if/then due to random bug that assigns undefined occassionally
                 }
 

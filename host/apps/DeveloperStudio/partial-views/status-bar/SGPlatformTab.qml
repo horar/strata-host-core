@@ -13,7 +13,7 @@ Item {
     height: 40
     width: 200
 
-    property color menuColor: Theme.strataGreen
+    property color menuColor: Theme.palette.green
 
     property string view: model.view
     property string name: model.name

@@ -101,17 +101,17 @@ Item {
                 spacing: 6
                 SGWidgets.SGButton {
                     text: "button7"
-                    color: Theme.strataGreen
+                    color: Theme.palette.green
                 }
 
                 SGWidgets.SGButton {
                     text: "button8"
-                    color: Theme.warning
+                    color: Theme.palette.warning
                 }
 
                 SGWidgets.SGButton {
                     text: "button9"
-                    color: Theme.error
+                    color: Theme.palette.error
                     alternativeColorEnabled: true
                 }
             }

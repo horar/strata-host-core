@@ -15,7 +15,7 @@ Rectangle {
     id: recentlyReleased
     implicitHeight: recentRow.implicitHeight + 40
     implicitWidth: recentRow.implicitWidth + 40
-    color: Theme.strataGreen
+    color: Theme.palette.green
     radius: 10
     visible: lengthModel.count > 0
 

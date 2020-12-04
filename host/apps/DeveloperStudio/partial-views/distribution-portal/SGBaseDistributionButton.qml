@@ -44,7 +44,7 @@ RowLayout {
     Rectangle {
         id: providerBackground
         color: !providerMouseArea.containsMouse && !providerPopup.opened
-               ? Theme.strataGreen : providerMouseArea.pressed && !providerPopup.opened
+               ? Theme.palette.green : providerMouseArea.pressed && !providerPopup.opened
                  ? Qt.darker("#007a1f", 1.25) : "#007a1f"
         radius: 10
         Layout.preferredWidth: textSize.width + textSize.height
@@ -142,7 +142,7 @@ RowLayout {
         id: iconBackground
         radius: 10
         color: !iconMouse.containsMouse
-               ? Theme.strataGreen : iconMouse.pressed
+               ? Theme.palette.green : iconMouse.pressed
                  ? Qt.darker("#007a1f", 1.25) : "#007a1f"
         implicitWidth: height
         implicitHeight: parent.height

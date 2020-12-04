@@ -65,7 +65,7 @@ Rectangle {
             readOnly: true
             font {
               family: "Courier" // Monospaced font for better text width uniformity
-              pixelSize: Theme.basePixelSize
+              pixelSize: 10
             }
             color: "black"
         }

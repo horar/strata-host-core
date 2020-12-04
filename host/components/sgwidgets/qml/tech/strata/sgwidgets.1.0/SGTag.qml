@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
     id: control
@@ -31,7 +32,7 @@ Item {
         id: tagBackground
         anchors.fill: parent
         radius: 2
-        color: SGWidgets.SGColorsJS.TANGO_BUTTER1
+        color: TangoTheme.palette.butter
         visible: tagText.text.length > 0
     }
 
