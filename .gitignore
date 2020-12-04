@@ -45,3 +45,4 @@ extern/couchbase-lite-C
 .venv*/
 3p/
 3p-d/
+*.pyc
