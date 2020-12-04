@@ -4,6 +4,7 @@ import "content-views"
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: view
@@ -15,6 +16,7 @@ Rectangle {
     property var classDocuments: null
 
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
+
     onTotalDocumentsChanged: {
         if (classDocuments.pdfListModel.count > 0) {
             pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
@@ -34,9 +36,49 @@ Rectangle {
             navigationSidebar.state = "close"
         }
     }
+    Connections {
+        target: Help.utility
+        onTour_runningChanged: {
+            console.log("in tour")
+            if(tour_running === false) {
+                classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+            }
+        }
+    }
+
+    SGIcon {
+        id: helpIcon
+        anchors {
+            right: view.right
+            bottom: view.bottom
+            margins: 40
+        }
+        source: "qrc:/sgimages/question-circle.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        height: 30
+        width: 30
+        function clickAction() {
+            Help.startHelpTour("contentViewHelp", "strataMain")
+        }
+        z: 2
+
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+                helpIcon.clickAction()
+                classDocuments = sdsModel.documentManager.getClassDocuments("b039e649-2713-4557-afb7-9fabeacd4290")
+            }
+            hoverEnabled: true
+        }
+    }
 
     Component.onCompleted: {
-         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+        classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+
+
     }
 
     Connections {
@@ -134,6 +176,9 @@ Rectangle {
                                 pdfAccordion.closeContent.start();
                             }
                         }
+                        Component.onCompleted: {
+                            Help.registerTarget(pdfAccordion,"test1",0,"contentViewHelp")
+                        }
                     }
 
                     SGAccordionItem {
@@ -152,6 +197,22 @@ Rectangle {
                                 datasheetAccordion.closeContent.start();
                             }
                         }
+                        Connections {
+                            target: Help.utility
+                            onInternal_tour_indexChanged: {
+                                if(Help.current_tour_targets[index]["target"] === datasheetAccordion){
+                                    datasheetAccordion.open = true
+                                }
+                                else {
+                                    datasheetAccordion.open = false
+                                }
+                            }
+                        }
+                        Component.onCompleted: {
+                            Help.registerTarget(datasheetAccordion,"test2",1,"contentViewHelp")
+
+                        }
+
                     }
 
                     SGAccordionItem {
@@ -166,10 +227,29 @@ Rectangle {
 
                         onOpenChanged: {
                             if(open){
+                                console.info("open")
+                                Help.liveResize()
                                 downloadAccordion.openContent.start();
+
                             } else {
                                 downloadAccordion.closeContent.start();
                             }
+                        }
+
+                        Connections {
+                            target: Help.utility
+                            onInternal_tour_indexChanged: {
+                                if(Help.current_tour_targets[index]["target"] === downloadAccordion){
+                                    downloadAccordion.open = true
+
+                                }
+                                else {
+                                    downloadAccordion.open = false
+                                }
+                            }
+                        }
+                        Component.onCompleted: {
+                            Help.registerTarget(downloadAccordion,"test3",2,"contentViewHelp")
                         }
                     }
                 }
@@ -237,6 +317,16 @@ Rectangle {
             }
 
             url: ""
+            Item {
+                id: pdfViewerContainer
+                width: parent.width
+                height: parent.height/1.5
+                anchors.centerIn: parent
+
+            }
+            Component.onCompleted: {
+                Help.registerTarget(pdfViewerContainer,"test4",3,"contentViewHelp")
+            }
         }
 
         EmptyDocuments {
