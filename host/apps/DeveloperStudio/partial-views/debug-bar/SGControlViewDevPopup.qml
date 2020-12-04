@@ -35,8 +35,6 @@ Window {
     onDebugPlatformChanged: {
         if (root.qrcFilePath.length > 0) {
             recompileResource()
-        } else {
-            console.error("Error with QRC file path")
         }
     }
 
