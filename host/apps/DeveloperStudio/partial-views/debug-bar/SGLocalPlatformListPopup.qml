@@ -25,9 +25,16 @@ Window {
         if(visible) {
             initialModelLoad()
         } else {
+
+            for(var i = 0; i < listModel.count; i++){
+                unloadAndRemovePlatform(listModel.get(i).class_id)
+            }
+
             deviceModel.clear()
             classModel.clear()
             listModel.clear()
+            currDeviceModel.clear()
+            injectPlatform.list = []
         }
     }
 
@@ -758,9 +765,7 @@ Window {
             if(storeDeviceList.value("stored-platforms").hasOwnProperty("platforms")){
                 const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
                 if(storedPlatforms.length > 0){
-                    for(var x = 0; x < storedPlatforms.length; x++){
-                        listModel.append({class_id: storedPlatforms[x].platform.class_id, opn: storedPlatforms[x].platform.opn, device_id: storedPlatforms[x].platform.device_id, firmware_version: storedPlatforms[x].platform.firmware_version, connected: false})
-                    }
+                        listModel.append({class_id: storedPlatforms[storedPlatforms.length - 1].platform.class_id, opn: storedPlatforms[0].platform.opn, device_id: storedPlatforms[0].platform.device_id, firmware_version: storedPlatforms[0].platform.firmware_version, connected: false})
                 } else {
                     listModel.append({class_id: "", opn: "" ,device_id: 0, firmware_version: "0.0.2", connected: false})
                 }
@@ -798,7 +803,7 @@ Window {
                     }
                 }
                 if(!flag){
-                    storeDeviceList.storedPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
+                    storeDeviceList.storedPlatforms.splice(0,1,{platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
                     storeDeviceList.setValue("stored-platforms",{platforms: storeDeviceList.storedPlatforms})
                 }
                 break
@@ -826,7 +831,7 @@ Window {
                     }
                 }
                 if(!flag){
-                    storeDeviceList.storedPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
+                    storeDeviceList.storedPlatforms.splice(0,1,{platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
                     storeDeviceList.setValue("stored-platforms",{platforms: storeDeviceList.storedPlatforms})
                 }
                 flag = false
