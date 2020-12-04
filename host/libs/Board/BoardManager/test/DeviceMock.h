@@ -26,7 +26,7 @@ public:
     bool mockIsOpened() {return opened_;}
     std::vector<QByteArray> mockGetRecordedMessages() {return recordedMessages_;} //copy the result, recordedMessages_ may change over time
     void mockClearRecordedMessages() {recordedMessages_.clear();}
-    int mockGetMsgCount() {return recordedMessages_.size();}
+    int mockGetMsgCount() {return static_cast<int>(recordedMessages_.size());}
     quintptr mockGetLock() {return operationLock_;}
     void mockSetAutoResponse(bool autoResponse) {autoResponse_ = autoResponse;}
     void mockEmitResponses(const QByteArray msg);
