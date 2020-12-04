@@ -15,7 +15,6 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 Rectangle {
     id: controlViewCreatorContainer
     anchors {
-        right: profileIconContainer.left
         rightMargin: 10
     }
     height: container.height
@@ -54,7 +53,7 @@ Rectangle {
             id: plusSignIcon
             Layout.preferredWidth: 25
             Layout.preferredHeight: Layout.preferredWidth
-            source: "qrc:/sgimages/times.svg"
+            source: "qrc:/sgimages/plus.svg"
             iconColor: controlViewCreatorText.color
         }
     }
