@@ -212,7 +212,7 @@ signals:
     // This signal is emitted when the file at the specified path is modified
     void fileChanged(const QUrl path);
     // This signal is emitted when the file with the specified uid is deleted
-    void fileDeleted(const QString uid);
+    void fileDeleted(const QString uid, const QUrl path);
     // This signal is emitted when a file is added to the project.
     void fileAdded(const QUrl path, const QUrl parentPath);
 
