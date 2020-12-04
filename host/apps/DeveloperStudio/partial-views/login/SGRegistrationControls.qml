@@ -174,7 +174,7 @@ Item {
                 wrapMode: Text.Wrap
                 linkColor: "#545960"
 
-                onLinkActivated: { privacyPolicy.open() }
+                onLinkActivated: { Qt.openUrlExternally("https://www.onsemi.com/privacy-policy")}
 
                 MouseArea {
                     anchors.fill: parent
