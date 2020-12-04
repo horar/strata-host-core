@@ -581,6 +581,7 @@ Window {
                             model: deviceModel
                             placeholderText: "device_id..."
                             textRole: null
+                            currentIndex: -1
 
 
                             delegate: SGText {
