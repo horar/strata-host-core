@@ -137,6 +137,7 @@ Rectangle {
         duration: openCloseTime
         onStopped: {
             contentContainer.height = 0  // Bind height to 0 so any content resizing while closed doesn't resize the accordionItem
+            contentOpenSignal()
         }
     }
 
