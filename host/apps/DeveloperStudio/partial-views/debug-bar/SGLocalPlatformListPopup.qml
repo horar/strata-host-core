@@ -740,6 +740,7 @@ Window {
             const storedPlatform = storeDeviceList.value("custom-platforms")
             if(storedPlatform.hasOwnProperty("platforms")){
                 const customPlatforms = storedPlatform.platforms
+                storeDeviceList.customPlatforms = storedPlatform
                 for(var i = 0; i < customPlatforms.length; i++){
                     if(customPlatforms[i].platform.custom){
                         classModel.append({platform: {class_id: customPlatforms[i].platform.class_id, opn: "Custom Platform"}})
@@ -765,7 +766,10 @@ Window {
             if(storeDeviceList.value("stored-platforms").hasOwnProperty("platforms")){
                 const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
                 if(storedPlatforms.length > 0){
-                        listModel.append({class_id: storedPlatforms[storedPlatforms.length - 1].platform.class_id, opn: storedPlatforms[0].platform.opn, device_id: storedPlatforms[0].platform.device_id, firmware_version: storedPlatforms[0].platform.firmware_version, connected: false})
+                    for(var x = 0; x < storedPlatforms.length; x++){
+                        listModel.append({class_id: storedPlatforms[x].platform.class_id, opn: storedPlatforms[x].platform.opn, device_id: storedPlatforms[x].platform.device_id, firmware_version: storedPlatforms[x].platform.firmware_version, connected: false})
+                    }
+                    storeDeviceList.storedPlatforms = storeDeviceList.value("stored-platforms");
                 } else {
                     listModel.append({class_id: "", opn: "" ,device_id: 0, firmware_version: "0.0.2", connected: false})
                 }
@@ -776,6 +780,7 @@ Window {
     }
     // loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
     function loadAndStorePlatform(platform, device_deviation ,firmwareVer, custom){
+        console.log(custom)
         const platforms = classModel
         for(var i = 0; i < platforms.count; i++){
             if(platform.class_id === platforms.get(i).platform.class_id && !custom){
@@ -793,7 +798,7 @@ Window {
 
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
                 var flag = false
-                if(storeDeviceList.value("stored-platforms") !== undefined) {
+                if(storeDeviceList.value("stored-platforms") !== undefined && storeDeviceList.storedPlatforms !== []) {
                     for( var j = 0; j < storeDeviceList.value("stored-platforms").platforms.length; j++){
                         const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
                         if(storedPlatforms[j].platform.class_id === platform.class_id){
@@ -803,11 +808,11 @@ Window {
                     }
                 }
                 if(!flag){
-                    storeDeviceList.storedPlatforms.splice(0,1,{platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
+                    storeDeviceList.storedPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
                     storeDeviceList.setValue("stored-platforms",{platforms: storeDeviceList.storedPlatforms})
                 }
                 break
-            } else {
+            } else if(custom){
                 injectPlatform.list.push({
                                              "class_id": platform.class_id,
                                              "device_id": Constants.DEBUG_DEVICE_ID + device_deviation,
@@ -821,7 +826,7 @@ Window {
 
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
                 let flag = false
-                if(storeDeviceList.value("stored-platforms") !== undefined) {
+                if(storeDeviceList.value("stored-platforms") !== undefined && storeDeviceList.storedPlatforms !== []) {
                     for( var y = 0; y < storeDeviceList.value("stored-platforms").platforms.length; y++){
                         const storedPlatforms = storeDeviceList.value("stored-platforms").platforms
                         if(storedPlatforms[y].platform.class_id === platform.class_id){
@@ -831,11 +836,11 @@ Window {
                     }
                 }
                 if(!flag){
-                    storeDeviceList.storedPlatforms.splice(0,1,{platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
+                    storeDeviceList.storedPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
                     storeDeviceList.setValue("stored-platforms",{platforms: storeDeviceList.storedPlatforms})
                 }
                 flag = false
-                if(storeDeviceList.value("custom-platforms") !== undefined) {
+                if(storeDeviceList.value("custom-platforms") !== undefined && storeDeviceList.customPlatforms !== []) {
                     for( let x = 0; x < storeDeviceList.value("custom-platforms").platforms.length; x++){
                         const storedPlatforms = storeDeviceList.value("custom-platforms").platforms
                         if(storedPlatforms[x].platform.class_id === platform.class_id){
@@ -845,8 +850,8 @@ Window {
                     }
                 }
                 if(!flag){
-                    storeDeviceList.storedPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
-                    storeDeviceList.setValue("custom-platforms",{platforms: storeDeviceList.storedPlatforms})
+                    storeDeviceList.customPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
+                    storeDeviceList.setValue("custom-platforms",{platforms: storeDeviceList.customPlatforms})
                 }
                 break
             }
