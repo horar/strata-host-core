@@ -56,6 +56,8 @@ public:
     Q_INVOKABLE void setSelected(int index, bool selected);
     Q_INVOKABLE void downloadSelectedFiles(const QUrl &saveUrl);
 
+    Q_INVOKABLE QString getMD5();
+
 signals:
     void countChanged();
     void downloadInProgressChanged();
@@ -82,12 +84,14 @@ struct DownloadDocumentItem {
             const QString &uri,
             const QString &prettyName,
             const QString &dirname,
+            const QString &md5,
             const qint64 &filesize)
         : status(DownloadDocumentListModel::DownloadStatus::NotSelected)
     {
         this->uri = uri;
         this->prettyName = prettyName;
         this->dirname = dirname;
+        this->md5 = md5;
         this->bytesTotal = filesize;
     }
 
@@ -95,6 +99,7 @@ struct DownloadDocumentItem {
     QString prettyName;
     QString downloadFilename;
     QString dirname;
+    QString md5;
     QString errorString;
     float progress;
     qint64 bytesTotal;

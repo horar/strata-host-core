@@ -347,3 +347,14 @@ void DownloadDocumentListModel::groupDownloadFinishedHandler(const QJsonObject &
 
     emit downloadInProgressChanged();
 }
+
+QString DownloadDocumentListModel::getMD5()
+{
+    QJsonObject jsonObj;
+    for (const auto &item : data_) {
+        jsonObj.insert(item->prettyName, item->md5);
+    }
+    QJsonDocument doc(jsonObj);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    return strJson;
+}

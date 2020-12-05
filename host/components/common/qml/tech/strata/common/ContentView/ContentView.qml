@@ -5,6 +5,11 @@ import "content-views"
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
 
+import tech.strata.common 1.0
+import tech.strata.commoncpp 1.0
+
+import "qrc:/js/navigation_control.js" as NavigationControl
+
 Rectangle {
     id: view
     anchors {
@@ -36,7 +41,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
-         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+        classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
     }
 
     Connections {
@@ -46,6 +51,19 @@ Rectangle {
                 pdfViewer.url = ""
                 loadingImage.currentFrame = 0
             }
+        }
+
+        onMd5Ready: {
+            // Downloads
+            let dataRAW = classDocuments.downloadDocumentListModel.getMD5()
+            let data = JSON.parse(dataRAW)
+            documentHistory.saveSettings(data)
+
+            // SAVE SETTINGS DOES NOT OVERWRITE!
+            // Views
+            // dataRAW = classDocuments.pdfListModel.getMD5()
+            // data = JSON.parse(dataRAW)
+            // documentHistory.saveSettings(data)
         }
     }
 
@@ -312,6 +330,21 @@ Rectangle {
             hoverEnabled: true
             preventStealing: true
             propagateComposedEvents: false
+        }
+    }
+
+    SGUserSettings {
+        id: documentHistory
+        classId: "documents-history"
+        user: NavigationControl.context.user_id
+
+        function loadSettings() {
+            const settings = readFile("documents-history.json")
+            return settings
+        }
+
+        function saveSettings(settings) {
+            documentHistory.writeFile("documents-history.json", settings)
         }
     }
 }

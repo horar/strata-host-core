@@ -1,5 +1,10 @@
 #include "DocumentListModel.h"
 
+#include "logging/LoggingQtCategories.h"
+
+#include <QJsonDocument>
+#include <QJsonObject>
+
 DocumentListModel::DocumentListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
@@ -104,4 +109,15 @@ QHash<int, QByteArray> DocumentListModel::roleNames() const
     names[PreviousDirnameRole] = "previousDirname";
 
     return names;
+}
+
+QString DocumentListModel::getMD5()
+{
+    QJsonObject jsonObj;
+    for (const auto &item : data_) {
+        jsonObj.insert(item->prettyName, item->md5);
+    }
+    QJsonDocument doc(jsonObj);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    return strJson;
 }
