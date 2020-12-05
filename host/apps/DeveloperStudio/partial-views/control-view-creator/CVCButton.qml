@@ -14,14 +14,11 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 Rectangle {
     id: controlViewCreatorContainer
-    anchors {
-        rightMargin: 10
-    }
     height: container.height
     width: controlViewCreatorRow.implicitWidth + 20
     color: controlViewCreatorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
-
     state: "debug"
+
     MouseArea {
         id: controlViewCreatorMouse
         anchors {

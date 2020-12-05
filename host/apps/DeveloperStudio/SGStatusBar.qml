@@ -106,15 +106,15 @@ Rectangle {
             }
         }
 
-        CVCButton {
-            id: cvcButton
-            visible: false
-        }
-
         Repeater {
             id: platformTabRepeater
             delegate: SGPlatformTab {}
             model: NavigationControl.platform_view_model_
+        }
+
+        CVCButton {
+            id: cvcButton
+            visible: false
         }
 
         SGPlatformTab {
@@ -301,6 +301,16 @@ Rectangle {
                     width: profileMenu.width
                 }
 
+                SGMenuItem {
+                    text: qsTr("CVC")
+                    visible: cvcButton.state === "debug"
+                    width: profileMenu.width
+
+                    onClicked: {
+                        cvcButton.toggleVisibility()
+                    }
+                }
+
                 Rectangle {
                     id: menuDivider
                     color: "white"
@@ -309,14 +319,6 @@ Rectangle {
                     width: profileMenu.width - 20
                     anchors {
                         horizontalCenter: profileColumn.horizontalCenter
-                    }
-                }
-
-                SGMenuItem {
-                    text: qsTr("C.V.C")
-                    visible: cvcButton.state === "debug"
-                    onClicked: {
-                      cvcButton.toggleVisibility()
                     }
                 }
 
