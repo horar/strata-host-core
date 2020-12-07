@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QDateTime>
+#include <QStandardPaths>
 #include <QImageReader>
 #include <cmath>
 #include <QUuid>
@@ -81,7 +82,8 @@ QUrl SGUtilsCpp::pathToUrl(const QString &path, const QString &scheme)
     return url;
 }
 
-QString SGUtilsCpp::returnViewsPath(const QString &filePath){
+QString SGUtilsCpp::returnViewsPath(const QString &filePath)
+{
     QDirIterator dir(filePath);
     QString str = "";
 
@@ -94,6 +96,24 @@ QString SGUtilsCpp::returnViewsPath(const QString &filePath){
     }
 
     return str;
+}
+
+QUrl SGUtilsCpp::getViewsFolder()
+{
+    QString str = QStandardPaths::locate(QStandardPaths::HomeLocation,"",QStandardPaths::LocateDirectory);
+    QDir dir(str);
+
+#ifdef Q_OS_WINDOWS
+    dir.cdUp();
+    dir.cdUp();
+#endif
+
+    dir.cd("spyglass");
+    dir.cd("host");
+    dir.cd("components");
+    dir.cd("views");
+
+    return QUrl::fromLocalFile(dir.absolutePath());
 }
 
 bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)

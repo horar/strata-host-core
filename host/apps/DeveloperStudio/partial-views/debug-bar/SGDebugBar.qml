@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
-import Qt.labs.platform 1.0 as QtLabsPlatform
 
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
@@ -29,12 +28,6 @@ Item {
             bottom: parent.bottom
         }
 
-        onVisibleChanged: {
-            if(visible){
-                getViewsFolder()
-            }
-        }
-
         // Buttons for event simulation
         Flow {
             id: flow
@@ -52,7 +45,6 @@ Item {
                 Label {
                     text: qsTr("View:")
                     leftPadding: 10
-                    visible: debugSettings.viewsUrl.toString() !== ""
                 }
 
                 ComboBox {
@@ -60,7 +52,6 @@ Item {
                     delegate: viewButtonDelegate
                     model: viewFolderModel
                     textRole: "fileName"
-                    visible: debugSettings.viewsUrl.toString() !== ""
 
                     onCurrentIndexChanged: {
                         // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
@@ -73,7 +64,7 @@ Item {
                     FolderListModel {
                         id: viewFolderModel
                         showDirs: true
-                        folder: debugSettings.viewsUrl
+                        folder: SGUtilsCpp.getViewsFolder()
 
                         onCountChanged: {
                             viewCombobox.currentIndex = viewFolderModel.count - 1
@@ -159,15 +150,6 @@ Item {
                     category: "Login"
                     property alias loginAsGuest: alwaysLogin.checked
                 }
-
-                QtLabsSettings.Settings {
-                    id: debugSettings
-                    category: "DebugViews"
-                    fileName: "ViewsUrl"
-                    property url viewsUrl: ""
-                }
-
-
 
                 Connections {
                     target: sdsModel
@@ -337,7 +319,7 @@ Item {
         qmlErrorListModel: qmlErrorModel
     }
 
-    function loadDebugView(path){
+    function loadDebugView(path) {
         controlViewDevContainer.setSource("")
 
         let uniquePrefix = new Date().getTime().valueOf()
@@ -351,9 +333,5 @@ Item {
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
         controlViewDevContainer.setSource(qml_control);
-    }
-
-    function getViewsFolder(){
-        debugSettings.viewsUrl = SGUtilsCpp.getViewsFolder()
     }
 }
