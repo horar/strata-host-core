@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
+import Qt.labs.platform 1.0 as QtLabsPlatform
 
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
@@ -26,6 +27,12 @@ Item {
 
         anchors {
             bottom: parent.bottom
+        }
+
+        onVisibleChanged: {
+            if(visible){
+                getViewsFolder()
+            }
         }
 
         // Buttons for event simulation
@@ -160,6 +167,8 @@ Item {
                     property url viewsUrl: ""
                 }
 
+
+
                 Connections {
                     target: sdsModel
                     onHcsConnectedChanged: {
@@ -216,40 +225,6 @@ Item {
 
             SGControlViewDevPopup {
                 id: controlViewDevDialog
-            }
-
-            Button {
-                text: "Set views folder"
-                onClicked: {
-                    folderDialog.open()
-                }
-            }
-
-            TextField {
-                placeholderText: "set to views folder location.."
-                text: debugSettings.viewsUrl
-
-                onEditingFinished: {
-                    debugSettings.viewsUrl = text
-                }
-            }
-
-            Text {
-                text: "Note: Set the views folder -> to host/components/views"
-                topPadding: 10
-                visible: !viewCombobox.visible
-                color: "red"
-            }
-        }
-
-        FileDialog {
-            id: folderDialog
-            folder: shortcuts.home
-            selectFolder: true
-            title: "First debug set the views folder"
-
-            onAccepted: {
-                debugSettings.viewsUrl = fileUrl
             }
         }
     }
@@ -376,5 +351,9 @@ Item {
 
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
         controlViewDevContainer.setSource(qml_control);
+    }
+
+    function getViewsFolder(){
+        debugSettings.viewsUrl = SGUtilsCpp.getViewsFolder()
     }
 }
