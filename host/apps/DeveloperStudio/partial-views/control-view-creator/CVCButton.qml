@@ -59,7 +59,7 @@ Rectangle {
             color:controlViewCreatorMouse.containsMouse ? "#33b13b" : closeArea.containsMouse  ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
 
             SGIcon {
-                id: plusSignIcon
+                id: timesSignIcon
                 width: 20
                 height: width
                 anchors.centerIn: parent
