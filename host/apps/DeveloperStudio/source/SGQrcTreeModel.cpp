@@ -476,7 +476,7 @@ void SGQrcTreeModel::removeDeletedFilesFromQrc()
     QDomNodeList files = qrcDoc_.elementsByTagName("file");
     QDir baseDirectory(SGUtilsCpp::urlToLocalFile(projectDir_));
 
-    for (int i = 0; i < files.count(); i++) {
+    for (int i = files.count() - 1; i >= 0; --i) {
         QString relativePath = files.at(i).toElement().text();
         QString absolutePath = baseDirectory.absoluteFilePath(relativePath);
 
