@@ -11,7 +11,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlViewCreatorRoot
-    objectName: "ControlViewCreator"
 
     property bool isConfirmCloseOpen: false
     property bool rccInitialized: false

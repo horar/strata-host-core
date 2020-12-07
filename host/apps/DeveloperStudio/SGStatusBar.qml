@@ -112,6 +112,11 @@ Rectangle {
             model: NavigationControl.platform_view_model_
         }
 
+        CVCButton {
+            id: cvcButton
+            visible: false
+        }
+
         SGPlatformTab {
             // demonstration tab set for help tour
             id: helpTab
@@ -147,8 +152,6 @@ Rectangle {
             }
         }
     }
-
-    CVCButton { }
 
     Item {
         id: profileIconContainer
@@ -296,6 +299,16 @@ Rectangle {
                         settingsLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("CVC")
+                    visible: cvcButton.state === "debug"
+                    width: profileMenu.width
+
+                    onClicked: {
+                        cvcButton.toggleVisibility()
+                    }
                 }
 
                 Rectangle {
