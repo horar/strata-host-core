@@ -32,7 +32,7 @@ Item {
         id: tagBackground
         anchors.fill: parent
         radius: 2
-        color: TangoTheme.palette.butter
+        color: TangoTheme.palette.butter1
         visible: tagText.text.length > 0
     }
 

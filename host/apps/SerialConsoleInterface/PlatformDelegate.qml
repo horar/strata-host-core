@@ -190,7 +190,7 @@ FocusScope {
 
                             color: {
                                 if (model.type === Sci.SciScrollbackModel.Request) {
-                                    return Qt.lighter(TangoTheme.palette.chocolate, 1.3)
+                                    return Qt.lighter(TangoTheme.palette.chocolate1, 1.3)
                                 }
 
                                 return "transparent"
@@ -489,7 +489,7 @@ FocusScope {
                                 return TangoTheme.palette.error
                             }
 
-                            return TangoTheme.palette.plum
+                            return TangoTheme.palette.plum1
                         }
                     }
                 }

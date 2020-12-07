@@ -117,7 +117,7 @@ FocusScope {
                 text: "ACTIVE"
                 font.bold: true
                 textColor: "white"
-                color: TangoTheme.palette.plum
+                color: TangoTheme.palette.plum1
                 visible: model.platform.scrollbackModel.autoExportIsActive
             }
 

@@ -745,7 +745,7 @@ FocusScope {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     Layout.minimumHeight: parent.height/4
-                    border.color: TangoTheme.palette.butter
+                    border.color: TangoTheme.palette.butter1
                     border.width: 2
                     visible: searchingMode
 
