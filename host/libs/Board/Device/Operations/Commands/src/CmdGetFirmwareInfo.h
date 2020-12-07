@@ -10,6 +10,7 @@ public:
     explicit CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse = true, uint maxRetries = 0);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
+    void commandRejected() override;
     void onTimeout() override;
 private:
     const bool requireResponse_;
