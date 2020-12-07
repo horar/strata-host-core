@@ -27,6 +27,7 @@ var uuid_map = {
     "entice_rgb" : "entice_rgb",
     "template": "template",
 
+
     /*****
         CES HACK or temporary Class ID for development purposes(class_id)
     *****/
