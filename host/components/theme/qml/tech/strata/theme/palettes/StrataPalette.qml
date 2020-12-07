@@ -18,4 +18,5 @@ QtObject {
     readonly property color error:          red
     readonly property color warning:        orange
     readonly property color success:        "#28a745"
+    readonly property color highlight:      lightBlue
 }

@@ -4,7 +4,6 @@ import QtQml 2.12
 QtObject {
     id: tangoPalette
 
-    // ADDITIONAL COLORS
     readonly property color chocolate:      "#e9b96e"
     readonly property color plum:           "#ad7fa8"
     readonly property color scarletRed1:   "#ef2920"
