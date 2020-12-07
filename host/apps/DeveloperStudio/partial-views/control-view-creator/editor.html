@@ -36,6 +36,11 @@
                 editor.layout()
             });
 
+            link.setContainerWidth.connect(function(width) {
+                document.getElementById("container").setAttribute("style", `width:${width}px`);
+                editor.layout()
+            });
+
             link.undo.connect(function() {
                 editor.trigger('undoClicked', 'undo');
             });

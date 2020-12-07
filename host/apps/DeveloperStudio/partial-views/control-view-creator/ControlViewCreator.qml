@@ -11,7 +11,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlViewCreatorRoot
-    objectName: "ControlViewCreator"
 
     property bool isConfirmCloseOpen: false
     property bool rccInitialized: false
@@ -170,85 +169,76 @@ Rectangle {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
-                SGText {
-                    anchors {
-                        centerIn: parent
-                    }
-                    fontSizeMultiplier: 2
-                    text: "Control view from RCC loaded here"
-                    opacity: .25
-                }
-            }
+                Loader {
+                    id: controlViewLoader
+                    anchors.fill: parent
+                    asynchronous: true
 
-            Loader {
-                id: controlViewLoader
-                asynchronous: true
+                    onStatusChanged: {
+                        if (status === Loader.Ready) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
 
-                onStatusChanged: {
-                    if (status === Loader.Ready) {
-                        // Tear Down creation context
-                        delete NavigationControl.context.class_id
-                        delete NavigationControl.context.device_id
+                            toolBarListView.recompiling = false
+                            if (toolBarListView.currentIndex === toolBarListView.viewTab
+                                    || source === NavigationControl.screens.LOAD_ERROR) {
+                                viewStack.currentIndex = 2
+                            }
+                        } else if (status === Loader.Error) {
+                            // Tear Down creation context
+                            delete NavigationControl.context.class_id
+                            delete NavigationControl.context.device_id
 
-                        toolBarListView.recompiling = false
-                        if (toolBarListView.currentIndex === toolBarListView.viewTab
-                                || source === NavigationControl.screens.LOAD_ERROR) {
-                            viewStack.currentIndex = 2
+                            toolBarListView.recompiling = false
+                            console.error("Error while loading control view")
+                            setSource(NavigationControl.screens.LOAD_ERROR,
+                                      { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
+                                      );
                         }
-                    } else if (status === Loader.Error) {
-                        // Tear Down creation context
-                        delete NavigationControl.context.class_id
-                        delete NavigationControl.context.device_id
-
-                        toolBarListView.recompiling = false
-                        console.error("Error while loading control view")
-                        setSource(NavigationControl.screens.LOAD_ERROR,
-                                  { "error_message": "Failed to load control view" }
-                                  );
                     }
                 }
             }
-
         }
     }
-
-    function recompileControlViewQrc () {
-        if (editor.fileTreeModel.url.toString() !== '') {
-            recompileRequested = true
-            sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
-        }
-    }
-
-    function loadDebugView (compiledRccFile) {
-        controlViewLoader.setSource("")
-
-        let uniquePrefix = new Date().getTime().valueOf()
-        uniquePrefix = "/" + uniquePrefix
-
-        // Register debug control view object
-        if (!sdsModel.resourceLoader.registerResource(compiledRccFile, uniquePrefix)) {
-            console.error("Failed to register resource")
-            return
+        function recompileControlViewQrc () {
+            if (editor.fileTreeModel.url.toString() !== '') {
+                recompileRequested = true
+                sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
+            }
         }
 
-        let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
+        function loadDebugView (compiledRccFile) {
+            controlViewLoader.setSource("")
 
-        Help.setClassId(debugPlatform.deviceId)
-        NavigationControl.context.class_id = debugPlatform.classId
-        NavigationControl.context.device_id = debugPlatform.deviceId
+            let uniquePrefix = new Date().getTime().valueOf()
+            uniquePrefix = "/" + uniquePrefix
 
-        controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
-    }
+            // Register debug control view object
+            if (!sdsModel.resourceLoader.registerResource(compiledRccFile, uniquePrefix)) {
+                console.error("Failed to register resource")
+                return
+            }
 
-    function blockWindowClose() {
-        let unsavedCount = editor.openFilesModel.getUnsavedCount();
-        if (unsavedCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
-            confirmClosePopup.unsavedFileCount = unsavedCount;
-            confirmClosePopup.open();
-            controlViewCreatorRoot.isConfirmCloseOpen = true;
-            return true
+            let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
+
+            Help.setClassId(debugPlatform.deviceId)
+            NavigationControl.context.class_id = debugPlatform.classId
+            NavigationControl.context.device_id = debugPlatform.deviceId
+
+            controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
         }
-        return false
-    }
+
+        function blockWindowClose() {
+            let unsavedCount = editor.openFilesModel.getUnsavedCount();
+            if (unsavedCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
+                confirmClosePopup.unsavedFileCount = unsavedCount;
+                confirmClosePopup.open();
+                controlViewCreatorRoot.isConfirmCloseOpen = true;
+                return true
+            }
+            return false
+        }
+
 }
 

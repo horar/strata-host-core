@@ -67,64 +67,6 @@ Rectangle {
                     }
                 }
 
-                RowLayout {
-                    Layout.preferredWidth: 50
-                    Layout.fillHeight: true
-                    spacing: 0
-
-                    Rectangle{
-                        Layout.fillHeight: true
-                        Layout.preferredWidth: 25
-                        color: plusArea.containsMouse ? "#aaa" : "transparent"
-
-                        SGIcon {
-                            width: 15
-                            height: width
-                            anchors.centerIn: parent
-                            source: "qrc:/sgimages/plus.svg"
-                            iconColor: "#ddd"
-                        }
-
-                        MouseArea {
-                            id: plusArea
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-
-                            onClicked: {
-                                // increase font size of the console logger
-                                consoleLogger.fontMultiplier += 0.1
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        Layout.fillHeight: true
-                        Layout.preferredWidth: 25
-                        color: minusArea.containsMouse ? "#aaa" : "transparent"
-
-                        SGIcon {
-                            width: 15
-                            height: width
-                            anchors.centerIn: parent
-                            source: "qrc:/sgimages/minus.svg"
-                            iconColor: "#ddd"
-                        }
-
-                        MouseArea {
-                            id: minusArea
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-
-                            onClicked: {
-                                // decrease font size of the console logger
-                                consoleLogger.fontMultiplier -= 0.1
-                            }
-                        }
-                    }
-                }
-
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true

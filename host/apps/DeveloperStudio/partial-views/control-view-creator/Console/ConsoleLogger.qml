@@ -12,7 +12,7 @@ ScrollView {
     clip: true
     wheelEnabled: true
 
-    property double fontMultiplier: 1.3
+    property double fontMultiplier: 1.1
     property string searchText: ""
     property int defaultRole: 1
     property int hit: -1
@@ -34,17 +34,58 @@ ScrollView {
 
         delegate: Rectangle {
             width: parent.width - 50
-            height: consoleItems.filterAcceptsRow(model.index) ? msgText.height * fontMultiplier : 0
+            height: consoleItems.filterAcceptsRow(model.index) ? 20 : 0
             color: "#eee"
             anchors.leftMargin: 10
             visible: consoleItems.filterAcceptsRow(model.index)
+            RowLayout{
+                id: row
+                anchors.fill: parent
+                height: msgText.height
+                SGText {
+                    id: msgTime
+                    fontSizeMultiplier: fontMultiplier
+                    wrapMode: Text.WordWrap
+                    Layout.minimumWidth: 85
+                    Layout.preferredWidth: 85
+                    text: model.time
+                }
+                    RowLayout {
+                        Layout.preferredHeight: textMetric.height
+                        Layout.preferredWidth: textMetric.width
 
-            SGText {
-                id: msgText
-                fontSizeMultiplier: fontMultiplier
-                wrapMode: Text.WordWrap
-                width: parent.width
-                text: `${model.time} \t ${getMsgType(type)} \t ${model.msg}`
+                        spacing: 0
+
+                        SGText {
+                            id: leftSide
+                            Layout.alignment: Qt.AlignLeft
+                            text: leftSidesColor(model.type)
+                            fontSizeMultiplier: fontMultiplier
+                        }
+
+                        SGText {
+                            id: msgType
+                            Layout.alignment: Qt.AlignCenter
+                            text: getMsgType(model.type)
+                            fontSizeMultiplier: fontMultiplier
+                        }
+
+                        SGText {
+                            id: rightSide
+                            Layout.alignment: Qt.AlignRight
+                            text: rightSidesColor(model.type)
+                            fontSizeMultiplier: fontMultiplier
+                        }
+                    }
+
+                SGText {
+                    id: msgText
+                    fontSizeMultiplier: fontMultiplier
+                    Layout.fillWidth: true
+                    Layout.minimumHeight: textMetric.height
+                    elide: Text.ElideRight
+                    text: model.msg
+                }
             }
 
         }
@@ -89,12 +130,30 @@ ScrollView {
         }
     }
 
+    function rightSidesColor(type){
+        switch(type){
+        case 0: return "<font color=\"cyan\" > ] </font>"
+        case 1: return "<font color=\"yellow\"> ] </font>"
+        case 2: return "<font color=\"red\"> ] </font>"
+        case 4: return "<font color=\"green\"> ] </font>"
+        }
+    }
+
+    function leftSidesColor(type){
+        switch(type){
+        case 0: return "<font color=\"cyan\" > [ </font>"
+        case 1: return "<font color=\"yellow\"> [ </font>"
+        case 2: return "<font color=\"red\"> [ </font>"
+        case 4: return "<font color=\"green\"> [ </font>"
+        }
+    }
+
     function getMsgType(type){
         switch(type){
-        case 0: return "<font color=\"cyan\" > \t[\tdebug\t]\t </font>"
-        case 1: return "<font color=\"yellow\"> \t[warning]\t </font>"
-        case 2: return "<font color=\"red\"> \t[\terror\t]\t </font>"
-        case 4: return "<font color=\"green\"> \t[\tinfo\t]\t </font>"
+        case 0: return "<font color=\"cyan\" > debug </font>"
+        case 1: return "<font color=\"yellow\"> warning </font>"
+        case 2: return "<font color=\"red\"> error </font>"
+        case 4: return "<font color=\"green\"> info </font>"
         }
     }
 
@@ -128,5 +187,11 @@ ScrollView {
         }
 
         return `${hours}:${minutes}:${seconds}.${millisecs}`
+    }
+
+    TextMetrics {
+        id: textMetric
+        text: `[  warning  ]`
+        font.pixelSize: 13 * fontMultiplier
     }
 }
