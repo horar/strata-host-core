@@ -156,7 +156,7 @@ Item {
             right: parent.right
             rightMargin: 6
             top: navTabs.bottom
-            topMargin: 20
+            topMargin: 30
         }
         color: "transparent"
         SGIcon {
@@ -164,8 +164,9 @@ Item {
             anchors.fill: parent
             source: "qrc:/sgimages/question-circle.svg"
             iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-            sourceSize.height: 40
             visible: true
+            height: 30
+            width: 30
             MouseArea {
                 id: helpMouse
                 anchors {
