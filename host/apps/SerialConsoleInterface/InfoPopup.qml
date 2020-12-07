@@ -17,7 +17,7 @@ Popup {
     property url succeedIcon: "qrc:/sgimages/check.svg"
     property url failedIcon: "qrc:/sgimages/times.svg"
     property alias color: dot.color
-    property color succeedColor: TangoTheme.palette.green
+    property color succeedColor: Theme.palette.green
     property color failedColor: TangoTheme.palette.error
 
     function showSuccess(text) {
@@ -84,7 +84,7 @@ Popup {
                 id: dot
                 anchors.fill: parent
                 radius: Math.round(width/2)
-                color: TangoTheme.palette.green
+                color: Theme.palette.green
             }
             SGWidgets.SGIcon {
                 id: statusIcon

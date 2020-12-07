@@ -3,10 +3,6 @@ import QtQml 2.12
 
 QtObject {
     id: tango_palette_
-    // BASE COLORS
-    readonly property color green:          "#33b13b"
-    readonly property color dark:           "#252627"
-    readonly property color blue:           "#1f5087"
 
     // ADDITIONAL COLORS
     readonly property color chocolate:      "#e9b96e"

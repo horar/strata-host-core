@@ -850,7 +850,7 @@ FocusScope {
 
                     iconColor: {
                         if (stateLoopSucceed.active) {
-                            return TangoTheme.palette.green
+                            return Theme.palette.green
                         } else if (stateLoopFailed.active || stateError.active) {
                             return TangoTheme.palette.scarlet_red2
                         }

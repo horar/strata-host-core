@@ -109,7 +109,7 @@ Item {
                 radius: Math.round(width/2)
                 color: {
                     if (nodeState === StatusNode.Succeed) {
-                        return TangoTheme.palette.green
+                        return Theme.palette.green
                     } else if (nodeState === StatusNode.Failed) {
                         return  TangoTheme.palette.error
                     }
@@ -144,7 +144,7 @@ Item {
                     if (isFinal) {
                         return "white"
                     } else if (nodeState === StatusNode.Succeed) {
-                        return TangoTheme.palette.green
+                        return Theme.palette.green
                     } else if (nodeState === StatusNode.SucceedWithWarning) {
                         return TangoTheme.palette.warning
                     } else if (nodeState === StatusNode.Failed) {
