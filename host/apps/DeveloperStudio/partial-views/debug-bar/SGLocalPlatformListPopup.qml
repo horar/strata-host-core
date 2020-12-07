@@ -430,8 +430,8 @@ Window {
                                     }
 
                                     onEditingFinished: {
-                                        if(model.connected){
-                                            loadAndStorePlatform({class_id: class_id.classId, opn: class_id.opn},device_id.currentIndex,rowPlatform.firmware_version,checkForCustomId(class_id.classId))
+                                        if(model.connected && class_id.classId !== "" && device_id.currentIndex !== -1){
+                                           changeAndReplacePlatform({class_id: class_id.classId, opn: class_id.opn}, device_id.currentIndex, rowPlatform.firmware_version)
                                         }
                                     }
                                 }
@@ -574,8 +574,8 @@ Window {
                                 }
 
                                 onEditingFinished: {
-                                    if(model.connected){
-                                        loadAndStorePlatform({class_id: class_id.classId, opn: class_id.opn},device_id.currentIndex,rowPlatform.firmware_version,checkForCustomId(class_id.classId))
+                                    if(model.connected && class_id.classId !== "" && device_id.currentIndex !== -1){
+                                          changeAndReplacePlatform({class_id: class_id.classId, opn: class_id.opn}, device_id.currentIndex, rowPlatform.firmware_version)
                                     }
                                 }
                             }
@@ -780,7 +780,6 @@ Window {
     }
     // loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
     function loadAndStorePlatform(platform, device_deviation ,firmwareVer, custom){
-        console.log(custom)
         const platforms = classModel
         for(var i = 0; i < platforms.count; i++){
             if(platform.class_id === platforms.get(i).platform.class_id && !custom){
@@ -854,6 +853,13 @@ Window {
                     storeDeviceList.setValue("custom-platforms",{platforms: storeDeviceList.customPlatforms})
                 }
                 break
+            } else {
+                let list = {
+                    "list": injectPlatform.list,
+                    "type":"connected_platforms"
+
+                }
+                PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
             }
         }
     }
@@ -897,4 +903,22 @@ Window {
         }
         return true
     }
+
+    function changeAndReplacePlatform(platform, deviceId, firmwareVersion){
+        for (var i = 0; i < injectPlatform.list.length; i++){
+            if((deviceId + Constants.DEBUG_DEVICE_ID) === injectPlatform.list[i].device_id){
+                injectPlatform.list.splice(i,1)
+                let list = {
+                    "list": injectPlatform.list,
+                    "type":"connected_platforms"
+
+                }
+                PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                loadAndStorePlatform(platform, deviceId, firmwareVersion, checkForCustomId(platform.class_id))
+                break;
+            }
+        }
+    }
 }
+
+
