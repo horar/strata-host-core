@@ -854,6 +854,11 @@ Window {
                 }
                 break
             } else {
+                injectPlatform.list.push({
+                                             "class_id": platform.class_id,
+                                             "device_id": Constants.DEBUG_DEVICE_ID + device_deviation,
+                                             "firmware_version": firmwareVer
+                                         })
                 let list = {
                     "list": injectPlatform.list,
                     "type":"connected_platforms"
