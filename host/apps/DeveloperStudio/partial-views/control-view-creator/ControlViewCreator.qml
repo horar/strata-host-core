@@ -11,7 +11,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: controlViewCreatorRoot
-    objectName: "ControlViewCreator"
 
     property bool isConfirmCloseOpen: false
     property bool rccInitialized: false
@@ -195,7 +194,7 @@ Rectangle {
                             toolBarListView.recompiling = false
                             console.error("Error while loading control view")
                             setSource(NavigationControl.screens.LOAD_ERROR,
-                                      { "error_message": "Failed to load control view" }
+                                      { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
                             );
                         }
                     }

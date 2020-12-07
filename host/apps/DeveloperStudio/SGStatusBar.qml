@@ -106,15 +106,15 @@ Rectangle {
             }
         }
 
-        CVCButton {
-            id: cvcButton
-            visible: false
-        }
-
         Repeater {
             id: platformTabRepeater
             delegate: SGPlatformTab {}
             model: NavigationControl.platform_view_model_
+        }
+
+        CVCButton {
+            id: cvcButton
+            visible: false
         }
 
         SGPlatformTab {
@@ -301,6 +301,16 @@ Rectangle {
                     width: profileMenu.width
                 }
 
+                SGMenuItem {
+                    text: qsTr("CVC")
+                    visible: cvcButton.state === "debug"
+                    width: profileMenu.width
+
+                    onClicked: {
+                        cvcButton.toggleVisibility()
+                    }
+                }
+
                 Rectangle {
                     id: menuDivider
                     color: "white"
@@ -313,6 +323,7 @@ Rectangle {
                 }
 
                 SGMenuItem {
+<<<<<<< HEAD
                     text: qsTr("C.V.C")
                     onClicked: {
                       cvcButton.toggleVisibility()
@@ -321,6 +332,8 @@ Rectangle {
                 }
 
                 SGMenuItem {
+=======
+>>>>>>> b2ccb58046f37d232d3cd4b6e18738fc1dd7033b
                     text: qsTr("Log Out")
                     onClicked: {
                         profileMenu.close()
