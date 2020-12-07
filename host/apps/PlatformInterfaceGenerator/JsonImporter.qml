@@ -153,11 +153,15 @@ ColumnLayout {
                     alertToast.textColor = "black"
                     alertToast.color = "#DFDF43"
                     alertToast.interval = 0
+
+                    debugMenuGenerator.generate(inputFilePath, outputFilePath);
                 } else {
                     alertToast.textColor = "white"
                     alertToast.text = "Successfully generated PlatformInterface.qml"
                     alertToast.color = "green"
                     alertToast.interval = 4000
+
+                    debugMenuGenerator.generate(inputFilePath, outputFilePath);
                 }
                 alertToast.show();
             }
