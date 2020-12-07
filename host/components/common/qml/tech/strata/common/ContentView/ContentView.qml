@@ -51,7 +51,6 @@ Rectangle {
     Connections {
         target: Help.utility
         onTour_runningChanged: {
-            console.log("in tour")
             if(tour_running === false) {
                 classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
                 accordion.contentItem.children[0].open = state1
@@ -76,6 +75,7 @@ Rectangle {
         width: 30
         function clickAction() {
             Help.startHelpTour("contentViewHelp", "strataMain")
+
         }
         z: 2
 
@@ -88,10 +88,8 @@ Rectangle {
                 state1 = accordion.contentItem.children[0].open
                 state2 = accordion.contentItem.children[1].open
                 state3 = accordion.contentItem.children[2].open
-                console.log("tanya",state1,state2,state3)
                 helpIcon.clickAction()
                 classDocuments = sdsModel.documentManager.getClassDocuments("b039e649-2713-4557-afb7-9fabeacd4290")
-
             }
             hoverEnabled: true
         }
@@ -206,15 +204,16 @@ Rectangle {
                             target: Help.utility
                             onInternal_tour_indexChanged: {
                                 if(Help.current_tour_targets[index]["target"] === pdfAccordion){
-                                    pdfAccordion.open = true
-                                    Help.liveResize()
+                                    if(!pdfAccordion.open)
+                                        pdfAccordion.open = true
+                                    else Help.liveResize()
+
                                 }
                             }
                         }
 
                         Component.onCompleted: {
                             Help.registerTarget(pdfAccordion,"test1",0,"contentViewHelp")
-
                         }
                     }
 
