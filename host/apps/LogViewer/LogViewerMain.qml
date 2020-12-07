@@ -19,6 +19,7 @@ FocusScope {
     property int openedFilesCount: fileModel.count
     property int cellHeightSpacer: 6
     property int defaultIconSize: 24
+    property int smallIconSize: 20
     property int fontMinSize: 8
     property int fontMaxSize: 24
     property string lastOpenedFolder: ""
@@ -383,7 +384,7 @@ FocusScope {
             id: caseSensButton
             anchors.verticalCenter: parent.verticalCenter
             icon.source: "qrc:/images/case-sensitive.svg"
-            iconSize: defaultIconSize/1.2
+            iconSize: smallIconSize
             backgroundOnlyOnHovered: false
             checkable: true
             enabled: fileLoaded
@@ -395,7 +396,7 @@ FocusScope {
             id: regExpButton
             anchors.verticalCenter: parent.verticalCenter
             icon.source: "qrc:/images/regular-expression.svg"
-            iconSize: defaultIconSize/1.2
+            iconSize: smallIconSize
             backgroundOnlyOnHovered: false
             checkable: true
             enabled: fileLoaded
@@ -407,7 +408,7 @@ FocusScope {
             id: showMarksButton
             anchors.verticalCenter: parent.verticalCenter
             icon.source: "qrc:/sgimages/bookmark.svg"
-            iconSize: defaultIconSize/1.2
+            iconSize: smallIconSize
             backgroundOnlyOnHovered: false
             checkable: true
             enabled: fileLoaded
