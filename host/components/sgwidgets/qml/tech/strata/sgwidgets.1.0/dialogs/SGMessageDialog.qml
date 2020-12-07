@@ -55,7 +55,7 @@ SGDialog {
             return Theme.palette.error
         }
 
-        return Theme.palette.blue
+        return Theme.palette.darkBlue
     }
 
     headerIcon: {

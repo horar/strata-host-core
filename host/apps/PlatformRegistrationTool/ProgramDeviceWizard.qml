@@ -852,7 +852,7 @@ FocusScope {
                         if (stateLoopSucceed.active) {
                             return Theme.palette.green
                         } else if (stateLoopFailed.active || stateError.active) {
-                            return TangoTheme.palette.scarlet_red2
+                            return TangoTheme.palette.scarletRed2
                         }
 
                         return "black"

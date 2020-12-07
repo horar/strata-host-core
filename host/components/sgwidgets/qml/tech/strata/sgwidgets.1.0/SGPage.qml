@@ -21,7 +21,7 @@ Page {
 
         Rectangle {
             anchors.fill: parent
-            color: Theme.palette.blue
+            color: Theme.palette.darkBlue
         }
 
         SGWidgets.SGIconButton {

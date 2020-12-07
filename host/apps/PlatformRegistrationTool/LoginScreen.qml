@@ -170,7 +170,7 @@ FocusScope {
                         if (loginStatus === LoginScreen.LoginSucceed) {
                             return Theme.palette.green
                         } else if (loginStatus === LoginScreen.LoginFailed) {
-                            return TangoTheme.palette.scarlet_red2
+                            return TangoTheme.palette.scarletRed2
                         }
 
                         return "black"

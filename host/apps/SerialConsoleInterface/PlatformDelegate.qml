@@ -505,7 +505,7 @@ FocusScope {
 
                     text: model.platform.errorString
                     verticalPadding: 1
-                    color: TangoTheme.palette.scarlet_red1
+                    color: TangoTheme.palette.scarletRed1
                     textColor: "white"
                     font.bold: true
                 }
