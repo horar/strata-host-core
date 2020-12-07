@@ -274,6 +274,11 @@ int SGSortFilterProxyModel::mapIndexFromSource(int i)
     return mapFromSource(QSortFilterProxyModel::sourceModel()->index(i, 0)).row();
 }
 
+bool SGSortFilterProxyModel::matches(const QString &text) const
+{
+    return filterRegExp().indexIn(text) != -1;
+}
+
 int SGSortFilterProxyModel::roleKey(const QString &role) const
 {
     QHash<int, QByteArray> roles = roleNames();
