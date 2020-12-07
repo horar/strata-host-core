@@ -17,6 +17,7 @@ Rectangle {
     height: container.height
     width: controlViewCreatorRow.implicitWidth
     color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
+    state: "debug"
 
     MouseArea {
         id: controlViewCreatorMouse
