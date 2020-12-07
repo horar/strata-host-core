@@ -384,7 +384,7 @@ Window {
                                 hoverEnabled: true
 
                                 onClicked: {
-                                    unloadAndRemovePlatform(class_id.classId)
+                                    unloadAndRemovePlatform(platformsComboBox.classId)
                                     for(var i = 0; i < currDeviceModel.count; i++){
                                         if(currDeviceModel.get(i).device_id === device_id.currentIndex){
                                             currDeviceModel.remove(i)
@@ -398,7 +398,7 @@ Window {
                         }
 
                         SGComboBox {
-                            id: class_id
+                            id: platformsComboBox
                             Layout.preferredHeight: 40
                             Layout.preferredWidth: 310
                             model: classModel
@@ -410,14 +410,14 @@ Window {
                             property string opn: rowPlatform.opn
 
                             onClassIdChanged: {
-                                class_id.contentItem.classId = classId
+                                platformsComboBox.contentItem.classId = classId
                             }
 
                             contentItem: RowLayout{
                                 anchors.fill: parent
                                 spacing: 0
 
-                                property string classId: class_id.classId
+                                property string classId: platformsComboBox.classId
 
                                 SGTextField {
                                     placeholderText: "class_id..."
@@ -426,12 +426,12 @@ Window {
                                     Layout.preferredHeight: 40
 
                                     onTextChanged: {
-                                        class_id.classId = text
+                                        platformsComboBox.classId = text
                                     }
 
                                     onEditingFinished: {
-                                        if(model.connected && class_id.classId !== "" && device_id.currentIndex !== -1){
-                                           changeAndReplacePlatform({class_id: class_id.classId, opn: class_id.opn}, device_id.currentIndex, rowPlatform.firmware_version)
+                                        if(model.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1){
+                                           changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
                                         }
                                     }
                                 }
@@ -459,10 +459,10 @@ Window {
                                         cursorShape: Qt.PointingHandCursor
 
                                         onClicked: {
-                                            if(!class_id.popup.opened){
-                                                class_id.popup.open()
+                                            if(!platformsComboBox.popup.opened){
+                                                platformsComboBox.popup.open()
                                             } else {
-                                                class_id.popup.close()
+                                                platformsComboBox.popup.close()
                                             }
                                         }
                                     }
@@ -526,8 +526,8 @@ Window {
 
                                     onClicked: {
                                         if(mouse.button === Qt.LeftButton) {
-                                            class_id.setId(modelData.class_id)
-                                            class_id.popup.close()
+                                            platformsComboBox.setId(modelData.class_id)
+                                            platformsComboBox.popup.close()
                                         }
                                     }
                                 }
@@ -536,7 +536,7 @@ Window {
                             function setId(class_){
                                 for(var i = 0; i < classModel.count; i++){
                                     if(class_ === classModel.get(i).platform.class_id){
-                                        class_id.currentIndex = i
+                                        platformsComboBox.currentIndex = i
                                         classId = class_
                                         opn = classModel.get(i).platform.opn
                                     }
@@ -574,15 +574,15 @@ Window {
                                 }
 
                                 onEditingFinished: {
-                                    if(model.connected && class_id.classId !== "" && device_id.currentIndex !== -1){
-                                          changeAndReplacePlatform({class_id: class_id.classId, opn: class_id.opn}, device_id.currentIndex, rowPlatform.firmware_version)
+                                    if(model.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1){
+                                          changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
                                     }
                                 }
                             }
                         }
 
                         SGComboBox {
-                            id: device_id
+                            id: deviceIdComboBox
                             Layout.preferredHeight: 40
                             Layout.preferredWidth: 150
                             model: deviceModel
@@ -597,7 +597,7 @@ Window {
 
                                 text: modelData
                                 leftPadding: 5
-                                enabled: device_id.checkIfNotUsed(model.index)
+                                enabled: deviceIdComboBox.checkIfNotUsed(model.index)
 
                                 MouseArea {
                                     id: deviceArea
@@ -608,8 +608,8 @@ Window {
 
 
                                     onClicked: {
-                                        device_id.setDevice(modelData)
-                                        device_id.popup.close()
+                                        deviceIdComboBox.setDevice(modelData)
+                                        deviceIdComboBox.popup.close()
                                     }
                                 }
                             }
@@ -628,14 +628,14 @@ Window {
                                             } else {
                                                 currDeviceModel.append({device_id: i})
                                             }
-                                            device_id.currentIndex = i
+                                            deviceIdComboBox.currentIndex = i
                                             break
                                         } else {
                                             for (var j = 0; j < currDeviceModel.count; j++){
                                                 if(currDeviceModel.get(j).device_id === device_id.currentIndex){
                                                     currDeviceModel.remove(j)
                                                     currDeviceModel.set(j, {device_id: i})
-                                                    device_id.currentIndex = i
+                                                    deviceIdComboBox.currentIndex = i
                                                     break
                                                 }
                                             }
@@ -656,13 +656,13 @@ Window {
 
                         Switch {
                             checked: model.connected
-                            enabled: device_id.currentIndex >= 0 && textField.text !== "" && class_id.classId !== ""
+                            enabled: deviceIdComboBox.currentIndex >= 0 && textField.text !== "" && deviceIdComboBox.classId !== ""
                             onCheckedChanged: {
                                 model.connected = checked
                                 if(model.connected){
-                                    loadAndStorePlatform({class_id:class_id.classId, opn: class_id.opn},device_id.currentIndex,rowPlatform.firmware_version, checkForCustomId(class_id.classId))
+                                    loadAndStorePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn},deviceIdComboBox.currentIndex,rowPlatform.firmware_version, checkForCustomId(class_id.classId))
                                 } else {
-                                    unloadAndRemovePlatform(class_id.classId)
+                                    unloadAndRemovePlatform(platformsComboBox.classId)
                                 }
                             }
                         }
@@ -718,23 +718,24 @@ Window {
             }
         }
     }
-
+    // The ListModel for the connected platforms
     ListModel {
         id: listModel
     }
-
+    // The model for the PlatformSelection platforms {class_id and opn}
     ListModel {
         id: classModel
     }
-
+    // The model for the deviceIdComboBox
     ListModel {
         id: deviceModel
     }
-
+    // The model that stores which device_id's are in Use
     ListModel {
         id: currDeviceModel
     }
 
+    // Parses and adds Custom ID's to the classModel
     function parseCustomSavedIds(){
         if(storeDeviceList.value("custom-platforms") !== undefined){
             const storedPlatform = storeDeviceList.value("custom-platforms")
@@ -778,7 +779,7 @@ Window {
             listModel.append({class_id: "", opn: "" ,device_id: 0, firmware_version: "0.0.2", connected: false})
         }
     }
-    // loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
+    // Loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
     function loadAndStorePlatform(platform, device_deviation ,firmwareVer, custom){
         const platforms = classModel
         for(var i = 0; i < platforms.count; i++){
@@ -868,7 +869,7 @@ Window {
             }
         }
     }
-
+    // Unloads and removes the Object containing the class_id in the InjectPlatform list
     function unloadAndRemovePlatform(classId){
         for(var i = 0; i < injectPlatform.list.length; i++){
             if(injectPlatform.list[i].class_id === classId){
@@ -883,7 +884,7 @@ Window {
             }
         }
     }
-
+    // Removes the index in both the stored-platforms and the listModel or remove the index in the listModel
     function deletePlatform(index){
         if(storeDeviceList.value("stored-platforms") !== undefined){
             if(storeDeviceList.value("stored-platforms").hasOwnProperty("platforms")){
@@ -899,7 +900,7 @@ Window {
         }
     }
 
-    // checks for a custom class_id
+    // Checks for a custom class_id
     function checkForCustomId(classId){
         for(var i = 0; i < PlatformSelection.platformSelectorModel.count; i++){
             if(classId === PlatformSelection.platformSelectorModel.get(i).class_id){
@@ -908,7 +909,7 @@ Window {
         }
         return true
     }
-
+    // OnEditingFinished for both the class_id.contentItem and the rowPlatform.version that will changeAndReplacePlatform the current Platform
     function changeAndReplacePlatform(platform, deviceId, firmwareVersion){
         for (var i = 0; i < injectPlatform.list.length; i++){
             if((deviceId + Constants.DEBUG_DEVICE_ID) === injectPlatform.list[i].device_id){
