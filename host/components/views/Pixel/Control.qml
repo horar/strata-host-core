@@ -150,13 +150,13 @@ Item {
     }
 
     Rectangle {
-        width: 40
-        height: 40
+        width: 30
+        height: 30
         anchors {
             right: parent.right
             rightMargin: 6
             top: navTabs.bottom
-            topMargin: 30
+            topMargin: 32
         }
         color: "transparent"
         SGIcon {
@@ -165,8 +165,6 @@ Item {
             source: "qrc:/sgimages/question-circle.svg"
             iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
             visible: true
-            height: 30
-            width: 30
             MouseArea {
                 id: helpMouse
                 anchors {
