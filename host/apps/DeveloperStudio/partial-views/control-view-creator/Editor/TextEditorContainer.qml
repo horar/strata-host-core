@@ -295,10 +295,6 @@ Item {
             }
         }
 
-        onContextMenuRequested: {
-
-        }
-
         url: "qrc:///partial-views/control-view-creator/editor.html"
 
         Rectangle {
