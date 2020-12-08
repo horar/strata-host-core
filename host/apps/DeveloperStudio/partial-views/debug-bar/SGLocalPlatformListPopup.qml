@@ -25,7 +25,7 @@ Window {
         if(visible) {
             initialModelLoad()
         } else {
-
+            storeDevices()
             for(var i = 0; i < listModel.count; i++){
                 unloadAndRemovePlatform(listModel.get(i).class_id)
             }
@@ -430,13 +430,17 @@ Window {
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 40
 
+                                    property bool onHasChanged: false
+
                                     onTextChanged: {
                                         platformsComboBox.classId = text
+                                        onHasChanged = true
                                     }
 
                                     onEditingFinished: {
-                                        if(rowPlatform.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1){
-                                           changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
+                                        if(onHasChanged && rowPlatform.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1 && rowPlatform.firmware_version !== ""){
+                                            changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
+                                            onHasChanged = false
                                         }
                                     }
                                 }
@@ -538,9 +542,9 @@ Window {
                                     cursorShape: Qt.PointingHandCursor
                                     hoverEnabled: true
 
-                                    onClicked: {                                       
-                                            platformsComboBox.setId(modelData.class_id)
-                                            platformsComboBox.popup.close()
+                                    onClicked: {
+                                        platformsComboBox.setId(modelData.class_id)
+                                        platformsComboBox.popup.close()
                                     }
                                 }
                             }
@@ -586,13 +590,17 @@ Window {
 
                                 text: rowPlatform.firmware_version
 
+                                property bool hasChanged: false
+
                                 onTextChanged: {
                                     rowPlatform.firmware_version = text
+                                    hasChanged = true
                                 }
 
                                 onEditingFinished: {
-                                    if(rowPlatform.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1){
-                                          changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
+                                    if(hasChanged && rowPlatform.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1 && rowPlatform.firmware_version !== ""){
+                                        changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
+                                        hasChanged = false
                                     }
                                 }
                             }
@@ -659,7 +667,7 @@ Window {
                                         }
                                     }
                                 }
-                            } 
+                            }
 
                             function checkIfNotUsed(device_id) {
                                 for(var i = 0; i < currDeviceModel.count; i++){
@@ -711,7 +719,7 @@ Window {
             category: "StoreDevicesList"
             fileName: "storedDevices"
             // will store custom platforms
-       }
+        }
 
         function removeLocalPlatformList() {
             PlatformSelection.setLocalPlatformList([])
@@ -822,11 +830,9 @@ Window {
 
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
                 let flag = false
-                if(storeDeviceList.value("stored-platforms") !== undefined) {
-                    const storedPlatforms = JSON.parse(storeDeviceList.value("stored-platforms"))
-                    const platforms = JSON.parse(storedPlatforms.platforms)
-                    for( var y = 0; y < platforms.length; y++){
-                        if(platforms[y].platform.class_id === platform.class_id){
+                if(injectPlatform.storedPlatforms !== []) {
+                    for( var y = 0; y < injectPlatform.storedPlatforms.length; y++){
+                        if(injectPlatform.storedPlatforms[y].platform.class_id === platform.class_id){
                             flag = true
                             break
                         }
@@ -834,14 +840,11 @@ Window {
                 }
                 if(!flag){
                     injectPlatform.storedPlatforms.push({platform: {class_id: platform.class_id, opn: platform.opn, device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
-                    storeDeviceList.setValue("stored-platforms",JSON.stringify({platforms: JSON.stringify(injectPlatform.storedPlatforms)}))
                 }
                 flag = false
-                if(storeDeviceList.value("custom-platforms") !== undefined) {
-                    const customPlatforms = JSON.parse(storeDeviceList.value("custom-platforms"))
-                    const platforms = JSON.parse(customPlatforms.platforms)
-                    for( let x = 0; x < platforms.length; x++){
-                        if(platforms[x].platform.class_id === platform.class_id){
+                if(injectPlatform.customPlatforms !== []) {
+                    for( let x = 0; x < injectPlatform.customPlatforms.length; x++){
+                        if(injectPlatform.customPlatforms[x].platform.class_id === platform.class_id){
                             flag = true
                             break
                         }
@@ -873,13 +876,10 @@ Window {
     }
     // Removes the index in both the stored-platforms and the listModel or remove the index in the listModel
     function deletePlatform(index){
-        if(storeDeviceList.value("stored-platforms") !== undefined){
-                let storedPlatforms = JSON.parse(storeDeviceList.value("stored-platforms"))
-                let platforms = JSON.parse(storedPlatforms.platforms)
-                listModel.remove(index)
-                platforms.splice(index,1)
-                injectPlatform.list.splice(index, 1)
-                storeDeviceList.setValue("stored-platforms", JSON.stringify({platforms: JSON.stringify(platforms)}))
+        if(injectPlatform.storedPlatforms !== []){
+            listModel.remove(index)
+            injectPlatform.storedPlatforms.splice(index,1)
+            injectPlatform.list.splice(index, 1)
         } else {
             listModel.remove(index)
         }
@@ -898,17 +898,32 @@ Window {
     function changeAndReplacePlatform(platform, deviceId, firmwareVersion){
         for (var i = 0; i < injectPlatform.list.length; i++){
             if((deviceId + Constants.DEBUG_DEVICE_ID) === injectPlatform.list[i].device_id){
-                injectPlatform.list.splice(i,1)
+                const deletedPlatform = injectPlatform.list.splice(i,1)
+                injectPlatform.list.splice(i,1);
                 let list = {
                     "list": injectPlatform.list,
                     "type":"connected_platforms"
 
                 }
-                PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
-                loadAndStorePlatform(platform, deviceId, firmwareVersion, checkForCustomId(platform.class_id))
+                // Removes updated class_id from storedPlatforms
+                if(injectPlatform.storedPlatforms !== [] && platform.class_id !== deletedPlatform[0].class_id){
+
+                        for (var j = 0; j < injectPlatform.storedPlatforms.length; j++){
+                            if(deletedPlatform[0].class_id === injectPlatform.storedPlatforms[j].platform.class_id){
+                                injectPlatform.storedPlatforms.splice(j, 1)
+                                PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                                loadAndStorePlatform(platform, deviceId, firmwareVersion, checkForCustomId(platform.class_id))
+                                break
+                            }
+                        }
+                }
                 break;
             }
         }
+    }
+
+    function storeDevices() {
+         storeDeviceList.setValue("stored-platforms",JSON.stringify({platforms: JSON.stringify(injectPlatform.storedPlatforms)}))
     }
 }
 
