@@ -28,14 +28,15 @@ Rectangle {
         width: imageContainer.width
         visible: model.image !== undefined && status == Image.Ready
         fillMode: Image.PreserveAspectFit
+        asynchronous: true
 
         property string modelSource: model.image
 
-        onModelSourceChanged: {
+        Component.onCompleted: {
             initialize()
         }
 
-        Component.onCompleted: {
+        onModelSourceChanged: {
             initialize()
         }
 
@@ -43,7 +44,7 @@ Rectangle {
             if (model.image.length === 0) {
                 console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
                 source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
-            } else if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))) {
+            } else if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image)) && SGUtilsCpp.isValidImage(SGUtilsCpp.urlToLocalFile(model.image))) {
                 source = model.image
             } else {
                 imageCheck.start()
@@ -51,7 +52,7 @@ Rectangle {
         }
 
         onStatusChanged: {
-            if (image.status == Image.Error){
+            if (image.status === Image.Error){
                 console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image failed to load - corrupt or does not exist:", model.image)
                 source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
             }
@@ -66,7 +67,7 @@ Rectangle {
             onTriggered: {
                 interval += interval
                 if (interval < 32000) {
-                    if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))){
+                    if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image)) && SGUtilsCpp.isValidImage(SGUtilsCpp.urlToLocalFile(model.image))){
                         image.source = model.image
                         return
                     }

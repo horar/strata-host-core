@@ -126,7 +126,7 @@ void BaseDeviceOperation::handleSendCommand()
     }
 }
 
-void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
+void BaseDeviceOperation::handleDeviceResponse(const QByteArray data)
 {
     if (currentCommand_ == commandList_.end()) {
         qCDebug(logCategoryDeviceOperations) << device_ << "No command is being processed, message from device is ignored.";

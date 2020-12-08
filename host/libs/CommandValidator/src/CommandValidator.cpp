@@ -369,7 +369,7 @@ const std::map<const CommandValidator::JsonType, const char*> CommandValidator::
 rapidjson::SchemaDocument CommandValidator::parseSchema(const QByteArray &schema, bool *isOk) {
     bool ok = true;
     rapidjson::Document sd;
-    rapidjson::ParseResult result = sd.Parse(schema.data());
+    rapidjson::ParseResult result = sd.Parse(schema.data(), schema.size());
     if (result.IsError()) {
         qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
             << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON schema: '" << schema << "'";
@@ -382,7 +382,7 @@ rapidjson::SchemaDocument CommandValidator::parseSchema(const QByteArray &schema
     return rapidjson::SchemaDocument(sd);
 }
 
-bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json) {
+bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json, bool quiet) {
     rapidjson::SchemaValidator validator(schema);
 
     if (json.Accept(validator) == false) {
@@ -397,7 +397,10 @@ bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &s
 
         validator.GetError().Accept(writer);
 
-        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
+        if (quiet == false) {
+            qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
+        }
+
         return false;
     }
 
@@ -459,20 +462,24 @@ bool CommandValidator::validateNotification(const JsonType type, const rapidjson
 }
 
 bool CommandValidator::isValidJson(const QByteArray &command) {
-    return (rapidjson::Document().Parse(command.data()).HasParseError() == false);
+    return (rapidjson::Document().Parse(command.data(), command.size()).HasParseError() == false);
 }
 
-bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Document &doc) {
-    rapidjson::ParseResult result = doc.Parse(command.data());
+bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Document &doc, bool quiet) {
+    rapidjson::ParseResult result = doc.Parse(command.data(), command.size());
     if (result.IsError()) {
-        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
-            << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON: '" << command << "'";
+        if (quiet == false) {
+            qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
+                << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON: '" << command << "'";
+        }
         return false;
     }
     if (doc.IsObject() == false) {
         // JSON can contain only a value (e.g. "abc").
         // We require object as a JSON content (Strata JSON commands starts with '{' and ends with '}')
-        qCCritical(logCategoryCommandValidator).nospace().noquote() << "Content of JSON is not an object: '" << command << "'.";
+        if (quiet == false) {
+            qCCritical(logCategoryCommandValidator).nospace().noquote() << "Content of JSON is not an object: '" << command << "'.";
+        }
         return false;
     }
     return true;

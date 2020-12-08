@@ -179,16 +179,34 @@ FocusScope {
                         property color helperTextColor: "#333333"
 
                         Rectangle {
+                            id: messageTypeBg
                             anchors {
                                 top: parent.top
                                 left: parent.left
+                                right: buttonRow.right
+                                bottom: divider.top
+                            }
+
+                            color: {
+                                if (model.type === Sci.SciScrollbackModel.Request) {
+                                    return Qt.lighter(SGWidgets.SGColorsJS.TANGO_CHOCOLATE1, 1.3)
+                                }
+
+                                return "transparent"
+                            }
+                        }
+
+                        Rectangle {
+                            id: messageValidityBg
+                            anchors {
+                                top: parent.top
+                                left: messageTypeBg.right
                                 right: parent.right
                                 bottom: divider.top
                             }
+
                             color: {
-                                if (model.type === Sci.SciScrollbackModel.Request) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.3)
-                                } else if (model.isJsonValid === false) {
+                                if (model.isJsonValid === false) {
                                     return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
                                 }
 
@@ -241,7 +259,7 @@ FocusScope {
                                         icon.source: "qrc:/images/redo.svg"
                                         iconSize: buttonRow.iconSize
                                         onClicked: {
-                                            cmdInput.text = JSON.stringify(JSON.parse(model.message))
+                                            cmdInput.text = model.message
                                         }
                                     }
                                 }
@@ -299,6 +317,18 @@ FocusScope {
                             }
                         }
 
+                        Loader {
+                            id: syntaxHighlighterLoader
+                            sourceComponent: model.isJsonValid ? syntaxHighlighterComponent : null
+                        }
+
+                        Component {
+                            id: syntaxHighlighterComponent
+                            CommonCpp.SGJsonSyntaxHighlighter {
+                                textDocument: cmdText.textDocument
+                            }
+                        }
+
                         Rectangle {
                             id: divider
                             height: 1
@@ -318,7 +348,7 @@ FocusScope {
 
             FocusScope {
                 id: inputWrapper
-                height: cmdInput.y + cmdInput.height + 6
+                height: validateCheckBox.y + validateCheckBox.height + 6
                 anchors {
                     bottom: parent.bottom
                     left: parent.left
@@ -331,6 +361,7 @@ FocusScope {
                     id: toolButtonRow
                     anchors {
                         top: parent.top
+                        topMargin: 2
                         left: cmdInput.left
                     }
 
@@ -493,18 +524,20 @@ FocusScope {
 
                     focus: true
                     font.family: "monospace"
-                    placeholderText: "Enter Command..."
+                    placeholderText: "Enter Message..."
                     isValidAffectsBackground: true
                     suggestionListModel: commandHistoryModel
                     suggestionModelTextRole: "message"
                     suggestionPosition: Item.Top
                     suggestionEmptyModelText: qsTr("No commands.")
-                    suggestionHeaderText: qsTr("Command history")
+                    suggestionHeaderText: qsTr("Message history")
                     suggestionOpenWithAnyKey: false
                     suggestionMaxHeight: 250
                     suggestionCloseOnDown: true
                     suggestionDelegateRemovable: true
                     showCursorPosition: true
+                    showClearButton: true
+                    suggestionDelegateTextWrap: true
 
                     onTextChanged: {
                         model.platform.errorString = "";
@@ -535,6 +568,20 @@ FocusScope {
                     }
                 }
 
+                SGWidgets.SGCheckBox {
+                    id: validateCheckBox
+                    anchors {
+                        top: cmdInput.bottom
+                        topMargin: 2
+                        left: cmdInput.left
+                    }
+
+                    focusPolicy: Qt.NoFocus
+                    padding: 0
+                    checked: true
+                    text: "Send only valid JSON message"
+                }
+
                 SGWidgets.SGButton {
                     id: btnSend
                     anchors {
@@ -554,7 +601,7 @@ FocusScope {
             }
 
             function sendTextInputTextAsComand() {
-                var result = model.platform.sendMessage(cmdInput.text)
+                var result = model.platform.sendMessage(cmdInput.text, validateCheckBox.checked)
                 if (result) {
                     cmdInput.clear()
                 }
