@@ -304,10 +304,10 @@ Item {
                                     SGStatusLight {
                                         id: toggleLED
                                         width : 40
-                                        state: {
+                                        status: {
                                             if(platformInterface.notifications.my_cmd_simple_periodic.toggle_bool === true)
                                                 return SGStatusLight.Green
-                                            else SGStatusLight.Red
+                                            else return SGStatusLight.Red
                                         }
 
                                     }
@@ -331,10 +331,10 @@ Item {
                                     SGStatusLight {
                                         id: inputLED
                                         width : 40
-                                        state: {
+                                        status: {
                                             if(platformInterface.notifications.my_cmd_simple_periodic.io_read === true)
                                                 return SGStatusLight.Green
-                                            else SGStatusLight.Off
+                                            else return SGStatusLight.Off
                                         }
 
                                     }
