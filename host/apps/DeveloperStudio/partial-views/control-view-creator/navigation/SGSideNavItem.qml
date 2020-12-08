@@ -3,11 +3,12 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: buttonContainer
 
-    color: toolBarListView.currentIndex === modelIndex ? "#33b13b" : "transparent"
+    color: toolBarListView.currentIndex === modelIndex ? Theme.palette.green : "transparent"
     enabled: {
         if (modelIndex === toolBarListView.editTab
                 || modelIndex === toolBarListView.viewTab) {
