@@ -2,7 +2,6 @@
 
 #include <QObject>
 #include <QUrl>
-#include <QDirIterator>
 
 class SGUtilsCpp : public QObject
 {
@@ -21,7 +20,6 @@ public:
     Q_INVOKABLE QString fileAbsolutePath(const QString &file);
     Q_INVOKABLE QString dirName(const QString &path);
     Q_INVOKABLE QUrl pathToUrl(const QString &path, const QString &scheme=QString("file"));
-    Q_INVOKABLE QString returnViewsPath(const QString &filePath);
 
     Q_INVOKABLE bool atomicWrite(const QString &path, const QString &content);
     Q_INVOKABLE QString readTextFileContent(const QString &path);

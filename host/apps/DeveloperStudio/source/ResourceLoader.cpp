@@ -149,9 +149,25 @@ void ResourceLoader::loadCoreResources()
     }
 }
 
-QUrl ResourceLoader::getStaticResourcesUrl() {
+QUrl ResourceLoader::getStaticViewsPhysicalPathUrl() {
 
     return QUrl::fromLocalFile(ResourcePath::viewsPhysicalPath());
+}
+
+QString ResourceLoader::returnQrcPath(const QString &filePath){
+
+        QDirIterator dir(filePath);
+        QString str = "";
+
+        while(dir.hasNext()){
+            QFileInfo fi(dir.next());
+            if(fi.fileName().endsWith(".qrc")){
+                str = fi.absoluteFilePath();
+                break;
+            }
+        }
+
+        return str;
 }
 
 void ResourceLoader::unregisterAllViews(QObject *parent)

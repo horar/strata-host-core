@@ -64,7 +64,7 @@ Item {
                     FolderListModel {
                         id: viewFolderModel
                         showDirs: true
-                        folder: sdsModel.resourceLoader.getStaticResourcesUrl()
+                        folder: sdsModel.resourceLoader.getStaticViewsPhysicalPathUrl()
 
                         onCountChanged: {
                             viewCombobox.currentIndex = viewFolderModel.count - 1
@@ -99,7 +99,7 @@ Item {
                                 let name = selectButton.text;
                                 viewCombobox.currentIndex = index
 
-                                let path = SGUtilsCpp.returnViewsPath(model.filePath);
+                                let path = sdsModel.resourceLoader.returnQrcPath(model.filePath);
                                 sdsModel.resourceLoader.recompileControlViewQrc(path);
                                 stackContainer.currentIndex = stackContainer.count - 1
 
