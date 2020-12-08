@@ -4,7 +4,7 @@ add_feature_info(APPS_CORECOMPONENTS APPS_CORECOMPONENTS "Build Strata applicati
 if(APPS_CORECOMPONENTS)
     if (CMAKE_BUILD_TYPE STREQUAL "OTA")
         project(components
-            DESCRIPTION "Strata components"
+            DESCRIPTION "Strata Components"
             LANGUAGES NONE
         )
 
