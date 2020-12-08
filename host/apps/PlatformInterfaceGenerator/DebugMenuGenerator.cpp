@@ -131,6 +131,8 @@ bool DebugMenuGenerator::generate(const QString &inputJSONFile, const QString &o
         QVariantMap cmd = QVariant::fromValue(val).toMap();
         commands.append(cmd);
     }
+
+    qDebug() << notifications.size() << commands.size();
     file.close();
 
     return generate(outputDirPath, notifications, commands);
@@ -294,7 +296,7 @@ QString DebugMenuGenerator::generateNotifications(QList<QVariantMap> &notificati
     QString text = "";
     for (QVariantMap notification : notifications) {
         QJsonDocument doc = QJsonDocument::fromVariant(notification);
-        text += text += writeLine(doc.toJson(QJsonDocument::Compact) + ",");
+        text += writeLine(doc.toJson(QJsonDocument::Compact) + ",");
     }
     return text;
 }
