@@ -133,7 +133,7 @@ ScrollView {
     function rightSidesColor(type){
         switch(type){
         case 0: return "<font color=\"cyan\" > ] </font>"
-        case 1: return "<font color=\"yellow\"> ] </font>"
+        case 1: return "<font color=\"#ffd700\"> ] </font>"
         case 2: return "<font color=\"red\"> ] </font>"
         case 4: return "<font color=\"green\"> ] </font>"
         }
@@ -142,7 +142,7 @@ ScrollView {
     function leftSidesColor(type){
         switch(type){
         case 0: return "<font color=\"cyan\" > [ </font>"
-        case 1: return "<font color=\"yellow\"> [ </font>"
+        case 1: return "<font color=\"#ffd700\"> [ </font>"
         case 2: return "<font color=\"red\"> [ </font>"
         case 4: return "<font color=\"green\"> [ </font>"
         }
@@ -151,7 +151,7 @@ ScrollView {
     function getMsgType(type){
         switch(type){
         case 0: return "<font color=\"cyan\" > debug </font>"
-        case 1: return "<font color=\"yellow\"> warning </font>"
+        case 1: return "<font color=\"#ffd700\"> warning </font>"
         case 2: return "<font color=\"red\"> error </font>"
         case 4: return "<font color=\"green\"> info </font>"
         }
