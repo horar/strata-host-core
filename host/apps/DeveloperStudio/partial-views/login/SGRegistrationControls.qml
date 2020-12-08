@@ -8,6 +8,7 @@ import "qrc:/js/login_utilities.js" as Registration
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -159,7 +160,7 @@ Item {
 
                     Rectangle {
                         color: "transparent"
-                        border.color: "#33b13b"
+                        border.color: Theme.palette.green
                         anchors.centerIn: parent
                         visible: policyCheck.focus
                         width: parent.width + 4
