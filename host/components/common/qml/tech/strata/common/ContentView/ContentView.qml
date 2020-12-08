@@ -54,16 +54,40 @@ Rectangle {
         }
 
         onMd5Ready: {
-            // Downloads
-            let dataRAW = classDocuments.downloadDocumentListModel.getMD5()
-            let data = JSON.parse(dataRAW)
-            documentHistory.saveSettings(data)
+            // Read existing 'documents-history' file
+            let previousDocHistory = documentHistory.loadSettings()
 
-            // SAVE SETTINGS DOES NOT OVERWRITE!
+            // Downloads
+            let downloadDocumentsData = classDocuments.downloadDocumentListModel.getMD5()
+            downloadDocumentsData = JSON.parse(downloadDocumentsData)
+
             // Views
-            // dataRAW = classDocuments.pdfListModel.getMD5()
-            // data = JSON.parse(dataRAW)
-            // documentHistory.saveSettings(data)
+            let pdfData = classDocuments.pdfListModel.getMD5()
+            pdfData = JSON.parse(pdfData)
+
+            var newDocHistory = {}
+            for (var _obj in downloadDocumentsData) {
+                newDocHistory[_obj] = downloadDocumentsData[_obj]
+            }
+            for (var _obj in pdfData) {
+                newDocHistory[_obj] = pdfData[_obj]
+            }
+
+            Object.keys(newDocHistory).forEach(function(key) {
+                if (Object.keys(previousDocHistory).length > 0 && !previousDocHistory.hasOwnProperty(key)) {
+
+                    // Key did not exist in old documents-history
+                    console.error("Key '" + key + "' did not exist in old documents-history!!")
+
+                } else if (previousDocHistory[key] != newDocHistory[key]) {
+
+                    // Key has changed from old documents-history
+                    console.error("Key '" + key + "' has changed from old documents-history!!")
+
+                }
+            })
+
+            documentHistory.saveSettings(newDocHistory)
         }
     }
 
@@ -335,7 +359,7 @@ Rectangle {
 
     SGUserSettings {
         id: documentHistory
-        classId: "documents-history"
+        classId: view.class_id + "-documents-history"
         user: NavigationControl.context.user_id
 
         function loadSettings() {
