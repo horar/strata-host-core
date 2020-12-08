@@ -73,19 +73,22 @@ Rectangle {
                 newDocHistory[_obj] = pdfData[_obj]
             }
 
-            Object.keys(newDocHistory).forEach(function(key) {
-                if (Object.keys(previousDocHistory).length > 0 && !previousDocHistory.hasOwnProperty(key)) {
+            if (Object.keys(previousDocHistory).length > 0) {
+                Object.keys(newDocHistory).forEach(function(key) {
 
-                    // Key did not exist in old documents-history
-                    console.error("Key '" + key + "' did not exist in old documents-history!!")
+                    if (!previousDocHistory.hasOwnProperty(key)) {
 
-                } else if (previousDocHistory[key] != newDocHistory[key]) {
+                        // Key did not exist in old documents-history
+                        console.error("Key '" + key + "' did not exist in old documents-history!!")
 
-                    // Key has changed from old documents-history
-                    console.error("Key '" + key + "' has changed from old documents-history!!")
+                    } else if (previousDocHistory[key] != newDocHistory[key]) {
 
-                }
-            })
+                        // Key has changed from old documents-history
+                        console.error("Key '" + key + "' has changed from old documents-history!!")
+
+                    }
+                })
+            }
 
             documentHistory.saveSettings(newDocHistory)
         }
