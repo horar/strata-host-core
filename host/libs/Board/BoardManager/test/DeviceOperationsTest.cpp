@@ -96,7 +96,7 @@ void DeviceOperationsTest::identifyTest()
     rapidjson::ParseResult parseResult;
 
     deviceOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(device_, false), &QObject::deleteLater);
+        new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
     deviceOperation_->run();
     QCOMPARE(deviceOperation_->deviceId(), 1234);
@@ -229,6 +229,7 @@ void DeviceOperationsTest::identifyLegacyTest()
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
+    QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
     expectedDoc.Parse(test_commands::request_platform_id_response.data());
     QCOMPARE(device_->name(),
@@ -237,8 +238,6 @@ void DeviceOperationsTest::identifyLegacyTest()
              expectedDoc["notification"]["payload"]["platform_id"].GetString());
     QCOMPARE(device_->classId(),
              expectedDoc["notification"]["payload"]["class_id"].GetString());
-
-    device_->mockSetLegacy(false);
 }
 
 // TODO tests for DeviceOperations:
