@@ -6,5 +6,7 @@
         <file>control-views/DebugMenu.qml</file>
         <file>control-views/template.json</file>
         <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/notificationicon.png</file>
+        <file>control-views/commandicon.png</file>
     </qresource>
 </RCC>
