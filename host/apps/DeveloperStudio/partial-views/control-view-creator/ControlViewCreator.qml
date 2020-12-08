@@ -4,8 +4,10 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
+import "../"
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -53,6 +55,39 @@ Rectangle {
                 mainWindow.close()
             }
             isConfirmCloseOpen = false
+        }
+    }
+
+    SGConfirmationPopup {
+        id: confirmCleanFiles
+        modal: true
+        padding: 0
+        closePolicy: Popup.NoAutoClose
+
+        acceptButtonColor: SGColorsJS.STRATA_GREEN
+        acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
+        acceptButtonText: "Clean"
+        cancelButtonText: "Cancel"
+        titleText: "Remove missing files"
+        popupText: {
+            let text = "Are you sure you want to remove the following files from this project's QRC?<br><ul type=\"bullet\">";
+            for (let i = 0; i < missingFiles.length; i++) {
+                text += "<li>" + missingFiles[i] + "</li>"
+            }
+            text += "</ul>"
+            return text
+        }
+
+        property var missingFiles: []
+
+        onOpened: {
+            missingFiles = editor.fileTreeModel.getMissingFiles()
+        }
+
+        onPopupClosed: {
+            if (closeReason === acceptCloseReason) {
+                editor.fileTreeModel.removeDeletedFilesFromQrc()
+            }
         }
     }
 
@@ -115,15 +150,16 @@ Rectangle {
                     id: mainNavItems
 
                     model: [
-                        { imageSource: "qrc:/sgimages/list.svg", imageText: "Start" },
-                        { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit" },
-                        { imageSource: "qrc:/sgimages/eye.svg", imageText: "View" },
+                        { imageSource: "qrc:/sgimages/list.svg", imageText: "Start", description: "Go to the start screen." },
+                        { imageSource: "qrc:/sgimages/edit.svg", imageText: "Edit", description: "Edit your control view project." },
+                        { imageSource: "qrc:/sgimages/eye.svg", imageText: "View", description: "View your control view" },
                     ]
 
                     delegate: SGSideNavItem {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 70
                         modelIndex: index
+                        tooltipDescription: modelData.description
                         iconLeftMargin: index === toolBarListView.editTab ? 7 : 0
                     }
                 }
