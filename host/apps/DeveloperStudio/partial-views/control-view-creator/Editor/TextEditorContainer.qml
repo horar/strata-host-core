@@ -230,7 +230,6 @@ Item {
         signal setContainerWidth(string width);
         signal undo();
         signal redo();
-        signal setBreakpoints(int lineNumber, string lineCode)
 
         function setHtml(value) {
             setValue(value)
@@ -254,10 +253,6 @@ Item {
 
             currentVersionId = version
             model.unsavedChanges = (savedVersionId !== version)
-        }
-
-        function createBreakpoint(lineNumber, lineCode){
-            setBreakpoints(lineNumber, lineCode)
         }
     }
 

@@ -18,9 +18,9 @@ Rectangle {
     property bool rccInitialized: false
     property bool recompileRequested: false
     property var debugPlatform: ({
-                                     deviceId: Constants.NULL_DEVICE_ID,
-                                     classId: ""
-                                 })
+      deviceId: Constants.NULL_DEVICE_ID,
+      classId: ""
+    })
 
     onDebugPlatformChanged: {
         recompileControlViewQrc();
@@ -237,44 +237,43 @@ Rectangle {
             }
         }
     }
-        function recompileControlViewQrc () {
-            if (editor.fileTreeModel.url.toString() !== '') {
-                recompileRequested = true
-                sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
-            }
+    function recompileControlViewQrc () {
+        if (editor.fileTreeModel.url.toString() !== '') {
+            recompileRequested = true
+            sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
+        }
+    }
+
+    function loadDebugView (compiledRccFile) {
+        controlViewLoader.setSource("")
+
+        let uniquePrefix = new Date().getTime().valueOf()
+        uniquePrefix = "/" + uniquePrefix
+
+        // Register debug control view object
+        if (!sdsModel.resourceLoader.registerResource(compiledRccFile, uniquePrefix)) {
+            console.error("Failed to register resource")
+            return
         }
 
-        function loadDebugView (compiledRccFile) {
-            controlViewLoader.setSource("")
+        let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
 
-            let uniquePrefix = new Date().getTime().valueOf()
-            uniquePrefix = "/" + uniquePrefix
+        Help.setClassId(debugPlatform.deviceId)
+        NavigationControl.context.class_id = debugPlatform.classId
+        NavigationControl.context.device_id = debugPlatform.deviceId
 
-            // Register debug control view object
-            if (!sdsModel.resourceLoader.registerResource(compiledRccFile, uniquePrefix)) {
-                console.error("Failed to register resource")
-                return
-            }
+        controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
+    }
 
-            let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-
-            Help.setClassId(debugPlatform.deviceId)
-            NavigationControl.context.class_id = debugPlatform.classId
-            NavigationControl.context.device_id = debugPlatform.deviceId
-
-            controlViewLoader.setSource(qml_control, Object.assign({}, NavigationControl.context))
+    function blockWindowClose() {
+        let unsavedCount = editor.openFilesModel.getUnsavedCount();
+        if (unsavedCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
+            confirmClosePopup.unsavedFileCount = unsavedCount;
+            confirmClosePopup.open();
+            controlViewCreatorRoot.isConfirmCloseOpen = true;
+            return true
         }
-
-        function blockWindowClose() {
-            let unsavedCount = editor.openFilesModel.getUnsavedCount();
-            if (unsavedCount > 0 && !controlViewCreatorRoot.isConfirmCloseOpen) {
-                confirmClosePopup.unsavedFileCount = unsavedCount;
-                confirmClosePopup.open();
-                controlViewCreatorRoot.isConfirmCloseOpen = true;
-                return true
-            }
-            return false
-        }
-
+        return false
+    }
 }
 
