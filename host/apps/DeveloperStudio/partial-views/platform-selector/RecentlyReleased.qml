@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
@@ -14,7 +15,7 @@ Rectangle {
     id: recentlyReleased
     implicitHeight: recentRow.implicitHeight + 40
     implicitWidth: recentRow.implicitWidth + 40
-    color: SGColorsJS.STRATA_GREEN
+    color: Theme.palette.green
     radius: 10
     visible: lengthModel.count > 0
 

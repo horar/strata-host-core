@@ -7,6 +7,7 @@ import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
+import tech.strata.theme 1.0
 
 Item {
     id: docCreator
@@ -107,7 +108,7 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            color: SGWidgets.SGColorsJS.STRATA_DARK
+            color: Theme.palette.dark
         }
 
         Row {
@@ -127,7 +128,7 @@ Item {
                 hintText: "Add Command"
                 icon.source: "qrc:/sgimages/plus.svg"
                 iconSize: buttonRow.iconHeight
-                iconColor: SGWidgets.SGColorsJS.STRATA_GREEN
+                iconColor: Theme.palette.green
                 alternativeColorEnabled: true
 
                 onClicked: {
@@ -394,7 +395,7 @@ Item {
 
                                 icon.source: "qrc:/sgimages/times-circle.svg"
                                 iconSize: label.contentHeight + 2
-                                iconColor: SGWidgets.SGColorsJS.ERROR_COLOR
+                                iconColor: TangoTheme.palette.error
 
                                 onClicked: {
                                     commandView.currentIndex = index
@@ -475,7 +476,7 @@ Item {
 
                                 icon.source: "qrc:/sgimages/times-circle.svg"
                                 iconSize: label.contentHeight + 2
-                                iconColor: SGWidgets.SGColorsJS.ERROR_COLOR
+                                iconColor: TangoTheme.palette.error
 
                                 onClicked: {
                                     commandView.maybeRemoveIndex = -1
