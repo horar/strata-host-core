@@ -6,7 +6,7 @@ SciPlatformModel::SciPlatformModel(strata::BoardManager *boardManager, QObject *
       boardManager_(boardManager)
 {
     connect(boardManager_, &strata::BoardManager::boardConnected, this, &SciPlatformModel::boardConnectedHandler);
-    connect(boardManager_, &strata::BoardManager::boardReady, this, &SciPlatformModel::boardReadyHandler);
+    connect(boardManager_, &strata::BoardManager::boardInfoChanged, this, &SciPlatformModel::boardReadyHandler);
     connect(boardManager_, &strata::BoardManager::boardDisconnected, this, &SciPlatformModel::boardDisconnectedHandler);
 }
 
@@ -90,7 +90,7 @@ void SciPlatformModel::disconnectPlatformFromSci(int index)
         return;
     }
 
-    boardManager_->disconnect(platformList_.at(index)->deviceId());
+    boardManager_->disconnectDevice(platformList_.at(index)->deviceId());
 
     platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Disconnected);
 }
@@ -120,7 +120,7 @@ void SciPlatformModel::reconnect(int index)
         qCCritical(logCategorySci) << "index out of range";
     }
 
-    boardManager_->reconnect(platformList_.at(index)->deviceId());
+    boardManager_->reconnectDevice(platformList_.at(index)->deviceId());
 }
 
 QHash<int, QByteArray> SciPlatformModel::roleNames() const
