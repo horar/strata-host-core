@@ -17,6 +17,7 @@ find_package(Qt5 ${VERSION_QT5}
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
     PlatformInterfaceGenerator.cpp
+    DebugMenuGenerator.cpp
 
     qml.qrc
     logging/LoggingQtCategories.cpp

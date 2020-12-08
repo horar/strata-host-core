@@ -5,20 +5,20 @@
 namespace strata::device::command {
 
 BaseDeviceCommand::BaseDeviceCommand(const DevicePtr& device, const QString& commandName) :
-    cmdName_(commandName), device_(device), ackReceived_(false),
+    cmdName_(commandName), device_(device), ackOk_(false),
     result_(CommandResult::InProgress), status_(operation::DEFAULT_STATUS) { }
 
 BaseDeviceCommand::~BaseDeviceCommand() { }
 
-void BaseDeviceCommand::setAckReceived() {
-    ackReceived_ = true;
+void BaseDeviceCommand::commandAcknowledged() {
+    ackOk_ = true;
 }
 
-bool BaseDeviceCommand::ackReceived() const {
-    return ackReceived_;
+bool BaseDeviceCommand::isCommandAcknowledged() const {
+    return ackOk_;
 }
 
-void BaseDeviceCommand::setCommandRejected() {
+void BaseDeviceCommand::commandRejected() {
     result_ = CommandResult::Reject;
 }
 
