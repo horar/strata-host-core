@@ -13,7 +13,7 @@ Rectangle {
                 || modelIndex === toolBarListView.viewTab) {
             if (editor.fileTreeModel.url.toString() === "") {
                 return false;
-            } else if (toolBarListView.currentIndex === toolBarListView.viewTab && modelIndex === toolBarListView.viewTab && viewStack.currentIndex !== 4) {
+            } else if (toolBarListView.currentIndex === toolBarListView.viewTab && modelIndex === toolBarListView.viewTab && viewStack.currentIndex !== 2) {
                 return false;
             }
         }
