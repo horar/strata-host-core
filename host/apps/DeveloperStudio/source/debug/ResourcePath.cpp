@@ -7,6 +7,7 @@
 
 QString ResourcePath::coreResourcePath_ = QString();
 QString ResourcePath::viewsResourcePath_ = QString();
+QString ResourcePath::viewsPhysicalPath_ = QString();
 
 ResourcePath::ResourcePath()
 {
@@ -41,4 +42,21 @@ QString &ResourcePath::viewsResourcePath()
     }
 
     return viewsResourcePath_;
+}
+
+QString &ResourcePath::viewsPhysicalPath()
+{
+    QDir* dir;
+    if(viewsPhysicalPath_.isEmpty()) {
+        dir = new QDir(coreResourcePath());
+        dir->cdUp();
+        dir->cdUp();
+        dir->cd("host");
+        dir->cd("components");
+        dir->cd("views");
+        viewsPhysicalPath_ = dir->absolutePath();
+        qDebug() << viewsPhysicalPath_;
+    }
+
+    return viewsPhysicalPath_;
 }

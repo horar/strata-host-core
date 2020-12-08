@@ -64,7 +64,7 @@ Item {
                     FolderListModel {
                         id: viewFolderModel
                         showDirs: true
-                        folder: SGUtilsCpp.getViewsFolder()
+                        folder: sdsModel.resourceLoader.getStaticResourcesUrl()
 
                         onCountChanged: {
                             viewCombobox.currentIndex = viewFolderModel.count - 1

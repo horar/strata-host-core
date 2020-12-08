@@ -150,10 +150,8 @@ void ResourceLoader::loadCoreResources()
 }
 
 QUrl ResourceLoader::getStaticResourcesUrl() {
-    QUrl url;
-    url.setScheme("file");
-    url.setPath(ResourcePath::viewsResourcePath());
-    return url;
+
+    return QUrl::fromLocalFile(ResourcePath::viewsPhysicalPath());
 }
 
 void ResourceLoader::unregisterAllViews(QObject *parent)
