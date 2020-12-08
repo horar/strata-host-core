@@ -16,9 +16,6 @@ int main() {
     // Open database manager
     DatabaseManager databaseManager;
 
-    // Open database
-    // auto DB_all_channels = databaseManager.open("Sample_User");
-
     // Open database, provide QStringList of channels for connection
     QStringList channel_ls = {"channel_A", "channel_B"};
     auto DB_all_channels = databaseManager.open("Sample_User", channel_ls);
@@ -44,7 +41,7 @@ int main() {
         qDebug() << "Failed to set document contents, body must be in JSON format.";
     }
 
-    if (DB_all_channels->write(&Doc1)) {
+    if (DB_all_channels->write(&Doc1, "*")) {
         qDebug() << "Successfully saved database.";
     } else {
         qDebug() << "Error saving database.";
@@ -67,7 +64,7 @@ int main() {
         qDebug() << "Error saving database.";
         return -1;
     }
-/*
+
     // Create document 3, write to buckets 'channel_A', 'channel_B'
     CouchbaseDocument Doc3("My_Doc_Two_Buckets");
     body_string = R"foo({"StrataTest": "Contents_3"})foo";
@@ -78,14 +75,13 @@ int main() {
         qDebug() << "Failed to set document contents, body must be in JSON format.";
     }
 
-    // channel_ls = {"channel_A", "channel_B"};
     if (DB_all_channels->write(&Doc3, channel_ls)) {
         qDebug() << "Successfully saved database.";
     } else {
         qDebug() << "Error saving database.";
         return -1;
     }
-*/
+
     // Retrieve entire DB as a QJsonObject
     auto db_obj = DB_all_channels->getDatabaseAsJsonObj();
     qDebug() << "Entire DB as a Json Object:";
@@ -94,26 +90,26 @@ int main() {
         qDebug() << "Key =" << key << ", value =" << value;
     }
 
-    // Start replicator
-    if (DB_all_channels->startReplicator(replicator_url, replicator_username, replicator_password)) {
-        qDebug() << "Replicator successfully started.";
-    } else {
-        qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";
-    }
+    // // Start replicator
+    // if (DB_all_channels->startReplicator(replicator_url, replicator_username, replicator_password)) {
+    //     qDebug() << "Replicator successfully started.";
+    // } else {
+    //     qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";
+    // }
 
-    // Wait until replication is finished
-    unsigned int retries = 0;
-    const unsigned int REPLICATOR_RETRY_MAX = 50;
-    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
-    while (DB_all_channels->getReplicatorStatus() != "Stopped" && DB_all_channels->getReplicatorStatus() != "Idle") {
-        ++retries;
-        std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
-        if (DB_all_channels->getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
-            DB_all_channels->stopReplicator();
-            qDebug() << "Error with execution of replicator. Verify endpoint URL" << replicator_url << "is valid.";
-            break;
-        }
-    }
+    // // Wait until replication is finished
+    // unsigned int retries = 0;
+    // const unsigned int REPLICATOR_RETRY_MAX = 50;
+    // const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
+    // while (DB_all_channels->getReplicatorStatus() != "Stopped" && DB_all_channels->getReplicatorStatus() != "Idle") {
+    //     ++retries;
+    //     std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
+    //     if (DB_all_channels->getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
+    //         DB_all_channels->stopReplicator();
+    //         qDebug() << "Error with execution of replicator. Verify endpoint URL" << replicator_url << "is valid.";
+    //         break;
+    //     }
+    // }
 
     return 0;
 }

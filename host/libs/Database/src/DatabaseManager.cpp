@@ -116,28 +116,45 @@ bool DatabaseAccess::close() {
 }
 
 bool DatabaseAccess::write(CouchbaseDocument *doc, const QString &bucket) {
-    if (!bucket.isEmpty()) {
+    // Bucket not provided - do not accept
+    if (bucket.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- a valid bucket is required";
+        return false;
+    }
+    // Bucket is "*" or "all": write to all buckets
+    bool ok = true;
+    if (bucket == "*" || bucket.toLower() == "all") {
+        for (const auto& _bucket : database_map_) {
+            std::vector<std::string> channels;
+            for (const auto& channel : channel_access_) {
+                channels.push_back(channel.toStdString());
+            }
+            doc->tagChannelField(channels);
+            if (!_bucket->save(doc)) {
+                qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- bucket " << QString::fromStdString(_bucket->getDatabaseName());
+                ok = false;
+            }
+        }
+    }
+    // A single bucket was provided
+    else {
         auto bucketObj = getBucket(bucket);
         if (!bucketObj) {
             qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- bucket not found in map";
             return false;
         }
         return bucketObj->save(doc);
-    } else for (const auto& _bucket : database_map_) {
-        std::vector<std::string> channels;
-        for (const auto& channel : channel_access_) {
-            channels.push_back(channel.toStdString());
-        }
-        doc->tagChannelField(channels);
-        if (!_bucket->save(doc)) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- bucket " << QString::fromStdString(_bucket->getDatabaseName());
-        }
     }
-
-    return true;
+    return ok;
 }
 
 bool DatabaseAccess::write(CouchbaseDocument *doc, const QStringList &buckets) {
+    // Array of buckets is empty - do not accept
+    if (buckets.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- a valid array of buckets is required";
+        return false;
+    }
+    // A valid array of buckets was provided
     bool ok = true;
     for (const auto& bucket : buckets) {
         if (!write(doc, bucket)) {
