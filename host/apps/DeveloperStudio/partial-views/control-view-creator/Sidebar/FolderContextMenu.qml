@@ -29,6 +29,14 @@ Menu {
     }
 
     MenuItem {
+        text: "Rename Folder"
+        onTriggered: {
+            treeView.selectItem(styleData.index)
+            model.editing = true
+        }
+    }
+
+    MenuItem {
         text: "Delete Folder"
         onTriggered: {
             treeModel.deleteFile(model.row, styleData.index.parent)

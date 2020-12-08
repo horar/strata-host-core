@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 
@@ -21,8 +22,15 @@ Rectangle {
 
     property alias iconText: imageText.text
     property alias iconSource: tabIcon.source
+    property color iconColor: "white"
     property int iconLeftMargin: 0
     property int modelIndex
+    property string tooltipDescription
+
+    ToolTip.text: tooltipDescription
+    ToolTip.delay: 300
+    ToolTip.visible: tooltipDescription.length > 0 ? mouseArea.containsMouse : false
+
 
     function onClicked() {
         toolBarListView.currentIndex = modelIndex
@@ -43,8 +51,18 @@ Rectangle {
             Layout.leftMargin: buttonContainer.iconLeftMargin
             Layout.fillWidth: true
 
-            // This color adds .40 alpha to white
-            iconColor: (parent.enabled || toolBarListView.currentIndex === modelIndex ? "white" : Qt.rgba(255, 255, 255, 0.4))
+            iconColor: {
+                if (iconTextGroup.enabled) {
+                    if (toolBarListView.currentIndex !== modelIndex && mouseArea.containsMouse) {
+                        return Qt.darker(buttonContainer.iconColor, 1.4)
+                    } else {
+                        return buttonContainer.iconColor
+                    }
+                } else {
+                    // This color adds .40 alpha to white
+                    return Qt.rgba(255, 255, 255, 0.4)
+                }
+            }
             source: modelData.imageSource
         }
 
@@ -66,7 +84,7 @@ Rectangle {
         hoverEnabled: true
         enabled: parent.enabled
 
-        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+        cursorShape: Qt.PointingHandCursor
         onClicked: {
             parent.onClicked()
         }

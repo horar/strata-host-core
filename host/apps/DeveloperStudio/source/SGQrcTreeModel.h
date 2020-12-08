@@ -21,6 +21,7 @@ class SGQrcTreeModel : public QAbstractItemModel
     Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
     Q_PROPERTY(QVector<SGQrcTreeNode*> childNodes READ childNodes)
     Q_PROPERTY(QModelIndex rootIndex READ rootIndex WRITE setRootIndex)
+    Q_PROPERTY(bool needsCleaning READ needsCleaning NOTIFY needsCleaningChanged)
 public:
     explicit SGQrcTreeModel(QObject *parent = nullptr);
     ~SGQrcTreeModel();
@@ -148,6 +149,12 @@ public:
     void setUrl(QUrl url);
 
     /**
+     * @brief needsCleaning Returns whether or not the qrc needs cleaning
+     * @return Returns true if the qrc needs cleaning, otherwise false
+     */
+    bool needsCleaning() const;
+
+    /**
      * @brief projectDirectory Returns the url to the project root directory
      * @return The url to the project root directory
      */
@@ -166,6 +173,31 @@ public:
      * @param save If the changes should be saved or not. Default is true
      */
     Q_INVOKABLE bool removeFromQrc(const QModelIndex &index, bool save = true);
+
+    /**
+     * @brief removeDeletedFilesFromQrc Removes all files in the Qrc that have been deleted from the filesystem
+     */
+    Q_INVOKABLE void removeDeletedFilesFromQrc();
+
+    /**
+     * @brief getMissingFiles Gets the list of missing files in the qrc
+     * @return Returns a list of filepaths for missing files
+     */
+    Q_INVOKABLE QList<QString> getMissingFiles();
+    
+    /**
+     * @brief removeEmptyChildren Removes any children that don't have a filename
+     * @param parent The QModelIndex of the parent
+     */
+    Q_INVOKABLE void removeEmptyChildren(const QModelIndex &parent);
+
+    /**
+     * @brief renameFile Renames a file or a folder
+     * @param index The index in the model
+     * @param newFilename The new file/folder name
+     * @return Returns true if successful, false otherwise
+     */
+    Q_INVOKABLE bool renameFile(const QModelIndex &index, const QString &newFilename);
 
     /**
      * @brief deleteFile Deletes a file from the local filesystem and removes it from the qrc
@@ -200,13 +232,14 @@ signals:
     void projectDirectoryChanged();
     void rootChanged();
     void debugMenuSourceChanged();
+    void needsCleaningChanged();
     void errorParsing(const QString error);
     void finishedReadingQrc(const QByteArray &fileText);
 
     // This signal is emitted when the file at the specified path is modified
     void fileChanged(const QUrl path);
     // This signal is emitted when the file with the specified uid is deleted
-    void fileDeleted(const QString uid);
+    void fileDeleted(const QString uid, const QUrl path);
     // This signal is emitted when a file is added to the project.
     void fileAdded(const QUrl path, const QUrl parentPath);
 
@@ -245,6 +278,7 @@ private:
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
     void setDebugMenuSource(const QUrl &path);
+    void renameAllChildren(const QModelIndex &parentIndex, const QString &newPath);
     QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
     /**
      * @brief handleExternalFileAdded Handles the situation when a file is added externally to the program
@@ -259,6 +293,7 @@ private:
      */
     void handleExternalFileDeleted(const QString uid);
     void save();
+    void setNeedsCleaning(const bool needsCleaning);
 
     SGQrcTreeNode *root_ = nullptr;
     QUrl url_;
@@ -270,4 +305,5 @@ private:
     std::unique_ptr<QFileSystemWatcher> fsWatcher_;
     QModelIndex rootIndex_;
     QUrl debugMenuSource_;
+    bool needsCleaning_;
 };
