@@ -1,5 +1,7 @@
 import QtQuick 2.12
 
+import tech.strata.theme 1.0
+
 Item {
     id: root
     height: column.height
@@ -27,7 +29,7 @@ Item {
 
         Rectangle {
             id: iconBackground
-            color: root.checked ? "#33b13b" : "black"
+            color: root.checked ? Theme.palette.green : "black"
             width: 75
             height: 75
             radius: width/2

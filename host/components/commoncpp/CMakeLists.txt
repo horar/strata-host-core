@@ -34,6 +34,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::SGSortFilterProxyModel
     strata::SGVersionUtils
     strata::SGJLinkConnector
+    strata::SGJsonSyntaxHighlighter
     mqtt::mqtt
 )
 

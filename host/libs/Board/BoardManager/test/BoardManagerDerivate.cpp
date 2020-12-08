@@ -101,9 +101,9 @@ bool BoardManagerDerivate::addDevice(const int deviceId, bool startOperations)
 
     DevicePtr device = std::make_shared<DeviceMock>(deviceId, name);
 
-    if (openDevice(deviceId, device)) {
+    if (openDevice(device)) {
         if (startOperations) {
-            startDeviceOperations(deviceId, device);
+            startDeviceOperations(device);
         }
         return true;
     } else {

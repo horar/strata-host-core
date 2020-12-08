@@ -34,8 +34,10 @@ Rectangle {
     readonly property var templatePayload: ({
         "name": "", // The name of the property
         "type": "int", // Type of the property, "array", "int", "string", etc.
+        "indexSelected": 0,
         "valid": false,
-        "array": [] // This is only filled if the type == "array"
+        "array": [], // This is only filled if the type == "array"
+        "object": []
     });
 
     /**
@@ -64,15 +66,12 @@ Rectangle {
                 for (let k = 0; k < command.payload.count; k++) {
                     let payloadProperty = command.payload.get(k);
 
-                    if (payloadProperty.type !== "array") {
-                        commandObj["payload"][payloadProperty.name] = payloadProperty.type;
+                    if (payloadProperty.type === "array") {
+                        commandObj["payload"][payloadProperty.name] = createJsonObjectFromArrayProperty(payloadProperty.array, []);
+                    } else if (payloadProperty.type === "object") {
+                        commandObj["payload"][payloadProperty.name] = createJsonObjectFromObjectProperty(payloadProperty.object, {});
                     } else {
-                        let arrayElements = [];
-                        for (let m = 0; m < payloadProperty.array.count; m++) {
-                            let arrayElement = payloadProperty.array.get(m);
-                            arrayElements.push(arrayElement.type)
-                        }
-                        commandObj["payload"][payloadProperty.name] = arrayElements;
+                        commandObj["payload"][payloadProperty.name] = payloadProperty.type;
                     }
                 }
                 commands.push(commandObj)
@@ -80,6 +79,37 @@ Rectangle {
             obj[type.name] = commands;
         }
         return obj;
+    }
+
+    function createJsonObjectFromArrayProperty(arrayModel, outputArr) {
+        for (let m = 0; m < arrayModel.count; m++) {
+            let arrayElement = arrayModel.get(m);
+
+            if (arrayElement.type === "object") {
+                outputArr.push(createJsonObjectFromObjectProperty(arrayElement.object, {}))
+            } else if (arrayElement.type === "array") {
+                outputArr.push(createJsonObjectFromArrayProperty(arrayElement.array, []))
+            } else {
+                outputArr.push(arrayElement.type)
+            }
+        }
+        return outputArr;
+    }
+
+    function createJsonObjectFromObjectProperty(objectModel, outputObj) {
+        for (let i = 0; i < objectModel.count; i++) {
+            let objectProperty = objectModel.get(i);
+
+            // Recurse through array
+            if (objectProperty.type === "array") {
+                outputObj[objectProperty.key] = createJsonObjectFromArrayProperty(objectProperty.array, [])
+            } else if (objectProperty.type === "object") {
+                outputObj[objectProperty.key] = createJsonObjectFromObjectProperty(objectProperty.object, {})
+            } else {
+                outputObj[objectProperty.key] = objectProperty.type
+            }
+        }
+        return outputObj;
     }
 
     function generatePlatformInterface() {
@@ -131,6 +161,8 @@ Rectangle {
           * This function checks if all fields are valid
          **/
         function checkForAllValid() {
+            // First loop through each command / notification and make sure there are no duplicate commands / notification names
+            // Then recursively go through each property to ensure that there are no duplicate object property names
             for (let i = 0; i < count; i++) {
                 let commands = get(i).data;
                 for (let k = 0; k < commands.count; k++) {
@@ -190,9 +222,118 @@ Rectangle {
                         break;
                     }
                 }
+
+                // If the payload property is an object, check to make sure there are no duplicate keys in that object
+                if (valid && payload.get(i).type === "object") {
+                    let objectPropertiesModel = payload.get(i).object;
+                    for (let k = 0; k < objectPropertiesModel.count; k++) {
+                        let tmpValid = checkForDuplicateObjectPropertyNames(objectPropertiesModel, k)
+                        if (!tmpValid) {
+                            valid = false
+                            allValid = false
+                            objectPropertiesModel.setProperty(k, "valid", false)
+
+                            console.error("Duplicate or empty property key in payload property '" + payload.get(i).name + "' found")
+
+                            if (shortCircuit) {
+                                return false
+                            }
+                        }
+                    }
+                } else if (valid && payload.get(i).type === "array") {
+                    if (!checkForArrayValid(payload.get(i).array)) {
+                        valid = false
+                        allValid = false
+
+                        console.error("Duplicate or empty property key in payload property '" + payload.get(i).name + "' found")
+
+                        if (shortCircuit) {
+                            return false
+                        }
+                    }
+                }
+
                 payload.setProperty(i, "valid", valid)
             }
             return allValid;
+        }
+
+        /**
+          * This function checks for duplicate keys in a give payload property that is of 'object' type
+         **/
+        function checkForDuplicateObjectPropertyNames(objectPropertiesModel, index) {
+            let key = objectPropertiesModel.get(index).key
+
+            if (key === "") {
+                return false
+            }
+
+            for (let i = 0; i < objectPropertiesModel.count; i++) {
+                if (i !== index) {
+                    let item = objectPropertiesModel.get(i);
+                    if (item.key === key) {
+                        return false;
+                    }
+                }
+            }
+
+            // Now recurse through any children that are objects or arrays
+            for (let j = 0; j < objectPropertiesModel.count; j++) {
+                let item = objectPropertiesModel.get(j);
+
+                if (item.type === "array") {
+                    for (let k = 0; k < item.array.count; k++) {
+                        if (item.array.get(k).type === "array") {
+                            if (!checkForArrayValid(item.array.get(k).array)) {
+                                return false
+                            }
+                        } else if (item.array.get(k).type === "object") {
+                            let subObject = item.array.get(k).object;
+                            for (let m = 0; m < subObject.count; m++) {
+                                if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                } else if (item.type === "object") {
+                    for (let k = 0; k < item.object.count; k++) {
+                        if (item.object.get(k).type === "array") {
+                            if (!checkForArrayValid(item.object.get(k).array)) {
+                                return false
+                            }
+                        } else if (item.object.get(k).type === "object") {
+                            let subObject = item.object.get(k).object;
+                            for (let m = 0; m < subObject.count; m++) {
+                                if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        function checkForArrayValid(arrayModel) {
+            for (let i = 0; i < arrayModel.count; i++) {
+                if (arrayModel.get(i).type === "array") {
+                    if (!checkForArrayValid(arrayModel.get(i).array)) {
+                        return false
+                    }
+                } else if (arrayModel.get(i).type === "object") {
+                    let subObject = arrayModel.get(i).object;
+                    for (let m = 0; m < subObject.count; m++) {
+                        if (!checkForDuplicateObjectPropertyNames(subObject, m)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true
         }
 
         /**

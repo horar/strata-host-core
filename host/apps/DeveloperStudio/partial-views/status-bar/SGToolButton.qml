@@ -5,6 +5,7 @@ import "qrc:/partial-views"
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: buttonRoot
@@ -16,7 +17,7 @@ Rectangle {
         } else if (model.selected) {
             return "#34993b"
         } else {
-            return "#33b13b"
+            return Theme.palette.green
         }
     }
     clip: true

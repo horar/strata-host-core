@@ -18,36 +18,54 @@ QDebug operator<<(QDebug dbg, const DevicePtr& d) {
 
 Device::Device(const int deviceId, const QString& name, const Type type) :
     deviceId_(deviceId), deviceName_(name), deviceType_(type), operationLock_(0),
-    bootloaderMode_(false), apiVersion_(ApiVersion::Unknown)
+    bootloaderMode_(false), apiVersion_(ApiVersion::Unknown), controllerType_(ControllerType::Embedded)
 { }
 
 Device::~Device() { }
 
-QString Device::property(DeviceProperties property) {
+QString Device::name() {
     QReadLocker rLock(&properiesLock_);
-    switch (property) {
-        case DeviceProperties::deviceName:
-            return deviceName_;
-        case DeviceProperties::verboseName :
-            return verboseName_;
-        case DeviceProperties::platformId :
-            return platformId_;
-        case DeviceProperties::classId :
-            return classId_;
-        case DeviceProperties::bootloaderVer :
-            return bootloaderVer_;
-        case DeviceProperties::applicationVer :
-            return applicationVer_;
-    }
-    return QString();
+    return name_;
 }
 
-int Device::deviceId() const {
-    return deviceId_;
+QString Device::bootloaderVer() {
+    QReadLocker rLock(&properiesLock_);
+    return bootloaderVer_;
 }
 
-Device::Type Device::deviceType() const {
-    return deviceType_;
+QString Device::applicationVer() {
+    QReadLocker rLock(&properiesLock_);
+    return applicationVer_;
+}
+
+QString Device::platformId() {
+    QReadLocker rLock(&properiesLock_);
+    return platformId_;
+}
+
+bool Device::hasClassId() {
+    QReadLocker rLock(&properiesLock_);
+    return (classId_.isNull() == false);
+}
+
+QString Device::classId() {
+    QReadLocker rLock(&properiesLock_);
+    return classId_;
+}
+
+QString Device::controllerPlatformId() {
+    QReadLocker rLock(&properiesLock_);
+    return controllerPlatformId_;
+}
+
+QString Device::controllerClassId() {
+    QReadLocker rLock(&properiesLock_);
+    return controllerClassId_;
+}
+
+QString Device::firmwareClassId() {
+    QReadLocker rLock(&properiesLock_);
+    return firmwareClassId_;
 }
 
 Device::ApiVersion Device::apiVersion() {
@@ -55,13 +73,60 @@ Device::ApiVersion Device::apiVersion() {
     return apiVersion_;
 }
 
-void Device::setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) {
+Device::ControllerType Device::controllerType() {
+    QReadLocker rLock(&properiesLock_);
+    return controllerType_;
+}
+
+int Device::deviceId() const {
+    return deviceId_;
+}
+
+const QString Device::deviceName() const {
+    return deviceName_;
+}
+
+Device::Type Device::deviceType() const {
+    return deviceType_;
+}
+
+bool Device::isControllerConnectedToPlatform() {
+    return ((this->controllerType() == ControllerType::Assisted) && this->hasClassId());
+}
+
+void Device::setVersions(const char* bootloaderVer, const char* applicationVer) {
+    // Do not change property if parameter is nullptr.
     QWriteLocker wLock(&properiesLock_);
-    if (verboseName) { verboseName_ = verboseName; }
-    if (platformId)  { platformId_ = platformId; }
-    if (classId)     { classId_ = classId; }
-    if (btldrVer)    { bootloaderVer_ = btldrVer; }
-    if (applVer)     { applicationVer_ = applVer; }
+    if (bootloaderVer)  { bootloaderVer_ = bootloaderVer; }
+    if (applicationVer) { applicationVer_ = applicationVer; }
+}
+
+void Device::setProperties(const char* name, const char* platformId, const char* classId, ControllerType type) {
+    // Clear property of parameter is nullptr.
+    QWriteLocker wLock(&properiesLock_);
+    if (name) { name_ = name; }
+    else { name_.clear(); }
+
+    if (platformId) { platformId_ = platformId; }
+    else { platformId_.clear(); }
+
+    if (classId) { classId_ = classId; }
+    else { classId_.clear(); }
+
+    controllerType_ = type;
+}
+
+void Device::setAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) {
+    // Clear property of parameter is nullptr.
+    QWriteLocker wLock(&properiesLock_);
+    if (platformId) { controllerPlatformId_ = platformId; }
+    else { controllerPlatformId_.clear(); }
+
+    if (classId) { controllerClassId_ = classId; }
+    else { controllerClassId_.clear(); }
+
+    if (fwClassId) { firmwareClassId_ = classId; }
+    else { firmwareClassId_.clear(); }
 }
 
 bool Device::lockDeviceForOperation(quintptr lockId) {

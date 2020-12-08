@@ -423,12 +423,12 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
     }
 }
 
-void HostControllerService::platformConnected(const int deviceId, const QString &classId)
+void HostControllerService::platformConnected(const int deviceId, bool hasAnyClassId)
 {
     Q_UNUSED(deviceId)
 
-    if (classId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "Connected platform doesn't have class Id.";
+    if (hasAnyClassId == false) {
+        qCCritical(logCategoryHcs) << "Class ID or controller class ID of connected platform is not set.";
         return;
     }
 
