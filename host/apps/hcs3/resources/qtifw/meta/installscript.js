@@ -1,34 +1,4 @@
-/**************************************************************************
-**
-** Copyright (C) 2017 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the Qt Installer Framework.
-**
-** $QT_BEGIN_LICENSE:GPL-EXCEPT$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 as published by the Free Software
-** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-** $QT_END_LICENSE$
-**
-**************************************************************************/
-
-function Component()
-{
-}
+function Component() {}
 
 Component.prototype.createOperations = function()
 {
@@ -36,26 +6,44 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     if( systemInfo.productType == "windows" ) {
-        var programDataShortcut = installer.value("RootDir").split("/").join("\\") + "ProgramData\\ON Semiconductor\\Strata Developer Studio\\HCS";
+        var programDataShortcut = installer.value("RootDir").split("/").join("\\") + "ProgramData";
         console.log("default ProgramData path: " + programDataShortcut);
         try {
             var programDataFolder = installer.execute("cmd", ["/c", "echo", "%ProgramData%"]);
             // the output of command is the first item, and the return code is the second
             if ((programDataFolder != undefined) && (programDataFolder != null) && (programDataFolder[0] != undefined) && (programDataFolder[0] != null) && (programDataFolder[0] != "")) {
-                programDataShortcut = programDataFolder[0].trim() + "\\ON Semiconductor\\Strata Developer Studio\\HCS";
+                programDataShortcut = programDataFolder[0].trim();
                 console.log("detected ProgramData path: " + programDataShortcut);
             } else {
                 console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
             }
         } catch(e) {
-            console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
+            console.log("error while detecting correct ProgramData path, trying default one: " + programDataShortcut);
             console.log(e);
         }
-
-        component.addOperation("Mkdir", programDataShortcut);
+        var onsemiConfigFolder = programDataShortcut + "\\ON Semiconductor";
+        var hcsConfigFolder = onsemiConfigFolder + "\\Strata Developer Studio\\HCS";
+        component.addOperation("Mkdir", hcsConfigFolder);
         // Do not use Move, because it will fail with error if file was deleted
-        component.addOperation("Copy", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config", programDataShortcut + "\\hcs.config");
+        component.addOperation("Copy", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config", hcsConfigFolder + "\\hcs.config");
         component.addOperation("Delete", installer.value("TargetDir").split("/").join("\\") + "\\hcs.config");
+
+        if (installer.isInstaller() == true) {
+            try {
+                if (installer.gainAdminRights() == true) {
+                    if (installer.fileExists(onsemiConfigFolder) == true) {
+                        console.log("changing acces rights for Strata config folder: " + onsemiConfigFolder);
+                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
+                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
+                    }
+                    // do not drop admin rights in this function, will break installer
+                    //installer.dropAdminRights();
+                }
+            } catch(e) {
+                console.log("unable to change acces rights for Strata config folder");
+                console.log(e);
+            }
+        }
     }
 }
 

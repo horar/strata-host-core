@@ -10,6 +10,7 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -18,7 +19,7 @@ Item {
 
     Rectangle {
         width: 50
-        color: "#29e335"//"#33b13b"
+        color: "#29e335"//Theme.palette.green
         opacity: 1
         height: parent.height-1
         visible: model.connected
@@ -237,7 +238,7 @@ Item {
                         centerIn: icon
                     }
                     radius: height/2
-                    color: "#33b13b"
+                    color: Theme.palette.green
                     opacity: delegate.PathView.delOpacity ? delegate.PathView.delOpacity : 0.7 // if/then due to random bug that assigns undefined occassionally
                 }
 
