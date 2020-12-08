@@ -613,7 +613,7 @@ Window {
                             model: deviceModel
                             placeholderText: "device_id..."
                             textRole: null
-                            currentIndex: rowPlatform.device_id
+                            currentIndex: -1
 
 
                             delegate: SGText {
