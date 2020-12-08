@@ -53,7 +53,7 @@ signals:
 private slots:
     void readMessage();
     void handleError(QSerialPort::SerialPortError error);
-    void handleWriteToPort(const QByteArray data, QPrivateSignal);
+    void handleWriteToPort(const QByteArray data);
 
 private:
     bool sendMessage(const QByteArray msg, quintptr lockId) override;
