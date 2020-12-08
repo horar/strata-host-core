@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/SetupControl.qml</file>
         <file>control-views/PlatformInterface.qml</file>
