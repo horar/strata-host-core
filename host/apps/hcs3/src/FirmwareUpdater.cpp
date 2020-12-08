@@ -190,6 +190,7 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
         updStatus = FirmwareUpdateController::UpdateStatus::Unsuccess;
         break;
     case FlasherConnector::State::Failed :
+    case FlasherConnector::State::NoFirmware :
         updStatus = FirmwareUpdateController::UpdateStatus::Failure;
         break;
     }

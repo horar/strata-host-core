@@ -111,6 +111,7 @@ target_link_libraries(${BOARD_MANAGER}
     PUBLIC strata::QtLogger
     PUBLIC strata::Device
     PRIVATE strata::DeviceOperations
+    PRIVATE strata::CommandValidator
 )
 
 set_target_properties(${BOARD_MANAGER} PROPERTIES

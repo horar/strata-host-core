@@ -12,6 +12,7 @@
 #include "SGUtilsCpp.h"
 #include "Version.h"
 #include "PlatformInterfaceGenerator.h"
+#include "DebugMenuGenerator.h"
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -72,9 +73,12 @@ int main(int argc, char *argv[])
     addImportPaths(&engine);
 
     PlatformInterfaceGenerator generator;
+    DebugMenuGenerator debugMenuGenerator;
     engine.rootContext()->setContextProperty("generator", &generator);
+    engine.rootContext()->setContextProperty("debugMenuGenerator", &debugMenuGenerator);
 
     qmlRegisterUncreatableType<PlatformInterfaceGenerator>("tech.strata.PlatformInterfaceGenerator", 1, 0, "PlatformInterfaceGenerator", "You can't instantiate PlatformInterfaceGenerator in QML");
+    qmlRegisterUncreatableType<DebugMenuGenerator>("tech.strata.DebugMenuGenerator", 1, 0, "DebugMenuGenerator", "You can't instantiate DebugMenuGenerator in QML");
 
     qmlRegisterSingletonType<SGUtilsCpp>("tech.strata.SGUtilsCpp", 1, 0,"SGUtilsCpp", [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject* {
         Q_UNUSED(engine)

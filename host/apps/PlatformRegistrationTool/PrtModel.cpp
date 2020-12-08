@@ -40,7 +40,7 @@ PrtModel::PrtModel(QObject *parent)
 
     boardManager_.init();
 
-    connect(&boardManager_, &strata::BoardManager::boardReady, this, &PrtModel::boardReadyHandler);
+    connect(&boardManager_, &strata::BoardManager::boardInfoChanged, this, &PrtModel::boardReadyHandler);
     connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PrtModel::boardDisconnectedHandler);
 
     connect(&downloadManager_, &strata::DownloadManager::groupDownloadFinished, this, &PrtModel::downloadFinishedHandler);
@@ -80,7 +80,7 @@ QString PrtModel::deviceFirmwareVersion() const
         return "";
     }
 
-    return platformList_.first()->property(strata::device::DeviceProperties::applicationVer);
+    return platformList_.first()->applicationVer();
 }
 
 QString PrtModel::deviceFirmwareVerboseName() const
@@ -89,7 +89,7 @@ QString PrtModel::deviceFirmwareVerboseName() const
         return "";
     }
 
-    return platformList_.first()->property(strata::device::DeviceProperties::verboseName);
+    return platformList_.first()->name();
 }
 
 void PrtModel::programDevice()

@@ -177,19 +177,36 @@ FocusScope {
                         height: divider.y + divider.height
 
                         property color helperTextColor: "#333333"
-                        property bool jsonIsValid
 
                         Rectangle {
+                            id: messageTypeBg
                             anchors {
                                 top: parent.top
                                 left: parent.left
+                                right: buttonRow.right
+                                bottom: divider.top
+                            }
+
+                            color: {
+                                if (model.type === Sci.SciScrollbackModel.Request) {
+                                    return Qt.lighter(SGWidgets.SGColorsJS.TANGO_CHOCOLATE1, 1.3)
+                                }
+
+                                return "transparent"
+                            }
+                        }
+
+                        Rectangle {
+                            id: messageValidityBg
+                            anchors {
+                                top: parent.top
+                                left: messageTypeBg.right
                                 right: parent.right
                                 bottom: divider.top
                             }
+
                             color: {
-                                if (model.type === Sci.SciScrollbackModel.Request) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.3)
-                                } else if (cmdDelegate.jsonIsValid === false) {
+                                if (model.isJsonValid === false) {
                                     return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
                                 }
 
@@ -242,7 +259,7 @@ FocusScope {
                                         icon.source: "qrc:/images/redo.svg"
                                         iconSize: buttonRow.iconSize
                                         onClicked: {
-                                            cmdInput.text = JSON.stringify(JSON.parse(model.message))
+                                            cmdInput.text = model.message
                                         }
                                     }
                                 }
@@ -258,12 +275,12 @@ FocusScope {
 
                                     iconColor: cmdDelegate.helperTextColor
                                     hintText: qsTr("Condensed mode")
-                                    icon.source: model.condensed ? "qrc:/sgimages/chevron-right.svg" : "qrc:/sgimages/chevron-down.svg"
+                                    icon.source: model.isCondensed ? "qrc:/sgimages/chevron-right.svg" : "qrc:/sgimages/chevron-down.svg"
                                     iconSize: buttonRow.iconSize
 
                                     onClicked: {
                                         var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
-                                        var item = scrollbackModel.setCondensed(sourceIndex, !model.condensed)
+                                        var item = scrollbackModel.setIsCondensed(sourceIndex, !model.isCondensed)
                                     }
                                 }
                             }
@@ -286,21 +303,29 @@ FocusScope {
                             readOnly: true
 
                             text: {
-                                var prettyText = prettifyJson(model.message, model.condensed)
-                                if (prettyText.length > 0) {
-                                    cmdDelegate.jsonIsValid = true
-                                    return prettyText
+                                if (model.isCondensed === false && model.isJsonValid) {
+                                    return CommonCpp.SGUtilsCpp.prettifyJson(model.message)
                                 }
 
-                                cmdDelegate.jsonIsValid = false
                                 return model.message
                             }
-
 
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.IBeamCursor
                                 acceptedButtons: Qt.NoButton
+                            }
+                        }
+
+                        Loader {
+                            id: syntaxHighlighterLoader
+                            sourceComponent: model.isJsonValid ? syntaxHighlighterComponent : null
+                        }
+
+                        Component {
+                            id: syntaxHighlighterComponent
+                            CommonCpp.SGJsonSyntaxHighlighter {
+                                textDocument: cmdText.textDocument
                             }
                         }
 
@@ -323,7 +348,7 @@ FocusScope {
 
             FocusScope {
                 id: inputWrapper
-                height: cmdInput.y + cmdInput.height + 6
+                height: validateCheckBox.y + validateCheckBox.height + 6
                 anchors {
                     bottom: parent.bottom
                     left: parent.left
@@ -336,6 +361,7 @@ FocusScope {
                     id: toolButtonRow
                     anchors {
                         top: parent.top
+                        topMargin: 2
                         left: cmdInput.left
                     }
 
@@ -498,18 +524,20 @@ FocusScope {
 
                     focus: true
                     font.family: "monospace"
-                    placeholderText: "Enter Command..."
+                    placeholderText: "Enter Message..."
                     isValidAffectsBackground: true
                     suggestionListModel: commandHistoryModel
                     suggestionModelTextRole: "message"
                     suggestionPosition: Item.Top
                     suggestionEmptyModelText: qsTr("No commands.")
-                    suggestionHeaderText: qsTr("Command history")
+                    suggestionHeaderText: qsTr("Message history")
                     suggestionOpenWithAnyKey: false
                     suggestionMaxHeight: 250
                     suggestionCloseOnDown: true
                     suggestionDelegateRemovable: true
                     showCursorPosition: true
+                    showClearButton: true
+                    suggestionDelegateTextWrap: true
 
                     onTextChanged: {
                         model.platform.errorString = "";
@@ -540,6 +568,20 @@ FocusScope {
                     }
                 }
 
+                SGWidgets.SGCheckBox {
+                    id: validateCheckBox
+                    anchors {
+                        top: cmdInput.bottom
+                        topMargin: 2
+                        left: cmdInput.left
+                    }
+
+                    focusPolicy: Qt.NoFocus
+                    padding: 0
+                    checked: true
+                    text: "Send only valid JSON message"
+                }
+
                 SGWidgets.SGButton {
                     id: btnSend
                     anchors {
@@ -559,7 +601,7 @@ FocusScope {
             }
 
             function sendTextInputTextAsComand() {
-                var result = model.platform.sendMessage(cmdInput.text)
+                var result = model.platform.sendMessage(cmdInput.text, validateCheckBox.checked)
                 if (result) {
                     cmdInput.clear()
                 }
@@ -629,25 +671,6 @@ FocusScope {
     function showExportView() {
         stackView.push(exportComponent)
     }
-
-    function prettifyJson(message, condensed) {
-        if (condensed === undefined) {
-            condensed = true
-        }
-
-        try {
-            var messageObj =  JSON.parse(message)
-        } catch(error) {
-            return ""
-        }
-
-        if (condensed) {
-            return JSON.stringify(messageObj)
-        }
-
-        return JSON.stringify(messageObj, undefined, 4)
-    }
-
 
     function prettifyHintText(hintText, shortcut) {
         return hintText + " - " + shortcut
