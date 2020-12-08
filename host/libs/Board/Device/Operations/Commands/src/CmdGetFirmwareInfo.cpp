@@ -61,6 +61,15 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
     }
 }
 
+void CmdGetFirmwareInfo::commandRejected() {
+    if (requireResponse_) {
+        result_ = CommandResult::Reject;
+    } else {
+        setDeviceVersions(nullptr, "");
+        result_ = CommandResult::Done;
+    }
+}
+
 void CmdGetFirmwareInfo::onTimeout() {
     if (requireResponse_) {
         if (retriesCount_ < maxRetries_) {

@@ -31,6 +31,7 @@ public:
     void mockSetAutoResponse(bool autoResponse) {autoResponse_ = autoResponse;}
     void mockEmitResponses(const QByteArray msg);
     bool mockIsBootloader() {return commandResponseMock_.mockIsBootloader();}
+    void mockSetLegacy(bool isLegacy) { commandResponseMock_.mockSetLegacy(isLegacy); }
 
 protected:
     virtual bool sendMessage(const QByteArray msg, quintptr lockId) override;
