@@ -332,17 +332,6 @@ Rectangle {
                 }
 
                 SGMenuItem {
-<<<<<<< HEAD
-                    text: qsTr("C.V.C")
-                    onClicked: {
-                      cvcButton.toggleVisibility()
-                      profileMenu.close()
-                    }
-                }
-
-                SGMenuItem {
-=======
->>>>>>> b2ccb58046f37d232d3cd4b6e18738fc1dd7033b
                     text: qsTr("Log Out")
                     onClicked: {
                         profileMenu.close()
