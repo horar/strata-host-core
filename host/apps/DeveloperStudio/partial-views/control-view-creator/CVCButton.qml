@@ -74,7 +74,7 @@ Rectangle {
                 anchors.fill: parent
 
                 onClicked: {
-                    let data = {"index": 0}
+                    let data = {"index": NavigationControl.stack_container_.count-3}
                     NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
                     controlViewCreatorContainer.visible = false
                 }
