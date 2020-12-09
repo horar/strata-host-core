@@ -402,7 +402,8 @@ Item {
 
                 ConsoleContainer {
                     id: consoleContainer
-                    Layout.minimumHeight: 200
+                    Layout.minimumHeight: 30
+                    Layout.preferredHeight: 200
                     Layout.maximumHeight: 750
                     Layout.fillWidth: true
                     visible: !noActiveFile.visible
@@ -419,6 +420,12 @@ Item {
                             PropertyChanges {
                                 target: consoleContainer
                                 Layout.preferredHeight: 200
+                            }
+                        }, State {
+                            name: "minimize"
+                            PropertyChanges {
+                                target: consoleContainer
+                                Layout.preferredHeight: 20
                             }
                         }
                     ]

@@ -72,6 +72,8 @@ Rectangle {
                     Layout.fillHeight: true
                 }
 
+                RowLayout{
+                    Layout.alignment: Qt.AlignRight
                 Rectangle{
                     id: closeButton
                     height: 30
@@ -85,7 +87,7 @@ Rectangle {
                         width: height
                         source: "qrc:/sgimages/chevron-up.svg"
                         iconColor: "#ddd"
-                        rotation: consoleContainer.state !== "normal" ? 180 : 0
+                        rotation: consoleContainer.state !== "normal" && consoleContainer.state !== "minimize" ? 180 : 0
                     }
 
                     MouseArea {
@@ -95,12 +97,41 @@ Rectangle {
                         hoverEnabled: true
 
                         onClicked: {
-                            if(consoleContainer.state !== "normal"){
+                            if(consoleContainer.state !== "normal" && consoleContainer.state !== "minimize"){
                                 consoleContainer.height = 200
                                 consoleContainer.state = "normal"
                             } else {
                                 consoleContainer.state = "maximize"
                                 consoleContainer.height = 750
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: retractButton
+                    height: 30
+                    width: height
+                    color: retractArea.containsMouse ? "#aaa" : "transparent"
+                    Layout.alignment: Qt.AlignRight
+
+                        SGIcon {
+                            anchors.centerIn: retractButton
+                            height: 20
+                            width: height
+                            source: "qrc:/sgimages/times.svg"
+                            iconColor: "#ddd"
+                        }
+
+                        MouseArea {
+                            id: retractArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: {
+                                consoleContainer.height = topBar.height
+                                consoleContainer.state = "minimize"
                             }
                         }
                     }
