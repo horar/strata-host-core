@@ -149,8 +149,6 @@ Item {
         }
     }
 
-
-
     Rectangle {
         width: 30
         height: 30
