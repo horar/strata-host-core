@@ -6,8 +6,8 @@ import tech.strata.sgwidgets 1.0
 SGMainWindow {
     id:  window
     title: qsTr("Platform Interface Generator")
-    minimumHeight: 400
-    minimumWidth: 600
+    minimumHeight: 800
+    minimumWidth: 1000
 
     visible: true
 

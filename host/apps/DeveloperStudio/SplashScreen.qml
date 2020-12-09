@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
     id: splashScreen
@@ -46,7 +47,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "Not Connected"
             textColor: "white"
-            color: SGWidgets.SGColorsJS.ERROR_COLOR
+            color: Theme.palette.error
             fontSizeMultiplier: 2.0
             radius: 12
             verticalPadding: 6

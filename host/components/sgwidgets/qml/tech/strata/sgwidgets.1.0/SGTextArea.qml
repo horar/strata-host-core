@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 FocusScope {
     id: control
@@ -35,7 +36,7 @@ FocusScope {
                 } else if (isValid) {
                     return dummyControl.palette.mid
                 } else {
-                    return Colors.ERROR_COLOR
+                    return TangoTheme.palette.error
                 }
             }
         }
