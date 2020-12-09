@@ -50,33 +50,34 @@ ScrollView {
                     Layout.preferredWidth: 85
                     text: model.time
                 }
-                    RowLayout {
-                        Layout.preferredHeight: textMetric.height
-                        Layout.preferredWidth: textMetric.width
 
-                        spacing: 0
+                RowLayout {
+                    Layout.preferredHeight: textMetric.height
+                    Layout.preferredWidth: textMetric.width
 
-                        SGText {
-                            id: leftSide
-                            Layout.alignment: Qt.AlignLeft
-                            text: leftSidesColor(model.type)
-                            fontSizeMultiplier: fontMultiplier
-                        }
+                    spacing: 0
 
-                        SGText {
-                            id: msgType
-                            Layout.alignment: Qt.AlignCenter
-                            text: getMsgType(model.type)
-                            fontSizeMultiplier: fontMultiplier
-                        }
-
-                        SGText {
-                            id: rightSide
-                            Layout.alignment: Qt.AlignRight
-                            text: rightSidesColor(model.type)
-                            fontSizeMultiplier: fontMultiplier
-                        }
+                    SGText {
+                        id: leftSide
+                        Layout.alignment: Qt.AlignLeft
+                        text: leftSidesColor(model.type)
+                        fontSizeMultiplier: fontMultiplier
                     }
+
+                    SGText {
+                        id: msgType
+                        Layout.alignment: Qt.AlignCenter
+                        text: getMsgType(model.type)
+                        fontSizeMultiplier: fontMultiplier
+                    }
+
+                    SGText {
+                        id: rightSide
+                        Layout.alignment: Qt.AlignRight
+                        text: rightSidesColor(model.type)
+                        fontSizeMultiplier: fontMultiplier
+                    }
+                }
 
                 SGText {
                     id: msgText
@@ -87,7 +88,6 @@ ScrollView {
                     text: model.msg
                 }
             }
-
         }
     }
 

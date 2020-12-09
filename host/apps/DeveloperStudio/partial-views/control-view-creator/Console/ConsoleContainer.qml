@@ -39,71 +39,68 @@ Rectangle {
                     leftPadding: 5
                 }
 
+                RowLayout {
+                    Layout.preferredHeight: 30
+                    spacing: 0
 
-                    RowLayout {
+                    Item {
+                        Layout.preferredWidth: 30
                         Layout.preferredHeight: 30
-                        spacing: 0
 
-                        Item {
-                            Layout.preferredWidth: 30
-                            Layout.preferredHeight: 30
+                        SGIcon {
+                            anchors.centerIn: parent
+                            source: "qrc:/sgimages/exclamation-triangle.svg"
+                            iconColor: Theme.palette.warning
+                            height: 20
+                            width: height
+                            enabled: warningCount > 0
 
-                            SGIcon {
+                            Rectangle {
                                 anchors.centerIn: parent
-                                source: "qrc:/sgimages/exclamation-triangle.svg"
-                                iconColor: Theme.palette.warning
-                                height: 20
-                                width: height
-                                enabled: warningCount > 0
-
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    height: 13
-                                    width: 4
-                                    z: -1
-                                    color: "white"
-                                }
+                                height: 13
+                                width: 4
+                                z: -1
+                                color: "white"
                             }
-                        }
-
-                        SGText {
-                            text: warningCount
-                            Layout.alignment: Qt.AlignVCenter
-                            height: 30
-                            color: "white"
-                        }
-
-                        Item {
-                            Layout.preferredHeight: 30
-                            Layout.preferredWidth: 30
-
-                            SGIcon {
-                                anchors.centerIn: parent
-                                source: "qrc:/sgimages/exclamation-circle.svg"
-                                iconColor: Theme.palette.error
-                                height: 20
-                                width: height
-                                enabled: errorCount > 0
-
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    height: 12
-                                    width: 4
-                                    z: -1
-                                    color: "white"
-                                }
-                            }
-                        }
-
-                        SGText {
-                            text: errorCount
-                            Layout.alignment: Qt.AlignVCenter
-                            color: "white"
-                            height: 30
                         }
                     }
 
+                    SGText {
+                        text: warningCount
+                        Layout.alignment: Qt.AlignVCenter
+                        height: 30
+                        color: "white"
+                    }
 
+                    Item {
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: 30
+
+                        SGIcon {
+                            anchors.centerIn: parent
+                            source: "qrc:/sgimages/exclamation-circle.svg"
+                            iconColor: Theme.palette.error
+                            height: 20
+                            width: height
+                            enabled: errorCount > 0
+
+                            Rectangle {
+                                anchors.centerIn: parent
+                                height: 12
+                                width: 4
+                                z: -1
+                                color: "white"
+                            }
+                        }
+                    }
+
+                    SGText {
+                        text: errorCount
+                        Layout.alignment: Qt.AlignVCenter
+                        color: "white"
+                        height: 30
+                    }
+                }
 
                 Item {
                     Layout.preferredWidth: 10
@@ -172,46 +169,47 @@ Rectangle {
 
                 RowLayout{
                     Layout.alignment: Qt.AlignRight
-                Rectangle{
-                    id: closeButton
-                    height: 30
-                    width: height
-                    color: closeArea.containsMouse ? "#aaa" : "transparent"
-                    Layout.alignment: Qt.AlignRight
 
-                    SGIcon {
-                        anchors.centerIn: closeButton
-                        height: 20
+                    Rectangle{
+                        id: closeButton
+                        height: 30
                         width: height
-                        source: "qrc:/sgimages/chevron-up.svg"
-                        iconColor: "#ddd"
-                        rotation: consoleContainer.state !== "normal" && consoleContainer.state !== "minimize" ? 180 : 0
-                    }
+                        color: closeArea.containsMouse ? "#aaa" : "transparent"
+                        Layout.alignment: Qt.AlignRight
 
-                    MouseArea {
-                        id: closeArea
-                        anchors.fill: closeButton
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
+                        SGIcon {
+                            anchors.centerIn: closeButton
+                            height: 20
+                            width: height
+                            source: "qrc:/sgimages/chevron-up.svg"
+                            iconColor: "#ddd"
+                            rotation: consoleContainer.state !== "normal" && consoleContainer.state !== "minimize" ? 180 : 0
+                        }
 
-                        onClicked: {
-                            if(consoleContainer.state !== "normal" && consoleContainer.state !== "minimize"){
-                                consoleContainer.height = 200
-                                consoleContainer.state = "normal"
-                            } else {
-                                consoleContainer.state = "maximize"
-                                consoleContainer.height = 750
+                        MouseArea {
+                            id: closeArea
+                            anchors.fill: closeButton
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+
+                            onClicked: {
+                                if(consoleContainer.state !== "normal" && consoleContainer.state !== "minimize"){
+                                    consoleContainer.height = 200
+                                    consoleContainer.state = "normal"
+                                } else {
+                                    consoleContainer.state = "maximize"
+                                    consoleContainer.height = 750
+                                }
                             }
                         }
                     }
-                }
 
-                Rectangle {
-                    id: retractButton
-                    height: 30
-                    width: height
-                    color: retractArea.containsMouse ? "#aaa" : "transparent"
-                    Layout.alignment: Qt.AlignRight
+                    Rectangle {
+                        id: retractButton
+                        height: 30
+                        width: height
+                        color: retractArea.containsMouse ? "#aaa" : "transparent"
+                        Layout.alignment: Qt.AlignRight
 
                         SGIcon {
                             anchors.centerIn: retractButton
@@ -243,5 +241,4 @@ Rectangle {
             Layout.fillWidth: true
         }
     }
-
 }
