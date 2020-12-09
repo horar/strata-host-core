@@ -24,5 +24,6 @@
         <file>widgets1_0/ExSGAlignedLabel.qml</file>
         <file>widgets1_0/ExSGMqttClient.qml</file>
         <file>widgets1_0/ExSGUserSettings.qml</file>
+        <file>widgets1_0/ExSGSpinBox.qml</file>
     </qresource>
 </RCC>

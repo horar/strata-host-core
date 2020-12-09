@@ -4,6 +4,7 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 add_library(${PROJECT_NAME} STATIC
+    QtLogger.cpp
     QtLoggerSetup.cpp
     LoggingQtCategories.cpp
 )

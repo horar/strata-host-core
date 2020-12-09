@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 TextField {
     id: field
@@ -35,14 +36,17 @@ TextField {
     property bool revealPassword: false
     property bool hasRightIcons: showIcon || revelPasswordLoader.status ===  Loader.Ready
 
-    background: Item {
+    background: Rectangle {
         id: backgroundContainer
         implicitHeight: 32
+        border.width: field.activeFocus ? 1 : 0
+        border.color:  field.activeFocus ? Theme.palette.green : "#40000000"
 
         Rectangle {
             id: background
             anchors.fill: backgroundContainer
             visible: false
+            z: -1
         }
 
         DropShadow {
@@ -52,6 +56,7 @@ TextField {
             verticalOffset: 2
             radius: 5.0
             samples: 10
+            z: -1
             color: "#40000000"
         }
 

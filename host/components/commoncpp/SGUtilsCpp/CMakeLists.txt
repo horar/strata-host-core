@@ -4,7 +4,7 @@ project(SGUtilsCpp
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core
+    COMPONENTS Core Gui
     REQUIRED
 )
 
@@ -21,7 +21,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC Qt5::Core
+    PUBLIC Qt5::Core Qt5::Gui
     PRIVATE strata::QtLogger
     PRIVATE rapidjson::rapidjson
 )

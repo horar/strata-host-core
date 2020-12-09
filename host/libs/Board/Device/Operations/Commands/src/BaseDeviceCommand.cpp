@@ -4,21 +4,21 @@
 
 namespace strata::device::command {
 
-BaseDeviceCommand::BaseDeviceCommand(const device::DevicePtr& device, const QString& commandName) :
-    cmdName_(commandName), device_(device), ackReceived_(false),
+BaseDeviceCommand::BaseDeviceCommand(const DevicePtr& device, const QString& commandName) :
+    cmdName_(commandName), device_(device), ackOk_(false),
     result_(CommandResult::InProgress), status_(operation::DEFAULT_STATUS) { }
 
 BaseDeviceCommand::~BaseDeviceCommand() { }
 
-void BaseDeviceCommand::setAckReceived() {
-    ackReceived_ = true;
+void BaseDeviceCommand::commandAcknowledged() {
+    ackOk_ = true;
 }
 
-bool BaseDeviceCommand::ackReceived() const {
-    return ackReceived_;
+bool BaseDeviceCommand::isCommandAcknowledged() const {
+    return ackOk_;
 }
 
-void BaseDeviceCommand::setCommandRejected() {
+void BaseDeviceCommand::commandRejected() {
     result_ = CommandResult::Reject;
 }
 
@@ -48,15 +48,23 @@ int BaseDeviceCommand::status() const {
     return status_;
 }
 
-void BaseDeviceCommand::setDeviceProperties(const char* name, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) {
-    device_->setProperties(name, platformId, classId, btldrVer, applVer);
+void BaseDeviceCommand::setDeviceVersions(const char* bootloaderVer, const char* applicationVer) {
+    device_->setVersions(bootloaderVer, applicationVer);
+}
+
+void BaseDeviceCommand::setDeviceProperties(const char* name, const char* platformId, const char* classId, Device::ControllerType type) {
+    device_->setProperties(name, platformId, classId, type);
+}
+
+void BaseDeviceCommand::setDeviceAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) {
+    device_->setAssistedProperties(platformId, classId, fwClassId);
 }
 
 void BaseDeviceCommand::setDeviceBootloaderMode(bool inBootloaderMode) {
     device_->setBootloaderMode(inBootloaderMode);
 }
 
-void BaseDeviceCommand::setDeviceApiVersion(device::Device::ApiVersion apiVersion) {
+void BaseDeviceCommand::setDeviceApiVersion(Device::ApiVersion apiVersion) {
     device_->setApiVersion(apiVersion);
 }
 

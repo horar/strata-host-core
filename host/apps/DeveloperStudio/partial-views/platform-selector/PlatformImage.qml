@@ -11,6 +11,7 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: imageContainer
@@ -28,14 +29,15 @@ Rectangle {
         width: imageContainer.width
         visible: model.image !== undefined && status == Image.Ready
         fillMode: Image.PreserveAspectFit
+        asynchronous: true
 
         property string modelSource: model.image
 
-        onModelSourceChanged: {
+        Component.onCompleted: {
             initialize()
         }
 
-        Component.onCompleted: {
+        onModelSourceChanged: {
             initialize()
         }
 
@@ -43,7 +45,7 @@ Rectangle {
             if (model.image.length === 0) {
                 console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
                 source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
-            } else if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))) {
+            } else if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image)) && SGUtilsCpp.isValidImage(SGUtilsCpp.urlToLocalFile(model.image))) {
                 source = model.image
             } else {
                 imageCheck.start()
@@ -51,7 +53,7 @@ Rectangle {
         }
 
         onStatusChanged: {
-            if (image.status == Image.Error){
+            if (image.status === Image.Error){
                 console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image failed to load - corrupt or does not exist:", model.image)
                 source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
             }
@@ -66,7 +68,7 @@ Rectangle {
             onTriggered: {
                 interval += interval
                 if (interval < 32000) {
-                    if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))){
+                    if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image)) && SGUtilsCpp.isValidImage(SGUtilsCpp.urlToLocalFile(model.image))){
                         image.source = model.image
                         return
                     }
@@ -117,10 +119,10 @@ Rectangle {
     }
 
     Rectangle {
-        color: "#33b13b"
-        width: image.width
+        color: Theme.palette.green
+        width: imageContainer.width
         anchors {
-            bottom: image.bottom
+            bottom: imageContainer.bottom
         }
         height: 25
         visible: model.connected

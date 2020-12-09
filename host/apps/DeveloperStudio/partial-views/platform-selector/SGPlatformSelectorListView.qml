@@ -10,6 +10,7 @@ import "qrc:/js/constants.js" as Constants
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -218,12 +219,13 @@ Item {
                         verticalCenter: textFilterContainer.verticalCenter
                         left: searchIcon.right
                         leftMargin: 5
-                        right: textFilterContainer.right
+                        right: clearIcon.left
                         rightMargin: 10
                     }
-                    color: "#33b13b"
+                    color: Theme.palette.green
                     font.bold: true
                     selectByMouse: true
+                    clip: true
                     enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
 
                     property string lowerCaseText: text.toLowerCase()
@@ -265,10 +267,7 @@ Item {
                     MouseArea {
                         id: mouseArea
                         anchors.fill: parent
-                        onClicked: {
-                            searchCategoriesDropdown.close()
-                            filter.focus = true
-                        }
+                        acceptedButtons: Qt.NoButton
                         cursorShape: Qt.IBeamCursor
                     }
                 }
@@ -403,7 +402,7 @@ Item {
 
                 Text {
                     id: activeSegmentFilterText
-                    color: "#33b13b"
+                    color: Theme.palette.green
                     font.bold: true
                     anchors {
                         left: segmentFilterContainer.left

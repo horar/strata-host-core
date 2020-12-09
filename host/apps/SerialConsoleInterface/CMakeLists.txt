@@ -52,6 +52,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::FlasherConnector
     strata::CouchbaseLiteCPP
     strata::QtLogger
+    strata::SGUtilsCpp
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

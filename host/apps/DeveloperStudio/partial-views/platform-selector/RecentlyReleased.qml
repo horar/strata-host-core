@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
@@ -14,7 +15,7 @@ Rectangle {
     id: recentlyReleased
     implicitHeight: recentRow.implicitHeight + 40
     implicitWidth: recentRow.implicitWidth + 40
-    color: SGColorsJS.STRATA_GREEN
+    color: Theme.palette.green
     radius: 10
     visible: lengthModel.count > 0
 
@@ -101,13 +102,16 @@ Rectangle {
                 onClicked:  {
                     Filters.clearActiveFilters()
 
-                    // filter on all of this platform's category filters to find all similar ones
-                    for (let j = 0; j < model.filters.count; j++){
-                        let filterName = model.filters.get(j).filterName
-                        if (Filters.mapping.hasOwnProperty(filterName)) {
-                            if (Filters.mapping[filterName].type === "category" && Filters.mapping[filterName].inUse === true) {
-                                Filters.categoryFilters.push(filterName)
-                                Filters.utility.categoryFiltersChanged()
+                    // do not set filters if filter controls not visible due to small window size
+                    if (leftFilters.responsiveVisible && rightFilters.responsiveVisible) {
+                        // filter on all of this platform's category filters to find all similar ones
+                        for (let j = 0; j < model.filters.count; j++){
+                            let filterName = model.filters.get(j).filterName
+                            if (Filters.mapping.hasOwnProperty(filterName)) {
+                                if (Filters.mapping[filterName].type === "category" && Filters.mapping[filterName].inUse === true) {
+                                    Filters.categoryFilters.push(filterName)
+                                    Filters.utility.categoryFiltersChanged()
+                                }
                             }
                         }
                     }
