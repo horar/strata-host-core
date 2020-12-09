@@ -35,6 +35,7 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isD
 SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, QString uid, QObject *parent) : QObject(parent), parent_(parentNode), isDir_(isDir), uid_(uid)
 {
     inQrc_ = false;
+    editing_ = true;
     children_ = QVector<SGQrcTreeNode*>();
     filename_ = QString();
     filepath_ = QUrl();

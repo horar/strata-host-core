@@ -48,8 +48,7 @@ Item {
                     if (!treeView.isExpanded(parent)) {
                         treeView.expand(parent)
                     }
-                    treeView.selectItem(index)
-                    treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
+                    Qt.callLater(treeView.selectItem, index)
                 } else {
                     let idx = openFilesModel.findTabByFilepath(node.filepath);
                     if (idx >= 0) {
@@ -115,9 +114,6 @@ Item {
         rowDelegate: Rectangle {
             height: 30
             color: styleData.selected && !model.editing ? "#CCCCCC" : "transparent"
-            onFocusChanged: {
-                forceActiveFocus()
-            }
         }
 
         itemDelegate: SideBarDelegate { }
