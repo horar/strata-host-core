@@ -50,7 +50,7 @@ Rectangle {
                         SGIcon {
                             anchors.centerIn: parent
                             source: "qrc:/sgimages/exclamation-triangle.svg"
-                            iconColor: Theme.palette.warning
+                            iconColor: "#c0ca33"
                             height: 20
                             width: height
                             enabled: warningCount > 0
