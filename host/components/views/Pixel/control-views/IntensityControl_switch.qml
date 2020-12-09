@@ -175,21 +175,20 @@ Item {
                         //uncheckedLabel: "Off"    // Default: "" (if not entered, label will not appear) // 20201022 YI Comment out
                         //checked:  platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")  // ?
 
-                        onToggled: {
-                            if(checked) {
-                                sgSwitch_wd.label = "<b>Watch Dog <br> ON</b>"
-                                platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)
-                            } else {
-                                sgSwitch_wd.label = "<b>Watch Dog <br> OFF</b>"
-                                platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")
+                            onToggled: {
+                                if(checked) {
+                                    sgSwitch_wd.label = "<b>Watch Dog <br> ON</b>"
+                                    platformInterface.start_periodic_mapena.update("pxnBRCMAPENCommand", -1, 100)
+                                } else {
+                                    sgSwitch_wd.label = "<b>Watch Dog <br> OFF</b>"
+                                    platformInterface.stop_periodic_mapena.update("pxnBRCMAPENCommand")
+                                }
                             }
-                        }
 
                     }
                 }
             }
         }
-
         Component.onCompleted:  {
             Help.registerTarget(sgSwitch_auto_addr, "Auto Addressing start when switch is turned on. Also Boost and Buck Enable are controlled automatically by GUI so LED are flusing seveal times. After Auto Addressing finish, all enable switches can select", 0, "Help1")
             Help.registerTarget(sgStatusLight, "LED indicator for Auto addressing, LED becomes green after auto addressing procedure finished.", 1, "Help1")
