@@ -379,6 +379,7 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine("text: model.name");
     text += writeLine("font.bold: true");
     text += writeLine("verticalAlignment: Text.AlignVCenter");
+    text += writeLine("elide: Text.ElideRight");
     text += writeLine();
     indentLevel--;
     text += writeLine("}");
@@ -388,7 +389,8 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine("TextField {");
     indentLevel++;
     text += writeLine("Layout.fillHeight: true");
-    text += writeLine("Layout.preferredWidth: 200");
+    text += writeLine("Layout.fillWidth: true");
+    text += writeLine("Layout.maximumWidth: 175");
     text += writeLine("text: placeholderText");
     text += writeLine("placeholderText: generatePlaceholder(model.type, model.value)");
     text += writeLine("selectByMouse: true");
@@ -804,13 +806,15 @@ QString DebugMenuGenerator::generateArrayComponent()
     text += writeLine("Layout.preferredWidth: 200");
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("verticalAlignment: Text.AlignVCenter");
+    text += writeLine("elide: Text.ElideRight");
     indentLevel--;
     text += writeLine("}");
     text += writeLine();
     text += writeLine("TextField {");
     indentLevel++;
     text += writeLine("Layout.fillHeight: true");
-    text += writeLine("Layout.preferredWidth: 200");
+    text += writeLine("Layout.fillWidth: true");
+    text += writeLine("Layout.maximumWidth: 175");
     text += writeLine("placeholderText: generatePlaceholder(modelData.type, modelData.value)");
     text += writeLine("selectByMouse: true");
     text += writeLine("visible: modelData.type !== \"array\" && modelData.type !== \"object\" && modelData.type !== \"bool\"");
@@ -954,6 +958,7 @@ QString DebugMenuGenerator::generateObjectComponent()
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("verticalAlignment: Text.AlignVCenter");
     text += writeLine("font.bold: true");
+    text += writeLine("elide: Text.ElideRight");
     indentLevel--;
     text += writeLine("}");
     text += writeLine();
@@ -962,7 +967,8 @@ QString DebugMenuGenerator::generateObjectComponent()
     text += writeLine("TextField {");
     indentLevel++;
     text += writeLine("Layout.fillHeight: true");
-    text += writeLine("Layout.preferredWidth: 200");
+    text += writeLine("Layout.fillWidth: true");
+    text += writeLine("Layout.maximumWidth: 175");
     text += writeLine("placeholderText: generatePlaceholder(modelData.type, modelData.value)");
     text += writeLine("selectByMouse: true");
     text += writeLine("visible: modelData.type !== \"array\" && modelData.type !== \"object\" && modelData.type !== \"bool\"");
