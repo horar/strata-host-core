@@ -21,6 +21,7 @@ import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: container
@@ -33,7 +34,7 @@ Rectangle {
     property string last_name: ""
 
     property color backgroundColor: "#3a3a3a"
-    property color menuColor: "#33b13b"
+    property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
 
     Component.onCompleted: {
@@ -52,37 +53,38 @@ Rectangle {
         Help.destroyHelp()
     }
 
-    Item {
-        id: logoContainer
-        height: container.height
-        width: 70
-
-        Image {
-            source: "qrc:/images/strata-logo-reverse.svg"
-            height: 30
-            width: 60
-            mipmap: true
-            anchors {
-                centerIn: logoContainer
-            }
-        }
-    }
-
-    Row {
+    RowLayout {
         id: tabRow
         anchors {
-            left: logoContainer.right
+            left: container.left
+            right: profileIconContainer.left
         }
         spacing: 1
 
+    	Item {
+        	id: logoContainer
+        	Layout.preferredHeight: container.height
+        	Layout.preferredWidth: 70
+
+        	Image {
+            	source: "qrc:/images/strata-logo-reverse.svg"
+            	height: 30
+            	width: 60
+            	mipmap: true
+            	anchors {
+                	centerIn: logoContainer
+            	}
+        	}
+    	}
+
         Rectangle {
             id: platformSelector
-            height: 40
-            width: 120
+            Layout.preferredHeight:40
+            Layout.preferredWidth: 120
 
-            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? "#33b13b" : "#444"
+            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.green : "#444"
 
-            property color menuColor: "#33b13b"
+            property color menuColor: Theme.palette.green
 
             SGText {
                 color: "white"
@@ -106,10 +108,21 @@ Rectangle {
             }
         }
 
-        Repeater {
+        ListView {
             id: platformTabRepeater
+            Layout.fillHeight: true
+            Layout.fillWidth: true
             delegate: SGPlatformTab {}
+            orientation: ListView.Horizontal
+            spacing: 1
+            clip: true
+
             model: NavigationControl.platform_view_model_
+        }
+
+        CVCButton {
+            id: cvcButton
+            visible: false
         }
 
         SGPlatformTab {
@@ -148,17 +161,16 @@ Rectangle {
         }
     }
 
-    CVCButton { }
-
     Item {
         id: profileIconContainer
+        width: height
+
         anchors {
             right: container.right
             rightMargin: 2
             top: container.top
             bottom: container.bottom
         }
-        width: height
 
         Rectangle {
             id: profileIcon
@@ -296,6 +308,16 @@ Rectangle {
                         settingsLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("CVC")
+                    visible: cvcButton.state === "debug"
+                    width: profileMenu.width
+
+                    onClicked: {
+                        cvcButton.toggleVisibility()
+                    }
                 }
 
                 Rectangle {

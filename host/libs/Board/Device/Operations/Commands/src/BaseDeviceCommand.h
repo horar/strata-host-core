@@ -29,7 +29,7 @@ public:
      * \param name command name
      * \param device the device on which the operation is performed
      */
-    BaseDeviceCommand(const device::DevicePtr& device, const QString& name);
+    BaseDeviceCommand(const DevicePtr& device, const QString& name);
 
     /*!
      * BaseDeviceCommand destructor.
@@ -56,20 +56,20 @@ public:
     virtual bool processNotification(rapidjson::Document& doc) = 0;
 
     /*!
-     * Sets ACK received flag.
+     * Sets ACK OK flag.
      */
-    virtual void setAckReceived() final;
+    virtual void commandAcknowledged() final;
 
     /*!
-     * Checks if ACK received flag is set.
-     * \return true if ACK received flag is set, otherwise false
+     * Checks if ACK OK flag is set.
+     * \return true if ACK OK flag is set, otherwise false
      */
-    virtual bool ackReceived() const final;
+    virtual bool isCommandAcknowledged() const final;
 
     /*!
      * Sets command result to CommandResult::Reject.
      */
-    virtual void setCommandRejected() final;
+    virtual void commandRejected();
 
     /*!
      * This method is called when expires timeout for sent command.
@@ -107,12 +107,14 @@ public:
     virtual int status() const final;
 
 protected:
-    virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) final;
+    virtual void setDeviceVersions(const char* bootloaderVer, const char* applicationVer) final;
+    virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, Device::ControllerType type) final;
+    virtual void setDeviceAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) final;
     virtual void setDeviceBootloaderMode(bool inBootloaderMode) final;
-    virtual void setDeviceApiVersion(device::Device::ApiVersion apiVersion) final;
+    virtual void setDeviceApiVersion(Device::ApiVersion apiVersion) final;
     const QString cmdName_;
-    const device::DevicePtr& device_;
-    bool ackReceived_;
+    const DevicePtr& device_;
+    bool ackOk_;
     CommandResult result_;
     int status_;
 };

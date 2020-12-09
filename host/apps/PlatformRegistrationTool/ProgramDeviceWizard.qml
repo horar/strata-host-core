@@ -7,6 +7,7 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
 import tech.strata.flasherConnector 1.0
+import tech.strata.theme 1.0
 import QtQml.StateMachine 1.12 as DSM
 
 FocusScope {
@@ -849,9 +850,9 @@ FocusScope {
 
                     iconColor: {
                         if (stateLoopSucceed.active) {
-                            return SGWidgets.SGColorsJS.STRATA_GREEN
+                            return Theme.palette.green
                         } else if (stateLoopFailed.active || stateError.active) {
-                            return SGWidgets.SGColorsJS.TANGO_SCARLETRED2
+                            return TangoTheme.palette.scarletRed2
                         }
 
                         return "black"

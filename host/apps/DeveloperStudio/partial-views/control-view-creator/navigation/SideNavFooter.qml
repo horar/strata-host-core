@@ -4,8 +4,27 @@ import QtQuick.Layouts 1.12
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
-    implicitHeight: divider.height + recompileNavButton.height
+    implicitHeight: divider.height + recompileNavButton.height + cleanupProjectNecessary.height
     implicitWidth: toolBarListView.width
+
+    SGSideNavItem {
+        id: cleanupProjectNecessary
+
+        width: parent.width
+        height: 70
+        anchors.top: parent.top
+
+        iconText: "Clean"
+        iconSource: "qrc:/sgimages/exclamation-triangle.svg"
+        iconColor: "#ffc107"
+        tooltipDescription: "The QRC file for this project contains files that no longer exist. Cleaning the project will remove these files from the QRC file."
+        visible: editor.fileTreeModel.needsCleaning
+        color: "transparent"
+
+        function onClicked () {
+            confirmCleanFiles.open()
+        }
+    }
 
     Rectangle {
         id: divider
@@ -13,7 +32,7 @@ Item {
         width: toolBarListView.width
         color: "lightgrey"
         anchors {
-            top: parent.top
+            top: cleanupProjectNecessary.bottom
             left: parent.left
         }
     }
@@ -21,7 +40,7 @@ Item {
     BusyIndicator {
         id: buildingIndicator
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: recompileNavButton.verticalCenter
         height: 30
         width: 30
         visible: toolBarListView.recompiling
@@ -86,6 +105,7 @@ Item {
         enabled: editor.fileTreeModel.url.toString() !== "" && !toolBarListView.recompiling
         visible: !toolBarListView.recompiling
         color: "transparent"
+        tooltipDescription: "Recompile your control view project."
 
         function onClicked() {
             toolBarListView.recompiling = true;

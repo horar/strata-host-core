@@ -48,7 +48,7 @@ public:
 signals:
     // signals only for internal use:
     // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
-    void writeToPort(const QByteArray& data, QPrivateSignal);
+    void writeToPort(const QByteArray data, QPrivateSignal);
 
 private slots:
     void readMessage();

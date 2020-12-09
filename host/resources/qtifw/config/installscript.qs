@@ -1,17 +1,9 @@
 var isSilent = false;
-var startSDS = false;
-var delayStart = 0;
 
 function isValueSet(val)
 {
     return ((installer.containsValue(val) == true) && ((installer.value(val).toLowerCase() == "true") || (installer.value(val) == "1")));
 }
-
-// if we run installer, it will be in installer mode
-// if we run maintenance tool, it will be by default in uninstall mode
-// we can also use the following settings to preselect other mode
-//  --updater                                Start application in updater mode.
-//  --manage-packages                        Start application in package manager
 
 function Controller()
 {
@@ -22,12 +14,7 @@ function Controller()
         installer.setValue("isSilent_internal","false");
     }
 
-    if (isValueSet("startSDS") == true) {
-        startSDS = true;
-    }
-
     console.log("Is isSilent set: " + isSilent);
-    console.log("Is startSDS set: " + startSDS);
 
     if (isSilent == true) {
         installer.installationFinished.connect(Controller.prototype.InstallationPerformed);
@@ -39,45 +26,29 @@ function Controller()
         //installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
     }
 
-    var widget = gui.pageById(QInstaller.Introduction); // get the introduction wizard page
-    if (widget != null) {
-        widget.packageManagerCoreTypeChanged.connect(onPackageManagerCoreTypeChanged);
-    }
-
-    if ((installer.containsValue("delayStart") == true) && installer.value("delayStart") != "0") {
-        console.log("delayStart: " + installer.value("delayStart"));
-        delayStart = parseInt(installer.value("delayStart")) || 0;
-        if (delayStart < 0) {
-            delayStart = 0;
+    try {
+        var widget = gui.pageById(QInstaller.Introduction); // get the introduction wizard page
+        if (widget != null) {
+            widget.packageManagerCoreTypeChanged.connect(onPackageManagerCoreTypeChanged);
         }
+    } catch(e) {
+        console.log("Controller: unable to access gui: " + e);
     }
-
-    console.log("Is delayStart set: " + delayStart);
-
-    // restore all custom variables to defaults, because they are persistent through Strata Maintenance Tool.ini
-    if (installer.isInstaller() == true) {
-        // keep these as they were set unless it is installer
-        installer.setValue("add_start_menu_shortcut", "true");
-        installer.setValue("add_desktop_shortcut", "true");
-    }
-    installer.setValue("restart_is_required", "false");
 
     // we already saved their values, so we can return them back to default now
     installer.setValue("isSilent", "false");
-    installer.setValue("startSDS", "false");
-    installer.setValue("delayStart", "0");
 }
 
 onPackageManagerCoreTypeChanged = function()
 {
-    console.log("Is Updater: " + installer.isUpdater());
-    console.log("Is Uninstaller: " + installer.isUninstaller());
-    console.log("Is Package Manager: " + installer.isPackageManager());
+    console.log("[GUI] Is Updater: " + installer.isUpdater());
+    console.log("[GUI] Is Uninstaller: " + installer.isUninstaller());
+    console.log("[GUI] Is Package Manager: " + installer.isPackageManager());
 }
 
 Controller.prototype.IntroductionPageCallback = function()
 {
-    console.log("IntroductionPageCallback entered");
+    console.log("[GUI] IntroductionPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
         if (installer.isInstaller() == true) {
@@ -109,17 +80,13 @@ Controller.prototype.IntroductionPageCallback = function()
     }
 
     if (isSilent == true) {
-        if (delayStart == 0) {
-            gui.clickButton(buttons.NextButton);
-        } else {
-            gui.clickButton(buttons.NextButton, delayStart);
-        }
+        gui.clickButton(buttons.NextButton);
     }
 }
 
 Controller.prototype.WelcomePageCallback = function ()
 {
-    console.log("WelcomePageCallback entered");
+    console.log("[GUI] WelcomePageCallback entered");
     if (isSilent == true) {
         gui.clickButton(buttons.NextButton, 3000);
     }
@@ -127,7 +94,7 @@ Controller.prototype.WelcomePageCallback = function ()
 
 Controller.prototype.TargetDirectoryPageCallback = function ()
 {
-    console.log("TargetDirectoryPageCallback entered");
+    console.log("[GUI] TargetDirectoryPageCallback entered");
     if (isSilent == true) {
         gui.clickButton(buttons.NextButton);
     }
@@ -135,7 +102,7 @@ Controller.prototype.TargetDirectoryPageCallback = function ()
 
 Controller.prototype.ComponentSelectionPageCallback = function ()
 {
-    console.log("ComponentSelectionPageCallback entered");
+    console.log("[GUI] ComponentSelectionPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
         if (isSilent == true) {
@@ -149,7 +116,7 @@ Controller.prototype.ComponentSelectionPageCallback = function ()
 
 Controller.prototype.LicenseAgreementPageCallback = function ()
 {
-    console.log("LicenseAgreementPageCallback entered");
+    console.log("[GUI] LicenseAgreementPageCallback entered");
     if (isSilent == true) {
         var widget = gui.currentPageWidget();
         if (widget != null) {
@@ -164,7 +131,7 @@ Controller.prototype.LicenseAgreementPageCallback = function ()
 
 Controller.prototype.StartMenuDirectoryPageCallback = function ()
 {
-    console.log("StartMenuDirectoryPageCallback entered");
+    console.log("[GUI] StartMenuDirectoryPageCallback entered");
     if (isSilent) {
         gui.clickButton(buttons.NextButton);
     }
@@ -172,7 +139,7 @@ Controller.prototype.StartMenuDirectoryPageCallback = function ()
 
 Controller.prototype.ReadyForInstallationPageCallback = function ()
 {
-    console.log("ReadyForInstallationPageCallback entered");
+    console.log("[GUI] ReadyForInstallationPageCallback entered");
     if (isSilent == true) {
         gui.clickButton(buttons.NextButton);
     }
@@ -180,7 +147,7 @@ Controller.prototype.ReadyForInstallationPageCallback = function ()
 
 Controller.prototype.PerformInstallationPageCallback = function ()
 {
-    console.log("PerformInstallationPageCallback entered");
+    console.log("[GUI] PerformInstallationPageCallback entered");
     //if (isSilent == true) {
     //    gui.clickButton(buttons.CommitButton);
     //}
@@ -214,19 +181,22 @@ function isComponentInstalled(component_name)
 
 Controller.prototype.FinishedPageCallback = function ()
 {
-    console.log("FinishedPageCallback entered");
+    console.log("[GUI] FinishedPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
         widget.MessageLabel.setText("ON Semiconductor\n\n"
                                     + "Thank you for using ON Semiconductor. If you have any questions or in need of support, please contact your local sales representative.\n\n"
                                     + "Copyright " + (new Date().getFullYear()) + "\n\n"
                                     );
-        if (((installer.isInstaller() == true) || (installer.isUpdater() == true) || (installer.isPackageManager() == true)) && (installer.status == QInstaller.Success)) {
-            var runItCheckBox = widget.findChild("RunItCheckBox");
-            if ((runItCheckBox != null) && isComponentInstalled("com.onsemi.strata.devstudio") == true) {
-                runItCheckBox.setChecked(startSDS);
+        var runItCheckBox = widget.findChild("RunItCheckBox");
+        if (runItCheckBox != null) {
+            if ((installer.isUpdater() == true) && (installer.status == QInstaller.Success) && (isSilent == true) && (isComponentInstalled("com.onsemi.strata.devstudio") == true)) {
+                runItCheckBox.setChecked(true);
+            } else {
+                runItCheckBox.setChecked(false);
             }
         }
+
         if ((installer.isInstaller() == true) && (installer.status != QInstaller.Success))
             installer.setValue("TargetDir", "");    // prohibit writing log into destination directory
     }
@@ -258,14 +228,14 @@ function isComponentAvailable(component_name)
 
 Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
 {
-    console.log("DynamicShortcutCheckBoxWidgetCallback entered");
+    console.log("[GUI] DynamicShortcutCheckBoxWidgetCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
         var desktopCheckBox = widget.findChild("desktopCheckBox");
         if (desktopCheckBox != null) {
             if (isComponentAvailable("com.onsemi.strata.devstudio") == true) {
                 desktopCheckBox.setEnabled(true);
-                desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "true");
+                desktopCheckBox.setChecked(installer.value("add_desktop_shortcut", "true") == "true");
             } else {
                 desktopCheckBox.setEnabled(false);
                 desktopCheckBox.setChecked(false);
@@ -273,7 +243,7 @@ Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
         }
         var startMenuCheckBox = widget.findChild("startMenuCheckBox");
         if (startMenuCheckBox != null) {
-            startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut") == "true");
+            startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut", "true") == "true");
         }
     }
 

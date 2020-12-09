@@ -21,6 +21,7 @@ SGQrcTreeModel::SGQrcTreeModel(QObject *parent) : QAbstractItemModel(parent)
     QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
     connect(this, &SGQrcTreeModel::urlChanged, this, &SGQrcTreeModel::createModel);
     fsWatcher_ = std::make_unique<QFileSystemWatcher>();
+    needsCleaning_ = false;
 
     connect(fsWatcher_.get(), &QFileSystemWatcher::directoryChanged, this, &SGQrcTreeModel::directoryStructureChanged);
     connect(fsWatcher_.get(), &QFileSystemWatcher::fileChanged, this, &SGQrcTreeModel::projectFilesModified);
@@ -403,6 +404,11 @@ void SGQrcTreeModel::setUrl(QUrl url)
     }
 }
 
+bool SGQrcTreeModel::needsCleaning() const
+{
+    return needsCleaning_;
+}
+
 QUrl SGQrcTreeModel::projectDirectory() const
 {
     return projectDir_;
@@ -463,6 +469,36 @@ bool SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
     }
 
     return true;
+}
+
+void SGQrcTreeModel::removeDeletedFilesFromQrc()
+{
+    QDomNodeList files = qrcDoc_.elementsByTagName("file");
+    QDir baseDirectory(SGUtilsCpp::urlToLocalFile(projectDir_));
+
+    for (int i = files.count() - 1; i >= 0; --i) {
+        QString relativePath = files.at(i).toElement().text();
+        QString absolutePath = baseDirectory.absoluteFilePath(relativePath);
+
+        if (!QFileInfo::exists(absolutePath)) {
+            files.at(i).parentNode().removeChild(files.at(i));
+            qrcItems_.remove(absolutePath);
+        }
+    }
+
+    setNeedsCleaning(false);
+    startSave();
+}
+
+QList<QString> SGQrcTreeModel::getMissingFiles()
+{
+    QList<QString> missingFiles;
+    for (QString filepath : qrcItems_.toList()) {
+        if (!QFileInfo::exists(filepath)) {
+            missingFiles.append(filepath);
+        }
+    }
+    return missingFiles;
 }
 
 void SGQrcTreeModel::removeEmptyChildren(const QModelIndex &parent)
@@ -630,6 +666,8 @@ void SGQrcTreeModel::clear(bool emitSignals)
 
     uidMap_.clear();
     qrcItems_.clear();
+    setNeedsCleaning(false);
+
     if (fsWatcher_->files().count() > 0) {
         fsWatcher_->removePaths(fsWatcher_->files());
     }
@@ -692,6 +730,9 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
     for (int i = 0; i < files.count(); i++) {
         QDomElement element = files.at(i).toElement();
         QString absolutePath = SGUtilsCpp::joinFilePath(SGUtilsCpp::urlToLocalFile(projectDir_), element.text());
+        if (!QFileInfo::exists(absolutePath)) {
+            setNeedsCleaning(true);
+        }
         qrcItems_.insert(absolutePath);
     }
 
@@ -816,6 +857,13 @@ void SGQrcTreeModel::save()
     startWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
 }
 
+void SGQrcTreeModel::setNeedsCleaning(const bool needsCleaning)
+{
+    if (needsCleaning_ != needsCleaning) {
+        needsCleaning_ = needsCleaning;
+        emit needsCleaningChanged();
+    }
+}
 
 /***
  * PUBLIC SLOTS
