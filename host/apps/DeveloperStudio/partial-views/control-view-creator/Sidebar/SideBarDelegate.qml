@@ -46,7 +46,7 @@ Item {
                     return;
                 }
 
-                text = model.filename
+                text = Qt.binding(() => styleData.value)
             }
         }
 
@@ -56,7 +56,7 @@ Item {
             }
 
             if (text.indexOf('/') >= 0) {
-                text = model.filename
+                text = Qt.binding(() => styleData.value)
             }
 
             // If a new file was created, and its filename is still empty
@@ -73,8 +73,9 @@ Item {
                 path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), text);
             }
 
+            treeModel.stopWatchingPath(SGUtilsCpp.parentDirectoryPath(path));
             // If we are creating a new file
-            if (model.filename === "") {
+            if (styleData.value === "") {
                 const success = SGUtilsCpp.createFile(path);
                 if (!success) {
                     //handle error
@@ -90,10 +91,11 @@ Item {
                         }
                     }
                     openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                    treeModel.addPathToTree(model.filepath)
                 }
             } else {
                 // Else we are just renaming an already existing file
-                if (text.length > 0 && model.filename !== text) {
+                if (text.length > 0 && styleData.value !== text) {
                     // Don't attempt to rename the file if the text is the same as the original filename
                     const success = treeModel.renameFile(styleData.index, text)
                     if (success) {
@@ -103,14 +105,15 @@ Item {
                             handleRenameForOpenFiles(treeModel.getNode(styleData.index))
                         }
                     } else {
-                        text = model.filename
+                        text = Qt.binding(() => styleData.value)
                     }
                 } else {
-                    text = model.filename
+                    text = Qt.binding(() => styleData.value)
                 }
 
                 model.editing = false
             }
+            treeModel.startWatchingPath(SGUtilsCpp.parentDirectoryPath(path));
         }
 
         onVisibleChanged: {
