@@ -95,8 +95,6 @@ Item {
                             }
 
                             onClicked: {
-                                // Todo: change this combobox to browse/scan qrc's in the components/views directories
-                                // and then open them/load the RCC applicable. https://ons-sec.atlassian.net/browse/CS-1301
                                 let name = selectButton.text;
                                 viewCombobox.currentIndex = index
                                 recompileRequested = true
