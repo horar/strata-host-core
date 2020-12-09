@@ -106,7 +106,24 @@ ScrollView {
             if(searchText === ""){
                 return true
             } else {
-                var searchMsg = item.msg
+                let type;
+
+                switch(item.type){
+                case 0:
+                    type = "debug"
+                    break;
+                case 1:
+                    type = "warning"
+                    break;
+                case 2:
+                    type = "error"
+                    break;
+                case 4:
+                    type = "info"
+                    break;
+                }
+
+                var searchMsg = item.time  + ` [ ${type} ] ` + item.msg
                 if(searchMsg.includes(searchText)){
                     return true
                 } else {
@@ -126,6 +143,13 @@ ScrollView {
         onLogMsg: {
             if(parent.visible){
                 consoleModel.append({time: timestamp(), type: type, msg: msg})
+
+                if(type === 1){
+                    warningCount += 1
+                }
+                if(type === 2){
+                    errorCount += 1
+                }
             }
         }
     }
@@ -187,6 +211,13 @@ ScrollView {
         }
 
         return `${hours}:${minutes}:${seconds}.${millisecs}`
+    }
+
+    function clearLogs() {
+        consoleItems.clear();
+        consoleModel.clear();
+        errorCount = 0
+        warningCount = 0
     }
 
     TextMetrics {

@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 
 Rectangle {
@@ -12,6 +13,9 @@ Rectangle {
     Layout.fillWidth: true
     color: "#eee"
     z: 3
+
+    property int warningCount: 0
+    property int errorCount: 0
 
     ColumnLayout {
         anchors.fill: parent
@@ -35,8 +39,74 @@ Rectangle {
                     leftPadding: 5
                 }
 
+
+                    RowLayout {
+                        Layout.preferredHeight: 30
+                        spacing: 0
+
+                        Item {
+                            Layout.preferredWidth: 30
+                            Layout.preferredHeight: 30
+
+                            SGIcon {
+                                anchors.centerIn: parent
+                                source: "qrc:/sgimages/exclamation-triangle.svg"
+                                iconColor: Theme.palette.warning
+                                height: 20
+                                width: height
+                                enabled: warningCount > 0
+
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    height: 13
+                                    width: 4
+                                    z: -1
+                                    color: "white"
+                                }
+                            }
+                        }
+
+                        SGText {
+                            text: warningCount
+                            Layout.alignment: Qt.AlignVCenter
+                            height: 30
+                            color: "white"
+                        }
+
+                        Item {
+                            Layout.preferredHeight: 30
+                            Layout.preferredWidth: 30
+
+                            SGIcon {
+                                anchors.centerIn: parent
+                                source: "qrc:/sgimages/exclamation-circle.svg"
+                                iconColor: Theme.palette.error
+                                height: 20
+                                width: height
+                                enabled: errorCount > 0
+
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    height: 12
+                                    width: 4
+                                    z: -1
+                                    color: "white"
+                                }
+                            }
+                        }
+
+                        SGText {
+                            text: errorCount
+                            Layout.alignment: Qt.AlignVCenter
+                            color: "white"
+                            height: 30
+                        }
+                    }
+
+
+
                 Item {
-                    Layout.preferredWidth: 30
+                    Layout.preferredWidth: 10
                 }
 
                 SGIcon {
@@ -63,6 +133,34 @@ Rectangle {
 
                         onTextChanged: {
                             consoleLogger.searchText = text
+                        }
+                    }
+                }
+
+                Rectangle {
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 30
+
+                    color: broomArea.containsMouse ? "#aaa" : "transparent"
+
+                    SGIcon {
+                        source: "qrc:/sgimages/broom.svg"
+                        iconColor: "#ddd"
+                        anchors.centerIn: parent
+                        width: 20
+                        height: width
+                    }
+
+                    MouseArea {
+                        id: broomArea
+
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            consoleLogger.clearLogs()
                         }
                     }
                 }
