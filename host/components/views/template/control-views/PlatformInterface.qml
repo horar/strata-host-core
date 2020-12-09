@@ -78,18 +78,20 @@ PlatformInterfaceBase {
         property var my_cmd_simple_periodic_update: ({
             "cmd": "my_cmd_simple_periodic_update",
             "payload": {
+                "run_state": false,
                 "interval": 0,
-                "run_count": 0,
-                "run_state": false
+                "run_count": 0
+
             },
-            update: function (interval,run_count,run_state) {
-                this.set(interval,run_count,run_state)
+            update: function (run_state,interval,run_count) {
+                this.set(run_state,interval,run_count)
                 this.send(this)
             },
-            set: function (interval,run_count,run_state) {
+            set: function (run_state,interval,run_count) {
+                this.payload.run_state = run_state
                 this.payload.interval = interval
                 this.payload.run_count = run_count
-                this.payload.run_state = run_state
+
             },
             send: function () { platformInterface.send(this) }
         })
