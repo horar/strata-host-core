@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 /*
   In most cases, it would be sufficient to call showMessageDialog() from SGDialogJS.
@@ -49,12 +50,12 @@ SGDialog {
 
     headerBgColor: {
         if (dialog.type === SGMessageDialog.Warning) {
-            return SGColorsJS.WARNING_COLOR
+            return Theme.palette.warning
         } else if (dialog.type === SGMessageDialog.Error) {
-            return SGColorsJS.ERROR_COLOR
+            return Theme.palette.error
         }
 
-        return SGColorsJS.STRATA_BLUE
+        return Theme.palette.darkBlue
     }
 
     headerIcon: {

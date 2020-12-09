@@ -55,7 +55,7 @@ public:
     bool programInProgress() const;
 
     void resetPropertiesFromDevice();
-    Q_INVOKABLE bool sendMessage(const QByteArray &message);
+    Q_INVOKABLE bool sendMessage(const QByteArray &message, bool onlyValidJson);
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
 
     //settings handlers

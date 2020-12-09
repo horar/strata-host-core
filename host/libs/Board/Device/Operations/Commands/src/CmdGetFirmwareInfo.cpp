@@ -42,19 +42,31 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
             setDeviceBootloaderMode(false);
         }
 
+        const char* bootloaderVer = nullptr;
+        const char* applicationVer = nullptr;
         if (bootloader.MemberCount() > 0) {  // JSON_BOOTLOADER object has some members -> it is not empty
-            setDeviceVersions(bootloader[JSON_VERSION].GetString(), "");
-            result_ = CommandResult::Done;
+            bootloaderVer = bootloader[JSON_VERSION].GetString();
         }
-
         if (application.MemberCount() > 0) {  // JSON_APPLICATION object has some members -> it is not empty
-            setDeviceVersions(nullptr, application[JSON_VERSION].GetString());
+            applicationVer = application[JSON_VERSION].GetString();
+        }
+        if (bootloaderVer || applicationVer) {
+            setDeviceVersions(bootloaderVer, applicationVer);
             result_ = CommandResult::Done;
         }
 
         return true;
     } else {
         return false;
+    }
+}
+
+void CmdGetFirmwareInfo::commandRejected() {
+    if (requireResponse_) {
+        result_ = CommandResult::Reject;
+    } else {
+        setDeviceVersions(nullptr, "");
+        result_ = CommandResult::Done;
     }
 }
 
