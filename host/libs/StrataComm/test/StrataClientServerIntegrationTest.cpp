@@ -30,6 +30,7 @@ void StrataClientServerIntegrationTest::testCase_1()
     bool clientRecivedExampleCommand2Notification = false;
     bool clientRecivedErrorCommand = false;
     bool clientRecivedPlatformMessage = false;
+    bool clientRecivedPlatformNotification = false;
     bool clientRecivedServerNotification = false;
 
     // create the server and client
@@ -71,9 +72,11 @@ void StrataClientServerIntegrationTest::testCase_1()
         server.notifyClient(cm, {{"test", 1}}, ClientMessage::ResponseType::Error);
     });
 
-    server.registerHandler("platform_message", [&server, &serverRecivedPlatformMessage](const ClientMessage &) {
+    server.registerHandler("platform_message", [&server, &serverRecivedPlatformMessage](const ClientMessage &cm) {
         serverRecivedPlatformMessage = true;
         // validate it?
+        server.notifyClient(cm, {{"device_id",100}, {"message",{}}}, ClientMessage::ResponseType::Notification);
+        server.notifyClient(cm, {{"device_id",100}, {"message",{}}}, ClientMessage::ResponseType::PlatformMessage);
     });
 
     // add client handlers
@@ -84,8 +87,8 @@ void StrataClientServerIntegrationTest::testCase_1()
     });
 
     client.registerHandler("unregister", [&client, &clientRecievedUnregisterClient](const ClientMessage &cm) {
-        // this mostlikely wont get called. fail if this is recived!
-        clientRecievedUnregisterClient = false;
+        // This should not be called.
+        clientRecievedUnregisterClient = true;
         QFAIL_("Client already disconnected.");
     });
 
@@ -119,7 +122,12 @@ void StrataClientServerIntegrationTest::testCase_1()
 
     client.registerHandler("platform_message", [&client, &clientRecivedPlatformMessage](const ClientMessage &) {
         // validate the platform message.
-        clientRecivedPlatformMessage  = true;
+        clientRecivedPlatformMessage = true;
+    });
+
+    client.registerHandler("platform_notification", [&client, &clientRecivedPlatformNotification](const ClientMessage &) {
+        // validate the platform notification.
+        clientRecivedPlatformNotification = true;
     });
 
     client.registerHandler("server_notification", [&client, &clientRecivedServerNotification](const ClientMessage &) {
@@ -152,6 +160,9 @@ void StrataClientServerIntegrationTest::testCase_1()
     client.sendRequest("example_command_sends_error", {{"key", "value"}});
     waitForZmqMessages();
     client.sendRequest("platform_message", {{"device_id", 2020}, {"message", "json string!"}});
+    waitForZmqMessages();
+    server.notifyAllClients("server_notification", {{"list", "of platforms"}});
+    waitForZmqMessages();
 
     // disconnect client
     client.disconnectServer();
@@ -173,6 +184,7 @@ void StrataClientServerIntegrationTest::testCase_1()
     QVERIFY_(clientRecivedExampleCommand2Notification);
     QVERIFY_(clientRecivedErrorCommand);
     QVERIFY_(clientRecivedPlatformMessage);
+    QVERIFY_(clientRecivedPlatformNotification);
     QVERIFY_(clientRecivedServerNotification);
     QVERIFY_(false == clientRecievedUnregisterClient);
 }
