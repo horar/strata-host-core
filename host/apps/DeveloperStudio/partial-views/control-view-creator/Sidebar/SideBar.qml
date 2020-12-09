@@ -48,7 +48,7 @@ Item {
                     if (!treeView.isExpanded(parent)) {
                         treeView.expand(parent)
                     }
-                    treeView.selectItem(index)
+                    Qt.callLater(treeView.selectItem, index)
                 } else {
                     let idx = openFilesModel.findTabByFilepath(node.filepath);
                     if (idx >= 0) {
