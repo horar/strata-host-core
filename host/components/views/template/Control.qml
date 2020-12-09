@@ -77,12 +77,12 @@ Item {
         anchors {
             right: controlContainer.right
             top: controlContainer.top
-            margins: 10
+            margins: 5
         }
         source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        height: 30
-        width: 30
+        height: 25
+        width: 25
 
         MouseArea {
             id: helpMouse

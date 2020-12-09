@@ -11,9 +11,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
-
     property alias firstCommand: firstCommand
-
     property var intervalState : 2000
     property alias gpio: gpio
 
@@ -89,7 +87,7 @@ Item {
         height: parent.height/1.1
         anchors.centerIn: parent
         anchors.top:parent.top
-        anchors.topMargin: 150
+        anchors.topMargin: 200
         anchors.left: parent.left
         anchors.leftMargin: 20
         anchors.right: parent.right
@@ -120,6 +118,8 @@ Item {
                     color: "#696969"
                     anchors {
                         top: parent.top
+                        left: parent.left
+                        leftMargin: 10
                     }
                 }
                 Image {
@@ -245,6 +245,8 @@ Item {
                     color: "#696969"
                     anchors {
                         top: parent.top
+                        left: parent.left
+                        leftMargin: 10
                     }
                 }
                 Image {
@@ -413,15 +415,14 @@ Item {
                     }
                 }
                 Rectangle {
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: parent.height/1.5
                     Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignCenter
                     color: "light gray"
                     ScrollView {
                         id: frame2
                         clip: true
-                        width: parent.width
-                        height: parent.height/2
-                        anchors.centerIn: parent
+                        anchors.fill: parent
                         ScrollBar.vertical.policy: ScrollBar.AsNeeded
                         SGText {
                             anchors.fill: parent
@@ -450,6 +451,8 @@ Item {
                     color: "#696969"
                     anchors {
                         top: parent.top
+                        left: parent.left
+                        leftMargin: 10
                     }
                 }
                 Image {
@@ -554,15 +557,16 @@ Item {
                                     SGAlignedLabel {
                                         id: infoBoxLabel
                                         target: infoBox
-                                        text: "infoBox"
+                                        text: "Interval"
                                         font.bold: true
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideTopCenter
 
                                         SGSubmitInfoBox {
                                             id: infoBox
-                                            width: 55
+                                            width: 60
                                             text: "2000"
+                                            unit: "ms"
                                             onEditingFinished:{
                                                 intervalState = parseInt(text)
                                                 platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,run_count,parseInt(text))

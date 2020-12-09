@@ -48,7 +48,7 @@ Widget09.SGResponsiveScrollView {
                 checked: basic.gpio.checked
                 onCheckedChanged: {
                     basic.gpio.checked = checked
-                   // basic.firstCommand.text = JSON.stringify(basic.my_cmd_simple_obj,null,4)
+                    // basic.firstCommand.text = JSON.stringify(basic.my_cmd_simple_obj,null,4)
                 }
 
                 // 'checked' state is bound to and sets the
@@ -56,18 +56,6 @@ Widget09.SGResponsiveScrollView {
                 //checked: platformInterface._motor_running_control
                 //onCheckedChanged: platformInterface._motor_running_control = checked
             }
-        }
-
-        SGCircularGauge {
-            id: speedGauge
-            anchors {
-                top: motorSwitchLabel.bottom
-                horizontalCenter: name.horizontalCenter
-            }
-            height: 200
-            width: 200
-
-            // value: platformInterface._motor_speed
         }
     }
 }
