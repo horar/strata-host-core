@@ -132,7 +132,6 @@ bool DebugMenuGenerator::generate(const QString &inputJSONFile, const QString &o
         commands.append(cmd);
     }
 
-    qDebug() << notifications.size() << commands.size();
     file.close();
 
     return generate(outputDirPath, notifications, commands);
