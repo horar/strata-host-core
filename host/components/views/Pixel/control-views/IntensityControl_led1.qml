@@ -380,5 +380,6 @@ Item {
         Component.onCompleted:  {
             Help.registerTarget(sw11, "Intensity control slider, slider is enabled after Enable button is turned on, and slider is disabled after Enable button is turned off, the dimming data will be sent when slider is released by mouse.", 2, "Help1")
         }
+
     }
 }

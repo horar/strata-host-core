@@ -148,7 +148,22 @@ Item {
             id:diagwindow
         }
     }
+    function helpTourStart() {
+        if(openHelp) {
+            callCount++
+            if(count === callCount){
+                Help.startHelpTour("Help1")
+                count = 0
+                callCount = 0
+                openHelp = false
+            }
+            console.info("call count",count,callCount)
+        }
 
+    }
+    property var count: 0
+    property var callCount: 0
+    property bool openHelp: false
     Rectangle {
         width: 30
         height: 30
@@ -165,15 +180,41 @@ Item {
             source: "qrc:/sgimages/question-circle.svg"
             iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
             visible: true
+
             MouseArea {
                 id: helpMouse
                 anchors {
                     fill: helpIcon
                 }
                 onClicked: {
+                    openHelp = true
                     if(intensitycontrol.visible === true) {
-                        Help.startHelpTour("Help1")
+                        count = 0
+                        callCount = 0
+
+                        if(!intensitycontrol.accordion.contentItem.children[0].open){
+                            count++
+                            intensitycontrol.accordion.contentItem.children[0].open = true
+                        }
+                        if(intensitycontrol.accordion.contentItem.children[1].open) {
+                            count++
+                            intensitycontrol.accordion.contentItem.children[1].open = false
+                        }
+                        if(intensitycontrol.accordion.contentItem.children[2].open) {
+                            count++
+                            intensitycontrol.accordion.contentItem.children[2].open = false
+                        }
+                        if(!intensitycontrol.accordion.contentItem.children[3].open) {
+                            count++
+                            intensitycontrol.accordion.contentItem.children[3].open = true
+                        }
+                        if(count === 0) {
+                            Help.startHelpTour("Help1")
+                        }
+
+                        //Help.startHelpTour("Help1")
                     }
+
                     else if(controldemo.visible === true) {
                         Help.startHelpTour("Help2")
                     }
@@ -186,7 +227,16 @@ Item {
                     else if(diagwindow.visible === true) {
                         Help.startHelpTour("Help5")
                     }
+
+
                 }
+                Component.onCompleted: {
+                    intensitycontrol.accordion.contentItem.children[0].contentOpenSignal.connect(helpTourStart)
+                    intensitycontrol.accordion.contentItem.children[1].contentOpenSignal.connect(helpTourStart)
+                    intensitycontrol.accordion.contentItem.children[2].contentOpenSignal.connect(helpTourStart)
+                    intensitycontrol.accordion.contentItem.children[3].contentOpenSignal.connect(helpTourStart)
+                }
+
                 hoverEnabled: true
             }
         }
