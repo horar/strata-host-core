@@ -187,8 +187,6 @@ Item {
                                     SGRegistrationControls {
                                         id: registerControls
                                         visible: false
-
-                                        property alias privacyPolicy: privacyPolicy
                                     }
                                 }
                             }
@@ -203,19 +201,6 @@ Item {
         id: forgotPopup
         x: root.width/2 - width/2
         y: root.height/2 - height/2
-    }
-
-    Item {
-        id: privacyPolicy
-
-        function open() {
-            var privacyPolicyPopup = Utility.createObject("qrc:/partial-views/SGPrivacyPolicyPopUp.qml", privacyPolicy)
-            privacyPolicyPopup.width = root.width * .8
-            privacyPolicyPopup.webContainerHeight = root.height *.75
-            privacyPolicyPopup.x = root.width/2 - privacyPolicyPopup.width/2
-            privacyPolicyPopup.y = root.height/2 - privacyPolicyPopup.height/2
-            privacyPolicyPopup.open()
-        }
     }
 
     Rectangle {

@@ -161,7 +161,7 @@ void SciPlatform::resetPropertiesFromDevice()
     setBootloaderVersion(bootloaderVersion);
 }
 
-bool SciPlatform::sendMessage(const QByteArray &message)
+bool SciPlatform::sendMessage(const QByteArray &message, bool onlyValidJson)
 {
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
@@ -170,19 +170,24 @@ bool SciPlatform::sendMessage(const QByteArray &message)
         return false;
     }
 
-    QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
+    QByteArray compactMessage = message;
+    if (onlyValidJson) {
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
 
-    if (parseError.error != QJsonParseError::NoError) {
-        QString error = QString("JSON error at position %1 - %2")
-                .arg(parseError.offset)
-                .arg(parseError.errorString());
+        if (parseError.error != QJsonParseError::NoError) {
+            QString error = QString("JSON error at position %1 - %2")
+                    .arg(parseError.offset)
+                    .arg(parseError.errorString());
 
-        setErrorString(error);
-        return false;
+            setErrorString(error);
+            return false;
+        }
+
+        compactMessage = SGUtilsCpp::minifyJson(message);
+    } else {
+        compactMessage = compactMessage.replace('\n',"");
     }
-
-    QByteArray compactMessage = SGUtilsCpp::minifyJson(message);
 
     bool result = device_->sendMessage(compactMessage);
     if (result) {
