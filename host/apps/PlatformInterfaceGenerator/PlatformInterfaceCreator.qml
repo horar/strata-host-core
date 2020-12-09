@@ -42,66 +42,6 @@ Rectangle {
 
     property string inputFilePath
 
-    function createJsonObjectFromArrayProperty(arrayModel, outputArr) {
-        for (let m = 0; m < arrayModel.count; m++) {
-            let arrayElement = arrayModel.get(m);
-
-            if (arrayElement.type === "object") {
-                outputArr.push(createJsonObjectFromObjectProperty(arrayElement.object, {}))
-            } else if (arrayElement.type === "array") {
-                outputArr.push(createJsonObjectFromArrayProperty(arrayElement.array, []))
-            } else {
-                outputArr.push(arrayElement.type)
-            }
-        }
-        return outputArr;
-    }
-
-    function createJsonObjectFromObjectProperty(objectModel, outputObj) {
-        for (let i = 0; i < objectModel.count; i++) {
-            let objectProperty = objectModel.get(i);
-
-            // Recurse through array
-            if (objectProperty.type === "array") {
-                outputObj[objectProperty.key] = createJsonObjectFromArrayProperty(objectProperty.array, [])
-            } else if (objectProperty.type === "object") {
-                outputObj[objectProperty.key] = createJsonObjectFromObjectProperty(objectProperty.object, {})
-            } else {
-                outputObj[objectProperty.key] = objectProperty.type
-            }
-        }
-        return outputObj;
-    }
-
-    function generatePlatformInterface() {
-        let jsonInputFilePath = SGUtilsCpp.joinFilePath(outputFileText.text, "platformInterface.json");
-
-        let jsonObject = createJsonObject();
-        let success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4));
-
-        let result = generator.generate(jsonInputFilePath, outputFileText.text);
-        if (!result) {
-            alertToast.text = "Generation Failed: " + generator.lastError
-            alertToast.textColor = "white"
-
-            alertToast.color = "#D10000"
-            alertToast.interval = 0
-        } else if (generator.lastError.length > 0) {
-            alertToast.text = "Generation Succeeded, but with warnings: " + generator.lastError
-            alertToast.textColor = "black"
-            alertToast.color = "#DFDF43"
-            alertToast.interval = 0
-            debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
-        } else {
-            alertToast.textColor = "white"
-            alertToast.text = "Successfully generated PlatformInterface.qml"
-            alertToast.color = "green"
-            alertToast.interval = 4000
-            debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
-        }
-        alertToast.show();
-    }
-
     ListModel {
         id: finishedModel
 
