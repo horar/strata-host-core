@@ -156,18 +156,18 @@ QUrl ResourceLoader::getStaticViewsPhysicalPathUrl() {
 
 QString ResourceLoader::returnQrcPath(const QString &filePath){
 
-        QDirIterator dir(filePath);
-        QString str = "";
+    QDirIterator dir(filePath);
+    QString str = "";
 
-        while(dir.hasNext()){
-            QFileInfo fi(dir.next());
-            if(fi.suffix() == "qrc"){
-                str = fi.absoluteFilePath();
-                break;
-            }
+    while(dir.hasNext()){
+        QFileInfo fi(dir.next());
+        if(fi.suffix() == "qrc"){
+            str = fi.absoluteFilePath();
+            break;
         }
+    }
 
-        return str;
+    return str;
 }
 
 void ResourceLoader::unregisterAllViews(QObject *parent)
