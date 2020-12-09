@@ -161,7 +161,7 @@ QString ResourceLoader::returnQrcPath(const QString &filePath){
 
         while(dir.hasNext()){
             QFileInfo fi(dir.next());
-            if(fi.fileName().endsWith(".qrc")){
+            if(fi.suffix() == "qrc"){
                 str = fi.absoluteFilePath();
                 break;
             }

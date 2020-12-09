@@ -16,6 +16,7 @@ Item {
     id: root
 
     property string testAuthServer: "http://18.191.108.5/"
+    property bool recompileRequested: false
 
     Rectangle {
         id: commandBar
@@ -98,7 +99,7 @@ Item {
                                 // and then open them/load the RCC applicable. https://ons-sec.atlassian.net/browse/CS-1301
                                 let name = selectButton.text;
                                 viewCombobox.currentIndex = index
-
+                                recompileRequested = true
                                 let path = sdsModel.resourceLoader.returnQrcPath(model.filePath);
                                 sdsModel.resourceLoader.recompileControlViewQrc(path);
                                 stackContainer.currentIndex = stackContainer.count - 1
@@ -291,12 +292,14 @@ Item {
             target: sdsModel.resourceLoader
 
             onFinishedRecompiling: {
-
-                if (filepath !== '') {
-                    loadDebugView(filepath)
-                } else {
-                    let error_str = sdsModel.resourceLoader.getLastLoggedError()
-                    controlViewDevContainer.setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": error_str})
+                if (recompileRequested) {
+                    recompileRequested = false;
+                    if (filepath !== '') {
+                        loadDebugView(filepath)
+                    } else {
+                        let error_str = sdsModel.resourceLoader.getLastLoggedError()
+                        controlViewDevContainer.setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": error_str})
+                    }
                 }
             }
         }
