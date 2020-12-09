@@ -10,12 +10,9 @@ Item {
     property var sgSwitch_off: false // default value the switch is off
     property alias accordion: accordion
 
-
-
     SGAccordion {
         id: accordion
         anchors.fill: parent
-        openCloseTime: 0
 
         accordionItems: Column {
             SGAccordionItem {
@@ -30,16 +27,13 @@ Item {
                         id: text1
                         anchors.fill: parent
                     }
+                }
 
-                }
-                onContentOpenSignal: {
-                    Help.liveResize()
-                }
                 onOpenChanged: {
                     if(open){
-                        led1.openContent.start();
+                        openContent.start();
                     } else {
-                        led1.closeContent.start();
+                        closeContent.start();
                     }
                 }
             }
@@ -56,17 +50,14 @@ Item {
                         anchors.fill: parent
                     }
                 }
-                onContentOpenSignal: {
-                    Help.liveResize()
-                }
+
                 onOpenChanged: {
                     if(open){
-                        led2.openContent.start();
+                        openContent.start();
                     } else {
-                        led2.closeContent.start();
+                        closeContent.start();
                     }
                 }
-
             }
 
             SGAccordionItem {
@@ -81,19 +72,15 @@ Item {
                         anchors.fill: parent
                     }
                 }
-                onContentOpenSignal: {
-                    Help.liveResize()
-                }
+
                 onOpenChanged: {
                     if(open){
-                        led3.openContent.start();
+                        openContent.start();
                     } else {
-                        led3.closeContent.start();
+                        closeContent.start();
                     }
                 }
-
             }
-
 
             SGAccordionItem {
                 id: led4
@@ -118,17 +105,14 @@ Item {
                         anchors.fill: parent
                     }
                 }
-                onContentOpenSignal: {
-                    Help.liveResize()
-                }
+
                 onOpenChanged: {
                     if(open){
-                        led4.openContent.start();
+                        openContent.start();
                     } else {
-                        led4.closeContent.start();
+                        closeContent.start();
                     }
                 }
-
             }
         }
     }

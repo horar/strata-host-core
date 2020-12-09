@@ -148,22 +148,9 @@ Item {
             id:diagwindow
         }
     }
-    function helpTourStart() {
-        if(openHelp) {
-            callCount++
-            if(count === callCount){
-                Help.startHelpTour("Help1")
-                count = 0
-                callCount = 0
-                openHelp = false
-            }
-            console.info("call count",count,callCount)
-        }
 
-    }
-    property var count: 0
-    property var callCount: 0
-    property bool openHelp: false
+
+
     Rectangle {
         width: 30
         height: 30
@@ -174,6 +161,7 @@ Item {
             topMargin: 32
         }
         color: "transparent"
+
         SGIcon {
             id: helpIcon
             anchors.fill: parent
@@ -186,35 +174,43 @@ Item {
                 anchors {
                     fill: helpIcon
                 }
+                hoverEnabled: true
+
+                property var count: 0
+                property var callCount: 0
+                property string tourToOpen: ""
+
                 onClicked: {
-                    openHelp = true
-                    if(intensitycontrol.visible === true) {
+                    if (intensitycontrol.visible === true) {
                         count = 0
                         callCount = 0
 
-                        if(!intensitycontrol.accordion.contentItem.children[0].open){
+                        // Figure out how many accordions are in the wrong position
+                        if (!intensitycontrol.accordion.contentItem.children[0].open) {
                             count++
+                        }
+                        if (intensitycontrol.accordion.contentItem.children[1].open) {
+                            count++
+                        }
+                        if (intensitycontrol.accordion.contentItem.children[2].open) {
+                            count++
+                        }
+                        if (!intensitycontrol.accordion.contentItem.children[3].open) {
+                            count++
+                        }
+
+                        if (count === 0) {
+                            // No accordions in the wrong position, start help
+                            Help.startHelpTour("Help1")
+                        } else {
+                            // >0 accordions are in the wrong position, correct them, then start help when all <count> animations have finished
+                            tourToOpen = "Help1"
                             intensitycontrol.accordion.contentItem.children[0].open = true
-                        }
-                        if(intensitycontrol.accordion.contentItem.children[1].open) {
-                            count++
                             intensitycontrol.accordion.contentItem.children[1].open = false
-                        }
-                        if(intensitycontrol.accordion.contentItem.children[2].open) {
-                            count++
                             intensitycontrol.accordion.contentItem.children[2].open = false
-                        }
-                        if(!intensitycontrol.accordion.contentItem.children[3].open) {
-                            count++
                             intensitycontrol.accordion.contentItem.children[3].open = true
                         }
-                        if(count === 0) {
-                            Help.startHelpTour("Help1")
-                        }
-
-                        //Help.startHelpTour("Help1")
                     }
-
                     else if(controldemo.visible === true) {
                         Help.startHelpTour("Help2")
                     }
@@ -227,17 +223,38 @@ Item {
                     else if(diagwindow.visible === true) {
                         Help.startHelpTour("Help5")
                     }
-
-
                 }
+
                 Component.onCompleted: {
-                    intensitycontrol.accordion.contentItem.children[0].contentOpenSignal.connect(helpTourStart)
-                    intensitycontrol.accordion.contentItem.children[1].contentOpenSignal.connect(helpTourStart)
-                    intensitycontrol.accordion.contentItem.children[2].contentOpenSignal.connect(helpTourStart)
-                    intensitycontrol.accordion.contentItem.children[3].contentOpenSignal.connect(helpTourStart)
+                    // Connect startHelpAfterAnimationComplete() to all accordion 'animation complete' signals
+                    intensitycontrol.accordion.contentItem.children[0].animationCompleted.connect(startHelpAfterAnimationComplete)
+                    intensitycontrol.accordion.contentItem.children[1].animationCompleted.connect(startHelpAfterAnimationComplete)
+                    intensitycontrol.accordion.contentItem.children[2].animationCompleted.connect(startHelpAfterAnimationComplete)
+                    intensitycontrol.accordion.contentItem.children[3].animationCompleted.connect(startHelpAfterAnimationComplete)
                 }
 
-                hoverEnabled: true
+                function startHelpAfterAnimationComplete() {
+                    // If help has been requested, wait until all 'animation complete' signals have been called before opening it
+                    if (count !== 0) {
+                        callCount++
+                        if (count === callCount) {
+                            // Wait one render frame for animations to really complete before opening help to make sure geometry is calculated correctly
+                            renderListener.enabled = true
+                            count = 0
+                            callCount = 0
+                        }
+                    }
+                }
+
+                Connections {
+                    id: renderListener
+                    target: mainWindow
+                    onAfterRendering: {
+                        enabled = false
+                        Help.startHelpTour(helpMouse.tourToOpen)
+                    }
+                    enabled: false
+                }
             }
         }
     }

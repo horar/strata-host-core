@@ -195,16 +195,5 @@ Item {
             Help.registerTarget(sgStatusLight, "LED indicator for Auto addressing, LED becomes green after auto addressing procedure finished.", 1, "Help1")
             Help.registerTarget(sgSwitch_wd, "Watch Dog switch controls periodical access of watch dog timer. In OFF, the dimming data will be disappeared and in ON, the dimming data will be kept.", 3, "Help1")  // YI
         }
-
-        Connections {
-            target: Help.utility
-            onInternal_tour_indexChanged: {
-                if(Help.current_tour_targets[index]["target"] === sgSwitch_auto_addr){
-                    if(intensitycontrol.accordion.contentItem.children[0].open)
-                        Help.liveResize()
-
-                }
-            }
-        }
     }
 }

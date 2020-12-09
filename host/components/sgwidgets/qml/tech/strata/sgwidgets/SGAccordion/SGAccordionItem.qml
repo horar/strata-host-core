@@ -27,7 +27,8 @@ Rectangle {
     property alias dividerColor: divider.color
     property alias closeContent: closeContent
     property alias openContent: openContent
-    signal contentOpenSignal
+
+    signal animationCompleted
 
     onOpenChanged: {
         if (open && exclusive && root.parent) {
@@ -137,7 +138,7 @@ Rectangle {
         duration: openCloseTime
         onStopped: {
             contentContainer.height = 0  // Bind height to 0 so any content resizing while closed doesn't resize the accordionItem
-            contentOpenSignal()
+            animationCompleted()
         }
     }
 
@@ -150,7 +151,7 @@ Rectangle {
         duration: openCloseTime
         onStopped: {
             bindHeight()  // Rebind to contents.height while open so contents can dynamically resize the accordionItem
-            contentOpenSignal()
+            animationCompleted()
         }
     }
 
