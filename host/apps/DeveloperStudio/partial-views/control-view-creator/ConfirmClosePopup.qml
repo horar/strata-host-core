@@ -1,5 +1,6 @@
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 import "../"
 
@@ -8,7 +9,7 @@ SGConfirmationPopup {
     padding: 0
     closePolicy: Popup.NoAutoClose
 
-    acceptButtonColor: SGColorsJS.STRATA_GREEN
+    acceptButtonColor: Theme.palette.green
     acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
     acceptButtonText: "Save"
     cancelButtonText: "Cancel"

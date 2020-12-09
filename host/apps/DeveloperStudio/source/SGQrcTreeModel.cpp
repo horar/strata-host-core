@@ -238,7 +238,7 @@ bool SGQrcTreeModel::hasChildren(const QModelIndex &parent) const
     }
     SGQrcTreeNode *node = getNode(parent);
     if (node) {
-        return node->childCount() > 0;
+        return node->isDir();
     }
     return false;
 }
@@ -619,6 +619,15 @@ void SGQrcTreeModel::startWatchingPath(const QString &path)
     if (!path.isEmpty()) {
         fsWatcher_->addPath(path);
     }
+}
+
+bool SGQrcTreeModel::addPathToTree(const QUrl &path)
+{
+    if (pathsInTree_.contains(path)) {
+        return false;
+    }
+    pathsInTree_.insert(path);
+    return true;
 }
 
 /***
