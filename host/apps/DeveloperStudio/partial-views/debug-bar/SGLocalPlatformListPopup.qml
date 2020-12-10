@@ -917,6 +917,8 @@ Window {
                             }
                         }
                 }
+                PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                loadAndStorePlatform(platform, deviceId, firmwareVersion, checkForCustomId(platform.class_id))
                 break;
             }
         }
