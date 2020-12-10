@@ -272,8 +272,6 @@ Item {
                     diagwindowpxn.accordion.contentItem.children[1].animationCompleted.connect(startHelpAfterAnimationComplete)
                     diagwindow.accordion.contentItem.children[0].animationCompleted.connect(startHelpAfterAnimationComplete)
                     diagwindow.accordion.contentItem.children[1].animationCompleted.connect(startHelpAfterAnimationComplete)
-
-
                 }
 
                 function startHelpAfterAnimationComplete() {
