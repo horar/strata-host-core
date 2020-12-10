@@ -213,7 +213,6 @@ Item {
                         Help.startHelpTour("Help2")
                     }
                     else if(diagwindowpxn.visible === true) {
-
                         count = 0
                         callCount = 0
 
