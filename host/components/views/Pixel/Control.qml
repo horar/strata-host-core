@@ -213,13 +213,53 @@ Item {
                         Help.startHelpTour("Help2")
                     }
                     else if(diagwindowpxn.visible === true) {
-                        Help.startHelpTour("Help3")
+
+                        count = 0
+                        callCount = 0
+
+                        // Figure out how many accordions are in the wrong position
+                        if (!diagwindowpxn.accordion.contentItem.children[0].open) {
+                            count++
+                        }
+                        if(!diagwindowpxn.accordion.contentItem.children[1].open) {
+                            count++
+                        }
+
+                        if (count === 0) {
+                            // No accordions in the wrong position, start help
+                            Help.startHelpTour("Help3")
+                        } else {
+                            // >0 accordions are in the wrong position, correct them, then start help when all <count> animations have finished
+                            tourToOpen = "Help3"
+                            diagwindowpxn.accordion.contentItem.children[0].open = true
+                            diagwindowpxn.accordion.contentItem.children[1].open = true
+                        }
+
                     }
                     else if(setupcontrol.visible === true) {
                         Help.startHelpTour("Help4")
                     }
                     else if(diagwindow.visible === true) {
-                        Help.startHelpTour("Help5")
+                        count = 0
+                        callCount = 0
+
+                        // Figure out how many accordions are in the wrong position
+                        if (!diagwindow.accordion.contentItem.children[0].open) {
+                            count++
+                        }
+                        if(!diagwindow.accordion.contentItem.children[1].open) {
+                            count++
+                        }
+
+                        if (count === 0) {
+                            // No accordions in the wrong position, start help
+                            Help.startHelpTour("Help5")
+                        } else {
+                            // >0 accordions are in the wrong position, correct them, then start help when all <count> animations have finished
+                            tourToOpen = "Help5"
+                            diagwindow.accordion.contentItem.children[0].open = true
+                            diagwindow.accordion.contentItem.children[1].open = true
+                        }
                     }
                 }
 
@@ -229,6 +269,12 @@ Item {
                     intensitycontrol.accordion.contentItem.children[1].animationCompleted.connect(startHelpAfterAnimationComplete)
                     intensitycontrol.accordion.contentItem.children[2].animationCompleted.connect(startHelpAfterAnimationComplete)
                     intensitycontrol.accordion.contentItem.children[3].animationCompleted.connect(startHelpAfterAnimationComplete)
+                    diagwindowpxn.accordion.contentItem.children[0].animationCompleted.connect(startHelpAfterAnimationComplete)
+                    diagwindowpxn.accordion.contentItem.children[1].animationCompleted.connect(startHelpAfterAnimationComplete)
+                    diagwindow.accordion.contentItem.children[0].animationCompleted.connect(startHelpAfterAnimationComplete)
+                    diagwindow.accordion.contentItem.children[1].animationCompleted.connect(startHelpAfterAnimationComplete)
+
+
                 }
 
                 function startHelpAfterAnimationComplete() {

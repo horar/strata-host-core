@@ -6,6 +6,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: root
+    property alias accordion: accordion
 
     SGAccordion {
         id: accordion
@@ -27,6 +28,13 @@ Rectangle {
                         anchors.fill: parent
                     }
                 }
+                onOpenChanged: {
+                    if(open){
+                        openContent.start();
+                    } else {
+                        closeContent.start();
+                    }
+                }
             }
 
             SGAccordionItem {
@@ -40,6 +48,13 @@ Rectangle {
                     Text {
                         id: text2
                         anchors.fill: parent
+                    }
+                }
+                onOpenChanged: {
+                    if(open){
+                        openContent.start();
+                    } else {
+                        closeContent.start();
                     }
                 }
             }
