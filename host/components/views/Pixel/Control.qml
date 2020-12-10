@@ -290,7 +290,7 @@ Item {
                 Connections {
                     id: renderListener
                     target: mainWindow
-                    onAfterRendering: {
+                    onAfterAnimating: {
                         enabled = false
                         Help.startHelpTour(helpMouse.tourToOpen)
                     }
