@@ -11,6 +11,8 @@ import "qrc:/partial-views/debug-bar"
 import "qrc:/partial-views/platform-view"
 import "qrc:/js/platform_filters.js" as PlatformFilters
 
+import "partial-views/notifications" 1.0
+
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
@@ -75,6 +77,7 @@ SGWidgets.SGMainWindow {
     ColumnLayout {
         spacing: 0
         anchors.fill: parent
+        z: 1
 
         Item {
             id: statusBarContainer
@@ -114,6 +117,17 @@ SGWidgets.SGMainWindow {
         }
     }
 
+// TODO CS-1380: Style the notificaions delegate and add this NotificationsBox to main.qml
+//    NotificationsBox {
+//        z: 2
+//        anchors {
+//            right: parent.right
+//            bottom: parent.bottom
+//            bottomMargin: 25
+//            rightMargin: 20
+//        }
+//    }
+
     Connections {
         id: coreInterfaceConnection
         target: sdsModel.coreInterface
@@ -135,6 +149,8 @@ SGWidgets.SGMainWindow {
     }
 
     SGDebugBar {
+        id: debugBar
+        z: 3
         anchors {
             fill: parent
         }
