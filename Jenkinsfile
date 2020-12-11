@@ -35,7 +35,7 @@ pipeline {
                 sh "python -m pip install -r ${env.workspace}/deployment/OTA/requirements.txt"
                 sh """python '${env.workspace}/deployment/OTA/main.py' view \
                     --dir '${BUILD_NAME}' \
-                    --views '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
+                    '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
                     """
                 archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/Strata*.exe", onlyIfSuccessful: true
             }
