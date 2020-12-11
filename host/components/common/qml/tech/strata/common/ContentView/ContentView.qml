@@ -14,18 +14,30 @@ Rectangle {
 
     property string class_id: ""
     property var classDocuments: null
-    property var state1
+    property var accordionPdf
     property var state2
     property var state3
+
 
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
 
     onVisibleChanged: {
         if(!visible) {
-            state1 = ""
+            accordionPdf = ""
             state2 = ""
             state3 = ""
         }
+    }
+
+    HelpButton{
+        height: 30
+        width: 30
+        anchors {
+            right: view.right
+            bottom: view.bottom
+            margins: 40
+        }
+        z: 2
     }
 
     onTotalDocumentsChanged: {
@@ -53,7 +65,7 @@ Rectangle {
         onTour_runningChanged: {
             if(tour_running === false) {
                 classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
-                accordion.contentItem.children[0].open = state1
+                accordion.contentItem.children[0].open = accordionPdf
                 accordion.contentItem.children[1].open = state2
                 accordion.contentItem.children[2].open = state3
 
@@ -62,38 +74,7 @@ Rectangle {
     }
 
 
-    SGIcon {
-        id: helpIcon
-        anchors {
-            right: view.right
-            bottom: view.bottom
-            margins: 40
-        }
-        source: "qrc:/sgimages/question-circle.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        height: 30
-        width: 30
-        function clickAction() {
-            Help.startHelpTour("contentViewHelp", "strataMain")
 
-        }
-        z: 2
-
-        MouseArea {
-            id: helpMouse
-            anchors {
-                fill: helpIcon
-            }
-            onClicked: {
-                state1 = accordion.contentItem.children[0].open
-                state2 = accordion.contentItem.children[1].open
-                state3 = accordion.contentItem.children[2].open
-                helpIcon.clickAction()
-                classDocuments = sdsModel.documentManager.getClassDocuments("b039e649-2713-4557-afb7-9fabeacd4290")
-            }
-            hoverEnabled: true
-        }
-    }
 
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
@@ -204,16 +185,15 @@ Rectangle {
                             target: Help.utility
                             onInternal_tour_indexChanged: {
                                 if(Help.current_tour_targets[index]["target"] === pdfAccordion){
-                                    if(!pdfAccordion.open)
+                                    if(!pdfAccordion.open) {
                                         pdfAccordion.open = true
-                                    else Help.liveResize()
-
+                                    }
                                 }
                             }
                         }
 
                         Component.onCompleted: {
-                            Help.registerTarget(pdfAccordion,"test1",0,"contentViewHelp")
+                            Help.registerTarget(pdfAccordion,"test1",1,"contentViewHelp")
                         }
                     }
 
@@ -248,7 +228,7 @@ Rectangle {
                             }
                         }
                         Component.onCompleted: {
-                            Help.registerTarget(datasheetAccordion,"test2",1,"contentViewHelp")
+                            Help.registerTarget(datasheetAccordion,"test2",2,"contentViewHelp")
 
                         }
 
@@ -289,7 +269,7 @@ Rectangle {
                             }
                         }
                         Component.onCompleted: {
-                            Help.registerTarget(downloadAccordion,"test3",2,"contentViewHelp")
+                            Help.registerTarget(downloadAccordion,"test3",3,"contentViewHelp")
                         }
                     }
                 }
@@ -360,12 +340,21 @@ Rectangle {
             Item {
                 id: pdfViewerContainer
                 width: parent.width
-                height: parent.height/1.2
+                height: parent.height/1.3
                 anchors.bottom: pdfViewer.bottom
+                anchors.bottomMargin: 10
 
             }
+            Connections {
+                target: Help.utility
+                onInternal_tour_indexChanged: {
+                    if(Help.current_tour_targets[index]["target"] === pdfViewerContainer) {
+                        Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 450
+                    }
+                }
+            }
             Component.onCompleted: {
-                Help.registerTarget(pdfViewerContainer,"test4",3,"contentViewHelp")
+                Help.registerTarget(pdfViewerContainer,"test4",0,"contentViewHelp")
             }
         }
 

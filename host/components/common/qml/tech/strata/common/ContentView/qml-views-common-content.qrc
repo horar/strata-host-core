@@ -11,5 +11,7 @@
         <file>images/docLoading.gif</file>
         <file>images/angle-right-solid.svg</file>
         <file>content-views/EmptyDocuments.qml</file>
+        <file>HelpButton.qml</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>
