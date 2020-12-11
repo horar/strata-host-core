@@ -81,6 +81,20 @@ int main(int argc, char *argv[])
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
 
+    QCommandLineParser parser;
+    parser.setApplicationDescription(
+        QStringLiteral("Strata Developer Studio\n\n"
+                       "A cloud-connected development platform that provides a seamless,"
+                       "personalized and secure environment for engineers to evaluate and design "
+                       "with ON Semiconductor technologies."));
+    parser.addOption({{QStringLiteral("f")},
+                      QObject::tr("Optional configuration <filename>"),
+                      QObject::tr("filename"),
+                      QStringLiteral(":/assets/sds.config")});
+    parser.addVersionOption();
+    parser.addHelpOption();
+    parser.process(app);
+
 #if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
 #endif
@@ -98,8 +112,8 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
-    RunGuard appGuard{"tech.strata.sds"};
-    strata::sds::config::AppConfig cfg{QStringLiteral(":/assets/sds.config")};
+    const QString configFilePath{parser.value(QStringLiteral("f"))};
+    strata::sds::config::AppConfig cfg{configFilePath};
     if (cfg.parse() == false) {
         return EXIT_FAILURE;
     }
