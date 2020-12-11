@@ -108,10 +108,11 @@ ColumnLayout {
         Accessible.name: addPropertyButton.text
         Accessible.role: Accessible.Button
         Accessible.onPressAction: {
-            addPropertyButton.clicked()
+            addPropertyButtonMouseArea.clicked()
         }
 
         MouseArea {
+            id: addPropertyButtonMouseArea
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
