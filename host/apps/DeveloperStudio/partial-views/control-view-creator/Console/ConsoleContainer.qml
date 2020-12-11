@@ -8,7 +8,6 @@ import tech.strata.theme 1.0
 
 import "../components"
 
-
 Rectangle {
     id: root
     Layout.fillHeight: true
