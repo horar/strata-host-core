@@ -37,7 +37,6 @@ ScrollView {
         delegate: ConsoleDelegate {
             id: consoleDelegate
         }
-
     }
 
     SGSortFilterProxyModel {

@@ -11,8 +11,8 @@ Item {
 
     property alias type: msgType.text
     property color typeColor: "#fff"
-
     property bool current: true
+
     SGText {
         id: leftSide
         anchors.left: parent.left
@@ -43,7 +43,6 @@ Item {
         text: ` [ warning ] `
         font.pixelSize: SGSettings.fontPixelSize * fontMultiplier
     }
-
 
     function getMsgColor(type){
         switch(type){

@@ -19,8 +19,6 @@ Rectangle {
     property int warningCount: 0
     property int errorCount: 0
 
-
-
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
@@ -120,7 +118,6 @@ Rectangle {
                     onTextChanged: {
                         consoleLogger.searchText = text
                     }
-
                 }
 
                 SGControlViewIconButton {
@@ -170,11 +167,9 @@ Rectangle {
 
                         function functionHandler() {
                             if(consoleContainer.state !== "normal" && consoleContainer.state !== "minimize"){
-                                consoleContainer.height = 200
                                 consoleContainer.state = "normal"
                             } else {
                                 consoleContainer.state = "maximize"
-                                consoleContainer.height = 750
                             }
                         }
                     }
@@ -186,8 +181,8 @@ Rectangle {
                         Layout.alignment: Qt.AlignRight
 
                         function functionHandler() {
-                            consoleContainer.height = topBar.height
                             consoleContainer.state = "minimize"
+                            consoleContainer.height = topBar.height
                         }
                     }
                 }
