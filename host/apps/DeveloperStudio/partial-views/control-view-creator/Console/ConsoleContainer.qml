@@ -19,6 +19,8 @@ Rectangle {
     property int warningCount: 0
     property int errorCount: 0
 
+
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
@@ -52,15 +54,15 @@ Rectangle {
                         SGIcon {
                             anchors.centerIn: parent
                             source: "qrc:/sgimages/exclamation-triangle.svg"
-                            iconColor: "#c0ca33"
-                            height: 20
+                            iconColor: "#ffea61"
+                            height: 25
                             width: height
                             enabled: warningCount > 0
 
                             Rectangle {
                                 anchors.centerIn: parent
-                                height: 13
-                                width: 4
+                                height: 16
+                                width: 5
                                 z: -1
                                 color: "white"
                             }
@@ -72,6 +74,7 @@ Rectangle {
                         Layout.alignment: Qt.AlignVCenter
                         height: 30
                         color: "white"
+                        fontSizeMultiplier: 1.2
                     }
 
                     Item {
@@ -82,14 +85,14 @@ Rectangle {
                             anchors.centerIn: parent
                             source: "qrc:/sgimages/exclamation-circle.svg"
                             iconColor: Theme.palette.error
-                            height: 20
+                            height: 25
                             width: height
                             enabled: errorCount > 0
 
                             Rectangle {
                                 anchors.centerIn: parent
-                                height: 12
-                                width: 4
+                                height: 16
+                                width: 5
                                 z: -1
                                 color: "white"
                             }
@@ -101,6 +104,7 @@ Rectangle {
                         Layout.alignment: Qt.AlignVCenter
                         color: "white"
                         height: 30
+                        fontSizeMultiplier: 1.2
                     }
                 }
 

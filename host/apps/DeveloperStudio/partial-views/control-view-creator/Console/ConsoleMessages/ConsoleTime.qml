@@ -6,17 +6,18 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
 Item {
-    id: root
     width: timeMetrics.width
-    height: timeMetrics.height
+    height:timeMetrics.height
 
     property alias time: msgTime.text
+    property alias current: msgTime.enabled
 
     SGText {
         id: msgTime
         fontSizeMultiplier: fontMultiplier
         width: timeMetrics.width
         height: timeMetrics.height
+        color: current ? "black" : "#777"
     }
 
     TextMetrics {

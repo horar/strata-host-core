@@ -6,18 +6,18 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
 Item {
-    height: msgMetric.height
+    height: msgMetric.height * msgText.lineCount
     width: root.width
 
     property alias msg: msgText.text
+    property alias current: msgText.enabled
 
     SGText {
         id: msgText
         fontSizeMultiplier: fontMultiplier
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        elide: Text.ElideRight
+        anchors.fill: parent
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        color: current ? "black" : "#777"
     }
 
     TextMetrics {

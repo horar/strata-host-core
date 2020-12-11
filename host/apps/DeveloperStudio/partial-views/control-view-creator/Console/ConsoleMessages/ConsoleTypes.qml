@@ -6,13 +6,13 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
 Item {
-    id: root
     width: typeMetric.width
     height: typeMetric.height
 
     property alias type: msgType.text
     property color typeColor: "#fff"
 
+    property bool current: true
     SGText {
         id: leftSide
         anchors.left: parent.left
@@ -51,11 +51,24 @@ Item {
         case "warning": return "#c0ca33"
         case "error": return "red"
         case "info": return "#4caf50"
+        default: return "#aaa"
         }
     }
 
     onTypeChanged: {
-        typeColor = getMsgColor(type)
+        if(current){
+            typeColor = getMsgColor(type)
+        }
+    }
+
+    onCurrentChanged: {
+        if(!current){
+            typeColor = "#777"
+            leftSide.enabled = current
+            rightSide.enabled = current
+            msgType.enabled = current
+        }
+
     }
 
 }

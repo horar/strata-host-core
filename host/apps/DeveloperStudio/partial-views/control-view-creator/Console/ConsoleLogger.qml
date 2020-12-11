@@ -32,11 +32,10 @@ ScrollView {
         anchors.fill: parent
         model: consoleItems
         clip: true
-        spacing: 5
+        spacing: 0
 
         delegate: ConsoleDelegate {
             id: consoleDelegate
-            width: parent.width - 50
         }
 
     }
@@ -77,7 +76,13 @@ ScrollView {
         target: logger
         onLogMsg: {
             if(parent.visible){
-                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg})
+                if(consoleModel.count > 0 && recompileRequested){
+                    for (var i = 0; i < consoleModel.count; i++){
+                        consoleModel.get(i).current = false
+                    }
+                }
+
+                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg, current: true})
 
                 if(type === 1){
                     warningCount += 1
