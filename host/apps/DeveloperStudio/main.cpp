@@ -163,8 +163,6 @@ int main(int argc, char *argv[])
                      });
 
     // Starting services this build?
-    // [prasanth] : Important note: Start HCS before launching the UI
-    // So the service callback works properly
 #ifdef START_SERVICES
     QObject::connect(
         &ui, &AppUi::uiLoaded, &app,
