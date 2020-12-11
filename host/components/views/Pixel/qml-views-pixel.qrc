@@ -1,0 +1,31 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Control.qml</file>
+        <file>control-views/SetupControl.qml</file>
+        <file>control-views/PlatformInterface.qml</file>
+        <file>control-views/ControlDemo.qml</file>
+        <file>control-views/Pixelcontrol.qml</file>
+        <file>control-views/SGSlideCustomize.qml</file>
+        <file>control-views/images/sliderHandle.svg</file>
+        <file>control-views/images/sliderHandleActive.svg</file>
+        <file>control-views/images/sliderThumb.svg</file>
+        <file>control-views/images/sliderValue.svg</file>
+        <file>control-views/DemoPattern1.qml</file>
+        <file>control-views/DemoPattern2.qml</file>
+        <file>control-views/DemoPattern3.qml</file>
+        <file>control-views/DemoPattern5.qml</file>
+        <file>control-views/DemoPattern6.qml</file>
+        <file>control-views/DemoPattern4.qml</file>
+        <file>control-views/DiagInfo.qml</file>
+        <file>control-views/DiagMonitor.qml</file>
+        <file>control-views/DiagWindow.qml</file>
+        <file>control-views/IntensityControl.qml</file>
+        <file>control-views/IntensityControl_led1.qml</file>
+        <file>control-views/IntensityControl_led2.qml</file>
+        <file>control-views/IntensityControl_led3.qml</file>
+        <file>control-views/IntensityControl_switch.qml</file>
+        <file>control-views/DiagWindowPxn.qml</file>
+        <file>control-views/DiagPxnInfo.qml</file>
+        <file>control-views/DiagPxnMonitor.qml</file>
+    </qresource>
+</RCC>

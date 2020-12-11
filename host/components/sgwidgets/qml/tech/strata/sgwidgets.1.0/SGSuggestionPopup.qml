@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQml.Models 2.12
 import QtGraphicalEffects 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Popup {
     id: popup
@@ -312,7 +313,7 @@ Popup {
 
                 iconColor: "white"
                 icon.source: "qrc:/sgimages/times.svg"
-                highlightImplicitColor: SGWidgets.SGColorsJS.ERROR_COLOR
+                highlightImplicitColor: Theme.palette.error
                 onClicked: {
                     removeRequested(index)
                 }
