@@ -566,7 +566,7 @@ QString DebugMenuGenerator::generateMainListView()
     indentLevel--;
     text += writeLine("} else {");
     indentLevel++;
-    text += writeLine("let command = { \"cmd\": model.name, \"device_id\": Constants.NULL_DEVICE_ID }");
+    text += writeLine("let command = { \"cmd\": model.name, \"device_id\": controlViewCreatorRoot.debugPlatform.deviceId }");
     text += writeLine("if (payload) {");
     indentLevel++;
     text += writeLine("command[\"payload\"] = payload;");
