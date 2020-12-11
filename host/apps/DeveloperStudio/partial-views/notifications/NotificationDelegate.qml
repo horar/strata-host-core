@@ -9,6 +9,7 @@ import tech.strata.theme 1.0
 import tech.strata.fonts 1.0
 
 Item {
+    id: root
     width: parent.width
     height: notificationContainer.height + 2
 
@@ -17,6 +18,15 @@ Item {
     MouseArea {
         // This is needed to prevent any cursor hover effects from items below this item
         anchors.fill: parent
+    }
+
+    ListView.onRemove: SequentialAnimation {
+
+        PropertyAction {
+            target: root; property: "ListView.delayRemove"; value: true
+        }
+        NumberAnimation { target: root; property: "opacity"; to: 0; duration: 400; easing.type: Easing.InOutQuad }
+        PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
     }
 
     Rectangle {
@@ -38,8 +48,9 @@ Item {
         color: "white"
 
         Timer {
+            id: closeTimer
             interval: model.timeout
-            running: false //model.timeout > 0
+            running: model.timeout > 0
             repeat: false
 
             onTriggered: {
@@ -60,7 +71,8 @@ Item {
             spacing: 5
 
             RowLayout {
-                Layout.preferredHeight: 25
+                Layout.minimumHeight: 30
+                Layout.fillHeight: model.description.length === 0
                 Layout.fillWidth: true
                 spacing: 5
                 clip: true
@@ -80,15 +92,15 @@ Item {
                             return Theme.palette.error;
                         }
                     }
-                    source: model.level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
+                    source: model.iconSource
                 }
 
                 Text {
+                    id: title
                     text: model.title
                     font {
                         bold: true
-                        family: Fonts.franklinGothicBook
-                        pixelSize: 14
+                        pixelSize: 13
                     }
                     verticalAlignment: Text.AlignVCenter
                     Layout.alignment: Qt.AlignVCenter
@@ -96,24 +108,58 @@ Item {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
-                    maximumLineCount: 2
                 }
 
                 Text {
                     text: model.date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
                     font {
-                        family: Fonts.franklinGothicBook
-                        pixelSize: 12
+                        pixelSize: 11
                     }
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                     Layout.preferredWidth: 50
+                    Layout.fillHeight: true
+                    Layout.rightMargin: 5
                     horizontalAlignment: Text.AlignRight
                     verticalAlignment: Text.AlignVCenter
+                }
+
+                RoundButton {
+                    Layout.preferredHeight: 17
+                    Layout.preferredWidth: 17
+                    Layout.alignment: Qt.AlignVCenter
+                    padding: 0
+                    hoverEnabled: true
+
+                    icon {
+                        source: "qrc:/sgimages/times.svg"
+                        color: closeNotificationButton.containsMouse ? Theme.palette.darkGray : "black"
+                        height: 10
+                        width: 10
+                        name: "Close"
+                    }
+
+                    Accessible.name: "Close notification"
+                    Accessible.role: Accessible.Button
+                    Accessible.onPressAction: {
+                        closeNotificationButton.clicked()
+                    }
+
+                    MouseArea {
+                        id: closeNotificationButton
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        onClicked: {
+                            closeTimer.stop()
+                            Notifications.remove(modelIndex)
+                        }
+                    }
                 }
             }
 
             Rectangle {
                 color: Theme.palette.lightGray
+                visible: model.description.length > 0
                 Layout.fillWidth: true
                 Layout.leftMargin: 10
                 Layout.rightMargin: 10
@@ -123,13 +169,25 @@ Item {
             Text {
                 id: description
                 text: model.description
+                visible: model.description.length > 0
                 Layout.fillWidth: true
                 Layout.leftMargin: 10
                 wrapMode: Text.WordWrap
             }
 
+            Rectangle {
+                color: Theme.palette.lightGray
+                visible: model.actions.count > 0
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
+                Layout.preferredHeight: 1
+            }
+
             RowLayout {
+                visible: model.actions.count > 0
                 Layout.preferredHeight: 35
+                Layout.leftMargin: 5
                 spacing: 3
 
                 Repeater {
@@ -168,6 +226,8 @@ Item {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 model.action.trigger()
+                                closeTimer.stop()
+                                Notifications.remove(modelIndex)
                             }
                         }
                     }
