@@ -181,20 +181,18 @@ function parseConnectedPlatforms (connected_platform_list_json) {
             continue
         }
 
-        // If unregistered board (empty class_id) is connected we want to show it in platform list.
-
-        // * If Strata assisted is connected without assisted board (only dongle is connected)
-        //   platform has only 'controller_class_id' (does not have 'class_id').
-        // * Temporary workaround until support for assisted Strata will be implemented.
-        if (platform.class_id === undefined) {
-          platform.class_id = ""
-        }
-
         let previousIndex = previousDeviceIndex(platform.device_id)
         if (previousIndex > -1) {
+            if (platform.controller_class_id === undefined) {
+                refreshFirmwareVersion(platform)
+            } else {
+                // Assisted Strata
+                // properties (class_id, ...) could be changed (e.g. controller (dongle) removed from platform (board))
+                disconnectPlatform(previouslyConnected[previousIndex])
+                addConnectedPlatform(platform)
+            }
             // device previously connected: keep status, remove from previouslyConnected list
             previouslyConnected.splice(previousIndex, 1);
-            refreshFirmwareVersion(platform)
             continue
         } else {
             addConnectedPlatform(platform)
@@ -251,18 +249,28 @@ function previousDeviceIndex(device_id) {
     Determine if connected platform exists in model or if unlisted/unrecognized
 */
 function addConnectedPlatform(platform) {
-    let class_id_string = String(platform.class_id);
+    let class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
 
-    if (classMap.hasOwnProperty(class_id_string)) {
-        connectListing(class_id_string, platform.device_id, platform.firmware_version)
-    } else if (class_id_string !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
-        // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
-        insertUnlistedListing(platform)
+    if (class_id_string !== "") {
+        if (classMap.hasOwnProperty(class_id_string)) {
+            connectListing(class_id_string, platform.device_id, platform.firmware_version)
+        } else if (UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
+            // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
+            insertUnlistedListing(platform)
+        } else {
+            // connected platform class_id not listed in UuidMap or DP platform list
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
+            insertUnknownListing(platform)
+        }
     } else {
-        // connected platform class_id not listed in UuidMap or DP platform list, or undefined
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
-        insertUnknownListing(platform)
+        if (platform.controller_class_id !== undefined && platform.class_id === undefined) {
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Assisted Strata without platform connected:", platform.controller_class_id);
+            insertAssistedNoPlatformListing(platform)
+        } else {
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
+            insertUnregisteredListing(platform)
+        }
     }
 
     let data = {
@@ -359,7 +367,7 @@ function openPlatformView(platform) {
     Disconnect listing, reset completely if no related PlatformView is open
 */
 function disconnectPlatform(platform) {
-    let class_id_string = String(platform.class_id)
+    let class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
     let selector_listing = getDeviceListing(class_id_string, platform.device_id)
     selector_listing.connected = false
 
@@ -431,15 +439,14 @@ function closePlatformView (platform) {
     Insert listing for platform that is not in DB platform_list and does not have a UI
 */
 function insertUnknownListing (platform) {
-    let platform_info = generateErrorListing(platform)
-    insertErrorListing(platform_info)
+    insertErrorListing(generateUnknownListing(platform))
 }
 
 /*
     Insert listing for platform that is not in DB platform_list but does have a UI
 */
 function insertUnlistedListing (platform) {
-    let platform_info = generateErrorListing(platform)
+    let platform_info = generateUnknownListing(platform)
     platform_info.available.control = true
     platform_info.description = "No information to display."
 
@@ -458,14 +465,45 @@ function insertUnlistedListing (platform) {
     }
 }
 
-function generateErrorListing (platform) {
+/*
+    Insert listing for unregistered platform
+*/
+function insertUnregisteredListing (platform) {
+    insertErrorListing(generateUnregisteredListing(platform))
+}
+
+/*
+    Insert listing for Strata assisted without platform (controller only)
+*/
+function insertAssistedNoPlatformListing (platform) {
+    insertErrorListing(generateAssistedNoPlatformListing(platform))
+}
+
+function generateUnknownListing (platform) {
+    let class_id = String(platform.class_id)
+    let opn = "Class id: " + class_id
+    let description = "Strata does not recognize this class_id. Updating Strata may fix this problem."
+    return generateErrorListing(platform, "Unknown Platform", class_id, opn, description)
+}
+
+function generateUnregisteredListing (platform) {
+    let description = "Unregistered platform. Contact local support."
+    return generateErrorListing(platform, "Unregistered Platform", "", "N/A", description)
+}
+
+function generateAssistedNoPlatformListing (platform) {
+    let description = "Connected only Strata Assisted controller without platform."
+    return generateErrorListing(platform, "Strata Assisted (no platform)", "", "N/A", description)
+}
+
+function generateErrorListing (platform, verbose_name, class_id, opn, description) {
     let error = {
-        "verbose_name" : "Unknown Platform",
+        "verbose_name" : verbose_name,
         "connected" : true,
-        "class_id" :  String(platform.class_id),
+        "class_id" :  class_id,
         "device_id":  platform.device_id,
-        "opn": "Class id: " +  String(platform.class_id),
-        "description": "Strata does not recognize this class_id. Updating Strata may fix this problem.",
+        "opn": opn,
+        "description": description,
         "image": "", // Assigns 'not found' image
         "available": {
             "control": false,
@@ -486,9 +524,10 @@ function insertErrorListing (platform) {
     platformSelectorModel.append(platform)
 
     let index = platformSelectorModel.count - 1
+    let class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
 
     // create entry in classMap
-    classMap[platform.class_id] = {
+    classMap[class_id_string] = {
         "original_listing": platform,
         "selector_listings": [index]
     }
