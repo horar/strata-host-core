@@ -60,6 +60,7 @@ ListModel {
             - saveToDisk: Whether to save the notification to disk | DEFAULT: False
             - singleton: Only allow one notification with this title to be exposed to the user | DEFAULT: False
             - timeout: The timeout for the notification  (in milliseconds) | DEFAULT: 10000ms for non-critical notifications
+            - iconSource: The icon's source url | DEFAULT: level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
             - notifyAllUsers: Whether to notify all users on the system // TODO
      **/
     function createNotification(title, level, additionalParameters = {}) {
@@ -69,6 +70,7 @@ ListModel {
         let singleton = additionalParameters.hasOwnProperty("singleton") ? additionalParameters["singleton"] : false;
         let notifyAllUsers = additionalParameters.hasOwnProperty("notifyAllUsers") ? additionalParameters["notifyAllUsers"] : false;
         let timeout = additionalParameters.hasOwnProperty("timeout") ? additionalParameters["timeout"] : -1;
+        let iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
 
         if (timeout < 0) {
             if (level < 2) {
@@ -81,13 +83,14 @@ ListModel {
         if (singleton && _notificationTitles.has(title)) {
             return false;
         }
-        
+
         let notification = {
             "title": title,
             "description": description,
             "level": level,
             "date": new Date(),
-            "timeout": timeout, // Set the timeout to 0 if it is an error notification
+            "timeout": timeout,
+            "iconSource": iconSource,
             "notifyAllUsers": notifyAllUsers,
             "saveToDisk": saveToDisk,
             "singleton": singleton,
