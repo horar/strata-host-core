@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
+import tech.strata.theme 1.0
 
 Item {
     id: logViewWrapper
@@ -567,10 +568,10 @@ Item {
                         z: -1
                         color: {
                             if (model.level === LogViewModels.LogModel.LevelWarning) {
-                                return SGWidgets.SGColorsJS.WARNING_COLOR
+                                return TangoTheme.palette.warning
                             }
                             if (model.level === LogViewModels.LogModel.LevelError) {
-                                return SGWidgets.SGColorsJS.ERROR_COLOR
+                                return TangoTheme.palette.error
                             } else {
                                 return cell.color
                             }

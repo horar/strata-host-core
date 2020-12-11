@@ -24,6 +24,13 @@ bool CmdStartFlash::processNotification(rapidjson::Document& doc) {
     if (CommandValidator::validateNotification(jsonType, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         result_ = (status == JSON_OK) ? CommandResult::Partial : CommandResult::Failure;
+        if (status == JSON_OK) {
+            result_ = CommandResult::Partial;
+            if (flashFirmware_) { setDeviceVersions(nullptr, ""); }  // clear firmware version
+            else { setDeviceVersions("", nullptr); }  // clear bootloader version
+        } else {
+            result_ = CommandResult::Failure;
+        }
         return true;
     } else {
         return false;

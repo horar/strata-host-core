@@ -8,6 +8,7 @@ import "qrc:/js/login_utilities.js" as Registration
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -159,7 +160,7 @@ Item {
 
                     Rectangle {
                         color: "transparent"
-                        border.color: "#33b13b"
+                        border.color: Theme.palette.green
                         anchors.centerIn: parent
                         visible: policyCheck.focus
                         width: parent.width + 4
@@ -169,12 +170,12 @@ Item {
             }
 
             Text {
-                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='https://www.onsemi.com/PowerSolutions/content.do?id=1109'>Privacy Policy</a>."
+                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='https://www.onsemi.com/privacy-policy'>Privacy Policy</a>."
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
                 linkColor: "#545960"
 
-                onLinkActivated: { privacyPolicy.open() }
+                onLinkActivated: { Qt.openUrlExternally("https://www.onsemi.com/privacy-policy")}
 
                 MouseArea {
                     anchors.fill: parent

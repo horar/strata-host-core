@@ -1,6 +1,6 @@
 if (CMAKE_BUILD_TYPE STREQUAL "OTA")
     project(Qt
-        DESCRIPTION "Qt5 framework"
+        DESCRIPTION "Qt5 Framework"
         LANGUAGES NONE
     )
 

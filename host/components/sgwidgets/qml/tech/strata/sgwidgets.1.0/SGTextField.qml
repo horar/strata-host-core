@@ -1,6 +1,7 @@
 import QtQuick.Controls 2.12
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 TextField {
     id: control
@@ -29,6 +30,7 @@ TextField {
     property int suggestionMaxHeight: 120
     property bool suggestionDelegateNumbering: false
     property bool suggestionDelegateRemovable: false
+    property bool suggestionDelegateTextWrap: false
     property alias suggestionPopup: suggestionPopupLoader.item
 
     signal suggestionDelegateSelected(int index)
@@ -86,7 +88,7 @@ TextField {
         implicitHeight: 40
         color: {
             if (isValidAffectsBackground && !isValid) {
-                return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 1.9)
+                return Qt.lighter(Theme.palette.error, 1.9)
             }
 
             return darkMode ? "#5e5e5e" : control.palette.base
@@ -98,7 +100,7 @@ TextField {
             } else if (isValid) {
                 return darkMode ? "black" : control.palette.mid
             } else {
-                return SGWidgets.SGColorsJS.ERROR_COLOR
+                return Theme.palette.error
             }
         }
 
@@ -173,6 +175,7 @@ TextField {
             maxHeight: suggestionMaxHeight
             delegateNumbering: suggestionDelegateNumbering
             delegateRemovable: suggestionDelegateRemovable
+            delegateTextWrap: suggestionDelegateTextWrap
 
             onDelegateSelected: {
                 control.suggestionDelegateSelected(index)
