@@ -31,6 +31,8 @@
 
 #include "AppUi.h"
 
+#include "config/AppConfig.h"
+
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {
@@ -97,6 +99,11 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
     RunGuard appGuard{"tech.strata.sds"};
+    strata::sds::config::AppConfig cfg{QStringLiteral(":/assets/sds.config")};
+    if (cfg.parse() == false) {
+        return EXIT_FAILURE;
+    }
+
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryStrataDevStudio) << QStringLiteral("Another instance of Developer Studio is already running.");
         return EXIT_FAILURE;
@@ -110,8 +117,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<ClassDocuments>("tech.strata.ClassDocuments", 1, 0, "ClassDocuments", "You can't instantiate ClassDocuments in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
-    std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>()};
-    sdsModel->init(app.applicationDirPath());
+    std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss())};
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,

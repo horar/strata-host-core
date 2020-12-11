@@ -41,6 +41,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
+    ${CMAKE_SOURCE_DIR}/assets/config/sds.qrc
 
     $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
 
