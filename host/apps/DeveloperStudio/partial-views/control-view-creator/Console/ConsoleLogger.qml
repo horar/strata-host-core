@@ -55,10 +55,22 @@ ScrollView {
             if(searchText === ""){
                 return true
             } else {
-
-
                 var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
-                if(searchMsg.includes(searchText)){
+                if(searchBox.useCase) {
+                    if(searchMsg.includes(searchText)){
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+                if (searchBox.useRegular){
+                    if(searchMsg.match(searchText)) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+                if(searchMsg.toLowerCase().includes(searchText.toLowerCase())){
                     return true
                 } else {
                     return false

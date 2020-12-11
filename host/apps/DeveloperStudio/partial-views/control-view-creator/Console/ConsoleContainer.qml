@@ -112,32 +112,15 @@ Rectangle {
                     Layout.preferredWidth: 10
                 }
 
-                SGIcon {
-                    id: contentIcon
-                    source: "qrc:/sgimages/zoom.svg"
-                    Layout.preferredHeight: 20
-                    Layout.preferredWidth: 20
-                    Layout.alignment: Qt.AlignVCenter
-                    iconColor: "#ddd"
-                }
-
-                Rectangle {
-                    id: searchFilter
+                SGControlSearchComboBox {
+                    id: searchBox
                     Layout.preferredHeight: 30
-                    Layout.preferredWidth: 300
-                    border.color: "#444"
-                    border.width: 0.5
+                    Layout.preferredWidth: 330
 
-                    TextField {
-                        font.pixelSize: 14
-                        anchors.fill: parent
-                        placeholderText: "search here..."
-                        leftPadding: 5
-
-                        onTextChanged: {
-                            consoleLogger.searchText = text
-                        }
+                    onTextChanged: {
+                        consoleLogger.searchText = text
                     }
+
                 }
 
                 SGControlViewIconButton {
