@@ -403,7 +403,7 @@ Item {
                 ConsoleContainer {
                     id: consoleContainer
                     Layout.minimumHeight: 30
-                    Layout.preferredHeight: 200
+                    height: 200
                     Layout.maximumHeight: 750
                     Layout.fillWidth: true
                     visible: !noActiveFile.visible
