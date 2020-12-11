@@ -31,6 +31,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/RunGuard.cpp
 
     source/config/Url.cpp
+    source/config/ConfigFile.cpp
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
