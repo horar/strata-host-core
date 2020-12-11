@@ -6,6 +6,8 @@ import QtQuick.Window 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 
+import "../components"
+
 
 Rectangle {
     id: root
@@ -134,31 +136,33 @@ Rectangle {
                     }
                 }
 
-                Rectangle {
+                SGControlViewIconButton {
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 30
+                    source: "qrc:/sgimages/plus.svg"
 
-                    color: broomArea.containsMouse ? "#aaa" : "transparent"
-
-                    SGIcon {
-                        source: "qrc:/sgimages/broom.svg"
-                        iconColor: "#ddd"
-                        anchors.centerIn: parent
-                        width: 20
-                        height: width
+                    function functionHandler() {
+                        consoleLogger.fontMultiplier += 0.1
                     }
+                }
 
-                    MouseArea {
-                        id: broomArea
+                SGControlViewIconButton {
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 30
+                    source: "qrc:/sgimages/minus.svg"
 
-                        anchors.fill: parent
-                        hoverEnabled: true
+                    function functionHandler() {
+                        consoleLogger.fontMultiplier -= 0.1
+                    }
+                }
 
-                        cursorShape: Qt.PointingHandCursor
+                SGControlViewIconButton {
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 30
+                    source: "qrc:/sgimages/broom.svg"
 
-                        onClicked: {
-                            consoleLogger.clearLogs()
-                        }
+                    function functionHandler() {
+                        consoleLogger.clearLogs()
                     }
                 }
 
@@ -170,65 +174,33 @@ Rectangle {
                 RowLayout{
                     Layout.alignment: Qt.AlignRight
 
-                    Rectangle{
-                        id: closeButton
-                        height: 30
-                        width: height
-                        color: closeArea.containsMouse ? "#aaa" : "transparent"
+                    SGControlViewIconButton{
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: 30
                         Layout.alignment: Qt.AlignRight
+                        rotation: consoleContainer.state !== "normal" && consoleContainer.state !== "minimize" ? 180 : 0
+                        source: "qrc:/sgimages/chevron-up.svg"
 
-                        SGIcon {
-                            anchors.centerIn: closeButton
-                            height: 20
-                            width: height
-                            source: "qrc:/sgimages/chevron-up.svg"
-                            iconColor: "#ddd"
-                            rotation: consoleContainer.state !== "normal" && consoleContainer.state !== "minimize" ? 180 : 0
-                        }
-
-                        MouseArea {
-                            id: closeArea
-                            anchors.fill: closeButton
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-
-                            onClicked: {
-                                if(consoleContainer.state !== "normal" && consoleContainer.state !== "minimize"){
-                                    consoleContainer.height = 200
-                                    consoleContainer.state = "normal"
-                                } else {
-                                    consoleContainer.state = "maximize"
-                                    consoleContainer.height = 750
-                                }
+                        function functionHandler() {
+                            if(consoleContainer.state !== "normal" && consoleContainer.state !== "minimize"){
+                                consoleContainer.height = 200
+                                consoleContainer.state = "normal"
+                            } else {
+                                consoleContainer.state = "maximize"
+                                consoleContainer.height = 750
                             }
                         }
                     }
 
-                    Rectangle {
-                        id: retractButton
-                        height: 30
-                        width: height
-                        color: retractArea.containsMouse ? "#aaa" : "transparent"
+                    SGControlViewIconButton {
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: 30
+                        source: "qrc:/sgimages/times.svg"
                         Layout.alignment: Qt.AlignRight
 
-                        SGIcon {
-                            anchors.centerIn: retractButton
-                            height: 20
-                            width: height
-                            source: "qrc:/sgimages/times.svg"
-                            iconColor: "#ddd"
-                        }
-
-                        MouseArea {
-                            id: retractArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-
-                            onClicked: {
-                                consoleContainer.height = topBar.height
-                                consoleContainer.state = "minimize"
-                            }
+                        function functionHandler() {
+                            consoleContainer.height = topBar.height
+                            consoleContainer.state = "minimize"
                         }
                     }
                 }

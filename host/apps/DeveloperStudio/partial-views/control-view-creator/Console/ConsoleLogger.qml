@@ -5,6 +5,8 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
+import "ConsoleMessages"
+
 ScrollView {
     id: root
     width: parent.width
@@ -12,16 +14,16 @@ ScrollView {
     clip: true
     wheelEnabled: true
 
-    property double fontMultiplier: 1.1
+    property double fontMultiplier: 1.3
     property string searchText: ""
     property int defaultRole: 1
     property int hit: -1
 
     onFontMultiplierChanged: {
-        if(fontMultiplier >= 2.0){
-            fontMultiplier = 2.0
-        } else if(fontMultiplier <= 1.0){
-            fontMultiplier = 1.0
+        if(fontMultiplier >= 2.5){
+            fontMultiplier = 2.5
+        } else if(fontMultiplier <= 0.8){
+            fontMultiplier = 0.8
         }
     }
 
@@ -30,65 +32,13 @@ ScrollView {
         anchors.fill: parent
         model: consoleItems
         clip: true
-        spacing: 0
+        spacing: 5
 
-        delegate: Rectangle {
+        delegate: ConsoleDelegate {
+            id: consoleDelegate
             width: parent.width - 50
-            height: consoleItems.filterAcceptsRow(model.index) ? 20 : 0
-            color: "#eee"
-            anchors.leftMargin: 10
-            visible: consoleItems.filterAcceptsRow(model.index)
-            RowLayout{
-                id: row
-                anchors.fill: parent
-                height: msgText.height
-                SGText {
-                    id: msgTime
-                    fontSizeMultiplier: fontMultiplier
-                    wrapMode: Text.WordWrap
-                    Layout.minimumWidth: 85
-                    Layout.preferredWidth: 85
-                    text: model.time
-                }
-
-                RowLayout {
-                    Layout.preferredHeight: textMetric.height
-                    Layout.preferredWidth: textMetric.width
-
-                    spacing: 0
-
-                    SGText {
-                        id: leftSide
-                        Layout.alignment: Qt.AlignLeft
-                        text: leftSidesColor(model.type)
-                        fontSizeMultiplier: fontMultiplier
-                    }
-
-                    SGText {
-                        id: msgType
-                        Layout.alignment: Qt.AlignCenter
-                        text: getMsgType(model.type)
-                        fontSizeMultiplier: fontMultiplier
-                    }
-
-                    SGText {
-                        id: rightSide
-                        Layout.alignment: Qt.AlignRight
-                        text: rightSidesColor(model.type)
-                        fontSizeMultiplier: fontMultiplier
-                    }
-                }
-
-                SGText {
-                    id: msgText
-                    fontSizeMultiplier: fontMultiplier
-                    Layout.fillWidth: true
-                    Layout.minimumHeight: textMetric.height
-                    elide: Text.ElideRight
-                    text: model.msg
-                }
-            }
         }
+
     }
 
     SGSortFilterProxyModel {
@@ -106,24 +56,9 @@ ScrollView {
             if(searchText === ""){
                 return true
             } else {
-                let type;
 
-                switch(item.type){
-                case 0:
-                    type = "debug"
-                    break;
-                case 1:
-                    type = "warning"
-                    break;
-                case 2:
-                    type = "error"
-                    break;
-                case 4:
-                    type = "info"
-                    break;
-                }
 
-                var searchMsg = item.time  + ` [ ${type} ] ` + item.msg
+                var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
                 if(searchMsg.includes(searchText)){
                     return true
                 } else {
@@ -142,7 +77,7 @@ ScrollView {
         target: logger
         onLogMsg: {
             if(parent.visible){
-                consoleModel.append({time: timestamp(), type: type, msg: msg})
+                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg})
 
                 if(type === 1){
                     warningCount += 1
@@ -154,30 +89,13 @@ ScrollView {
         }
     }
 
-    function rightSidesColor(type){
-        switch(type){
-        case 0: return "<font color=\"#00bcd4\" > ] </font>"
-        case 1: return "<font color=\"#c0ca33\"> ] </font>"
-        case 2: return "<font color=\"red\"> ] </font>"
-        case 4: return "<font color=\"#4caf50\"> ] </font>"
-        }
-    }
-
-    function leftSidesColor(type){
-        switch(type){
-        case 0: return "<font color=\"#00bcd4\" > [ </font>"
-        case 1: return "<font color=\"#c0ca33\"> [ </font>"
-        case 2: return "<font color=\"red\"> [ </font>"
-        case 4: return "<font color=\"#4caf50\"> [ </font>"
-        }
-    }
 
     function getMsgType(type){
         switch(type){
-        case 0: return "<font color=\"#00bcd4\" > debug </font>"
-        case 1: return "<font color=\"#c0ca33\"> warning </font>"
-        case 2: return "<font color=\"red\"> error </font>"
-        case 4: return "<font color=\"#4caf50\"> info </font>"
+        case 0: return "debug"
+        case 1: return "warning"
+        case 2: return "error"
+        case 4: return "info"
         }
     }
 
@@ -222,7 +140,6 @@ ScrollView {
 
     TextMetrics {
         id: textMetric
-        text: `[  warning  ]`
         font.pixelSize: 13 * fontMultiplier
     }
 }
