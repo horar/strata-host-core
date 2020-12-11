@@ -7,7 +7,16 @@ import tech.strata.commoncpp 1.0
 
 Item {
     height: listView.height
-    width: 450
+    width: 350
+
+    // This removes any cursor changes to elements that are underneath listView
+    MouseArea {
+        anchors.fill: parent
+        propagateComposedEvents: true
+        onClicked: {
+            mouse.accepted = false
+        }
+    }
 
     SGSortFilterProxyModel {
         id: filteredNotifications
@@ -31,7 +40,9 @@ Item {
         id: listView
         width: parent.width
         height: Math.min(contentHeight, mainWindow.height - statusBarContainer.height - anchors.bottomMargin - 20) // This sets the height to be a max of the window height - status bar height - the bottom margin - 20 for top margin padding
-        model: filteredNotifications
+        model: Notifications
+        spacing: 10
+        clip: true
         delegate: NotificationDelegate { modelIndex: index }
         verticalLayoutDirection: ListView.BottomToTop
     }
