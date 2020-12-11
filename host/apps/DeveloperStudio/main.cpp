@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
+    RunGuard appGuard{QStringLiteral("tech.strata.sds:%1").arg(cfg.hcsDealerAddresss().port())};
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryStrataDevStudio) << QStringLiteral("Another instance of Developer Studio is already running.");
         return EXIT_FAILURE;
