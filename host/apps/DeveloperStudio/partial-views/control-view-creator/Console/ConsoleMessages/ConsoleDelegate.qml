@@ -5,7 +5,6 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
-
 Item{
     id: root
     height: consoleItems.filterAcceptsRow(model.index) ? consoleMessage.height : 0

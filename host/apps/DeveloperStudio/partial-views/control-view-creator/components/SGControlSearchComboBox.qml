@@ -8,7 +8,6 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
 
-
 RowLayout {
     id: root
 
