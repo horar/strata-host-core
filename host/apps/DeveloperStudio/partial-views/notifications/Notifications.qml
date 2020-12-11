@@ -17,6 +17,12 @@ ListModel {
     // _notificationTitles holds the Set of titles currently showing
     property var _notificationTitles: new Set()
 
+    property SGUserSettings notificationSettings: SGUserSettings {
+        id: notificationSettings
+        user: NavigationControl.context.user_id
+        classId: "notifications"
+    }
+
     onRowsAboutToBeRemoved: {
         let row = get(first);
 
@@ -26,11 +32,11 @@ ListModel {
 
     Component.onDestruction: {
         // Save the open notifications to disk on close
-        let notifications = [];
+        let notifications = { "notifications": [] };
         for (let i = 0; i < count; i++) {
             let row = get(i);
             if (row.saveToDisk) {
-                notifications.push({
+                notifications["notifications"].push({
                                        "title": row.title,
                                        "description": row.description,
                                        "level": row.level,
@@ -39,7 +45,7 @@ ListModel {
             }
         }
 
-        notificationSettings.writeFile("savedNotifications", notifications)
+        notificationSettings.writeFile("savedNotifications.json", notifications)
     }
 
     /**
@@ -50,12 +56,12 @@ ListModel {
         - description: The notification description
         - level: The notification importance level (0, 1, 2) (Info, Warn, Critical)
         - actions: A list of Action objects that correspond to each button in the notification
-        - notifyAllUsers: Whether to notify all users on the system // TODO
         - saveToDisk: Whether to save the notification to disk
         - singleton: Only allow one notification with this title to be exposed to the user
+        - notifyAllUsers: Whether to notify all users on the system // TODO
      **/
-    function createNotification(title, description, level, actions = [], notifyAllUsers = false, saveToDisk = false, singleton = false) {
-        if (_notificationTitles.has(title)) {
+    function createNotification(title, description, level, actions = [], saveToDisk = false, singleton = false, notifyAllUsers = false) {
+        if (singleton && _notificationTitles.has(title)) {
             return false;
         }
 
@@ -74,11 +80,5 @@ ListModel {
         append(notification);
         _notificationTitles.add(title);
         return true;
-    }
-
-    SGUserSettings {
-        id: notificationSettings
-        user: NavigationControl.context.user_id
-        classId: "notifications"
     }
 }
