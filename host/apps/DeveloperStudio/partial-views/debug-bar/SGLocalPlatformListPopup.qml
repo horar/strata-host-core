@@ -613,7 +613,7 @@ Window {
                             model: deviceModel
                             placeholderText: "device_id..."
                             textRole: null
-                            currentIndex: -1
+                            currentIndex: !checkIfNotUsed(rowPlatform.device_id) ? rowPlatform.device_id : -1
 
 
                             delegate: SGText {
@@ -790,6 +790,7 @@ Window {
                 injectPlatform.storedPlatforms = platforms
                 for(var x = 0; x < platforms.length; x++){
                     listModel.append({class_id: platforms[x].platform.class_id, opn: platforms[x].platform.opn, device_id: platforms[x].platform.device_id, firmware_version: platforms[x].platform.firmware_version, connected: false})
+                    currDeviceModel.append({device_id: platforms[x].platform.device_id})
                 }
             } else {
                 listModel.append({class_id: "", opn: "" ,device_id: -1, firmware_version: "0.0.2", connected: false})
