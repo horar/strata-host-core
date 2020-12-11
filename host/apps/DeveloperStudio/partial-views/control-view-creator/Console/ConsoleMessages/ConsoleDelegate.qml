@@ -8,7 +8,7 @@ import tech.strata.commoncpp 1.0
 RowLayout{
     id: row
 
-    height: consoleItems.filterAcceptsRow(model.index) ? SGSettings.fontPixelSize * fontMultiplier : 0
+    height: consoleItems.filterAcceptsRow(model.index) ?  model.type !== "error" ? SGSettings.fontPixelSize * fontMultiplier : consoleMessage.height : 0
     visible: consoleItems.filterAcceptsRow(model.index)
     spacing: 5
 
@@ -38,8 +38,21 @@ RowLayout{
             msg: model.msg
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.left: parent.left
+            anchors.left: consoleTypes.right
             anchors.leftMargin: 10
+        }
+
+        ToolTip {
+            id: showConsoleMessage
+            text: model.msg
+            visible: toolArea.containsMouse
+
+        }
+
+        MouseArea {
+            id: toolArea
+            anchors.fill: consoleMessage
+            hoverEnabled: true
         }
     }
 }
