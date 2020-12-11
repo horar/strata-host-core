@@ -433,8 +433,10 @@ Window {
                                     property bool onHasChanged: false
 
                                     onTextChanged: {
-                                        platformsComboBox.classId = text
-                                        onHasChanged = true
+                                        if(platformsComboBox.classId !== text){
+                                            platformsComboBox.classId = text
+                                            onHasChanged = true
+                                        }
                                     }
 
                                     onEditingFinished: {
@@ -552,13 +554,12 @@ Window {
                             function setId(class_){
                                 for(var i = 0; i < classModel.count; i++){
                                     if(class_ === classModel.get(i).platform.class_id){
-                                        platformsComboBox.currentIndex = i
+                                        currentIndex = i
                                         classId = class_
                                         opn = classModel.get(i).platform.opn
                                         if(rowPlatform.connected){
                                             changeAndReplacePlatform({class_id: classId, opn: opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
                                         }
-
                                         break
                                     }
                                 }
@@ -593,8 +594,10 @@ Window {
                                 property bool hasChanged: false
 
                                 onTextChanged: {
-                                    rowPlatform.firmware_version = text
-                                    hasChanged = true
+                                    if(rowPlatform.firmware_version !== text){
+                                        rowPlatform.firmware_version = text
+                                        hasChanged = true
+                                    }
                                 }
 
                                 onEditingFinished: {
@@ -907,7 +910,7 @@ Window {
 
                 }
                 // Removes updated class_id from storedPlatforms
-                if(injectPlatform.storedPlatforms !== [] && platform.class_id !== deletedPlatform[0].class_id){
+                if(injectPlatform.storedPlatforms !== []){
 
                         for (var j = 0; j < injectPlatform.storedPlatforms.length; j++){
                             if(deletedPlatform[0].class_id === injectPlatform.storedPlatforms[j].platform.class_id){
@@ -917,10 +920,11 @@ Window {
                                 break
                             }
                         }
-                }
+                } else {
                 PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
                 loadAndStorePlatform(platform, deviceId, firmwareVersion, checkForCustomId(platform.class_id))
                 break;
+                }
             }
         }
     }
