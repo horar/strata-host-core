@@ -43,7 +43,7 @@ FocusScope {
     property string simpleTimestampFormat: "hh:mm:ss.zzz"
     property bool showDropAreaIndicator: false
     property bool showMarks: false
-    property string markColor: SGWidgets.SGColorsJS.TANGO_CHAMELEON3
+    property string markColor: TangoTheme.palette.chameleon3
 
     LogViewModels.LogModel {
         id: logModel
