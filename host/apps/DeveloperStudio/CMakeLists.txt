@@ -30,6 +30,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
     source/RunGuard.cpp
 
+    source/config/Url.cpp
+
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
     signals/qml/tech/strata/signals/qml.qrc
