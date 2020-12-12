@@ -12,7 +12,7 @@ Item {
     Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
     property alias firstCommand: firstCommand
-    property var intervalState : 2000
+    property var intervalState : 200
     property alias gpio: gpio
 
     property var obj: {
@@ -24,14 +24,6 @@ Item {
             "toggle_bool": platformInterface.notifications.my_cmd_simple_periodic.toggle_bool
         }
     }
-
-    property var test: platformInterface.my_cmd_simple_periodic.toggle_bool
-    onTestChanged: {
-        console.info(test)
-    }
-
-
-
     property var run_count: -1
 
     property var my_cmd_simple_start_periodic_obj: {
@@ -175,7 +167,7 @@ Item {
                                     checked: false
 
                                     onToggled:  {
-                                        platformInterface.commands.my_cmd_simple.update(gpio.checked,dac.value)
+                                        platformInterface.commands.my_cmd_simple.update(dac.value,gpio.checked)
                                         firstCommand.text =  JSON.stringify(my_cmd_simple_obj,null,4)
                                     }
                                 }
@@ -198,7 +190,7 @@ Item {
                                     from: 0                          // Default: 0.0
                                     to: 1
                                     onUserSet: {
-                                        platformInterface.commands.my_cmd_simple.update(gpio.checked,dac.value)
+                                        platformInterface.commands.my_cmd_simple.update(dac.value,gpio.checked)
                                         firstCommand.text = JSON.stringify(my_cmd_simple_obj,null,4)
 
                                     }
@@ -209,8 +201,11 @@ Item {
                 }
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    Layout.topMargin: 10
+                    Layout.preferredWidth: parent.width/2.5
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.topMargin: 30
+
+
                     color: "light gray"
                     ScrollView {
                         id: frame3
@@ -280,10 +275,11 @@ Item {
 
                 Item {
                     Layout.fillHeight: true
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: parent.width/1.6
 
                     ColumnLayout{
-                        anchors.fill: parent
+                        width: parent.width - graphLabel.width
+                        height:  parent.height
                         Item  {
                             Layout.preferredHeight: parent.height/4
                             Layout.fillWidth: true
@@ -352,73 +348,92 @@ Item {
                             SGGraph{
                                 id: timedGraphPoints
                                 anchors.fill: parent
-                                title: "Periodic Notification Graph"
+                                title: "Periodic Notification Graph "
                                 yMin: 0
-                                yMax: 5
+                                yMax: 1
                                 xMin: 0
-                                xMax: 5
-                                xTitle: "X Axis"
-                                yTitle: "Y Axis"
+                                xMax: 1
+                                xTitle: "Time (s)"
+                                yTitle: "Values"
                                 panXEnabled: false
                                 panYEnabled: false
                                 zoomXEnabled: false
                                 zoomYEnabled: false
-                                autoUpdate: false
                                 xGrid: true
                                 yGrid: true
                                 property var movingCurve: createCurve("movingCurve")
                                 property var movingCurve2: createCurve("movingCurve2")
+                                property real lastTime
+
                                 Component.onCompleted: {
                                     movingCurve.color = "blue"
-                                    movingCurve.autoUpdate = false
-                                    movingCurve2.color = "green"
-                                    movingCurve2.autoUpdate = false
+                                    movingCurve2.color = "orange"
+                                    lastTime = Date.now()
+
                                 }
-                                Timer {
-                                    id: graphTimerPoints
-                                    interval: parseInt(infoBox.text)
-                                    running: enableSwitch.checked
-                                    repeat: true
 
-                                    property real lastTime
 
-                                    onRunningChanged: {
-                                        if (running){
-                                            if(timedGraphPoints.count > 0) {
-                                                timedGraphPoints.curve(0).clear()
-                                                timedGraphPoints.curve(1).clear()
-                                                lastTime = Date.now()
-                                            }
-                                        }
-                                    }
 
-                                    onTriggered: {
-                                        let currentTime = Date.now()
-                                        let curve = timedGraphPoints.curve(0)
-                                        curve.shiftPoints((currentTime - lastTime)/1000, 0)
-                                        curve.append(0, platformInterface.notifications.my_cmd_simple_periodic.adc_read)
-
-                                        let curve2 = timedGraphPoints.curve(1)
-                                        curve2.shiftPoints((currentTime - lastTime)/1000, 0)
-                                        curve2.append(0, platformInterface.notifications.my_cmd_simple_periodic.random_float)
-
-                                        timedGraphPoints.update()
-                                        lastTime = currentTime
+                                function removeOutOfViewPoints() {
+                                    // recursively clean up points that have moved out of view
+                                    if (timedGraphPoints.curve(0).at(xMax).x > timedGraphPoints.xMax ||timedGraphPoints.curve(1).at(xMax).x > timedGraphPoints.xMax) {
+                                        timedGraphPoints.xMax += 0.02
+                                        timedGraphPoints.xMin += 0.02
 
                                     }
+                                }
 
+                                property var adc_read:  obj
+                                onAdc_readChanged: {
+                                    let currentTime = Date.now()
+                                    let curve = timedGraphPoints.curve(0)
+                                    let curve2 = timedGraphPoints.curve(1)
+                                    var adc_value = platformInterface.notifications.my_cmd_simple_periodic.adc_read
+                                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                                    curve.append(0, adc_value)
+                                    var random_float = platformInterface.notifications.my_cmd_simple_periodic.random_float
+                                    curve2.shiftPoints((currentTime - lastTime)/1000, 0)
+                                    curve2.append(0, random_float)
+                                    removeOutOfViewPoints()
+                                    timedGraphPoints.update()
+                                    lastTime = currentTime
                                 }
 
                             }
                         }
 
+
                     }
+
+                    Item{
+                        id: graphLabel
+                        width: 110
+                        height: 110
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        ColumnLayout {
+                            anchors.fill: parent
+                            SGText {
+                                text:" ADC \n Input"
+                                color: "blue"
+                                font.bold: true
+                            }
+                            SGText {
+                                text:" Random"
+                                color: "orange"
+                                font.bold: true
+                            }
+
+                        }
+                    }
+
                 }
                 Rectangle {
                     Layout.preferredHeight: parent.height/1.5
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
                     color: "light gray"
+
                     ScrollView {
                         id: frame2
                         clip: true
@@ -510,7 +525,13 @@ Item {
                                     width: 50
                                     checked: true
                                     onToggled: {
-                                        platformInterface.commands.my_cmd_simple_periodic_update.update(checked,run_count,infoBox.text)
+                                        platformInterface.commands.my_cmd_simple_periodic_update.update(checked,infoBox.text,run_count)
+                                    }
+                                    onCheckedChanged: {
+                                        if(checked) {
+                                            timedGraphPoints.xMin = 0
+                                            timedGraphPoints.xMax = (intervalState/1000) * 5
+                                        }
                                     }
                                 }
                             }
@@ -540,11 +561,11 @@ Item {
                                             onToggled: {
                                                 if(checked) {
                                                     run_count = -1
-                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,run_count,parseInt(infoBox.text))
+                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,parseInt(infoBox.text),run_count)
                                                 }
                                                 else {
                                                     run_count = 1
-                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,run_count,parseInt(infoBox.text))
+                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,parseInt(infoBox.text),run_count)
                                                 }
                                             }
                                         }
@@ -565,11 +586,14 @@ Item {
                                         SGSubmitInfoBox {
                                             id: infoBox
                                             width: 60
-                                            text: "2000"
+                                            text: "200"
                                             unit: "ms"
                                             onEditingFinished:{
                                                 intervalState = parseInt(text)
-                                                platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,run_count,parseInt(text))
+                                                timedGraphPoints.xMin = 0
+                                                timedGraphPoints.xMax = (intervalState/1000) * 5
+                                                console.info(timedGraphPoints.xMax)
+                                                platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,intervalState,run_count)
                                             }
                                         }
                                     }
@@ -580,9 +604,10 @@ Item {
                 }
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: parent.width/2.5
                     color: "light gray"
-                    Layout.topMargin: 10
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.topMargin: 30
                     ScrollView {
                         id: frame4
                         clip: true

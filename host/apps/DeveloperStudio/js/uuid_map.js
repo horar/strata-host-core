@@ -102,6 +102,8 @@ var uuid_map = {
     "2286e1e0-4035-46b9-b197-4d729653c101": "rsl10-dcdc",
     "4aad7090-eac3-470e-a304-00988c8c006d": "rsl10-dcdc",
     "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-dcdc",
-    "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators"
+    "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators",
+    "9b8fb506-dd43-40a5-b762-2ec8b70cbb78": "template"
+
 
 }

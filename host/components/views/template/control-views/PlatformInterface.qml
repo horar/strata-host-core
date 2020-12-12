@@ -35,16 +35,6 @@ PlatformInterfaceBase {
 
     }
 
-
-    property var my_cmd_simple_periodic : {
-        "adc_read":	1,		//in Volts
-        "io_read": false,      //in Volts
-        "random_float":	0,    	//in mA
-        "toggle_bool": false,     	//in mA
-
-    }
-
-
     /******************************************************************
       * COMMANDS
     ******************************************************************/
