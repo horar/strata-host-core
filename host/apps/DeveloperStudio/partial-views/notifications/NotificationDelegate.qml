@@ -11,7 +11,7 @@ import tech.strata.fonts 1.0
 Item {
     id: root
     width: parent.width
-    height: notificationContainer.height + 2
+    height: notificationContainer.height + (2 * notificationShadow.radius)
 
     property int modelIndex
 
@@ -25,15 +25,16 @@ Item {
         PropertyAction {
             target: root; property: "ListView.delayRemove"; value: true
         }
-        NumberAnimation { target: root; property: "opacity"; to: 0; duration: 400; easing.type: Easing.InOutQuad }
+        NumberAnimation { target: notificationContainer; property: "height"; to: 0; duration: 250; easing.type: Easing.InOutQuad; onFinished: root.height = 0 }
         PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
     }
 
     Rectangle {
         id: notificationContainer
-        width: parent.width - 2
+        width: parent.width - (2 * notificationShadow.radius)
         height: columnLayout.implicitHeight + 20
         radius: 4
+        clip: true
         border.color: {
             if (model.level === Notifications.info) {
                 return Theme.palette.gray;
@@ -237,12 +238,15 @@ Item {
     }
 
     DropShadow {
-        anchors.fill: parent
+        id: notificationShadow
+        anchors.fill: root
         source: notificationContainer
-        color: Theme.palette.lightGray
-        horizontalOffset: 2
-        verticalOffset: 2
+        color: Theme.palette.gray
+        horizontalOffset: 1
+        verticalOffset: 3
         cached: true
-        radius: 8.0
+        radius: 8
+        smooth: true
+        samples: radius*2
     }
 }
