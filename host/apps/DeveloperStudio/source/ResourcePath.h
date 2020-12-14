@@ -8,9 +8,9 @@ public:
     ResourcePath();
 
     static QString& coreResourcePath();
-    static QString& viewsResourcePath();
+    static QString& viewsPhysicalPath();
 
 private:
     static QString coreResourcePath_;
-    static QString viewsResourcePath_;
+    static QString viewsPhysicalPath_;
 };

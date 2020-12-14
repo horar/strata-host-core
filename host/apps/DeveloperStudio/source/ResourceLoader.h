@@ -82,9 +82,12 @@ public:
      * @param class_id The class_id of the platform
      * @return Returns the git tagged version for the class_id
      */
+
+    Q_INVOKABLE QString returnQrcPath(const QString &filePath);
+
     Q_INVOKABLE QString getGitTaggedVersion(const QString &class_id);
 
-    Q_INVOKABLE QUrl getStaticResourcesUrl();
+    Q_INVOKABLE QUrl getStaticViewsPhysicalPathUrl();
 
     Q_INVOKABLE void unregisterAllViews(QObject *parent);
 

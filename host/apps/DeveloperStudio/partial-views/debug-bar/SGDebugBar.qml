@@ -23,6 +23,7 @@ Item {
         width: parent.width
         height: flow.height
         color: "lightgrey"
+
         anchors {
             bottom: parent.bottom
         }
@@ -54,18 +55,16 @@ Item {
 
                     onCurrentIndexChanged: {
                         // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
-                        let fileName = viewFolderModel.get(currentIndex, "fileName");
-                        if (fileName !== undefined) {
-                            displayText = fileName.replace("views-", "").slice(0, -4)
+                        let folder = viewFolderModel.get(currentIndex, "fileName");
+                        if (folder !== undefined) {
+                            displayText = folder
                         }
                     }
 
                     FolderListModel {
                         id: viewFolderModel
-                        showDirs: false
-                        showFiles: true
-                        nameFilters: "views-*.rcc"
-                        folder: sdsModel.resourceLoader.getStaticResourcesUrl()
+                        showDirs: true
+                        folder: sdsModel.resourceLoader.getStaticViewsPhysicalPathUrl()
 
                         onCountChanged: {
                             viewCombobox.currentIndex = viewFolderModel.count - 1
@@ -75,7 +74,7 @@ Item {
                             if (viewFolderModel.status === FolderListModel.Ready) {
                                 // [LC] - this FolderListModel is from Lab; a side effects in 5.12
                                 //      - if 'folder' url doesn't exists the it loads app folder content
-                                comboboxRow.visible = (viewFolderModel.folder.toString() === sdsModel.resourceLoader.getStaticResourcesUrl().toString())
+                                comboboxRow.visible = true
                             }
                         }
                     }
@@ -88,17 +87,17 @@ Item {
                             width: viewCombobox.width
                             height: 20
                             // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
-                            text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
+                            text: model.fileName
                             hoverEnabled: true
                             background: Rectangle {
                                 color: hovered ? "white" : "lightgrey"
                             }
 
                             onClicked: {
-                                // Todo: change this combobox to browse/scan qrc's in the components/views directories
-                                // and then open them/load the RCC applicable. https://ons-sec.atlassian.net/browse/CS-1301
-                                let name = selectButton.text;
-                                viewCombobox.currentIndex = index
+                                let path = sdsModel.resourceLoader.returnQrcPath(model.filePath);
+                                controlViewDevDialog.visible = true
+                                controlViewDevDialog.qrcFilePath = path
+                                controlViewDevDialog.compileRCCFromPath()
                             }
                         }
                     }
