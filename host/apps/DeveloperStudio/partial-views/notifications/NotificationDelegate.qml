@@ -55,7 +55,7 @@ Item {
             repeat: false
 
             onTriggered: {
-                Notifications.remove(modelIndex)
+                Notifications.model.remove(modelIndex)
             }
         }
 
@@ -152,7 +152,7 @@ Item {
                         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                         onClicked: {
                             closeTimer.stop()
-                            Notifications.remove(modelIndex)
+                            Notifications.model.remove(modelIndex)
                         }
                     }
                 }
@@ -228,7 +228,7 @@ Item {
                             onClicked: {
                                 model.action.trigger()
                                 closeTimer.stop()
-                                Notifications.remove(modelIndex)
+                                Notifications.model.remove(modelIndex)
                             }
                         }
                     }

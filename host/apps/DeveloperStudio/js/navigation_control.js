@@ -151,7 +151,6 @@ function globalEventHandler(event,data)
     {
     case events.PROMPT_SPLASH_SCREEN_EVENT:
         navigation_state_ = states.NOT_CONNECTED_STATE
-        main_qml_object_.state = navigation_state_
         createView(screens.SPLASH_SCREEN, main_container_)
 
         // Remove StatusBar
@@ -162,7 +161,6 @@ function globalEventHandler(event,data)
     case events.PROMPT_LOGIN_EVENT:
         //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Updated state to Login:", states.LOGIN_STATE)
         navigation_state_ = states.LOGIN_STATE
-        main_qml_object_.state = navigation_state_
 
         // Show login, reset stack
         createView(screens.LOGIN_SCREEN, main_container_)
@@ -188,7 +186,6 @@ function globalEventHandler(event,data)
 
         // Show Login Screen
         navigation_state_ = states.LOGIN_STATE
-        main_qml_object_.state = navigation_state_
 
         updateState(events.PROMPT_LOGIN_EVENT)
         break;
@@ -267,7 +264,6 @@ function updateState(event, data)
 
                 // Progress to next state
                 navigation_state_ = states.CONTROL_STATE
-                main_qml_object_.state = navigation_state_
 
                  // Populate platforms only after all UI components are complete
                 statusBar.loginSuccessful()

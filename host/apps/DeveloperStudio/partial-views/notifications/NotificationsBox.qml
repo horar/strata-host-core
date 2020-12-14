@@ -2,12 +2,20 @@ import QtQuick 2.12
 import QtQml 2.12
 
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/login_utilities.js" as Authenticator
 
 import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 
 Item {
     height: listView.height
     width: 350
+
+    property string currentUser
+
+    onCurrentUserChanged: {
+        filteredNotifications.invalidate()
+    }
 
     // This removes any cursor changes to elements that are underneath listView
     MouseArea {
@@ -20,20 +28,18 @@ Item {
 
     SGSortFilterProxyModel {
         id: filteredNotifications
-        sourceModel: Notifications
+        sourceModel: Notifications.model
+        invokeCustomFilter: true
+        sortEnabled: false
 
         function filterAcceptsRow(index) {
-            if (mainWindow.state === NavigationControl.states.CONTROL_STATE) {
-                return true
-            }
-
-            if (!Notifications.get(index).notifyAllUsers) {
+            const notification = Notifications.model.get(index);
+            if (notification.to !== "all" && notification.to !== currentUser) {
                 return false
             } else {
                 return true
             }
         }
-
     }
 
     ListView {
@@ -48,6 +54,26 @@ Item {
 
         add: Transition {
             NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
+        }
+    }
+
+    Connections {
+        target: Signals
+
+        onLoginResult: {
+            const resultObject = JSON.parse(result)
+            //console.log(Logger.devStudioCategory, "Login result received")
+            if (resultObject.response === "Connected") {
+                currentUser = resultObject.user_id
+            }
+        }
+
+        onLogout: {
+            currentUser = ""
+        }
+
+        onValidationResult: {
+            currentUser = Authenticator.settings.user
         }
     }
 }

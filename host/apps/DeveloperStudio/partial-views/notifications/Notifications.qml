@@ -8,24 +8,30 @@ import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
-ListModel {
+Item {
     // Constants
     readonly property int info: 0
     readonly property int warning: 1
     readonly property int critical: 2
 
-    property SGUserSettings notificationSettings: SGUserSettings {
-        id: notificationSettings
-        user: NavigationControl.context.user_id
-        classId: "notifications"
+    property alias model: model_
 
-        onUserChanged: {
-            addSavedNotifications()
-        }
+    SGUserSettings {
+        id: notificationSettings
+        user: "strata"
+        classId: "notifications"
     }
 
-    Component.onDestruction: {
-        saveNotifications()
+    ListModel {
+        id: model_
+
+        Component.onCompleted: {
+            addSavedNotifications()
+        }
+
+        Component.onDestruction: {
+            saveNotifications()
+        }
     }
 
     /**
@@ -51,15 +57,6 @@ ListModel {
         const iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
         let timeout = additionalParameters.hasOwnProperty("timeout") ? additionalParameters["timeout"] : -1;
 
-        if (to === "current") {
-            to = notificationSettings.user;
-        }
-
-        if (to !== "all" && to !== notificationSettings.user) {
-            // This notification was intended for another user
-            return;
-        }
-
         if (timeout < 0) {
             if (level < 2) {
                 timeout = 10000
@@ -68,23 +65,8 @@ ListModel {
             }
         }
 
-        let foundEntry = false;
-        // Check the pre-existing entry in the model and see if that one is a singleton
-        for (let i = 0; i < count; i++) {
-            let notif = get(i);
-            if (notif.title === title) {
-                if (notif.singleton) {
-                    return false
-                }
-
-                foundEntry = true;
-                break;
-            }
-        }
-
-        if (singleton && foundEntry) {
-            // If the entry being inserted has the singleton property set to true, and the title already exists, don't insert
-            return false;
+        if (to === "current") {
+            to = NavigationControl.context.user_id;
         }
 
         const notification = {
@@ -100,16 +82,35 @@ ListModel {
             "actions": actions
         };
 
-        append(notification);
+        let foundEntry = false;
+        // Check the pre-existing entry in the model and see if that one is a singleton
+        for (let i = 0; i < model_.count; i++) {
+            let notif = model_.get(i);
+            if (notif.title === title) {
+                if (notif.singleton) {
+                    return false
+                }
+
+                foundEntry = true;
+                break;
+            }
+        }
+
+        if (singleton && foundEntry) {
+            // If the entry being inserted has the singleton property set to true, and the title already exists, don't insert
+            return false;
+        }
+
+        model_.append(notification);
         return true;
     }
 
     function saveNotifications() {
         // Save the open notifications to disk on close
         let notifications = { "notifications": [] };
-        for (let i = 0; i < count; i++) {
-            let row = get(i);
-            if (row.saveToDisk && (row.to === "all" || row.to === notificationSettings.user)) {
+        for (let i = 0; i < model_.count; i++) {
+            let row = model_.get(i);
+            if (row.saveToDisk) {
                 notifications["notifications"].push({
                                        "title": row.title,
                                        "description": row.description,
@@ -124,6 +125,7 @@ ListModel {
     }
 
     function addSavedNotifications() {
+        console.info("Attempting to add saved information", currentUser)
         let savedNotifications = notificationSettings.readFile("savedNotifications.json");
 
         if (!savedNotifications.hasOwnProperty("notifications")) {
@@ -140,25 +142,12 @@ ListModel {
                 "to": savedNotifications[i].to,
                 "date": Date.fromLocaleString(Qt.locale(), savedNotifications[i].date),
                 "timeout": 0,
-                "iconSource": (level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"),
+                "iconSource": (savedNotifications[i].level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"),
                 "saveToDisk": true,
                 "singleton": false,
                 "actions": []
             };
-            append(notification)
-        }
-    }
-
-    Connections {
-        target: mainWindow
-
-        onStateChanged: {
-            if (state === NavigationControl.states.LOGIN_STATE) {
-                saveNotifications()
-            } else if (state === NavigationControl.states.CONTROL_STATE) {
-                // User has logged in
-                notificationSettings.user = NavigationControl.context.user_id
-            }
+            model_.append(notification)
         }
     }
 }

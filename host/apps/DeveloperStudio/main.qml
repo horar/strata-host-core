@@ -17,6 +17,8 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 
+import QtQml 2.12
+
 SGWidgets.SGMainWindow {
     id: mainWindow
     visible: true
@@ -25,8 +27,6 @@ SGWidgets.SGMainWindow {
     minimumHeight: 768-40 // -40 for Win10 taskbar height
     minimumWidth: 1024
     title: Qt.application.displayName
-
-    property int state: NavigationControl.states.LOGIN_STATE
 
     signal initialized()
 
@@ -119,16 +119,15 @@ SGWidgets.SGMainWindow {
         }
     }
 
-// TODO CS-1380: Style the notificaions delegate and add this NotificationsBox to main.qml
-//    NotificationsBox {
-//        z: 2
-//        anchors {
-//            right: parent.right
-//            bottom: parent.bottom
-//            bottomMargin: 25
-//            rightMargin: 20
-//        }
-//    }
+    NotificationsBox {
+        z: 2
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+            bottomMargin: 25
+            rightMargin: 20
+        }
+    }
 
     Connections {
         id: coreInterfaceConnection
