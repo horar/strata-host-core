@@ -1,6 +1,5 @@
 module tech.strata.sgwidgets
 
-SGColorsJS 1.0 utils/SGColors.js
 SGUtilsJS 1.0 utils/SGUtils.js
 
 SGAboutWindow 1.0 SGAboutWindow.qml
@@ -51,3 +50,5 @@ SGBaseEditor 1.0 editors/SGBaseEditor.qml
 SGTextFieldEditor 1.0 editors/SGTextFieldEditor.qml
 
 singleton SGSettings 1.0 SGSettings.qml
+
+depends tech.strata.theme 1.0

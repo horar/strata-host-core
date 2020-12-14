@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 SGWidgets.SGDialog {
     id: dialog
@@ -246,7 +247,7 @@ SGWidgets.SGDialog {
                             SGWidgets.SGIconButton {
                                 anchors.verticalCenter: parent.verticalCenter
                                 icon.source: "qrc:/sgimages/times-circle.svg"
-                                iconColor: SGWidgets.SGColorsJS.ERROR_COLOR
+                                iconColor: TangoTheme.palette.error
 
                                 onClicked: {
                                     filterConditionModel.remove(index)

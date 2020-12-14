@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.sci 1.0 as Sci
+import tech.strata.theme 1.0
 
 FocusScope {
     id: platformDelegate
@@ -189,7 +190,7 @@ FocusScope {
 
                             color: {
                                 if (model.type === Sci.SciScrollbackModel.Request) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.TANGO_CHOCOLATE1, 1.3)
+                                    return Qt.lighter(TangoTheme.palette.chocolate1, 1.3)
                                 }
 
                                 return "transparent"
@@ -207,7 +208,7 @@ FocusScope {
 
                             color: {
                                 if (model.isJsonValid === false) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
+                                    return Qt.lighter(TangoTheme.palette.error, 2.3)
                                 }
 
                                 return "transparent"
@@ -485,10 +486,10 @@ FocusScope {
                         textColor: "white"
                         color: {
                             if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
-                                return SGWidgets.SGColorsJS.ERROR_COLOR
+                                return TangoTheme.palette.error
                             }
 
-                            return SGWidgets.SGColorsJS.TANGO_PLUM1
+                            return TangoTheme.palette.plum1
                         }
                     }
                 }
@@ -504,7 +505,7 @@ FocusScope {
 
                     text: model.platform.errorString
                     verticalPadding: 1
-                    color: SGWidgets.SGColorsJS.TANGO_SCARLETRED1
+                    color: TangoTheme.palette.scarletRed1
                     textColor: "white"
                     font.bold: true
                 }

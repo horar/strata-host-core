@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Button {
     id: itemRoot
@@ -28,7 +29,7 @@ Button {
         opacity: enabled ? 1 : 0.3
         color: !itemRoot.hovered ?
                    "#007a1f" : itemRoot.pressed ?
-                       Qt.lighter(SGColorsJS.STRATA_GREEN, 1.1) : SGColorsJS.STRATA_GREEN
+                       Qt.lighter(Theme.palette.green, 1.1) : Theme.palette.green
         clip: true
     }
 
