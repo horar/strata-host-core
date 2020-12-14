@@ -28,6 +28,8 @@ Rectangle {
     property alias closeContent: closeContent
     property alias openContent: openContent
 
+    signal animationCompleted
+
     onOpenChanged: {
         if (open && exclusive && root.parent) {
             for (var i = 0; i< root.parent.children.length; i++){
@@ -63,7 +65,7 @@ Rectangle {
             width: titleBar.height
             height: width
             anchors {
-               right: titleBar.right
+                right: titleBar.right
             }
 
             Text {
@@ -136,6 +138,7 @@ Rectangle {
         duration: openCloseTime
         onStopped: {
             contentContainer.height = 0  // Bind height to 0 so any content resizing while closed doesn't resize the accordionItem
+            animationCompleted()
         }
     }
 
@@ -148,6 +151,7 @@ Rectangle {
         duration: openCloseTime
         onStopped: {
             bindHeight()  // Rebind to contents.height while open so contents can dynamically resize the accordionItem
+            animationCompleted()
         }
     }
 
