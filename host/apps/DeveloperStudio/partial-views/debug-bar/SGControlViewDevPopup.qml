@@ -191,4 +191,12 @@ Window {
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
         controlViewDevContainer.setSource(qml_control);
     }
+
+    function compileRCCFromPath(){
+        if(root.qrcFilePath !== ""){
+            recompileRequested = true
+            sdsModel.resourceLoader.recompileControlViewQrc(root.qrcFilePath)
+            stackContainer.currentIndex = stackContainer.count - 1
+        }
+    }
 }
