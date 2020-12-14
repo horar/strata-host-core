@@ -288,7 +288,7 @@ Item {
     property var vout_warning_response: ({
                                              "cmd" : "vout_warning_response",
                                              "payload": {
-                                                 "response": "on"
+                                                 "response": "true"
                                              },
 
                                              // Update will set and send in one shot

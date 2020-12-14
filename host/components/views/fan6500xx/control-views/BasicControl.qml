@@ -280,9 +280,9 @@ ColumnLayout {
 
                     onClicked: {
                         if (displayPopupAgainCheckbox.checked){
-                            platformInterface.vout_warning_response.update("off")
+                            platformInterface.vout_warning_response.update("false")
                         } else {
-                            platformInterface.vout_warning_response.update("on")
+                            platformInterface.vout_warning_response.update("true")
                         }
                         warningPopup.close()
                     }
