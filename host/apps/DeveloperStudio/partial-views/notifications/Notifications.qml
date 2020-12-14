@@ -14,20 +14,10 @@ ListModel {
     readonly property int warning: 1
     readonly property int critical: 2
 
-    // _notificationTitles holds the Set of titles currently showing
-    property var _notificationTitles: new Set()
-
     property SGUserSettings notificationSettings: SGUserSettings {
         id: notificationSettings
         user: NavigationControl.context.user_id
         classId: "notifications"
-    }
-
-    onRowsAboutToBeRemoved: {
-        let row = get(first);
-
-        // Delete the title when the row is about to get deleted
-        _notificationTitles.delete(get(first).title)
     }
 
     Component.onDestruction: {
@@ -64,13 +54,13 @@ ListModel {
             - notifyAllUsers: Whether to notify all users on the system // TODO
      **/
     function createNotification(title, level, additionalParameters = {}) {
-        let description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";
-        let actions = additionalParameters.hasOwnProperty("actions") ? additionalParameters["actions"].map((action) => ({"action": action})) : [];
-        let saveToDisk = additionalParameters.hasOwnProperty("saveToDisk") ? additionalParameters["saveToDisk"] : false;
-        let singleton = additionalParameters.hasOwnProperty("singleton") ? additionalParameters["singleton"] : false;
-        let notifyAllUsers = additionalParameters.hasOwnProperty("notifyAllUsers") ? additionalParameters["notifyAllUsers"] : false;
+        const description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";
+        const actions = additionalParameters.hasOwnProperty("actions") ? additionalParameters["actions"].map((action) => ({"action": action})) : [];
+        const saveToDisk = additionalParameters.hasOwnProperty("saveToDisk") ? additionalParameters["saveToDisk"] : false;
+        const singleton = additionalParameters.hasOwnProperty("singleton") ? additionalParameters["singleton"] : false;
+        const notifyAllUsers = additionalParameters.hasOwnProperty("notifyAllUsers") ? additionalParameters["notifyAllUsers"] : false;
+        const iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
         let timeout = additionalParameters.hasOwnProperty("timeout") ? additionalParameters["timeout"] : -1;
-        let iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
 
         if (timeout < 0) {
             if (level < 2) {
@@ -80,7 +70,22 @@ ListModel {
             }
         }
 
-        if (singleton && _notificationTitles.has(title)) {
+        let foundEntry = false;
+        // Check the pre-existing entry in the model and see if that one is a singleton
+        for (let i = 0; i < count; i++) {
+            let notif = get(i);
+            if (notif.title === title) {
+                if (notif.singleton) {
+                    return false
+                }
+
+                foundEntry = true;
+                break;
+            }
+        }
+
+        if (singleton && foundEntry) {
+            // If the entry being inserted has the singleton property set to true, and the title already exists, don't insert
             return false;
         }
 
@@ -98,7 +103,6 @@ ListModel {
         };
 
         append(notification);
-        _notificationTitles.add(title);
         return true;
     }
 }
