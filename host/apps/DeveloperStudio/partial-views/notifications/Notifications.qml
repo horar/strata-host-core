@@ -18,24 +18,14 @@ ListModel {
         id: notificationSettings
         user: NavigationControl.context.user_id
         classId: "notifications"
+
+        onUserChanged: {
+            addSavedNotifications()
+        }
     }
 
     Component.onDestruction: {
-        // Save the open notifications to disk on close
-        let notifications = { "notifications": [] };
-        for (let i = 0; i < count; i++) {
-            let row = get(i);
-            if (row.saveToDisk) {
-                notifications["notifications"].push({
-                                       "title": row.title,
-                                       "description": row.description,
-                                       "level": row.level,
-                                       "date": row.date.toLocaleString()
-                                   });
-            }
-        }
-
-        notificationSettings.writeFile("savedNotifications.json", notifications)
+        saveNotifications()
     }
 
     /**
@@ -44,6 +34,7 @@ ListModel {
      * Parameters:
         - title (REQUIRED): The notification title
         - level (REQUIRED): The notification importance level (0, 1, 2) (Info, Warning, Critical)
+        - to (REQUIRED): The user to send the notification to. Either an email, "all", "current"
         - additionalParameters: The object can include the following properties
             - description: The notification description
             - actions: A list of Action objects that correspond to each button in the notification
@@ -51,16 +42,23 @@ ListModel {
             - singleton: Only allow one notification with this title to be exposed to the user | DEFAULT: False
             - timeout: The timeout for the notification  (in milliseconds) | DEFAULT: 10000ms for non-critical notifications
             - iconSource: The icon's source url | DEFAULT: level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
-            - notifyAllUsers: Whether to show notification regardless of whether someone is logged in or not
      **/
-    function createNotification(title, level, additionalParameters = {}) {
+    function createNotification(title, level, to, additionalParameters = {}) {
         const description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";
         const actions = additionalParameters.hasOwnProperty("actions") ? additionalParameters["actions"].map((action) => ({"action": action})) : [];
         const saveToDisk = additionalParameters.hasOwnProperty("saveToDisk") ? additionalParameters["saveToDisk"] : false;
         const singleton = additionalParameters.hasOwnProperty("singleton") ? additionalParameters["singleton"] : false;
-        const notifyAllUsers = additionalParameters.hasOwnProperty("notifyAllUsers") ? additionalParameters["notifyAllUsers"] : false;
         const iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
         let timeout = additionalParameters.hasOwnProperty("timeout") ? additionalParameters["timeout"] : -1;
+
+        if (to === "current") {
+            to = notificationSettings.user;
+        }
+
+        if (to !== "all" && to !== notificationSettings.user) {
+            // This notification was intended for another user
+            return;
+        }
 
         if (timeout < 0) {
             if (level < 2) {
@@ -89,14 +87,14 @@ ListModel {
             return false;
         }
 
-        let notification = {
+        const notification = {
             "title": title,
             "description": description,
             "level": level,
+            "to": to,
             "date": new Date(),
             "timeout": timeout,
             "iconSource": iconSource,
-            "notifyAllUsers": notifyAllUsers,
             "saveToDisk": saveToDisk,
             "singleton": singleton,
             "actions": actions
@@ -104,5 +102,63 @@ ListModel {
 
         append(notification);
         return true;
+    }
+
+    function saveNotifications() {
+        // Save the open notifications to disk on close
+        let notifications = { "notifications": [] };
+        for (let i = 0; i < count; i++) {
+            let row = get(i);
+            if (row.saveToDisk && (row.to === "all" || row.to === notificationSettings.user)) {
+                notifications["notifications"].push({
+                                       "title": row.title,
+                                       "description": row.description,
+                                       "to": row.to,
+                                       "level": row.level,
+                                       "date": row.date.toLocaleString()
+                                   });
+            }
+        }
+
+        notificationSettings.writeFile("savedNotifications.json", notifications)
+    }
+
+    function addSavedNotifications() {
+        let savedNotifications = notificationSettings.readFile("savedNotifications.json");
+
+        if (!savedNotifications.hasOwnProperty("notifications")) {
+            return;
+        } else {
+            savedNotifications = savedNotifications["notifications"];
+        }
+
+        for (let i = 0; i < savedNotifications.length; i++) {
+            const notification = {
+                "title": savedNotifications[i].title,
+                "description": savedNotifications[i].description,
+                "level": savedNotifications[i].level,
+                "to": savedNotifications[i].to,
+                "date": Date.fromLocaleString(Qt.locale(), savedNotifications[i].date),
+                "timeout": 0,
+                "iconSource": (level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"),
+                "saveToDisk": true,
+                "singleton": false,
+                "actions": []
+            };
+            append(notification)
+        }
+    }
+
+    Connections {
+        target: mainWindow
+
+        onStateChanged: {
+            if (state === NavigationControl.states.LOGIN_STATE) {
+                saveNotifications()
+            } else if (state === NavigationControl.states.CONTROL_STATE) {
+                // User has logged in
+                notificationSettings.user = NavigationControl.context.user_id
+            }
+        }
     }
 }
