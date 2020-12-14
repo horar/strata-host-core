@@ -97,6 +97,7 @@ Item {
                                 let path = sdsModel.resourceLoader.returnQrcPath(model.filePath);
                                 controlViewDevDialog.visible = true
                                 controlViewDevDialog.qrcFilePath = path
+                                controlViewDevDialog.compileRCCFromPath()
                             }
                         }
                     }

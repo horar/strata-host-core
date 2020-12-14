@@ -24,14 +24,6 @@ Window {
     property bool controlViewVisible: controlViewDevContainer.visible
     property bool recompileRequested: false
 
-    onQrcFilePathChanged: {
-        if(qrcFilePath !== ""){
-            recompileRequested = true
-            sdsModel.resourceLoader.recompileControlViewQrc(root.qrcFilePath)
-            stackContainer.currentIndex = stackContainer.count - 1
-        }
-    }
-
     Settings {
         category: "ControlViewDev"
         property alias qrcFilePath: root.qrcFilePath
