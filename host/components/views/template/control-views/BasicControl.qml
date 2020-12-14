@@ -379,8 +379,8 @@ Item {
                                 property real lastTime
 
                                 Component.onCompleted: {
-                                    curve.color = "blue"
-                                    curve2.color = "orange"
+                                    curve.color = "orange"
+                                    curve2.color = "blue"
 
                                 }
 
@@ -396,37 +396,38 @@ Item {
                                 }
 
 
+
                                 property var adc_read:  obj
+                                // property var adc_read: platformInterface.my_cmd_simple_periodic.random_increment
                                 onAdc_readChanged: {
                                     let dataArray = []
-
+                                    let dataArray2 = []
                                     xMax = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
                                     xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
+                                    var xValue = xMin
                                     console.log(platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0, platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1)
-                                    //                                    for (let x = xMin; x < xMax ; i++) {
-                                    //                                        for(let y = 0)
+                                    for(let y = 0; y < 6; y++) {
+                                        var idxName = `index_${y}`
+                                        var yValue = platformInterface.notifications.my_cmd_simple_periodic.random_float_array[idxName]
+                                        if(yValue) {
+                                            dataArray.push({"x":xValue, "y":yValue})
+                                            dataArray2.push({"x":xValue, "y":platformInterface.notifications.my_cmd_simple_periodic.adc_read})
+                                            xValue++
+                                        }
 
-                                    //                                        dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
-                                    //                                    }
+                                    }
+                                    if(dataArray.length >= 0) {
+                                        curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
+                                    }
 
-                                    //                                    let currentTime = Date.now()
-                                    //                                    let curve = timedGraphPoints.curve(0)
-                                    //                                    let curve2 = timedGraphPoints.curve(1)
-                                    //                                    var adc_value = platformInterface.notifications.my_cmd_simple_periodic.adc_read
-                                    //                                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
-                                    //                                    curve.append(0, adc_value)
-                                    //                                    var random_float = platformInterface.notifications.my_cmd_simple_periodic.random_float
-                                    //                                    curve2.shiftPoints((currentTime - lastTime)/1000, 0)
-                                    //                                    curve2.append(0, random_float)
-                                    //                                    removeOutOfViewPoints()
-                                    //                                    timedGraphPoints.update()
-                                    //                                    lastTime = currentTime
-
+                                    if(dataArray2.length >= 0) {
+                                        console.info(JSON.stringify(dataArray2))
+                                        curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
+                                    }
                                 }
 
                             }
                         }
-
 
                     }
 

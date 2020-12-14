@@ -29,7 +29,7 @@ Rectangle {
                 {"cmd":"my_cmd_i2c","payload":null},
             ],
             "notifications": [
-                {"payload":{"adc_read":"double","io_read":"bool","random_float":"double","random_float_array":["double"],"random_increment":["int","int"],"toggle_bool":"bool"},"value":"my_cmd_simple_periodic"},
+                {"payload":{"adc_read":"double","io_read":"bool","random_float":"double","random_float_array":["double","double","double","double","double","double"],"random_increment":["int","int"],"toggle_bool":"bool"},"value":"my_cmd_simple_periodic"},
             ]
         })
 
