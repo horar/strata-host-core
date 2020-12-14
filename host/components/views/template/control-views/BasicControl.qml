@@ -21,13 +21,26 @@ Item {
             "adc_read": platformInterface.notifications.my_cmd_simple_periodic.adc_read,
             "io_read": platformInterface.notifications.my_cmd_simple_periodic.io_read,
             "random_float": platformInterface.notifications.my_cmd_simple_periodic.random_float,
+            "random_float_array": platformInterface.notifications.my_cmd_simple_periodic.random_float_array,
+            "random_increment": platformInterface.notifications.my_cmd_simple_periodic.random_increment,
             "toggle_bool": platformInterface.notifications.my_cmd_simple_periodic.toggle_bool
         }
     }
+    //    property var obj: {
+    //        "value": "my_cmd_simple_periodic",
+    //        "payload": {
+    //            "adc_read": platformInterface.my_cmd_simple_periodic.adc_read,
+    //            "io_read": platformInterface.my_cmd_simple_periodic.io_read,
+    //            "random_float": platformInterface.my_cmd_simple_periodic.random_float,
+    //            "random_float_array": platformInterface.my_cmd_simple_periodic.random_float_array,
+    //            "random_increment": platformInterface.my_cmd_simple_periodic.random_increment,
+    //            "toggle_bool": platformInterface.my_cmd_simple_periodic.toggle_bool
+    //        }
+    //    }
     property var run_count: -1
 
     property var my_cmd_simple_start_periodic_obj: {
-        "value": "my_cmd_simple_periodic_update",
+        "cmd": "my_cmd_simple_periodic_update",
         "payload": {
             "run_state": enableSwitch.checked,
             "interval": intervalState,
@@ -39,7 +52,7 @@ Item {
 
 
     property var my_cmd_simple_obj: {
-        "value": "my_cmd_simple",
+        "cmd": "my_cmd_simple",
         "payload": {
             "io": gpio.checked,
             "dac": dac.value.toFixed(1)
@@ -203,7 +216,7 @@ Item {
                     Layout.fillHeight: true
                     Layout.preferredWidth: parent.width/2.5
                     Layout.alignment: Qt.AlignCenter
-                    Layout.topMargin: 30
+                    Layout.topMargin: 25
 
 
                     color: "light gray"
@@ -361,14 +374,13 @@ Item {
                                 zoomYEnabled: false
                                 xGrid: true
                                 yGrid: true
-                                property var movingCurve: createCurve("movingCurve")
-                                property var movingCurve2: createCurve("movingCurve2")
+                                property var curve: createCurve("movingCurve")
+                                property var curve2: createCurve("movingCurve2")
                                 property real lastTime
 
                                 Component.onCompleted: {
-                                    movingCurve.color = "blue"
-                                    movingCurve2.color = "orange"
-                                    lastTime = Date.now()
+                                    curve.color = "blue"
+                                    curve2.color = "orange"
 
                                 }
 
@@ -383,20 +395,33 @@ Item {
                                     }
                                 }
 
+
                                 property var adc_read:  obj
                                 onAdc_readChanged: {
-                                    let currentTime = Date.now()
-                                    let curve = timedGraphPoints.curve(0)
-                                    let curve2 = timedGraphPoints.curve(1)
-                                    var adc_value = platformInterface.notifications.my_cmd_simple_periodic.adc_read
-                                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
-                                    curve.append(0, adc_value)
-                                    var random_float = platformInterface.notifications.my_cmd_simple_periodic.random_float
-                                    curve2.shiftPoints((currentTime - lastTime)/1000, 0)
-                                    curve2.append(0, random_float)
-                                    removeOutOfViewPoints()
-                                    timedGraphPoints.update()
-                                    lastTime = currentTime
+                                    let dataArray = []
+
+                                    xMax = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
+                                    xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
+                                    console.log(platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0, platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1)
+                                    //                                    for (let x = xMin; x < xMax ; i++) {
+                                    //                                        for(let y = 0)
+
+                                    //                                        dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
+                                    //                                    }
+
+                                    //                                    let currentTime = Date.now()
+                                    //                                    let curve = timedGraphPoints.curve(0)
+                                    //                                    let curve2 = timedGraphPoints.curve(1)
+                                    //                                    var adc_value = platformInterface.notifications.my_cmd_simple_periodic.adc_read
+                                    //                                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                                    //                                    curve.append(0, adc_value)
+                                    //                                    var random_float = platformInterface.notifications.my_cmd_simple_periodic.random_float
+                                    //                                    curve2.shiftPoints((currentTime - lastTime)/1000, 0)
+                                    //                                    curve2.append(0, random_float)
+                                    //                                    removeOutOfViewPoints()
+                                    //                                    timedGraphPoints.update()
+                                    //                                    lastTime = currentTime
+
                                 }
 
                             }
@@ -607,7 +632,7 @@ Item {
                     Layout.preferredWidth: parent.width/2.5
                     color: "light gray"
                     Layout.alignment: Qt.AlignCenter
-                    Layout.topMargin: 30
+                    Layout.topMargin: 25
                     ScrollView {
                         id: frame4
                         clip: true

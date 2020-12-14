@@ -27,6 +27,8 @@
                 "adc_read": "double",
                 "io_read": "bool",
                 "random_float": "double",
+                "random_float_array": ["double"],
+                "random_increment": ["int","int"],
                 "toggle_bool": "bool"
             }
         }
