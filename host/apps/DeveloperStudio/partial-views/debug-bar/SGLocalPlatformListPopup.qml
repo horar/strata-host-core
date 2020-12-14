@@ -617,6 +617,7 @@ Window {
                             placeholderText: "device_id..."
                             textRole: null
                             currentIndex: !checkIfNotUsed(rowPlatform.device_id) ? rowPlatform.device_id : -1
+                            enabled: !rowPlatform.connected
 
 
                             delegate: SGText {
@@ -625,7 +626,7 @@ Window {
 
                                 text: modelData
                                 leftPadding: 5
-                                enabled: deviceIdComboBox.checkIfNotUsed(model.index) && !rowPlatform.connected
+                                enabled: deviceIdComboBox.checkIfNotUsed(model.index)
 
                                 MouseArea {
                                     id: deviceArea
