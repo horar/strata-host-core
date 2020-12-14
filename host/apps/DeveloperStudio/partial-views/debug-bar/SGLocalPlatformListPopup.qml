@@ -441,7 +441,7 @@ Window {
 
                                     onEditingFinished: {
                                         if(onHasChanged && rowPlatform.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1 && rowPlatform.firmware_version !== ""){
-                                            changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
+                                            changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: !checkForCustomId(platformsComboBox.classId) ? platformsComboBox.opn : "Custom Platform"}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
                                             onHasChanged = false
                                         }
                                     }
@@ -602,7 +602,7 @@ Window {
 
                                 onEditingFinished: {
                                     if(onHasChanged && rowPlatform.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1 && rowPlatform.firmware_version !== ""){
-                                        changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
+                                        changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: !checkForCustomId(platformsComboBox.classId) ? platformsComboBox.opn : "Custom Platform"}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
                                         onHasChanged = false
                                     }
                                 }
@@ -688,7 +688,7 @@ Window {
                             onCheckedChanged: {
                                 rowPlatform.connected = checked
                                 if(rowPlatform.connected){
-                                    loadAndStorePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn},deviceIdComboBox.currentIndex,rowPlatform.firmware_version, checkForCustomId(platformsComboBox.classId))
+                                    loadAndStorePlatform({class_id: platformsComboBox.classId, opn: !checkForCustomId(platformsComboBox.classId) ? platformsComboBox.opn : "Custom Platform"},deviceIdComboBox.currentIndex,rowPlatform.firmware_version, checkForCustomId(platformsComboBox.classId))
                                 } else {
                                     unloadAndRemovePlatform(platformsComboBox.classId)
                                 }
@@ -767,9 +767,7 @@ Window {
             const customPlatforms = JSON.parse(storedPlatform.platforms)
             injectPlatform.customPlatforms = customPlatforms
             for(var i = 0; i < customPlatforms.length; i++){
-                if(customPlatforms[i].platform.custom){
-                    classModel.append({platform: {class_id: customPlatforms[i].platform.class_id, opn: customPlatforms[i].platform.opn}})
-                }
+                classModel.append({platform: {class_id: customPlatforms[i].platform.class_id, opn: customPlatforms[i].platform.opn}})
             }
         }
     }
@@ -855,7 +853,7 @@ Window {
                     }
                 }
                 if(!flag){
-                    injectPlatform.customPlatforms.push({platform: {class_id: platform.class_id, opn: "Custom Platform", device_id: device_deviation ,firmware_version: firmwareVer, custom: custom } })
+                    injectPlatform.customPlatforms.push({platform: {class_id: platform.class_id, opn: "Custom Platform"}})
                     storeDeviceList.setValue("custom-platforms",JSON.stringify({platforms: JSON.stringify(injectPlatform.customPlatforms)}))
                 }
                 classModel.append({platform: {class_id: platform.class_id, opn: "Custom Platform"}})
@@ -918,7 +916,6 @@ Window {
                     for (var j = 0; j < injectPlatform.storedPlatforms.length; j++){
                         if(deviceId === injectPlatform.storedPlatforms[j].platform.device_id && checkForCustomId(platform.class_id)){
                             injectPlatform.storedPlatforms.splice(j,1,{platform: {class_id: platform.class_id, opn: platform.opn, device_id: deviceId, firmware_version: firmwareVersion, custom: true}})
-                            classModel.append({platform:{class_id: platform.class_id, opn: "Custom Platform"}})
                             break;
                         } else if(platform.class_id === injectPlatform.storedPlatforms[j].platform.class_id || firmwareVersion === injectPlatform.storedPlatforms[j].platform.firmware_version){
                             injectPlatform.storedPlatforms.splice(j,1,{platform: {class_id: platform.class_id, opn: platform.opn, device_id: deviceId, firmware_version: firmwareVersion, custom: true}})
