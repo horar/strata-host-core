@@ -237,7 +237,7 @@ void BoardManager::startIdentifyOperation(const DevicePtr device) {
     // We need deleteLater() because DeviceOperations object is deleted
     // in slot connected to signal from it (BoardManager::handleOperationFinished).
     std::shared_ptr<operation::BaseDeviceOperation> operation (
-        new operation::Identify(device, reqFwInfoResp_),
+        new operation::Identify(device, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES),
         operationLaterDeleter
     );
 
