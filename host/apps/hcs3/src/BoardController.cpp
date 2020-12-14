@@ -53,13 +53,17 @@ void BoardController::newConnection(int deviceId, bool recognized) {
         emit boardConnected(deviceId);
     } else {
         qCWarning(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logDeviceId(deviceId);
+        // Remove board if it was previously connected.
+        if (boards_.contains(deviceId)) {
+            boards_.remove(deviceId);
+            emit boardDisconnected(deviceId);
+        }
     }
 }
 
 void BoardController::closeConnection(int deviceId)
 {
-    auto it = boards_.constFind(deviceId);
-    if (it == boards_.constEnd()) {
+    if (boards_.contains(deviceId) == false) {
         // This situation can occur if unrecognized board is disconnected.
         qCInfo(logCategoryHcsBoard).noquote() << "Disconnected unknown board." << logDeviceId(deviceId);
         return;
