@@ -16,7 +16,6 @@ Item {
     id: root
 
     property string testAuthServer: "http://18.191.108.5/"
-    property bool recompileRequested: false
 
     Rectangle {
         id: commandBar
@@ -95,8 +94,6 @@ Item {
                             }
 
                             onClicked: {
-                                viewCombobox.currentIndex = index
-                                recompileRequested = true
                                 let path = sdsModel.resourceLoader.returnQrcPath(model.filePath);
                                 controlViewDevDialog.visible = true
                                 controlViewDevDialog.qrcFilePath = path
