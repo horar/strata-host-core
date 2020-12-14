@@ -80,6 +80,7 @@ function logout() {
 
 function logout_result(response){
     console.log(LoggerModule.Logger.devStudioLoginCategory, "Logout Successful:", response.message)
+    SignalsModule.Signals.logout()
 }
 
 function logout_error(error){
