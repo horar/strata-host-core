@@ -95,13 +95,11 @@ Item {
                             }
 
                             onClicked: {
-                                let name = selectButton.text;
                                 viewCombobox.currentIndex = index
                                 recompileRequested = true
                                 let path = sdsModel.resourceLoader.returnQrcPath(model.filePath);
-                                sdsModel.resourceLoader.recompileControlViewQrc(path);
-                                stackContainer.currentIndex = stackContainer.count - 1
-
+                                controlViewDevDialog.visible = true
+                                controlViewDevDialog.qrcFilePath = path
                             }
                         }
                     }
@@ -285,22 +283,6 @@ Item {
                 qmlErrorModel.append({"data" : notifyQmlError})
             }
         }
-
-        Connections {
-            target: sdsModel.resourceLoader
-
-            onFinishedRecompiling: {
-                if (recompileRequested) {
-                    recompileRequested = false;
-                    if (filepath !== '') {
-                        loadDebugView(filepath)
-                    } else {
-                        let error_str = sdsModel.resourceLoader.getLastLoggedError()
-                        controlViewDevContainer.setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": error_str})
-                    }
-                }
-            }
-        }
     }
 
     SGQmlErrorListPopUp {
@@ -318,21 +300,5 @@ Item {
 
 
         qmlErrorListModel: qmlErrorModel
-    }
-
-    function loadDebugView(path) {
-        controlViewDevContainer.setSource("")
-
-        let uniquePrefix = new Date().getTime().valueOf()
-        uniquePrefix = "/" + uniquePrefix
-
-        // Register debug control view object
-        if (!sdsModel.resourceLoader.registerResource(path, uniquePrefix)) {
-            console.error("Failed to register resource")
-            return
-        }
-
-        let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
-        controlViewDevContainer.setSource(qml_control);
     }
 }
