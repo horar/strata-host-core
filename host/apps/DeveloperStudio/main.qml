@@ -26,6 +26,8 @@ SGWidgets.SGMainWindow {
     minimumWidth: 1024
     title: Qt.application.displayName
 
+    property int state: NavigationControl.states.LOGIN_STATE
+
     signal initialized()
 
     function resetWindowSize()

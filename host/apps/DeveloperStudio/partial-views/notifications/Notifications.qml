@@ -51,7 +51,7 @@ ListModel {
             - singleton: Only allow one notification with this title to be exposed to the user | DEFAULT: False
             - timeout: The timeout for the notification  (in milliseconds) | DEFAULT: 10000ms for non-critical notifications
             - iconSource: The icon's source url | DEFAULT: level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
-            - notifyAllUsers: Whether to notify all users on the system // TODO
+            - notifyAllUsers: Whether to show notification regardless of whether someone is logged in or not
      **/
     function createNotification(title, level, additionalParameters = {}) {
         const description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";
