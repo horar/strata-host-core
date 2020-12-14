@@ -879,9 +879,14 @@ Window {
     // Removes the index in both the stored-platforms and the listModel or remove the index in the listModel
     function deletePlatform(index){
         if(injectPlatform.storedPlatforms !== []){
-            listModel.remove(index)
-            injectPlatform.storedPlatforms.splice(index,1)
+            for(var i = 0; i < injectPlatform.storedPlatforms.length; i++){
+               if(injectPlatform.storedPlatforms[i].platform.class_id === listModel.get(index).class_id){
+                   injectPlatform.storedPlatforms.splice(i, 1)
+                   break;
+               }
+            }
             injectPlatform.list.splice(index, 1)
+            listModel.remove(index)
         } else {
             listModel.remove(index)
         }
