@@ -591,19 +591,19 @@ Window {
 
                                 text: rowPlatform.firmware_version
 
-                                property bool hasChanged: false
+                                property bool onHasChanged: false
 
                                 onTextChanged: {
                                     if(rowPlatform.firmware_version !== text){
                                         rowPlatform.firmware_version = text
-                                        hasChanged = true
+                                        onHasChanged = true
                                     }
                                 }
 
                                 onEditingFinished: {
-                                    if(hasChanged && rowPlatform.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1 && rowPlatform.firmware_version !== ""){
+                                    if(onHasChanged && rowPlatform.connected && platformsComboBox.classId !== "" && deviceIdComboBox.currentIndex !== -1 && rowPlatform.firmware_version !== ""){
                                         changeAndReplacePlatform({class_id: platformsComboBox.classId, opn: platformsComboBox.opn}, deviceIdComboBox.currentIndex, rowPlatform.firmware_version)
-                                        hasChanged = false
+                                        onHasChanged = false
                                     }
                                 }
                             }
@@ -625,7 +625,7 @@ Window {
 
                                 text: modelData
                                 leftPadding: 5
-                                enabled: deviceIdComboBox.checkIfNotUsed(model.index)
+                                enabled: deviceIdComboBox.checkIfNotUsed(model.index) && !rowPlatform.connected
 
                                 MouseArea {
                                     id: deviceArea
@@ -902,29 +902,34 @@ Window {
     function changeAndReplacePlatform(platform, deviceId, firmwareVersion){
         for (var i = 0; i < injectPlatform.list.length; i++){
             if((deviceId + Constants.DEBUG_DEVICE_ID) === injectPlatform.list[i].device_id){
-                const deletedPlatform = injectPlatform.list.splice(i,1)
-                injectPlatform.list.splice(i,1);
-                let list = {
-                    "list": injectPlatform.list,
-                    "type":"connected_platforms"
+                const toBeDeleted = injectPlatform.list.splice(i,1)[0]
 
+                if(toBeDeleted.class_id !== platform.class_id){
+                    injectPlatform.list.splice(i,1)
+                    let list = {
+                        "list": injectPlatform.list,
+                        "type": "connected_platforms"
+                    }
+                    PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
                 }
-                // Removes updated class_id from storedPlatforms
-                if(injectPlatform.storedPlatforms !== []){
 
-                        for (var j = 0; j < injectPlatform.storedPlatforms.length; j++){
-                            if(deletedPlatform[0].class_id === injectPlatform.storedPlatforms[j].platform.class_id){
-                                injectPlatform.storedPlatforms.splice(j, 1)
-                                PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
-                                loadAndStorePlatform(platform, deviceId, firmwareVersion, checkForCustomId(platform.class_id))
-                                break
-                            }
+                // Removes updated class_id from storedPlatforms
+               console.log("BEFORE",JSON.stringify(injectPlatform.storedPlatforms))
+                if(injectPlatform.storedPlatforms.length > 0) {
+                    for (var j = 0; j < injectPlatform.storedPlatforms.length; j++){
+                        if(deviceId === injectPlatform.storedPlatforms[j].platform.device_id && checkForCustomId(platform.class_id)){
+                            injectPlatform.storedPlatforms.splice(j,1,{platform: {class_id: platform.class_id, opn: platform.opn, device_id: deviceId, firmware_version: firmwareVersion, custom: true}})
+                            classModel.append({platform:{class_id: platform.class_id, opn: "Custom Platform"}})
+                            break;
+                        } else if(platform.class_id === injectPlatform.storedPlatforms[j].platform.class_id || firmwareVersion === injectPlatform.storedPlatforms[j].platform.firmware_version){
+                            injectPlatform.storedPlatforms.splice(j,1,{platform: {class_id: platform.class_id, opn: platform.opn, device_id: deviceId, firmware_version: firmwareVersion, custom: true}})
+                            break;
                         }
-                } else {
-                PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                    }
+                }
+                console.log("AFTER",JSON.stringify(injectPlatform.storedPlatforms))
                 loadAndStorePlatform(platform, deviceId, firmwareVersion, checkForCustomId(platform.class_id))
                 break;
-                }
             }
         }
     }
