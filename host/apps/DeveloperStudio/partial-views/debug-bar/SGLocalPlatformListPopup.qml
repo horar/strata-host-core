@@ -914,7 +914,6 @@ Window {
                 }
 
                 // Removes updated class_id from storedPlatforms
-               console.log("BEFORE",JSON.stringify(injectPlatform.storedPlatforms))
                 if(injectPlatform.storedPlatforms.length > 0) {
                     for (var j = 0; j < injectPlatform.storedPlatforms.length; j++){
                         if(deviceId === injectPlatform.storedPlatforms[j].platform.device_id && checkForCustomId(platform.class_id)){
@@ -927,7 +926,6 @@ Window {
                         }
                     }
                 }
-                console.log("AFTER",JSON.stringify(injectPlatform.storedPlatforms))
                 loadAndStorePlatform(platform, deviceId, firmwareVersion, checkForCustomId(platform.class_id))
                 break;
             }
