@@ -116,7 +116,7 @@ Item {
         //        console.info("data", data)
         if(temp_export_reg_value) {
             regToStoreInFile = ""
-            regToStoreInFile = "{"+"\""+"value"+":"+"\"" + "\""+ temp_export_reg_value  + "\""+ "}"
+            regToStoreInFile = "{"+"\""+"value"+"\""+ ":" + "\""+ temp_export_reg_value  + "\""+ "}"
         }
         console.info("data", temp_export_reg_value)
     }
@@ -127,7 +127,7 @@ Item {
         //        console.info("data", data)
         if(temp_export_data_value) {
             dataToStoreInFile = ""
-            dataToStoreInFile = "{"+"\""+"value"+":"+"\"" + "\""+ temp_export_data_value + "\""+ "}"
+            dataToStoreInFile = "{"+"\""+"value"+"\"" + ":" + "\""+ temp_export_data_value + "\""+ "}"
         }
         console.info("data", dataToStoreInFile)
     }

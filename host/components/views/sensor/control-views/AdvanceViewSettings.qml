@@ -95,7 +95,7 @@ Item {
     onTouch_export_reg_valueChanged: {
         if(touch_export_reg_value) {
             regToStoreInFile = ""
-            regToStoreInFile = "{"+"\""+"value"+":"+"\"" + "\""+ touch_export_reg_value  + "\""+ "}"
+            regToStoreInFile = "{"+"\""+"value"+"\"" + ":" +"\""+ touch_export_reg_value  + "\""+ "}"
         }
         console.info("data", touch_export_reg_value)
     }
@@ -104,7 +104,7 @@ Item {
     onTouch_export_data_valueChanged: {
         if(touch_export_data_value) {
             dataToStoreInFile = ""
-            dataToStoreInFile = "{"+"\""+"value"+":"+"\"" + "\""+ touch_export_data_value + "\""+ "}"
+            dataToStoreInFile = "{"+"\""+"value"+"\"" + ":" + "\""+ touch_export_data_value + "\""+ "}"
         }
         console.info("data", dataToStoreInFile)
     }
