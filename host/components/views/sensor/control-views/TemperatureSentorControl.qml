@@ -13,9 +13,9 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1225/648
     anchors.centerIn: parent
-     height: parent.height
+    height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-   // height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+    // height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     property var pwmArray: []
     property real fracValue1: 0.00
     property real fracValue2: 0.00
@@ -79,15 +79,16 @@ Item {
         onNotification: {
             try {
                 var temp_export_reg =  JSON.parse(payload)
-                if(temp_export_reg.value === "temp_export_reg_value")
+                let message = JSON.parse(temp_export_reg.message)
+                let notification = message.notification
+
+                if(notification.value === "temp_export_reg_value")
                 {
-                    regDataToStoreInFile += "[" + payload + "\n" + ","
+                    regDataToStoreInFile += "[" + JSON.stringify(notification.payload) + "\n" + ","
                 }
-                if(temp_export_reg.value === "temp_export_data_value")
-
+                if(notification.value === "temp_export_data_value")
                 {
-                    regDataToStoreInFile += payload + "]"
-
+                    regDataToStoreInFile += JSON.stringify(notification.payload) + "]"
                 }
 
             }
@@ -98,6 +99,7 @@ Item {
             }
         }
     }
+
 
     FileDialog {
         id: saveFileDialog

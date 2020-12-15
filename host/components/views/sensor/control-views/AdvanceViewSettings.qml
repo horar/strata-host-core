@@ -66,15 +66,18 @@ Item {
         target: coreInterface
         onNotification: {
             try {
-                var abc =  JSON.parse(payload)
-                if(abc.value === "touch_export_reg_value")
+                var temp_export_reg =  JSON.parse(payload)
+                let message = JSON.parse(temp_export_reg.message)
+                let notification = message.notification
+
+                if(notification.value === "touch_export_reg_value")
                 {
-                    regDataToStore += "[" + payload + "\n" + ","
+                    regDataToStore += "[" + JSON.stringify(notification.payload) + "\n" + ","
                 }
-                if(abc.value === "touch_export_data_value")
+                if(notification.value === "touch_export_data_value")
 
                 {
-                    regDataToStore += payload + "]"
+                    regDataToStore += JSON.stringify(notification.payload) + "]"
                 }
 
             }
