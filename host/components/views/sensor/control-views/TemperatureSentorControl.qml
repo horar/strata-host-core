@@ -21,6 +21,8 @@ Item {
     property real fracValue2: 0.00
     property real fracValue3: 0.00
     property string regDataToStoreInFile: ""
+    property string regToStoreInFile: ""
+    property string dataToStoreInFile:""
 
     MouseArea {
         id: containMouseArea
@@ -74,30 +76,60 @@ Item {
         return request.status;
     }
 
-    Connections {
-        target: coreInterface
-        onNotification: {
-            try {
-                var temp_export_reg =  JSON.parse(payload)
-                let message = JSON.parse(temp_export_reg.message)
-                let notification = message.notification
+    //    function storeData() {
+    //        console.info("test",regToStoreInFile,dataToStoreInFile)
+    //        regDataToStoreInFile = "[" + regToStoreInFile + "\n" + "," + dataToStoreInFile + "]"
 
-                if(notification.value === "temp_export_reg_value")
-                {
-                    regDataToStoreInFile += "[" + JSON.stringify(notification.payload) + "\n" + ","
-                }
-                if(notification.value === "temp_export_data_value")
-                {
-                    regDataToStoreInFile += JSON.stringify(notification.payload) + "]"
-                }
+    //        return regDataToStoreInFile
+    //    }
 
-            }
-            catch(error) {
-                if(error instanceof SyntaxError) {
-                    console.log("Notification JSON is invalid, ignoring")
-                }
-            }
+    //    Connections {
+    //        target: coreInterface
+    //        onNotification: {
+    //            try {
+    //                var temp_export_reg =  JSON.parse(payload)
+    //                let message = JSON.parse(temp_export_reg.message)
+    //                let notification = message.notification
+
+    //                if(notification.value === "temp_export_reg_value")
+    //                {
+    //                    regDataToStoreInFile += "[" + JSON.stringify(notification.payload) + "\n" + ","
+    //                }
+    //                if(notification.value === "temp_export_data_value")
+    //                {
+    //                    regDataToStoreInFile += JSON.stringify(notification.payload) + "]"
+    //                }
+
+    //            }
+    //            catch(error) {
+    //                if(error instanceof SyntaxError) {
+    //                    console.log("Notification JSON is invalid, ignoring")
+    //                }
+    //            }
+    //        }
+    //    }
+
+
+    property var temp_export_reg_value: platformInterface.temp_export_reg_value.value
+    onTemp_export_reg_valueChanged: {
+        //        var data = JSON.stringify(platformInterface.temp_export_reg_value)
+        //        console.info("data", data)
+        if(temp_export_reg_value) {
+            regToStoreInFile = ""
+            regToStoreInFile = "{"+"\""+"value"+":"+"\"" + "\""+ temp_export_reg_value  + "\""+ "}"
         }
+        console.info("data", temp_export_reg_value)
+    }
+
+    property var temp_export_data_value: platformInterface.temp_export_data_value.value
+    onTemp_export_data_valueChanged: {
+        //        var data = JSON.stringify(platformInterface.temp_export_data_value)
+        //        console.info("data", data)
+        if(temp_export_data_value) {
+            dataToStoreInFile = ""
+            dataToStoreInFile = "{"+"\""+"value"+":"+"\"" + "\""+ temp_export_data_value + "\""+ "}"
+        }
+        console.info("data", dataToStoreInFile)
     }
 
 
@@ -107,6 +139,7 @@ Item {
         nameFilters: ["JSON files (*.js)", "All files (*)"]
         //modality: Qt.NonModal
         onAccepted: {
+            regDataToStoreInFile = "[" + regToStoreInFile + "\n" + "," + dataToStoreInFile + "]"
             saveFile(saveFileDialog.fileUrl, regDataToStoreInFile)
             regDataToStoreInFile = ""
         }
@@ -114,6 +147,7 @@ Item {
             console.log("Canceled")
             regDataToStoreInFile = ""
         }
+
     }
 
     property var temp_remote_value: platformInterface.temp_remote_value.value

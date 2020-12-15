@@ -9,7 +9,9 @@ import QtQuick.Dialogs 1.2
 Item {
     id: root
     anchors.fill: parent
-    property string regDataToStore: ""
+    property string regDataToStoreInFile: ""
+    property string regToStoreInFile: ""
+    property string dataToStoreInFile:""
     property alias cin07CREFid: cin07CREF
     property alias shortIntervalDyn: shortIntervalDyn
     property var modeSelection: interval
@@ -62,47 +64,68 @@ Item {
         return request.status;
     }
 
-    Connections {
-        target: coreInterface
-        onNotification: {
-            try {
-                var temp_export_reg =  JSON.parse(payload)
-                let message = JSON.parse(temp_export_reg.message)
-                let notification = message.notification
+    //    Connections {
+    //        target: coreInterface
+    //        onNotification: {
+    //            try {
+    //                var temp_export_reg =  JSON.parse(payload)
+    //                let message = JSON.parse(temp_export_reg.message)
+    //                let notification = message.notification
 
-                if(notification.value === "touch_export_reg_value")
-                {
-                    regDataToStore += "[" + JSON.stringify(notification.payload) + "\n" + ","
-                }
-                if(notification.value === "touch_export_data_value")
+    //                if(notification.value === "touch_export_reg_value")
+    //                {
+    //                    regDataToStore += "[" + JSON.stringify(notification.payload) + "\n" + ","
+    //                }
+    //                if(notification.value === "touch_export_data_value")
 
-                {
-                    regDataToStore += JSON.stringify(notification.payload) + "]"
-                }
+    //                {
+    //                    regDataToStore += JSON.stringify(notification.payload) + "]"
+    //                }
 
-            }
-            catch(error) {
-                if(error instanceof SyntaxError) {
-                    console.log("Notification JSON is invalid, ignoring")
-                }
-            }
+    //            }
+    //            catch(error) {
+    //                if(error instanceof SyntaxError) {
+    //                    console.log("Notification JSON is invalid, ignoring")
+    //                }
+    //            }
+    //        }
+    //    }
+
+    property var touch_export_reg_value: platformInterface.touch_export_reg_value.value
+    onTouch_export_reg_valueChanged: {
+        if(touch_export_reg_value) {
+            regToStoreInFile = ""
+            regToStoreInFile = "{"+"\""+"value"+":"+"\"" + "\""+ touch_export_reg_value  + "\""+ "}"
         }
+        console.info("data", touch_export_reg_value)
     }
+
+    property var touch_export_data_value: platformInterface.touch_export_data_value.value
+    onTouch_export_data_valueChanged: {
+        if(touch_export_data_value) {
+            dataToStoreInFile = ""
+            dataToStoreInFile = "{"+"\""+"value"+":"+"\"" + "\""+ touch_export_data_value + "\""+ "}"
+        }
+        console.info("data", dataToStoreInFile)
+    }
+
 
     FileDialog {
         id: saveFileDialog
         selectExisting: false
-        nameFilters: ["Text files (*.js)", "All files (*)"]
+        nameFilters: ["JSON files (*.js)", "All files (*)"]
+        //modality: Qt.NonModal
         onAccepted: {
-            saveFile(saveFileDialog.fileUrl, regDataToStore)
-            regDataToStore = ""
+            regDataToStoreInFile = "[" + regToStoreInFile + "\n" + "," + dataToStoreInFile + "]"
+            saveFile(saveFileDialog.fileUrl, regDataToStoreInFile)
+            regDataToStoreInFile = ""
         }
-
         onRejected: {
-            regDataToStore = ""
+            console.log("Canceled")
+            regDataToStoreInFile = ""
         }
-    }
 
+    }
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
         if(sensor_status_value === "defaults") {
