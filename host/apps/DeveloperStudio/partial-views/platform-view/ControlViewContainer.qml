@@ -90,7 +90,7 @@ Item {
                     delete NavigationControl.context.class_id
                     delete NavigationControl.context.device_id
 
-                    createErrorScreen("Could not load file: " + source);
+                    createErrorScreen("Failed to load file: " + source + "\nError: " + sourceComponent.errorString());
                 }
             }
         }

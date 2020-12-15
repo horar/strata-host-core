@@ -109,7 +109,7 @@ namespace strata {
 
     private slots:
         virtual void checkNotification(QByteArray message);
-        virtual void handlePlatformIdChanged(const int deviceId, QPrivateSignal);
+        virtual void handlePlatformIdChanged(const int deviceId);
 
     protected:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
@@ -137,6 +137,7 @@ namespace strata {
         bool reqFwInfoResp_;
 
     private:
+        void startIdentifyOperation(const device::DevicePtr device);
         static void operationLaterDeleter(device::operation::BaseDeviceOperation* operation);
 
     };

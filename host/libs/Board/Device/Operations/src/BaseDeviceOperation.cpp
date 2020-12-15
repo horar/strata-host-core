@@ -72,6 +72,7 @@ bool BaseDeviceOperation::isFinished() const {
 
 void BaseDeviceOperation::cancelOperation()
 {
+    qCDebug(logCategoryDeviceOperations) << device_ << "Cancelling currently running operation.";
     responseTimer_.stop();
     finishOperation(Result::Cancel);
 }
@@ -126,7 +127,7 @@ void BaseDeviceOperation::handleSendCommand()
     }
 }
 
-void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
+void BaseDeviceOperation::handleDeviceResponse(const QByteArray data)
 {
     if (currentCommand_ == commandList_.end()) {
         qCDebug(logCategoryDeviceOperations) << device_ << "No command is being processed, message from device is ignored.";
@@ -154,11 +155,11 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
             BaseDeviceCommand *command = currentCommand_->get();
             if (ackStr == command->name()) {
                 if (ackOk) {
-                    command->setAckReceived();
+                    command->commandAcknowledged();
                 } else {
                     const QString ackError = payload[JSON_RETURN_STRING].GetString();
                     qCWarning(logCategoryDeviceOperations) << device_ << "ACK for '" << command->name() << "' command is not OK: '" << ackError << "'.";
-                    command->setCommandRejected();
+                    command->commandRejected();
                     nextCommand();
                 }
             } else {
@@ -175,7 +176,7 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
                 responseTimer_.stop();
                 ok = true;
 
-                if (command->ackReceived() == false) {
+                if (command->isCommandAcknowledged() == false) {
                     qCWarning(logCategoryDeviceOperations) << device_ << "Received notification without previous ACK.";
                 }
                 qCDebug(logCategoryDeviceOperations) << device_ << "Processed '" << command->name() << "' notification.";
