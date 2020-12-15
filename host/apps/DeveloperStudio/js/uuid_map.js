@@ -53,6 +53,7 @@ var uuid_map = {
     "221": "usb-pd-pps",
     "222": "subGHz",
     "225": "smart-speaker",
+    "224": "pixel",
     "226": "hello-strata",
     "227" : "eFuse",
     "228" : "eFuse",
