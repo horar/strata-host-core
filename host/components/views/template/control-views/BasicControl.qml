@@ -14,7 +14,7 @@ Item {
     property alias firstCommand: firstCommand
     property var intervalState : 200
     property alias gpio: gpio
-
+    property var xValue
     property var obj: {
         "notification" : {
             "value": "my_cmd_simple_periodic",
@@ -28,7 +28,7 @@ Item {
             }
         }
     }
-  //  property var notification: ({ })
+    //  property var notification: ({ })
 
     function set_random_array(max,value){
         let dataArray = []
@@ -402,35 +402,38 @@ Item {
 
 
                                 property var adc_read:  obj
+
                                 // property var adc_read: platformInterface.my_cmd_simple_periodic.random_increment
                                 onAdc_readChanged: {
                                     let dataArray = []
                                     let dataArray2 = []
                                     xMax = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
                                     xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
-                                    var xValue = xMin
-                                    console.log(xMin)
-
+                                    xValue = xMin
+                                    console.info(xValue)
                                     for(let y = 0; y < 6; y++) {
                                         var idxName = `index_${y}`
                                         var yValue = platformInterface.notifications.my_cmd_simple_periodic.random_float_array[idxName]
                                         if(yValue) {
                                             dataArray.push({"x":xValue, "y":yValue})
                                             dataArray2.push({"x":xValue, "y":platformInterface.notifications.my_cmd_simple_periodic.adc_read})
-                                            xValue++
                                         }
+                                        xValue++
                                     }
-                                    console.log("length", dataArray.length)
+                                    //                                    for (let i = 0; i < curve.count(); i++) {
 
+                                    //                                    }
+                                    //                                    console.log(JSON.stringify(dataArray))
+                                    //                                    console.info(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
                                     if(dataArray.length > 0) {
-                                        console.info(JSON.stringify(dataArray))
-                                        curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
+                                        //   console.info(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
+                                        curve.append(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
                                     }
 
-                                    if(dataArray2.length > 0) {
+                                    //                                    if(dataArray2.length > 0) {
 
-                                        curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
-                                    }
+                                    //                                        curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
+                                    //                                    }
                                 }
 
                             }
@@ -558,7 +561,7 @@ Item {
                                     width: 50
                                     checked: true
                                     onToggled: {
-                                        platformInterface.commands.my_cmd_simple_periodic_update.update(checked,infoBox.text,run_count)
+                                        platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,checked)
                                     }
                                     onCheckedChanged: {
                                         if(checked) {
@@ -594,11 +597,11 @@ Item {
                                             onToggled: {
                                                 if(checked) {
                                                     run_count = -1
-                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,parseInt(infoBox.text),run_count)
+                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,enableSwitch.checked)
                                                 }
                                                 else {
                                                     run_count = 1
-                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,parseInt(infoBox.text),run_count)
+                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,enableSwitch.checked)
                                                 }
                                             }
                                         }
@@ -609,15 +612,15 @@ Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
-                                        id: infoBoxLabel
-                                        target: infoBox
+                                        id: intervalLabel
+                                        target: interval
                                         text: "Interval"
                                         font.bold: true
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideTopCenter
 
                                         SGSubmitInfoBox {
-                                            id: infoBox
+                                            id: interval
                                             width: 60
                                             text: "200"
                                             unit: "ms"
@@ -626,7 +629,7 @@ Item {
                                                 timedGraphPoints.xMin = 0
                                                 timedGraphPoints.xMax = (intervalState/1000) * 5
                                                 console.info(timedGraphPoints.xMax)
-                                                platformInterface.commands.my_cmd_simple_periodic_update.update(enableSwitch.checked,intervalState,run_count)
+                                                platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                             }
                                         }
                                     }
