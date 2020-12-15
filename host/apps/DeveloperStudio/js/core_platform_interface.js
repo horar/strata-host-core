@@ -30,6 +30,7 @@ function data_source_handler (payload) {
             if (message.hasOwnProperty("notification")) {
                 let notification = message.notification
                 if (notification.hasOwnProperty("value") && notification.hasOwnProperty("payload")) {
+                    console.info(JSON.stringify(notification))
                     var notification_key = notification.value
                     if (platformInterface.apiVersion && platformInterface.apiVersion > 1) {
                         // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
@@ -38,7 +39,8 @@ function data_source_handler (payload) {
                             if (Array.isArray(obj)) {
                                 // Loop through each value in array and set according property in platforminterface
                                 for (let i = 0; i < obj.length; i++) {
-                                    let idxName = `${key}_${i}`;
+//                                    let idxName = `${key}_${i}`;
+                                     let idxName = `index_${i}`;
                                     platformInterface["notifications"][notification_key][key][idxName] = obj[i];
                                 }
                             } else {
