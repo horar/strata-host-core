@@ -95,18 +95,16 @@ Item {
     onTouch_export_reg_valueChanged: {
         if(touch_export_reg_value) {
             regToStoreInFile = ""
-            regToStoreInFile = "{"+"\""+"value"+"\"" + ":" +"\""+ touch_export_reg_value  + "\""+ "}"
+            regToStoreInFile = "{"+"\""+"touch_export_reg"+"\"" + ":" +"\""+ touch_export_reg_value  + "\""+ "}"
         }
-        console.info("data", touch_export_reg_value)
     }
 
     property var touch_export_data_value: platformInterface.touch_export_data_value.value
     onTouch_export_data_valueChanged: {
         if(touch_export_data_value) {
             dataToStoreInFile = ""
-            dataToStoreInFile = "{"+"\""+"value"+"\"" + ":" + "\""+ touch_export_data_value + "\""+ "}"
+            dataToStoreInFile = "{"+"\""+"touch_export_data"+"\"" + ":" + "\""+ touch_export_data_value + "\""+ "}"
         }
-        console.info("data", dataToStoreInFile)
     }
 
 

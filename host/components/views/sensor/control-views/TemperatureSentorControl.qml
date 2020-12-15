@@ -112,24 +112,18 @@ Item {
 
     property var temp_export_reg_value: platformInterface.temp_export_reg_value.value
     onTemp_export_reg_valueChanged: {
-        //        var data = JSON.stringify(platformInterface.temp_export_reg_value)
-        //        console.info("data", data)
         if(temp_export_reg_value) {
             regToStoreInFile = ""
-            regToStoreInFile = "{"+"\""+"value"+"\""+ ":" + "\""+ temp_export_reg_value  + "\""+ "}"
+            regToStoreInFile = "{"+"\""+"touch_export_reg"+"\""+ ":" + "\""+ temp_export_reg_value  + "\""+ "}"
         }
-        console.info("data", temp_export_reg_value)
     }
 
     property var temp_export_data_value: platformInterface.temp_export_data_value.value
     onTemp_export_data_valueChanged: {
-        //        var data = JSON.stringify(platformInterface.temp_export_data_value)
-        //        console.info("data", data)
         if(temp_export_data_value) {
             dataToStoreInFile = ""
-            dataToStoreInFile = "{"+"\""+"value"+"\"" + ":" + "\""+ temp_export_data_value + "\""+ "}"
+            dataToStoreInFile = "{"+"\""+"touch_export_data"+"\"" + ":" + "\""+ temp_export_data_value + "\""+ "}"
         }
-        console.info("data", dataToStoreInFile)
     }
 
 
