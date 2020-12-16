@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Item {
     width: typeMetric.width
@@ -48,8 +49,8 @@ Item {
         switch(type){
         case "debug": return "#00bcd4"
         case "warning": return "#c0ca33"
-        case "error": return "red"
-        case "info": return "#4caf50"
+        case "error": return Theme.palette.error
+        case "info": return Theme.palette.green
         default: return "#aaa"
         }
     }
@@ -62,7 +63,7 @@ Item {
 
     onCurrentChanged: {
         if(!current){
-            typeColor = "#777"
+            typeColor = Theme.palette.gray
             leftSide.enabled = current
             rightSide.enabled = current
             msgType.enabled = current
