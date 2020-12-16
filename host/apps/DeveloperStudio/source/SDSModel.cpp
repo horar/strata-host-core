@@ -1,27 +1,27 @@
 #include "SDSModel.h"
-#include "DocumentManager.h"
-#include "ResourceLoader.h"
-#include "HcsNode.h"
-#include <PlatformInterface/core/CoreInterface.h>
 
+#include "DocumentManager.h"
+#include "HcsNode.h"
+#include "ResourceLoader.h"
 #include "logging/LoggingQtCategories.h"
 
-#include <QFile>
-#include <QDir>
+#include <PlatformInterface/core/CoreInterface.h>
+
 #include <QThread>
 
 #ifdef Q_OS_WIN
-#include <Shlwapi.h>
 #include <ShlObj.h>
+#include <Shlwapi.h>
 #endif
 
-
-SDSModel::SDSModel(QObject *parent)
-    : QObject(parent), remoteHcsNode_{nullptr}
+SDSModel::SDSModel(const QUrl &dealerAddress, QObject *parent)
+    : QObject(parent),
+      coreInterface_(new CoreInterface(this, dealerAddress.toString().toStdString())),
+      documentManager_(new DocumentManager(coreInterface_, this)),
+      resourceLoader_(new ResourceLoader(this)),
+      remoteHcsNode_(new HcsNode(this))
 {
-    resourceLoader_ = new ResourceLoader(this);
-    coreInterface_ = new CoreInterface(this);
-    documentManager_ = new DocumentManager(coreInterface_, this);
+    connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
 }
 
 SDSModel::~SDSModel()
@@ -29,17 +29,7 @@ SDSModel::~SDSModel()
     delete documentManager_;
     delete coreInterface_;
     delete resourceLoader_;
-}
-
-void SDSModel::init(const QString &appDirPath)
-{
-    appDirPath_ = appDirPath;
-
-    remoteHcsNode_ = new HcsNode(this);
-
-    connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged,
-            this, &SDSModel::setHcsConnected);
-
+    delete remoteHcsNode_;
 }
 
 bool SDSModel::startHcs()
@@ -48,12 +38,10 @@ bool SDSModel::startHcs()
         return false;
     }
 
-    if (appDirPath_.isEmpty()) {
-        return false;
-    }
+    const QString appDirPath = QCoreApplication::applicationDirPath();
 
 #ifdef Q_OS_WIN
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(appDirPath_)) };
+    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(appDirPath)) };
 #if WINDOWS_INSTALLER_BUILD
     QString hcsConfigPath;
     TCHAR programDataPath[MAX_PATH];
@@ -65,18 +53,18 @@ bool SDSModel::startHcs()
         return false;
     }
 #else
-    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/hcs.config").arg(appDirPath_)) };
+    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/hcs.config").arg(appDirPath)) };
 #endif
 #endif
 
 #ifdef Q_OS_MACOS
-    const QString hcsPath{ QDir::cleanPath(QString("%1/../../../hcs").arg(appDirPath_)) };
-    const QString hcsConfigPath{ QDir::cleanPath( QString("%1/../../../hcs.config").arg(appDirPath_)) };
+    const QString hcsPath{ QDir::cleanPath(QString("%1/../../../hcs").arg(appDirPath)) };
+    const QString hcsConfigPath{ QDir::cleanPath( QString("%1/../../../hcs.config").arg(appDirPath)) };
 #endif
 
 #ifdef Q_OS_LINUX
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs").arg(appDirPath_)) };
-    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/hcs.config").arg(appDirPath_))};
+    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs").arg(appDirPath)) };
+    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/hcs.config").arg(appDirPath))};
 #endif
 
     // Start HCS before handling events for Qt

@@ -72,6 +72,7 @@ bool BaseDeviceOperation::isFinished() const {
 
 void BaseDeviceOperation::cancelOperation()
 {
+    qCDebug(logCategoryDeviceOperations) << device_ << "Cancelling currently running operation.";
     responseTimer_.stop();
     finishOperation(Result::Cancel);
 }

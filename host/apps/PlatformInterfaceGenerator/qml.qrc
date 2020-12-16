@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>JsonImporter.qml</file>
         <file>PlatformInterfaceCreator.qml</file>
         <file>AlertToast.qml</file>
         <file>PayloadPropertyDelegate.qml</file>
