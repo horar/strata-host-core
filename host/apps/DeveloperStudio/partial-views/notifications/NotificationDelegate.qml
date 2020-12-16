@@ -20,15 +20,6 @@ Item {
         anchors.fill: parent
     }
 
-    ListView.onRemove: SequentialAnimation {
-
-        PropertyAction {
-            target: root; property: "ListView.delayRemove"; value: true
-        }
-        NumberAnimation { target: notificationContainer; property: "height"; to: 0; duration: 250; easing.type: Easing.InOutQuad; onFinished: root.height = 0 }
-        PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
-    }
-
     Rectangle {
         id: notificationContainer
         width: parent.width - (2 * notificationShadow.radius)

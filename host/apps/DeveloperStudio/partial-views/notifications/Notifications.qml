@@ -126,7 +126,6 @@ Item {
     }
 
     function addSavedNotifications() {
-        console.info("Attempting to add saved information", currentUser)
         let savedNotifications = notificationSettings.readFile("savedNotifications.json");
 
         if (!savedNotifications.hasOwnProperty("notifications")) {

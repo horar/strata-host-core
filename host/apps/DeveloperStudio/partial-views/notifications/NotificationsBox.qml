@@ -3,6 +3,7 @@ import QtQml 2.12
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/constants.js" as Constants
 
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
@@ -11,7 +12,7 @@ Item {
     height: listView.height
     width: 350
 
-    property string currentUser
+    property string currentUser: Constants.GUEST_USER_ID
 
     onCurrentUserChanged: {
         filteredNotifications.invalidate()
@@ -34,6 +35,7 @@ Item {
 
         function filterAcceptsRow(index) {
             const notification = Notifications.model.get(index);
+            console.info("notification", notification.to, currentUser)
             if (notification.hidden || (notification.to !== "all" && notification.to !== currentUser)) {
                 return false
             } else {
@@ -54,6 +56,14 @@ Item {
 
         add: Transition {
             NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
+        }
+
+        removeDisplaced: Transition {
+            NumberAnimation {
+                properties: "y"
+                duration: 400
+                easing.type: Easing.InOutQuad
+            }
         }
     }
 
