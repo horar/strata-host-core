@@ -172,6 +172,7 @@ QString PlatformInterfaceGenerator::generateImports()
     QString imports = "import QtQuick 2.12\n";
     imports += "import QtQuick.Controls 2.12\n";
     imports += "import tech.strata.common 1.0\n";
+    imports += "import QtQml 2.12\n";
     imports += "\n\n";
     return imports;
 }
@@ -338,7 +339,7 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
         notificationBody += insertTabs(indentLevel) + "property QtObject " + id + ": QtObject {\n";
 
         // Add object name
-        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"array\"";
+        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"array\"\n";
 
         // This documentation text will be passed back to parent
         // This allows us to generate comments above each QtObject for their properties
@@ -362,7 +363,7 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
                 return;
             }
 
-            if (element.isArray() && element.toArray().count() > 0) {
+            if ((element.isArray() && element.toArray().count() > 0) || element.isObject()) {
                 continue;
             }
 
@@ -385,7 +386,7 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
         notificationBody += insertTabs(indentLevel) + "property QtObject " + id + ": QtObject {\n";
 
         // Add object name
-        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"object\"";
+        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"object\"\n";
 
         // This documentation text will be passed back to parent
         // This allows us to generate comments above each QtObject for their properties
