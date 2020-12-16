@@ -30,24 +30,40 @@ function data_source_handler (payload) {
             if (message.hasOwnProperty("notification")) {
                 let notification = message.notification
                 if (notification.hasOwnProperty("value") && notification.hasOwnProperty("payload")) {
-                    console.info(JSON.stringify(notification))
                     var notification_key = notification.value
                     if (platformInterface.apiVersion && platformInterface.apiVersion > 1) {
                         // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
                         for (const key of Object.keys(notification["payload"])) {
-                            let obj = notification["payload"][key];
+                            const obj = notification["payload"][key]
+
+                            const json = JSON.parse(JSON.stringify(platformInterface["notifications"][notification_key]))
+                            if (!json.hasOwnProperty(key)) {
+                                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", key, "' to platform interface notification '" + notification_key + "'")
+                                continue;
+                            }
+
                             if (Array.isArray(obj)) {
-                                // Loop through each value in array and set according property in platforminterface
-                                for (let i = 0; i < obj.length; i++) {
-//                                    let idxName = `${key}_${i}`;
-                                     let idxName = `index_${i}`;
-                                    platformInterface["notifications"][notification_key][key][idxName] = obj[i];
+                                if (Array.isArray(platformInterface["notifications"][notification_key][key])) {
+                                    // Property is a dynamic array
+                                    platformInterface["notifications"][notification_key][key] = obj;
+                                } else {
+                                    if (isQtObject(platformInterface["notifications"][notification_key][key])) {
+                                        setNotification(platformInterface["notifications"][notification_key], key, obj);
+                                    }
+                                }
+                            } else if (typeof obj === "object") {
+                                if (isQtObject(platformInterface["notifications"][notification_key][key])) {
+                                    setNotification(platformInterface["notifications"][notification_key], key, obj);
+                                } else {
+                                    platformInterface["notifications"][notification_key][key] = obj;
                                 }
                             } else {
-                                platformInterface["notifications"][notification_key][key] = notification["payload"][key]
+                                platformInterface["notifications"][notification_key][key] = obj;
                             }
                         }
-                        
+
+                        // Emit the notificationFinished signal
+                        platformInterface["notifications"][notification_key].notificationFinished()
                     } else {
                         platformInterface[notification_key] = Object.create(notification["payload"]);
                     }
@@ -105,6 +121,70 @@ function injectDebugNotification(notification) {
         "message": JSON.stringify(message)
     }
     data_source_handler(JSON.stringify(wrapper))
+}
+
+/*
+  Recursively set the notification property for QtObjects
+ */
+function setNotification(parentObject, key, payloadValue) {
+    if (Array.isArray(payloadValue)) {
+        for (let i = 0; i < payloadValue.length; i++) {
+            const idxName = `index_${i}`;
+
+            // Check to make sure that the property has this index
+            const json = JSON.parse(JSON.stringify(parentObject[key]))
+            if (!json.hasOwnProperty(idxName)) {
+                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid index", i, "to array '" + key + "'")
+                continue;
+            }
+
+            if (Array.isArray(parentObject[key][idxName])) {
+                parentObject[key][idxName] = payloadValue[i];
+            } else if (typeof parentObject[key][idxName] === "object") {
+                if (isQtObject(parentObject[key][idxName])) {
+                    setNotification(parentObject[key], idxName, payloadValue[i])
+                } else {
+                    parentObject[key][idxName] = payloadValue[i]
+                }
+            } else {
+                parentObject[key][idxName] = payloadValue[i]
+            }
+        }
+    } else if (typeof payloadValue === "object") {
+        const payloadValueKeys = Object.keys(payloadValue);
+        for (let i = 0; i < payloadValueKeys.length; i++) {
+            const payloadKey = payloadValueKeys[i];
+
+            const json = JSON.parse(JSON.stringify(parentObject[key]))
+            // Check to make sure that the property has this index
+            if (!json.hasOwnProperty(payloadKey)) {
+                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", payloadKey, "' to object '" + key + "'")
+                continue;
+            }
+
+            if (Array.isArray(parentObject[key][payloadKey])) {
+                parentObject[key][payloadKey] = payloadValue[payloadKey];
+            } else if (typeof parentObject[key][payloadKey] === "object") {
+                if (isQtObject(parentObject[key][payloadKey])) {
+                    setNotification(parentObject[key], payloadKey, payloadValue[payloadKey])
+                } else {
+                    parentObject[key][payloadKey] = payloadValue[payloadKey]
+                }
+            } else {
+                parentObject[key][payloadKey] = payloadValue[payloadKey]
+            }
+        }
+    } else {
+        parentObject[key] = payloadValue
+    }
+}
+
+function isQtObject(obj) {
+    let parsedObject = JSON.parse(JSON.stringify(obj));
+    if (parsedObject.hasOwnProperty("objectName") && (parsedObject["objectName"] === "array" || parsedObject["objectName"] === "object")) {
+        return true
+    }
+    return false
 }
 
 init()
