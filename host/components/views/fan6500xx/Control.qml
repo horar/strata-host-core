@@ -16,6 +16,7 @@ Item {
     anchors {
         fill: parent
     }
+    property alias class_id: basicControl.class_id
 
     PlatformInterface {
         id: platformInterface
@@ -30,34 +31,33 @@ Item {
         visible: true
     }
 
-
-SGIcon {
-    id: helpIcon
-    anchors {
-        right: parent.right
-        rightMargin: 20
-        top: parent.top
-        topMargin: 50
-    }
-    source: "qrc:/sgimages/question-circle.svg"
-    iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-    height: 40
-    width: 40
-    visible: true
-
-    MouseArea {
-        id: helpMouse
+    SGIcon {
+        id: helpIconest
         anchors {
-            fill: helpIcon
+            right: parent.right
+            rightMargin: 20
+            top: parent.top
+            topMargin: 50
         }
-        onClicked: {
-            if(basicControl.visible === true) {
-                Help.startHelpTour("basicFan65Help")
-            }
+        source: "qrc:/sgimages/question-circle.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        height: 40
+        width: 40
+        visible: true
 
-            else console.log("help not available")
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+                if(basicControl.visible === true) {
+                    Help.startHelpTour("basicFan65Help")
+                }
+
+                else console.log("help not available")
+            }
+            hoverEnabled: true
         }
-        hoverEnabled: true
     }
-}
 }
