@@ -31,8 +31,9 @@ Item {
         visible: true
     }
 
+
     SGIcon {
-        id: helpIconest
+        id: helpIcon
         anchors {
             right: parent.right
             rightMargin: 20
