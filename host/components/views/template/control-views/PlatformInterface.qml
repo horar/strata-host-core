@@ -59,6 +59,16 @@ PlatformInterfaceBase {
 
     }
 
+    property var my_cmd_simple_periodic: {
+        "adc_read" : 0.0,
+        "io_read": false,
+        "random_float": 0.0,
+        "toggle_bool": false,
+        "random_float_array": [0,0],
+        "random_increment": []
+
+    }
+
     /******************************************************************
       * COMMANDS
     ******************************************************************/

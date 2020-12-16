@@ -14,7 +14,9 @@ Item {
     property alias firstCommand: firstCommand
     property var intervalState : 200
     property alias gpio: gpio
-    property var xValue
+    property real xValue: 0
+
+
     property var obj: {
         "notification" : {
             "value": "my_cmd_simple_periodic",
@@ -28,6 +30,7 @@ Item {
             }
         }
     }
+
     //  property var notification: ({ })
 
     function set_random_array(max,value){
@@ -40,6 +43,12 @@ Item {
         }
         return dataArray
     }
+
+
+    //    property var my_cmd_simple_periodic_random_float_array: platformInterface.my_cmd_simple_periodic.random_float_array
+    //    onMy_cmd_simple_periodic_random_float_arrayChanged: {
+    //        console.info("tanya")
+    //    }
 
     property var run_count: -1
 
@@ -368,8 +377,8 @@ Item {
                                 title: "Periodic Notification Graph "
                                 yMin: 0
                                 yMax: 1
-                                xMin: 0
-                                xMax: 5
+                                xMin:  platformInterface.notifications.my_cmd_simple_periodic.random_increment[index_0]
+                                xMax: platformInterface.notifications.my_cmd_simple_periodic.random_increment[index_1]
                                 xTitle: "Time (s)"
                                 yTitle: "Values"
                                 panXEnabled: false
@@ -388,53 +397,61 @@ Item {
 
                                 }
 
-
-
-                                function removeOutOfViewPoints() {
-                                    // recursively clean up points that have moved out of view
-                                    if (timedGraphPoints.curve(0).at(xMax).x > timedGraphPoints.xMax ||timedGraphPoints.curve(1).at(xMax).x > timedGraphPoints.xMax) {
-                                        timedGraphPoints.xMax += 0.02
-                                        timedGraphPoints.xMin += 0.02
-
-                                    }
-                                }
-
-
-
-                                property var adc_read:  obj
-
-                                // property var adc_read: platformInterface.my_cmd_simple_periodic.random_increment
-                                onAdc_readChanged: {
+                                property var test: platformInterface.notifications.my_cmd_simple_periodic.random_float
+                                onTestChanged: {
+                                    console.log("test")
                                     let dataArray = []
-                                    let dataArray2 = []
                                     xMax = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
                                     xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
-                                    xValue = xMin
-                                    console.info(xValue)
+                                    xValue = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
                                     for(let y = 0; y < 6; y++) {
+                                        console.log(y)
                                         var idxName = `index_${y}`
                                         var yValue = platformInterface.notifications.my_cmd_simple_periodic.random_float_array[idxName]
                                         if(yValue) {
                                             dataArray.push({"x":xValue, "y":yValue})
-                                            dataArray2.push({"x":xValue, "y":platformInterface.notifications.my_cmd_simple_periodic.adc_read})
+                                            //  dataArray2.push({"x":xValue, "y":platformInterface.notifications.my_cmd_simple_periodic.adc_read})
+                                            xValue++
                                         }
-                                        xValue++
                                     }
-                                    //                                    for (let i = 0; i < curve.count(); i++) {
+                                    console.log(JSON.stringify(dataArray))
+                                    console.log(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
 
-                                    //                                    }
-                                    //                                    console.log(JSON.stringify(dataArray))
-                                    //                                    console.info(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
+
                                     if(dataArray.length > 0) {
-                                        //   console.info(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
-                                        curve.append(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
+                                        curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
                                     }
-
-                                    //                                    if(dataArray2.length > 0) {
-
-                                    //                                        curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
-                                    //                                    }
                                 }
+
+
+                                //                                    let dataArray = []
+                                //                                    let dataArray2 = []
+                                //                                    xMax = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
+                                //                                    xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
+                                //                                    xValue = xMin
+                                //                                    for(let y = 0; y < xMax; y++) {
+                                //                                        console.log(y)
+                                //                                        var idxName = `index_${y}`
+                                //                                        var yValue = platformInterface.notifications.my_cmd_simple_periodic.random_float_array[idxName]
+                                //                                        if(yValue) {
+                                //                                            dataArray.push({"x":xValue, "y":yValue})
+                                //                                            dataArray2.push({"x":xValue, "y":platformInterface.notifications.my_cmd_simple_periodic.adc_read})
+                                //                                            xValue++
+                                //                                        }
+                                //                                    }
+
+                                //                                    console.log(JSON.stringify(dataArray))
+                                //                                    console.log(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
+
+
+                                //                                    if(dataArray.length > 0) {
+                                //                                        curve.append(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
+                                //                                    }
+
+                                //                                    if(dataArray2.length > 0) {
+                                //                                        curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
+                                //                                    }
+                                //   }
 
                             }
                         }
