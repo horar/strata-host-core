@@ -13,16 +13,22 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    //    anchors.leftMargin: 25
-    //    anchors.rightMargin: 25
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1225/648
-    // spacing: 10
     property string popup_message: ""
     anchors.centerIn: parent
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
+    property string class_id: ""
+
+    //For Debug
+    //function set_class_id_info_inUI(){
+    //if(class_id = "")
+    ////partnumber and
+    //else if()
+
+    //}
 
 
     property var initial_status: platformInterface.initial_status
@@ -82,6 +88,7 @@ Item {
     }
 
     Component.onCompleted:  {
+        console.info("test class_id",class_id)
         Help.registerTarget(vinLEDHelpContainer, "This LED indicates whether the input voltage is above the required 4.5 V for proper operation. Green indicates above 4.5 V and red indicates below 4.5 V.", 0,"basicFan65Help")
         Help.registerTarget(inputCurrentVoltageHelpContainer, "This box displays the input voltage and input current supplied to the board.", 1,"basicFan65Help")
         Help.registerTarget(inputVCCLabel, "This box displays the voltage of the VCC pin of the FAN6500XX, which supplies power to the internal analog circuits. Using the VCC Source dropdown, this pin can be supplied either by the PVCC pin on the FAN6500XX, or it can be supplied by an external 5V source.", 2,"basicFan65Help")
