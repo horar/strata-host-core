@@ -62,8 +62,6 @@ ColumnLayout {
             vccCombo.currentIndex = 1
         else  vccCombo.currentIndex = 0
 
-
-
         if(initial_status.sync_mode_status === "master" || initial_status.sync_mode_status === "Master")
             syncCombo.currentIndex = 0
         else syncCombo.currentIndex = 1
@@ -73,9 +71,6 @@ ColumnLayout {
         ocpSlider.value = initial_status.ocp_status
         boardTitle.text = initial_status.variant
 
-
-        //var ocp_max = initial_status.ocp_max
-        //var ocp_min = initial_status.ocp_min
         ocpSlider.to = initial_status.ocp_max
         ocpSlider.from = initial_status.ocp_min
         ocpSlider.toText.text = initial_status.ocp_max + " A"
@@ -107,67 +102,6 @@ ColumnLayout {
 
         platformInterface.read_initial_status.update()
     }
-
-
-
-
-    //For demo
-
-    //    Item {
-    //        id: filterHelpContainer
-    //        property point topLeft
-    //        property point bottomRight
-    //        width: inputVoltageContainer.width + inputCurrentContainer.width - 80
-    //        height: (bottomRight.y - topLeft.y) - 20
-    //        x: topLeft.x
-    //        y: topLeft.y
-    //        function update() {
-    //            topLeft = inputVoltageContainer.mapToItem(root, 0,  0)
-    //            bottomRight = inputCurrentContainer.mapToItem(root, inputCurrentContainer.width, inputCurrentContainer.height)
-    //        }
-    //    }
-
-    //    Item {
-    //        id: filterHelp2Container
-    //        property point topLeft
-    //        property point bottomRight
-    //        width: frequencyContainer.width - 80
-    //        height: (bottomRight.y - topLeft.y) - 20
-    //        x: topLeft.x
-    //        y: topLeft.y
-    //        function update() {
-    //            topLeft = frequencyContainer.mapToItem(root, 0,  0)
-    //            bottomRight = ocpContainer.mapToItem(root, ocpContainer.width, ocpContainer.height)
-    //        }
-    //    }
-
-    //    Item {
-    //        id: filterHelp3Container
-    //        property point topLeft
-    //        property point bottomRight
-    //        width: gaugeContainer.width
-    //        height: (bottomRight.y - topLeft.y) - 30
-    //        x: topLeft.x
-    //        y: topLeft.y
-    //        function update() {
-    //            topLeft = efficiencyGaugeContainer.mapToItem(root, 0,  0)
-    //            bottomRight = tempGaugeContainer.mapToItem(root, tempGaugeContainer.width, tempGaugeContainer.height)
-    //        }
-
-    //    }
-
-    //    Connections {
-    //        target: Help.utility
-    //        onTour_runningChanged:{
-    //            filterHelp3Container.update()
-    //        }
-    //    }
-    //    onWidthChanged: {
-    //        filterHelp3Container.update()
-    //    }
-    //    onHeightChanged: {
-    //        filterHelp3Container.update()
-    //    }
 
     Popup{
         id: warningPopup
@@ -547,23 +481,18 @@ ColumnLayout {
                                                 font.bold : true
                                                 SGInfoBox {
                                                     id: inputCurrent
-                                                    //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                                     unit: "A"
                                                     width: 100 * ratioCalc
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    //boxColor: "lightgrey"
                                                     boxFont.family: Fonts.digitalseven
                                                     unitFont.bold: true
                                                     property var inputCurrentValue: platformInterface.status_voltage_current.iin.toFixed(2)
                                                     onInputCurrentValueChanged: {
                                                         inputCurrent.text = inputCurrentValue
                                                     }
-
-
                                                 }
                                             }
                                         }
-
                                     }
                                 }
 
@@ -585,12 +514,10 @@ ColumnLayout {
                                                 text: "VCC"
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.verticalCenter: parent.verticalCenter
-                                                // anchors.horizontalCenter: parent.horizontalCenter
                                                 fontSizeMultiplier: ratioCalc
                                                 font.bold : true
                                                 SGInfoBox {
                                                     id: inputVCC
-                                                    //text: platformInterface.status_voltage_current.vin.toFixed(2)
                                                     unit: "V"
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                     width: 100 * ratioCalc
@@ -627,12 +554,10 @@ ColumnLayout {
                                                     unit: "V"
                                                     width: 100 * ratioCalc
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    //boxColor: "lightgrey"
                                                     boxFont.family: Fonts.digitalseven
                                                     unitFont.bold: true
                                                 }
                                             }
-
                                         }
                                         Rectangle {
                                             id: vbstConatiner
@@ -656,19 +581,14 @@ ColumnLayout {
                                                     unit: "V"
                                                     width: 100 * ratioCalc
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    //boxColor: "lightgrey"
                                                     boxFont.family: Fonts.digitalseven
                                                     unitFont.bold: true
                                                 }
                                             }
                                         }
-
                                     }
                                 }
-
                             }
-
-
                         }
 
                         Rectangle {
@@ -746,7 +666,6 @@ ColumnLayout {
                                                             pgoodLight.status = SGStatusLight.Green
                                                         else  pgoodLight.status = SGStatusLight.Red
                                                     }
-
                                                 }
                                             }
                                         }
@@ -766,7 +685,6 @@ ColumnLayout {
                                                 font.bold : true
                                                 SGInfoBox {
                                                     id: outputVoltage
-                                                    //text: platformInterface.status_voltage_current.vin.toFixed(2)
                                                     unit: "V"
                                                     width: 100 * ratioCalc
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -796,7 +714,6 @@ ColumnLayout {
                                                 font.bold : true
                                                 SGInfoBox {
                                                     id: outputCurrent
-                                                    //text: platformInterface.status_voltage_current.iin.toFixed(2)
                                                     unit: "A"
                                                     width: 100 * ratioCalc
                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -807,11 +724,9 @@ ColumnLayout {
                                                     onOuputCurrentValueChanged: {
                                                         text = ouputCurrentValue
                                                     }
-
                                                 }
                                             }
                                         }
-
                                     }
                                 }
 
@@ -849,19 +764,9 @@ ColumnLayout {
                                             onUserSet: {
                                                 platformInterface.switchFrequency = value
                                                 platformInterface.set_switching_frequency.update(value)
-
-                                                //re-enable for REV1
-                                                //platformInterface.set_sync_slave_frequency.update(value)
-
-                                                //if (SGComboBox.model === "Slave"){
-                                                //platformInterface.set_sync_slave_frequency.update(value)
-                                                //}
                                             }
-
                                         }
-
                                     }
-
                                 }
 
                                 Rectangle {
@@ -924,7 +829,6 @@ ColumnLayout {
                                             fontSizeMultiplier: ratioCalc * 0.8
                                             fromText.text: "0 A"
 
-
                                             toText.text: "13 A"
                                             from: 0
                                             to: 13
@@ -937,26 +841,13 @@ ColumnLayout {
                                             }
                                             onUserSet: {
                                                 platformInterface.set_ocp.update(value)
-
                                             }
                                         }
-
                                     }
-
-
-
                                 }
-
-
-
-
                             }
-
                         }
-
                     }
-
-
                 }
                 Rectangle {
                     Layout.fillWidth: true
@@ -1045,19 +936,12 @@ ColumnLayout {
 
                                                     unitText: "%"
                                                     unitTextFontSizeMultiplier: ratioCalc * 2.2
-                                                    //value: platformInterface.status_voltage_current.efficiency
                                                     property var efficiencyValue: platformInterface.status_voltage_current.efficiency
                                                     onEfficiencyValueChanged: {
                                                         value = efficiencyValue
                                                     }
-
-                                                    // Behavior on value { NumberAnimation { duration: 300 } }
-
                                                 }
                                             }
-
-
-
                                         }
 
                                         Rectangle {
@@ -1092,12 +976,9 @@ ColumnLayout {
                                                     onPowerDissipatedValueChanged: {
                                                         value = powerDissipatedValue
                                                     }
-                                                    //Behavior on value { NumberAnimation { duration: 300 } }
                                                 }
                                             }
                                         }
-
-
                                     }
                                 }
 
@@ -1139,8 +1020,6 @@ ColumnLayout {
                                                     onOutputPowerValueChanged: {
                                                         value = outputPowerValue
                                                     }
-
-                                                    //Behavior on value { NumberAnimation { duration: 300 } }
                                                 }
                                             }
                                         }
@@ -1167,7 +1046,6 @@ ColumnLayout {
                                                     minimumValue: -55
                                                     maximumValue: 125
                                                     tickmarkStepSize: 20
-                                                    //outerColor: "#999"
                                                     unitText: "°C"
                                                     unitTextFontSizeMultiplier: ratioCalc * 2.2
                                                     width: tempGaugeContainer.width
@@ -1177,7 +1055,6 @@ ColumnLayout {
                                                     onTempValueChanged: {
                                                         value = tempValue
                                                     }
-                                                    //Behavior on value { NumberAnimation { duration: 300 } }
                                                 }
                                             }
                                         }
@@ -1227,8 +1104,6 @@ ColumnLayout {
                                                         }
                                                     }
                                                 }
-
-
                                             }
                                         }
 
@@ -1255,15 +1130,11 @@ ColumnLayout {
                                                             osALERT.status = SGStatusLight.Red
                                                         else  osALERT.status = SGStatusLight.Off
                                                     }
-
                                                 }
                                             }
-
                                         }
                                     }
                                 }
-
-
                             }
                         }
 
@@ -1404,14 +1275,10 @@ ColumnLayout {
                                                             model: [ "Master", "Slave" ]
                                                             onActivated: {
                                                                 platformInterface.set_sync_mode.update(currentText.toLowerCase())
-
                                                             }
                                                         }
-
                                                     }
                                                 }
-
-
                                             }
                                         }
 
@@ -1419,7 +1286,6 @@ ColumnLayout {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
                                         }
-
                                     }
                                 }
 
@@ -1444,9 +1310,6 @@ ColumnLayout {
                                                 fontSizeMultiplier: ratioCalc
                                                 SGComboBox {
                                                     id:  modeCombo
-                                                    //                                                    borderColor: "black"
-                                                    //                                                    textColor: "black"          // Default: "black"
-                                                    //                                                    indicatorColor: "black"
                                                     model: [ "DCM" , "FCCM"]
                                                     fontSizeMultiplier: ratioCalc
                                                     onActivated: {
@@ -1510,23 +1373,15 @@ ColumnLayout {
                                                     }
                                                 }
                                             }
-
                                         }
                                     }
                                 }
-
                             }
                         }
                     }
                 }
-
             }
-
         }
-
-
-
     }
-
 }
 

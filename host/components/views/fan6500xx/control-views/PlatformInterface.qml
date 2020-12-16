@@ -69,12 +69,6 @@ Item {
 
     // -------------------
     // Commands
-    // TO SEND A COMMAND DO THE FOLLOWING:
-    // EXAMPLE: To send the motor speed: platformInterface.set_enable.update("on")
-
-    // TO SYNCHRONIZE THE SPEED ON ALL THE VIEW DO THE FOLLOWING:
-    // EXAMPLE: platformInterface.enabled
-
     property var read_initial_status: ({
                                            "cmd":"read_initial_status",
                                            update: function () {
@@ -360,43 +354,4 @@ Item {
     property bool advertise
     property bool hideOutputVol
 
-    // DEBUG Window for testing motor vortex UI without a platform
-    //    Window {
-    //        id: debug
-    //        visible: true
-    //        width: 200
-    //        height: 200
-
-    //        Button {
-    //            id: button2
-    //         //   anchors { top: button1.bottom }
-    //            text: "send vin"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler('{
-    //                    "value":"read_voltage_current",
-    //                    "payload":{
-    //                                "vin":'+ (Math.random()*5+10).toFixed(2) +',
-    //                                "vout": '+ (Math.random()*5+10).toFixed(2) +',
-    //                                "iin": '+ (Math.random()*5+10).toFixed(2) +',
-    //                                "iout": '+ (Math.random()*5+10).toFixed(2) +',
-    //                                "vin_bad": "off"
-
-    //                               }
-    //                             }')
-    //            }
-    //        }
-    //        Button {
-    //            anchors { top: button2.bottom }
-    //            text: "send"
-    //            onClicked: {
-    //                CorePlatformInterface.data_source_handler('{
-    //                            "value":"read_temperature_sensor",
-    //                            "payload":{
-    //                                     "temperature": '+ (Math.random()*100).toFixed(0) +'
-    //                            }
-    //                    }
-    //            ')
-    //            }
-    //        }
-    //    }
 }
