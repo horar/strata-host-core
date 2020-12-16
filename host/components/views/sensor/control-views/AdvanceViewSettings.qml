@@ -64,33 +64,6 @@ Item {
         return request.status;
     }
 
-    //    Connections {
-    //        target: coreInterface
-    //        onNotification: {
-    //            try {
-    //                var temp_export_reg =  JSON.parse(payload)
-    //                let message = JSON.parse(temp_export_reg.message)
-    //                let notification = message.notification
-
-    //                if(notification.value === "touch_export_reg_value")
-    //                {
-    //                    regDataToStore += "[" + JSON.stringify(notification.payload) + "\n" + ","
-    //                }
-    //                if(notification.value === "touch_export_data_value")
-
-    //                {
-    //                    regDataToStore += JSON.stringify(notification.payload) + "]"
-    //                }
-
-    //            }
-    //            catch(error) {
-    //                if(error instanceof SyntaxError) {
-    //                    console.log("Notification JSON is invalid, ignoring")
-    //                }
-    //            }
-    //        }
-    //    }
-
     property var touch_export_reg_value: platformInterface.touch_export_reg_value.value
     onTouch_export_reg_valueChanged: {
         if(touch_export_reg_value) {

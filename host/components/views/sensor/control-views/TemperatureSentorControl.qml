@@ -76,40 +76,6 @@ Item {
         return request.status;
     }
 
-    //    function storeData() {
-    //        console.info("test",regToStoreInFile,dataToStoreInFile)
-    //        regDataToStoreInFile = "[" + regToStoreInFile + "\n" + "," + dataToStoreInFile + "]"
-
-    //        return regDataToStoreInFile
-    //    }
-
-    //    Connections {
-    //        target: coreInterface
-    //        onNotification: {
-    //            try {
-    //                var temp_export_reg =  JSON.parse(payload)
-    //                let message = JSON.parse(temp_export_reg.message)
-    //                let notification = message.notification
-
-    //                if(notification.value === "temp_export_reg_value")
-    //                {
-    //                    regDataToStoreInFile += "[" + JSON.stringify(notification.payload) + "\n" + ","
-    //                }
-    //                if(notification.value === "temp_export_data_value")
-    //                {
-    //                    regDataToStoreInFile += JSON.stringify(notification.payload) + "]"
-    //                }
-
-    //            }
-    //            catch(error) {
-    //                if(error instanceof SyntaxError) {
-    //                    console.log("Notification JSON is invalid, ignoring")
-    //                }
-    //            }
-    //        }
-    //    }
-
-
     property var temp_export_reg_value: platformInterface.temp_export_reg_value.value
     onTemp_export_reg_valueChanged: {
         if(temp_export_reg_value) {
