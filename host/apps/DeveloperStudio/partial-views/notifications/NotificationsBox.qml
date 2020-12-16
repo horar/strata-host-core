@@ -34,7 +34,7 @@ Item {
 
         function filterAcceptsRow(index) {
             const notification = Notifications.model.get(index);
-            if (notification.to !== "all" && notification.to !== currentUser) {
+            if (notification.hidden || (notification.to !== "all" && notification.to !== currentUser)) {
                 return false
             } else {
                 return true

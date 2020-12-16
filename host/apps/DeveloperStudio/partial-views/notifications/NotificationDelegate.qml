@@ -55,7 +55,7 @@ Item {
             repeat: false
 
             onTriggered: {
-                Notifications.model.remove(modelIndex)
+                model.hidden = true
             }
         }
 
