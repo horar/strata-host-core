@@ -868,7 +868,9 @@ Window {
     function storePlatforms() {
         let platforms = []
         for(var i = 0; i < listModel.count; i++){
-            platforms.push({platform: listModel.get(i).platform})
+            if(listModel.get(i).platform.class_id !== "" && listModel.get(i).platform.device_id > -1 && listModel.get(i).platform.firmware_version !== ""){
+                platforms.push({platform: listModel.get(i).platform})
+            }
         }
         storeDeviceList.setValue("recent-platforms",JSON.stringify({platforms: JSON.stringify(platforms)}))
     }
