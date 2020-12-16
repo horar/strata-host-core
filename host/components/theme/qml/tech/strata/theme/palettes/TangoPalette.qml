@@ -21,4 +21,8 @@ QtObject {
     readonly property color butter3:        "#c4a000"
     readonly property color error:          scarletRed2
     readonly property color warning:        orange1
+    readonly property color chameleon1:     "#8ae234"
+    readonly property color chameleon2:     "#73d216"
+    readonly property color chameleon3:     "#4e9a06"
+
 }

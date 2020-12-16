@@ -34,6 +34,8 @@
 
 #include "AppUi.h"
 
+#include "config/AppConfig.h"
+
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {
@@ -82,6 +84,20 @@ int main(int argc, char *argv[])
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
 
+    QCommandLineParser parser;
+    parser.setApplicationDescription(
+        QStringLiteral("Strata Developer Studio\n\n"
+                       "A cloud-connected development platform that provides a seamless,"
+                       "personalized and secure environment for engineers to evaluate and design "
+                       "with ON Semiconductor technologies."));
+    parser.addOption({{QStringLiteral("f")},
+                      QObject::tr("Optional configuration <filename>"),
+                      QObject::tr("filename"),
+                      QStringLiteral(":/assets/sds.config")});
+    parser.addVersionOption();
+    parser.addHelpOption();
+    parser.process(app);
+
 #if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
 #endif
@@ -99,7 +115,13 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
-    RunGuard appGuard{"tech.strata.sds"};
+    const QString configFilePath{parser.value(QStringLiteral("f"))};
+    strata::sds::config::AppConfig cfg{configFilePath};
+    if (cfg.parse() == false) {
+        return EXIT_FAILURE;
+    }
+
+    RunGuard appGuard{QStringLiteral("tech.strata.sds:%1").arg(cfg.hcsDealerAddresss().port())};
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryStrataDevStudio) << QStringLiteral("Another instance of Developer Studio is already running.");
         return EXIT_FAILURE;
@@ -117,8 +139,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
-    std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>()};
-    sdsModel->init(app.applicationDirPath());
+    std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss())};
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,
@@ -150,8 +171,6 @@ int main(int argc, char *argv[])
                      });
 
     // Starting services this build?
-    // [prasanth] : Important note: Start HCS before launching the UI
-    // So the service callback works properly
 #ifdef START_SERVICES
     QObject::connect(
         &ui, &AppUi::uiLoaded, &app,

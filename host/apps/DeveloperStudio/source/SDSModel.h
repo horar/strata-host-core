@@ -22,10 +22,9 @@ class SDSModel: public QObject
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
 
 public:
-    explicit SDSModel(QObject *parent = nullptr);
+    explicit SDSModel(const QUrl &dealerAddress, QObject *parent = nullptr);
     virtual ~SDSModel();
 
-    void init(const QString &appDirPath);
     bool startHcs();
     bool killHcs();
 
@@ -52,13 +51,12 @@ private slots:
 
 private:
     bool hcsConnected_ = false;
-    CoreInterface *coreInterface_;
-    DocumentManager *documentManager_;
-    ResourceLoader *resourceLoader_;
-    SGNewControlView *newControlView_;
-    HcsNode *remoteHcsNode_;
+    CoreInterface *coreInterface_{nullptr};
+    DocumentManager *documentManager_{nullptr};
+    ResourceLoader *resourceLoader_{nullptr};
+    SGNewControlView *newControlView_{nullptr};
+    HcsNode *remoteHcsNode_{nullptr};
     QPointer<QProcess> hcsProcess_;
-    QString appDirPath_;
     bool externalHcsConnected_{false};
 
     void setHcsConnected(bool hcsConnected);
