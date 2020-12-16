@@ -34,9 +34,11 @@ function data_source_handler (payload) {
                     if (platformInterface.apiVersion && platformInterface.apiVersion > 1) {
                         // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
                         for (const key of Object.keys(notification["payload"])) {
-                            let obj = notification["payload"][key]
-                            if (!platformInterface["notifications"][notification_key][key]) {
-                                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property", key, "to platform interface notification '" + notification_key + "'")
+                            const obj = notification["payload"][key]
+
+                            const json = JSON.parse(JSON.stringify(platformInterface["notifications"][notification_key]))
+                            if (!json.hasOwnProperty(key)) {
+                                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", key, "' to platform interface notification '" + notification_key + "'")
                                 continue;
                             }
 
@@ -124,11 +126,17 @@ function injectDebugNotification(notification) {
 function setNotification(parentObject, key, payloadValue) {
     if (Array.isArray(payloadValue)) {
         for (let i = 0; i < payloadValue.length; i++) {
-            let idxName = `index_${i}`;
+            const idxName = `index_${i}`;
+
+            // Check to make sure that the property has this index
+            const json = JSON.parse(JSON.stringify(parentObject[key]))
+            if (!json.hasOwnProperty(idxName)) {
+                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid index", i, "to array '" + key + "'")
+                continue;
+            }
 
             if (Array.isArray(parentObject[key][idxName])) {
                 parentObject[key][idxName] = payloadValue[i];
-                break;
             } else if (typeof parentObject[key][idxName] === "object") {
                 if (isQtObject(parentObject[key][idxName])) {
                     setNotification(parentObject[key], idxName, payloadValue[i])
@@ -140,9 +148,28 @@ function setNotification(parentObject, key, payloadValue) {
             }
         }
     } else if (typeof payloadValue === "object") {
-        let payloadValueKeys = Object.keys(payloadValue);
+        const payloadValueKeys = Object.keys(payloadValue);
         for (let i = 0; i < payloadValueKeys.length; i++) {
-            setNotification(parentObject[key], payloadValueKeys[i], payloadValue[payloadValueKeys[i]])
+            const payloadKey = payloadValueKeys[i];
+
+            const json = JSON.parse(JSON.stringify(parentObject[key]))
+            // Check to make sure that the property has this index
+            if (!json.hasOwnProperty(payloadKey)) {
+                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", payloadKey, "' to object '" + key + "'")
+                continue;
+            }
+
+            if (Array.isArray(parentObject[key][payloadKey])) {
+                parentObject[key][payloadKey] = payloadValue[payloadKey];
+            } else if (typeof parentObject[key][payloadKey] === "object") {
+                if (isQtObject(parentObject[key][payloadKey])) {
+                    setNotification(parentObject[key], payloadKey, payloadValue[payloadKey])
+                } else {
+                    parentObject[key][payloadKey] = payloadValue[payloadKey]
+                }
+            } else {
+                parentObject[key][payloadKey] = payloadValue[payloadKey]
+            }
         }
     } else {
         parentObject[key] = payloadValue
