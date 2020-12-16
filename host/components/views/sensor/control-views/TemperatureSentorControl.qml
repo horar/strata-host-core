@@ -92,7 +92,6 @@ Item {
         }
     }
 
-
     FileDialog {
         id: saveFileDialog
         selectExisting: false
@@ -104,10 +103,8 @@ Item {
             regDataToStoreInFile = ""
         }
         onRejected: {
-            console.log("Canceled")
             regDataToStoreInFile = ""
         }
-
     }
 
     property var temp_remote_value: platformInterface.temp_remote_value.value

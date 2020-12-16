@@ -80,7 +80,6 @@ Item {
         }
     }
 
-
     FileDialog {
         id: saveFileDialog
         selectExisting: false
