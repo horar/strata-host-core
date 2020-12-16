@@ -1112,6 +1112,7 @@ Item {
                                             Item {
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
+                                                Layout.leftMargin: 5
                                                 SGAlignedLabel {
                                                     id: osAlertLabel
                                                     target: osALERT
