@@ -642,7 +642,7 @@ Window {
                             Layout.preferredHeight: 40
                             Layout.preferredWidth: 150
                             model: deviceFilterModel
-                            placeholderText: "device_id 0"
+                            placeholderText: "device_id..."
                             textRole: null
                             currentIndex: -1
                             enabled: !rowPlatform.connected
