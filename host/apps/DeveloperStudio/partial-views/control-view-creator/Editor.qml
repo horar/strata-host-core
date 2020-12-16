@@ -33,6 +33,10 @@ Item {
             parsingErrorRect.visible = true
             openProjectContainer.url = ""
         }
+
+        onUrlChanged: {
+            debugPanel.collapse()
+        }
     }
 
     SGFileTabModel {

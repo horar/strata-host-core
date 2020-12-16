@@ -2,9 +2,9 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
-import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
@@ -116,6 +116,7 @@ Rectangle {
                 property int startTab: 0
                 property int editTab: 1
                 property int viewTab: 2
+                property int debugTab: 3
                 property bool recompiling: false
 
                 onCurrentIndexChanged: {
@@ -169,6 +170,24 @@ Rectangle {
                   Additional items go below here, but above filler
                 *****************************************/
 
+                SGSideNavItem {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 70
+                    modelIndex: toolBarListView.debugTab
+                    iconText: "Debug"
+                    iconSource: "qrc:/sgimages/tools.svg"
+                    enabled: viewStack.currentIndex === 2 && debugPanel.visible
+                    color: debugPanel.expanded ? Theme.palette.green : "transparent"
+
+                    function onClicked() {
+                        if (debugPanel.expanded) {
+                            debugPanel.collapse()
+                        } else {
+                            debugPanel.expand()
+                        }
+                    }
+                }
+
                 Item {
                     id: filler
                     Layout.fillHeight: true
@@ -201,15 +220,27 @@ Rectangle {
                 Layout.fillWidth: true
             }
 
-            Rectangle {
+            SGSplitView {
                 id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "white"
+
+                onResizingChanged: {
+                    if (!resizing) {
+                        if (debugPanel.width >= debugPanel.minimumExpandWidth) {
+                            debugPanel.expandWidth = debugPanel.width
+                        } else {
+                            debugPanel.expandWidth = debugPanel.minimumExpandWidth
+                        }
+                    }
+                }
 
                 Loader {
                     id: controlViewLoader
-                    anchors.fill: parent
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 600
+
                     asynchronous: true
 
                     onStatusChanged: {
@@ -235,6 +266,11 @@ Rectangle {
                             );
                         }
                     }
+                }
+
+                DebugPanel {
+                    id: debugPanel
+                    Layout.fillHeight: true
                 }
             }
         }
