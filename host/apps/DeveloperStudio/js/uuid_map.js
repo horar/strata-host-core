@@ -69,8 +69,6 @@ var uuid_map = {
     "238": "ecoSWITCH",
     "239": "1A-LED",
     "240": "ldo-cp",
-    "241": "fan6500xx",
-    "242": "fan6500xx",
     "243": "Automotive-ADAS-Preregulator",
     "244": "motorController",
     "245": "bldcMotorControl",
