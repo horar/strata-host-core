@@ -408,6 +408,7 @@ Window {
                                 deviceIdComboBox.currentIndex = device_id
                                 deviceIdComboBox.contentItem.text = deviceFilterModel.get(device_id).device
                                 deviceFilterModel.setDeviceInUse(device_id)
+                                hasUpdated = false
                             }
                         }
 
