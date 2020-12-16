@@ -337,6 +337,9 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
         // Generate a property for each element in array
         notificationBody += insertTabs(indentLevel) + "property QtObject " + id + ": QtObject {\n";
 
+        // Add object name
+        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"array\"";
+
         // This documentation text will be passed back to parent
         // This allows us to generate comments above each QtObject for their properties
         documentation += generateComment("@property " + id + ": " + propType, indentLevel - 1);
@@ -354,7 +357,7 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
 
             QString childType = getType(element);
             if (childType.isNull()) {
-                lastError_ = "Unrecognized type of property for notificaition " + parentId;
+                lastError_ = "Unrecognized type of property for notification " + parentId;
                 qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
                 return;
             }
@@ -380,6 +383,9 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
 
         // Generate a property for each element in array
         notificationBody += insertTabs(indentLevel) + "property QtObject " + id + ": QtObject {\n";
+
+        // Add object name
+        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"object\"";
 
         // This documentation text will be passed back to parent
         // This allows us to generate comments above each QtObject for their properties
