@@ -143,7 +143,7 @@ Item {
                         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                         onClicked: {
                             closeTimer.stop()
-                            Notifications.model.remove(modelIndex)
+                            Qt.callLater(Notifications.model.remove, modelIndex)
                         }
                     }
                 }
