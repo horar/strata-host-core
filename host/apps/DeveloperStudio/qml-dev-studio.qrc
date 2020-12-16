@@ -99,6 +99,11 @@
         <file>partial-views/general/WebPopup/SGWebControls.qml</file>
         <file>partial-views/general/WebPopup/SGWebView.qml</file>
         <file>partial-views/notifications/NotificationDelegate.qml</file>
-        <file>partial-views/notifications/NotificationsBox.qml</file>
+        <file>partial-views/notifications/Notifications.qml</file>
+        <file>partial-views/notifications/NotificationsContainer.qml</file>
+        <file>partial-views/notifications/qmldir</file>
+        <file>partial-views/notifications/NotificationsInbox.qml</file>
+        <file>partial-views/notifications/NotificationsInboxList.qml</file>
+        <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
     </qresource>
 </RCC>

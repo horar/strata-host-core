@@ -120,7 +120,7 @@ SGWidgets.SGMainWindow {
         }
     }
 
-    NotificationsBox {
+    NotificationsContainer {
         z: 2
         anchors {
             right: parent.right
