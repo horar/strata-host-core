@@ -6,6 +6,7 @@ import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
@@ -16,7 +17,7 @@ Rectangle {
     id: controlViewCreatorContainer
     height: container.height
     width: controlViewCreatorRow.implicitWidth
-    color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
+    color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? Theme.palette.green : "#444"
     state: "debug"
 
     MouseArea {
@@ -56,7 +57,7 @@ Rectangle {
             Layout.preferredHeight: controlViewCreatorContainer.height
             Layout.preferredWidth: Layout.preferredHeight
             Layout.alignment: Qt.AlignRight
-            color:controlViewCreatorMouse.containsMouse ? "#33b13b" : closeArea.containsMouse  ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? "#33b13b" : "#444"
+            color:controlViewCreatorMouse.containsMouse ? Theme.palette.green : closeArea.containsMouse  ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? Theme.palette.green : "#444"
 
             SGIcon {
                 id: timesSignIcon

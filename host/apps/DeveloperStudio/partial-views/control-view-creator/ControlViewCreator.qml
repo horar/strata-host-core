@@ -177,7 +177,7 @@ Rectangle {
                     iconText: "Debug"
                     iconSource: "qrc:/sgimages/tools.svg"
                     enabled: viewStack.currentIndex === 2 && debugPanel.visible
-                    color: debugPanel.expanded ? "#33b13b" : "transparent"
+                    color: debugPanel.expanded ? Theme.palette.green : "transparent"
 
                     function onClicked() {
                         if (debugPanel.expanded) {

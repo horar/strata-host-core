@@ -1,6 +1,9 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+
+import tech.strata.theme 1.0
+
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
@@ -76,7 +79,7 @@ Item {
                         implicitWidth: 6
                         implicitHeight: 6
                         radius: 5
-                        color: "#33b13b"
+                        color: Theme.palette.green
                         transform: [
                             Translate {
                                 y: -Math.min(item.width, item.height) * 0.5 + 3
