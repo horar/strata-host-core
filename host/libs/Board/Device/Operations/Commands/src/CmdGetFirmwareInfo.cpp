@@ -71,17 +71,17 @@ void CmdGetFirmwareInfo::commandRejected() {
 }
 
 void CmdGetFirmwareInfo::onTimeout() {
-    if (requireResponse_) {
-        if (retriesCount_ < maxRetries_) {
-            ++retriesCount_;
-            qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to get firmware info.";
-            result_ = CommandResult::Retry;
-        } else {
-            result_ = CommandResult::InProgress;
-        }
+    if (retriesCount_ < maxRetries_) {
+        ++retriesCount_;
+        qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to get firmware info.";
+        result_ = CommandResult::Retry;
     } else {
-        setDeviceVersions(nullptr, "");
-        result_ = CommandResult::Done;
+        if (requireResponse_) {
+            result_ = CommandResult::InProgress;
+        } else {
+            setDeviceVersions(nullptr, "");
+            result_ = CommandResult::Done;
+        }
     }
 }
 
