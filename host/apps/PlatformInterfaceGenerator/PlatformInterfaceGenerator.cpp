@@ -303,11 +303,14 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
         }
 
         propertiesBody += insertTabs(indentLevel) + "property " + propType + " " + payloadProperty + ": " + getPropertyValue(propValue, propType, indentLevel) + "\n";
+
         if (lastError_.length() > 0) {
             qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
             return "";
         }
     }
+
+    propertiesBody += "\n" + insertTabs(indentLevel) + "signal notificationFinished()\n";
 
     notificationBody = childrenDocumentationBody + notificationBody + propertiesBody;
     notificationBody += childrenNotificationBody;

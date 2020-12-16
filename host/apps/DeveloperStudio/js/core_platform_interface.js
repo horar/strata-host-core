@@ -61,6 +61,9 @@ function data_source_handler (payload) {
                                 platformInterface["notifications"][notification_key][key] = obj;
                             }
                         }
+
+                        // Emit the notificationFinished signal
+                        platformInterface["notifications"][notification_key].notificationFinished()
                     } else {
                         platformInterface[notification_key] = Object.create(notification["payload"]);
                     }
