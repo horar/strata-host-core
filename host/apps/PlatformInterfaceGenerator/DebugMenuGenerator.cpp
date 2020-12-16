@@ -426,18 +426,7 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine();
 
     // Generate the switch for boolean values
-    text += writeLine("SGSwitch {");
-    indentLevel++;
-    text += writeLine("Layout.preferredWidth: 50");
-    text += writeLine("visible: model.type === \"bool\"");
-    text += writeLine();
-    text += writeLine("onToggled: {");
-    indentLevel++;
-    text += writeLine("model.value = (checked ? \"true\" : \"false\")");
-    indentLevel--;
-    text += writeLine("}");
-    indentLevel--;
-    text += writeLine("}");
+    text += generateSGSwitch("model");
     indentLevel--;
     text += writeLine("}");
     text += writeLine();
@@ -847,18 +836,9 @@ QString DebugMenuGenerator::generateArrayComponent()
     indentLevel--;
     text += writeLine("}");
     text += writeLine();
-    text += writeLine("SGSwitch {");
-    indentLevel++;
-    text += writeLine("Layout.preferredWidth: 50");
-    text += writeLine("visible: modelData.type === \"bool\"");
-    text += writeLine();
-    text += writeLine("onToggled: {");
-    indentLevel++;
-    text += writeLine("modelData.value = (checked ? \"true\" : \"false\")");
-    indentLevel--;
-    text += writeLine("}");
-    indentLevel--;
-    text += writeLine("}");
+
+    text += generateSGSwitch("modelData");
+
     indentLevel--;
     text += writeLine("}");
     text += writeLine();
@@ -1003,18 +983,8 @@ QString DebugMenuGenerator::generateObjectComponent()
     text += writeLine();
 
     // Generate the switch for booleans
-    text += writeLine("SGSwitch {");
-    indentLevel++;
-    text += writeLine("Layout.preferredWidth: 50");
-    text += writeLine("visible: modelData.type === \"bool\"");
-    text += writeLine();
-    text += writeLine("onToggled: {");
-    indentLevel++;
-    text += writeLine("modelData.value = (checked ? \"true\" : \"false\")");
-    indentLevel--;
-    text += writeLine("}");
-    indentLevel--;
-    text += writeLine("}");
+    text += generateSGSwitch("modelData");
+
     indentLevel--;
     text += writeLine("}");
     text += writeLine();
@@ -1081,6 +1051,26 @@ QString DebugMenuGenerator::generateObjectComponent()
     indentLevel--;
     text += writeLine("}");
 
+    return text;
+}
+
+QString DebugMenuGenerator::generateSGSwitch(const QString &modelName)
+{
+    QString text = "";
+    text += writeLine("SGSwitch {");
+    indentLevel++;
+    text += writeLine("Layout.preferredWidth: 70");
+    text += writeLine("checkedLabel: \"True\"");
+    text += writeLine("uncheckedLabel: \"False\"");
+    text += writeLine("visible: " + modelName + ".type === \"bool\"");
+    text += writeLine();
+    text += writeLine("onToggled: {");
+    indentLevel++;
+    text += writeLine(modelName + ".value = (checked ? \"true\" : \"false\")");
+    indentLevel--;
+    text += writeLine("}");
+    indentLevel--;
+    text += writeLine("}");
     return text;
 }
 

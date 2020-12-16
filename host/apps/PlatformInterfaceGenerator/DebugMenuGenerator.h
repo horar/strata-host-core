@@ -87,6 +87,13 @@ public:
      */
     QString generateObjectComponent();
 
+    /**
+     * @brief generateSGSwitch Generates the SGSwitch
+     * @param modelName Either "model" or "modelData"
+     * @return Returns the SGSwitch string
+     */
+    QString generateSGSwitch(const QString &modelName);
+
 private:
     int indentLevel = 0;
 
