@@ -675,8 +675,6 @@ Window {
                                 }
                                 rowPlatform.hasUpdated = true
                                 rowPlatform.device_id = index
-                                currentIndex = index
-                                contentItem.text = deviceFilterModel.get(index).device
                                 deviceFilterModel.setDeviceInUse(index)
                             }
                         }
