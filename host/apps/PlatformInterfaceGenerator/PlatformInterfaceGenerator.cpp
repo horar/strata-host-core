@@ -460,17 +460,17 @@ QString PlatformInterfaceGenerator::getType(const QJsonValue &value)
         return "var";
     } else if (value.isString()) {
         QString str = value.toString();
-        if (str == "string") {
-            return "string";
-        } else if (str == "int") {
-            return "int";
-        } else if (str == "double") {
-            return "double";
-        } else if (str == "bool") {
-            return "bool";
-        } else if (str == "array-dynamic") {
+        if (str == TYPE_STRING) {
+            return TYPE_STRING;
+        } else if (str == TYPE_INT) {
+            return TYPE_INT;
+        } else if (str == TYPE_DOUBLE) {
+            return TYPE_DOUBLE;
+        } else if (str == TYPE_BOOL) {
+            return TYPE_BOOL;
+        } else if (str == TYPE_ARRAY_DYNAMIC) {
             return "var";
-        } else if (str == "object-dynamic") {
+        } else if (str == TYPE_OBJECT_DYNAMIC) {
             return "var";
         } else {
             lastError_ = "Unknown type " + str;
@@ -497,13 +497,13 @@ QString PlatformInterfaceGenerator::getPropertyValue(const QJsonValue &value, co
         }
         returnText += "]";
         return returnText;
-    } else if (propertyType == "bool") {
+    } else if (propertyType == TYPE_BOOL) {
         return "false";
-    } else if (propertyType == "string") {
+    } else if (propertyType == TYPE_STRING) {
         return "\"\"";
-    } else if (propertyType == "int") {
+    } else if (propertyType == TYPE_INT) {
         return "0";
-    } else if (propertyType == "double") {
+    } else if (propertyType == TYPE_DOUBLE) {
         return "0.0";
     } else if (propertyType == "var" && value.isObject()) {
         QString returnText = "{\n";
@@ -522,7 +522,7 @@ QString PlatformInterfaceGenerator::getPropertyValue(const QJsonValue &value, co
     } else if (propertyType == "var") {
         // Handle array-dynamic and object-dynamic
         QString type = value.toString();
-        if (type == "array-dynamic") {
+        if (type == TYPE_ARRAY_DYNAMIC) {
             return "[]";
         } else {
             return "({})";

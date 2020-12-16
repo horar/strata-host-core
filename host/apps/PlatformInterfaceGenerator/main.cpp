@@ -18,7 +18,8 @@ void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
 
     const auto resources = {
-        QStringLiteral("component-sgwidgets.rcc")
+        QStringLiteral("component-sgwidgets.rcc"),
+        QStringLiteral("component-theme.rcc")
     };
 
 #ifdef Q_OS_MACOS
