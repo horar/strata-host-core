@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
@@ -219,19 +220,16 @@ Rectangle {
                 Layout.fillWidth: true
             }
 
-            Rectangle {
+            SGSplitView {
                 id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
                 Loader {
                     id: controlViewLoader
-                    anchors {
-                        top: parent.top
-                        left: parent.left
-                        right: debugPanel.left
-                        bottom: parent.bottom
-                    }
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 600
 
                     asynchronous: true
 
@@ -262,13 +260,7 @@ Rectangle {
 
                 DebugPanel {
                     id: debugPanel
-                    anchors {
-                        top: parent.top
-                        bottom: parent.bottom
-                        right: parent.right
-                    }
-
-                    width: implicitWidth
+                    Layout.fillHeight: true
 
                     expandWidth: 400
                 }

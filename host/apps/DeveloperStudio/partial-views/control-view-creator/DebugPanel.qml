@@ -5,10 +5,10 @@ import QtQuick.Layouts 1.12
 Rectangle {
     id: root
 
-    implicitWidth: mainContainer.width
+    width: 0
     visible: debugMenuSource.toString() !== ""
 
-    readonly property bool expanded: mainContainer.width > 0 && visible
+    readonly property bool expanded: width > 0 && visible
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
     property int expandWidth: 500
     property alias mainContainer: mainContainer
@@ -51,11 +51,12 @@ Rectangle {
 
     Rectangle {
         id: mainContainer
-        width: 0
+        width: parent.width
         height: parent.height
         anchors.left: parent.left
         color: "lightgrey"
         visible: width > 0
+        clip: true
 
         Loader {
             anchors.fill: parent
@@ -66,7 +67,7 @@ Rectangle {
 
     NumberAnimation {
         id: collapseAnimation
-        target: mainContainer
+        target: root
         property: "width"
         duration: 200
         easing.type: Easing.InOutQuad
@@ -76,7 +77,7 @@ Rectangle {
 
     NumberAnimation {
         id: expandAnimation
-        target: mainContainer
+        target: root
         property: "width"
         duration: 200
         easing.type: Easing.InOutQuad
