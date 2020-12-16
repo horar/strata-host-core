@@ -25,65 +25,39 @@ Item {
         platformInterface.read_initial_status.update()
     }
 
-
-
-    TabBar {
-        id: navTabs
-        anchors {
-            top: controlNavigation.top
-            left: controlNavigation.left
-            right: controlNavigation.right
-        }
-
-    }
-
-    StackLayout {
-        id: controlContainer
-        anchors {
-            top: navTabs.bottom
-            bottom: controlNavigation.bottom
-            right: controlNavigation.right
-            left: controlNavigation.left
-        }
-        currentIndex: navTabs.currentIndex
-
-        BasicControl {
-            id: basicControl
-            visible: true
-            Layout.preferredHeight: parent.height
-            Layout.preferredWidth: parent.width
-            Layout.margins: 10
-        }
-
-    }
-
-    SGIcon {
-        id: helpIcon
-        anchors {
-            right: parent.right
-            rightMargin: 20
-            top: parent.top
-            topMargin: 50
-        }
-        source: "qrc:/sgimages/question-circle.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        height: 40
-        width: 40
+    BasicControl {
+        id: basicControl
         visible: true
-
-        MouseArea {
-            id: helpMouse
-            anchors {
-                fill: helpIcon
-            }
-            onClicked: {
-                if(basicControl.visible === true) {
-                    Help.startHelpTour("basicFan65Help")
-                }
-
-                else console.log("help not available")
-            }
-            hoverEnabled: true
-        }
     }
+
+
+SGIcon {
+    id: helpIcon
+    anchors {
+        right: parent.right
+        rightMargin: 20
+        top: parent.top
+        topMargin: 50
+    }
+    source: "qrc:/sgimages/question-circle.svg"
+    iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+    height: 40
+    width: 40
+    visible: true
+
+    MouseArea {
+        id: helpMouse
+        anchors {
+            fill: helpIcon
+        }
+        onClicked: {
+            if(basicControl.visible === true) {
+                Help.startHelpTour("basicFan65Help")
+            }
+
+            else console.log("help not available")
+        }
+        hoverEnabled: true
+    }
+}
 }

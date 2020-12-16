@@ -11,16 +11,18 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 
 
-ColumnLayout {
+Item {
     id: root
-    anchors.leftMargin: -25
-    anchors.rightMargin: 25
+    //    anchors.leftMargin: 25
+    //    anchors.rightMargin: 25
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/820
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-    spacing: 10
+    property real initialAspectRatio: 1225/648
+    // spacing: 10
     property string popup_message: ""
+    anchors.centerIn: parent
+    height: parent.height
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+
 
 
     property var initial_status: platformInterface.initial_status
@@ -253,883 +255,591 @@ ColumnLayout {
     }
 
 
+    ColumnLayout {
+        anchors.fill: parent
 
-    Text {
-        id: boardTitle
-        Layout.alignment: Qt.AlignHCenter
-        // text: multiplePlatform.partNumber
-        font.bold: true
-        font.pixelSize: ratioCalc * 30
-        topPadding: 5
-    }
+        Text {
+            id: boardTitle
+            Layout.alignment: Qt.AlignHCenter
+            // text: multiplePlatform.partNumber
+            font.bold: true
+            font.pixelSize: ratioCalc * 30
+            topPadding: 5
+        }
 
-    Rectangle {
-        id: mainSetting
-        Layout.fillWidth: true
-        Layout.preferredHeight:root.height - boardTitle.contentHeight - 20
-        Layout.alignment: Qt.AlignCenter
+        Item {
+            id: mainSetting
+            Layout.fillWidth: true
+            Layout.preferredHeight:root.height - boardTitle.contentHeight - 20
+            Layout.alignment: Qt.AlignCenter
 
-        Rectangle{
-            id: mainSettingContainer
-            anchors.fill: parent
-            anchors {
-                bottom: parent.bottom
-                bottomMargin: 30
-            }
-            ColumnLayout{
+            Item{
+                id: mainSettingContainer
+                anchors.fill: parent
                 anchors {
-                    margins: 15
-                    fill: parent
+                    bottom: parent.bottom
+                    bottomMargin: 30
                 }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height/1.8
-
-
-                    RowLayout {
-                        anchors.fill: parent
-                        spacing: 20
-
-                        Rectangle {
-                            id: inputContainer
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            color: "transparent"
-                            Text {
-                                id: inputContainerHeading
-                                text: "Input"
-                                font.bold: true
-                                font.pixelSize: ratioCalc * 15
-                                color: "#696969"
-                                anchors.top: parent.top
-                            }
-
-                            Rectangle {
-                                id: line3
-                                height: 2
-                                Layout.alignment: Qt.AlignCenter
-                                width: parent.width
-                                border.color: "lightgray"
-                                radius: 2
-                                anchors {
-                                    top: inputContainerHeading.bottom
-                                    topMargin: 7
-                                }
-                            }
-
-                            ColumnLayout {
-                                anchors {
-                                    top: line3.bottom
-                                    topMargin: 10
-                                    left: parent.left
-                                    right: parent.right
-                                    bottom: parent.bottom
-                                }
-                                spacing: 5
-
-                                Rectangle {
-                                    Layout.preferredWidth: parent.width/1.5
-                                    Layout.preferredHeight: 40
-                                    Layout.alignment: Qt.AlignCenter
-                                    Rectangle {
-                                        id: warningBox
-                                        color: "red"
-                                        anchors.fill: parent
-
-                                        Text {
-                                            id: warningText
-                                            anchors.centerIn: warningBox
-                                            text: "<b>DO NOT Exceed LDO Input Voltage more than 65V</b>"
-                                            font.pixelSize:  ratioCalc * 12
-                                            color: "white"
-                                        }
-
-                                        Text {
-                                            id: warningIconleft
-                                            anchors {
-                                                right: warningText.left
-                                                verticalCenter: warningText.verticalCenter
-                                                rightMargin: 5
-                                            }
-                                            text: "\ue80e"
-                                            font.family: Fonts.sgicons
-                                            font.pixelSize:  ratioCalc * 14
-                                            color: "white"
-                                        }
-
-                                        Text {
-                                            id: warningIconright
-                                            anchors {
-                                                left: warningText.right
-                                                verticalCenter: warningText.verticalCenter
-                                                leftMargin: 5
-                                            }
-                                            text: "\ue80e"
-                                            font.family: Fonts.sgicons
-                                            font.pixelSize:  ratioCalc * 14
-                                            color: "white"
-                                        }
-                                    }
-                                }
-
-
-                                Rectangle {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    Item {
-                                        id: inputCurrentVoltageHelpContainer
-                                        width: inputVoltageContainer.width + inputCurrentContainer.width - 65
-                                        height: inputVoltageContainer.height/2
-                                        anchors.verticalCenter:parent.verticalCenter
-                                        anchors.right:parent.right
-                                        anchors.rightMargin: 85
-                                    }
-
-
-                                    RowLayout {
-                                        anchors.fill: parent
-                                        spacing: 10
-
-
-                                        Rectangle {
-
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            Item {
-                                                id:  vinLEDHelpContainer
-                                                width: parent.width/2
-                                                height: parent.height - 50
-                                                anchors.verticalCenter: parent.verticalCenter
-                                            }
-
-                                            ColumnLayout{
-                                                id: vinLEDLabelContainer
-                                                //anchors.fill: parent
-                                                width: parent.width/2
-                                                height: parent.height
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                Rectangle {
-                                                    Layout.fillWidth: true
-                                                    Layout.fillHeight: true
-
-                                                    SGText {
-                                                        id: vinLabel
-                                                        anchors.left: parent.left
-                                                        anchors.bottom: parent.bottom
-                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                        font.bold : true
-                                                        horizontalAlignment: Text.AlignHCenter
-                                                    }
-                                                }
-                                                Rectangle {
-
-                                                    Layout.fillWidth: true
-                                                    Layout.fillHeight: true
-
-                                                    SGStatusLight {
-                                                        id: ledLight
-                                                        anchors.left: parent.left
-                                                        anchors.leftMargin: 20
-                                                        anchors.top: parent.top
-                                                        height: 40 * ratioCalc
-                                                        width: 40 * ratioCalc
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            id: inputVoltageContainer
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGAlignedLabel {
-                                                id: inputVoltageLabel
-                                                target: inputVoltage
-                                                text: "Input Voltage"
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGInfoBox {
-                                                    id: inputVoltage
-                                                    unit: "V"
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    width: 100 * ratioCalc
-                                                    boxFont.family: Fonts.digitalseven
-                                                    unitFont.bold: true
-                                                    property var inputVoltageValue: platformInterface.status_voltage_current.vin.toFixed(2)
-                                                    onInputVoltageValueChanged: {
-                                                        inputVoltage.text = inputVoltageValue
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            id: inputCurrentContainer
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGAlignedLabel {
-                                                id: inputCurrentLabel
-                                                target: inputCurrent
-                                                text: "Input Current"
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGInfoBox {
-                                                    id: inputCurrent
-                                                    unit: "A"
-                                                    width: 100 * ratioCalc
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxFont.family: Fonts.digitalseven
-                                                    unitFont.bold: true
-                                                    property var inputCurrentValue: platformInterface.status_voltage_current.iin.toFixed(2)
-                                                    onInputCurrentValueChanged: {
-                                                        inputCurrent.text = inputCurrentValue
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-
-                                Rectangle {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-
-                                    RowLayout {
-                                        anchors.fill: parent
-                                        spacing: 10
-                                        Rectangle {
-                                            id: inputVCCContainer
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGAlignedLabel {
-                                                id: inputVCCLabel
-                                                target: inputVCC
-                                                text: "VCC"
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGInfoBox {
-                                                    id: inputVCC
-                                                    unit: "V"
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    width: 100 * ratioCalc
-
-                                                    boxFont.family: Fonts.digitalseven
-                                                    unitFont.bold: true
-                                                    property var vccValue: platformInterface.status_voltage_current.vcc.toFixed(2)
-                                                    onVccValueChanged: {
-                                                        inputVCC.text = vccValue
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            id: pvccConatiner
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGAlignedLabel {
-                                                id: pvccLabel
-                                                target: pvccValue
-                                                text: "PVCC"
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGInfoBox {
-                                                    id: pvccValue
-                                                    property var pvccValueMonitor: platformInterface.status_voltage_current.pvcc.toFixed(2)
-                                                    onPvccValueMonitorChanged: {
-                                                        text = pvccValueMonitor
-                                                    }
-
-                                                    unit: "V"
-                                                    width: 100 * ratioCalc
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxFont.family: Fonts.digitalseven
-                                                    unitFont.bold: true
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            id: vbstConatiner
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGAlignedLabel {
-                                                id: vbstLabel
-                                                target: vbstValue
-                                                text: "VBST"
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGInfoBox {
-                                                    id: vbstValue
-                                                    property var vboostValue: platformInterface.status_voltage_current.vboost.toFixed(2)
-                                                    onVboostValueChanged: {
-                                                        vbstValue.text = vboostValue
-                                                    }
-                                                    unit: "V"
-                                                    width: 100 * ratioCalc
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                    boxFont.family: Fonts.digitalseven
-                                                    unitFont.bold: true
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            Text {
-                                id: outputContainerHeading
-                                text: "Output"
-                                font.bold: true
-                                font.pixelSize: ratioCalc * 15
-                                color: "#696969"
-                                anchors.top: parent.top
-                            }
-
-                            Rectangle {
-                                id: line4
-                                height: 2
-                                Layout.alignment: Qt.AlignCenter
-                                width: parent.width
-                                border.color: "lightgray"
-                                radius: 2
-                                anchors {
-                                    top: outputContainerHeading.bottom
-                                    topMargin: 7
-                                }
-                            }
-
-                            ColumnLayout {
-                                anchors {
-                                    top: line4.bottom
-                                    topMargin: 10
-                                    left: parent.left
-                                    right: parent.right
-                                    bottom: parent.bottom
-                                }
-                                spacing: 5
-
-                                Rectangle {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    Item {
-                                        id: outputCurrentVoltageHelpContainer
-                                        width: outputVoltageContainer.width + outputCurrentContainer.width - 65
-                                        height: outputVoltageContainer.height - 20
-                                        anchors.bottom: parent.bottom
-                                        anchors.right:parent.right
-                                        anchors.rightMargin: 85
-                                    }
-
-                                    RowLayout {
-                                        anchors.fill: parent
-                                        spacing: 10
-                                        Rectangle {
-                                            id: pgoodLightContainer
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGAlignedLabel {
-                                                id: pgoodLabel
-                                                target: pgoodLight
-                                                text:  "PGOOD"
-                                                alignment: SGAlignedLabel.SideTopCenter
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGStatusLight {
-                                                    id: pgoodLight
-                                                    height: 40 * ratioCalc
-                                                    width: 40 * ratioCalc
-
-                                                    property var read_pgood: platformInterface.status_pgood.pgood
-                                                    onRead_pgoodChanged: {
-                                                        if(read_pgood === "good")
-                                                            pgoodLight.status = SGStatusLight.Green
-                                                        else  pgoodLight.status = SGStatusLight.Red
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            id: outputVoltageContainer
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-
-                                            SGAlignedLabel {
-                                                id: outputVoltageLabel
-                                                target: outputVoltage
-                                                text: "Output Voltage"
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGInfoBox {
-                                                    id: outputVoltage
-                                                    unit: "V"
-                                                    width: 100 * ratioCalc
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-
-                                                    boxFont.family: Fonts.digitalseven
-                                                    unitFont.bold: true
-
-                                                    property var ouputVoltageValue:  platformInterface.status_voltage_current.vout.toFixed(2)
-                                                    onOuputVoltageValueChanged: {
-                                                        outputVoltage.text = ouputVoltageValue
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            id: outputCurrentContainer
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-
-                                            SGAlignedLabel {
-                                                id: outputCurrentLabel
-                                                target: outputCurrent
-                                                text: "Output Current"
-                                                alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGInfoBox {
-                                                    id: outputCurrent
-                                                    unit: "A"
-                                                    width: 100 * ratioCalc
-                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-
-                                                    boxFont.family: Fonts.digitalseven
-                                                    unitFont.bold: true
-                                                    property var ouputCurrentValue:  platformInterface.status_voltage_current.iout.toFixed(2)
-                                                    onOuputCurrentValueChanged: {
-                                                        text = ouputCurrentValue
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Rectangle {
-                                    id:frequencyContainer
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-
-                                    SGAlignedLabel {
-                                        id: frequencyLabel
-                                        target: frequencySlider
-                                        text: "Switch Frequency"
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
-                                        horizontalAlignment: Text.AlignHCenter
-
-                                        SGSlider{
-                                            id: frequencySlider
-                                            fontSizeMultiplier: ratioCalc * 0.8
-                                            fromText.text: "100 kHz"
-                                            toText.text: "1.2 MHz"
-                                            from: 100
-                                            to: 1200
-                                            live: false
-                                            stepSize: 5
-                                            width: frequencyContainer.width/1.2
-
-                                            inputBoxWidth: frequencyContainer.width/8
-                                            inputBox.validator: DoubleValidator {
-                                                top: frequencySlider.to
-                                                bottom: frequencySlider.from
-                                            }
-                                            onUserSet: {
-                                                platformInterface.switchFrequency = value
-                                                platformInterface.set_switching_frequency.update(value)
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Rectangle {
-                                    id:outputContainer
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    SGAlignedLabel {
-                                        id: outputLabel
-                                        target: selectOutputSlider
-                                        text: "Select Output Voltage"
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
-                                        horizontalAlignment: Text.AlignHCenter
-
-                                        SGSlider{
-                                            id: selectOutputSlider
-                                            width: outputContainer.width/1.2
-                                            inputBoxWidth: outputContainer.width/8
-                                            fontSizeMultiplier: ratioCalc * 0.8
-                                            fromText.text: "2 V"
-                                            toText.text: "28 V"
-                                            from: 2
-                                            to: 28
-                                            stepSize: 0.05
-                                            live: false
-
-                                            inputBox.validator: DoubleValidator {
-                                                top: selectOutputSlider.to
-                                                bottom: selectOutputSlider.from
-                                            }
-                                            onUserSet: {
-                                                platformInterface.set_output_voltage.update(value)
-                                            }
-                                        }
-                                    }
-
-                                }
-
-                                Rectangle {
-                                    id:ocpContainer
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-
-                                    SGAlignedLabel {
-                                        id: ocpLabel
-                                        target: ocpSlider
-                                        text: "OCP Threshold"
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
-                                        horizontalAlignment: Text.AlignHCenter
-
-                                        SGSlider{
-                                            id: ocpSlider
-                                            width: ocpContainer.width/1.2
-                                            inputBoxWidth: ocpContainer.width/8
-                                            fontSizeMultiplier: ratioCalc * 0.8
-                                            fromText.text: "0 A"
-
-                                            toText.text: "13 A"
-                                            from: 0
-                                            to: 13
-                                            stepSize: 0.5
-                                            //handleSize: 30
-                                            live: false
-                                            inputBox.validator: DoubleValidator {
-                                                top: ocpSlider.to
-                                                bottom: ocpSlider.from
-                                            }
-                                            onUserSet: {
-                                                platformInterface.set_ocp.update(value)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                ColumnLayout{
+                    anchors {
+                        margins: 15
+                        fill: parent
                     }
-                }
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
 
                     Item {
-                        id: filterHelp3Container
-                        width: gaugeContainer.width/1.7
-                        height: gaugeContainer.height
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.verticalCenterOffset: 40
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: parent.height/1.8
 
-                    }
-                    RowLayout {
-                        anchors.fill: parent
-                        spacing: 20
-                        Rectangle {
-                            id: gaugeReading
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
 
-                            Text {
-                                id: gaugeContainerHeading
-                                text: "Board Temperature, Power Loss, Output Power & Efficiency"
-                                font.bold: true
-                                font.pixelSize: ratioCalc * 15
-                                color: "#696969"
-                                anchors.top: parent.top
-                            }
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: 20
 
-                            Rectangle {
-                                id: line1
-                                height: 2
-                                Layout.alignment: Qt.AlignCenter
-                                width: parent.width
-                                border.color: "lightgray"
-                                radius: 2
-                                anchors {
-                                    top: gaugeContainerHeading.bottom
-                                    topMargin: 7
+                            Item {
+                                id: inputContainer
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                Text {
+                                    id: inputContainerHeading
+                                    text: "Input"
+                                    font.bold: true
+                                    font.pixelSize: ratioCalc * 15
+                                    color: "#696969"
+                                    anchors.top: parent.top
                                 }
-                            }
 
-                            RowLayout {
-                                id: gaugeContainer
-                                anchors {
-                                    top: line1.bottom
-                                    topMargin: 10
-                                    left: parent.left
-                                    right: parent.right
-                                    bottom: parent.bottom
-                                }
-                                spacing: 5
                                 Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    RowLayout {
-                                        anchors.fill:parent
+                                    id: line3
+                                    height: 2
+                                    Layout.alignment: Qt.AlignCenter
+                                    width: parent.width
+                                    border.color: "lightgray"
+                                    radius: 2
+                                    anchors {
+                                        top: inputContainerHeading.bottom
+                                        topMargin: 7
+                                    }
+                                }
 
+                                ColumnLayout {
+                                    anchors {
+                                        top: line3.bottom
+                                        topMargin: 10
+                                        left: parent.left
+                                        right: parent.right
+                                        bottom: parent.bottom
+                                    }
+                                    spacing: 5
+
+                                    Item {
+                                        Layout.preferredWidth: parent.width/1.5
+                                        Layout.preferredHeight: 40
+                                        Layout.alignment: Qt.AlignCenter
                                         Rectangle {
-                                            id: efficiencyGaugeContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            color: "transparent"
-                                            SGAlignedLabel {
-                                                id: efficiencyGaugeLabel
-                                                target: efficiencyGauge
-                                                text: "Efficiency"
-                                                margin: 0
-                                                anchors.centerIn: parent
-                                                alignment: SGAlignedLabel.SideBottomCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                horizontalAlignment: Text.AlignHCenter
-                                                SGCircularGauge {
-                                                    id: efficiencyGauge
-                                                    gaugeFillColor1: Qt.rgba(1,0,0,1)
-                                                    gaugeFillColor2: Qt.rgba(0,1,.25,1)
-                                                    minimumValue: 0
-                                                    maximumValue: 100
-                                                    tickmarkStepSize: 10
-                                                    width: efficiencyGaugeContainer.width
-                                                    height: efficiencyGaugeContainer.height/1.3
+                                            id: warningBox
+                                            color: "red"
+                                            anchors.fill: parent
 
-                                                    unitText: "%"
-                                                    unitTextFontSizeMultiplier: ratioCalc * 2.2
-                                                    property var efficiencyValue: platformInterface.status_voltage_current.efficiency
-                                                    onEfficiencyValueChanged: {
-                                                        value = efficiencyValue
+                                            Text {
+                                                id: warningText
+                                                anchors.centerIn: warningBox
+                                                text: "<b>DO NOT Exceed LDO Input Voltage more than 65V</b>"
+                                                font.pixelSize:  ratioCalc * 12
+                                                color: "white"
+                                            }
+
+                                            Text {
+                                                id: warningIconleft
+                                                anchors {
+                                                    right: warningText.left
+                                                    verticalCenter: warningText.verticalCenter
+                                                    rightMargin: 5
+                                                }
+                                                text: "\ue80e"
+                                                font.family: Fonts.sgicons
+                                                font.pixelSize:  ratioCalc * 14
+                                                color: "white"
+                                            }
+
+                                            Text {
+                                                id: warningIconright
+                                                anchors {
+                                                    left: warningText.right
+                                                    verticalCenter: warningText.verticalCenter
+                                                    leftMargin: 5
+                                                }
+                                                text: "\ue80e"
+                                                font.family: Fonts.sgicons
+                                                font.pixelSize:  ratioCalc * 14
+                                                color: "white"
+                                            }
+                                        }
+                                    }
+
+
+                                    Item {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        Item {
+                                            id: inputCurrentVoltageHelpContainer
+                                            width: inputVoltageContainer.width + inputCurrentContainer.width - 65
+                                            height: inputVoltageContainer.height/2
+                                            anchors.verticalCenter:parent.verticalCenter
+                                            anchors.right:parent.right
+                                            anchors.rightMargin: 85
+                                        }
+
+
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            spacing: 10
+
+                                            Item {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+
+                                                Item {
+                                                    id:  vinLEDHelpContainer
+                                                    width: parent.width/2
+                                                    height: parent.height - 50
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                }
+
+                                                ColumnLayout{
+                                                    id: vinLEDLabelContainer
+                                                    width: parent.width/2
+                                                    height: parent.height
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    Item {
+                                                        Layout.fillWidth: true
+                                                        Layout.fillHeight: true
+
+                                                        SGText {
+                                                            id: vinLabel
+                                                            anchors.left: parent.left
+                                                            anchors.bottom: parent.bottom
+                                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                            font.bold : true
+                                                            horizontalAlignment: Text.AlignHCenter
+                                                        }
+                                                    }
+                                                    Item {
+
+                                                        Layout.fillWidth: true
+                                                        Layout.fillHeight: true
+
+                                                        SGStatusLight {
+                                                            id: ledLight
+                                                            anchors.left: parent.left
+                                                            anchors.leftMargin: 20
+                                                            anchors.top: parent.top
+                                                            height: 40 * ratioCalc
+                                                            width: 40 * ratioCalc
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            Item {
+                                                id: inputVoltageContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                SGAlignedLabel {
+                                                    id: inputVoltageLabel
+                                                    target: inputVoltage
+                                                    text: "Input Voltage"
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGInfoBox {
+                                                        id: inputVoltage
+                                                        unit: "V"
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                        width: 100 * ratioCalc
+                                                        boxFont.family: Fonts.digitalseven
+                                                        unitFont.bold: true
+                                                        property var inputVoltageValue: platformInterface.status_voltage_current.vin.toFixed(2)
+                                                        onInputVoltageValueChanged: {
+                                                            inputVoltage.text = inputVoltageValue
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            Item {
+                                                id: inputCurrentContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                SGAlignedLabel {
+                                                    id: inputCurrentLabel
+                                                    target: inputCurrent
+                                                    text: "Input Current"
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGInfoBox {
+                                                        id: inputCurrent
+                                                        unit: "A"
+                                                        width: 100 * ratioCalc
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                        boxFont.family: Fonts.digitalseven
+                                                        unitFont.bold: true
+                                                        property var inputCurrentValue: platformInterface.status_voltage_current.iin.toFixed(2)
+                                                        onInputCurrentValueChanged: {
+                                                            inputCurrent.text = inputCurrentValue
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
+                                    }
 
-                                        Rectangle {
-                                            id: powerDissipatedContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            color: "transparent"
 
-                                            SGAlignedLabel {
-                                                id: powerDissipatedLabel
-                                                target: powerDissipatedGauge
-                                                text: "Power Loss"
-                                                margin: 0
-                                                anchors.centerIn: parent
-                                                alignment: SGAlignedLabel.SideBottomCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                horizontalAlignment: Text.AlignHCenter
-                                                SGCircularGauge {
-                                                    id: powerDissipatedGauge
-                                                    gaugeFillColor1: Qt.rgba(0,1,.25,1)
-                                                    gaugeFillColor2: Qt.rgba(1,0,0,1)
-                                                    minimumValue: 0
-                                                    maximumValue: 10
-                                                    tickmarkStepSize: 1
-                                                    width: powerDissipatedContainer.width
-                                                    height: powerDissipatedContainer.height/1.3
-                                                    unitText: "W"
-                                                    unitTextFontSizeMultiplier: ratioCalc * 2.2
-                                                    valueDecimalPlaces: 2
-                                                    property var powerDissipatedValue: platformInterface.status_voltage_current.power_dissipated
-                                                    onPowerDissipatedValueChanged: {
-                                                        value = powerDissipatedValue
+                                    Item {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            spacing: 10
+                                            Item {
+                                                id: inputVCCContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                SGAlignedLabel {
+                                                    id: inputVCCLabel
+                                                    target: inputVCC
+                                                    text: "VCC"
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGInfoBox {
+                                                        id: inputVCC
+                                                        unit: "V"
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                        width: 100 * ratioCalc
+
+                                                        boxFont.family: Fonts.digitalseven
+                                                        unitFont.bold: true
+                                                        property var vccValue: platformInterface.status_voltage_current.vcc.toFixed(2)
+                                                        onVccValueChanged: {
+                                                            inputVCC.text = vccValue
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            Item {
+                                                id: pvccConatiner
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+
+                                                SGAlignedLabel {
+                                                    id: pvccLabel
+                                                    target: pvccValue
+                                                    text: "PVCC"
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGInfoBox {
+                                                        id: pvccValue
+                                                        property var pvccValueMonitor: platformInterface.status_voltage_current.pvcc.toFixed(2)
+                                                        onPvccValueMonitorChanged: {
+                                                            text = pvccValueMonitor
+                                                        }
+
+                                                        unit: "V"
+                                                        width: 100 * ratioCalc
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                        boxFont.family: Fonts.digitalseven
+                                                        unitFont.bold: true
+                                                    }
+                                                }
+                                            }
+                                            Item {
+                                                id: vbstConatiner
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+
+                                                SGAlignedLabel {
+                                                    id: vbstLabel
+                                                    target: vbstValue
+                                                    text: "VBST"
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGInfoBox {
+                                                        id: vbstValue
+                                                        property var vboostValue: platformInterface.status_voltage_current.vboost.toFixed(2)
+                                                        onVboostValueChanged: {
+                                                            vbstValue.text = vboostValue
+                                                        }
+                                                        unit: "V"
+                                                        width: 100 * ratioCalc
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                        boxFont.family: Fonts.digitalseven
+                                                        unitFont.bold: true
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
+                            }
+
+                            Item {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                Text {
+                                    id: outputContainerHeading
+                                    text: "Output"
+                                    font.bold: true
+                                    font.pixelSize: ratioCalc * 15
+                                    color: "#696969"
+                                    anchors.top: parent.top
+                                }
 
                                 Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
+                                    id: line4
+                                    height: 2
+                                    Layout.alignment: Qt.AlignCenter
+                                    width: parent.width
+                                    border.color: "lightgray"
+                                    radius: 2
+                                    anchors {
+                                        top: outputContainerHeading.bottom
+                                        topMargin: 7
+                                    }
+                                }
 
-                                    RowLayout {
-                                        anchors.fill:parent
+                                ColumnLayout {
+                                    anchors {
+                                        top: line4.bottom
+                                        topMargin: 10
+                                        left: parent.left
+                                        right: parent.right
+                                        bottom: parent.bottom
+                                    }
+                                    spacing: 5
+                                    Item {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        Item {
+                                            id: outputCurrentVoltageHelpContainer
+                                            width: outputVoltageContainer.width + outputCurrentContainer.width - 65
+                                            height: outputVoltageContainer.height - 20
+                                            anchors.bottom: parent.bottom
+                                            anchors.right:parent.right
+                                            anchors.rightMargin: 85
+                                        }
 
-                                        Rectangle {
-                                            id: powerOutputContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: powerOutputLabel
-                                                target: powerOutputGauge
-                                                text: "Output Power"
-                                                margin: 0
-                                                anchors.centerIn: parent
-                                                alignment: SGAlignedLabel.SideBottomCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                horizontalAlignment: Text.AlignHCenter
-                                                SGCircularGauge {
-                                                    id: powerOutputGauge
-                                                    gaugeFillColor1: Qt.rgba(0,0.5,1,1)
-                                                    gaugeFillColor2: Qt.rgba(1,0,0,1)
-                                                    minimumValue: 0
-                                                    maximumValue: 250
-                                                    tickmarkStepSize: 50
-                                                    unitText: "W"
-                                                    unitTextFontSizeMultiplier: ratioCalc * 2.2
-                                                    width: powerOutputContainer.width
-                                                    height: powerOutputContainer.height/1.3
-                                                    valueDecimalPlaces: 2
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            spacing: 10
+                                            Item {
+                                                id: pgoodLightContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
 
-                                                    property var outputPowerValue: platformInterface.status_voltage_current.output_power
-                                                    onOutputPowerValueChanged: {
-                                                        value = outputPowerValue
+                                                SGAlignedLabel {
+                                                    id: pgoodLabel
+                                                    target: pgoodLight
+                                                    text:  "PGOOD"
+                                                    alignment: SGAlignedLabel.SideTopCenter
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGStatusLight {
+                                                        id: pgoodLight
+                                                        height: 40 * ratioCalc
+                                                        width: 40 * ratioCalc
+
+                                                        property var read_pgood: platformInterface.status_pgood.pgood
+                                                        onRead_pgoodChanged: {
+                                                            if(read_pgood === "good")
+                                                                pgoodLight.status = SGStatusLight.Green
+                                                            else  pgoodLight.status = SGStatusLight.Red
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
+                                            Item {
+                                                id: outputVoltageContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
 
-                                        Rectangle {
-                                            id: tempGaugeContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: tempGaugeLabel
-                                                target: tempGauge
-                                                text: "Board Temperature"
-                                                margin: 0
-                                                anchors.centerIn: parent
-                                                alignment: SGAlignedLabel.SideBottomCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                horizontalAlignment: Text.AlignHCenter
 
-                                                SGCircularGauge {
-                                                    id: tempGauge
-                                                    gaugeFillColor1: Qt.rgba(0,1,.25,1)
-                                                    gaugeFillColor2: Qt.rgba(1,0,0,1)
-                                                    minimumValue: -55
-                                                    maximumValue: 125
-                                                    tickmarkStepSize: 20
-                                                    unitText: "°C"
-                                                    unitTextFontSizeMultiplier: ratioCalc * 2.2
-                                                    width: tempGaugeContainer.width
-                                                    height: tempGaugeContainer.height/1.3
+                                                SGAlignedLabel {
+                                                    id: outputVoltageLabel
+                                                    target: outputVoltage
+                                                    text: "Output Voltage"
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGInfoBox {
+                                                        id: outputVoltage
+                                                        unit: "V"
+                                                        width: 100 * ratioCalc
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
 
-                                                    property var tempValue: platformInterface.status_temperature_sensor.temperature
-                                                    onTempValueChanged: {
-                                                        value = tempValue
+                                                        boxFont.family: Fonts.digitalseven
+                                                        unitFont.bold: true
+
+                                                        property var ouputVoltageValue:  platformInterface.status_voltage_current.vout.toFixed(2)
+                                                        onOuputVoltageValueChanged: {
+                                                            outputVoltage.text = ouputVoltageValue
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            Item {
+                                                id: outputCurrentContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+
+                                                SGAlignedLabel {
+                                                    id: outputCurrentLabel
+                                                    target: outputCurrent
+                                                    text: "Output Current"
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGInfoBox {
+                                                        id: outputCurrent
+                                                        unit: "A"
+                                                        width: 100 * ratioCalc
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+
+                                                        boxFont.family: Fonts.digitalseven
+                                                        unitFont.bold: true
+                                                        property var ouputCurrentValue:  platformInterface.status_voltage_current.iout.toFixed(2)
+                                                        onOuputCurrentValueChanged: {
+                                                            text = ouputCurrentValue
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                }
-                                Rectangle{
-                                    Layout.preferredHeight: parent.height/1.5
-                                    Layout.preferredWidth: parent.width/7
 
-                                    ColumnLayout{
-                                        anchors.fill: parent
-                                        Rectangle {
-                                            id: dltConnectedContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
+                                    Item {
+                                        id:frequencyContainer
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
 
-                                            SGAlignedLabel {
-                                                id: dltConnectedLabel
-                                                target: dltConnected
-                                                text: "DLT \n Connected"
-                                                alignment:  SGAlignedLabel.SideTopCenter
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                horizontalAlignment: Text.AlignHCenter
-                                                font.bold : true
-                                                CheckBox{
-                                                    id: dltConnected
-                                                    width: 25
-                                                    height: 25
-                                                    onCheckedChanged: {
-                                                        platformInterface.set_dlt_connected.update(checked)
-                                                        if(checked){
-                                                            efficiencyGaugeContainer.enabled = false
-                                                            efficiencyGaugeContainer.opacity = 0.5
-                                                            powerDissipatedContainer.enabled = false
-                                                            powerDissipatedContainer.opacity = 0.5
-                                                            powerOutputContainer.enabled = false
-                                                            powerOutputContainer.opacity = 0.5
-                                                        }
-                                                        else{
-                                                            efficiencyGaugeContainer.enabled = true
-                                                            efficiencyGaugeContainer.opacity = 1.0
-                                                            powerDissipatedContainer.enabled = true
-                                                            powerDissipatedContainer.opacity = 1.0
-                                                            powerOutputContainer.enabled = true
-                                                            powerOutputContainer.opacity = 1.0
-                                                        }
-                                                    }
+                                        SGAlignedLabel {
+                                            id: frequencyLabel
+                                            target: frequencySlider
+                                            text: "Switch Frequency"
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+                                            horizontalAlignment: Text.AlignHCenter
+
+                                            SGSlider{
+                                                id: frequencySlider
+                                                fontSizeMultiplier: ratioCalc * 0.8
+                                                fromText.text: "100 kHz"
+                                                toText.text: "1.2 MHz"
+                                                from: 100
+                                                to: 1200
+                                                live: false
+                                                stepSize: 5
+                                                width: frequencyContainer.width/1.2
+
+                                                inputBoxWidth: frequencyContainer.width/8
+                                                inputBox.validator: DoubleValidator {
+                                                    top: frequencySlider.to
+                                                    bottom: frequencySlider.from
+                                                }
+                                                onUserSet: {
+                                                    platformInterface.switchFrequency = value
+                                                    platformInterface.set_switching_frequency.update(value)
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    Item {
+                                        id:outputContainer
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        SGAlignedLabel {
+                                            id: outputLabel
+                                            target: selectOutputSlider
+                                            text: "Select Output Voltage"
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+                                            horizontalAlignment: Text.AlignHCenter
+
+                                            SGSlider{
+                                                id: selectOutputSlider
+                                                width: outputContainer.width/1.2
+                                                inputBoxWidth: outputContainer.width/8
+                                                fontSizeMultiplier: ratioCalc * 0.8
+                                                fromText.text: "2 V"
+                                                toText.text: "28 V"
+                                                from: 2
+                                                to: 28
+                                                stepSize: 0.05
+                                                live: false
+
+                                                inputBox.validator: DoubleValidator {
+                                                    top: selectOutputSlider.to
+                                                    bottom: selectOutputSlider.from
+                                                }
+                                                onUserSet: {
+                                                    platformInterface.set_output_voltage.update(value)
                                                 }
                                             }
                                         }
 
-                                        Rectangle {
+                                    }
 
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: osAlertLabel
-                                                target: osALERT
-                                                text:  "OS/ALERT"
-                                                alignment: SGAlignedLabel.SideTopCenter
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGStatusLight {
-                                                    id: osALERT
-                                                    height: 40 * ratioCalc
-                                                    width: 40 * ratioCalc
+                                    Item {
+                                        id:ocpContainer
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
 
-                                                    property var status_os_alert: platformInterface.status_os_alert.os_alert
-                                                    onStatus_os_alertChanged: {
-                                                        if(status_os_alert === true)
-                                                            osALERT.status = SGStatusLight.Red
-                                                        else  osALERT.status = SGStatusLight.Off
-                                                    }
+                                        SGAlignedLabel {
+                                            id: ocpLabel
+                                            target: ocpSlider
+                                            text: "OCP Threshold"
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+                                            horizontalAlignment: Text.AlignHCenter
+
+                                            SGSlider{
+                                                id: ocpSlider
+                                                width: ocpContainer.width/1.2
+                                                inputBoxWidth: ocpContainer.width/8
+                                                fontSizeMultiplier: ratioCalc * 0.8
+                                                fromText.text: "0 A"
+
+                                                toText.text: "13 A"
+                                                from: 0
+                                                to: 13
+                                                stepSize: 0.5
+                                                //handleSize: 30
+                                                live: false
+                                                inputBox.validator: DoubleValidator {
+                                                    top: ocpSlider.to
+                                                    bottom: ocpSlider.from
+                                                }
+                                                onUserSet: {
+                                                    platformInterface.set_ocp.update(value)
                                                 }
                                             }
                                         }
@@ -1137,239 +847,521 @@ ColumnLayout {
                                 }
                             }
                         }
+                    }
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
 
-                        Rectangle {
-                            id: controlContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
-                            Text {
-                                id: controlContainerHeading
-                                text: "Control"
-                                font.bold: true
-                                font.pixelSize: ratioCalc * 15
-                                color: "#696969"
-                                anchors.top: parent.top
-                            }
+                        Item {
+                            id: filterHelp3Container
+                            width: gaugeContainer.width/1.7
+                            height: gaugeContainer.height
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.verticalCenterOffset: 40
 
-                            Rectangle {
-                                id: line2
-                                height: 2
-                                Layout.alignment: Qt.AlignCenter
-                                width: parent.width
-                                border.color: "lightgray"
-                                radius: 2
-                                anchors {
-                                    top: controlContainerHeading.bottom
-                                    topMargin: 7
+                        }
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: 20
+                            Item {
+                                id: gaugeReading
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+
+                                Text {
+                                    id: gaugeContainerHeading
+                                    text: "Board Temperature, Power Loss, Output Power & Efficiency"
+                                    font.bold: true
+                                    font.pixelSize: ratioCalc * 15
+                                    color: "#696969"
+                                    anchors.top: parent.top
                                 }
-                            }
-
-                            ColumnLayout {
-                                anchors {
-                                    top: line2.bottom
-                                    topMargin: 10
-                                    left: parent.left
-                                    right: parent.right
-                                    bottom: parent.bottom
-                                }
-                                spacing: 5
 
                                 Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    RowLayout {
-                                        anchors.fill: parent
-                                        spacing: 10
-                                        Rectangle {
-                                            id:enableContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
+                                    id: line1
+                                    height: 2
+                                    Layout.alignment: Qt.AlignCenter
+                                    width: parent.width
+                                    border.color: "lightgray"
+                                    radius: 2
+                                    anchors {
+                                        top: gaugeContainerHeading.bottom
+                                        topMargin: 7
+                                    }
+                                }
 
-                                            SGAlignedLabel {
-                                                id: enableSwitchLabel
-                                                target: enableSwitch
-                                                text: "Enable (EN)"
-                                                alignment:  SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGSwitch {
-                                                    id: enableSwitch
+                                RowLayout {
+                                    id: gaugeContainer
+                                    anchors {
+                                        top: line1.bottom
+                                        topMargin: 10
+                                        left: parent.left
+                                        right: parent.right
+                                        bottom: parent.bottom
+                                    }
+                                    spacing: 5
+                                    Item {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        RowLayout {
+                                            anchors.fill:parent
 
-                                                    labelsInside: true
-                                                    checkedLabel: "On"
-                                                    uncheckedLabel:   "Off"
-                                                    textColor: "black"              // Default: "black"
-                                                    handleColor: "white"            // Default: "white"
-                                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                    checked: platformInterface.enabled
+                                            Item {
+                                                id: efficiencyGaugeContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGAlignedLabel {
+                                                    id: efficiencyGaugeLabel
+                                                    target: efficiencyGauge
+                                                    text: "Efficiency"
+                                                    margin: 0
+                                                    anchors.centerIn: parent
+                                                    alignment: SGAlignedLabel.SideBottomCenter
                                                     fontSizeMultiplier: ratioCalc
-                                                    onToggled: {
-                                                        platformInterface.enabled = checked
-                                                        if(checked){
-                                                            platformInterface.set_enable.update("on")
-                                                            frequencyContainer.enabled = false
-                                                            frequencyContainer.opacity = 0.5
-                                                            vccContainer.enabled = false
-                                                            vccContainer.opacity = 0.5
-                                                            outputContainer.enabled = false
-                                                            outputContainer.opacity = 0.5
-                                                            ocpContainer.enabled = false
-                                                            ocpContainer.opacity = 0.5
-                                                            syncContainer.enabled = false
-                                                            syncContainer.opacity = 0.5
-                                                            softStartContainer.enabled = false
-                                                            softStartContainer.opacity = 0.5
-                                                            modeContainer.enabled = false
-                                                            modeContainer.opacity = 0.5
+                                                    font.bold : true
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    SGCircularGauge {
+                                                        id: efficiencyGauge
+                                                        gaugeFillColor1: Qt.rgba(1,0,0,1)
+                                                        gaugeFillColor2: Qt.rgba(0,1,.25,1)
+                                                        minimumValue: 0
+                                                        maximumValue: 100
+                                                        tickmarkStepSize: 10
+                                                        width: efficiencyGaugeContainer.width
+                                                        height: efficiencyGaugeContainer.height/1.3
+
+                                                        unitText: "%"
+                                                        unitTextFontSizeMultiplier: ratioCalc * 2.2
+                                                        property var efficiencyValue: platformInterface.status_voltage_current.efficiency
+                                                        onEfficiencyValueChanged: {
+                                                            value = efficiencyValue
                                                         }
-                                                        else{
-                                                            platformInterface.set_enable.update("off")
-                                                            frequencyContainer.enabled = true
-                                                            frequencyContainer.opacity = 1.0
-                                                            vccContainer.enabled = true
-                                                            vccContainer.opacity = 1.0
-                                                            outputContainer.enabled = true
-                                                            outputContainer.opacity = 1
-                                                            ocpContainer.enabled = true
-                                                            ocpContainer.opacity = 1
-                                                            syncContainer.enabled = true
-                                                            syncContainer.opacity = 1
-                                                            softStartContainer.enabled = true
-                                                            softStartContainer.opacity = 1
-                                                            modeContainer.enabled = true
-                                                            modeContainer.opacity = 1
+                                                    }
+                                                }
+                                            }
+
+                                            Item {
+                                                id: powerDissipatedContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGAlignedLabel {
+                                                    id: powerDissipatedLabel
+                                                    target: powerDissipatedGauge
+                                                    text: "Power Loss"
+                                                    margin: 0
+                                                    anchors.centerIn: parent
+                                                    alignment: SGAlignedLabel.SideBottomCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    SGCircularGauge {
+                                                        id: powerDissipatedGauge
+                                                        gaugeFillColor1: Qt.rgba(0,1,.25,1)
+                                                        gaugeFillColor2: Qt.rgba(1,0,0,1)
+                                                        minimumValue: 0
+                                                        maximumValue: 10
+                                                        tickmarkStepSize: 1
+                                                        width: powerDissipatedContainer.width
+                                                        height: powerDissipatedContainer.height/1.3
+                                                        unitText: "W"
+                                                        unitTextFontSizeMultiplier: ratioCalc * 2.2
+                                                        valueDecimalPlaces: 2
+                                                        property var powerDissipatedValue: platformInterface.status_voltage_current.power_dissipated
+                                                        onPowerDissipatedValueChanged: {
+                                                            value = powerDissipatedValue
                                                         }
                                                     }
                                                 }
                                             }
                                         }
+                                    }
 
-                                        Rectangle {
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
+                                    Item {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
 
+                                        RowLayout {
+                                            anchors.fill:parent
 
-                                            RowLayout {
-                                                anchors.fill: parent
-                                                spacing: 10
-                                                Rectangle {
-                                                    id: syncContainer
-                                                    Layout.fillHeight: true
-                                                    Layout.fillWidth: true
-                                                    SGAlignedLabel {
-                                                        id: syncLabel
-                                                        target: syncCombo
-                                                        text: "Sync Mode"
-                                                        horizontalAlignment: Text.AlignHCenter
-                                                        font.bold : true
-                                                        alignment: SGAlignedLabel.SideTopLeft
-                                                        anchors.verticalCenter: parent.verticalCenter
-                                                        fontSizeMultiplier: ratioCalc
-                                                        SGComboBox {
-                                                            id:  syncCombo
-                                                            fontSizeMultiplier: ratioCalc
+                                            Item {
+                                                id: powerOutputContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGAlignedLabel {
+                                                    id: powerOutputLabel
+                                                    target: powerOutputGauge
+                                                    text: "Output Power"
+                                                    margin: 0
+                                                    anchors.centerIn: parent
+                                                    alignment: SGAlignedLabel.SideBottomCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    SGCircularGauge {
+                                                        id: powerOutputGauge
+                                                        gaugeFillColor1: Qt.rgba(0,0.5,1,1)
+                                                        gaugeFillColor2: Qt.rgba(1,0,0,1)
+                                                        minimumValue: 0
+                                                        maximumValue: 250
+                                                        tickmarkStepSize: 50
+                                                        unitText: "W"
+                                                        unitTextFontSizeMultiplier: ratioCalc * 2.2
+                                                        width: powerOutputContainer.width
+                                                        height: powerOutputContainer.height/1.3
+                                                        valueDecimalPlaces: 2
 
-                                                            model: [ "Master", "Slave" ]
-                                                            onActivated: {
-                                                                platformInterface.set_sync_mode.update(currentText.toLowerCase())
+                                                        property var outputPowerValue: platformInterface.status_voltage_current.output_power
+                                                        onOutputPowerValueChanged: {
+                                                            value = outputPowerValue
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            Item {
+                                                id: tempGaugeContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGAlignedLabel {
+                                                    id: tempGaugeLabel
+                                                    target: tempGauge
+                                                    text: "Board Temperature"
+                                                    margin: 0
+                                                    anchors.centerIn: parent
+                                                    alignment: SGAlignedLabel.SideBottomCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    horizontalAlignment: Text.AlignHCenter
+
+                                                    SGCircularGauge {
+                                                        id: tempGauge
+                                                        gaugeFillColor1: Qt.rgba(0,1,.25,1)
+                                                        gaugeFillColor2: Qt.rgba(1,0,0,1)
+                                                        minimumValue: -55
+                                                        maximumValue: 125
+                                                        tickmarkStepSize: 20
+                                                        unitText: "°C"
+                                                        unitTextFontSizeMultiplier: ratioCalc * 2.2
+                                                        width: tempGaugeContainer.width
+                                                        height: tempGaugeContainer.height/1.3
+
+                                                        property var tempValue: platformInterface.status_temperature_sensor.temperature
+                                                        onTempValueChanged: {
+                                                            value = tempValue
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    Item{
+                                        Layout.preferredHeight: parent.height/1.5
+                                        Layout.preferredWidth: parent.width/7
+
+                                        ColumnLayout{
+                                            anchors.fill: parent
+                                            Item {
+                                                id: dltConnectedContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+
+                                                SGAlignedLabel {
+                                                    id: dltConnectedLabel
+                                                    target: dltConnected
+                                                    text: "DLT \n Connected"
+                                                    alignment:  SGAlignedLabel.SideTopCenter
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    font.bold : true
+                                                    CheckBox{
+                                                        id: dltConnected
+                                                        width: 25
+                                                        height: 25
+                                                        onCheckedChanged: {
+                                                            platformInterface.set_dlt_connected.update(checked)
+                                                            if(checked){
+                                                                efficiencyGaugeContainer.enabled = false
+                                                                efficiencyGaugeContainer.opacity = 0.5
+                                                                powerDissipatedContainer.enabled = false
+                                                                powerDissipatedContainer.opacity = 0.5
+                                                                powerOutputContainer.enabled = false
+                                                                powerOutputContainer.opacity = 0.5
+                                                            }
+                                                            else{
+                                                                efficiencyGaugeContainer.enabled = true
+                                                                efficiencyGaugeContainer.opacity = 1.0
+                                                                powerDissipatedContainer.enabled = true
+                                                                powerDissipatedContainer.opacity = 1.0
+                                                                powerOutputContainer.enabled = true
+                                                                powerOutputContainer.opacity = 1.0
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        }
 
-                                        Rectangle{
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
+                                            Item {
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGAlignedLabel {
+                                                    id: osAlertLabel
+                                                    target: osALERT
+                                                    text:  "OS/ALERT"
+                                                    alignment: SGAlignedLabel.SideTopCenter
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGStatusLight {
+                                                        id: osALERT
+                                                        height: 40 * ratioCalc
+                                                        width: 40 * ratioCalc
+
+                                                        property var status_os_alert: platformInterface.status_os_alert.os_alert
+                                                        onStatus_os_alertChanged: {
+                                                            if(status_os_alert === true)
+                                                                osALERT.status = SGStatusLight.Red
+                                                            else  osALERT.status = SGStatusLight.Off
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
+                            }
+
+                            Item {
+                                id: controlContainer
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                Text {
+                                    id: controlContainerHeading
+                                    text: "Control"
+                                    font.bold: true
+                                    font.pixelSize: ratioCalc * 15
+                                    color: "#696969"
+                                    anchors.top: parent.top
+                                }
 
                                 Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    RowLayout {
-                                        anchors.fill: parent
-                                        spacing: 10
-                                        Rectangle {
-                                            id : modeContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: modeLabel
-                                                target: modeCombo
-                                                text: "Operating Mode"
-                                                horizontalAlignment: Text.AlignHCenter
-                                                font.bold : true
-                                                alignment:  SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                SGComboBox {
-                                                    id:  modeCombo
-                                                    model: [ "DCM" , "FCCM"]
-                                                    fontSizeMultiplier: ratioCalc
-                                                    onActivated: {
-                                                        if(currentIndex == 0){
-                                                            platformInterface.select_mode.update("dcm")
-                                                            vbstConatiner.enabled = false
-                                                            vbstConatiner.opacity = 0.5
-                                                        }
-                                                        else  {
-                                                            platformInterface.select_mode.update("fccm")
-                                                            vbstConatiner.enabled = true
-                                                            vbstConatiner.opacity = 1.0
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            id: softStartContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: softStartLabel
-                                                target: softStartCombo
-                                                text: "Soft Start"
-                                                horizontalAlignment: Text.AlignHCenter
-                                                font.bold : true
-                                                alignment:  SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                SGComboBox {
-                                                    id:  softStartCombo
-                                                    model: [ "3ms" , "6ms"]
-                                                    fontSizeMultiplier: ratioCalc
-                                                    onActivated: {
-                                                        platformInterface.set_soft_start.update(currentText)
+                                    id: line2
+                                    height: 2
+                                    Layout.alignment: Qt.AlignCenter
+                                    width: parent.width
+                                    border.color: "lightgray"
+                                    radius: 2
+                                    anchors {
+                                        top: controlContainerHeading.bottom
+                                        topMargin: 7
+                                    }
+                                }
 
+                                ColumnLayout {
+                                    anchors {
+                                        top: line2.bottom
+                                        topMargin: 10
+                                        left: parent.left
+                                        right: parent.right
+                                        bottom: parent.bottom
+                                    }
+                                    spacing: 5
+
+                                    Item {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            spacing: 10
+                                            Item {
+                                                id:enableContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+
+                                                SGAlignedLabel {
+                                                    id: enableSwitchLabel
+                                                    target: enableSwitch
+                                                    text: "Enable (EN)"
+                                                    alignment:  SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    font.bold : true
+                                                    SGSwitch {
+                                                        id: enableSwitch
+
+                                                        labelsInside: true
+                                                        checkedLabel: "On"
+                                                        uncheckedLabel:   "Off"
+                                                        textColor: "black"              // Default: "black"
+                                                        handleColor: "white"            // Default: "white"
+                                                        grooveColor: "#ccc"             // Default: "#ccc"
+                                                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                        checked: platformInterface.enabled
+                                                        fontSizeMultiplier: ratioCalc
+                                                        onToggled: {
+                                                            platformInterface.enabled = checked
+                                                            if(checked){
+                                                                platformInterface.set_enable.update("on")
+                                                                frequencyContainer.enabled = false
+                                                                frequencyContainer.opacity = 0.5
+                                                                vccContainer.enabled = false
+                                                                vccContainer.opacity = 0.5
+                                                                outputContainer.enabled = false
+                                                                outputContainer.opacity = 0.5
+                                                                ocpContainer.enabled = false
+                                                                ocpContainer.opacity = 0.5
+                                                                syncContainer.enabled = false
+                                                                syncContainer.opacity = 0.5
+                                                                softStartContainer.enabled = false
+                                                                softStartContainer.opacity = 0.5
+                                                                modeContainer.enabled = false
+                                                                modeContainer.opacity = 0.5
+                                                            }
+                                                            else{
+                                                                platformInterface.set_enable.update("off")
+                                                                frequencyContainer.enabled = true
+                                                                frequencyContainer.opacity = 1.0
+                                                                vccContainer.enabled = true
+                                                                vccContainer.opacity = 1.0
+                                                                outputContainer.enabled = true
+                                                                outputContainer.opacity = 1
+                                                                ocpContainer.enabled = true
+                                                                ocpContainer.opacity = 1
+                                                                syncContainer.enabled = true
+                                                                syncContainer.opacity = 1
+                                                                softStartContainer.enabled = true
+                                                                softStartContainer.opacity = 1
+                                                                modeContainer.enabled = true
+                                                                modeContainer.opacity = 1
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
+
+                                            Item {
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                RowLayout {
+                                                    anchors.fill: parent
+                                                    spacing: 10
+                                                    Item {
+                                                        id: syncContainer
+                                                        Layout.fillHeight: true
+                                                        Layout.fillWidth: true
+                                                        SGAlignedLabel {
+                                                            id: syncLabel
+                                                            target: syncCombo
+                                                            text: "Sync Mode"
+                                                            horizontalAlignment: Text.AlignHCenter
+                                                            font.bold : true
+                                                            alignment: SGAlignedLabel.SideTopLeft
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            fontSizeMultiplier: ratioCalc
+                                                            SGComboBox {
+                                                                id:  syncCombo
+                                                                fontSizeMultiplier: ratioCalc
+
+                                                                model: [ "Master", "Slave" ]
+                                                                onActivated: {
+                                                                    platformInterface.set_sync_mode.update(currentText.toLowerCase())
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            Item{
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                            }
                                         }
-                                        Rectangle {
-                                            id: vccContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
-                                            SGAlignedLabel {
-                                                id: vccLabel
-                                                target: vccCombo
-                                                text: "VCC Source"
-                                                horizontalAlignment: Text.AlignHCenter
-                                                font.bold : true
-                                                alignment:  SGAlignedLabel.SideTopLeft
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                SGComboBox {
-                                                    id:  vccCombo
-                                                    model: [ "PVCC" , "5V_REG"]
+                                    }
+
+                                    Item {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            spacing: 10
+                                            Item {
+                                                id : modeContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGAlignedLabel {
+                                                    id: modeLabel
+                                                    target: modeCombo
+                                                    text: "Operating Mode"
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    font.bold : true
+                                                    alignment:  SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
                                                     fontSizeMultiplier: ratioCalc
-                                                    onActivated: {
-                                                        platformInterface.select_VCC_mode.update(currentText.toLowerCase())
+                                                    SGComboBox {
+                                                        id:  modeCombo
+                                                        model: [ "DCM" , "FCCM"]
+                                                        fontSizeMultiplier: ratioCalc
+                                                        onActivated: {
+                                                            if(currentIndex == 0){
+                                                                platformInterface.select_mode.update("dcm")
+                                                                vbstConatiner.enabled = false
+                                                                vbstConatiner.opacity = 0.5
+                                                            }
+                                                            else  {
+                                                                platformInterface.select_mode.update("fccm")
+                                                                vbstConatiner.enabled = true
+                                                                vbstConatiner.opacity = 1.0
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            Item {
+                                                id: softStartContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGAlignedLabel {
+                                                    id: softStartLabel
+                                                    target: softStartCombo
+                                                    text: "Soft Start"
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    font.bold : true
+                                                    alignment:  SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    SGComboBox {
+                                                        id:  softStartCombo
+                                                        model: [ "3ms" , "6ms"]
+                                                        fontSizeMultiplier: ratioCalc
+                                                        onActivated: {
+                                                            platformInterface.set_soft_start.update(currentText)
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            Item {
+                                                id: vccContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                SGAlignedLabel {
+                                                    id: vccLabel
+                                                    target: vccCombo
+                                                    text: "VCC Source"
+                                                    horizontalAlignment: Text.AlignHCenter
+                                                    font.bold : true
+                                                    alignment:  SGAlignedLabel.SideTopLeft
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    fontSizeMultiplier: ratioCalc
+                                                    SGComboBox {
+                                                        id:  vccCombo
+                                                        model: [ "PVCC" , "5V_REG"]
+                                                        fontSizeMultiplier: ratioCalc
+                                                        onActivated: {
+                                                            platformInterface.select_VCC_mode.update(currentText.toLowerCase())
+                                                        }
                                                     }
                                                 }
                                             }
