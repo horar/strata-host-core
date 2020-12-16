@@ -225,6 +225,16 @@ Rectangle {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
+                onResizingChanged: {
+                    if (!resizing) {
+                        if (debugPanel.width >= debugPanel.minimumExpandWidth) {
+                            debugPanel.expandWidth = debugPanel.width
+                        } else {
+                            debugPanel.expandWidth = debugPanel.minimumExpandWidth
+                        }
+                    }
+                }
+
                 Loader {
                     id: controlViewLoader
                     Layout.fillHeight: true
@@ -261,8 +271,6 @@ Rectangle {
                 DebugPanel {
                     id: debugPanel
                     Layout.fillHeight: true
-
-                    expandWidth: 400
                 }
             }
         }

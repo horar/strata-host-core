@@ -9,8 +9,10 @@ Rectangle {
     visible: debugMenuSource.toString() !== ""
 
     readonly property bool expanded: width > 0 && visible
+    readonly property int minimumExpandWidth: 400
+
     property url debugMenuSource: editor.fileTreeModel.debugMenuSource
-    property int expandWidth: 500
+    property int expandWidth: minimumExpandWidth
     property alias mainContainer: mainContainer
 
     Button {
