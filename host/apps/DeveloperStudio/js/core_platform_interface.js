@@ -34,18 +34,31 @@ function data_source_handler (payload) {
                     if (platformInterface.apiVersion && platformInterface.apiVersion > 1) {
                         // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
                         for (const key of Object.keys(notification["payload"])) {
-                            let obj = notification["payload"][key];
+                            let obj = notification["payload"][key]
+                            if (!platformInterface["notifications"][notification_key][key]) {
+                                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property", key, "to platform interface notification '" + notification_key + "'")
+                                continue;
+                            }
+
                             if (Array.isArray(obj)) {
-                                // Loop through each value in array and set according property in platforminterface
-                                for (let i = 0; i < obj.length; i++) {
-                                    let idxName = `${key}_${i}`;
-                                    platformInterface["notifications"][notification_key][key][idxName] = obj[i];
+                                if (Array.isArray(platformInterface["notifications"][notification_key][key])) {
+                                    // Property is a dynamic array
+                                    platformInterface["notifications"][notification_key][key] = obj;
+                                } else {
+                                    if (isQtObject(platformInterface["notifications"][notification_key][key])) {
+                                        setNotification(platformInterface["notifications"][notification_key], key, obj);
+                                    }
+                                }
+                            } else if (typeof obj === "object") {
+                                if (isQtObject(platformInterface["notifications"][notification_key][key])) {
+                                    setNotification(platformInterface["notifications"][notification_key], key, obj);
+                                } else {
+                                    platformInterface["notifications"][notification_key][key] = obj;
                                 }
                             } else {
-                                platformInterface["notifications"][notification_key][key] = notification["payload"][key]
+                                platformInterface["notifications"][notification_key][key] = obj;
                             }
                         }
-                        
                     } else {
                         platformInterface[notification_key] = Object.create(notification["payload"]);
                     }
@@ -103,6 +116,45 @@ function injectDebugNotification(notification) {
         "message": JSON.stringify(message)
     }
     data_source_handler(JSON.stringify(wrapper))
+}
+
+/*
+  Recursively set the notification property for QtObjects
+ */
+function setNotification(parentObject, key, payloadValue) {
+    if (Array.isArray(payloadValue)) {
+        for (let i = 0; i < payloadValue.length; i++) {
+            let idxName = `index_${i}`;
+
+            if (Array.isArray(parentObject[key][idxName])) {
+                parentObject[key][idxName] = payloadValue[i];
+                break;
+            } else if (typeof parentObject[key][idxName] === "object") {
+                if (isQtObject(parentObject[key][idxName])) {
+                    setNotification(parentObject[key], idxName, payloadValue[i])
+                } else {
+                    parentObject[key][idxName] = payloadValue[i]
+                }
+            } else {
+                parentObject[key][idxName] = payloadValue[i]
+            }
+        }
+    } else if (typeof payloadValue === "object") {
+        let payloadValueKeys = Object.keys(payloadValue);
+        for (let i = 0; i < payloadValueKeys.length; i++) {
+            setNotification(parentObject[key], payloadValueKeys[i], payloadValue[payloadValueKeys[i]])
+        }
+    } else {
+        parentObject[key] = payloadValue
+    }
+}
+
+function isQtObject(obj) {
+    let parsedObject = JSON.parse(JSON.stringify(obj));
+    if (parsedObject.hasOwnProperty("objectName") && (parsedObject["objectName"] === "array" || parsedObject["objectName"] === "object")) {
+        return true
+    }
+    return false
 }
 
 init()
