@@ -32,12 +32,17 @@ function data_source_handler (payload) {
                 if (notification.hasOwnProperty("value") && notification.hasOwnProperty("payload")) {
                     var notification_key = notification.value
                     if (platformInterface.apiVersion && platformInterface.apiVersion > 1) {
+
+                        if (!platformInterface["notifications"].hasOwnProperty(notification_key)) {
+                            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "This platform interface doesn't support the notification '" + notification_key + "'. Ignoring...")
+                            return;
+                        }
+
                         // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
                         for (const key of Object.keys(notification["payload"])) {
                             const obj = notification["payload"][key]
 
-                            const json = JSON.parse(JSON.stringify(platformInterface["notifications"][notification_key]))
-                            if (!json.hasOwnProperty(key)) {
+                            if (!platformInterface["notifications"][notification_key].hasOwnProperty(key)) {
                                 console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", key, "' to platform interface notification '" + notification_key + "'")
                                 continue;
                             }
@@ -132,8 +137,7 @@ function setNotification(parentObject, key, payloadValue) {
             const idxName = `index_${i}`;
 
             // Check to make sure that the property has this index
-            const json = JSON.parse(JSON.stringify(parentObject[key]))
-            if (!json.hasOwnProperty(idxName)) {
+            if (!parentObject[key].hasOwnProperty(idxName)) {
                 console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid index", i, "to array '" + key + "'")
                 continue;
             }
@@ -155,9 +159,8 @@ function setNotification(parentObject, key, payloadValue) {
         for (let i = 0; i < payloadValueKeys.length; i++) {
             const payloadKey = payloadValueKeys[i];
 
-            const json = JSON.parse(JSON.stringify(parentObject[key]))
             // Check to make sure that the property has this index
-            if (!json.hasOwnProperty(payloadKey)) {
+            if (!parentObject[key].hasOwnProperty(payloadKey)) {
                 console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", payloadKey, "' to object '" + key + "'")
                 continue;
             }
@@ -180,8 +183,7 @@ function setNotification(parentObject, key, payloadValue) {
 }
 
 function isQtObject(obj) {
-    let parsedObject = JSON.parse(JSON.stringify(obj));
-    if (parsedObject.hasOwnProperty("objectName") && (parsedObject["objectName"] === "array" || parsedObject["objectName"] === "object")) {
+    if (obj.hasOwnProperty("objectName") && (obj["objectName"] === "array" || obj["objectName"] === "object")) {
         return true
     }
     return false
