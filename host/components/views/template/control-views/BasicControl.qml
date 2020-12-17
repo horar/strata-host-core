@@ -14,7 +14,7 @@ Item {
     property alias firstCommand: firstCommand
     property var intervalState : 200
     property alias gpio: gpio
-    property real xValue: 0
+    property var xValue: 0
 
 
     property var obj: {
@@ -24,7 +24,7 @@ Item {
                 "adc_read": platformInterface.notifications.my_cmd_simple_periodic.adc_read,
                 "io_read": platformInterface.notifications.my_cmd_simple_periodic.io_read,
                 "random_float": platformInterface.notifications.my_cmd_simple_periodic.random_float,
-                "random_float_array": set_random_array(6,platformInterface.notifications.my_cmd_simple_periodic.random_float_array),
+                "random_float_array": platformInterface.notifications.my_cmd_simple_periodic.random_float_array,
                 "random_increment": set_random_array(2,platformInterface.notifications.my_cmd_simple_periodic.random_increment),
                 "toggle_bool": platformInterface.notifications.my_cmd_simple_periodic.toggle_bool
             }
@@ -71,34 +71,6 @@ Item {
             "dac": dac.value.toFixed(1)
         }
     }
-
-
-
-    //    property var obj1: {
-    //        "value":"my_cmd_complex_periodic",
-    //        "payload":{
-    //            "bool_array":platformInterface.notifications.my_cmd_complex_periodic.bool_array,
-    //            "bool_array_rval":platformInterface.notifications.my_cmd_complex_periodic.bool_array_rval,
-    //            "bool_vector":platformInterface.notifications.my_cmd_complex_periodic.bool_vector,
-    //            "float_array_3dec":platformInterface.notifications.my_cmd_complex_periodic.float_array_3dec,
-    //            "float_array_rval_4dec":platformInterface.notifications.my_cmd_complex_periodic.float_array_rval_4dec,
-    //            "float_vector_5dec":platformInterface.notifications.my_cmd_complex_periodic.float_vector_5dec,
-    //            "int_array":platformInterface.notifications.my_cmd_complex_periodic.int_array,
-    //            "int_array_rval":platformInterface.notifications.my_cmd_complex_periodic.int_array_rval,
-    //            "int_vector":platformInterface.notifications.my_cmd_complex_periodic.int_vector,
-    //            "single_bool":platformInterface.notifications.my_cmd_complex_periodic.single_bool,
-    //            "single_bool_rval":platformInterface.notifications.my_cmd_complex_periodic.single_bool_rval,
-    //            "single_float_1dec":platformInterface.notifications.my_cmd_complex_periodic.single_float_1dec,
-    //            "single_float_rval_2dec":platformInterface.notifications.my_cmd_complex_periodic.single_float_rval_2dec,
-    //            "single_int":platformInterface.notifications.my_cmd_complex_periodic.single_int,
-    //            "single_int_rval":platformInterface.notifications.my_cmd_complex_periodic.single_int_rval,
-    //            "single_string":platformInterface.notifications.my_cmd_complex_periodic.single_string,
-    //            "string_array":platformInterface.notifications.my_cmd_complex_periodic.string_array,
-    //            "string_array_rval":platformInterface.notifications.my_cmd_complex_periodic.string_array_rval,
-    //            "string_literal":platformInterface.notifications.my_cmd_complex_periodic.string_literal,
-    //            "string_vector":platformInterface.notifications.my_cmd_complex_periodic.string_vector
-    //        }
-    //    }
 
     ColumnLayout {
         width: parent.width
@@ -377,8 +349,8 @@ Item {
                                 title: "Periodic Notification Graph "
                                 yMin: 0
                                 yMax: 1
-                                xMin:  platformInterface.notifications.my_cmd_simple_periodic.random_increment[index_0]
-                                xMax: platformInterface.notifications.my_cmd_simple_periodic.random_increment[index_1]
+                                //                                xMin:  platformInterface.notifications.my_cmd_simple_periodic.random_increment
+                                //                                xMax: platformInterface.notifications.my_cmd_simple_periodic.random_increment
                                 xTitle: "Time (s)"
                                 yTitle: "Values"
                                 panXEnabled: false
@@ -390,6 +362,7 @@ Item {
                                 property var curve: createCurve("movingCurve")
                                 property var curve2: createCurve("movingCurve2")
                                 property real lastTime
+                                property var firstNotification: 1
 
                                 Component.onCompleted: {
                                     curve.color = "orange"
@@ -397,65 +370,47 @@ Item {
 
                                 }
 
-                                property var test: platformInterface.notifications.my_cmd_simple_periodic.random_float
-                                onTestChanged: {
-                                    console.log("test")
-                                    let dataArray = []
-                                    xMax = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
-                                    xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
-                                    xValue = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
-                                    for(let y = 0; y < 6; y++) {
-                                        console.log(y)
-                                        var idxName = `index_${y}`
-                                        var yValue = platformInterface.notifications.my_cmd_simple_periodic.random_float_array[idxName]
-                                        if(yValue) {
+                                Connections {
+                                    target: platformInterface.notifications.my_cmd_simple_periodic
+                                    onNotificationFinished: {
+                                        let dataArray = []
+                                        let dataArray2 = []
+                                        let random_float_array = platformInterface.notifications.my_cmd_simple_periodic.random_float_array
+                                        let adc_read = platformInterface.notifications.my_cmd_simple_periodic.adc_read
+                                        timedGraphPoints.xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
+                                        timedGraphPoints.xMax =  platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
+                                        xValue = timedGraphPoints.xMin
+
+                                        console.log("test",xValue)
+
+                                        for(let y = 0; y < random_float_array.length ; y++) {
+                                            var yValue = platformInterface.notifications.my_cmd_simple_periodic.random_float_array[y]
                                             dataArray.push({"x":xValue, "y":yValue})
-                                            //  dataArray2.push({"x":xValue, "y":platformInterface.notifications.my_cmd_simple_periodic.adc_read})
+                                            dataArray2.push({"x":xValue, "y":adc_read})
                                             xValue++
                                         }
-                                    }
-                                    console.log(JSON.stringify(dataArray))
-                                    console.log(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
+                                        console.log(JSON.stringify(dataArray))
+                                        console.log(dataArray.length, dataArray2.length, timedGraphPoints.firstNotification)
 
-
-                                    if(dataArray.length > 0) {
-                                        curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
+                                        if(dataArray.length > 0 && timedGraphPoints.firstNotification !== 1) {
+                                            timedGraphPoints.curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
+                                            timedGraphPoints.firstNotification++
+                                        }
+                                        if(dataArray2.length > 0 && timedGraphPoints.firstNotification !== 1) {
+                                            timedGraphPoints.curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
+                                            timedGraphPoints.firstNotification++
+                                        }
+                                        // If the array contains more than one value at the first notification, append all the data points on curve
+                                        else if(timedGraphPoints.firstNotification === 1) {
+                                            console.log("tanya",timedGraphPoints.firstNotification)
+                                            timedGraphPoints.curve.appendList(dataArray)
+                                            timedGraphPoints.curve2.appendList(dataArray2)
+                                            timedGraphPoints.firstNotification++
+                                        }
                                     }
                                 }
-
-
-                                //                                    let dataArray = []
-                                //                                    let dataArray2 = []
-                                //                                    xMax = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
-                                //                                    xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
-                                //                                    xValue = xMin
-                                //                                    for(let y = 0; y < xMax; y++) {
-                                //                                        console.log(y)
-                                //                                        var idxName = `index_${y}`
-                                //                                        var yValue = platformInterface.notifications.my_cmd_simple_periodic.random_float_array[idxName]
-                                //                                        if(yValue) {
-                                //                                            dataArray.push({"x":xValue, "y":yValue})
-                                //                                            dataArray2.push({"x":xValue, "y":platformInterface.notifications.my_cmd_simple_periodic.adc_read})
-                                //                                            xValue++
-                                //                                        }
-                                //                                    }
-
-                                //                                    console.log(JSON.stringify(dataArray))
-                                //                                    console.log(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
-
-
-                                //                                    if(dataArray.length > 0) {
-                                //                                        curve.append(dataArray[dataArray.length -1]["x"],dataArray[dataArray.length -1]["y"])
-                                //                                    }
-
-                                //                                    if(dataArray2.length > 0) {
-                                //                                        curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
-                                //                                    }
-                                //   }
-
                             }
                         }
-
                     }
 
                     Item{

@@ -28,11 +28,12 @@
                 "io_read": "bool",
                 "random_float": "double",
                 "random_float_array": "array-dynamic",
-                "random_increment": ["int","int"],
+                "random_increment": [
+                    "int",
+                    "int"
+                ],
                 "toggle_bool": "bool"
             }
         }
-
     ]
 }
-
