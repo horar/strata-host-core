@@ -47,14 +47,14 @@ function data_source_handler (payload) {
                             }
 
                             const payloadObj = notification["payload"][key]
-                            const platformInterfaceObj = platformInterface["notifications"][notification_key][key]
+                            let platformInterfaceObj = platformInterface["notifications"][notification_key][key]
 
                             if (typeof payloadObj === "object" && isQtObject(platformInterfaceObj)) {
                                 // if payload is an object or array, and platform interface object is a QtObject, recurse
                                 setNotification(platformInterfaceObj, payloadObj);
                             } else {
                                 // directly assign value; either basic types or JS objects/arrays
-                                platformInterfaceObj = payloadObj;
+                                platformInterface["notifications"][notification_key][key] = payloadObj;
                             }
                         }
 
@@ -155,11 +155,12 @@ function setNotification(platformInterfaceObject, payloadValue) {
         }
 
         if (typeof platformInterfaceObject[key] === "object" && isQtObject(platformInterfaceObject[key])) {
-            setNotification(platformInterfaceObject[key], iterable[index])
+            setNotification(platformInterfaceObject[key], iterable[i])
         } else {
-            platformInterfaceObject[key] = iterable[index]
+            platformInterfaceObject[key] = payloadValue[index]
         }
     }
+
 }
 
 function isQtObject(obj) {
