@@ -12,8 +12,10 @@ SGIcon {
     property var fake_data: {
         "class_id": "help_docs_demo",
         "datasheets": [{"category":"Standard Logic","datasheet":"https://www.onsemi.com/pub/Collateral/NL7SZ97-D.PDF","name":"NL7SZ97","opn":"NL7SZ97","subcategory":"Logic Gates"}],
-        "documents": [],
+        "documents": [{"category":"view","md5":"29bb28352a18b9cac24d94362646abac","name":"AR0130_DTS","prettyname":"AR0130CS-D.pdf","uri":"29bb28352a18b9cac24d94362646abac.pdf"},
+                      {"category":"download","filesize":11292,"md5":"dab1c59648d209db980dedb25d5f4a3c","name":"Bill of Materials","prettyname":"STR-LOGIC-GATES-EVK_bom.xlsx","uri":"201/Bill of Materials/dab1c59648d209db980dedb25d5f4a3c.xlsx"}],
 
+    "type":"document"
     }
     property string class_id: ""
 

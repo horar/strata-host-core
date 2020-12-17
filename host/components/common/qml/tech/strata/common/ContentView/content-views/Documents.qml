@@ -28,8 +28,16 @@ Item {
                 bottomPadding: 2
 
                 property string effectiveUri: {
-                    console.info(helpIcon.class_id)
-                    "file://localhost/" + model.uri
+
+                    if(helpIcon.class_id === "help_docs_demo") {
+                        console.info(helpIcon.class_id)
+                        return "qrc:/tech/strata/common/ContentView/images/" + model.uri
+                    }
+                    else return "file://localhost/" + model.uri
+
+                }
+                onEffectiveUriChanged: {
+                    console.log(effectiveUri)
                 }
 
                 Binding {
@@ -45,64 +53,64 @@ Item {
                 }
 
                 contentSourceComponent: Item {
-                     height: textItem.contentHeight + 20
+                    height: textItem.contentHeight + 20
 
-                     SGWidgets.SGText {
-                         id: textItem
+                    SGWidgets.SGText {
+                        id: textItem
 
-                         anchors {
-                             verticalCenter: parent.verticalCenter
-                             left: parent.left
-                             leftMargin: chevronImage.width + chevronImage.anchors.rightMargin
-                             right: parent.right
-                             rightMargin: textItem.anchors.leftMargin
-                         }
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            left: parent.left
+                            leftMargin: chevronImage.width + chevronImage.anchors.rightMargin
+                            right: parent.right
+                            rightMargin: textItem.anchors.leftMargin
+                        }
 
-                         font.bold: delegate.checked ? false : true
-                         horizontalAlignment: Text.AlignHCenter
-                         text: {
-                             /*
+                        font.bold: delegate.checked ? false : true
+                        horizontalAlignment: Text.AlignHCenter
+                        text: {
+                            /*
                                  the first regexp is looking for HTML RichText
                                  the second regexp is looking for spaces after string
                                  the third regexp is looking for spaces before string
                                  the fourth regexp is looking for tabs throughout the string
                              */
-                             const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
-                             return model.dirname.replace(htmlTags,"");
-                         }
-                         alternativeColorEnabled: delegate.checked === false
-                         fontSizeMultiplier: 1.1
-                         wrapMode: Text.Wrap
-                         textFormat: Text.PlainText
-                     }
+                            const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
+                            return model.dirname.replace(htmlTags,"");
+                        }
+                        alternativeColorEnabled: delegate.checked === false
+                        fontSizeMultiplier: 1.1
+                        wrapMode: Text.Wrap
+                        textFormat: Text.PlainText
+                    }
 
-                     Rectangle {
-                         id: underline
-                         width: textItem.contentWidth
-                         height: 1
-                         anchors {
-                             top: textItem.bottom
-                             topMargin: 2
-                             horizontalCenter: textItem.horizontalCenter
-                         }
+                    Rectangle {
+                        id: underline
+                        width: textItem.contentWidth
+                        height: 1
+                        anchors {
+                            top: textItem.bottom
+                            topMargin: 2
+                            horizontalCenter: textItem.horizontalCenter
+                        }
 
-                         color: "#33b13b"
-                         visible: delegate.checked
-                     }
+                        color: "#33b13b"
+                        visible: delegate.checked
+                    }
 
-                     SGWidgets.SGIcon {
-                         id: chevronImage
-                         height: 20
-                         width: height
-                         anchors {
-                             right: parent.right
-                             rightMargin: 2
-                             verticalCenter: parent.verticalCenter
-                         }
+                    SGWidgets.SGIcon {
+                        id: chevronImage
+                        height: 20
+                        width: height
+                        anchors {
+                            right: parent.right
+                            rightMargin: 2
+                            verticalCenter: parent.verticalCenter
+                        }
 
-                         source: "qrc:/sgimages/chevron-right.svg"
-                         visible: delegate.checked
-                     }
+                        source: "qrc:/sgimages/chevron-right.svg"
+                        visible: delegate.checked
+                    }
                 }
             }
         }

@@ -42,12 +42,19 @@ Rectangle {
     }
 
     onTotalDocumentsChanged: {
-        if (classDocuments.pdfListModel.count > 0) {
-            pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
-        } else if (classDocuments.datasheetListModel.count > 0) {
-            pdfViewer.url = classDocuments.datasheetListModel.getFirstUri()
-        } else {
-            pdfViewer.url = ""
+        console.log("classDocuments.downloadDocumentListModel.count",classDocuments.downloadDocumentListModel.count)
+
+        if(helpIcon.class_id !== "help_docs_demo" ) {
+            if (classDocuments.pdfListModel.count > 0) {
+                pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
+            } else if (classDocuments.datasheetListModel.count > 0) {
+                pdfViewer.url = classDocuments.datasheetListModel.getFirstUri()
+            } else {
+                pdfViewer.url = ""
+            }
+        }
+        else {
+             pdfViewer.url = "qrc:/tech/strata/common/ContentView/images/" + classDocuments.pdfListModel.getFirstUri()
         }
 
         if (classDocuments.downloadDocumentListModel.count > 0){
@@ -79,7 +86,7 @@ Rectangle {
 
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
-          helpIcon.class_id = view.class_id
+        helpIcon.class_id = view.class_id
 
     }
 

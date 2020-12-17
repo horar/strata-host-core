@@ -12,6 +12,7 @@
         <file>images/angle-right-solid.svg</file>
         <file>content-views/EmptyDocuments.qml</file>
         <file>HelpButton.qml</file>
+        <file>images/29bb28352a18b9cac24d94362646abac.pdf</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
