@@ -155,7 +155,7 @@ function setNotification(platformInterfaceObject, payloadValue) {
         }
 
         if (typeof platformInterfaceObject[key] === "object" && isQtObject(platformInterfaceObject[key])) {
-            setNotification(platformInterfaceObject[key], iterable[i])
+            setNotification(platformInterfaceObject[key], payloadValue[index])
         } else {
             platformInterfaceObject[key] = payloadValue[index]
         }
