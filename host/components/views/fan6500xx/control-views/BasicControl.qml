@@ -11,7 +11,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 
 
-Item {
+Rectangle {
     id: root
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1225/648
