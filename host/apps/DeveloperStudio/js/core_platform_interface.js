@@ -1,6 +1,6 @@
 .import tech.strata.logger 1.0 as LoggerModule
 .import "qrc:/js/navigation_control.js" as NavigationControl
-
+.import QtQml 2.12 as QtQml
 // Use caution when updating this file; older platform control_views rely on the original API
 
 var device_id
@@ -154,7 +154,7 @@ function setNotification(platformInterfaceObject, payloadValue) {
             continue;
         }
 
-        if (typeof platformInterfaceObject[key] === "object" && isQtObject(platformInterfaceObject[key])) {
+        if (isQtObject(platformInterfaceObject[key])) {
             setNotification(platformInterfaceObject[key], payloadValue[index])
         } else {
             platformInterfaceObject[key] = payloadValue[index]
@@ -164,10 +164,12 @@ function setNotification(platformInterfaceObject, payloadValue) {
 }
 
 function isQtObject(obj) {
-    if (obj.hasOwnProperty("objectName") && (obj["objectName"] === "array" || obj["objectName"] === "object")) {
-        return true
+    try {
+        let result = (obj instanceof QtQml.QtObject);
+        return result;
+    } catch (e) {
+        return false;
     }
-    return false
 }
 
 init()
