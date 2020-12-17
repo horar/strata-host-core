@@ -31,8 +31,9 @@ SGIcon {
             view.state2 = accordion.contentItem.children[1].open
             view.state3 = accordion.contentItem.children[2].open
             helpIcon.clickAction()
-            classDocuments = sdsModel.documentManager.getClassDocuments("b039e649-2713-4557-afb7-9fabeacd4290")
-           // classDocuments = sdsModel.documentManager.getClassDocuments("help_docs_demo")
+            //classDocuments = sdsModel.documentManager.getClassDocuments("b039e649-2713-4557-afb7-9fabeacd4290")
+            classDocuments = sdsModel.documentManager.getClassDocuments("help_docs_demo")
+            classDocuments.populateModels(fake_data)
 
         }
         hoverEnabled: true
