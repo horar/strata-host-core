@@ -114,7 +114,7 @@ Item {
                 }
                 Image {
                     id: name
-                    source: "commandicon.png"
+                    source: "images/commandicon.png"
                     anchors {
                         top: parent.top
                         topMargin: -5
@@ -244,7 +244,7 @@ Item {
                 }
                 Image {
                     id: name2
-                    source: "notificationicon.png"
+                    source: "images/notificationicon.png"
                     anchors {
                         top: parent.top
                         topMargin: -5
@@ -351,7 +351,7 @@ Item {
                                 yMax: 1
                                 //                                xMin:  platformInterface.notifications.my_cmd_simple_periodic.random_increment
                                 //                                xMax: platformInterface.notifications.my_cmd_simple_periodic.random_increment
-                                xTitle: "Time (s)"
+                                xTitle: "Interval Count"
                                 yTitle: "Values"
                                 panXEnabled: false
                                 panYEnabled: false
@@ -480,7 +480,7 @@ Item {
                 }
                 Image {
                     id: name3
-                    source: "commandicon.png"
+                    source: "images/commandicon.png"
                     anchors {
                         top: parent.top
                         topMargin: -5

@@ -3,10 +3,9 @@
         <file>Control.qml</file>
         <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicControl.qml</file>
-        <file>control-views/DebugMenu.qml</file>
         <file>control-views/template.json</file>
         <file>control-views/PlatformInterface.qml</file>
-        <file>control-views/notificationicon.png</file>
-        <file>control-views/commandicon.png</file>
+        <file>control-views/images/commandicon.png</file>
+        <file>control-views/images/notificationicon.png</file>
     </qresource>
 </RCC>
