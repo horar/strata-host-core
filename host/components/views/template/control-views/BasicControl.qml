@@ -598,9 +598,9 @@ Item {
                                             unit: "ms"
                                             onEditingFinished:{
                                                 intervalState = parseInt(text)
-                                                timedGraphPoints.xMin = 0
-                                                timedGraphPoints.xMax = (intervalState/1000) * 5
-                                                console.info(timedGraphPoints.xMax)
+//                                                timedGraphPoints.xMin = 0
+//                                                timedGraphPoints.xMax = (intervalState/1000) * 5
+//                                                console.info(timedGraphPoints.xMax)
                                                 platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                             }
                                         }
