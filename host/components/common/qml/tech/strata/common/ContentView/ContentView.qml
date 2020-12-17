@@ -30,6 +30,7 @@ Rectangle {
     }
 
     HelpButton{
+        id: helpIcon
         height: 30
         width: 30
         anchors {
@@ -64,20 +65,21 @@ Rectangle {
         target: Help.utility
         onTour_runningChanged: {
             if(tour_running === false) {
+                helpIcon.class_id = view.class_id
                 classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
                 accordion.contentItem.children[0].open = accordionPdf
                 accordion.contentItem.children[1].open = state2
                 accordion.contentItem.children[2].open = state3
 
             }
+
         }
     }
 
 
-
-
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+          helpIcon.class_id = view.class_id
 
     }
 

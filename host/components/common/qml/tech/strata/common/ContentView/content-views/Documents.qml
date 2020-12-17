@@ -27,7 +27,10 @@ Item {
 
                 bottomPadding: 2
 
-                property string effectiveUri: "file://localhost/" + model.uri
+                property string effectiveUri: {
+                    console.info(helpIcon.class_id)
+                    "file://localhost/" + model.uri
+                }
 
                 Binding {
                     target: delegate
