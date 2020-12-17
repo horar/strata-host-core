@@ -259,6 +259,7 @@ function updateState(event, data)
 
                 // Update StatusBar
                 status_bar_container_.visible = true
+                context.mainWindow = main_qml_object_
                 let statusBar = createView(screens.STATUS_BAR, status_bar_container_)
                 platform_tab_list_view_ = statusBar.platformTabListView
 

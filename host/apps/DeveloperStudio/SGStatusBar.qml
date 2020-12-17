@@ -38,6 +38,7 @@ Rectangle {
     property color alternateColor1: "#575757"
 
     property alias platformTabListView: platformTabListView
+    property var mainWindow
 
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
@@ -295,6 +296,14 @@ Rectangle {
                         feedLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Notifications")
+                    onClicked: {
+                        profileMenu.close()
+                        mainWindow.notificationsInbox.toggle()
+                    }
                 }
 
                 SGMenuItem {
