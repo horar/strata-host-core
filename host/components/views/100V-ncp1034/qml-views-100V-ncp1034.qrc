@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/100V-ncp1034">
+    <qresource prefix="/">
         <file>Control.qml</file>
         <file>control-views/BasicControl.qml</file>
         <file>control-views/PlatformInterface.qml</file>
