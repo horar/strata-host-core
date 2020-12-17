@@ -44,7 +44,10 @@ Rectangle {
     onTotalDocumentsChanged: {
         console.log("classDocuments.downloadDocumentListModel.count",classDocuments.downloadDocumentListModel.count)
 
-        if(helpIcon.class_id !== "help_docs_demo" ) {
+        if(helpIcon.class_id == "help_docs_demo" ) {
+            pdfViewer.url = "qrc:/tech/strata/common/ContentView/images/" + classDocuments.pdfListModel.getFirstUri()
+        }
+        else {
             if (classDocuments.pdfListModel.count > 0) {
                 pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
             } else if (classDocuments.datasheetListModel.count > 0) {
@@ -53,14 +56,10 @@ Rectangle {
                 pdfViewer.url = ""
             }
         }
-        else {
-             pdfViewer.url = "qrc:/tech/strata/common/ContentView/images/" + classDocuments.pdfListModel.getFirstUri()
-        }
 
         if (classDocuments.downloadDocumentListModel.count > 0){
             empty.hasDownloads = true
         }
-
         if (totalDocuments > 0) {
             navigationSidebar.state = "open"
         } else {
@@ -238,9 +237,7 @@ Rectangle {
                         }
                         Component.onCompleted: {
                             Help.registerTarget(datasheetAccordion,"test2",2,"contentViewHelp")
-
                         }
-
                     }
 
                     SGAccordionItem {
@@ -270,7 +267,6 @@ Rectangle {
                             onInternal_tour_indexChanged: {
                                 if(Help.current_tour_targets[index]["target"] === downloadAccordion){
                                     downloadAccordion.open = true
-
                                 }
                                 else {
                                     downloadAccordion.open = false

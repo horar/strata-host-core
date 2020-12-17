@@ -28,18 +28,12 @@ Item {
                 bottomPadding: 2
 
                 property string effectiveUri: {
-
                     if(helpIcon.class_id === "help_docs_demo") {
-                        console.info(helpIcon.class_id)
                         return "qrc:/tech/strata/common/ContentView/images/" + model.uri
                     }
                     else return "file://localhost/" + model.uri
 
                 }
-                onEffectiveUriChanged: {
-                    console.log(effectiveUri)
-                }
-
                 Binding {
                     target: delegate
                     property: "checked"
