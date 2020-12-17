@@ -71,12 +71,23 @@ Item {
     // Commands
     property var read_initial_status: ({
                                            "cmd":"read_initial_status",
-                                           update: function () {
+                                           "payload": {
+                                               "class_id": "CLASS_ID_STRING"
+                                           },
+                                           // Update will set and send in one shot
+                                           update: function (class_id) {
+                                               this.set(class_id)
                                                CorePlatformInterface.send(this)
+                                           },
+                                           // Set can set single or multiple properties before sending to platform
+                                           set: function (class_id) {
+                                               this.payload.class_id = class_id;
                                            },
                                            send: function () { CorePlatformInterface.send(this) },
                                            show: function () { CorePlatformInterface.show(this) }
                                        })
+
+
 
     property var set_enable: ({
                                   "cmd" : "set_enable",

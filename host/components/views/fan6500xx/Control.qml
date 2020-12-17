@@ -22,10 +22,6 @@ Item {
         id: platformInterface
     }
 
-    Component.onCompleted: {
-        platformInterface.read_initial_status.update()
-    }
-
     BasicControl {
         id: basicControl
         visible: true

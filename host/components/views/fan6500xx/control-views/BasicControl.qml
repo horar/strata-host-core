@@ -22,15 +22,6 @@ Item {
 
     property string class_id: ""
 
-    //For Debug
-    //function set_class_id_info_inUI(){
-    //if(class_id = "")
-    ////partnumber and
-    //else if()
-
-    //}
-
-
     property var initial_status: platformInterface.initial_status
     onInitial_statusChanged: {
         if(initial_status.enable_status === "on"){
@@ -109,7 +100,7 @@ Item {
         Help.registerTarget(softStartLabel, "This control allows the soft start time to be adjusted. The soft start does not describe the startup of the output voltage, but rather the voltage on the SS pin, which affects the startup time of the output voltage. In addition, the output voltage startup time also depends on the output voltage.", 17,"basicFan65Help")
         Help.registerTarget(vccLabel, "This control allows the user to switch between the FAN6500XX generated 5V source (PVCC) and a 5V source from USB (USB_5V). Using the USB_5V source will increase efficiency slightly.",18,"basicFan65Help")
 
-        platformInterface.read_initial_status.update()
+        platformInterface.read_initial_status.update(class_id)
     }
 
     Popup{
