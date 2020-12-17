@@ -32,33 +32,29 @@ function data_source_handler (payload) {
                 if (notification.hasOwnProperty("value") && notification.hasOwnProperty("payload")) {
                     var notification_key = notification.value
                     if (platformInterface.apiVersion && platformInterface.apiVersion > 1) {
+
+                        if (!platformInterface["notifications"].hasOwnProperty(notification_key)) {
+                            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "This platform interface doesn't support the notification '" + notification_key + "'. Ignoring...")
+                            return;
+                        }
+
                         // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
                         for (const key of Object.keys(notification["payload"])) {
-                            const obj = notification["payload"][key]
 
-                            const json = JSON.parse(JSON.stringify(platformInterface["notifications"][notification_key]))
-                            if (!json.hasOwnProperty(key)) {
+                            if (!platformInterface["notifications"][notification_key].hasOwnProperty(key)) {
                                 console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", key, "' to platform interface notification '" + notification_key + "'")
                                 continue;
                             }
 
-                            if (Array.isArray(obj)) {
-                                if (Array.isArray(platformInterface["notifications"][notification_key][key])) {
-                                    // Property is a dynamic array
-                                    platformInterface["notifications"][notification_key][key] = obj;
-                                } else {
-                                    if (isQtObject(platformInterface["notifications"][notification_key][key])) {
-                                        setNotification(platformInterface["notifications"][notification_key], key, obj);
-                                    }
-                                }
-                            } else if (typeof obj === "object") {
-                                if (isQtObject(platformInterface["notifications"][notification_key][key])) {
-                                    setNotification(platformInterface["notifications"][notification_key], key, obj);
-                                } else {
-                                    platformInterface["notifications"][notification_key][key] = obj;
-                                }
+                            const payloadObj = notification["payload"][key]
+                            let platformInterfaceObj = platformInterface["notifications"][notification_key][key]
+
+                            if (typeof payloadObj === "object" && isQtObject(platformInterfaceObj)) {
+                                // if payload is an object or array, and platform interface object is a QtObject, recurse
+                                setNotification(platformInterfaceObj, payloadObj);
                             } else {
-                                platformInterface["notifications"][notification_key][key] = obj;
+                                // directly assign value; either basic types or JS objects/arrays
+                                platformInterface["notifications"][notification_key][key] = payloadObj;
                             }
                         }
 
@@ -126,62 +122,49 @@ function injectDebugNotification(notification) {
 /*
   Recursively set the notification property for QtObjects
  */
-function setNotification(parentObject, key, payloadValue) {
+function setNotification(platformInterfaceObject, payloadValue) {
+    let type
+    let iterable
+
     if (Array.isArray(payloadValue)) {
-        for (let i = 0; i < payloadValue.length; i++) {
-            const idxName = `index_${i}`;
-
-            // Check to make sure that the property has this index
-            const json = JSON.parse(JSON.stringify(parentObject[key]))
-            if (!json.hasOwnProperty(idxName)) {
-                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid index", i, "to array '" + key + "'")
-                continue;
-            }
-
-            if (Array.isArray(parentObject[key][idxName])) {
-                parentObject[key][idxName] = payloadValue[i];
-            } else if (typeof parentObject[key][idxName] === "object") {
-                if (isQtObject(parentObject[key][idxName])) {
-                    setNotification(parentObject[key], idxName, payloadValue[i])
-                } else {
-                    parentObject[key][idxName] = payloadValue[i]
-                }
-            } else {
-                parentObject[key][idxName] = payloadValue[i]
-            }
-        }
+        type = "array"
+        iterable = payloadValue
     } else if (typeof payloadValue === "object") {
-        const payloadValueKeys = Object.keys(payloadValue);
-        for (let i = 0; i < payloadValueKeys.length; i++) {
-            const payloadKey = payloadValueKeys[i];
-
-            const json = JSON.parse(JSON.stringify(parentObject[key]))
-            // Check to make sure that the property has this index
-            if (!json.hasOwnProperty(payloadKey)) {
-                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", payloadKey, "' to object '" + key + "'")
-                continue;
-            }
-
-            if (Array.isArray(parentObject[key][payloadKey])) {
-                parentObject[key][payloadKey] = payloadValue[payloadKey];
-            } else if (typeof parentObject[key][payloadKey] === "object") {
-                if (isQtObject(parentObject[key][payloadKey])) {
-                    setNotification(parentObject[key], payloadKey, payloadValue[payloadKey])
-                } else {
-                    parentObject[key][payloadKey] = payloadValue[payloadKey]
-                }
-            } else {
-                parentObject[key][payloadKey] = payloadValue[payloadKey]
-            }
-        }
+        type = "object"
+        iterable = Object.keys(payloadValue)
     } else {
-        parentObject[key] = payloadValue
+        platformInterfaceObject = payloadValue
+        return
     }
+
+    for (let i = 0; i < iterable.length; i++) {
+        let key
+        let index
+
+        if (type === "array") {
+            key = `index_${i}`;
+            index = i
+        } else {
+            key = iterable[i];
+            index = key
+        }
+
+        if (!platformInterfaceObject.hasOwnProperty(key)) {
+            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid index:", index, "to array: '" + key + "'")
+            continue;
+        }
+
+        if (typeof platformInterfaceObject[key] === "object" && isQtObject(platformInterfaceObject[key])) {
+            setNotification(platformInterfaceObject[key], payloadValue[index])
+        } else {
+            platformInterfaceObject[key] = payloadValue[index]
+        }
+    }
+
 }
 
 function isQtObject(obj) {
-    let parsedObject = JSON.parse(JSON.stringify(obj));
-    if (parsedObject.hasOwnProperty("objectName") && (parsedObject["objectName"] === "array" || parsedObject["objectName"] === "object")) {
+    if (obj.hasOwnProperty("objectName") && (obj["objectName"] === "array" || obj["objectName"] === "object")) {
         return true
     }
     return false
