@@ -7,13 +7,13 @@
 #include <QList>
 #include <QMap>
 #include <QPointer>
-
-#include <QBasicTimer>
-#include <QTimerEvent>
 #include <QCryptographicHash>
-
+#include <QFile>
 
 namespace strata {
+
+class InternalDownloadRequest;
+
 class DownloadManager : public QObject
 {
     Q_OBJECT
@@ -41,7 +41,8 @@ public:
               notifySingleDownloadFinished(false),
               notifyGroupDownloadProgress(false),
               keepOriginalName(false),
-              oneFailsAllFail(true)
+              oneFailsAllFail(true),
+              removeCorruptedFile(true)
         {
         }
 
@@ -51,16 +52,23 @@ public:
         bool notifySingleDownloadFinished;
         bool notifyGroupDownloadProgress;
 
-        /* When true and filePath alredy exists, download is either skipped or
+        /*! When true and filePath alredy exists, download is either skipped or
          * old file is removed before new download starts.
-         *
          * When false and filePath alrady exists file is downloaded
          * and saved under different name. */
         bool keepOriginalName;
 
-        /* When true and one of downloaded items fails,
+        /*! When true and one of downloaded items fails,
          * all remaining are aborted. */
         bool oneFailsAllFail;
+
+        /*! When true, wrongly downloaded file is removed.
+         *
+         * When saved file is managed outside of DownloadManager, it is useful
+         * to have it false along with keepOriginalName=true,
+         * for example when saved file is created in advance with QTemporaryFile.
+         */
+        bool removeCorruptedFile;
     };
 
     void setMaxDownloadCount(int maxDownloadCount);
@@ -68,7 +76,7 @@ public:
     QString download(const QList<DownloadRequestItem> &items,
                      const Settings &settings=Settings());
 
-    bool verifyFileChecksum(
+    bool verifyFileHash(
             const QString &filePath,
             const QString &checksum,
             const QCryptographicHash::Algorithm &method=QCryptographicHash::Md5);
@@ -87,87 +95,48 @@ signals:
     void groupDownloadFinished(QString groupId, QString errorString);
 
 private slots:
-    void readyReadHandler();
-    void downloadProgressHandler(qint64 bytesReceived, qint64 bytesTotal);
-    void finishedHandler();
+    void networkReplyReadyReadHandler();
+    void networkReplyProgressHandler(qint64 bytesReceived, qint64 bytesTotal);
+    void networkReplyFinishedHandler();
 
 private:
-    enum class DownloadState {
-        Pending,
-        Running,
-        Finished,
-        FinishedWithError,
-    };
-
     struct DownloadGroup {
         QString id;
         Settings settings;
         QString errorString;
-    };
-
-    struct DownloadItem {
-        QUrl url;
-        QString originalFilePath;
-        QString effectiveFilePath;
-        QString md5;
-        DownloadState state;
-        QString groupId;
-        QString errorString;
+        bool aborted = false;
     };
 
     QPointer<QNetworkAccessManager> networkManager_;
     QList<QNetworkReply*> currentDownloads_;
 
+    /* As of Qt 5.12 QNetworkAccessManager can handle up to 6 http requests in parallel.
+      This number should be lower so other clients are not blocked for a long time. */
     int maxDownloadCount_ = 4;
 
-    QList<DownloadItem> itemList_;
-    QHash<QUrl /*complete-url*/, DownloadItem*> itemHash_;
-
+    QList<InternalDownloadRequest*> internalRequestList_;
     QHash<QString /*groupId*/, DownloadGroup*> groupHash_;
 
     void startNextDownload();
-    DownloadItem* findNextDownload();
+    bool postNextDownloadRequest(InternalDownloadRequest *internalRequest);
+
+    void processRequest(InternalDownloadRequest *internalRequest, const DownloadRequestItem &request);
+    InternalDownloadRequest* findNextPendingDownload();
     void createFolderForFile(const QString &filePath);
-    QNetworkReply* postRequest(const QUrl &url);
+    QNetworkReply* postNetworkRequest(const QUrl &url, QObject *originatingObject);
     bool isHttpRedirect(QNetworkReply *reply);
-    QString writeToFile(const QString &filePath, const QByteArray &buffer);
-
-    void prepareResponse(DownloadItem *downloadItem, const QString &errorString=QString());
-
+    QString writeToFile(QFile &file, const QByteArray &data);
+    void prepareResponse(InternalDownloadRequest *internalRequest, const QString &errorString=QString());
     void resolveGroupProgress(
             const QString &groupId,
             int &filesFailed,
             int &filesCompleted,
             int &filesTotal);
 
-
     void clearData(const QString groupId);
+    void abortReply(QNetworkReply *reply);
 };
 
-/**
- * Timed timeout trigger since QNetworkReply does not inherently timeout
- */
-class ReplyTimeout : public QObject
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(ReplyTimeout)
 
-public:
-    ReplyTimeout(QNetworkReply* reply, const int timeout) : QObject(reply) {
-        Q_ASSERT(reply);
-        milliseconds_ = timeout;
-        if (reply && reply->isRunning())
-             mSec_timer_.start(timeout, this);
-    }
-    static void set(QNetworkReply* reply, const int timeout) {
-        new ReplyTimeout(reply, timeout);
-    }
-
-private:
-    int milliseconds_;
-    QBasicTimer mSec_timer_;
-
-    void timerEvent(QTimerEvent * ev);
-};
 
 }

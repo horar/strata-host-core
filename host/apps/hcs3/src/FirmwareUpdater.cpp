@@ -59,6 +59,9 @@ void FirmwareUpdater::downloadFirmware()
         return;
     }
 
+    //file is created on disk, no need to keep descriptor open
+    firmwareFile_.close();
+
     QList<DownloadManager::DownloadRequestItem> downloadRequestList;
 
     DownloadManager::DownloadRequestItem firmwareItem;
@@ -71,6 +74,7 @@ void FirmwareUpdater::downloadFirmware()
     settings.notifySingleDownloadProgress = true;
     settings.keepOriginalName = true;
     settings.oneFailsAllFail = true;
+    settings.removeCorruptedFile = false;
 
     connect(downloadManager_, &DownloadManager::groupDownloadFinished, this, &FirmwareUpdater::handleDownloadFinished);
     connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &FirmwareUpdater::handleSingleDownloadProgress);
@@ -118,7 +122,7 @@ void FirmwareUpdater::handleFlashFirmware()
         return;
     }
 
-    flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName() , this);
+    flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName(), firmwareMD5_, this);
 
     connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
     connect(flasherConnector_, &FlasherConnector::flashProgress, this, &FirmwareUpdater::handleFlashProgress);
@@ -186,6 +190,7 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
         updStatus = FirmwareUpdateController::UpdateStatus::Unsuccess;
         break;
     case FlasherConnector::State::Failed :
+    case FlasherConnector::State::NoFirmware :
         updStatus = FirmwareUpdateController::UpdateStatus::Failure;
         break;
     }

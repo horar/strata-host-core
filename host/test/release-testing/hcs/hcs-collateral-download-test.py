@@ -4,7 +4,7 @@
 #
 # Triggers download of all available collateral by HCS, verifies files were properly downloaded by a MD5 hash check
 
-import sys, os.path, json, hashlib, shutil, zmq
+import sys, os.path, json, hashlib, shutil, zmq, textwrap
 
 if len(sys.argv) != 3:
     print("\nError: incorrect number of arguments provided.\nInvoke from Powershell script 'hcs-collateral-download-testing.ps1',")
@@ -114,13 +114,18 @@ if os.path.exists(os.path.join(hcs_directory, "documents", "platform_selector"))
 # Start main loop over each platform
 total_failed_tests = 0
 total_passed_platforms = 0
+tests_ran = 0
 for platform in platform_list:
     platform_failed_tests = 0
-    print("\n" + 80 * "=" + "\n\nSending HCS notification for platform " + str(platform["class_id"]), end = '')
+
+    print("\n")
+    tests_ran += 1
+
+    print("TEST " + str(tests_ran) + ": Sending HCS notification for platform " + str(platform["class_id"]))
 
     # Skip download check for any platforms with "available"/"documents" flag set to false
     if platform["available"]["documents"] == False:
-        print("\nPlatform has 'documents' flag set to false, skipping...")
+        print(textwrap.indent("Platform has 'documents' flag set to false, skipping...", '\t'))
         total_passed_platforms += 1
         continue
 
@@ -137,12 +142,13 @@ for platform in platform_list:
         view_list = [file for file in file_list if file["category"] == "view"]
         download_list = [file for file in file_list if file["category"] == "download"]
     except KeyError:
-        print("\nError: received empty or invalid response from HCS.\nLast response from HCS:\n\n" + json.dumps(message_from_HCS, indent=4) + "\n")
+        print(textwrap.indent("Error: received empty or invalid response from HCS.\nLast response from HCS:\n\n" + json.dumps(message_from_HCS, indent=4), '\t'))
         platform_failed_tests += 1
         total_failed_tests += 1
         continue
-    print(", received reply with " + str(len(file_list)) + " files to be automatically downloaded (" +
-        str(len(view_list)) + " views, " + str(len(download_list)) + " downloads).\n\nDownloading files and verifying...\n")
+        
+    print(textwrap.indent("Received reply with " + str(len(file_list)) + " files to be automatically downloaded (" +
+        str(len(view_list)) + " views, " + str(len(download_list)) + " downloads) Downloading files and verifying...", '\t'))
 
     download_cmd = generateDownloadFilesCommand(str(platform["class_id"]), download_list)
     messageHCS(download_cmd, "download_platform_files_finished")
@@ -152,18 +158,18 @@ for platform in platform_list:
         if os.path.isfile(filepath): # File found where expected - perform MD5 check
             calculated_md5 = getFileMD5Hash(filepath)
             if calculated_md5 != file["md5"]: # MD5 check failed
-                print("\nTest failed, MD5 check unsuccessful for file:\n" + filepath)
+                print(textwrap.indent("Test failed, MD5 check unsuccessful for file: " + filepath, '\t'))
                 platform_failed_tests += 1
                 total_failed_tests += 1
         else: # File not found where expected
-            print("\nTest failed, file not found:\n" + filepath)
+            print(textwrap.indent("Test failed, file not found: " + filepath, '\t'))
             platform_failed_tests += 1
             total_failed_tests += 1
     if platform_failed_tests < 1:
-        print("\nAll tests PASSED for platform " + str(platform["class_id"]) + ".")
+        print(textwrap.indent("All tests PASSED for platform " + str(platform["class_id"]) + ".", '\t'))
         total_passed_platforms += 1
     else:
-        print("\nWARNING:\nA total of " + str(platform_failed_tests) + " unsuccessful test cases were found for this platform.")
+        print(textwrap.indent("WARNING:\nA total of " + str(platform_failed_tests) + " unsuccessful test cases were found for this platform.",'\t'))
 
 if total_failed_tests < 1:
     print("\nAll tests PASSED for all platforms.\n")

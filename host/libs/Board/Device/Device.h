@@ -10,10 +10,11 @@
 #include <QReadWriteLock>
 
 namespace strata::device {
-    class DeviceOperations;
-
     namespace command {
         class BaseDeviceCommand;
+    }
+    namespace operation {
+        class BaseDeviceOperation;
     }
 }
 
@@ -23,21 +24,12 @@ namespace strata::device {
 
     typedef std::shared_ptr<Device> DevicePtr;
 
-    enum class DeviceProperties {
-        deviceName,
-        verboseName,
-        platformId,
-        classId,
-        bootloaderVer,
-        applicationVer
-    };
-
     class Device : public QObject
     {
         Q_OBJECT
         Q_DISABLE_COPY(Device)
 
-    friend class strata::device::DeviceOperations;
+    friend class strata::device::operation::BaseDeviceOperation;
     friend class strata::device::command::BaseDeviceCommand;
 
     public:
@@ -73,6 +65,17 @@ namespace strata::device {
             SerialDevice
         };
 
+        enum class ApiVersion {
+            Unknown,
+            v1_0,
+            v2_0
+        };
+
+        enum class ControllerType {
+            Embedded = 0x01,
+            Assisted = 0x02
+        };
+
         /**
          * Device constructor
          * @param deviceId device ID
@@ -104,12 +107,75 @@ namespace strata::device {
          */
         virtual bool sendMessage(const QByteArray msg) = 0;
 
+        // *** Device properties (start) ***
+
         /**
-         * Get property.
-         * @param property value from enum DeviceProperties
-         * @return QString filled with value of required property
+         * Get name property.
+         * @return name (device property)
          */
-        virtual QString property(DeviceProperties property) final;
+        virtual QString name() final;
+
+        /**
+         * Get bootloader version property.
+         * @return bootloader version (device property)
+         */
+        virtual QString bootloaderVer() final;
+
+        /**
+         * Get application version property.
+         * @return application version (device property)
+         */
+        virtual QString applicationVer() final;
+
+        /**
+         * Get platform ID property.
+         * @return platform ID (device property)
+         */
+        virtual QString platformId() final;
+
+        /**
+         * Check if class ID property is set.
+         * @return true if class ID is set (true is returned also if class ID is empty string)
+         */
+        virtual bool hasClassId() final;
+
+        /**
+         * Get class ID property.
+         * @return class ID (device property)
+         */
+        virtual QString classId() final;
+
+        /**
+         * Get controller platform ID property.
+         * @return controller platform ID (device property)
+         */
+        virtual QString controllerPlatformId() final;
+
+        /**
+         * Get controller class ID property.
+         * @return controller class ID (device property)
+         */
+        virtual QString controllerClassId() final;
+
+        /**
+         * Get firmware class ID property.
+         * @return firmware class ID (device property)
+         */
+        virtual QString firmwareClassId() final;
+
+        /**
+         * Get API version property.
+         * @return API version (device property)
+         */
+        virtual ApiVersion apiVersion() final;
+
+        /**
+         * Get controller type property.
+         * @return controller type (device property)
+         */
+        virtual ControllerType controllerType() final;
+
+        // *** Device properties (end) ***
 
         /**
          * Get device ID.
@@ -118,10 +184,24 @@ namespace strata::device {
         virtual int deviceId() const final;
 
         /**
+         * Get device name given by system (e.g. COM3)
+         * @return Device name
+         */
+        virtual const QString deviceName() const final;
+
+        /**
          * Get device type.
          * @return Type of device
          */
         virtual Type deviceType() const final;
+
+        /**
+         * Check if controller is connected to platform (dongle is connected to board).
+         * This method must be called after Identify operation finishes or after signal
+         * boardInfoChanged is received from BoardManager.
+         * @return true if controller is connected to platform, false otherwise
+         */
+        virtual bool isControllerConnectedToPlatform() final;
 
         friend QDebug operator<<(QDebug dbg, const Device* d);
         friend QDebug operator<<(QDebug dbg, const DevicePtr& d);
@@ -146,18 +226,26 @@ namespace strata::device {
          */
         void deviceError(ErrorCode errCode, QString msg);
 
-//    protected:
     private:
-        // *** functions used by friend classes DeviceOperations and BaseDeviceCommand:
-        virtual void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) final;
+      // *** functions used by friend classes BaseDeviceOperation and BaseDeviceCommand:
+        // Does not change property if parameter is nullptr.
+        virtual void setVersions(const char* bootloaderVer, const char* applicationVer) final;
+        // Clears property if parameter is nullptr.
+        virtual void setProperties(const char* name, const char* platformId, const char* classId, ControllerType type) final;
+        // Clears property if parameter is nullptr.
+        virtual void setAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) final;
         virtual bool lockDeviceForOperation(quintptr lockId) final;
         virtual void unlockDevice(quintptr lockId) final;
         virtual bool sendMessage(const QByteArray msg, quintptr lockId) = 0;
-        // ***
+        virtual void setBootloaderMode(bool inBootloaderMode) final;
+        // Before calling bootloaderMode(), commands get_firmware_info and request_platform_id must be called.
+        virtual bool bootloaderMode() final;
+        virtual void setApiVersion(ApiVersion apiVersion) final;
+      // ***
 
     protected:
         const int deviceId_;
-        const QString deviceName_;
+        const QString deviceName_;  // name given by system (e.g. COM3)
         const Type deviceType_;
 
         // Mutex for protect access to operationLock_.
@@ -167,15 +255,20 @@ namespace strata::device {
         // Address of DeviceOperations class instance is used as value of operationLock_. 0 means unlocked.
         quintptr operationLock_;
 
+    private:
         QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
 
-    // TODO: make these variables private after removing deprecated functions from SerialDevice
-    //private:
-        QString platformId_;
-        QString classId_;
-        QString verboseName_;
+        bool bootloaderMode_;
+        ApiVersion apiVersion_;
+        ControllerType controllerType_;
         QString bootloaderVer_;
         QString applicationVer_;
+        QString name_;
+        QString platformId_;
+        QString classId_;
+        QString controllerPlatformId_;
+        QString controllerClassId_;
+        QString firmwareClassId_;
     };
 
 }  // namespace

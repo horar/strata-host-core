@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/smart-speaker">
+    <qresource prefix="/">
         <file>views/basic-partial-views/PortInfo.qml</file>
         <file>views/basic-partial-views/PortStatBox.qml</file>
         <file>views/images/icon-boost.svg</file>
@@ -49,5 +49,28 @@
         <file>views/images/usb-c icon.svg</file>
         <file>views/advanced views/PortStatBox.qml</file>
         <file>views/DebugMenu.qml</file>
+        <file>sgwidgets/fonts/Inconsolata.otf</file>
+        <file>sgwidgets/fonts/sgicons.ttf</file>
+        <file>sgwidgets/images/sliderHandle.svg</file>
+        <file>sgwidgets/images/sliderHandleActive.svg</file>
+        <file>sgwidgets/images/sliderThumb.svg</file>
+        <file>sgwidgets/images/sliderValue.svg</file>
+        <file>sgwidgets/SGAccordion.qml</file>
+        <file>sgwidgets/SGAccordionItem.qml</file>
+        <file>sgwidgets/SGCapacityBar.qml</file>
+        <file>sgwidgets/SGCapacityBarElement.qml</file>
+        <file>sgwidgets/SGComboBox.qml</file>
+        <file>sgwidgets/SGDivider.qml</file>
+        <file>sgwidgets/SGGraph.qml</file>
+        <file>sgwidgets/SGLabelledInfoBox.qml</file>
+        <file>sgwidgets/SGLayoutDebug.qml</file>
+        <file>sgwidgets/SGLayoutDivider.qml</file>
+        <file>sgwidgets/SGOutputLogBox.qml</file>
+        <file>sgwidgets/SGResponsiveScrollView.qml</file>
+        <file>sgwidgets/SGSlider.qml</file>
+        <file>sgwidgets/SGStatusListBox.qml</file>
+        <file>sgwidgets/SGSubmitInfoBox.qml</file>
+        <file>sgwidgets/SGSwitch.qml</file>
+        <file>sgwidgets/SGToolTipPopup.qml</file>
     </qresource>
 </RCC>

@@ -10,6 +10,7 @@ import "qrc:/js/constants.js" as Constants
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -17,6 +18,10 @@ Item {
     Layout.preferredWidth: listviewBackground.width
     Layout.fillWidth: false
     Layout.fillHeight: true
+
+    property alias listview: listviewContainer.listview
+    property alias model: filteredPlatformSelectorModel
+    property alias filterText: filter.text
 
     Component.onCompleted: {
         // Restore previously set filters
@@ -76,13 +81,43 @@ Item {
         }
 
         function contains_text(item) {
-            if (filteringText){
-                var keywords = item.description + " " + item.opn + " " + item.verbose_name
-                if(keywords.toLowerCase().includes(filter.lowerCaseText)) {
-                    return true
-                } else {
-                    return false
+            if (filteringText && (searchCategoryText.checked || searchCategoryPartsList.checked)){
+                let found = false
+
+                if (searchCategoryText.checked === true) {
+                    let replaceIdx = item.description.toLowerCase().indexOf(filter.lowerCaseText)
+                    if (replaceIdx > -1) {
+                        found = true;
+                    }
+
+                    item.desc_matching_index = replaceIdx
+
+                    replaceIdx = item.opn.toLowerCase().indexOf(filter.lowerCaseText)
+                    if (replaceIdx > -1) {
+                        found = true
+                    }
+                    item.opn_matching_index = replaceIdx
+
+                    replaceIdx = item.verbose_name.toLowerCase().indexOf(filter.lowerCaseText)
+                    if (replaceIdx > -1) {
+                        found = true
+                    }
+                    item.name_matching_index = replaceIdx
                 }
+
+                if (searchCategoryPartsList.checked === true) {
+                    for (let i = 0; i < item.parts_list.count; i++) {
+                        let idxMatched = item.parts_list.get(i).opn.toLowerCase().indexOf(filter.lowerCaseText);
+                        if (idxMatched !== -1) {
+                            found = true
+                        }
+                        item.parts_list.set(i, {
+                            opn: item.parts_list.get(i).opn,
+                            matchingIndex: idxMatched
+                        });
+                    }
+                }
+                return found
             } else {
                 return true
             }
@@ -133,6 +168,10 @@ Item {
             }
             filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
         }
+
+        onKeywordFilterChanged: {
+            root.filterText = ""
+        }
     }
 
     Rectangle {
@@ -160,25 +199,40 @@ Item {
                 width: 577
                 clip: true
 
+                SGIcon {
+                    id: searchIcon
+                    source: "qrc:/sgimages/zoom.svg"
+                    height: filter.height * .75
+                    width: height
+                    iconColor: "#666"
+                    anchors {
+                        left: textFilterContainer.left
+                        leftMargin: 10
+                        verticalCenter: textFilterContainer.verticalCenter
+                    }
+                }
+
                 TextInput {
                     id: filter
                     text: ""
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
-                        left: textFilterContainer.left
-                        leftMargin: 10
-                        right: textFilterContainer.right
+                        left: searchIcon.right
+                        leftMargin: 5
+                        right: clearIcon.left
                         rightMargin: 10
                     }
-                    color: "#33b13b"
+                    color: Theme.palette.green
                     font.bold: true
                     selectByMouse: true
+                    clip: true
                     enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
 
                     property string lowerCaseText: text.toLowerCase()
 
                     onLowerCaseTextChanged: {
                         Filters.keywordFilter = lowerCaseText
+                        searchCategoriesDropdown.close()
                         if (lowerCaseText === "") {
                             filteredPlatformSelectorModel.filteringText = false
                         } else {
@@ -187,9 +241,21 @@ Item {
                         filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
                     }
 
+
                     Text {
                         id: placeholderText
-                        text: "Filter By Keyword..."
+                        text: {
+                            if (searchCategoryText.checked) {
+                                if (searchCategoryPartsList.checked) {
+                                    return "Search Titles, Descriptions, and Part Numbers..."
+                                }
+                                return "Search Titles and Descriptions..."
+                            } else if (searchCategoryPartsList.checked) {
+                                return "Search Part Numbers in Bill of Materials..."
+                            } else {
+                                return "Please Select Search Options Below..."
+                            }
+                        }
                         color: filter.enabled? "#666" : "#ddd"
                         visible: filter.text === ""
                         anchors {
@@ -201,18 +267,19 @@ Item {
                     MouseArea {
                         id: mouseArea
                         anchors.fill: parent
-                        onPressed: mouse.accepted = false
+                        acceptedButtons: Qt.NoButton
                         cursorShape: Qt.IBeamCursor
                     }
                 }
 
                 SGIcon {
+                    id: clearIcon
                     source: "qrc:/sgimages/times-circle.svg"
                     height: parent.height * .75
                     width: height
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
-                        right: textFilterContainer.right
+                        right: settingsIcon.left
                         rightMargin: (textFilterContainer.height - height) / 2
                     }
                     iconColor: textFilterClearMouse.containsMouse ?  "#bbb" : "#999"
@@ -226,6 +293,88 @@ Item {
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                    }
+                }
+
+                SGIcon {
+                    id: settingsIcon
+                    source: "qrc:/sgimages/chevron-down.svg"
+                    height: 20
+                    width: height
+                    anchors {
+                        verticalCenter: textFilterContainer.verticalCenter
+                        right: textFilterContainer.right
+                        rightMargin: (textFilterContainer.height - height) / 2
+                    }
+                    iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ? "#444" : "#666"
+
+                    MouseArea {
+                        id: cogMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            searchCategoriesDropdown.opened ? searchCategoriesDropdown.close() : searchCategoriesDropdown.open()
+                        }
+                    }
+                }
+
+                Popup {
+                    id: searchCategoriesDropdown
+
+                    y: textFilterContainer.height-1
+                    width: textFilterContainer.width+1
+                    topPadding: 0
+                    bottomPadding: 0
+                    leftPadding: 5
+
+                    closePolicy: Popup.CloseOnReleaseOutsideParent
+
+                    background: Rectangle {
+                        border {
+                            width: 1
+                            color: "#DDD"
+                        }
+                    }
+
+                    contentItem: Column {
+                        id: checkboxCol
+                        anchors.fill: parent
+
+                        RowLayout {
+                            CheckBox {
+                                id: searchCategoryText
+                                checked: true
+                                enabled: searchCategoryPartsList.checked
+
+                                onCheckedChanged: {
+                                    filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                }
+                            }
+
+                            SGText {
+                                id: titlesDescriptions
+                                text: qsTr("Platform Titles and Descriptions")
+                            }
+                        }
+
+                        RowLayout {
+                            CheckBox {
+                                id: searchCategoryPartsList
+                                checked: true
+                                enabled: searchCategoryText.checked
+
+                                onCheckedChanged: {
+                                    filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                }
+                            }
+
+                            SGText {
+                                id: partNumbers
+                                text: qsTr("Part Numbers in Bill of Materials")
+                            }
+                        }
                     }
                 }
             }
@@ -253,7 +402,7 @@ Item {
 
                 Text {
                     id: activeSegmentFilterText
-                    color: "#33b13b"
+                    color: Theme.palette.green
                     font.bold: true
                     anchors {
                         left: segmentFilterContainer.left
@@ -274,8 +423,15 @@ Item {
                             case "segment-industrial-cloud-power":
                                 activeSegmentFilterText.text =  "Showing Industrial & Cloud Power Platforms"
                                 break
-                            default: // case "wirelessiot":
+                            case "segment-iot":
                                 activeSegmentFilterText.text =  "Showing Internet of Things Platforms"
+                                break
+                            default: // case "":
+                                activeSegmentFilterText.text =  ""
+                                defaultSegmentFilterText.visible = true
+                                for (let i = 0; i < segmentFilterRepeater.model.count; i++) {
+                                    segmentFilterRepeater.itemAt(i).checked = false
+                                }
                             }
                         }
                     }
@@ -346,6 +502,7 @@ Item {
                             }
 
                             Repeater {
+                                id: segmentFilterRepeater
                                 delegate: SegmentFilterDelegate {
                                     Component.onCompleted: {
                                         selected.connect(segmentFilterRow.selected)
@@ -383,6 +540,8 @@ Item {
         anchors {
             top: filterContainer.bottom
         }
+
+        property alias listview: listview
 
         Image {
             id: maskTop

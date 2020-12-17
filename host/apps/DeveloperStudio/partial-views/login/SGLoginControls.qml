@@ -7,18 +7,20 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/login_storage.js" as UsernameStorage
 import "qrc:/partial-views/login/"
+import "qrc:/partial-views/general/"
 import "qrc:/partial-views/"
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.signals 1.0
 
 Item {
     id: root
     Layout.preferredHeight: loginControls.implicitHeight
     Layout.fillWidth: true
 
-    property bool animationsRunning: failedLoginAnimation.running || hideFailedLoginAnimation.running
+    property bool animationsRunning: loginErrorRect.running
     property bool connecting: connectionStatus.visible
 
     ColumnLayout {
@@ -56,7 +58,7 @@ Item {
             }
 
             Keys.onPressed: {
-                hideFailedLoginAnimation.startAnimation()
+                loginErrorRect.hide()
             }
 
             Keys.onReturnPressed:{
@@ -112,14 +114,14 @@ Item {
             id: passwordField
             Layout.fillWidth: true
             activeFocusOnTab: true
-            echoMode: TextInput.Password
             selectByMouse: true
-            KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
+            KeyNavigation.tab: rememberCheckBox
             placeholderText: qsTr("Password")
             showIcon: false
+            passwordMode: true
 
             Keys.onPressed: {
-                hideFailedLoginAnimation.startAnimation()
+                loginErrorRect.hide()
             }
 
             Keys.onReturnPressed:{
@@ -127,44 +129,9 @@ Item {
             }
         }
 
-        Rectangle {
+        SGNotificationToast {
             id: loginErrorRect
             Layout.preferredWidth: usernameField.width
-            Layout.preferredHeight: 0
-            color:"red"
-            visible: Layout.preferredHeight > 0
-            clip: true
-
-            SGIcon {
-                id: alertIcon
-                source: "qrc:/sgimages/exclamation-circle.svg"
-                anchors {
-                    left: loginErrorRect.left
-                    verticalCenter: loginErrorRect.verticalCenter
-                    leftMargin: 5
-                }
-                height: 30
-                width: 30
-                iconColor: "white"
-            }
-
-            Text {
-                id: loginErrorText
-                font {
-                    pixelSize: 10
-                    family: Fonts.franklinGothicBold
-                }
-                wrapMode: Label.WordWrap
-                anchors {
-                    left: alertIcon.right
-                    right: loginErrorRect.right
-                    rightMargin: 5
-                    verticalCenter: loginErrorRect.verticalCenter
-                }
-                horizontalAlignment:Text.AlignHCenter
-                text: ""
-                color: "white"
-            }
         }
 
         RowLayout {
@@ -175,6 +142,7 @@ Item {
                 id: rememberCheckBox
                 text: qsTr("Remember Me")
                 checked: Authenticator.settings.rememberMe
+                KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
                 onCheckedChanged: {
                     Authenticator.settings.rememberMe = checked
                 }
@@ -191,15 +159,20 @@ Item {
                 text: "Forgot Password"
                 color: forgotLink.pressed ? "#ddd" : "#545960"
                 font.underline: forgotMouse.containsMouse
+                Accessible.name: forgotLink.text
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: onClick()
+
+                function onClick() {
+                    forgotPopup.visible = true
+                }
 
                 MouseArea {
                     id: forgotMouse
                     anchors.fill: forgotLink
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        forgotPopup.visible = true
-                    }
+                    onClicked: forgotLink.onClick()
                 }
             }
         }
@@ -244,10 +217,6 @@ Item {
                     }
                 }
 
-                Keys.onReturnPressed:{
-                    loginButton.submit()
-                }
-
                 onClicked: {
                     loginControls.visible = false
                     var timezone = -(new Date(new Date().getFullYear(), 0, 1)).getTimezoneOffset()/60
@@ -258,8 +227,14 @@ Item {
                         timezone = Math.floor(timezone)
                     }
                     var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
+                    connectionStatus.currentId = Authenticator.getNextId()
                     Authenticator.login(login_info)
                 }
+
+                Keys.onReturnPressed:{
+                    loginButton.submit()
+                }
+                Accessible.onPressAction: submit()
 
                 function submit() {
                     if (loginButton.enabled) {
@@ -309,7 +284,7 @@ Item {
     }
 
     Connections {
-        target: Authenticator.signals
+        target: Signals
         onLoginResult: {
             var resultObject = JSON.parse(result)
             //console.log(Logger.devStudioCategory, "Login result received")
@@ -321,39 +296,13 @@ Item {
             } else {
                 loginControls.visible = true
                 connectionStatus.text = ""
+                loginErrorRect.color = "red"
                 if (resultObject.response === "No Connection") {
-                    loginErrorText.text = "Connection to authentication server failed"
+                    loginErrorRect.text = "Connection to authentication server failed"
                 } else {
-                    loginErrorText.text = "Username and/or password is incorrect"
+                    loginErrorRect.text = "Username and/or password is incorrect"
                 }
-                failedLoginAnimation.start()
-            }
-        }
-    }
-
-    NumberAnimation{
-        id: failedLoginAnimation
-        target: loginErrorRect
-        property: "Layout.preferredHeight"
-        to: usernameField.height + 10
-        duration: 200
-    }
-
-    NumberAnimation{
-        id: hideFailedLoginAnimation
-        target: loginErrorRect
-        property: "Layout.preferredHeight"
-        to: 0
-        duration: 200
-        onStopped: {
-            if (!animationsRunning) {
-                loginErrorText.text = ""
-            }
-        }
-
-        function startAnimation () {
-            if (loginErrorRect.height !== 0 && !animationsRunning) {
-                start()
+                loginErrorRect.show()
             }
         }
     }

@@ -77,7 +77,12 @@ std::vector<QByteArray> CommandResponseMock::getResponses(QByteArray request)
     if (qCmd->IsString()) {
         std::string cmd = qCmd->GetString();
         if (0 == cmd.compare("get_firmware_info")) {
-            retVal.push_back(test_commands::get_firmware_info_response);
+            if (isLegacy_) {
+                retVal.pop_back();  // remove ack
+                retVal.push_back(test_commands::nack_command_not_found);
+            } else {
+                retVal.push_back(test_commands::get_firmware_info_response);
+            }
         } else if (0 == cmd.compare("request_platform_id")) {
             if (isBootloader_) {
                 retVal.push_back(test_commands::request_platform_id_response_bootloader);

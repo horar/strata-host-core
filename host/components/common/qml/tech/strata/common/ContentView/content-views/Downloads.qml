@@ -7,6 +7,7 @@ import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.DownloadDocumentListModel 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: downloadSection
@@ -166,18 +167,26 @@ Item {
                             }
 
                             text: {
+                                /*
+                                    the first regexp is looking for HTML RichText
+                                    the second regexp is looking for spaces after string
+                                    the third regexp is looking for spaces before string
+                                    the fourth regexp is looking for tabs throughout the string
+                                */
+                                const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
                                 if (model.status === DownloadDocumentListModel.Selected
                                         || model.status === DownloadDocumentListModel.NotSelected)
                                 {
-                                    return model.prettyName
+                                    return model.prettyName.replace(htmlTags, "");
                                 }
 
-                                return model.downloadFilename
+                                return model.downloadFilename.replace(htmlTags, "");
                             }
                             alternativeColorEnabled: true
                             fontSizeMultiplier: delegate.enlarge ? 1.1 : 1.0
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             elide: Text.ElideNone
+                            textFormat: Text.PlainText
                             maximumLineCount: 2
                         }
 
@@ -205,7 +214,7 @@ Item {
                                     bottom: parent.bottom
                                 }
 
-                                color: SGWidgets.SGColorsJS.STRATA_GREEN
+                                color: Theme.palette.green
                             }
                         }
 
@@ -220,7 +229,7 @@ Item {
                             height: infoItem.contentHeight + 2
 
                             radius: 2
-                            color: SGWidgets.SGColorsJS.ERROR_COLOR
+                            color: Theme.palette.error
                             visible: model.status === DownloadDocumentListModel.FinishedWithError
                         }
 

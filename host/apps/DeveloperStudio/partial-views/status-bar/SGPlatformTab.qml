@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/navigation_control.js" as NavigationControl
@@ -12,7 +13,7 @@ Item {
     height: 40
     width: 200
 
-    property color menuColor: "#33b13b"
+    property color menuColor: Theme.palette.green
 
     property string view: model.view
     property string name: model.name
@@ -45,12 +46,16 @@ Item {
                     "device_id": platformTabRoot.device_id
                 }
                 PlatformSelection.closePlatformView(data)
+
                 NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)  // must call last - model entry/delegate begins destruction
+                return
             } else {
                 model.view = selection.view
                 setSelectedButton()
             }
         }
+
+        bringIntoView()
     }
 
     function bringIntoView() {
@@ -79,14 +84,6 @@ Item {
             }
             buttonModel.append(buttonData)
         }
-
-        buttonData = {
-            "text": "Settings",
-            "view": "settings",
-            "icon": "qrc:/sgimages/cog.svg",
-            "selected": false
-        }
-        buttonModel.append(buttonData)
 
         buttonData = {
             "text": "Close Platform",
@@ -208,7 +205,6 @@ Item {
             signal clicked(int index)
 
             onClicked: {
-                platformTabRoot.bringIntoView()
                 platformTabRoot.menuClicked(index)
             }
 

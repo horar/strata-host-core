@@ -1,4 +1,4 @@
-<!DOCTYPE RCC><RCC version="1.0">
+<RCC>
     <qresource prefix="/tech/strata/sgwidgets.1.0">
         <file>qmldir</file>
         <file>SGAboutWindow.qml</file>
@@ -44,7 +44,6 @@
         <file>SGTextEdit.qml</file>
         <file>SGTextField.qml</file>
         <file>SGWindow.qml</file>
-        <file>utils/SGColors.js</file>
         <file>utils/SGUtils.js</file>
         <file>editors/SGBaseEditor.qml</file>
         <file>editors/SGTextFieldEditor.qml</file>
@@ -54,4 +53,3 @@
         <file>dialogs/SGMessageDialog.qml</file>
     </qresource>
 </RCC>
-

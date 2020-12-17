@@ -26,6 +26,14 @@ public:
     FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent = nullptr);
 
     /*!
+     * FlasherConnector constructor.
+     * \param device device which will be used by FlasherConnector
+     * \param firmwarePath path to firmware file
+     * \param firmwareMD5 MD5 checksum of firmware
+     */
+    FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, const QString& firmwareMD5, QObject* parent = nullptr);
+
+    /*!
      * FlasherConnector destructor.
      */
     ~FlasherConnector();
@@ -83,7 +91,8 @@ public:
         Started,
         Finished,
         Cancelled,
-        Failed
+        Failed,
+        NoFirmware
     };
     Q_ENUM(State)
 
@@ -129,8 +138,7 @@ signals:
     void devicePropertiesChanged();
 
 private slots:
-    void handleFlasherFinished(Flasher::Result flasherResult);
-    void handleFlasherError(QString errorString);
+    void handleFlasherFinished(Flasher::Result flasherResult, QString errorString);
     void handleSwitchToBootloader(bool done);
 
 private:
@@ -142,8 +150,8 @@ private:
     device::DevicePtr device_;
     std::unique_ptr<Flasher> flasher_;
     QString filePath_;
+    const QString newFirmwareMD5_;
     QTemporaryFile tmpBackupFile_;
-    QString errorString_;
 
     enum class Action {
         None,

@@ -54,6 +54,11 @@ bool ClassDocuments::loading() const
     return loading_;
 }
 
+bool ClassDocuments::metaDataInitialized() const
+{
+    return metaDataInitialized_;
+}
+
 int ClassDocuments::loadingProgressPercentage() const
 {
     return loadingProgressPercentage_;
@@ -85,8 +90,6 @@ void ClassDocuments::populateModels(QJsonObject data)
     QList<DocumentItem* > pdfList;
     QList<DocumentItem* > datasheetList;
     QList<DownloadDocumentItem* > downloadList;
-    QList<VersionedItem* > firmwareList;
-    QList<VersionedItem* > controlViewList;
 
     if (data.contains("error")) {
         qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
@@ -115,6 +118,13 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString category = datasheetObject.value("category").toString();
         QString uri = datasheetObject.value("datasheet").toString();
         QString name = datasheetObject.value("name").toString();
+
+        if (uri.length() == 0
+                || name.length() == 0)
+        {
+            qCWarning(logCategoryDocumentManager) << "Datasheet has missing data";
+            continue;
+        }
 
         DocumentItem *di = new DocumentItem(uri, name, category);
         datasheetList.append(di);
@@ -166,6 +176,24 @@ void ClassDocuments::populateModels(QJsonObject data)
         }
     }
 
+    pdfModel_.populateModel(pdfList);
+    datasheetModel_.populateModel(datasheetList);
+    downloadDocumentModel_.populateModel(downloadList);
+
+    setLoading(false);
+}
+
+void ClassDocuments::populateMetaData(QJsonObject data)
+{
+    if (data.contains("error")) {
+        qCWarning(logCategoryDocumentManager) << "Document metadata error:" << data["error"].toString();
+        setMetaDataInitialized(true);
+        return;
+    }
+
+    QList<VersionedItem* > firmwareList;
+    QList<VersionedItem* > controlViewList;
+
     QJsonArray firmwareArray = data["firmwares"].toArray();
     for (const QJsonValueRef firmwareValue : firmwareArray) {
         QJsonObject documentObject = firmwareValue.toObject();
@@ -179,9 +207,6 @@ void ClassDocuments::populateModels(QJsonObject data)
             qCWarning(logCategoryDocumentManager) << "firmware object is not complete";
             continue;
         }
-
-        QJsonDocument doc(documentObject);
-        QString strJson(doc.toJson(QJsonDocument::Compact));
 
         QString uri = documentObject["uri"].toString();
         QString name = documentObject["name"].toString();
@@ -208,9 +233,6 @@ void ClassDocuments::populateModels(QJsonObject data)
             continue;
         }
 
-        QJsonDocument doc(documentObject);
-        QString strJson(doc.toJson(QJsonDocument::Compact));
-
         QString uri = documentObject["uri"].toString();
         QString name = documentObject["name"].toString();
         QString md5 = documentObject["md5"].toString();
@@ -222,13 +244,10 @@ void ClassDocuments::populateModels(QJsonObject data)
         controlViewList.append(controlViewItem);
     }
 
-    pdfModel_.populateModel(pdfList);
-    datasheetModel_.populateModel(datasheetList);
-    downloadDocumentModel_.populateModel(downloadList);
     firmwareModel_.populateModel(firmwareList);
     controlViewModel_.populateModel(controlViewList);
 
-    setLoading(false);
+    setMetaDataInitialized(true);
 }
 
 void ClassDocuments::clearDocuments()
@@ -251,6 +270,14 @@ void ClassDocuments::setLoading(bool loading)
     if (loading_ != loading) {
         loading_ = loading;
         emit loadingChanged();
+    }
+}
+
+void ClassDocuments::setMetaDataInitialized(bool init)
+{
+    if (metaDataInitialized_ != init) {
+        metaDataInitialized_ = init;
+        emit metaDataInitializedChanged();
     }
 }
 
@@ -287,6 +314,8 @@ void ClassDocuments::populateDatasheetList(const QString &path, QList<DocumentIt
 
             DocumentItem *di = new DocumentItem(datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
             list.append(di);
+        } else {
+            qCWarning(logCategoryDocumentManager) << "Skipping datasheet with missing information:" << datasheetLine;
         }
     }
 

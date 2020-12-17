@@ -1,8 +1,8 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.3
-import "qrc:/views/subGHz/sgwidgets"
-import "qrc:/views/subGHz/views"
+import "sgwidgets"
+import "views"
 
 Item {
     id: controlView

@@ -19,6 +19,8 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: container
@@ -31,13 +33,14 @@ Rectangle {
     property string last_name: ""
 
     property color backgroundColor: "#3a3a3a"
-    property color menuColor: "#33b13b"
+    property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
 
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
+        userSettings.loadSettings()
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -49,37 +52,38 @@ Rectangle {
         Help.destroyHelp()
     }
 
-    Item {
-        id: logoContainer
-        height: container.height
-        width: 70
-
-        Image {
-            source: "qrc:/images/strata-logo-reverse.svg"
-            height: 30
-            width: 60
-            mipmap: true
-            anchors {
-                centerIn: logoContainer
-            }
-        }
-    }
-
-    Row {
+    RowLayout {
         id: tabRow
         anchors {
-            left: logoContainer.right
+            left: container.left
+            right: profileIconContainer.left
         }
         spacing: 1
 
+    	Item {
+        	id: logoContainer
+        	Layout.preferredHeight: container.height
+        	Layout.preferredWidth: 70
+
+        	Image {
+            	source: "qrc:/images/strata-logo-reverse.svg"
+            	height: 30
+            	width: 60
+            	mipmap: true
+            	anchors {
+                	centerIn: logoContainer
+            	}
+        	}
+    	}
+
         Rectangle {
             id: platformSelector
-            height: 40
-            width: 120
+            Layout.preferredHeight:40
+            Layout.preferredWidth: 120
 
-            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? "#33b13b" : "#444"
+            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.green : "#444"
 
-            property color menuColor: "#33b13b"
+            property color menuColor: Theme.palette.green
 
             SGText {
                 color: "white"
@@ -103,9 +107,15 @@ Rectangle {
             }
         }
 
-        Repeater {
+        ListView {
             id: platformTabRepeater
+            Layout.fillHeight: true
+            Layout.fillWidth: true
             delegate: SGPlatformTab {}
+            orientation: ListView.Horizontal
+            spacing: 1
+            clip: true
+
             model: NavigationControl.platform_view_model_
         }
 
@@ -147,13 +157,14 @@ Rectangle {
 
     Item {
         id: profileIconContainer
+        width: height
+
         anchors {
             right: container.right
             rightMargin: 2
             top: container.top
             bottom: container.bottom
         }
-        width: height
 
         Rectangle {
             id: profileIcon
@@ -201,7 +212,6 @@ Rectangle {
                 anchors {
                     centerIn: parent
                 }
-
                 source: "qrc:/sgimages/exclamation-circle.svg"
                 iconColor : "white"
             }
@@ -214,8 +224,13 @@ Rectangle {
                 fill: profileIconContainer
             }
             cursorShape: Qt.PointingHandCursor
+            Accessible.role: Accessible.Button
+            Accessible.name: "User Icon"
+            Accessible.description: "User menu button."
+            Accessible.onPressAction: pressAction()
+            onPressed: pressAction()
 
-            onPressed: {
+            function pressAction() {
                 profileMenu.open()
             }
         }
@@ -266,7 +281,7 @@ Rectangle {
                     text: qsTr("Feedback")
                     onClicked: {
                         profileMenu.close()
-                        feedbackPopup.open();
+                        feedLoader.active = true
                     }
                     width: profileMenu.width
                 }
@@ -275,7 +290,16 @@ Rectangle {
                     text: qsTr("Profile")
                     onClicked: {
                         profileMenu.close()
-                        profilePopup.open()
+                        profileLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Settings")
+                    onClicked: {
+                        profileMenu.close()
+                        settingsLoader.active = true
                     }
                     width: profileMenu.width
                 }
@@ -308,20 +332,58 @@ Rectangle {
         }
     }
 
-    SGFeedbackPopup {
-        id: feedbackPopup
-        width: Math.max(container.width * 0.8, 600)
-        x: container.width/2 - feedbackPopup.width/2
-        y: container.parent.windowHeight/2 - feedbackPopup.height/2
+    Loader {
+        id: feedLoader
+        source: "qrc:/partial-views/status-bar/SGFeedbackPopup.qml"
+        active: false
     }
 
-    SGProfilePopup {
-        id: profilePopup
-        x: container.width/2 - profilePopup.width/2
-        y: container.parent.windowHeight/2 - profilePopup.height/2
+    Loader {
+        id: profileLoader
+        source: "qrc:/partial-views/profile-popup/SGProfilePopup.qml"
+        active: false
     }
 
-    function showAboutWindow() {
+    Loader {
+        id: settingsLoader
+        source: "qrc:/partial-views/status-bar/SGSettingsPopup.qml"
+        active: false
+    }
+
+    SGUserSettings {
+        id: userSettings
+        classId: "general-settings"
+        user: NavigationControl.context.user_id
+
+        property bool autoOpenView: false
+        property bool closeOnDisconnect: false
+        property bool notifyOnFirmwareUpdate: false
+
+        property int selectedDistributionPortal: 0
+
+        function loadSettings() {
+            const settings = readFile("general-settings.json")
+            if (settings.hasOwnProperty("autoOpenView")) {
+                autoOpenView = settings.autoOpenView
+                closeOnDisconnect = settings.closeOnDisconnect
+                notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+                selectedDistributionPortal = settings.selectedDistributionPortal
+            }
+            NavigationControl.userSettings = userSettings
+        }
+
+        function saveSettings() {
+            const settings = {
+                autoOpenView: autoOpenView,
+                closeOnDisconnect: closeOnDisconnect,
+                notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
+                selectedDistributionPortal: selectedDistributionPortal
+            }
+            userSettings.writeFile("general-settings.json", settings)
+        }
+    }
+
+    function showAboutWindow(){
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 }

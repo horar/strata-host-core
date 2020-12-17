@@ -101,6 +101,8 @@ void StorageManager::singleDownloadProgressHandler(const QString &groupId, const
 
     if (request->type == RequestType::FileDownload) {
         emit downloadPlatformSingleFileProgress(request->clientId, filePath, bytesReceived, bytesTotal);
+    } else if (request->type == RequestType::ControlViewDownload) {
+        emit downloadControlViewProgress(request->clientId, downloadControlViewUris_[groupId], filePath, bytesReceived, bytesTotal);
     }
 }
 
@@ -166,7 +168,7 @@ void StorageManager::handlePlatformListResponse(const QByteArray &clientId, cons
 
 void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadRequest *requestItem, const QString &errorString)
 {
-    QJsonArray documentList, datasheetList, firmwareList, controlViewList;
+    QJsonArray documentList, datasheetList;
     QString  finalErrorString = errorString;
 
     PlatformDocument *platDoc = fetchPlatformDoc(requestItem->classId);
@@ -230,48 +232,12 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
 
             documentList.append(object);
         }
-
-        //firmwares
-        QList<VersionedFileItem> firmwareItems = platDoc->getFirmwareList();
-        for (const auto &item : firmwareItems) {
-            QJsonObject object {
-                {"uri", item.partialUri},
-                {"md5", item.md5},
-                {"name", item.name},
-                {"timestamp", item.timestamp},
-                {"version", item.version}
-            };
-
-            firmwareList.append(object);
-        }
-
-        //control views
-        QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
-        for (const auto &item : controlViewItems) {
-            QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views");
-            if (downloadManager_->verifyFileChecksum(filePath, item.md5) == false) {
-                filePath.clear();
-            }
-            QJsonObject object {
-                {"uri", item.partialUri},
-                {"md5", item.md5},
-                {"name", item.name},
-                {"timestamp", item.timestamp},
-                {"version", item.version},
-                {"filepath", filePath}
-            };
-
-            controlViewList.append(object);
-        }
-
     }
 
     emit platformDocumentsResponseRequested(requestItem->clientId,
                                             requestItem->classId,
                                             datasheetList,
                                             documentList,
-                                            firmwareList,
-                                            controlViewList,
                                             finalErrorString);
 }
 
@@ -357,7 +323,15 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
 
         QJsonObject jsonPlatform(value.toObject());
         jsonPlatform.insert("image", url.toString());
+        jsonPlatform.insert("timestamp", platDoc->platformSelector().timestamp);
 
+        QJsonArray parts_list;
+
+        for (PlatformDatasheetItem i : platDoc->getDatasheetList()) {
+            parts_list.append(i.opn);
+        }
+
+        jsonPlatform.insert("parts_list", parts_list);
         jsonPlatformListResponse.append(jsonPlatform);
     }
 
@@ -376,12 +350,53 @@ void StorageManager::requestPlatformDocuments(
 {
     PlatformDocument* platDoc = fetchPlatformDoc(classId);
 
-    if (platDoc == nullptr){
-        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), QJsonArray(), QJsonArray(), "Failed to fetch platform data");
+    if (platDoc == nullptr) {
+        emit platformMetaData(clientId, classId,  QJsonArray(), QJsonArray(), "Failed to fetch platform metadata");
+        emit platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), "Failed to fetch platform data");
+
         qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
         return;
     }
 
+    // Here we return metadata about the platform before downloading items
+    QJsonArray controlViewList, firmwareList;
+
+    //firmwares
+    QList<VersionedFileItem> firmwareItems = platDoc->getFirmwareList();
+    for (const auto &item : firmwareItems) {
+        QJsonObject object {
+            {"uri", item.partialUri},
+            {"md5", item.md5},
+            {"name", item.name},
+            {"timestamp", item.timestamp},
+            {"version", item.version}
+        };
+
+        firmwareList.append(object);
+    }
+
+    //control views
+    QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
+    for (const auto &item : controlViewItems) {
+        QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views" + (classId.isEmpty() ? "" : "/" + classId));
+        if (downloadManager_->verifyFileHash(filePath, item.md5) == false) {
+            filePath.clear();
+        }
+
+        QJsonObject object {
+            {"uri", item.partialUri},
+            {"md5", item.md5},
+            {"name", item.name},
+            {"timestamp", item.timestamp},
+            {"version", item.version},
+            {"filepath", filePath}
+        };
+
+        controlViewList.append(object);
+    }
+    emit platformMetaData(clientId, classId, controlViewList, firmwareList, "");
+
+    // Now continue to start the downloads for platform documents
     QString pathPrefix("documents/views");
 
     QList<PlatformFileItem> viewList = platDoc->getViewList();
@@ -462,6 +477,12 @@ void StorageManager::requestDownloadPlatformFiles(
         downloadList << item;
     }
 
+    if (downloadList.isEmpty()) {
+        qCWarning(logCategoryHcsStorage()) << "requested files not valid";
+        emit downloadPlatformFilesFinished(clientId, "requested files not valid");
+        return;
+    }
+
     DownloadRequest *request = new DownloadRequest();
     request->clientId = clientId;
     request->type = RequestType::FileDownload;
@@ -477,11 +498,15 @@ void StorageManager::requestDownloadPlatformFiles(
     downloadRequests_.insert(request->groupId, request);
 }
 
-void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5)
+void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5, const QString &class_id)
 {
     DownloadManager::DownloadRequestItem item;
     item.url = baseUrl_.resolved(partialUri);
-    item.filePath = createFilePathFromItem(partialUri, "documents/control_views");
+    QString prefix = "documents/control_views";
+    if (!class_id.isEmpty()) {
+        prefix += "/" + class_id;
+    }
+    item.filePath = createFilePathFromItem(partialUri, prefix);
     item.md5 = md5;
 
     QList<DownloadManager::DownloadRequestItem> downloadList({item});
@@ -491,6 +516,7 @@ void StorageManager::requestDownloadControlView(const QByteArray &clientId, cons
     request->type = RequestType::ControlViewDownload;
 
     DownloadManager::Settings settings;
+    settings.notifySingleDownloadProgress = true;
     settings.keepOriginalName = true;
 
     request->groupId = downloadManager_->download(downloadList, settings);

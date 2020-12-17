@@ -5,12 +5,9 @@ import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/platform_selection.js" as PlatformSelection
-import "qrc:/js/help_layout_manager.js" as Help
 
 StackLayout {
     id: platformStack
-
     currentIndex: {
         switch (model.view) {
         case "collateral":
@@ -22,95 +19,51 @@ StackLayout {
         }
     }
 
-    property alias controlContainer: controlContainer
-    property alias collateralContainer: collateralContainer
-
-    property int device_id: model.device_id
+    property var device_id: model.device_id // var type so Constants.DEVICE_IDs are not coerced to 32 bit signed ints
     property string class_id: model.class_id
     property string firmware_version: model.firmware_version
     property bool connected: model.connected
-    property bool controlLoaded: false
-    property bool fullyInitialized: platformStack.initialized && sgUserSettings.initialized
-    property bool initialized: false
+    property string name: model.name
+    property alias controlViewContainer: controlViewContainer
+
+    property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
+    property bool platformStackInitialized: false
+    property bool userSettingsInitialized: false
+    property bool fullyInitialized: platformStackInitialized &&
+                                    userSettingsInitialized &&
+                                    platformMetaDataInitialized
+
+    onFullyInitializedChanged: {
+        initialize()
+    }
 
     onConnectedChanged: {
         initialize()
     }
 
     Component.onCompleted: {
-        initialized = true
-        initialize()
+        platformStackInitialized = true
     }
 
     Component.onDestruction: {
-        removeControl()
+        controlViewContainer.removeControl()
     }
 
     function initialize () {
-        if (fullyInitialized) { // guarantee control view loads after platformStack & sgUserSettings
+        // guarantee control view loads after platformStack & sgUserSettings etc
+        if (fullyInitialized) {
             if (connected && model.available.control) {
-                loadControl()
+                controlViewContainer.initialize()
             } else {
-                removeControl()
+                controlViewContainer.removeControl()
             }
         }
     }
 
-    function loadControl () {
-        if (controlLoaded === false){
-            Help.setClassId(model.device_id)
-            let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")
-            NavigationControl.context.class_id = model.class_id
-            NavigationControl.context.device_id = model.device_id
-            NavigationControl.context.sgUserSettings = sgUserSettings
-
-            let control = NavigationControl.createView(qml_control, controlContainer)
-            delete NavigationControl.context.class_id
-            delete NavigationControl.context.device_id
-            delete NavigationControl.context.sgUserSettings
-            if (control === null) {
-                NavigationControl.createView(NavigationControl.screens.LOAD_ERROR, controlContainer)
-            }
-
-            controlLoaded = true
-        }
-    }
-
-    function removeControl () {
-        if (controlLoaded) {
-            NavigationControl.removeView(controlContainer)
-            controlLoaded = false
-        }
-    }
-
-    SGUserSettings {
-        id: sgUserSettings
-        classId: model.class_id
-        user: NavigationControl.context.user_id
-
-        property bool initialized: false
-
-        Component.onCompleted: {
-            initialized = true
-            platformStack.initialize()
-        }
-    }
-
-    Item {
-        id: controlStackContainer
-        Layout.fillHeight: true
-        Layout.fillWidth: true
-
-        Item {
-            id: controlContainer
-            anchors {
-                fill: parent
-            }
-        }
-
-        DisconnectedOverlay {
-            visible: model.connected === false
-        }
+    ControlViewContainer {
+         id: controlViewContainer
+         Layout.fillHeight: true
+         Layout.fillWidth: true
     }
 
     Item {
@@ -128,7 +81,22 @@ StackLayout {
         Layout.fillHeight: true
         Layout.fillWidth: true
 
-        PlatformSettings {
+        property int stackIndex: 2 // must be updated if platformStack order is modified
+    }
+
+    SGUserSettings {
+        id: sgUserSettings
+        classId: platformStack.class_id
+        user: NavigationControl.context.user_id
+
+        Component.onCompleted: {
+            platformStack.userSettingsInitialized = true
         }
+    }
+
+    SGUserSettings {
+        id: versionSettings
+        classId: platformStack.class_id
+        user: "strata"
     }
 }

@@ -5,18 +5,17 @@ import Qt.labs.settings 1.0
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/constants.js" as Constants
-Row {
+import "qrc:/js/navigation_control.js" as NavigationControl
+
+RowLayout {
     id: row
     height: textSize.height * 2
-    anchors {
-        right: parent.right
-        top: parent.top
-        margins: 40
-    }
+    spacing: 0
 
-    property string user_id: parent.user_id
+    property string user_id: container.user_id
     property string providerUrl: ''
     property string providerName: ''
     readonly property var providers: [
@@ -42,49 +41,43 @@ Row {
         }
     ]
 
-    Button {
-        id: providerButton
-        width: textSize.width + textSize.height
-        height: parent.height
-        hoverEnabled: true
+    Rectangle {
+        id: providerBackground
+        color: !providerMouseArea.containsMouse && !providerPopup.opened
+               ? Theme.palette.green : providerMouseArea.pressed && !providerPopup.opened
+                 ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+        radius: 10
+        Layout.preferredWidth: textSize.width + textSize.height
+        Layout.fillWidth: true
+        implicitHeight: parent.height
 
-        background: Rectangle {
-            id: providerBackground
-            color: !providerButton.hovered && !providerPopup.opened
-                   ? SGColorsJS.STRATA_GREEN : providerMouseArea.pressed && !providerPopup.opened
-                     ? Qt.darker("#007a1f", 1.25) : "#007a1f"
-            radius: 10
+        Rectangle {
+            // square off bottom
+            visible: providerPopup.visible
+            y: providerBackground.height / 2
+            width: providerBackground.width
+            height: providerBackground.height/2
+            color: providerBackground.color
+        }
 
-
-            Rectangle {
-                // square off bottom
-                visible: providerPopup.visible
-                y: providerButton.height / 2
-                width: providerButton.width
-                height: providerButton.height/2
-                color: providerBackground.color
+        Rectangle {
+            // square off right
+            anchors {
+                right: parent.right
             }
-
-            Rectangle {
-                // square off right
-                anchors {
-                    right: parent.right
-                }
-                width: providerButton.width/2
-                height: providerButton.height
-                color: providerBackground.color
-            }
+            width: providerBackground.width/2
+            height: providerBackground.height
+            color: providerBackground.color
         }
 
         SGText {
             id: providerText
-            text: urlIconButton.enabled && providerButton.hovered || providerPopup.opened ? sgBaseRepeater.model.get(0).name : providerName
+            text: iconMouse.enabled && providerMouseArea.containsMouse || providerPopup.opened ? sgBaseRepeater.model.get(0).name : providerName
             color: "white"
             width: parent.width
             height: parent.height
-            font {
-                family: Fonts.franklinGothicBold
-            }
+            font.family: Fonts.franklinGothicBold
+            elide: Text.ElideRight
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
             fontSizeMultiplier: 1.25
@@ -92,17 +85,20 @@ Row {
 
         MouseArea {
             id: providerMouseArea
-            hoverEnabled: true
             anchors {
                 fill: parent
             }
+            hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: !providerPopup.opened ?  providerPopup.popOpen() : providerPopup.popClose()
+
+            onClicked:  {
+                !providerPopup.opened ?  providerPopup.popOpen() : providerPopup.popClose()
+            }
         }
 
         Popup {
             id: providerPopup
-            width: providerButton.width
+            width: providerBackground.width
             height: providerItems.implicitHeight
             y: providerBackground.height
             closePolicy: Popup.CloseOnPressOutsideParent
@@ -111,7 +107,7 @@ Row {
 
             contentItem: ColumnLayout {
                 id: providerItems
-                width: providerButton.width
+                width: providerBackground.width
                 spacing: 0
 
                 Repeater {
@@ -120,8 +116,8 @@ Row {
                     delegate: SGBaseDistributionItem {
                         id: sgBaseItem
                         text: qsTr(model.name)
-                        Layout.preferredWidth: providerButton.width
-                        Layout.preferredHeight: Math.floor(providerButton.height)
+                        Layout.preferredWidth: providerBackground.width
+                        Layout.preferredHeight: Math.floor(providerBackground.height)
                         visible: model.visible
 
                         onClicked: {
@@ -142,37 +138,32 @@ Row {
         }
     }
 
-    Button {
-        id: urlIconButton
-        enabled: providerUrl !== ''
-        width: height
-        height: parent.height
-        onClicked: Qt.openUrlExternally(providerUrl)
+    Rectangle {
+        id: iconBackground
+        radius: 10
+        color: !iconMouse.containsMouse
+               ? Theme.palette.green : iconMouse.pressed
+                 ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+        implicitWidth: height
+        implicitHeight: parent.height
 
-        background: Rectangle {
-            id: iconBackground
-            radius: 10
-            color: !urlIconButton.hovered
-                   ? SGColorsJS.STRATA_GREEN : iconMouse.pressed
-                     ? Qt.darker("#007a1f", 1.25) : "#007a1f"
-
-            Rectangle {
-                // square off left side
-                width: parent.width/2
-                height: parent.height
-                color: parent.color
-            }
+        Rectangle {
+            // square off left side
+            width: parent.width/2
+            height: parent.height
+            color: parent.color
         }
+
 
         SGIcon {
             id: urlIcon
             source: 'qrc:/partial-views/distribution-portal/images/arrow-circle-right.svg'
-            opacity: urlIconButton.enabled ? 1 : 0.3
+            opacity: iconMouse.enabled ? 1 : 0.3
             iconColor: 'white'
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            enabled: urlIconButton.enabled
-            anchors.fill: urlIconButton
+            enabled: iconMouse.enabled
+            anchors.fill: iconBackground
             anchors.margins: 5
         }
 
@@ -182,27 +173,18 @@ Row {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: Qt.openUrlExternally(providerUrl)
+            enabled: providerUrl !== ''
         }
-    }
-
-    Settings {
-        id: providerSettings
-        category: "Distributor"
-        property string jsonString: ''
     }
 
     Component.onCompleted: {
         // This is needed to create the model
         loadModel();
-        if (providerSettings.jsonString !== "") {
-            const userSettings = JSON.parse(providerSettings.jsonString)
-            if (userSettings.hasOwnProperty(user_id)) {
-                const savedIndex = userSettings[user_id]
-                const index = savedIndex["index"]
-                providerUrl = sgBaseRepeater.model.get(index).url
-                providerName = sgBaseRepeater.model.get(index).name
+        if (NavigationControl.userSettings.selectedDistributionPortal !== 0) {
+                const selectedDistributionPortal = NavigationControl.userSettings.selectedDistributionPortal;
+                providerUrl = sgBaseRepeater.model.get(selectedDistributionPortal).url
+                providerName = sgBaseRepeater.model.get(selectedDistributionPortal).name
                 return
-            }
         }
         setIndex(0)
     }
@@ -210,18 +192,8 @@ Row {
     function setIndex(index) {
         providerUrl = sgBaseRepeater.model.get(index).url
         providerName = sgBaseRepeater.model.get(index).name
-        const savedIndex = {}
-        savedIndex["index"] = index
-
-        let savedSettings
-        if (providerSettings.jsonString !== "") {
-            savedSettings = JSON.parse(providerSettings.jsonString)
-        } else {
-            savedSettings = {}
-        }
-
-        savedSettings[user_id] = savedIndex
-        providerSettings.jsonString = JSON.stringify(savedSettings)
+        NavigationControl.userSettings.selectedDistributionPortal = index
+        NavigationControl.userSettings.saveSettings()
     }
 
     function loadModel(){

@@ -18,8 +18,11 @@ public:
 
     bool mockIsBootloader() { return isBootloader_; }
 
+    void mockSetLegacy(bool legacy) { isLegacy_ = legacy; }
+
 private:
     bool isBootloader_ = false;
+    bool isLegacy_ = false;  // very old board without 'get_firmware_info' command support
 };
 
 
@@ -46,7 +49,7 @@ R"({
     "payload":{"return_value":false,"return_string":"command not found"}
 })";
 
-const QByteArray get_firmware_info_request = R"({"cmd":"get_firmware_info"})";
+const QByteArray get_firmware_info_request = R"({"cmd":"get_firmware_info","payload":{}})";
 
 const QByteArray get_firmware_info_response =
 R"({
@@ -67,7 +70,8 @@ R"({
 
 const QByteArray request_platform_id_request =
 R"({
-    "cmd":"request_platform_id"
+    "cmd":"request_platform_id",
+    "payload":{}
 })";
 
 const QByteArray request_platform_id_response =
@@ -99,7 +103,7 @@ R"({
     }
 })";
 
-const QByteArray start_bootloader_request = R"({"cmd":"start_bootloader"})";
+const QByteArray start_bootloader_request = R"({"cmd":"start_bootloader","payload":{}})";
 
 const QByteArray start_bootloader_response =
 R"({
@@ -111,7 +115,7 @@ R"({
     }
 })";
 
-const QByteArray start_application_request = R"({"cmd":"start_application"})";
+const QByteArray start_application_request = R"({"cmd":"start_application","payload":{}})";
 
 const QByteArray start_application_response =
 R"({

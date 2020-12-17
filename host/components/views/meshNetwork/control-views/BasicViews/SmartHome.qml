@@ -209,7 +209,7 @@ Rectangle {
 
     Image{
         id:mainImage
-        source:"qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+        source:"../../images/smartHome_lightsOn.jpg"
         height:parent.height*.6
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 20
@@ -226,28 +226,28 @@ Rectangle {
            var doorState = platformInterface.smarthome_door.value
            var windowState = platformInterface.window_shade.value
            if (doorState === "open" && windowState === "open")
-                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+                 mainImage.source = "../../images/smartHome_doorOpenWindowOpen.jpg"
              else if (doorState === "open" && windowState === "closed")
-                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+                 mainImage.source = "../../images/smartHome_doorOpen.jpg"
              else if (doorState === "closed" && windowState === "open")
-               mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+               mainImage.source = "../../images/smartHome_windowOpen.jpg"
              else if (doorState === "closed" && windowState === "closed")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+                mainImage.source = "../../images/smartHome_lightsOn.jpg"
         }
 
         function setColor(inColor){
             if (inColor === "white")
-              mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+              mainImage.source = "../../images/smartHome_lightsOn.jpg"
             else if (inColor === "black")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.jpg"
+                mainImage.source = "../../images/smartHome_lightsOff.jpg"
             else if (inColor === "blue")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.jpg"
+                mainImage.source = "../../images/smartHome_blue.jpg"
             else if (inColor === "green")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.jpg"
+                mainImage.source = "../../images/smartHome_green.jpg"
             else if (inColor === "purple")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.jpg"
+                mainImage.source = "../../images/smartHome_purple.jpg"
             else if (inColor === "orange")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_orange.jpg"
+                mainImage.source = "../../images/smartHome_orange.jpg"
         }
 
         function toggleDoor(){
@@ -259,30 +259,30 @@ Rectangle {
             var doorState = platformInterface.smarthome_door.value
             var windowState = platformInterface.window_shade.value
             if (doorState === "open" && windowState === "open")
-                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+                  mainImage.source = "../../images/smartHome_doorOpenWindowOpen.jpg"
               else if (doorState === "open" && windowState === "closed")
-                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+                  mainImage.source = "../../images/smartHome_doorOpen.jpg"
               else if (doorState === "closed" && windowState === "open")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+                mainImage.source = "../../images/smartHome_windowOpen.jpg"
               else if (doorState === "closed" && windowState === "closed")
-                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+                 mainImage.source = "../../images/smartHome_lightsOn.jpg"
         }
 
         property var color: platformInterface.room_color_notification
         onColorChanged: {
             var newColor = platformInterface.room_color_notification.color
             if (newColor === "white")
-              mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+              mainImage.source = "../../images/smartHome_lightsOn.jpg"
             else if (newColor === "black")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.jpg"
+                mainImage.source = "../../images/smartHome_lightsOff.jpg"
             else if (newColor === "blue")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.jpg"
+                mainImage.source = "../../images/smartHome_blue.jpg"
             else if (newColor === "green")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.jpg"
+                mainImage.source = "../../images/smartHome_green.jpg"
             else if (newColor === "purple")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.jpg"
+                mainImage.source = "../../images/smartHome_purple.jpg"
             else if (newColor === "orange")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_orange.jpg"
+                mainImage.source = "../../images/smartHome_orange.jpg"
             }
 
         property var door: platformInterface.smarthome_door
@@ -290,13 +290,13 @@ Rectangle {
             var doorState = platformInterface.smarthome_door.value
             var windowState = platformInterface.window_shade.value
             if (doorState === "open" && windowState === "open")
-                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+                  mainImage.source = "../../images/smartHome_doorOpenWindowOpen.jpg"
               else if (doorState === "open" && windowState === "closed")
-                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+                  mainImage.source = "../../images/smartHome_doorOpen.jpg"
               else if (doorState === "closed" && windowState === "open")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+                mainImage.source = "../../images/smartHome_windowOpen.jpg"
               else if (doorState === "closed" && windowState === "closed")
-                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+                 mainImage.source = "../../images/smartHome_lightsOn.jpg"
             }
 
         property var window: platformInterface.window_shade
@@ -305,36 +305,13 @@ Rectangle {
              var windowState = platformInterface.window_shade.value
             console.log("settting window to be",windowState)
             if (doorState === "open" && windowState === "open")
-                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+                  mainImage.source = "../../images/smartHome_doorOpenWindowOpen.jpg"
               else if (doorState === "open" && windowState === "closed")
-                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+                  mainImage.source = "../../images/smartHome_doorOpen.jpg"
               else if (doorState === "closed" && windowState === "open")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+                mainImage.source = "../../images/smartHome_windowOpen.jpg"
               else if (doorState === "closed" && windowState === "closed")
-                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
-            }
-        }
-
-
-
-        NodeConnector{
-            id:nodeConnector
-            anchors.left:dragTargetContainer.left
-            anchors.right:dragTargetContainer.right
-            anchors.top:dragTargetContainer.top
-            height: dragTargetContainer.height
-            visible:false
-
-            dragObjects: dragTargets
-
-            Connections{
-                target: sensorRow
-                onShowMesh:{
-                    nodeConnector.visible = true
-                }
-                onHideMesh:{
-                    nodeConnector.visible = false
-                }
+                 mainImage.source = "../../images/smartHome_lightsOn.jpg"
             }
         }
 

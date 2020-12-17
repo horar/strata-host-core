@@ -2,7 +2,6 @@
 
 #include "Authenticator.h"
 #include "RestClient.h"
-#include "OpnListModel.h"
 
 #include <BoardManager.h>
 #include <FlasherConnector.h>
@@ -21,7 +20,6 @@ class PrtModel : public QObject
     Q_PROPERTY(int deviceCount READ deviceCount NOTIFY deviceCountChanged)
     Q_PROPERTY(Authenticator* authenticator READ authenticator CONSTANT)
     Q_PROPERTY(RestClient* restClient READ restClient CONSTANT)
-    Q_PROPERTY(OpnListModel* opnListModel READ opnListModel CONSTANT)
     Q_PROPERTY(QString bootloaderFilepath READ bootloaderFilepath NOTIFY bootloaderFilepathChanged)
 
 public:
@@ -31,15 +29,32 @@ public:
     int deviceCount() const;
     Authenticator* authenticator();
     RestClient* restClient();
-    OpnListModel* opnListModel();
     QString bootloaderFilepath();
 
     Q_INVOKABLE QString deviceFirmwareVersion() const;
     Q_INVOKABLE QString deviceFirmwareVerboseName() const;
-    Q_INVOKABLE void downloadBinaries(int platformIndex);
+    Q_INVOKABLE void downloadBinaries(
+            QString bootloaderUrl,
+            QString bootloaderMd5,
+            QString firmwareUrl,
+            QString firmwareMd5);
+
     Q_INVOKABLE void programDevice();
-    Q_INVOKABLE void registerPlatform();
+    Q_INVOKABLE void notifyServiceAboutRegistration(
+            const QString &classId,
+            const QString &platformId);
+
+    Q_INVOKABLE void setPlatformId(
+            const QString &classId,
+            const QString &platformId,
+            int boardCount);
+
+    Q_INVOKABLE void setAssistedPlatformId();
+    Q_INVOKABLE void startBootloader();
+    Q_INVOKABLE void startApplication();
+
     Q_INVOKABLE void clearBinaries();
+    Q_INVOKABLE void requestBootloaderUrl();
 
 signals:
     void boardReady(int deviceId);
@@ -54,7 +69,11 @@ signals:
 
     void flasherProgress(int chunk, int total);
     void flasherFinished(strata::FlasherConnector::Result result);
-    void registerPlatformFinished(QString errorString);
+    void notifyServiceFinished(int boardCount, QString errorString);
+    void setPlatformIdFinished(QString errorString);
+    void bootloaderUrlRequestFinished(QString url, QString md5, QString errorString);
+    void startBootloaderFinished(QString errorString);
+    void startApplicationFinished(QString errorString);
 
 private slots:
     void boardReadyHandler(int deviceId, bool recognized);
@@ -70,7 +89,7 @@ private:
     strata::DownloadManager downloadManager_;
     RestClient restClient_;
     Authenticator authenticator_;
-    OpnListModel opnListModel_;
+    QUrl cloudServiceUrl_;
 
     QString downloadJobId_;
     QPointer<QTemporaryFile> bootloaderFile_;
@@ -80,12 +99,5 @@ private:
                 const QString &bootloaderUrl,
                 const QString &firmwareUrl);
 
-    void downloadBinaries(
-            const QString &bootloaderUrl,
-            const QString &bootloaderChecksum,
-            const QString &firmwareUrl,
-            const QString &firmwareChecksum);
-
     QString resolveConfigFilePath();
-
 };

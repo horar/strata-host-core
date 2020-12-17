@@ -66,7 +66,8 @@ public slots:
     void requestDownloadControlView(
             const QByteArray &clientId,
             const QString &partialUri,
-            const QString &md5);
+            const QString &md5,
+            const QString &class_id);
 
     void requestCancelAllDownloads(const QByteArray &clientId);
 
@@ -82,12 +83,14 @@ signals:
     void downloadPlatformSingleFileProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
     void downloadPlatformSingleFileFinished(QByteArray clientId, QString filePath, QString errorString);
     void downloadPlatformDocumentsProgress(QByteArray clientId, QString classId, int filesCompleted, int filesTotal);
+    void downloadControlViewProgress(QByteArray clientId, QString partialUri, QString classId, qint64 bytesReceived, qint64 bytesTotal);
     void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
     void downloadControlViewFinished(QByteArray clientId, QString partialUri, QString filePath, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
     void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray datasheetList, QJsonArray documentList,
-                                            QJsonArray firmwareList, QJsonArray controlViewList, QString error);
+                                            QString error);
+    void platformMetaData(QByteArray clientId, QString classId, QJsonArray firmwareList, QJsonArray controlViewList, QString error);
 
 private slots:
     void filePathChangedHandler(QString groupId,
@@ -147,7 +150,6 @@ private:
      * @return returns full filePath
      */
     QString createFilePathFromItem(const QString& item, const QString& prefix) const;
-
 
     QUrl baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files

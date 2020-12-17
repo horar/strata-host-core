@@ -246,7 +246,7 @@ Rectangle {
         anchors.right:bulbNodeRectangle.left
         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
-        source: "qrc:/views/meshNetwork/images/rightArrow.svg"
+        source: "../../images/rightArrow.svg"
         height:25
         //sourceSize: Qt.size(width, height)
         fillMode: Image.PreserveAspectFit

@@ -1,6 +1,7 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
 .import "constants.js" as Constants
+.import "utilities.js" as Utility
 .import QtQuick 2.0 as QtQuickModule
 .import tech.strata.logger 1.0 as LoggerModule
 
@@ -45,15 +46,12 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     }
 
     let tourTargetList = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
+    let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": null}
 
-    let component = Qt.createComponent("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml");
-    if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioHelpCategory, "Cannot createComponent ", component.errorString());
+    if (index === 0) {
+        // On registration, pre-load first helpObject before tour is opened
+        createHelpObject(tourTarget)
     }
-    let tourStop = component.createObject(window);
-    tourStop.index = index
-    tourStop.description = targetDescription
-    let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": tourStop}
 
     for (let i=0; i<tourTargetList.length; i++) {
         if (tourTargetList[i].index === index) {
@@ -134,6 +132,12 @@ function startHelpTour(tourName, device_id) {
         if (font_size_multiplier !== 1) {
             tour_target.helpObject.fontSizeMultiplier = font_size_multiplier
         }
+        if (tour_target.index === 1) {
+            // Pre-load second helpObject if not loaded already
+            if (tour_target.helpObject === null) {
+                createHelpObject(tour_target)
+            }
+        }
     }
 
     refreshView(internal_tour_index)
@@ -155,6 +159,11 @@ function next(currentIndex) {
             current_tour_targets[i]["helpObject"].visible = true
             internal_tour_index = i
             utility.internal_tour_indexChanged(i)
+        } else if (current_tour_targets[i]["index"] === currentIndex+2) {
+            // Pre-load index+2 helpObject if not loaded already
+            if (!current_tour_targets[i]["helpObject"]) {
+                createHelpObject(current_tour_targets[i])
+            }
         }
     }
 }
@@ -213,7 +222,8 @@ function killView(index) {
     for (let i=0; i<views[index].view_tours.length; i++) {
         //        console.log(LoggerModule.Logger.devStudioHelpCategory, "Destroying", views[index].view_tours[i].tour_name)
         for (let j=0; j<views[index].view_tours[i].tour_targets.length; j++) {
-            views[index].view_tours[i].tour_targets[j].helpObject.destroy()
+            if(views[index].view_tours[i].tour_targets[j].helpObject)
+                views[index].view_tours[i].tour_targets[j].helpObject.destroy()
         }
     }
     views.splice(index, 1)
@@ -226,4 +236,11 @@ function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
     } else {
         views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].font_size_multiplier = fontSizeMultiplier
     }
+}
+
+function createHelpObject(tourTarget) {
+    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+    tourStop.index = tourTarget.index
+    tourStop.description = tourTarget.description
+    tourTarget.helpObject = tourStop
 }

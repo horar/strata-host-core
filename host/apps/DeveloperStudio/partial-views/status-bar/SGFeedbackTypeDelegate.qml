@@ -5,16 +5,22 @@ import tech.strata.fonts 1.0
 Component {
     Rectangle {
         id: label
+        color: containsMouse ? hoverColor : baseColor
+        implicitWidth: content.width + 15
+        implicitHeight: 30
+        radius: 5
+        border.width: feedbackTypeListView.currentIndex === index ? 2 : 0
+        border.color: "black"
+        Accessible.role: Accessible.Button
+        Accessible.name: content.text
+        Accessible.onPressAction: onClick()
 
         property alias containsMouse: buttonMouseArea.containsMouse
         property string typeValue: type
 
-        color: containsMouse ? hoverColor : baseColor
-        width: content.width + 15
-        height: 30
-        radius: 5
-        border.width: feedbackTypeListView.currentIndex === index ? 2 : 0
-        border.color: "black"
+        function onClick() {
+            feedbackTypeListView.currentIndex = index
+        }
 
         Text {
             id: content
@@ -32,9 +38,7 @@ Component {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
 
-            onClicked: {
-                feedbackTypeListView.currentIndex = index
-            }
+            onClicked: label.onClick()
         }
     }
 }

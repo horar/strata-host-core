@@ -1,16 +1,24 @@
 #include "PrtModel.h"
 #include "logging/LoggingQtCategories.h"
-#include "DownloadManager.h"
+#include <SGUtilsCpp.h>
+
+#include <Device/Operations/StartBootloader.h>
+#include <Device/Operations/StartApplication.h>
+#include <Device/Operations/SetPlatformId.h>
+#include <Device/Operations/SetAssistedPlatformId.h>
+#include <Device/Operations/include/DeviceOperationsStatus.h>
 
 #include <QDir>
 #include <QSettings>
 #include <QCoreApplication>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent),
       downloadManager_(&networkManager_),
-      authenticator_(&restClient_),
-      opnListModel_(&restClient_)
+      authenticator_(&restClient_)
 {
     QString configFilePath = resolveConfigFilePath();
 
@@ -18,21 +26,21 @@ PrtModel::PrtModel(QObject *parent)
 
     QSettings settings(configFilePath, QSettings::IniFormat);
 
-    QUrl baseUrl = settings.value("cloud-service/url").toUrl();
+    cloudServiceUrl_ = settings.value("cloud-service/url").toUrl();
 
-    if (baseUrl.isValid() == false) {
-        qCCritical(logCategoryPrt) << "cloud service url is not valid:" << baseUrl.toString();
+    if (cloudServiceUrl_.isValid() == false) {
+        qCCritical(logCategoryPrt) << "cloud service url is not valid:" << cloudServiceUrl_.toString();
     }
 
-    if (baseUrl.scheme().isEmpty()) {
-        qCCritical(logCategoryPrt) << "cloud service url does not have scheme:" << baseUrl.toString();
+    if (cloudServiceUrl_.scheme().isEmpty()) {
+        qCCritical(logCategoryPrt) << "cloud service url does not have scheme:" << cloudServiceUrl_.toString();
     }
 
-    restClient_.init(baseUrl, &networkManager_, &authenticator_);
+    restClient_.init(cloudServiceUrl_, &networkManager_, &authenticator_);
 
     boardManager_.init();
 
-    connect(&boardManager_, &strata::BoardManager::boardReady, this, &PrtModel::boardReadyHandler);
+    connect(&boardManager_, &strata::BoardManager::boardInfoChanged, this, &PrtModel::boardReadyHandler);
     connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PrtModel::boardDisconnectedHandler);
 
     connect(&downloadManager_, &strata::DownloadManager::groupDownloadFinished, this, &PrtModel::downloadFinishedHandler);
@@ -57,11 +65,6 @@ RestClient *PrtModel::restClient()
     return &restClient_;
 }
 
-OpnListModel *PrtModel::opnListModel()
-{
-    return &opnListModel_;
-}
-
 QString PrtModel::bootloaderFilepath()
 {
     if(bootloaderFile_.isNull()) {
@@ -77,7 +80,7 @@ QString PrtModel::deviceFirmwareVersion() const
         return "";
     }
 
-    return platformList_.first()->property(strata::device::DeviceProperties::applicationVer);
+    return platformList_.first()->applicationVer();
 }
 
 QString PrtModel::deviceFirmwareVerboseName() const
@@ -86,19 +89,11 @@ QString PrtModel::deviceFirmwareVerboseName() const
         return "";
     }
 
-    return platformList_.first()->property(strata::device::DeviceProperties::verboseName);
+    return platformList_.first()->name();
 }
 
 void PrtModel::programDevice()
 {
-    //fake
-//    QTimer::singleShot(2000, [this](){
-//        emit flasherFinished(strata::FlasherConnector::Result::Success);
-//    });
-
-
-//    return;
-
     QString errorString;
 
     if (platformList_.isEmpty()) {
@@ -131,31 +126,130 @@ void PrtModel::programDevice()
     flasherConnector_->flash(false);
 }
 
-void PrtModel::downloadBinaries(int platformIndex)
+void PrtModel::downloadBinaries(
+        const QString bootloaderUrl,
+        const QString bootloaderMd5,
+        const QString firmwareUrl,
+        const QString firmwareMd5)
 {
-    QTimer::singleShot(2500, this, [this](){
 
-        bool ok = false;//fakeDownloadBinaries(
-//                    "/Users/zbh6nr/dev/strata firmware/with_bootloader/bootloader-release.bin",
-//                    "/Users/zbh6nr/dev/strata firmware/with_bootloader/water-heater-release.bin");
+//    //use this to fake it
+//    QTimer::singleShot(2500, this, [this](){
+//        bool ok = fakeDownloadBinaries(
+//                    "/Users/martin/dev/strata firmware/with_bootloader/bootloader-release.bin",
+//                    "/Users/martin/dev/strata firmware/with_bootloader/water-heater-release.bin");
 
 //        qDebug() << "bootloader" << bootloaderFile_->fileName();
 //        qDebug() << "firmware" << firmwareFile_->fileName();
 
-        if (ok == false) {
-            emit downloadFirmwareFinished("Fake download failed");
-            //emit downloadFirmwareFinished("Download failed");
-        } else {
-            emit downloadFirmwareFinished("");
-        }
-    });
+//        if (ok == false) {
+//            emit downloadFirmwareFinished("Fake download failed");
+//        } else {
+//            emit downloadFirmwareFinished("");
+//        }
+//    });
+
+//    return;
+
+    if (downloadJobId_.isEmpty() == false) {
+        return;
+    }
+
+    //we need to open file so it is created on the disk and DownloadManager can use it
+    bootloaderFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-bootloader-XXXXXX.bin"), this);
+    bootloaderFile_->open();
+    bootloaderFile_->close();
+
+    emit bootloaderFilepathChanged();
+
+    firmwareFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-firmware-XXXXXX.bin"), this);
+    firmwareFile_->open();
+    firmwareFile_->close();
+
+    QList<strata::DownloadManager::DownloadRequestItem> downloadRequestList;
+
+    strata::DownloadManager::DownloadRequestItem bootloaderItem;
+    bootloaderItem.url = cloudServiceUrl_.resolved(bootloaderUrl);
+    bootloaderItem.md5 = bootloaderMd5;
+    bootloaderItem.filePath = bootloaderFile_->fileName();
+    downloadRequestList << bootloaderItem;
+
+    strata::DownloadManager::DownloadRequestItem firmwareItem;
+    firmwareItem.url = cloudServiceUrl_.resolved(firmwareUrl);
+    firmwareItem.md5 = firmwareMd5;
+    firmwareItem.filePath = firmwareFile_->fileName();
+    downloadRequestList << firmwareItem;
+
+    strata::DownloadManager::Settings settings;
+    settings.oneFailsAllFail = true;
+    settings.keepOriginalName = true;
+    settings.removeCorruptedFile = false;
+
+    qCDebug(logCategoryPrt) << "download bootloader" << bootloaderItem.url.toString()
+                            << "into" << bootloaderItem.filePath;
+
+    qCDebug(logCategoryPrt) << "download firmware" << firmwareItem.url.toString()
+                            << "into" << firmwareItem.filePath;
+
+    downloadJobId_ = downloadManager_.download(downloadRequestList, settings);
+
+    qCDebug(logCategoryPrt) << "downloadJobId" << downloadJobId_;
 }
 
-void PrtModel::registerPlatform()
+void PrtModel::notifyServiceAboutRegistration(
+        const QString &classId,
+        const QString &platformId)
 {
-    //fake for now
-    QTimer::singleShot(4000, [this](){
-        emit registerPlatformFinished("fake registration failed");
+    qCDebug(logCategoryPrtAuth) << "classId" << classId;
+    qCDebug(logCategoryPrtAuth) << "platformId" << platformId;
+
+    QJsonDocument doc;
+    QJsonObject data;
+
+
+    data.insert("platform_id", platformId);
+    data.insert("class_id", classId );
+    doc.setObject(data);
+
+    Deferred *deferred = restClient_.post(
+                QUrl("platform_register"),
+                QVariantMap(),
+                doc.toJson(QJsonDocument::Compact));
+
+
+    connect(deferred, &Deferred::finishedSuccessfully, [this] (int status, QByteArray data) {
+        Q_UNUSED(status)
+
+        qCDebug(logCategoryPrtAuth) << "reply data" << data;
+
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+
+        if (parseError.error != QJsonParseError::NoError) {
+            qCCritical(logCategoryPrtAuth) << "failed, cannot parse reply" << parseError.errorString();
+            qCCritical(logCategoryPrtAuth) << "data:"<< data;
+
+            emit notifyServiceFinished(-1, "invalid reply");
+            return;
+        }
+
+        int boardCount = doc.object().value("count").toInt(-1);
+        if (boardCount <= 0) {
+            qCCritical(logCategoryPrtAuth) << "process failed";
+            emit notifyServiceFinished(-1, "invalid reply");
+            return;
+        }
+
+        emit notifyServiceFinished(boardCount, "");
+    });
+
+    connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
+        qCCritical(logCategoryPrtAuth)
+                << "failed, "
+                << "status=" << status
+                << "errorString=" << errorString;
+
+        emit notifyServiceFinished(-1, errorString);
     });
 }
 
@@ -169,6 +263,161 @@ void PrtModel::clearBinaries()
     if (firmwareFile_.isNull() == false) {
         firmwareFile_->deleteLater();
     }
+}
+
+void PrtModel::requestBootloaderUrl()
+{
+    //TODO finish this method once bootloader endpoint is ready
+
+    QTimer::singleShot(1000, [this](){
+        emit bootloaderUrlRequestFinished("fake-bootloader-url","", "");
+    });
+}
+
+void PrtModel::setPlatformId(
+        const QString &classId,
+        const QString &platformId,
+        int boardCount)
+{
+    using strata::device::operation::SetPlatformId;
+    using strata::device::operation::Result;
+
+    if (platformList_.isEmpty()) {
+        QString errorString = "No platform connected";
+        qCCritical(logCategoryPrt) << errorString;
+        emit setPlatformIdFinished(errorString);
+        return;
+    }
+
+    strata::device::command::CmdSetPlatformIdData data;
+    data.classId = classId;
+    data.platformId = platformId;
+    data.boardCount = boardCount;
+
+    SetPlatformId *operation = new SetPlatformId(
+                platformList_.first(),
+                data);
+
+    connect(operation, &SetPlatformId::finished, [this, operation](Result result, int status, QString errorString) {
+
+        if (result != Result::Success) {
+            emit setPlatformIdFinished(errorString);
+        } else if (status == strata::device::operation::SET_PLATFORM_ID_FAILED) {
+            emit setPlatformIdFinished("Board refused registration");
+        } else if (status == strata::device::operation::PLATFORM_ID_ALREADY_SET) {
+            emit setPlatformIdFinished("Board has already been registered");
+        }
+
+        emit setPlatformIdFinished("");
+        operation->deleteLater();
+    });
+
+    operation->run();
+}
+
+void PrtModel::setAssistedPlatformId()
+{
+    using strata::device::operation::SetAssistedPlatformId;
+    using strata::device::operation::Result;
+
+    if (platformList_.isEmpty()) {
+        QString errorString = "No platform connected";
+        qCCritical(logCategoryPrt) << errorString;
+        emit startApplicationFinished(errorString);
+        return;
+    }
+
+    /*only faked data as there is no service support for asisted platforms type*/
+
+    strata::device::command::CmdSetPlatformIdData baseData;
+    baseData.classId = "abababab-62e5-4541-ab70-0f51322c711a";
+    baseData.platformId = "acacacac-p2e5-4541-ab70-0f51322c711a";
+    baseData.boardCount = 4;
+
+    strata::device::command::CmdSetPlatformIdData controllerData;
+    controllerData.classId = "cccccccc-62e5-4541-ab70-0f51322c711a";
+    controllerData.platformId = "aaaaaaaa-62e5-4541-ab70-0f51322c711a";
+    controllerData.boardCount = 1;
+
+    QString fwClassId = "ffffffff-62e5-4541-ab70-0f51322c711a";
+
+    SetAssistedPlatformId *operation = new SetAssistedPlatformId(platformList_.first());
+    //any of
+    operation->setBaseData(baseData);
+    operation->setControllerData(controllerData);
+    operation->setFwClassId(fwClassId);
+
+    connect(operation, &SetAssistedPlatformId::finished, [this, operation](Result result, int status, QString errorString) {
+        qDebug() << "PLATFORM ID SET fnished" << static_cast<int>(result) << status << errorString;
+
+        if (result != Result::Success) {
+            emit setPlatformIdFinished(errorString);
+        } else if (status == strata::device::operation::SET_PLATFORM_ID_FAILED) {
+            emit setPlatformIdFinished("Board refused registration");
+        } else if (status == strata::device::operation::PLATFORM_ID_ALREADY_SET) {
+            emit setPlatformIdFinished("Board has already been registered");
+        } else if (status == strata::device::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
+            emit setPlatformIdFinished("Board not connected to dongle");
+        }
+
+        operation->deleteLater();
+    });
+
+    operation->run();
+}
+
+void PrtModel::startBootloader()
+{
+    using strata::device::operation::StartBootloader;
+    using strata::device::operation::Result;
+
+    if (platformList_.isEmpty()) {
+        QString errorString = "No platform connected";
+        qCCritical(logCategoryPrt) << errorString;
+        emit startBootloaderFinished(errorString);
+        return;
+    }
+
+    StartBootloader *operation = new StartBootloader(platformList_.first());
+
+    connect(operation, &StartBootloader::finished, [this, operation](Result result, int status, QString errorString) {
+        if (errorString.isEmpty() == false ) {
+            qCCritical(logCategoryPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
+        }
+
+        emit startBootloaderFinished(errorString);
+
+        operation->deleteLater();
+    });
+
+    operation->run();
+}
+
+void PrtModel::startApplication()
+{
+    using strata::device::operation::StartApplication;
+    using strata::device::operation::Result;
+
+    if (platformList_.isEmpty()) {
+        QString errorString = "No platform connected";
+        qCCritical(logCategoryPrt) << errorString;
+        emit startApplicationFinished(errorString);
+        return;
+    }
+
+    StartApplication *operation = new StartApplication(platformList_.first());
+
+    connect(operation, &StartApplication::finished, [this, operation](Result result, int status, QString errorString) {
+        if (errorString.isEmpty() == false ) {
+            qCCritical(logCategoryPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
+        }
+
+        emit startApplicationFinished(errorString);
+
+        operation->deleteLater();
+    });
+
+    operation->run();
 }
 
 void PrtModel::boardReadyHandler(int deviceId, bool recognized)
@@ -217,11 +466,13 @@ void PrtModel::downloadFinishedHandler(QString groupId, QString errorString)
     downloadJobId_.clear();
 }
 
+
 bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString &firmwareUrl)
 {
     //bootloader
     QFile bootloaderFile(bootloaderUrl);
     if (bootloaderFile.open(QIODevice::ReadOnly) == false) {
+        qCCritical(logCategoryPrt()) << "cannot open bootloader file";
         return false;
     }
     QByteArray data = bootloaderFile.readAll();
@@ -237,6 +488,7 @@ bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString 
     //firmware
     QFile firmwareFile(firmwareUrl);
     if (firmwareFile.open(QIODevice::ReadOnly) == false) {
+        qCCritical(logCategoryPrt()) << "cannot open firmware file";
         return false;
     }
     data = firmwareFile.readAll();
@@ -250,55 +502,7 @@ bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString 
     return true;
 }
 
-void PrtModel::downloadBinaries(
-        const QString &bootloaderUrl,
-        const QString &bootloaderChecksum,
-        const QString &firmwareUrl,
-        const QString &firmwareChecksum)
-{
-    if (downloadJobId_.isEmpty() == false) {
-        return;
-    }
 
-    //we need to open file so it is created on the disk and DownloadManager can use it
-    bootloaderFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-bootloader-XXXXXX.bin"), this);
-    bootloaderFile_->open();
-    bootloaderFile_->close();
-
-    emit bootloaderFilepathChanged();
-
-    firmwareFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-firmware-XXXXXX.bin"), this);
-    firmwareFile_->open();
-    firmwareFile_->close();
-
-    QList<strata::DownloadManager::DownloadRequestItem> downloadRequestList;
-
-    strata::DownloadManager::DownloadRequestItem bootloaderItem;
-    bootloaderItem.url = bootloaderUrl;
-    bootloaderItem.md5 = bootloaderChecksum;
-    bootloaderItem.filePath = bootloaderFile_->fileName();
-    downloadRequestList << bootloaderItem;
-
-    strata::DownloadManager::DownloadRequestItem firmwareItem;
-    firmwareItem.url = firmwareUrl;
-    firmwareItem.md5 = firmwareChecksum;
-    firmwareItem.filePath = firmwareFile_->fileName();
-    downloadRequestList << firmwareItem;
-
-    strata::DownloadManager::Settings settings;
-    settings.oneFailsAllFail = true;
-    settings.keepOriginalName = true;
-
-    qCDebug(logCategoryPrt) << "download bootloader" << bootloaderItem.url.toString()
-                            << "into" << bootloaderItem.filePath;
-
-    qCDebug(logCategoryPrt) << "download firmware" << firmwareItem.url.toString()
-                            << "into" << firmwareItem.filePath;
-
-    downloadJobId_ = downloadManager_.download(downloadRequestList, settings);
-
-    qCDebug(logCategoryPrt) << "downloadJobId" << downloadJobId_;
-}
 
 QString PrtModel::resolveConfigFilePath()
 {

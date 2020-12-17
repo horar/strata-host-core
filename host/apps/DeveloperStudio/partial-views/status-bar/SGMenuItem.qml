@@ -45,6 +45,10 @@ Button {
         color: !root.hovered ? "#00b842" : root.pressed ? Qt.darker("#007a1f", 1.25) : "#007a1f"
     }
 
+    Accessible.onPressAction: function() {
+        clicked()
+    }
+
     MouseArea {
         id: mouseArea
         anchors.fill: parent

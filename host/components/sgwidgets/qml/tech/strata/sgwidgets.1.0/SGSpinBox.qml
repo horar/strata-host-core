@@ -5,4 +5,5 @@ SpinBox {
     id: control
 
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+    editable: true
 }

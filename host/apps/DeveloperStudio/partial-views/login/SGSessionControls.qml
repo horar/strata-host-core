@@ -4,11 +4,13 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import Qt.labs.settings 1.0
 import "qrc:/partial-views/login/"
+import "qrc:/partial-views/general/"
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0 as LoggerModule
+import tech.strata.signals 1.0
 import tech.strata.sgwidgets 1.0
 
 Item {
@@ -26,6 +28,7 @@ Item {
             // on Strata startup, pass previous session JWT to Authenticator for re-validation if 'remember me' enabled
             if (Authenticator.settings.token !== "") {
                 if (Authenticator.settings.rememberMe) {
+                    connectionStatus.currentId = Authenticator.getNextId()
                     Authenticator.set_token(Authenticator.settings.token)
                     Authenticator.validate_token()
                     return
@@ -50,7 +53,7 @@ Item {
     }
 
     Connections {
-        target: Authenticator.signals
+        target: Signals
 
         onLoginResult: {
             var resultObject = JSON.parse(result)

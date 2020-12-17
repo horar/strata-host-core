@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.prt.authenticator 1.0
+import tech.strata.theme 1.0
 
 FocusScope {
     id: loginScreen
@@ -42,7 +43,12 @@ FocusScope {
             if (status === true) {
                 loginStatus = LoginScreen.LoginSucceed
             } else {
-                loginStatus = LoginScreen.Logout
+                if (errorString.length > 0) {
+                    loginStatus = LoginScreen.LoginFailed
+                    statusText.text = errorString
+                } else {
+                    loginStatus = LoginScreen.Logout
+                }
             }
         }
 
@@ -89,7 +95,11 @@ FocusScope {
 
     Column {
         id: contentColumn
-        anchors.centerIn: parent
+        anchors {
+            top: parent.top
+            topMargin: Math.floor(parent.height * 0.3)
+            horizontalCenter: parent.horizontalCenter
+        }
 
         spacing: 10
 
@@ -110,6 +120,17 @@ FocusScope {
             passwordMode: true
             hasHelperText: false
             enabled: usernameEdit.enabled
+        }
+
+        SGWidgets.SGCheckBox {
+            id: autoLoginCheckbox
+            text: "Auto login"
+            leftPadding: 0
+            enabled: usernameEdit.enabled
+
+            Component.onCompleted: {
+                checked = prtModel.authenticator.xAccessToken.byteLength > 0
+            }
         }
 
         Item {
@@ -147,9 +168,9 @@ FocusScope {
 
                     iconColor: {
                         if (loginStatus === LoginScreen.LoginSucceed) {
-                            return SGWidgets.SGColorsJS.STRATA_GREEN
+                            return Theme.palette.green
                         } else if (loginStatus === LoginScreen.LoginFailed) {
-                            return SGWidgets.SGColorsJS.TANGO_SCARLETRED2
+                            return TangoTheme.palette.scarletRed2
                         }
 
                         return "black"
@@ -165,6 +186,7 @@ FocusScope {
                     horizontalCenter: parent.horizontalCenter
                 }
 
+                horizontalAlignment: Text.AlignHCenter
                 font.bold: true
                 textColor: {
                     if (loginStatus === LoginScreen.LoginFailed) {
@@ -176,7 +198,7 @@ FocusScope {
 
                 color: {
                     if (loginStatus === LoginScreen.LoginFailed) {
-                        return SGWidgets.SGColorsJS.ERROR_COLOR
+                        return TangoTheme.palette.error
                     }
 
                     return "transparent"
@@ -200,6 +222,6 @@ FocusScope {
             return
         }
 
-        prtModel.authenticator.login(usernameEdit.text, passwordEdit.text);
+        prtModel.authenticator.login(usernameEdit.text, passwordEdit.text, autoLoginCheckbox.checked);
     }
 }

@@ -19,6 +19,7 @@ qt5_generate_repc(NODE_RO_SRCS ${CMAKE_SOURCE_DIR}/apps/hcs3/src/HostControllerS
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
+    source/AppUi.cpp
     source/SDSModel.cpp
     source/DocumentManager.cpp
     source/ResourceLoader.cpp
@@ -26,16 +27,23 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/DownloadDocumentListModel.cpp
     source/VersionedListModel.cpp
     source/ClassDocuments.cpp
-    $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
+    $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
+    source/RunGuard.cpp
+
+    source/config/Url.cpp
+    source/config/ConfigFile.cpp
+    source/config/AppConfig.cpp
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
+    signals/qml/tech/strata/signals/qml.qrc
 
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
+    ${CMAKE_SOURCE_DIR}/assets/config/sds.qrc
 
-    $<IF:$<CONFIG:Release>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
+    $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
 
     source/HcsNode.cpp
     ${NODE_RO_SRCS}
@@ -67,6 +75,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::connector
     strata::HostControllerClient
     strata::PlatformInterface
+    strata::SGVersionUtils
 
     strata::QtLogger
 )
@@ -129,3 +138,13 @@ set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/signals/qml")
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    get_target_property(QT_RCC_EXECUTABLE Qt5::rcc IMPORTED_LOCATION)
+    if(QT_RCC_EXECUTABLE STREQUAL "")
+        message(WARNING "Could not locate Qt RCC compiler executable.")
+    else()
+        target_compile_definitions(${PROJECT_NAME} PRIVATE -DQT_RCC_EXECUTABLE="${QT_RCC_EXECUTABLE}")
+    endif()
+endif()

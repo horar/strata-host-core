@@ -3,8 +3,12 @@ project(component-commoncpp
     LANGUAGES CXX
 )
 
+include(SubdirList)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick Widgets
+    COMPONENTS Core Qml
     REQUIRED
 )
 
@@ -13,12 +17,6 @@ add_library(${PROJECT_NAME} MODULE)
 target_sources(${PROJECT_NAME}
     PRIVATE
     CommonCppPlugin.cpp
-    SGUtilsCpp.cpp
-    SGJLinkConnector.cpp
-    SGSortFilterProxyModel.cpp
-    logging/LoggingQtCategories.cpp
-    SGQWTPlot.cpp
-    SGUserSettings.cpp
     mqtt/SGMqttClient.cpp
     mqtt/SGSslConfiguration.cpp
 
@@ -29,13 +27,16 @@ target_sources(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
     Qt5::Core
-    Qt5::Quick
     Qt5::Qml
-    Qt5::Widgets
-    qwt::qwt
+    strata::SGUserSettings
+    strata::SGUtilsCpp
+    strata::SGQWTPlot
+    strata::SGSortFilterProxyModel
+    strata::SGVersionUtils
+    strata::SGJLinkConnector
+    strata::SGJsonSyntaxHighlighter
     mqtt::mqtt
-    QtLogger
-    )
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
@@ -57,25 +58,12 @@ add_custom_command(
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/
 )
 
-# Export SGJLinkConnector
-add_library(SGJLinkConnector
-    SGJLinkConnector.cpp
-    SGJLinkConnector.h
-    logging/LoggingQtCategories.cpp
-)
+SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(SGJLinkConnector
-    PRIVATE
-    Qt5::Core
-    QtLogger
-)
-
-target_include_directories(SGJLinkConnector
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-set_target_properties(SGJLinkConnector PROPERTIES
-    AUTOMOC ON
-)
+foreach(SUBDIR ${SUBDIRS})
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SUBDIR}/CMakeLists.txt")
+        add_subdirectory(${SUBDIR})
+    endif()
+endforeach()
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/imports")

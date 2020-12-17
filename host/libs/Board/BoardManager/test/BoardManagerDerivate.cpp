@@ -1,11 +1,9 @@
 #include "BoardManagerDerivate.h"
-#include "Device/DeviceOperations.h"
 #include "DeviceMock.h"
 #include "QtTest.h"
 
 using strata::BoardManager;
 using strata::device::Device;
-using strata::device::DeviceOperations;
 using strata::device::DevicePtr;
 
 BoardManagerDerivate::BoardManagerDerivate() : BoardManager()
@@ -83,15 +81,10 @@ void BoardManagerDerivate::checkNewSerialDevices()
     // empty, disable the BoardManager functionality working with serial ports
 }
 
-void BoardManagerDerivate::handleOperationFinished(strata::device::DeviceOperation operation,
-                                                   int data)
+void BoardManagerDerivate::handleOperationFinished(strata::device::operation::Result result,
+                                                   int status, QString errStr)
 {
-    BoardManager::handleOperationFinished(operation, data);
-}
-
-void BoardManagerDerivate::handleOperationError(QString message)
-{
-    BoardManager::handleOperationError(message);
+    BoardManager::handleOperationFinished(result, status, errStr);
 }
 
 void BoardManagerDerivate::handleDeviceError(strata::device::Device::ErrorCode errCode,
@@ -108,9 +101,9 @@ bool BoardManagerDerivate::addDevice(const int deviceId, bool startOperations)
 
     DevicePtr device = std::make_shared<DeviceMock>(deviceId, name);
 
-    if (openDevice(deviceId, device)) {
+    if (openDevice(device)) {
         if (startOperations) {
-            startDeviceOperations(deviceId, device);
+            startDeviceOperations(device);
         }
         return true;
     } else {

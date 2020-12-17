@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 ColumnLayout {
     id: firmwareList
@@ -96,10 +97,13 @@ ColumnLayout {
                             id: description
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignRight
-                            color: "#bbb"
+                            color: "#666"
                             elide: Text.ElideRight
                             wrapMode: Text.Wrap
                             horizontalAlignment: Text.AlignRight
+                            text: defaultText
+
+                            property string defaultText: !model.installed && installMouse.enabled ? "Download and flash firmware" : ""
                         }
 
                         Item {
@@ -125,6 +129,7 @@ ColumnLayout {
                                 visible: firmwareRow.flashingInProgress === false
 
                                 MouseArea {
+                                    id: installMouse
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: model.installed || firmwareColumn.flashingInProgress || platformStack.connected === false ? Qt.ArrowCursor : Qt.PointingHandCursor
@@ -132,14 +137,9 @@ ColumnLayout {
 
                                     onClicked: {
                                         if (platformStack.firmware_version !== "") {
-                                            let chosenVersion = model.version.split(".")
-                                            let installedVersion = platformStack.firmware_version.split(".")
-
-                                            for (let i = 0; i < chosenVersion.length; i++) {
-                                                if (parseInt(chosenVersion[i]) > parseInt(installedVersion[i])) {
-                                                    flashStatus.startFlash()
-                                                    return
-                                                }
+                                            if (SGVersionUtils.greaterThan(model.version, platformStack.firmware_version)) {
+                                                flashStatus.startFlash()
+                                                return
                                             }
 
                                             warningPop.callback = this
@@ -185,7 +185,7 @@ ColumnLayout {
                             fillBar.width = 0
                             fillBar.color = "lime"
                             flashStatus.visible = false
-                            description.text = ""
+                            description.text = Qt.binding(() => description.defaultText)
                         }
 
                         function startFlash() {

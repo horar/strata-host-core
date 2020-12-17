@@ -62,7 +62,7 @@ signals:
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
-    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5);
+    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
 
 public slots:
     void onAboutToQuit();
@@ -102,8 +102,6 @@ public slots:
             const QString &classId,
             const QJsonArray &datasheetList,
             const QJsonArray &documentList,
-            const QJsonArray &firmwareList,
-            const QJsonArray &controlViewList,
             const QString &error);
 
     void sendDownloadControlViewFinishedMessage(
@@ -111,6 +109,21 @@ public slots:
             const QString &partialUri,
             const QString &filePath,
             const QString &errorString);
+
+    void sendControlViewDownloadProgressMessage(
+            const QByteArray &clientId,
+            const QString &partialUri,
+            const QString &filePath,
+            qint64 bytesReceived,
+            qint64 bytesTotal);
+
+    void sendPlatformMetaData(
+            const QByteArray &clientId,
+            const QString &classId,
+            const QJsonArray &controlViewList,
+            const QJsonArray &firmwareList,
+            const QString &error);
+
 
 private:
     void handleMessage(const PlatformMessage& msg);
@@ -135,7 +148,7 @@ private:
     void onCmdUpdateFirmware(const rapidjson::Value* );
     void onCmdDownloadControlView(const rapidjson::Value* );
 
-    void platformConnected(const int deviceId, const QString &classId);
+    void platformConnected(const int deviceId);
     void platformDisconnected(const int deviceId);
 
     Client* getSenderClient() const { return current_client_; }     //TODO: only one client
@@ -152,7 +165,7 @@ private:
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
 
-    HCS_Dispatcher dispatcher_;
+    std::shared_ptr<HCS_Dispatcher> dispatcher_;
     std::thread dispatcherThread_;
 
     typedef std::function<void(const rapidjson::Value* )> NotificationHandler;

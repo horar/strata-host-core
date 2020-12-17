@@ -2,7 +2,6 @@
 
 using strata::BoardManager;
 using strata::device::DevicePtr;
-using strata::device::DeviceProperties;
 
 PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     : QObject(parent),
@@ -16,7 +15,7 @@ PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     connect(this, &PlatformIdentificationTest::setState, this, &PlatformIdentificationTest::stateChangedHandler);
 
     connect(&jlinkConnector_, &SGJLinkConnector::checkConnectionProcessFinished, this, &PlatformIdentificationTest::checkJLinkDeviceConnectionHandler);
-    connect(&jlinkConnector_, &SGJLinkConnector::flashBoardProcessFinished, this, &PlatformIdentificationTest::flashCompletedHandler);
+    connect(&jlinkConnector_, &SGJLinkConnector::programBoardProcessFinished, this, &PlatformIdentificationTest::flashCompletedHandler);
 
     testTimeout_.setInterval(TEST_TIMEOUT);
     testTimeout_.setSingleShot(true);
@@ -25,10 +24,10 @@ PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
 
 void PlatformIdentificationTest::enableBoardManagerSignals(bool enable) {
     if (enable) {
-        connect(&boardManager_, &BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
+        connect(&boardManager_, &BoardManager::boardInfoChanged, this, &PlatformIdentificationTest::newConnectionHandler);
         connect(&boardManager_, &BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     } else {
-        disconnect(&boardManager_, &BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
+        disconnect(&boardManager_, &BoardManager::boardInfoChanged, this, &PlatformIdentificationTest::newConnectionHandler);
         disconnect(&boardManager_, &BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     }
 }
@@ -40,8 +39,11 @@ bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString
         return false;
     }
 
-    if (QFile::exists(jlinkExePath)) { 
+    if (QFile::exists(jlinkExePath)) {
         jlinkConnector_.setExePath(jlinkExePath);
+        jlinkConnector_.setEraseBeforeProgram(true);
+        jlinkConnector_.setDevice("EFM32GG380F1024");
+        jlinkConnector_.setSpeed(4000);
         // check if there is a JLinkConnected. need to connect the signals to get the result, this
         // is async process!
         if (!jlinkConnector_.checkConnectionRequested()) {
@@ -66,7 +68,7 @@ void PlatformIdentificationTest::checkJLinkDeviceConnectionHandler(bool exitedNo
     if (exitedNormally && connected) {
         std::cout << "JLink device is connected" << std::endl;
         setState(PlatfortestState_::FlashingPlatform);
-    } 
+    }
     else {
         std::cerr << "Error connecting to JLink device" << std::endl;
         setState(PlatfortestState_::TestFinished);
@@ -123,11 +125,11 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
     DevicePtr testDevice = boardManager_.device(testDeviceId_);
     // determine if the test passed or not
     bool testPassed = false;
-    
+
     // if device not recognized, doesn't have name, or doesn't have class id then it fails.
     if ( deviceRecognized == false
-         || testDevice->property(DeviceProperties::classId).isEmpty()
-         || testDevice->property(DeviceProperties::verboseName).isEmpty()) {
+         || testDevice->classId().isEmpty()
+         || testDevice->name().isEmpty()) {
         testPassed = false;
     } else {
         testPassed = true;
@@ -135,26 +137,26 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
 
     if (testDevice != nullptr) {
         std::cout << "bin name: " << binaryFileNameList_[currentBinaryFileIndex_].toStdString() << std::endl;
-        std::cout << "class id: " << testDevice->property(DeviceProperties::classId).toStdString() << std::endl;
-        std::cout << "device name: " << testDevice->property(DeviceProperties::deviceName).toStdString() << std::endl;
-        std::cout << "platform id: " << testDevice->property(DeviceProperties::platformId).toStdString() << std::endl;
-        std::cout << "verbose name: " << testDevice->property(DeviceProperties::verboseName).toStdString() << std::endl;
-        std::cout << "bootloader version: " << testDevice->property(DeviceProperties::bootloaderVer).toStdString() << std::endl;
-        std::cout << "application version: " << testDevice->property(DeviceProperties::applicationVer).toStdString() << std::endl;
+        std::cout << "class id: " << testDevice->classId().toStdString() << std::endl;
+        std::cout << "device name: " << testDevice->deviceName().toStdString() << std::endl;
+        std::cout << "platform id: " << testDevice->platformId().toStdString() << std::endl;
+        std::cout << "name: " << testDevice->name().toStdString() << std::endl;
+        std::cout << "bootloader version: " << testDevice->bootloaderVer().toStdString() << std::endl;
+        std::cout << "application version: " << testDevice->applicationVer().toStdString() << std::endl;
 
         // Append to the test summary list
         testSummaryList_.push_back({
                                        binaryFileNameList_[currentBinaryFileIndex_],
-                                       testDevice->property(DeviceProperties::deviceName),
-                                       testDevice->property(DeviceProperties::verboseName),
-                                       testDevice->property(DeviceProperties::classId),
-                                       testDevice->property(DeviceProperties::platformId),
-                                       testDevice->property(DeviceProperties::bootloaderVer),
-                                       testDevice->property(DeviceProperties::applicationVer),
+                                       testDevice->deviceName(),
+                                       testDevice->name(),
+                                       testDevice->classId(),
+                                       testDevice->platformId(),
+                                       testDevice->bootloaderVer(),
+                                       testDevice->applicationVer(),
                                        deviceRecognized,
                                        testPassed
                                    });
-    } 
+    }
     else {
         std::cerr << "TestDevicePtr is null. Aborting..." << std::endl;
         testFailed_ = true;
@@ -183,7 +185,7 @@ void PlatformIdentificationTest::connectToPlatform() {
             testDeviceId_ = connectedDevicesList.front();
         }
     }
-    boardManager_.reconnect(testDeviceId_);
+    boardManager_.reconnectDevice(testDeviceId_);
 }
 
 void PlatformIdentificationTest::flashPlatform(const QString& binaryFileName) {
@@ -194,7 +196,7 @@ void PlatformIdentificationTest::flashPlatform(const QString& binaryFileName) {
     std::cout << "flashing platform..." << std::endl;
 
     // Use SGJLinkConnector to flash a the platform
-    jlinkConnector_.flashBoardRequested(binaryFileName, true);
+    jlinkConnector_.programBoardRequested(binaryFileName);
 }
 
 void PlatformIdentificationTest::printSummary() {

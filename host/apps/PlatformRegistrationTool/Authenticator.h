@@ -23,7 +23,11 @@ public:
     ~Authenticator() override;
 
     Q_INVOKABLE void renewSession();
-    Q_INVOKABLE void login(const QString &username, const QString &password);
+    Q_INVOKABLE void login(
+            const QString &username,
+            const QString &password,
+            bool storeXAccessToken=false);
+
     Q_INVOKABLE void logout();
 
     QByteArray sessionId() const;
@@ -36,7 +40,7 @@ signals:
     void loginStarted();
     void loginFinished(bool status, QString errorString);
     void renewSessionStarted();
-    void renewSessionFinished(bool status);
+    void renewSessionFinished(bool status, QString errorString);
     void logoutStarted();
     void logoutFinished(bool status);
     void sessionIdChanged();
@@ -54,7 +58,7 @@ private:
     QString firstname_;
     QString lastname_;
 
-    void writeSettings();
+    void writeSettings(bool storeXAccessToken=false);
     void readSettings();
 
     void setSessionId(const QByteArray &sessionId);

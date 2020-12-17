@@ -3,9 +3,12 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import "qrc:/partial-views"
 import "qrc:/partial-views/login/registration"
+import "qrc:/partial-views/general/"
 import "qrc:/js/login_utilities.js" as Registration
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -13,12 +16,16 @@ Item {
     Layout.fillWidth: true
 
     property bool connecting: registrationStatus.visible
-    property bool animationsRunning: alertAnimation.running || hideAlertAnimation.running
+    property bool animationsRunning: alertRect.running
 
     onVisibleChanged: {
         if (visible) {
             focus = true
             firstNameField.focus = true
+            passReqsPopup.close()
+        }
+        else {
+            passReqsPopup.close()
         }
     }
 
@@ -27,45 +34,9 @@ Item {
         spacing: 20
         width: parent.width
 
-        Rectangle {
+        SGNotificationToast {
             id: alertRect
-            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: fieldGrid.width * 0.75
-            Layout.preferredHeight: 0
-            color: "red"
-            visible: Layout.preferredHeight > 0
-            clip: true
-
-            SGIcon {
-                id: alertIcon
-                source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
-                anchors {
-                    left: alertRect.left
-                    verticalCenter: alertRect.verticalCenter
-                    leftMargin: alertRect.height/2 - height/2
-                }
-                height: 30
-                width: 30
-                iconColor: "white"
-            }
-
-            Text {
-                id: alertText
-                font {
-                    pixelSize: 10
-                    family: Fonts.franklinGothicBold
-                }
-                wrapMode: Label.WordWrap
-                anchors {
-                    left: alertIcon.right
-                    right: alertRect.right
-                    rightMargin: 5
-                    verticalCenter: alertRect.verticalCenter
-                }
-                horizontalAlignment:Text.AlignHCenter
-                text: ""
-                color: "white"
-            }
         }
 
         RowLayout {
@@ -113,55 +84,59 @@ Item {
             }
         }
 
-        ValidationField {
-            id: passwordField
-            Layout.fillWidth: true
-            echoMode: TextInput.Password
-            placeholderText: "Password"
-            showIcon: false
+        RowLayout{
+            id: newPasswordRow
+            spacing: 15
 
-            SGIcon {
-                id: showPasswordIcon
-                source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
-                iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
-                anchors {
-                    verticalCenter: passwordField.verticalCenter
-                    rightMargin: 5
-                    right: passwordField.right
-                }
-                height: passwordField.height*.75
-                width: height
+            ValidationField {
+                id: passwordField
+                placeholderText: "Password"
+                showIcon: false
+                passwordMode: true
+                Layout.preferredWidth: 50
+                Component {
+                    id: revealPasswordComponent
+                    SGIcon {
+                        id: showPasswordIcon
+                        source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
+                        iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
+                        height: passwordField.height*.75
+                        width: height
 
-                MouseArea {
-                    id: showPassword
-                    anchors.fill: showPasswordIcon
-                    hoverEnabled: true
-                    onClicked: {
-                        if (passwordField.echoMode === TextInput.Password) {
-                            passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Normal
-                        } else {
-                            passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Password
+                        MouseArea {
+                            id: showPassword
+                            anchors.fill: showPasswordIcon
+                            hoverEnabled: true
+                            onPressedChanged: {
+                                if (passwordField.echoMode === TextInput.Password) {
+                                    passwordField.echoMode = confirmPasswordField.echoMode
+                                    passwordField.echoMode = TextInput.Normal
+                                } else {
+                                    passwordField.echoMode = confirmPasswordField.echoMode
+                                    passwordField.echoMode = TextInput.Password
+                                }
+                            }
+                            cursorShape: Qt.PointingHandCursor
                         }
                     }
-                    cursorShape: Qt.PointingHandCursor
                 }
             }
-        }
 
-        ValidationField {
-            id: confirmPasswordField
-            echoMode: TextInput.Password
-            KeyNavigation.tab: policyCheck
-            valid: passReqs.passwordValid
-            placeholderText: "Confirm Password"
+            ValidationField {
+                id: confirmPasswordField
+                echoMode: passwordField.echoMode
+                KeyNavigation.tab: policyCheck
+                valid: passReqs.passwordValid
+                placeholderText: "Confirm Password"
+                Layout.preferredWidth: 50
+            }
+
         }
 
         RowLayout{
             Layout.fillWidth: true
             Layout.columnSpan: 2
-            Layout.leftMargin: 10
-            Layout.rightMargin: 10
-            spacing: 10
+            spacing: 13
 
             CheckBox {
                 id: policyCheck
@@ -185,7 +160,7 @@ Item {
 
                     Rectangle {
                         color: "transparent"
-                        border.color: "#33b13b"
+                        border.color: Theme.palette.green
                         anchors.centerIn: parent
                         visible: policyCheck.focus
                         width: parent.width + 4
@@ -195,12 +170,12 @@ Item {
             }
 
             Text {
-                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='https://www.onsemi.com/PowerSolutions/content.do?id=1109'>Privacy Policy</a>."
+                text: "I agree that the information that I provide will be used in accordance with the terms of the ON Semiconductor <a href='https://www.onsemi.com/privacy-policy'>Privacy Policy</a>."
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
                 linkColor: "#545960"
 
-                onLinkActivated: { privacyPolicy.open() }
+                onLinkActivated: { Qt.openUrlExternally("https://www.onsemi.com/privacy-policy")}
 
                 MouseArea {
                     anchors.fill: parent
@@ -251,12 +226,16 @@ Item {
                     }
                 }
 
-                Keys.onReturnPressed:{
+                Keys.onReturnPressed: pressRegisterButton()
+                Accessible.onPressAction: pressRegisterButton()
+
+                function pressRegisterButton() {
                     registerButton.clicked()
+
                 }
 
                 onClicked: {
-                    hideAlertAnimation.start()
+                    alertRect.hide()
                     fieldGrid.visible = false
                     var register_info = {
                         firstname: firstNameField.text,
@@ -267,6 +246,7 @@ Item {
                         username:emailField.text,
                         password:passwordField.text
                     }
+                    registrationStatus.currentId = Registration.getNextId()
                     Registration.register(register_info)
                 }
 
@@ -321,13 +301,14 @@ Item {
 
     Popup {
         id: passReqsPopup
-        width: confirmPasswordField.width
+        width: confirmPasswordField.width + passwordField.width
         height: passReqs.height
-        visible: passwordField.focus || confirmPasswordField.focus
-        x: confirmPasswordField.x
-        y: confirmPasswordField.y + confirmPasswordField.height + 5
+        visible: (passwordField.focus || confirmPasswordField.focus) && !passReqs.passwordValid
+        x: newPasswordRow.x
+        y: newPasswordRow.y + passwordField.height + 5
         padding: 0
         background: Item {}
+        closePolicy: Popup.NoAutoClose
 
         PasswordRequirements {
             id: passReqs
@@ -344,44 +325,26 @@ Item {
         anchors.centerIn: parent
     }
 
-
-    NumberAnimation{
-        id: alertAnimation
-        target: alertRect
-        property: "Layout.preferredHeight"
-        to: registerButton.height + 10
-        duration: 100
-    }
-
-    NumberAnimation{
-        id: hideAlertAnimation
-        target: alertRect
-        property: "Layout.preferredHeight"
-        to: 0
-        duration: 100
-        onStarted: alertText.text = ""
-    }
-
     Connections {
-        target: Registration.signals
+        target: Signals
         onRegistrationResult: {
             registrationStatus.text = ""
             fieldGrid.visible = true
             if (result === "Registered") {
                 alertRect.color = "#57d445"
-                alertText.text = "Account successfully registered to " + emailField.text + "!"
+                alertRect.text = "Account successfully registered to " + emailField.text + "!"
                 root.resetForm()
             } else {
                 alertRect.color = "red"
                 if (result === "No Connection") {
-                    alertText.text = "Connection to registration server failed"
+                    alertRect.text = "Connection to registration server failed"
                 } else if (result === "Account already exists for this email address") {
-                    alertText.text = "Account already exists for this email address"
+                    alertRect.text = "Account already exists for this email address"
                 } else {
-                    alertText.text = "Registration server did not create user account"
+                    alertRect.text = "Registration server did not create user account"
                 }
             }
-            alertAnimation.start()
+            alertRect.show()
         }
     }
 

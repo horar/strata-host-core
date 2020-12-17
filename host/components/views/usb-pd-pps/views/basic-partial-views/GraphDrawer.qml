@@ -5,7 +5,7 @@ import QtQuick.Controls 2.12
 
 //import QtQuick 2.9
 //import QtQuick.Controls 2.2
-import "qrc:/views/usb-pd-pps/sgwidgets"
+import "../../sgwidgets"
 import tech.strata.sgwidgets 1.0 as SGWidgets10
 
 Drawer {

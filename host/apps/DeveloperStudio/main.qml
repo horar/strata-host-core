@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import "js/navigation_control.js" as NavigationControl
-import "js/uuid_map.js" as UuidMap
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
@@ -14,6 +13,7 @@ import "qrc:/js/platform_filters.js" as PlatformFilters
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 SGWidgets.SGMainWindow {
     id: mainWindow
@@ -26,9 +26,15 @@ SGWidgets.SGMainWindow {
 
     signal initialized()
 
+    function resetWindowSize()
+    {
+        mainWindow.width = 1200
+        mainWindow.height = 900
+    }
+
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
-        NavigationControl.init(statusBarContainer, stackContainer)
+        NavigationControl.init(statusBarContainer, stackContainer, sdsModel.resourceLoader, mainWindow)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
             PlatformSelection.initialize(sdsModel.coreInterface)
@@ -82,6 +88,7 @@ SGWidgets.SGMainWindow {
             id: stackContainer
 
             property alias mainContainer: mainContainer
+            property alias controlViewDevContainer: controlViewDevContainer
             property alias platformViewModel: platformViewModel
             property alias platformViewRepeater: platformViewRepeater
 
@@ -99,6 +106,10 @@ SGWidgets.SGMainWindow {
                 id: platformViewRepeater
                 model: platformViewModel
                 delegate: SGPlatformView {}
+            }
+
+            ControlViewDevContainer {
+                id: controlViewDevContainer
             }
         }
     }

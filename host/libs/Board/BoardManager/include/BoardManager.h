@@ -14,11 +14,9 @@
 
 #include <Device/Device.h>
 
-namespace strata::device {
-
-    class DeviceOperations;
-    enum class DeviceOperation: int;
-
+namespace strata::device::operation {
+    class BaseDeviceOperation;
+    enum class Result: int;
 }
 
 namespace strata {
@@ -45,14 +43,14 @@ namespace strata {
          * @param deviceId device ID
          * @return true if device was disconnected, otherwise false
          */
-        Q_INVOKABLE bool disconnect(const int deviceId);
+        Q_INVOKABLE bool disconnectDevice(const int deviceId);
 
         /**
          * Reconnect the device.
          * @param deviceId device ID
          * @return true if device was reconnected (and identification process has started), otherwise false
          */
-        Q_INVOKABLE bool reconnect(const int deviceId);
+        Q_INVOKABLE bool reconnectDevice(const int deviceId);
 
         /**
          * Get smart pointer to the device.
@@ -80,11 +78,11 @@ namespace strata {
         void boardDisconnected(int deviceId);
 
         /**
-         * Emitted when board is ready for communication.
+         * Emitted when board properties has changed (and board is ready for communication).
          * @param deviceId device ID
          * @param recognized true when board was recognized (identified), otherwise false
          */
-        void boardReady(int deviceId, bool recognized);
+        void boardInfoChanged(int deviceId, bool recognized);
 
         /**
          * Emitted when error occures during communication with the board.
@@ -94,27 +92,30 @@ namespace strata {
         void boardError(int deviceId, QString message);
 
         /**
-         * Emitted when there is available new message from the connected board.
-         * @param deviceId device ID
-         * @param message message from board
-         */
-
-        /**
          * Emitted when device IDs has changed (available device ID list has changed).
          */
         void readyDeviceIdsChanged();
 
+        /**
+         * Emitted when platform_id_changed notification was received (signal only for internal use).
+         * @param deviceId devide ID
+         */
+        void platformIdChanged(const int deviceId, QPrivateSignal);
+
     protected slots:
         virtual void checkNewSerialDevices();
-        virtual void handleOperationFinished(device::DeviceOperation operation, int);
-        virtual void handleOperationError(QString message);
+        virtual void handleOperationFinished(device::operation::Result result, int status, QString errStr);
         virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+
+    private slots:
+        virtual void checkNotification(QByteArray message);
+        virtual void handlePlatformIdChanged(const int deviceId);
 
     protected:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
         bool addSerialPort(const int deviceId);
-        bool openDevice(const int deviceId, const device::DevicePtr newDevice);
-        void startDeviceOperations(const int deviceId, const device::DevicePtr device);
+        bool openDevice(const device::DevicePtr newDevice);
+        void startDeviceOperations(const device::DevicePtr device);
         bool closeDevice(const int deviceId);
 
         void logInvalidDeviceId(const QString& message, const int deviceId) const;
@@ -130,10 +131,15 @@ namespace strata {
         QHash<int, QString> serialIdToName_;
         QHash<int, device::DevicePtr> openedDevices_;
 
-        QHash<int, std::shared_ptr<device::DeviceOperations>> deviceOperations_;
+        QHash<int, std::shared_ptr<device::operation::BaseDeviceOperation>> identifyOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;
+
+    private:
+        void startIdentifyOperation(const device::DevicePtr device);
+        static void operationLaterDeleter(device::operation::BaseDeviceOperation* operation);
+
     };
 
 }

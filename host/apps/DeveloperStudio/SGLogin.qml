@@ -4,7 +4,7 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/"
-import "qrc:/js/login_utilities.js" as LoginUtilities
+import "qrc:/js/utilities.js" as Utility
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/constants.js" as Constants
@@ -12,7 +12,7 @@ import "qrc:/js/constants.js" as Constants
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
-
+import tech.strata.signals 1.0
 Item {
     id: root
     clip: true
@@ -126,6 +126,8 @@ Item {
                                 SelectionButton {
                                     checked: true
                                     text: "Login"
+                                    Accessible.role: Accessible.Button
+
                                     onClicked: {
                                         loginControls.visible = true
                                         registerControls.visible = false
@@ -134,6 +136,8 @@ Item {
 
                                 SelectionButton {
                                     text: "Register"
+                                    Accessible.role: Accessible.Button
+
                                     onClicked: {
                                         loginControls.visible = false
                                         registerControls.visible = true
@@ -183,8 +187,6 @@ Item {
                                     SGRegistrationControls {
                                         id: registerControls
                                         visible: false
-
-                                        property alias privacyPolicy: privacyPolicy
                                     }
                                 }
                             }
@@ -201,19 +203,6 @@ Item {
         y: root.height/2 - height/2
     }
 
-    Item {
-        id: privacyPolicy
-
-        function open() {
-            var privacyPolicyPopup = LoginUtilities.createObject("qrc:/partial-views/SGPrivacyPolicyPopUp.qml", privacyPolicy)
-            privacyPolicyPopup.width = root.width * .8
-            privacyPolicyPopup.webContainerHeight = root.height *.75
-            privacyPolicyPopup.x = root.width/2 - privacyPolicyPopup.width/2
-            privacyPolicyPopup.y = root.height/2 - privacyPolicyPopup.height/2
-            privacyPolicyPopup.open()
-        }
-    }
-
     Rectangle {
         id: testServerWarningContainer
         color: "red"
@@ -227,7 +216,7 @@ Item {
         visible: Rest.url !== Constants.PRODUCTION_AUTH_SERVER
 
         Connections {
-            target: Authenticator.signals
+            target: Signals
             onServerChanged: {
                 testServerWarningContainer.visible = ( Rest.url !== Constants.PRODUCTION_AUTH_SERVER )
             }

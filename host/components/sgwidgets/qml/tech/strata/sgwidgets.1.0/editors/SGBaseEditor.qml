@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 FocusScope {
     id: delegate
@@ -36,6 +37,25 @@ FocusScope {
     function inputValidationErrorMsg() {
         return ""
     }
+
+    /* Use these to manually set state.
+       This is useful when state depends on async events, for example response from server.
+     */
+    function setIsUnknown() {
+        validStatus = SGBaseEditor.Unknown
+        errorText = ""
+    }
+
+    function setIsValid() {
+        validStatus = SGBaseEditor.Valid
+        errorText = ""
+    }
+
+    function setIsInvalid(error) {
+        validStatus = SGBaseEditor.Invalid
+        errorText = error
+    }
+
 
     enum ValidStatus {
         Unknown,
@@ -79,16 +99,15 @@ FocusScope {
             }
         }
 
-        validStatus = SGBaseEditor.Unknown
-        errorText = ""
+        setIsUnknown()
     }
 
     function callInputValidationErrorMsg() {
-        errorText = inputValidationErrorMsg()
-        if (errorText.length > 0) {
-            validStatus = SGBaseEditor.Invalid
-        } else if (errorText.length === 0) {
-            validStatus = SGBaseEditor.Valid
+        var error = inputValidationErrorMsg()
+        if (error.length > 0) {
+            setIsInvalid(error)
+        } else if (error.length === 0) {
+            setIsValid()
         }
     }
 
@@ -148,7 +167,7 @@ FocusScope {
         visible: hasHelperText
         font.italic: true
         text: validStatus === SGBaseEditor.Invalid ? errorText : helperText
-        color: validStatus === SGBaseEditor.Invalid ? SGColorsJS.ERROR_COLOR : Qt.darker("grey",1.5)
+        color: validStatus === SGBaseEditor.Invalid ? Theme.palette.error : Qt.darker("grey",1.5)
     }
 
     Component {
@@ -158,7 +177,7 @@ FocusScope {
             Rectangle {
                 anchors.fill: parent
                 radius: Math.round(width/2)
-                color: SGColorsJS.ERROR_COLOR
+                color: Theme.palette.error
             }
 
             SGIcon {
