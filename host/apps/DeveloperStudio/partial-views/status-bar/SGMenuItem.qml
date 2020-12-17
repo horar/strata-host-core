@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 import QtQuick.Layouts 1.12
 
 Button {
@@ -42,7 +43,7 @@ Button {
         implicitHeight: 40
         opacity: enabled ? 1 : 0.3
         radius: 2
-        color: !root.hovered ? "#00b842" : root.pressed ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+        color: !root.hovered ? Theme.palette.green : root.pressed ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
     }
 
     Accessible.onPressAction: function() {
