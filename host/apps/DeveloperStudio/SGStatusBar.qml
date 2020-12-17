@@ -36,6 +36,8 @@ Rectangle {
     property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
 
+    property var mainWindow
+
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
@@ -284,6 +286,14 @@ Rectangle {
                         feedLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Notifications")
+                    onClicked: {
+                        profileMenu.close()
+                        mainWindow.notificationsInbox.toggle()
+                    }
                 }
 
                 SGMenuItem {

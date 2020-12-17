@@ -29,6 +29,8 @@ SGWidgets.SGMainWindow {
     minimumWidth: 1024
     title: Qt.application.displayName
 
+    property alias notificationsInbox: notificationsInbox
+
     signal initialized()
 
     function resetWindowSize()
@@ -120,8 +122,20 @@ SGWidgets.SGMainWindow {
         }
     }
 
-    NotificationsContainer {
+    NotificationsInbox {
+        id: notificationsInbox
         z: 2
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+        }
+
+        height: mainWindow.height - statusBarContainer.height
+        expandWidth: 400
+    }
+
+    NotificationsContainer {
+        z: 3
         anchors {
             right: parent.right
             bottom: parent.bottom
@@ -154,7 +168,7 @@ SGWidgets.SGMainWindow {
 
     SGDebugBar {
         id: debugBar
-        z: 3
+        z: 4
         anchors {
             fill: parent
         }

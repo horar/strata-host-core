@@ -15,9 +15,14 @@ ColumnLayout {
         Layout.preferredHeight: 25
         color: Theme.palette.darkGray
         Text {
-            anchors.fill: parent
-            text: level
-            textFormat: level.toUpperCase()
+            anchors {
+                fill: parent
+                leftMargin: 10
+                verticalCenter: parent.verticalCenter
+            }
+            verticalAlignment: Text.AlignVCenter
+            color: Theme.palette.white
+            text: level.toUpperCase()
         }
     }
 
@@ -25,6 +30,7 @@ ColumnLayout {
         Layout.fillHeight: true
         Layout.fillWidth: true
         model: dataModel
+        clip: true
         delegate: Text {
             text: model.title
         }

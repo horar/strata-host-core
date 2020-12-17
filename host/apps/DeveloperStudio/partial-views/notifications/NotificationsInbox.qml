@@ -3,18 +3,31 @@ import QtQuick.Layouts 1.12
 import QtQml 2.12
 
 import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/constants.js" as Constants
 
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0
 
 Rectangle {
+    id: root
 
     property string currentUser: Constants.GUEST_USER_ID
+    property int expandWidth: 300
+    readonly property bool isOpen: width > 0
+
+    color: Theme.palette.white
 
     onCurrentUserChanged: {
         criticalNotificationsModel.invalidate()
         warningNotificationsModel.invalidate()
         infoNotificationsModel.invalidate()
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: false
     }
 
     SGSortFilterProxyModel {
@@ -82,26 +95,73 @@ Rectangle {
         }
     }
 
-    ColumnLayout {
+    SGSplitView {
+        anchors.fill: parent
+        orientation: Qt.Vertical
+
         NotificationsInboxList {
+            id: criticalNotificationsList
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height / 3
+            Layout.minimumHeight: 25
             level: "critical"
             dataModel: criticalNotificationsModel.sourceModel
         }
 
         NotificationsInboxList {
+            id: warningNotificationsList
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height / 3
+            Layout.minimumHeight: 25
             level: "warning"
             dataModel: warningNotificationsModel.sourceModel
         }
 
         NotificationsInboxList {
+            id: infoNotificationsList
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height / 3
+            Layout.fillHeight: true
+            Layout.minimumHeight: 25
             level: "info"
             dataModel: infoNotificationsModel.sourceModel
+        }
+    }
+
+
+    NumberAnimation {
+        id: showAnimation
+        target: root
+        property: "width"
+        duration: 250
+        to: expandWidth
+        easing.type: Easing.InOutQuad
+    }
+
+
+    NumberAnimation {
+        id: hideAnimation
+        target: root
+        property: "width"
+        duration: 250
+        to: 0
+        easing.type: Easing.InOutQuad
+    }
+
+    function toggle() {
+        if (isOpen) {
+            hideAnimation.restart()
+        } else {
+            showAnimation.restart()
+        }
+    }
+
+    function open() {
+        if (!showAnimation.running) {
+            showAnimation.start()
+        }
+    }
+
+    function close() {
+        if (!hideAnimation.running) {
+            hideAnimation.start()
         }
     }
 
