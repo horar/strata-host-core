@@ -1,7 +1,5 @@
 import QtQuick.Controls 2.12
-import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
-
 import "../"
 
 SGConfirmationPopup {
@@ -21,7 +19,7 @@ SGConfirmationPopup {
         buttonHoverColor: closeButtonHoverColor,
         closeReason: closeFilesReason
     })
-    property color closeButtonColor: "#db2e1e"
+    property color closeButtonColor: Theme.palette.red
     property color closeButtonHoverColor: Qt.darker(closeButtonColor, 1.25)
     property string closeButtonText: "Don't save"
 

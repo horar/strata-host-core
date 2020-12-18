@@ -3,17 +3,18 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: buttonContainer
 
-    color: toolBarListView.currentIndex === modelIndex ? "#33b13b" : "transparent"
+    color: toolBarListView.currentIndex === modelIndex ? Theme.palette.green : "transparent"
     enabled: {
         if (modelIndex === toolBarListView.editTab
                 || modelIndex === toolBarListView.viewTab) {
             if (editor.fileTreeModel.url.toString() === "") {
                 return false;
-            } else if (toolBarListView.currentIndex === toolBarListView.viewTab && modelIndex === toolBarListView.viewTab && viewStack.currentIndex !== 4) {
+            } else if (toolBarListView.currentIndex === toolBarListView.viewTab && modelIndex === toolBarListView.viewTab && viewStack.currentIndex !== 2) {
                 return false;
             }
         }
@@ -51,8 +52,18 @@ Rectangle {
             Layout.leftMargin: buttonContainer.iconLeftMargin
             Layout.fillWidth: true
 
-            // This color adds .40 alpha to white
-            iconColor: parent.enabled ? buttonContainer.iconColor : Qt.rgba(255, 255, 255, 0.4)
+            iconColor: {
+                if (iconTextGroup.enabled) {
+                    if (toolBarListView.currentIndex !== modelIndex && mouseArea.containsMouse) {
+                        return Qt.darker(buttonContainer.iconColor, 1.4)
+                    } else {
+                        return buttonContainer.iconColor
+                    }
+                } else {
+                    // This color adds .40 alpha to white
+                    return Qt.rgba(255, 255, 255, 0.4)
+                }
+            }
             source: modelData.imageSource
         }
 
@@ -74,19 +85,9 @@ Rectangle {
         hoverEnabled: true
         enabled: parent.enabled
 
-        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-
-        onContainsMouseChanged: {
-            if (containsMouse && iconTextGroup.enabled && modelIndex !== toolBarListView.currentIndex) {
-                tabIcon.iconColor = Qt.darker(iconColor, 1.4)
-            } else if (iconTextGroup.enabled) {
-                tabIcon.iconColor = iconColor
-            }
-        }
-
+        cursorShape: Qt.PointingHandCursor
         onClicked: {
             parent.onClicked()
-            tabIcon.iconColor = iconColor
         }
     }
 }
