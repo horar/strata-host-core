@@ -13,14 +13,16 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1225/648
     anchors.centerIn: parent
-     height: parent.height
+    height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-   // height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+    // height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     property var pwmArray: []
     property real fracValue1: 0.00
     property real fracValue2: 0.00
     property real fracValue3: 0.00
     property string regDataToStoreInFile: ""
+    property string regToStoreInFile: ""
+    property string dataToStoreInFile:""
 
     MouseArea {
         id: containMouseArea
@@ -74,28 +76,19 @@ Item {
         return request.status;
     }
 
-    Connections {
-        target: coreInterface
-        onNotification: {
-            try {
-                var temp_export_reg =  JSON.parse(payload)
-                if(temp_export_reg.value === "temp_export_reg_value")
-                {
-                    regDataToStoreInFile += "[" + payload + "\n" + ","
-                }
-                if(temp_export_reg.value === "temp_export_data_value")
+    property var temp_export_reg_value: platformInterface.temp_export_reg_value.value
+    onTemp_export_reg_valueChanged: {
+        if(temp_export_reg_value) {
+            regToStoreInFile = ""
+            regToStoreInFile = "{"+"\""+"touch_export_reg"+"\""+ ":" + "\""+ temp_export_reg_value  + "\""+ "}"
+        }
+    }
 
-                {
-                    regDataToStoreInFile += payload + "]"
-
-                }
-
-            }
-            catch(error) {
-                if(error instanceof SyntaxError) {
-                    console.log("Notification JSON is invalid, ignoring")
-                }
-            }
+    property var temp_export_data_value: platformInterface.temp_export_data_value.value
+    onTemp_export_data_valueChanged: {
+        if(temp_export_data_value) {
+            dataToStoreInFile = ""
+            dataToStoreInFile = "{"+"\""+"touch_export_data"+"\"" + ":" + "\""+ temp_export_data_value + "\""+ "}"
         }
     }
 
@@ -105,11 +98,11 @@ Item {
         nameFilters: ["JSON files (*.js)", "All files (*)"]
         //modality: Qt.NonModal
         onAccepted: {
+            regDataToStoreInFile = "[" + regToStoreInFile + "\n" + "," + dataToStoreInFile + "]"
             saveFile(saveFileDialog.fileUrl, regDataToStoreInFile)
             regDataToStoreInFile = ""
         }
         onRejected: {
-            console.log("Canceled")
             regDataToStoreInFile = ""
         }
     }

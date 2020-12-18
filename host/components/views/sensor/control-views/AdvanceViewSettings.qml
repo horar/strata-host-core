@@ -9,7 +9,9 @@ import QtQuick.Dialogs 1.2
 Item {
     id: root
     anchors.fill: parent
-    property string regDataToStore: ""
+    property string regDataToStoreInFile: ""
+    property string regToStoreInFile: ""
+    property string dataToStoreInFile:""
     property alias cin07CREFid: cin07CREF
     property alias shortIntervalDyn: shortIntervalDyn
     property var modeSelection: interval
@@ -62,44 +64,38 @@ Item {
         return request.status;
     }
 
-    Connections {
-        target: coreInterface
-        onNotification: {
-            try {
-                var abc =  JSON.parse(payload)
-                if(abc.value === "touch_export_reg_value")
-                {
-                    regDataToStore += "[" + payload + "\n" + ","
-                }
-                if(abc.value === "touch_export_data_value")
+    property var touch_export_reg_value: platformInterface.touch_export_reg_value.value
+    onTouch_export_reg_valueChanged: {
+        if(touch_export_reg_value) {
+            regToStoreInFile = ""
+            regToStoreInFile = "{"+"\""+"touch_export_reg"+"\"" + ":" +"\""+ touch_export_reg_value  + "\""+ "}"
+        }
+    }
 
-                {
-                    regDataToStore += payload + "]"
-                }
-
-            }
-            catch(error) {
-                if(error instanceof SyntaxError) {
-                    console.log("Notification JSON is invalid, ignoring")
-                }
-            }
+    property var touch_export_data_value: platformInterface.touch_export_data_value.value
+    onTouch_export_data_valueChanged: {
+        if(touch_export_data_value) {
+            dataToStoreInFile = ""
+            dataToStoreInFile = "{"+"\""+"touch_export_data"+"\"" + ":" + "\""+ touch_export_data_value + "\""+ "}"
         }
     }
 
     FileDialog {
         id: saveFileDialog
         selectExisting: false
-        nameFilters: ["Text files (*.js)", "All files (*)"]
+        nameFilters: ["JSON files (*.js)", "All files (*)"]
+        //modality: Qt.NonModal
         onAccepted: {
-            saveFile(saveFileDialog.fileUrl, regDataToStore)
-            regDataToStore = ""
+            regDataToStoreInFile = "[" + regToStoreInFile + "\n" + "," + dataToStoreInFile + "]"
+            saveFile(saveFileDialog.fileUrl, regDataToStoreInFile)
+            regDataToStoreInFile = ""
         }
-
         onRejected: {
-            regDataToStore = ""
+            console.log("Canceled")
+            regDataToStoreInFile = ""
         }
-    }
 
+    }
     property var sensor_status_value:  platformInterface.sensor_status_value.value
     onSensor_status_valueChanged: {
         if(sensor_status_value === "defaults") {
