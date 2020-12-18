@@ -341,6 +341,10 @@ Window {
                     clip: true
                     spacing: 5
 
+                    ScrollBar.vertical: ScrollBar {
+                        active: true
+                    }
+
                     delegate: RowLayout {
                         id: platformRow
                         Layout.fillWidth: true
@@ -350,6 +354,13 @@ Window {
                         property int device_id: model.device_id
                         property string firmware_version: model.firmware_version
                         property bool connected: model.connected
+
+
+                        onDevice_idChanged: {
+                            if(platformModel.initialized){
+                                deviceIdComboBox.currentIndex = device_id
+                            }
+                        }
 
                         function setDevice_id(device_id) {
                             model.device_id = device_id
@@ -405,6 +416,14 @@ Window {
                                 text: platformRow.class_id
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
+                                enabled: !platformRow.connected
+
+                                background: Rectangle {
+                                    color: "transparent"
+                                    border.color: parent.enabled ? "gray" : "lightGray"
+                                    border.width: 0.5
+                                    anchors.fill: parent
+                                }
 
                                 property bool textChanged: false
 
@@ -436,6 +455,8 @@ Window {
                                 Layout.preferredWidth: 40
                                 border.color: "lightGrey"
                                 border.width: 1
+                                // Currently, changing the class_id while still connected is an undefined behavior in platform_selection.js
+                                enabled: !platformRow.connected
 
                                 SGIcon {
                                     width: 25
@@ -443,12 +464,14 @@ Window {
                                     anchors.centerIn: parent
                                     source: "qrc:/sgimages/chevron-down.svg"
                                     iconColor: "lightGrey"
+                                    enabled: parent.enabled
                                 }
 
                                 MouseArea {
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
                                     hoverEnabled: true
+                                    enabled: parent.enabled
 
                                     onClicked: {
                                         forceActiveFocus()
@@ -460,7 +483,7 @@ Window {
                             Popup {
                                 id: popUp
                                 width: parent.width
-                                height: 500
+                                height: 485
                                 y: parent.y - height
 
                                 ColumnLayout {
@@ -581,30 +604,16 @@ Window {
                             id: deviceIdComboBox
                             Layout.preferredHeight: 40
                             Layout.preferredWidth: 150
-                            model: notInUseDeviceModel
-                            currentIndex: -1
+                            model: deviceModel
                             enabled: !platformRow.connected
                             textRole: "name"
-                            popupHeight: 500
-
-                            property int baseModelIndex: -1
+                            popupHeight: 485
 
                             onCurrentIndexChanged: {
-                                let currentBaseModelIndex = notInUseDeviceModel.mapIndexToSource(currentIndex) // must determine first as the next step changes the filter model indices
-                                if (baseModelIndex > -1) {
-                                    // reset previous inUse to false
-                                    notInUseDeviceModel.sourceModel.get(baseModelIndex).inUse = false
+                                const newDevice = model.get(currentIndex)
+                                if(newDevice){
+                                    displayText = newDevice.name
                                 }
-                                baseModelIndex = currentBaseModelIndex
-                                let newDevice = notInUseDeviceModel.sourceModel.get(baseModelIndex)
-                                displayText = newDevice.name
-                                platformRow.setDevice_id(newDevice.device_id)
-                                newDevice.inUse = true
-                            }
-
-                            Component.onCompleted: {
-                                // set currentIndex on start to trigger currentIndexChanged logic
-                                currentIndex = 0
                             }
                         }
 
@@ -627,9 +636,12 @@ Window {
                     Layout.preferredHeight: 40
                     Layout.alignment: Qt.AlignLeft
                     leftPadding: 40
+                    enabled: platformModel.count < platformModel.max_platforms
 
                     onClicked: {
-                        platformModel.append({class_id: "", opn: "", device_id: -1, firmware_version: "0.0.0", connected: false})
+                        if(enabled){
+                            platformModel.append({class_id: "", opn: "", device_id: platformModel.count, firmware_version: "0.0.0", connected: false})
+                        }
                     }
                 }
             }
@@ -664,6 +676,7 @@ Window {
         id: platformModel
 
         property bool initialized: false
+        property int max_platforms: 10
     }
 
     ListModel {
@@ -675,31 +688,17 @@ Window {
         id: deviceModel
     }
 
-    // The model that stores which device_id's are in Use
-    SGSortFilterProxyModel {
-        id: notInUseDeviceModel
-        sourceModel: deviceModel
-        invokeCustomFilter: true
-        sortEnabled: false
-
-        function filterAcceptsRow(index) {
-            // show only devices that are not in use
-            var item = sourceModel.get(index)
-            return item.inUse === false
-        }
-    }
-
     // Loads a device model, and prepends the classModel with any saved custom platforms
     function initialModelLoad() {
         if (platformModel.initialized === false) {
             for (var j = 0; j < 10; j++) {
-                deviceModel.append({name: `device_id ${j}`, inUse: false, device_id: Constants.DEBUG_DEVICE_ID + j})
+                deviceModel.append({name: `device_id ${j}`, device_id: Constants.DEBUG_DEVICE_ID + j})
             }
 
             readState()
 
             if (platformModel.count === 0) {
-                platformModel.append({class_id: "", opn: "---", device_id: -1, firmware_version: "0.0.0", connected: false})
+                platformModel.append({class_id: "", opn: "---", device_id: 0, firmware_version: "0.0.0", connected: false})
             }
 
             platformModel.initialized = true
@@ -708,6 +707,7 @@ Window {
 
     // Loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
     function updateConnectedPlatforms() {
+
         let injectList = {
             "list": [],
             "type": "connected_platforms"
