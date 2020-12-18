@@ -47,7 +47,11 @@ Item {
             repeat: false
 
             onTriggered: {
-                model.hidden = true
+                if (model.saveToDisk) {
+                    model.hidden = true
+                } else {
+                    Notifications.model.remove(filteredNotifications.mapIndexToSource(modelIndex))
+                }
             }
         }
 
