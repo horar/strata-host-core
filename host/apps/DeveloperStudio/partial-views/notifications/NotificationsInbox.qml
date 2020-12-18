@@ -64,48 +64,34 @@ Rectangle {
 
         function filterAcceptsRow(index) {
             const item = sourceModel.get(index);
+            const filterLevel = filterBox.currentIndex - 1;
 
-            return (item.to === "all" || item.to === currentUser)
-        }
-    }
-
-    ListView {
-        anchors {
-            top: parent.top
-            bottom: footer.top
-            left: parent.left
-            right: parent.right
-        }
-        clip: true
-        model: sortedModel
-        delegate: NotificationsInboxDelegate {
-            modelIndex: index
+            if (filterLevel < 0) {
+                return (item.to === "all" || item.to === currentUser)
+            } else {
+                return item.level === filterLevel && (item.to === "all" || item.to === currentUser)
+            }
         }
     }
 
     Rectangle {
-        id: footer
-        anchors {
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
-        }
-        height: 25
+        id: headerContainer
+        width: parent.width
+        height: 30
+        color: Theme.palette.gray
 
-        border.color: Theme.palette.black
-        border.width: 1
-
-        Text {
+        SGIcon {
             id: collapseExpandIcon
-            text: isOpen ? "\u00bb" : "\u00ab"
-            font.pixelSize: 24
-            verticalAlignment: Text.AlignVCenter
+            source: "qrc:/sgimages/chevron-right.svg"
+            width: 20
+            height: 20
             anchors {
                 left: parent.left
                 leftMargin: 5
                 top: parent.top
                 bottom: parent.bottom
             }
+            verticalAlignment: Image.AlignVCenter
 
             MouseArea {
                 anchors.fill: parent
@@ -116,6 +102,50 @@ Rectangle {
                 }
             }
         }
+
+        Text {
+            text: "NOTIFICATIONS"
+            font.bold: true
+            font.pixelSize: 14
+            anchors {
+                left: collapseExpandIcon.right
+                leftMargin: 10
+                top: parent.top
+                right: filterBox.left
+                bottom: parent.bottom
+            }
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        SGComboBox {
+            id: filterBox
+            anchors {
+                top: parent.top
+                right: parent.right
+                bottom: parent.bottom
+            }
+            width: 200
+            currentIndex: -1
+            model: ["All", "Info", "Warning", "Critical"]
+            placeholderText: "Filter by Type"
+            onCurrentIndexChanged: {
+                sortedModel.invalidate()
+            }
+        }
+    }
+
+    ListView {
+        anchors {
+            top: headerContainer.bottom
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
+        clip: true
+        model: sortedModel
+        delegate: NotificationsInboxDelegate {
+            modelIndex: index
+        }
     }
 
     NumberAnimation {
@@ -125,6 +155,9 @@ Rectangle {
         duration: 250
         to: expandWidth
         easing.type: Easing.InOutQuad
+        onStarted: {
+            root.visible = true
+        }
     }
 
 
@@ -135,6 +168,9 @@ Rectangle {
         duration: 250
         to: 0
         easing.type: Easing.InOutQuad
+        onFinished: {
+            root.visible = false
+        }
     }
 
     function toggle() {
