@@ -7,10 +7,12 @@ import "qrc:/js/constants.js" as Constants
 
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
+import tech.strata.notifications 1.0
 
 Item {
-    height: listView.height
     width: 350
+    height: listView.height
+    clip: true
 
     property string currentUser: Constants.GUEST_USER_ID
 
@@ -22,6 +24,7 @@ Item {
     MouseArea {
         anchors.fill: parent
         propagateComposedEvents: true
+
         onClicked: {
             mouse.accepted = false
         }
@@ -46,7 +49,8 @@ Item {
     ListView {
         id: listView
         width: parent.width
-        height: Math.min(contentHeight, mainWindow.height - statusBarContainer.height - 25) // This sets the height to be a max of the window height - status bar height - the bottom margin - 20 for top margin padding
+        height: Math.min(contentHeight, mainWindow.height - statusBarContainer.height - 25)
+        anchors.bottom: parent.bottom
         model: filteredNotifications
         spacing: 10
         clip: true
@@ -63,6 +67,9 @@ Item {
                 duration: 400
                 easing.type: Easing.InOutQuad
             }
+
+            // This verifies that the opacity is set to 1.0 when the add transition is interrupted
+            NumberAnimation { property: "opacity"; to: 1.0 }
         }
     }
 

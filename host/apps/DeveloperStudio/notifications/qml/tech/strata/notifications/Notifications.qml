@@ -117,7 +117,7 @@ Item {
                                        "description": row.description,
                                        "to": row.to,
                                        "level": row.level,
-                                       "date": row.date.toLocaleString()
+                                       "date": row.date.toLocaleString(Qt.locale())
                                    });
             }
         }
@@ -140,7 +140,7 @@ Item {
                 "description": savedNotifications[i].description,
                 "level": savedNotifications[i].level,
                 "to": savedNotifications[i].to,
-                "hidden": false,
+                "hidden": true,
                 "date": Date.fromLocaleString(Qt.locale(), savedNotifications[i].date),
                 "timeout": 0,
                 "iconSource": (savedNotifications[i].level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"),

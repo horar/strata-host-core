@@ -7,6 +7,7 @@ import QtQml 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 import tech.strata.fonts 1.0
+import tech.strata.notifications 1.0
 
 Item {
     id: root

@@ -11,11 +11,12 @@ import "qrc:/partial-views/debug-bar"
 import "qrc:/partial-views/platform-view"
 import "qrc:/js/platform_filters.js" as PlatformFilters
 
-import "partial-views/notifications" 1.0
+import "partial-views/notifications"
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
+import tech.strata.notifications 1.0
 
 import QtQml 2.12
 

@@ -37,6 +37,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
     signals/qml/tech/strata/signals/qml.qrc
+    notifications/qml/tech/strata/notifications/qml.qrc
 
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
@@ -139,6 +140,7 @@ set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/signals/qml")
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/notifications/qml")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     get_target_property(QT_RCC_EXECUTABLE Qt5::rcc IMPORTED_LOCATION)
