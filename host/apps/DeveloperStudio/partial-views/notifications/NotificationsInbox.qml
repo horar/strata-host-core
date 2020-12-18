@@ -74,64 +74,120 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    ColumnLayout {
         id: headerContainer
         width: parent.width
-        height: 30
-        color: Theme.palette.gray
 
-        SGIcon {
-            id: collapseExpandIcon
-            source: "qrc:/sgimages/chevron-right.svg"
-            width: 20
-            height: 20
-            anchors {
-                left: parent.left
-                leftMargin: 5
-                top: parent.top
-                bottom: parent.bottom
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            color: Theme.palette.gray
+
+            SGIcon {
+                id: collapseExpandIcon
+                source: "qrc:/sgimages/chevron-right.svg"
+                width: 20
+                height: 20
+                anchors {
+                    left: parent.left
+                    leftMargin: 5
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                verticalAlignment: Image.AlignVCenter
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        toggle()
+                    }
+                }
             }
-            verticalAlignment: Image.AlignVCenter
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    toggle()
+            Text {
+                text: "NOTIFICATIONS"
+                font.bold: true
+                font.pixelSize: 14
+                anchors {
+                    left: collapseExpandIcon.right
+                    leftMargin: 10
+                    top: parent.top
+                    right: notificationCountContainer.left
+                    bottom: parent.bottom
+                }
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            Rectangle {
+                id: notificationCountContainer
+                anchors {
+                    right: parent.right
+                    top: parent.top
+                    bottom: parent.bottom
+                    topMargin: 5
+                    bottomMargin: 5
+                    rightMargin: 5
+                }
+                width: 30
+                height: 15
+                radius: width / 2
+                border.color: {
+                    const idx = filterBox.currentIndex
+                    if (idx <= 1) {
+                        return Theme.palette.black
+                    } else if (idx === 2) {
+                        return Theme.palette.warning
+                    } else {
+                        return Theme.palette.error
+                    }
+                }
+
+                color: "transparent"
+                border.width: 1
+
+                Text {
+                    anchors.centerIn: parent
+                    text: sortedModel.count
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    color: notificationCountContainer.border.color
                 }
             }
         }
 
-        Text {
-            text: "NOTIFICATIONS"
-            font.bold: true
-            font.pixelSize: 14
-            anchors {
-                left: collapseExpandIcon.right
-                leftMargin: 10
-                top: parent.top
-                right: filterBox.left
-                bottom: parent.bottom
+        RowLayout {
+            Layout.preferredHeight: 30
+            Layout.leftMargin: 5
+            Layout.rightMargin: 5
+
+            Text {
+                Layout.fillHeight: true
+                text: "Filter by Type:"
+                font.bold: true
+                font.pixelSize: 12
+                verticalAlignment: Text.AlignVCenter
             }
-            verticalAlignment: Text.AlignVCenter
+
+            SGComboBox {
+                id: filterBox
+
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                model: ["All", "Info", "Warning", "Critical"]
+                onCurrentIndexChanged: {
+                    sortedModel.invalidate()
+                }
+            }
         }
 
-        SGComboBox {
-            id: filterBox
-            anchors {
-                top: parent.top
-                right: parent.right
-                bottom: parent.bottom
-            }
-            width: 200
-            currentIndex: -1
-            model: ["All", "Info", "Warning", "Critical"]
-            placeholderText: "Filter by Type"
-            onCurrentIndexChanged: {
-                sortedModel.invalidate()
-            }
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: Theme.palette.darkGray
         }
+
     }
 
     ListView {
