@@ -37,7 +37,7 @@ Rectangle {
     property color backgroundColor: "#3a3a3a"
     property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
-    property bool hasNotifications: Notifications.model.count > 0
+    property bool hasNotifications: criticalNotifications.count > 0
 
     onHasNotificationsChanged: {
         alertIconContainer.visible = hasNotifications
@@ -60,6 +60,17 @@ Rectangle {
 
     Component.onDestruction: {
         Help.destroyHelp()
+    }
+
+    SGSortFilterProxyModel {
+        id: criticalNotifications
+        sourceModel: Notifications.model
+        sortEnabled: false
+        invokeCustomFilter: true
+
+        function filterAcceptsRow(index) {
+            return sourceModel.get(index).level === Notifications.critical
+        }
     }
 
     RowLayout {
