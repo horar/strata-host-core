@@ -36,6 +36,7 @@ Rectangle {
         if (classDocuments.downloadDocumentListModel.count > 0){
             empty.hasDownloads = true
         }
+
         if (totalDocuments > 0) {
             navigationSidebar.state = "open"
         } else {
@@ -174,6 +175,7 @@ Rectangle {
                 anchors {
                     fill: parent
                 }
+
                 // Optional Configuration:
                 openCloseTime: 80           // Default: 80 (how fast the sliders pop open)
                 statusIcon: "\u25B2"        // Default: "\u25B2" (triangle char)
@@ -205,8 +207,6 @@ Rectangle {
                         onAnimationCompleted: {
                             Help.liveResize()
                         }
-
-
                     }
 
                     SGAccordionItem {
