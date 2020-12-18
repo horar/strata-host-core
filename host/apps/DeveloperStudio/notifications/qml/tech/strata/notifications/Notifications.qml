@@ -116,6 +116,7 @@ Item {
                                        "title": row.title,
                                        "description": row.description,
                                        "to": row.to,
+                                       "iconSource": row.iconSource,
                                        "level": row.level,
                                        "date": row.date.toLocaleString(Qt.locale())
                                    });
@@ -143,7 +144,7 @@ Item {
                 "hidden": true,
                 "date": Date.fromLocaleString(Qt.locale(), savedNotifications[i].date),
                 "timeout": 0,
-                "iconSource": (savedNotifications[i].level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"),
+                "iconSource": savedNotifications[i].iconSource,
                 "saveToDisk": true,
                 "singleton": false,
                 "actions": []

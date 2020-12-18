@@ -11,23 +11,13 @@ import tech.strata.notifications 1.0
 
 Item {
     width: 350
-    height: listView.height
+
     clip: true
 
     property string currentUser: Constants.GUEST_USER_ID
 
     onCurrentUserChanged: {
         filteredNotifications.invalidate()
-    }
-
-    // This removes any cursor changes to elements that are underneath listView
-    MouseArea {
-        anchors.fill: parent
-        propagateComposedEvents: true
-
-        onClicked: {
-            mouse.accepted = false
-        }
     }
 
     SGSortFilterProxyModel {
@@ -49,14 +39,14 @@ Item {
     ListView {
         id: listView
         width: parent.width
-        height: Math.min(contentHeight, mainWindow.height - statusBarContainer.height - 25)
+        height: parent.height
         anchors.bottom: parent.bottom
         model: filteredNotifications
         spacing: 10
         clip: true
         delegate: NotificationDelegate { modelIndex: index }
         verticalLayoutDirection: ListView.BottomToTop
-
+        interactive: contentHeight > height
         add: Transition {
             NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
         }

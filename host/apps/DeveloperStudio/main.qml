@@ -125,6 +125,8 @@ SGWidgets.SGMainWindow {
         anchors {
             right: parent.right
             bottom: parent.bottom
+            top: parent.top
+            topMargin: statusBarContainer.height
             bottomMargin: 25
             rightMargin: 20
         }

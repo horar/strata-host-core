@@ -51,8 +51,7 @@ Item {
             }
         }
 
-        ColumnLayout {
-            id: columnLayout
+        RowLayout {
             anchors {
                 left: parent.left
                 leftMargin: 10
@@ -61,171 +60,175 @@ Item {
                 top: parent.top
                 topMargin: 10
             }
-            spacing: 5
 
-            RowLayout {
-                Layout.minimumHeight: 30
-                Layout.fillHeight: model.description.length === 0
-                Layout.fillWidth: true
-                spacing: 5
-                clip: true
+            SGIcon {
+                Layout.preferredWidth: 15
+                Layout.preferredHeight: 15
+                Layout.alignment: Qt.AlignVCenter
+                verticalAlignment: Image.AlignVCenter
 
-                SGIcon {
-                    Layout.preferredWidth: 15
-                    Layout.preferredHeight: 15
-                    Layout.alignment: Qt.AlignVCenter
-                    verticalAlignment: Image.AlignVCenter
-
-                    iconColor: {
-                        if (model.level === Notifications.info) {
-                            return Theme.palette.gray;
-                        } else if (model.level === Notifications.warning) {
-                            return Theme.palette.warning;
-                        } else if (model.level === Notifications.critical) {
-                            return Theme.palette.error;
-                        }
-                    }
-                    source: model.iconSource
-                }
-
-                Text {
-                    id: title
-                    text: model.title
-                    font {
-                        bold: true
-                        pixelSize: 13
-                    }
-                    verticalAlignment: Text.AlignVCenter
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                    elide: Text.ElideRight
-                }
-
-                Text {
-                    text: model.date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
-                    font {
-                        pixelSize: 11
-                    }
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                    Layout.preferredWidth: 50
-                    Layout.fillHeight: true
-                    Layout.rightMargin: 5
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                }
-
-                RoundButton {
-                    Layout.preferredHeight: 17
-                    Layout.preferredWidth: 17
-                    Layout.alignment: Qt.AlignVCenter
-                    padding: 0
-                    hoverEnabled: true
-
-                    icon {
-                        source: "qrc:/sgimages/times.svg"
-                        color: closeNotificationButton.containsMouse ? Theme.palette.darkGray : "black"
-                        height: 10
-                        width: 10
-                        name: "Close"
-                    }
-
-                    Accessible.name: "Close notification"
-                    Accessible.role: Accessible.Button
-                    Accessible.onPressAction: {
-                        closeNotificationButton.clicked()
-                    }
-
-                    MouseArea {
-                        id: closeNotificationButton
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        onClicked: {
-                            closeTimer.stop()
-                            Notifications.model.remove(filteredNotifications.mapIndexToSource(modelIndex))
-                        }
+                iconColor: {
+                    if (model.level === Notifications.info) {
+                        return Theme.palette.gray;
+                    } else if (model.level === Notifications.warning) {
+                        return Theme.palette.warning;
+                    } else if (model.level === Notifications.critical) {
+                        return Theme.palette.error;
                     }
                 }
+                source: model.iconSource
             }
 
-            Rectangle {
-                color: Theme.palette.lightGray
-                visible: model.description.length > 0
+            ColumnLayout {
+                id: columnLayout
                 Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                Layout.preferredHeight: 1
-            }
-
-            Text {
-                id: description
-                text: model.description
-                visible: model.description.length > 0
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                wrapMode: Text.WordWrap
-            }
-
-            Rectangle {
-                color: Theme.palette.lightGray
-                visible: model.actions.count > 0
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                Layout.preferredHeight: 1
-            }
-
-            RowLayout {
-                visible: model.actions.count > 0
-                Layout.preferredHeight: 35
                 Layout.leftMargin: 5
-                spacing: 3
+                spacing: 5
 
-                Repeater {
-                    model: actions
+                RowLayout {
+                    Layout.minimumHeight: 30
+                    Layout.fillHeight: model.description.length === 0
+                    Layout.fillWidth: true
+                    spacing: 5
+                    clip: true
 
-                    delegate: Rectangle {
-                        id: button
+                    Text {
+                        id: title
+                        text: model.title
+                        font {
+                            bold: true
+                            pixelSize: 13
+                        }
+                        verticalAlignment: Text.AlignVCenter
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        elide: Text.ElideRight
+                    }
 
-                        Layout.preferredWidth: metrics.tightBoundingRect.width + 20
-                        Layout.preferredHeight: 25
-                        color: "transparent"
-                        border.color: actionMouseArea.containsMouse ? Theme.palette.highlight : "transparent"
-                        border.width: 1
-                        radius: 4
+                    Text {
+                        text: model.date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
+                        font {
+                            pixelSize: 11
+                        }
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                        Layout.preferredWidth: 50
+                        Layout.fillHeight: true
+                        Layout.rightMargin: 5
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
+                    }
 
-                        Text {
-                            id: actionText
-                            height: parent.height
-                            anchors.centerIn: parent
-                            text: model.action.text
-                            color: Theme.palette.highlight
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
+                    RoundButton {
+                        Layout.preferredHeight: 17
+                        Layout.preferredWidth: 17
+                        Layout.alignment: Qt.AlignVCenter
+                        padding: 0
+                        hoverEnabled: true
+
+                        icon {
+                            source: "qrc:/sgimages/times.svg"
+                            color: closeNotificationButton.containsMouse ? Theme.palette.darkGray : "black"
+                            height: 10
+                            width: 10
+                            name: "Close"
                         }
 
-                        TextMetrics {
-                            id: metrics
-                            font: actionText.font
-                            text: actionText.text
+                        Accessible.name: "Close notification"
+                        Accessible.role: Accessible.Button
+                        Accessible.onPressAction: {
+                            closeNotificationButton.clicked()
                         }
 
                         MouseArea {
-                            id: actionMouseArea
+                            id: closeNotificationButton
                             anchors.fill: parent
                             hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
+                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
-                                model.action.trigger()
                                 closeTimer.stop()
                                 Notifications.model.remove(filteredNotifications.mapIndexToSource(modelIndex))
                             }
                         }
                     }
                 }
+
+                Rectangle {
+                    color: Theme.palette.lightGray
+                    visible: model.description.length > 0
+                    Layout.fillWidth: true
+                    Layout.rightMargin: 10
+                    Layout.preferredHeight: 1
+                }
+
+                Text {
+                    id: description
+                    text: model.description
+                    visible: model.description.length > 0
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                }
+
+                Rectangle {
+                    color: Theme.palette.lightGray
+                    visible: model.actions.count > 0
+                    Layout.fillWidth: true
+                    Layout.rightMargin: 10
+                    Layout.preferredHeight: 1
+                }
+
+                RowLayout {
+                    visible: model.actions.count > 0
+                    Layout.preferredHeight: 35
+                    Layout.leftMargin: 5
+                    spacing: 3
+
+                    Repeater {
+                        model: actions
+
+                        delegate: Rectangle {
+                            id: button
+
+                            Layout.preferredWidth: metrics.tightBoundingRect.width + 20
+                            Layout.preferredHeight: 25
+                            color: "transparent"
+                            border.color: actionMouseArea.containsMouse ? Theme.palette.highlight : "transparent"
+                            border.width: 1
+                            radius: 4
+
+                            Text {
+                                id: actionText
+                                height: parent.height
+                                anchors.centerIn: parent
+                                text: model.action.text
+                                color: Theme.palette.highlight
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            TextMetrics {
+                                id: metrics
+                                font: actionText.font
+                                text: actionText.text
+                            }
+
+                            MouseArea {
+                                id: actionMouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    model.action.trigger()
+                                    closeTimer.stop()
+                                    Notifications.model.remove(filteredNotifications.mapIndexToSource(modelIndex))
+                                }
+                            }
+                        }
+                    }
+                }
             }
+
         }
     }
 
