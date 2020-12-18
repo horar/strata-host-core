@@ -80,7 +80,7 @@ Rectangle {
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
         helpIcon.class_id = view.class_id
-        Help.registerTarget(pdfViewerContainer,"Here you can see the all browse files/documents",0,"contentViewHelp")
+        Help.registerTarget(pdfViewerContainer,"Here you can see all browse files/documents",0,"contentViewHelp")
         Help.registerTarget(accordion.contentItem.children[0],"Here you can find platform-specific documents.",1,"contentViewHelp")
         Help.registerTarget(accordion.contentItem.children[1],"Here you can find platform-specific datasheets.",2,"contentViewHelp")
         Help.registerTarget(accordion.contentItem.children[2],"Here you can download platform-specific documents.",3,"contentViewHelp")
