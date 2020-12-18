@@ -70,6 +70,7 @@ Item {
                 Layout.preferredHeight: 15
                 Layout.alignment: Qt.AlignVCenter
                 verticalAlignment: Image.AlignVCenter
+                visible: model.iconSource !== ""
 
                 iconColor: {
                     if (model.level === Notifications.info) {
