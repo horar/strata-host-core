@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
+import QtGraphicalEffects 1.0
 
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/constants.js" as Constants
@@ -9,6 +10,7 @@ import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
 import tech.strata.theme 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.notifications 1.0
 
 Rectangle {
     id: root
@@ -17,25 +19,41 @@ Rectangle {
     property int expandWidth: 300
     readonly property bool isOpen: width > 0
 
+    layer.enabled: true
+    layer.effect: DropShadow {
+        anchors.fill: root
+        source: root
+        color: Theme.palette.gray
+        horizontalOffset: -1
+        verticalOffset: 0
+        cached: true
+        radius: 8
+        smooth: true
+        samples: radius*2
+    }
+
     color: Theme.palette.white
 
     onCurrentUserChanged: {
-        criticalNotificationsModel.invalidate()
-        warningNotificationsModel.invalidate()
-        infoNotificationsModel.invalidate()
+        sortedModel.invalidate()
     }
 
     MouseArea {
         anchors.fill: parent
-        hoverEnabled: false
+        propagateComposedEvents: false
+
+        onClicked: {
+            mouse.accepted = false
+        }
     }
 
     SGSortFilterProxyModel {
-        id: criticalNotificationsModel
+        id: sortedModel
         sourceModel: Notifications.model
         sortEnabled: true
-        invokeCustomLessThan: true
         invokeCustomFilter: true
+        sortRole: "date"
+        sortAscending: false
 
         function lessThan(index1, index2) {
             const item1 = sourceModel.get(index1);
@@ -47,84 +65,58 @@ Rectangle {
         function filterAcceptsRow(index) {
             const item = sourceModel.get(index);
 
-            return item.level === Notifications.critical && item.hidden && (item.to === "all" || item.to === currentUser)
+            return (item.to === "all" || item.to === currentUser)
         }
     }
 
-    SGSortFilterProxyModel {
-        id: warningNotificationsModel
-        sourceModel: Notifications.model
-
-        sortEnabled: true
-        invokeCustomLessThan: true
-        invokeCustomFilter: true
-
-        function lessThan(index1, index2) {
-            const item1 = sourceModel.get(index1);
-            const item2 = sourceModel.get(index2);
-
-            return item1.date < item2.date
+    ListView {
+        anchors {
+            top: parent.top
+            bottom: footer.top
+            left: parent.left
+            right: parent.right
         }
-
-        function filterAcceptsRow(index) {
-            const item = sourceModel.get(index);
-
-            return item.level === Notifications.warning && item.hidden && (item.to === "all" || item.to === currentUser)
+        clip: true
+        model: sortedModel
+        delegate: NotificationsInboxDelegate {
+            modelIndex: index
         }
     }
 
-    SGSortFilterProxyModel {
-        id: infoNotificationsModel
-        sourceModel: Notifications.model
-
-        sortEnabled: true
-        invokeCustomLessThan: true
-        invokeCustomFilter: true
-
-        function lessThan(index1, index2) {
-            const item1 = sourceModel.get(index1);
-            const item2 = sourceModel.get(index2);
-
-            return item1.date < item2.date
+    Rectangle {
+        id: footer
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
         }
+        height: 25
 
-        function filterAcceptsRow(index) {
-            const item = sourceModel.get(index);
+        border.color: Theme.palette.black
+        border.width: 1
 
-            return item.level === Notifications.info && item.hidden && (item.to === "all" || item.to === currentUser)
-        }
-    }
+        Text {
+            id: collapseExpandIcon
+            text: isOpen ? "\u00bb" : "\u00ab"
+            font.pixelSize: 24
+            verticalAlignment: Text.AlignVCenter
+            anchors {
+                left: parent.left
+                leftMargin: 5
+                top: parent.top
+                bottom: parent.bottom
+            }
 
-    SGSplitView {
-        anchors.fill: parent
-        orientation: Qt.Vertical
-
-        NotificationsInboxList {
-            id: criticalNotificationsList
-            Layout.fillWidth: true
-            Layout.minimumHeight: 25
-            level: "critical"
-            dataModel: criticalNotificationsModel.sourceModel
-        }
-
-        NotificationsInboxList {
-            id: warningNotificationsList
-            Layout.fillWidth: true
-            Layout.minimumHeight: 25
-            level: "warning"
-            dataModel: warningNotificationsModel.sourceModel
-        }
-
-        NotificationsInboxList {
-            id: infoNotificationsList
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.minimumHeight: 25
-            level: "info"
-            dataModel: infoNotificationsModel.sourceModel
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    toggle()
+                }
+            }
         }
     }
-
 
     NumberAnimation {
         id: showAnimation
@@ -177,6 +169,7 @@ Rectangle {
         }
 
         onLogout: {
+            close()
             for (let i = 0; i < Notifications.model.count; i++) {
                 // Clear any actions when the user logs out
                 Notifications.model.get(i).actions.clear()
