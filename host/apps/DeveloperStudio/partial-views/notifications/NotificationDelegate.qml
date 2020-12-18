@@ -143,7 +143,7 @@ Item {
                         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                         onClicked: {
                             closeTimer.stop()
-                            Qt.callLater(Notifications.model.remove, modelIndex)
+                            Notifications.model.remove(filteredNotifications.mapIndexToSource(modelIndex))
                         }
                     }
                 }
@@ -219,7 +219,7 @@ Item {
                             onClicked: {
                                 model.action.trigger()
                                 closeTimer.stop()
-                                Notifications.model.remove(modelIndex)
+                                Notifications.model.remove(filteredNotifications.mapIndexToSource(modelIndex))
                             }
                         }
                     }

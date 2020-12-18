@@ -46,7 +46,7 @@ Item {
     ListView {
         id: listView
         width: parent.width
-        height: Math.min(contentHeight, mainWindow.height - statusBarContainer.height - parent.anchors.bottomMargin) // This sets the height to be a max of the window height - status bar height - the bottom margin - 20 for top margin padding
+        height: Math.min(contentHeight, mainWindow.height - statusBarContainer.height - 25) // This sets the height to be a max of the window height - status bar height - the bottom margin - 20 for top margin padding
         model: filteredNotifications
         spacing: 10
         clip: true
