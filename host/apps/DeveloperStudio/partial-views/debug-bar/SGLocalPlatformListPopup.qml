@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQml 2.12
 import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.12
@@ -22,19 +23,9 @@ Window {
     title: "Local platform list manipulation"
 
     onVisibleChanged: {
-        if(visible) {
+        if (visible) {
             initialModelLoad()
-        } else {
-            deviceModel.clear()
-            classModel.clear()
-            storePlatforms()
-            listModel.clear()
-            recentListModel.clear()
         }
-    }
-
-    Component.onDestruction: {
-        storePlatforms()
     }
 
     ColumnLayout {
@@ -227,7 +218,7 @@ Window {
                     }
 
                     onClicked: {
-                        mainColumn.removeLocalPlatformList()
+                        removeLocalPlatformList()
                     }
                 }
             }
@@ -249,7 +240,7 @@ Window {
                     }
 
                     onClicked: {
-                        mainColumn.removeLocalPlatformList()
+                        removeLocalPlatformList()
                         PlatformSelection.getPlatformList()
                     }
                 }
@@ -279,7 +270,7 @@ Window {
                         model: [true, false]
                         checkedIndices: 0
                         onClicked: {
-                            mainColumn.manipulateFlags(model[index],modelData)
+                            manipulateFlags(model[index],modelData)
                         }
                     }
                     SGText {
@@ -311,6 +302,7 @@ Window {
             Layout.topMargin: 10
             fontSizeMultiplier: 1.5
             target: injectPlatform
+
             ColumnLayout {
                 id: injectPlatform
 
@@ -326,7 +318,7 @@ Window {
                     }
 
                     Text {
-                        Layout.preferredWidth: 140
+                        Layout.preferredWidth: 80
                         text: "Version"
                     }
 
@@ -338,12 +330,11 @@ Window {
                     Text {
                         text: "Connected"
                     }
-
                 }
 
                 ListView {
                     id: listView
-                    model: listModel
+                    model: platformModel
                     Layout.fillWidth: true
                     Layout.preferredHeight: contentHeight
                     Layout.maximumHeight: 300
@@ -351,65 +342,29 @@ Window {
                     spacing: 5
 
                     delegate: RowLayout {
-                        id: rowPlatform
+                        id: platformRow
                         Layout.fillWidth: true
 
-                        property var platformSources: {"class_id": model.platform.class_id, "opn": model.platform.opn}
-                        property int device_id: model.platform.device_id
-                        property string firmware_version: model.platform.firmware_version
-                        property bool connected: model.platform.connected
+                        property var class_id: model.class_id
+                        property var opn: model.opn
+                        property int device_id: model.device_id
+                        property string firmware_version: model.firmware_version
+                        property bool connected: model.connected
 
-                        property bool hasUpdated: false
-
-                        onPlatformSourcesChanged: {
-                            if(root.visible && hasUpdated){
-                                let platform = {
-                                    class_id: platformSources.class_id,
-                                    opn: platformSources.opn,
-                                    device_id: device_id,
-                                    firmware_version: firmware_version,
-                                    connected: connected
-                                }
-                                hasUpdated = false
-                                updateConnectedPlatforms(platform, model.index)
-                            }
+                        function setDevice_id(device_id) {
+                            model.device_id = device_id
                         }
 
-                        onFirmware_versionChanged: {
-                            if(root.visible && hasUpdated){
-                                let platform = {
-                                    class_id: platformSources.class_id,
-                                    opn: platformSources.opn,
-                                    device_id: device_id,
-                                    firmware_version: firmware_version,
-                                    connected: connected
-                                }
-                                hasUpdated = false
-                                updateConnectedPlatforms(platform, model.index)
-                            }
+                        function setFirmware_version(firmware_version) {
+                            model.firmware_version = firmware_version
                         }
 
-                        onConnectedChanged: {
-                            if(root.visible && hasUpdated){
-                                let platform = {
-                                    class_id: platformSources.class_id,
-                                    opn: platformSources.opn,
-                                    device_id: device_id,
-                                    firmware_version: firmware_version,
-                                    connected: connected
-                                }
-                                hasUpdated = false
-                                updateConnectedPlatforms(platform, model.index)
-                            }
+                        function setClass_id(class_id) {
+                            model.class_id = class_id
                         }
 
-                        onDevice_idChanged: {
-                            if(root.visible && device_id > -1) {
-                                deviceIdComboBox.currentIndex = device_id
-                                deviceIdComboBox.contentItem.text = deviceFilterModel.get(device_id).device
-                                deviceFilterModel.setDeviceInUse(device_id)
-                                hasUpdated = false
-                            }
+                        function setOpn(opn) {
+                            model.opn = opn
                         }
 
                         Rectangle {
@@ -420,9 +375,8 @@ Window {
                             SGIcon {
                                 source:"qrc:/sgimages/times.svg"
                                 anchors.centerIn: parent
-                                width: 30
+                                width: 25
                                 height: width
-
                                 iconColor: "white"
                             }
 
@@ -433,72 +387,80 @@ Window {
                                 hoverEnabled: true
 
                                 onClicked: {
-                                    rowPlatform.connected = false
-                                    deletePlatform(model.index)
+                                    platformModel.remove(index)
+                                    storeState()
                                 }
                             }
                         }
 
-                        Item {
+                        RowLayout {
                             Layout.preferredHeight: 40
                             Layout.preferredWidth: 310
+                            Layout.fillWidth: false
+                            spacing: 0
 
-                            RowLayout {
-                                anchors.fill: parent
-                                spacing: 0
-                                SGTextField {
-                                    id: classIDField
-                                    placeholderText: "Class Id..."
-                                    text: rowPlatform.platformSources.class_id
-                                    Layout.fillHeight: true
-                                    Layout.preferredWidth: 250
+                            SGTextField {
+                                id: classIDField
+                                placeholderText: "Class Id..."
+                                text: platformRow.class_id
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
 
-                                    property bool onHasChanged: false
+                                property bool textChanged: false
 
-                                    onTextChanged: {
-                                        if(root.visible && rowPlatform.platformSources.class_id!== text && text !== ""){
-                                            onHasChanged = true
-                                        }
-                                    }
-
-                                    onEditingFinished: {
-                                        if(onHasChanged){
-                                            rowPlatform.hasUpdated = true
-                                            rowPlatform.platformSources = {"class_id": text, "opn":checkForCustomId(text) ? "Custom Platform" :rowPlatform.platformSources.opn}
-                                            onHasChanged = false
-                                        }
-                                    }
+                                onTextChanged: {
+                                    textChanged = true
                                 }
 
-                                Rectangle {
-                                    Layout.preferredHeight: 40
-                                    Layout.preferredWidth: 60
-                                    border.color: "lightGrey"
-                                    border.width: 0.5
-                                    SGIcon {
-                                        width: 55
-                                        height: 35
-                                        anchors.centerIn: parent
-                                        source: "qrc:/sgimages/chevron-up.svg"
-                                        iconColor: "lightGrey"
+                                onEditingFinished: {
+                                    if (textChanged && platformRow.class_id !== text && text !== ""){
+                                        setClassId()
                                     }
+                                    textChanged = false
+                                }
 
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
+                                function setClassId () {
+                                    let opn = findOPN(text)
+                                    platformRow.setClass_id(text)
+                                    platformRow.setOpn(opn)
+                                    addToRecentPlatforms(text, opn)
+                                    storeState()
+                                    if (platformRow.connected){
+                                        updateConnectedPlatforms()
+                                    }
+                                }
+                            }
 
-                                        onClicked: {
-                                            popUp.open()
-                                        }
+                            Rectangle {
+                                Layout.preferredHeight: 40
+                                Layout.preferredWidth: 40
+                                border.color: "lightGrey"
+                                border.width: 1
+
+                                SGIcon {
+                                    width: 25
+                                    height: 25
+                                    anchors.centerIn: parent
+                                    source: "qrc:/sgimages/chevron-down.svg"
+                                    iconColor: "lightGrey"
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+
+                                    onClicked: {
+                                        forceActiveFocus()
+                                        popUp.open()
                                     }
                                 }
                             }
 
                             Popup {
                                 id: popUp
-                                width: 310
-                                height: 300
+                                width: parent.width
+                                height: 500
                                 y: parent.y - height
 
                                 ColumnLayout {
@@ -512,26 +474,27 @@ Window {
                                         SGButton {
                                             Layout.preferredHeight: 40
                                             Layout.preferredWidth: 140
-                                            text: "Platform Selection List"
-                                            enabled: popUpView.model !== classModel
+                                            text: "Platform Selector List"
+                                            enabled: popUpView.model !== PlatformSelection.platformSelectorModel
 
                                             onClicked: {
-                                                popUpView.model = classModel
+                                                popUpView.model = PlatformSelection.platformSelectorModel
                                             }
                                         }
 
                                         SGButton {
                                             Layout.preferredHeight: 40
                                             Layout.preferredWidth: 140
-                                            text: "Recent Platform List"
-                                            enabled: popUpView.model !== recentListModel
+                                            text: "Recent Platforms"
+                                            enabled: popUpView.model !== recentPlatformsModel
                                             onClicked: {
-                                                popUpView.model = recentListModel
+                                                popUpView.model = recentPlatformsModel
                                             }
                                         }
                                     }
 
                                     Rectangle {
+                                        // divider
                                         color: "grey"
                                         Layout.preferredHeight: 1
                                         Layout.fillWidth: true
@@ -543,7 +506,7 @@ Window {
                                         id: popUpView
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
-                                        model: classModel
+                                        model: PlatformSelection.platformSelectorModel
                                         clip: true
 
                                         ScrollBar.vertical: ScrollBar {
@@ -553,12 +516,13 @@ Window {
                                         delegate: Item {
                                             height: 40
                                             width: parent.width
+
                                             SGText {
                                                 id: opnText
                                                 color: delegateArea.containsMouse ? "#888" : "black"
                                                 anchors.left: parent.left
                                                 anchors.top: parent.top
-                                                text: model.platform.opn
+                                                text: model.opn
                                                 leftPadding: 5
                                             }
 
@@ -567,7 +531,7 @@ Window {
                                                 color: delegateArea.containsMouse ? "#888" : "#333"
                                                 anchors.left: parent.left
                                                 anchors.top: opnText.bottom
-                                                text: model.platform.class_id
+                                                text: model.class_id
                                                 leftPadding: 10
                                             }
 
@@ -578,62 +542,38 @@ Window {
                                                 hoverEnabled: true
 
                                                 onClicked: {
-                                                    popUpView.setPlatform({class_id: model.platform.class_id, opn: model.platform.opn})
+                                                    classIDField.text = model.class_id
+                                                    classIDField.setClassId()
                                                     popUp.close()
                                                 }
                                             }
-                                        }
-
-                                        function setPlatform(platform){
-                                            classIDField.text = platform.class_id
-                                            rowPlatform.hasUpdated = true
-                                            rowPlatform.platformSources = platform
                                         }
                                     }
                                 }
                             }
                         }
 
-                        Rectangle {
+                        SGTextField {
+                            id: firmwareVersion
                             Layout.preferredHeight: 40
-                            Layout.preferredWidth: 140
-                            color: "transparent"
-                            border.width: 0.5
-                            border.color: "lightgrey"
+                            Layout.preferredWidth: 80
+                            placeholderText: "Firmware version #.#.#"
+                            text: platformRow.firmware_version
 
-                            SGText {
-                                id: textBox
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: "ver."
-                                leftPadding: 5
-                                rightPadding: 5
+                            property bool textChanged: false
+
+                            onTextChanged: {
+                                textChanged = true
                             }
 
-                            SGTextField {
-                                id: textField
-                                anchors.left: textBox.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.right: parent.right
-                                placeholderText: "firmware_version"
-
-                                text: rowPlatform.firmware_version
-
-                                property bool onHasChanged: false
-
-                                onTextChanged: {
-                                    if(root.visible && rowPlatform.firmware_version !== text && text !== ""){
-                                        onHasChanged = true
+                            onEditingFinished: {
+                                if (textChanged && platformRow.firmware_version !== text && text !== ""){
+                                    platformRow.setFirmware_version(text)
+                                    if (platformRow.connected){
+                                        updateConnectedPlatforms()
                                     }
                                 }
-
-                                onEditingFinished: {
-                                    if(onHasChanged){
-                                        rowPlatform.hasUpdated = true
-                                        rowPlatform.firmware_version = text
-                                        onHasChanged = false
-                                    }
-                                }
+                                textChanged = false
                             }
                         }
 
@@ -641,52 +581,42 @@ Window {
                             id: deviceIdComboBox
                             Layout.preferredHeight: 40
                             Layout.preferredWidth: 150
-                            model: deviceFilterModel
-                            placeholderText: "device_id..."
-                            textRole: null
+                            model: notInUseDeviceModel
                             currentIndex: -1
-                            enabled: !rowPlatform.connected
+                            enabled: !platformRow.connected
+                            textRole: "name"
+                            popupHeight: 500
 
-                            delegate: SGText {
-                                id: deviceText
-                                color: deviceArea.containsMouse ? "#888" : enabled ? "black" : "#bbb"
+                            property int baseModelIndex: -1
 
-                                text: model.device
-                                leftPadding: 5
-                                enabled: !deviceFilterModel.checkIfInUse(model.index) && model.index !== rowPlatform.device_id
-
-                                MouseArea {
-                                    id: deviceArea
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    enabled: parent.enabled
-
-                                    onClicked: {
-                                        deviceIdComboBox.setDevice(model.index)
-                                        deviceIdComboBox.popup.close()
-                                    }
+                            onCurrentIndexChanged: {
+                                let currentBaseModelIndex = notInUseDeviceModel.mapIndexToSource(currentIndex) // must determine first as the next step changes the filter model indices
+                                if (baseModelIndex > -1) {
+                                    // reset previous inUse to false
+                                    notInUseDeviceModel.sourceModel.get(baseModelIndex).inUse = false
                                 }
+                                baseModelIndex = currentBaseModelIndex
+                                let newDevice = notInUseDeviceModel.sourceModel.get(baseModelIndex)
+                                displayText = newDevice.name
+                                platformRow.setDevice_id(newDevice.device_id)
+                                newDevice.inUse = true
                             }
 
-                            function setDevice(index){
-                                if(rowPlatform.device_id !== -1){
-                                    deviceFilterModel.enableDeviceNotInUse(rowPlatform.device_id)
-                                }
-                                rowPlatform.hasUpdated = true
-                                rowPlatform.device_id = index
-                                deviceFilterModel.setDeviceInUse(index)
+                            Component.onCompleted: {
+                                // set currentIndex on start to trigger currentIndexChanged logic
+                                currentIndex = 0
                             }
                         }
 
                         Switch {
                             id: connectSwitch
-                            checked: rowPlatform.connected
-                            enabled: rowPlatform.platformSources.class_id !== "" && rowPlatform.device_id > -1 && rowPlatform.firmware_version !== ""
+                            checked: model.connected
+                            enabled: model.connected || (platformRow.class_id !== "" && platformRow.device_id !== -1 && platformRow.firmware_version !== "")
+
                             onCheckedChanged: {
-                                rowPlatform.hasUpdated = true
-                                rowPlatform.connected = checked
-                           }
+                                model.connected = checked
+                                updateConnectedPlatforms()
+                            }
                         }
                     }
                 }
@@ -699,184 +629,161 @@ Window {
                     leftPadding: 40
 
                     onClicked: {
-                        listModel.append({platform:{class_id: "", opn: "" ,device_id: -1, firmware_version: "0.0.2", connected: false}})
+                        platformModel.append({class_id: "", opn: "", device_id: -1, firmware_version: "0.0.0", connected: false})
                     }
                 }
             }
         }
-
-        Settings {
-            id: localPlatformSettings
-            category: "LocalPlatformList"
-        }
-        // will store recent used platforms
-        Settings {
-            id: storeDeviceList
-            category: "StoreDevicesList"
-            fileName: "storedDevices"
-        }
-
-        function removeLocalPlatformList() {
-            PlatformSelection.setLocalPlatformList([])
-            localPlatformSettings.setValue("path", "")
-        }
-
-        function manipulateFlags(bool,flag){
-            for(var i = 0; i < PlatformSelection.platformSelectorModel.count ; i+=1){
-                const platformItem = PlatformSelection.platformSelectorModel.get(i)
-                const available = PlatformSelection.classMap[platformItem.class_id].original_listing.available
-                available[flag] = bool
-                PlatformSelection.classMap[platformItem.class_id].original_listing.available = available
-                const platform = PlatformSelection.classMap[platformItem.class_id].original_listing
-                PlatformSelection.platformSelectorModel.set(i, platform);
-            }
-            if(!reset.enabled){
-                reset.enabled = true
-            }
-        }
     }
-    // The ListModel for the connected platforms
-    ListModel {
-        id: listModel
+
+    Settings {
+        id: localPlatformSettings
+        category: "LocalPlatformList"
+    }
+
+    function removeLocalPlatformList() {
+        PlatformSelection.setLocalPlatformList([])
+        localPlatformSettings.setValue("path", "")
+    }
+
+    function manipulateFlags(bool,flag){
+        for(var i = 0; i < PlatformSelection.platformSelectorModel.count ; i+=1){
+            const platformItem = PlatformSelection.platformSelectorModel.get(i)
+            const available = PlatformSelection.classMap[platformItem.class_id].original_listing.available
+            available[flag] = bool
+            PlatformSelection.classMap[platformItem.class_id].original_listing.available = available
+            const platform = PlatformSelection.classMap[platformItem.class_id].original_listing
+            PlatformSelection.platformSelectorModel.set(i, platform);
+        }
+        if(!reset.enabled){
+            reset.enabled = true
+        }
     }
 
     ListModel {
-        id: recentListModel
+        id: platformModel
+
+        property bool initialized: false
     }
 
-    // The model for the PlatformSelection platforms {class_id and opn}
     ListModel {
-        id: classModel
+        id: recentPlatformsModel
     }
+
     // The model for the deviceIdComboBox
     ListModel {
         id: deviceModel
     }
+
     // The model that stores which device_id's are in Use
     SGSortFilterProxyModel {
-        id: deviceFilterModel
+        id: notInUseDeviceModel
         sourceModel: deviceModel
+        invokeCustomFilter: true
+        sortEnabled: false
 
-        function checkIfInUse(index) {
-            const item = sourceModel.get(index)
-            if(item.inUse){
-                return true
-            }
-            return false
-        }
-
-        function setDeviceInUse(index) {
-            const item = sourceModel.get(index)
-            item.inUse = true
-            sourceModel.set(index, item)
-        }
-
-        function enableDeviceNotInUse(index) {
-            const item = sourceModel.get(index)
-            item.inUse = false
-            sourceModel.set(index, item)
+        function filterAcceptsRow(index) {
+            // show only devices that are not in use
+            var item = sourceModel.get(index)
+            return item.inUse === false
         }
     }
 
-    // Loads the PlatformSelectionModel, a device model, and prepends the classModel with any saved custom platforms
-    function initialModelLoad(){
-
-        for(var i = 0; i < PlatformSelection.platformSelectorModel.count; i++){
-            classModel.append({platform: {class_id: PlatformSelection.platformSelectorModel.get(i).class_id, opn: PlatformSelection.platformSelectorModel.get(i).opn}})
-        }
-
-        for(var j = 0; j < 10; j++){
-            deviceModel.append({device: `device_id ${j}`, inUse: false})
-        }
-
-        if(storeDeviceList.value("recent-platforms") !== undefined){
-            const storedPlatforms = JSON.parse(storeDeviceList.value("recent-platforms"))
-            const platforms = JSON.parse(storedPlatforms.platforms)
-            if(platforms.length > 0){
-                for(var x = 0; x < platforms.length; x++){
-                    listModel.append({platform: {class_id: platforms[x].platform.class_id, opn: platforms[x].platform.opn, device_id: platforms[x].platform.device_id, firmware_version: platforms[x].platform.firmware_version, connected: false}})
-                    recentListModel.append({platform: {class_id: platforms[x].platform.class_id, opn: platforms[x].platform.opn}})
-                }
-            } else {
-                listModel.append({platform: {class_id: "", opn: "" ,device_id: -1, firmware_version: "0.0.2", connected: false}})
+    // Loads a device model, and prepends the classModel with any saved custom platforms
+    function initialModelLoad() {
+        if (platformModel.initialized === false) {
+            for (var j = 0; j < 10; j++) {
+                deviceModel.append({name: `device_id ${j}`, inUse: false, device_id: Constants.DEBUG_DEVICE_ID + j})
             }
-        } else {
-            listModel.append({platform: {class_id: "", opn: "" ,device_id: -1, firmware_version: "0.0.2", connected: false}})
+
+            readState()
+
+            if (platformModel.count === 0) {
+                platformModel.append({class_id: "", opn: "---", device_id: -1, firmware_version: "0.0.0", connected: false})
+            }
+
+            platformModel.initialized = true
         }
     }
+
     // Loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
-    function updateConnectedPlatforms(platform,index){
-        let list = []
-        let injectList = {}
-
-        if(listModel.get(index).platform.class_id !== platform.class_id){
-            injectList = {
-                "list": list,
-                "type": "connected_platforms"
-            }
-            PlatformSelection.parseConnectedPlatforms(JSON.stringify(injectList))
-        }
-
-        listModel.set(index,{platform:platform})
-
-        for (var i = 0; i < listModel.count; i++){
-            const updatedPlatform = listModel.get(i).platform
-            if(updatedPlatform.connected){
-                list.push({
-                    "class_id": updatedPlatform.class_id,
-                    "device_id": updatedPlatform.device_id + Constants.DEBUG_DEVICE_ID,
-                    "firmware_version": updatedPlatform.firmware_version
-                })
-            }
-        }
-
-        injectList = {
-            "list": list,
+    function updateConnectedPlatforms() {
+        let injectList = {
+            "list": [],
             "type": "connected_platforms"
         }
-        if(recentListModel.count > 0  && platform.connected){
-            let flag = false
-            for(var j = 0; j < recentListModel.count; j++){
-                if(recentListModel.get(j).platform.class_id === platform.class_id){
-                    flag = true
-                    break
-                }
+
+        for (var i = 0; i < platformModel.count; i++) {
+            const updatedPlatform = platformModel.get(i)
+            if (updatedPlatform.connected) {
+                injectList.list.push({
+                              "class_id": updatedPlatform.class_id,
+                              "device_id": updatedPlatform.device_id,
+                              "firmware_version": updatedPlatform.firmware_version
+                          })
             }
-            if(!flag){
-                recentListModel.append({platform:{class_id: platform.class_id, opn: platform.opn}})
-            }
-        } else if(platform.connected){
-            recentListModel.append({platform:{class_id: platform.class_id, opn: platform.opn}})
         }
 
         PlatformSelection.parseConnectedPlatforms(JSON.stringify(injectList))
     }
 
-    // Removes the index in both the stored-platforms and the listModel or remove the index in the listModel
-    function deletePlatform(index){
-        listModel.remove(index)
-
-    }
-
-    // Checks for a custom class_id
-    function checkForCustomId(classId){
-        for(var i = 0; i < PlatformSelection.platformSelectorModel.count; i++){
-            if(classId === PlatformSelection.platformSelectorModel.get(i).class_id){
-                return false
+    // Finds OPN for a custom class_id
+    function findOPN(classId){
+        for (var i = 0; i < PlatformSelection.platformSelectorModel.count; i++) {
+            if (classId === PlatformSelection.platformSelectorModel.get(i).class_id) {
+                return PlatformSelection.platformSelectorModel.get(i).opn
             }
         }
-        return true
+        return "---"
     }
-    // Stores the most recently used platforms
-    function storePlatforms() {
-        let platforms = []
-        for(var i = 0; i < listModel.count; i++){
-            if(listModel.get(i).platform.class_id !== "" && listModel.get(i).platform.device_id > -1 && listModel.get(i).platform.firmware_version !== ""){
-                platforms.push({platform: listModel.get(i).platform})
+
+    // Check if class_id is in recent list, if not, append
+    function addToRecentPlatforms(class_id, opn) {
+        for (var j = 0; j < recentPlatformsModel.count; j++) {
+            if (recentPlatformsModel.get(j).class_id === class_id) {
+                if (recentPlatformsModel.get(j).opn !== opn && opn !== "---") {
+                    // update opn if not matching
+                    recentPlatformsModel.get(j).opn = opn
+                }
+                return
             }
         }
-        storeDeviceList.setValue("recent-platforms",JSON.stringify({platforms: JSON.stringify(platforms)}))
+        recentPlatformsModel.append({class_id: class_id, opn: opn})
+    }
+
+    // Read last state from disk
+    function readState() {
+        if (localPlatformSettings.value("recent-platforms") !== undefined) {
+            const storedPlatforms = JSON.parse(localPlatformSettings.value("recent-platforms"))
+            for (var x = 0; x < storedPlatforms.length; x++) {
+                recentPlatformsModel.append({class_id: storedPlatforms[x].class_id, opn: storedPlatforms[x].opn})
+            }
+        }
+
+        if (localPlatformSettings.value("last-state") !== undefined) {
+            const lastPlatforms = JSON.parse(localPlatformSettings.value("last-state"))
+            for (var i = 0; i < lastPlatforms.length; i++) {
+                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: -1, firmware_version: "0.0.0", connected: false})
+            }
+        }
+    }
+
+    // Save recently used platforms to disk
+    function storeState() {
+        let recentPlatforms = []
+        for (var i = 0; i < recentPlatformsModel.count; i++){
+            let recentPlatform = recentPlatformsModel.get(i)
+            recentPlatforms.push({class_id: recentPlatform.class_id, opn: recentPlatform.opn})
+        }
+        localPlatformSettings.setValue("recent-platforms", JSON.stringify(recentPlatforms))
+
+        let platformState = []
+        for (var j = 0; j < platformModel.count; j++){
+            let platform = platformModel.get(j)
+            if (platform.class_id !== "") {
+                platformState.push({class_id: platform.class_id, opn: platform.opn})
+            }
+        }
+        localPlatformSettings.setValue("last-state", JSON.stringify(platformState))
     }
 }
-
-
