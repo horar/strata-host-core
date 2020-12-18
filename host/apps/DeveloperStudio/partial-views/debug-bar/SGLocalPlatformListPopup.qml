@@ -433,7 +433,7 @@ Window {
 
                                 onEditingFinished: {
                                     if (textChanged && platformRow.class_id !== text && text !== ""){
-                                        setClassId()
+                                        setClassId(text)
                                     }
                                     textChanged = false
                                 }
@@ -613,6 +613,7 @@ Window {
                                 const newDevice = model.get(currentIndex)
                                 if(newDevice){
                                     displayText = newDevice.name
+                                    platformRow.setDevice_id(newDevice.device_id)
                                 }
                             }
                         }
@@ -692,7 +693,7 @@ Window {
     function initialModelLoad() {
         if (platformModel.initialized === false) {
             for (var j = 0; j < 10; j++) {
-                deviceModel.append({name: `device_id ${j}`, device_id: Constants.DEBUG_DEVICE_ID + j})
+                deviceModel.append({name: `device_id ${j}`, device_id: j})
             }
 
             readState()
@@ -718,7 +719,7 @@ Window {
             if (updatedPlatform.connected) {
                 injectList.list.push({
                               "class_id": updatedPlatform.class_id,
-                              "device_id": updatedPlatform.device_id,
+                              "device_id": updatedPlatform.device_id + Constants.DEBUG_DEVICE_ID,
                               "firmware_version": updatedPlatform.firmware_version
                           })
             }
@@ -763,7 +764,7 @@ Window {
         if (localPlatformSettings.value("last-state") !== undefined) {
             const lastPlatforms = JSON.parse(localPlatformSettings.value("last-state"))
             for (var i = 0; i < lastPlatforms.length; i++) {
-                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: -1, firmware_version: "0.0.0", connected: false})
+                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: i, firmware_version: "0.0.0", connected: false})
             }
         }
     }
