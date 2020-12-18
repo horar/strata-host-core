@@ -14,37 +14,14 @@ Rectangle {
 
     property string class_id: ""
     property var classDocuments: null
-    property var accordionPdf
-    property var state2
-    property var state3
+    property var pdfAccordionState
+    property var datasheetAccordionState
+    property var downloadAccordionState
 
 
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
-
-    onVisibleChanged: {
-        if(!visible) {
-            accordionPdf = ""
-            state2 = ""
-            state3 = ""
-        }
-    }
-
-    HelpButton{
-        id: helpIcon
-        height: 30
-        width: 30
-        anchors {
-            right: view.right
-            bottom: view.bottom
-            margins: 40
-        }
-        z: 2
-    }
-
     onTotalDocumentsChanged: {
-        console.log("classDocuments.downloadDocumentListModel.count",classDocuments.downloadDocumentListModel.count)
-
-        if(helpIcon.class_id == "help_docs_demo" ) {
+        if(helpIcon.class_id === "help_docs_demo" ) {
             pdfViewer.url = "qrc:/tech/strata/common/ContentView/images/" + classDocuments.pdfListModel.getFirstUri()
         }
         else {
@@ -67,26 +44,42 @@ Rectangle {
         }
     }
 
+    onVisibleChanged: {
+        if(!visible) {
+            pdfAccordionState = ""
+            datasheetAccordionState = ""
+            downloadAccordionState = ""
+        }
+    }
+
+    HelpButton{
+        id: helpIcon
+        height: 30
+        width: 30
+        anchors {
+            right: view.right
+            bottom: view.bottom
+            margins: 40
+        }
+        z: 2
+    }
+
     Connections {
         target: Help.utility
         onTour_runningChanged: {
             if(tour_running === false) {
                 helpIcon.class_id = view.class_id
                 classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
-                accordion.contentItem.children[0].open = accordionPdf
-                accordion.contentItem.children[1].open = state2
-                accordion.contentItem.children[2].open = state3
-
+                accordion.contentItem.children[0].open = pdfAccordionState
+                accordion.contentItem.children[1].open = datasheetAccordionState
+                accordion.contentItem.children[2].open = downloadAccordionState
             }
-
         }
     }
-
 
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
         helpIcon.class_id = view.class_id
-
     }
 
     Connections {
@@ -185,7 +178,7 @@ Rectangle {
                                 pdfAccordion.closeContent.start();
                             }
                         }
-                        onContentOpenSignal: {
+                        onAnimationCompleted: {
                             Help.liveResize()
                         }
 
@@ -221,7 +214,7 @@ Rectangle {
                                 datasheetAccordion.closeContent.start();
                             }
                         }
-                        onContentOpenSignal: {
+                        onAnimationCompleted: {
                             Help.liveResize()
                         }
                         Connections {
@@ -258,7 +251,7 @@ Rectangle {
                                 downloadAccordion.closeContent.start();
                             }
                         }
-                        onContentOpenSignal: {
+                        onAnimationCompleted: {
                             Help.liveResize()
                         }
 
@@ -346,8 +339,10 @@ Rectangle {
                 id: pdfViewerContainer
                 width: parent.width
                 height: parent.height/1.3
-                anchors.bottom: pdfViewer.bottom
-                anchors.bottomMargin: 10
+                anchors {
+                    top: pdfViewer.top
+                    topMargin: 10
+                }
 
             }
             Connections {

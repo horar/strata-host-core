@@ -32,7 +32,6 @@ Item {
                         return "qrc:/tech/strata/common/ContentView/images/" + model.uri
                     }
                     else return "file://localhost/" + model.uri
-
                 }
                 Binding {
                     target: delegate
