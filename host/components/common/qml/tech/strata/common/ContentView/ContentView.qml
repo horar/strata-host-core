@@ -18,7 +18,6 @@ Rectangle {
     property var datasheetAccordionState
     property var downloadAccordionState
 
-
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
     onTotalDocumentsChanged: {
         if(helpIcon.class_id === "help_docs_demo" ) {
@@ -80,6 +79,10 @@ Rectangle {
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
         helpIcon.class_id = view.class_id
+        Help.registerTarget(pdfViewerContainer,"Here you can see the all the browsed documents",0,"contentViewHelp")
+        Help.registerTarget(accordion.contentItem.children[0],"Here you can find platform-specific documents.",1,"contentViewHelp")
+        Help.registerTarget(accordion.contentItem.children[1],"Here you can find platform-specific datasheets.",2,"contentViewHelp")
+        Help.registerTarget(accordion.contentItem.children[2],"Here you can download platform-specific documents.",3,"contentViewHelp")
     }
 
     Connections {
@@ -88,6 +91,29 @@ Rectangle {
             if (classDocuments.errorString.length > 0) {
                 pdfViewer.url = ""
                 loadingImage.currentFrame = 0
+            }
+        }
+    }
+
+    Connections {
+        target: Help.utility
+        onInternal_tour_indexChanged: {
+            if(Help.current_tour_targets[index]["target"] === accordion.contentItem.children[0]){
+                if(!accordion.contentItem.children[0].open) {
+                    accordion.contentItem.children[0].open = true
+                }
+            }
+            if(Help.current_tour_targets[index]["target"] === accordion.contentItem.children[1]){
+                accordion.contentItem.children[1].open = true
+            }
+            else {
+                accordion.contentItem.children[1].open = false
+            }
+            if(Help.current_tour_targets[index]["target"] === accordion.contentItem.children[2]){
+                accordion.contentItem.children[2].open = true
+            }
+            else {
+                accordion.contentItem.children[2].open = false
             }
         }
     }
@@ -148,7 +174,6 @@ Rectangle {
                 anchors {
                     fill: parent
                 }
-
                 // Optional Configuration:
                 openCloseTime: 80           // Default: 80 (how fast the sliders pop open)
                 statusIcon: "\u25B2"        // Default: "\u25B2" (triangle char)
@@ -161,7 +186,6 @@ Rectangle {
                 exclusive: false
 
                 accordionItems: Column {
-
                     SGAccordionItem {
                         id: pdfAccordion
                         title: "Platform Documents"
@@ -182,20 +206,7 @@ Rectangle {
                             Help.liveResize()
                         }
 
-                        Connections {
-                            target: Help.utility
-                            onInternal_tour_indexChanged: {
-                                if(Help.current_tour_targets[index]["target"] === pdfAccordion){
-                                    if(!pdfAccordion.open) {
-                                        pdfAccordion.open = true
-                                    }
-                                }
-                            }
-                        }
 
-                        Component.onCompleted: {
-                            Help.registerTarget(pdfAccordion,"test1",1,"contentViewHelp")
-                        }
                     }
 
                     SGAccordionItem {
@@ -217,20 +228,6 @@ Rectangle {
                         onAnimationCompleted: {
                             Help.liveResize()
                         }
-                        Connections {
-                            target: Help.utility
-                            onInternal_tour_indexChanged: {
-                                if(Help.current_tour_targets[index]["target"] === datasheetAccordion){
-                                    datasheetAccordion.open = true
-                                }
-                                else {
-                                    datasheetAccordion.open = false
-                                }
-                            }
-                        }
-                        Component.onCompleted: {
-                            Help.registerTarget(datasheetAccordion,"test2",2,"contentViewHelp")
-                        }
                     }
 
                     SGAccordionItem {
@@ -246,28 +243,12 @@ Rectangle {
                         onOpenChanged: {
                             if(open){
                                 downloadAccordion.openContent.start();
-
                             } else {
                                 downloadAccordion.closeContent.start();
                             }
                         }
                         onAnimationCompleted: {
                             Help.liveResize()
-                        }
-
-                        Connections {
-                            target: Help.utility
-                            onInternal_tour_indexChanged: {
-                                if(Help.current_tour_targets[index]["target"] === downloadAccordion){
-                                    downloadAccordion.open = true
-                                }
-                                else {
-                                    downloadAccordion.open = false
-                                }
-                            }
-                        }
-                        Component.onCompleted: {
-                            Help.registerTarget(downloadAccordion,"test3",3,"contentViewHelp")
                         }
                     }
                 }
@@ -343,18 +324,6 @@ Rectangle {
                     top: pdfViewer.top
                     topMargin: 10
                 }
-
-            }
-            Connections {
-                target: Help.utility
-                onInternal_tour_indexChanged: {
-                    if(Help.current_tour_targets[index]["target"] === pdfViewerContainer) {
-                        Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 450
-                    }
-                }
-            }
-            Component.onCompleted: {
-                Help.registerTarget(pdfViewerContainer,"test4",0,"contentViewHelp")
             }
         }
 
