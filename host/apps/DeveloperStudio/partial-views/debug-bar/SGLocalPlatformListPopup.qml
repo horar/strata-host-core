@@ -433,7 +433,7 @@ Window {
 
                                 onEditingFinished: {
                                     if (textChanged && platformRow.class_id !== text && text !== ""){
-                                        setClassId(text)
+                                        setClassId()
                                     }
                                     textChanged = false
                                 }
