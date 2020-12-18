@@ -42,13 +42,16 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
             setDeviceBootloaderMode(false);
         }
 
+        const char* bootloaderVer = nullptr;
+        const char* applicationVer = nullptr;
         if (bootloader.MemberCount() > 0) {  // JSON_BOOTLOADER object has some members -> it is not empty
-            setDeviceVersions(bootloader[JSON_VERSION].GetString(), "");
-            result_ = CommandResult::Done;
+            bootloaderVer = bootloader[JSON_VERSION].GetString();
         }
-
         if (application.MemberCount() > 0) {  // JSON_APPLICATION object has some members -> it is not empty
-            setDeviceVersions(nullptr, application[JSON_VERSION].GetString());
+            applicationVer = application[JSON_VERSION].GetString();
+        }
+        if (bootloaderVer || applicationVer) {
+            setDeviceVersions(bootloaderVer, applicationVer);
             result_ = CommandResult::Done;
         }
 
@@ -58,18 +61,27 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
     }
 }
 
-void CmdGetFirmwareInfo::onTimeout() {
+void CmdGetFirmwareInfo::commandRejected() {
     if (requireResponse_) {
-        if (retriesCount_ < maxRetries_) {
-            ++retriesCount_;
-            qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to get firmware info.";
-            result_ = CommandResult::Retry;
-        } else {
-            result_ = CommandResult::InProgress;
-        }
+        result_ = CommandResult::Reject;
     } else {
         setDeviceVersions(nullptr, "");
         result_ = CommandResult::Done;
+    }
+}
+
+void CmdGetFirmwareInfo::onTimeout() {
+    if (retriesCount_ < maxRetries_) {
+        ++retriesCount_;
+        qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to get firmware info.";
+        result_ = CommandResult::Retry;
+    } else {
+        if (requireResponse_) {
+            result_ = CommandResult::InProgress;
+        } else {
+            setDeviceVersions(nullptr, "");
+            result_ = CommandResult::Done;
+        }
     }
 }
 

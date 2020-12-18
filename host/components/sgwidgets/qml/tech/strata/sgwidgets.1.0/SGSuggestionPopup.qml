@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQml.Models 2.12
 import QtGraphicalEffects 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Popup {
     id: popup
@@ -25,6 +26,7 @@ Popup {
     property string headerText
     property bool delegateNumbering: false
     property bool delegateRemovable: false
+    property bool delegateTextWrap: false
 
     signal delegateSelected(int index)
     signal removeRequested(int index)
@@ -252,6 +254,7 @@ Popup {
                 }
 
                 SGWidgets.SGText {
+                    id: delegateNumberText
                     anchors.centerIn: parent
 
                     color: text.color
@@ -277,7 +280,8 @@ Popup {
                     rightMargin: 4
                 }
 
-                elide: Text.ElideRight
+                elide: popup.delegateTextWrap ? Text.ElideNone : Text.ElideRight
+                wrapMode: popup.delegateTextWrap ? Text.WrapAnywhere : Text.NoWrap
                 text: popup.textRole? model[popup.textRole] : modelData
                 alternativeColorEnabled: parent.ListView.isCurrentItem
             }
@@ -300,7 +304,7 @@ Popup {
                     rightMargin: 2 + 8
                 }
 
-                iconSize: delegateNumberWrapper.height - 8
+                iconSize: delegateNumberText.height
                 hintText: qsTr("Remove")
                 visible: delegateRemovable
                          && (delegateMouseArea.containsMouse
@@ -309,7 +313,7 @@ Popup {
 
                 iconColor: "white"
                 icon.source: "qrc:/sgimages/times.svg"
-                highlightImplicitColor: SGWidgets.SGColorsJS.ERROR_COLOR
+                highlightImplicitColor: Theme.palette.error
                 onClicked: {
                     removeRequested(index)
                 }

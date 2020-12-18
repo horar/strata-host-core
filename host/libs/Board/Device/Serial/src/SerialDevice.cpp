@@ -145,7 +145,7 @@ Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPor
     return ErrorCode::UndefinedError;
 }
 
-void SerialDevice::handleWriteToPort(const QByteArray data, QPrivateSignal) {
+void SerialDevice::handleWriteToPort(const QByteArray data) {
     qint64 writtenBytes = serialPort_.write(data);
     qint64 dataSize = data.size();
     // Strata commands must end with '\n'

@@ -9,7 +9,30 @@ ColumnLayout {
     Layout.leftMargin: 20
     spacing: 5
 
-    property ListModel payloadArrayModel: model.array
+    property ListModel subArrayListModel: model.array
+    property ListModel subObjectListModel: model.object
+
+    function changePropertyType(index, objectListModel, arrayListModel) {
+        if (index === 4) {
+            // static array
+            if (arrayListModel.count === 0) {
+                objectListModel.clear()
+                arrayListModel.append({"type": generator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel})
+                commandsListView.contentY += 50
+            }
+        } else if (index === 6) {
+            // Object with known properties
+            if (objectListModel.count === 0) {
+                arrayListModel.clear()
+                objectListModel.append({"key": "", "type": generator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel})
+            }
+        } else {
+            arrayListModel.clear()
+            objectListModel.clear()
+        }
+
+        return propertyType.items[index].value
+    }
 
     RowLayout {
         id: propertyBox
@@ -54,7 +77,7 @@ ColumnLayout {
             Layout.preferredHeight: 30
             placeholderText: "Property key"
             validator: RegExpValidator {
-                regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
+                regExp: /^(?!default)[a-z_][a-zA-Z0-9_]*/
             }
 
             background: Rectangle {
@@ -74,6 +97,7 @@ ColumnLayout {
             }
 
             Component.onCompleted: {
+                text = model.name
                 forceActiveFocus()
             }
 
@@ -88,137 +112,45 @@ ColumnLayout {
             }
         }
 
-        ComboBox {
+        TypeSelectorComboBox {
             id: propertyType
-            Layout.preferredWidth: 150
-            Layout.preferredHeight: 30
-            model: ["int", "double", "string", "bool", "array"]
-
             Component.onCompleted: {
-                let idx = find(model.type);
-                if (idx === -1) {
-                    currentIndex = 0;
+                if (indexSelected === -1) {
+                    currentIndex = getIndexOfType(type)
+                    indexSelected = currentIndex
                 } else {
-                    currentIndex = idx
+                    currentIndex = indexSelected
                 }
             }
 
             onActivated: {
-                if (index === 4) {
-                    if (payloadContainer.payloadArrayModel.count == 0) {
-                        payloadContainer.payloadArrayModel.append({"type": "int", "indexSelected": 0})
-                        commandsListView.contentY += 50
-                    }
-                } else {
-                    payloadContainer.payloadArrayModel.clear()
-                }
-
-                type = currentText // This refers to model.type, but since there is a naming conflict with this ComboBox, we have to use type
+                type = changePropertyType(index, subObjectListModel, subArrayListModel)
+                indexSelected = index
             }
         }
     }
 
     /*****************************************
-    * This ListView corresponds to the elements in a property of type "array"
+    * This Repeater corresponds to the elements in a property of type "array"
     *****************************************/
     Repeater {
         id: payloadArrayRepeater
-        model: payloadContainer.payloadArrayModel
+        model: payloadContainer.subArrayListModel
 
-        delegate: RowLayout {
-            id: rowLayout
-            Layout.preferredHeight: 30
-            Layout.leftMargin: 20
-            Layout.fillHeight: true
-            spacing: 5
+        delegate: PayloadArrayPropertyDelegate {
+            modelIndex: index
+        }
+    }
 
-            RoundButton {
-                Layout.preferredHeight: 15
-                Layout.preferredWidth: 15
-                padding: 0
-                hoverEnabled: true
+    /*****************************************
+    * This Repeater corresponds to the elements in a property of type "object"
+    *****************************************/
+    Repeater {
+        id: payloadObjectRepeater
+        model: payloadContainer.subObjectListModel
 
-                icon {
-                    source: "qrc:/sgimages/times.svg"
-                    color: removeItemMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
-                    height: 7
-                    width: 7
-                    name: "add"
-                }
-
-                Accessible.name: "Remove item from array"
-                Accessible.role: Accessible.Button
-                Accessible.onPressAction: {
-                    removeItemMouseArea.clicked()
-                }
-
-                MouseArea {
-                    id: removeItemMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    onClicked: {
-                        payloadContainer.payloadArrayModel.remove(index)
-                    }
-                }
-            }
-
-            Text {
-                text: "[Index " + index  + "] Element type: "
-                Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: 150
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            ComboBox {
-                id: arrayPropertyType
-                Layout.fillWidth: true
-                Layout.preferredHeight: 30
-                z: 2
-                model: ["int", "double", "string", "bool"]
-
-                Component.onCompleted: {
-                    currentIndex = indexSelected
-                }
-
-                onActivated: {
-                    type = currentText
-                    indexSelected = index
-                }
-            }
-
-            RoundButton {
-                id: addItemToArrayButton
-                Layout.preferredHeight: 25
-                Layout.preferredWidth: 25
-                hoverEnabled: true
-                visible: index === payloadContainer.payloadArrayModel.count - 1
-
-                icon {
-                    source: "qrc:/sgimages/plus.svg"
-                    color: addItemToArrayMouseArea.containsMouse ? Qt.darker("green", 1.25) : "green"
-                    height: 20
-                    width: 20
-                    name: "add"
-                }
-
-                Accessible.name: "Add item to array"
-                Accessible.role: Accessible.Button
-                Accessible.onPressAction: {
-                    addItemToArrayMouseArea.clicked()
-                }
-
-                MouseArea {
-                    id: addItemToArrayMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    onClicked: {
-                        payloadContainer.payloadArrayModel.append({"type": "int", "indexSelected": 0})
-                        commandsListView.contentY += 40
-                    }
-                }
-            }
+        delegate: PayloadObjectPropertyDelegate {
+            modelIndex: index
         }
     }
 }

@@ -20,6 +20,7 @@ import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: container
@@ -32,7 +33,7 @@ Rectangle {
     property string last_name: ""
 
     property color backgroundColor: "#3a3a3a"
-    property color menuColor: "#33b13b"
+    property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
 
     Component.onCompleted: {
@@ -80,9 +81,9 @@ Rectangle {
             Layout.preferredHeight:40
             Layout.preferredWidth: 120
 
-            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? "#33b13b" : "#444"
+            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.green : "#444"
 
-            property color menuColor: "#33b13b"
+            property color menuColor: Theme.palette.green
 
             SGText {
                 color: "white"

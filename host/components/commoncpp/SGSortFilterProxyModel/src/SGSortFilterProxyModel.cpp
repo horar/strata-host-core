@@ -36,11 +36,10 @@ void SGSortFilterProxyModel::setSourceModel(QObject *sourceModel)
     if (sourceModel == static_cast<QObject *>(QSortFilterProxyModel::sourceModel())) {
         return;
     }
+    disconnectFromSourceModel();
 
     QAbstractItemModel *m = qobject_cast<QAbstractItemModel *>(sourceModel);
     if (m != nullptr) {
-        disconnectFromSourceModel();
-
         /* In case source model is a ListModel, it does not have roles until first item is inserted,
            so we have to wait for it */
         connect(m, SIGNAL(rowsInserted(const QModelIndex &, int, int)), this,
@@ -273,6 +272,11 @@ int SGSortFilterProxyModel::mapIndexFromSource(int i)
     }
 
     return mapFromSource(QSortFilterProxyModel::sourceModel()->index(i, 0)).row();
+}
+
+bool SGSortFilterProxyModel::matches(const QString &text) const
+{
+    return filterRegExp().indexIn(text) != -1;
 }
 
 int SGSortFilterProxyModel::roleKey(const QString &role) const

@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 TextField {
     id: field
@@ -39,7 +40,7 @@ TextField {
         id: backgroundContainer
         implicitHeight: 32
         border.width: field.activeFocus ? 1 : 0
-        border.color:  field.activeFocus ? "#33b13b" : "#40000000"
+        border.color:  field.activeFocus ? Theme.palette.green : "#40000000"
 
         Rectangle {
             id: background

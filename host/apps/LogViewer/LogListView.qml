@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
+import tech.strata.theme 1.0
 
 Item {
     id: logViewWrapper
@@ -15,6 +16,7 @@ Item {
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
     property int searchResultCount: model.count
+    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -26,12 +28,17 @@ Item {
     property bool messageWrapEnabled: true
     property bool searchTagShown: false
     property var highlightColor
+    property string hoverColor: "#a6c5f5"
+    property string markColor
     property alias contentX: logListView.contentX
     property alias contentY: logListView.contentY
     property int animationDuration: 500
     property bool automaticScroll: true
     property bool timestampSimpleFormat: false
     property int indexOfVisibleItem: logListView.indexAt(contentX, contentY) //Returns the index of the visible item containing the point x, y in content coordinates.
+    property bool markIconVisible
+    property bool showMarks: false
+    property bool searchingMode: false
 
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)
@@ -102,6 +109,18 @@ Item {
         text: "Message"
     }
 
+    TextMetrics {
+        id: textMetricsMark
+        font: timestampHeaderText.font
+        text: " W "
+    }
+
+    TextMetrics {
+        id: textMetricsIndex
+        font: timestampHeaderText.font
+        text: "Index"
+    }
+
     Item {
         id: header
         anchors.top: parent.top
@@ -130,6 +149,59 @@ Item {
             id: headerContent
             height: messageHeaderText.contentHeight
             spacing: 8
+
+            Item {
+                id: markHeader
+                height: textMetricsMark.boundingRect.height
+                width: textMetricsMark.boundingRect.width
+                visible: markIconVisible
+            }
+
+            Divider {
+                visible: markIconVisible
+                color: "transparent"
+            }
+
+            Item {
+                id: indexHeader
+                Layout.preferredHeight: indexHeaderText.contentHeight + cellHeightSpacer
+                Layout.preferredWidth: textMetricsIndex.boundingRect.width + cellWidthSpacer
+                Layout.minimumWidth: textMetricsIndex.boundingRect.width
+                Layout.maximumWidth: logListView.width/2
+                Layout.leftMargin: handleSpacer
+                Layout.fillWidth: true
+
+                visible: indexColumnVisible
+                clip: true
+
+                onWidthChanged: {
+                    if (indexDivider.mouseArea.onPressed) {
+                        Layout.preferredWidth = width
+                    }
+                }
+
+                SGWidgets.SGText {
+                    id: indexHeaderText
+                    anchors {
+                        left: indexHeader.left
+                        verticalCenter: parent.verticalCenter
+                    }
+                    font.family: "monospace"
+                    text: qsTr("Index")
+                    elide: Text.ElideRight
+                }
+            }
+
+            Divider {
+                id: indexDivider
+                Layout.fillHeight: true
+                visible: indexColumnVisible
+                clickable: true
+
+                mouseArea.onMouseXChanged: {
+                    indexHeader.width = indexHeader.width + mouseX
+                }
+            }
 
             Item {
                 id: tsHeader
@@ -343,7 +415,20 @@ Item {
             rightMargin: 5
         }
         visible: searchTagShown
-        text: searchResultCount == 1 ? "Search Result: " + searchResultCount : "Search Results: " + searchResultCount
+        text: {
+            if (showMarks) {
+                if (searchResultCount == 1) {
+                    return "Mark Search Result: " + searchResultCount
+                }
+                return "Mark Search Results: " + searchResultCount
+            } else {
+                if (searchResultCount == 1) {
+                    return "Search Result: " + searchResultCount
+                }
+                return "Search Results: " + searchResultCount
+            }
+
+        }
     }
 
     ListView {
@@ -382,6 +467,8 @@ Item {
             id: delegate
             width: row.width
             height: row.height
+
+            property bool isHovered: cellMouseArea.containsMouse
 
             onWidthChanged: {
                 logListView.contentWidth = delegate.width + 10
@@ -452,6 +539,16 @@ Item {
                             return "darkgray"
                         }
                     }
+
+                    if (delegate.isHovered) {
+                        if (logViewWrapper.activeFocus) {
+                            return hoverColor
+                        }
+                        else {
+                            return Qt.lighter("gray")
+                        }
+                    }
+
                     if (index % 2) {
                         return "#f2f0f0"
                     } else {
@@ -460,10 +557,35 @@ Item {
                 }
 
                 MouseArea {
+                    id: cellMouseArea
                     anchors.fill: parent
-                    onPressed:  {
+                    hoverEnabled: true
+
+                    onPressed: {
                         logViewWrapper.forceActiveFocus()
                         currentIndex = index
+                    }
+
+                    SGWidgets.SGIcon {
+                        id: markIconWithMouseArea
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 5
+                        source: model.isMarked ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
+                        width: parent.height - 4
+                        height: width
+                        iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.isMarked ? markColor : cell.color
+                        visible: markIconSpacer.visible
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: {
+                                logViewWrapper.forceActiveFocus()
+                                delegate.isHovered ? logModel.toggleIsMarked(index) : logModel.toggleIsMarked(currentIndex)
+                            }
+                        }
                     }
                 }
             }
@@ -473,6 +595,37 @@ Item {
                 leftPadding: handleSpacer
                 spacing: 18
 
+                Item {
+                    id: markIconSpacer
+                    width: textMetricsMark.boundingRect.width
+                    height: textMetricsMark.boundingRect.height
+                    visible: markIconVisible
+                }
+
+                SGWidgets.SGText {
+                    id: indexText
+                    width: indexHeader.width
+                    text: {
+                        //hackVariable is re-calculated once the sourceModel's count changes so it catches the changes for model.index
+                        var hackVariable = markedModel.sourceModel.count
+                        if (showMarks) {
+                            return markedModel.mapIndexToSource(model.index) + 1
+                        }
+                        else {
+                            if (searchingMode) {
+                                return searchResultModel.mapIndexToSource(model.index) + 1
+                            }
+                            return model.index + 1
+                        }
+                    }
+                    color: delegate.ListView.isCurrentItem ? "white" : "black"
+                    font.family: "monospace"
+                    visible: indexColumnVisible
+
+                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                }
+
                 SGWidgets.SGText {
                     id: ts
                     width: tsHeader.width
@@ -480,10 +633,10 @@ Item {
                     font.family: "monospace"
                     text: {
                         if (visible) {
-                            if (timestampSimpleFormat == false) {
-                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
-                            } else {
+                            if (timestampSimpleFormat) {
                                 return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
+                            } else {
+                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
                             }
                         } else {
                             return ""
@@ -567,10 +720,10 @@ Item {
                         z: -1
                         color: {
                             if (model.level === LogViewModels.LogModel.LevelWarning) {
-                                return SGWidgets.SGColorsJS.WARNING_COLOR
+                                return TangoTheme.palette.warning
                             }
                             if (model.level === LogViewModels.LogModel.LevelError) {
-                                return SGWidgets.SGColorsJS.ERROR_COLOR
+                                return TangoTheme.palette.error
                             } else {
                                 return cell.color
                             }
@@ -628,6 +781,9 @@ Item {
         }
         else if (event.key === Qt.Key_End) {
             logListView.positionViewAtEnd()
+        }
+        else if ((event.key === Qt.Key_M) && markIconVisible) {
+            logModel.toggleIsMarked(currentIndex)
         }
     }
 }
