@@ -13,11 +13,6 @@ Rectangle {
     width: parent.width
     implicitHeight: mainColumnLayout.implicitHeight + 20
     color: "transparent"
-    border {
-        color: Theme.palette.lightGray
-        width: 1
-    }
-
     property int modelIndex
 
     MouseArea {
@@ -25,6 +20,7 @@ Rectangle {
     }
 
     RowLayout {
+        id: mainRowLayout
         anchors {
             left: parent.left
             leftMargin: 10
@@ -215,5 +211,16 @@ Rectangle {
                 }
             }
         }
+    }
+
+    Rectangle {
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: mainRowLayout.bottom
+            topMargin: 10
+        }
+        color: Theme.palette.gray
+        height: 1
     }
 }
