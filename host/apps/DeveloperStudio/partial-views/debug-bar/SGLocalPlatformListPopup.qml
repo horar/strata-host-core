@@ -807,12 +807,16 @@ Window {
     // Loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
     function updateConnectedPlatforms(platform,index){
         let list = []
-        let injectList = {
-            "list": list,
-            "type": "connected_platforms"
+        let injectList = {}
+
+        if(listModel.get(index).platform.class_id !== platform.class_id){
+            injectList = {
+                "list": list,
+                "type": "connected_platforms"
+            }
+            PlatformSelection.parseConnectedPlatforms(JSON.stringify(injectList))
         }
 
-        PlatformSelection.parseConnectedPlatforms(JSON.stringify(injectList))
         listModel.set(index,{platform:platform})
 
         for (var i = 0; i < listModel.count; i++){
