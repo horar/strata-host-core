@@ -7,9 +7,8 @@ import tech.strata.commoncpp 1.0
 
 Item{
     id: root
-    height: consoleItems.filterAcceptsRow(model.index) ? consoleMessage.height : 0
+    height: consoleMessage.height
     width: consoleLogs.width
-    visible: consoleItems.filterAcceptsRow(model.index)
     anchors.bottomMargin: 5
 
     ConsoleTime {

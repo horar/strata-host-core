@@ -15,6 +15,7 @@ Rectangle {
 
     property alias source: icon.source
     property alias iconRotation: icon.rotation
+    signal clicked()
 
     SGIcon {
         id: icon
@@ -34,7 +35,7 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
 
         onClicked: {
-            parent.functionHandler()
+            parent.clicked()
         }
     }
 }

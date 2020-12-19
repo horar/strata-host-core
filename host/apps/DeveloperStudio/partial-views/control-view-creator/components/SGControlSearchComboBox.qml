@@ -22,7 +22,7 @@ RowLayout {
         source: "qrc:/sgimages/zoom.svg"
         Layout.fillHeight: true
         Layout.preferredWidth: 30
-        function functionHandler(){
+        onClicked: {
             if(menu.opened){
                 menu.close()
             } else {
@@ -38,7 +38,7 @@ RowLayout {
         border.color: "#444"
         border.width: 0.5
 
-        TextField {
+        SGTextField {
             id: textField
             font.pixelSize: 14
             anchors.fill: parent
@@ -49,7 +49,7 @@ RowLayout {
 
     Menu {
         id: menu
-        Layout.alignment: Qt.AlignTop
+        width: 100
         y: -menu.height
         MenuItem {
             SGCheckBox {

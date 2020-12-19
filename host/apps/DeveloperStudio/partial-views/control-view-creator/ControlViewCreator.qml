@@ -11,6 +11,7 @@ import "navigation"
 import "../"
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/help_layout_manager.js" as Help
+import "Console"
 
 Rectangle {
     id: controlViewCreatorRoot
@@ -19,9 +20,9 @@ Rectangle {
     property bool rccInitialized: false
     property bool recompileRequested: false
     property var debugPlatform: ({
-      deviceId: Constants.NULL_DEVICE_ID,
-      classId: ""
-    })
+                                     deviceId: Constants.NULL_DEVICE_ID,
+                                     classId: ""
+                                 })
 
     onDebugPlatformChanged: {
         recompileControlViewQrc();
@@ -206,6 +207,10 @@ Rectangle {
 
         StackLayout {
             id: viewStack
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            property Component consoleSource: consoleContainer
 
             Start {
                 id: startContainer
@@ -217,60 +222,104 @@ Rectangle {
                 id: editor
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                consoleTarget: viewStack.consoleSource
             }
 
             SGSplitView {
-                id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                orientation: Qt.Vertical
 
-                onResizingChanged: {
-                    if (!resizing) {
-                        if (debugPanel.width >= debugPanel.minimumExpandWidth) {
-                            debugPanel.expandWidth = debugPanel.width
-                        } else {
-                            debugPanel.expandWidth = debugPanel.minimumExpandWidth
+                SGSplitView {
+                    id: controlViewContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    onResizingChanged: {
+                        if (!resizing) {
+                            if (debugPanel.width >= debugPanel.minimumExpandWidth) {
+                                debugPanel.expandWidth = debugPanel.width
+                            } else {
+                                debugPanel.expandWidth = debugPanel.minimumExpandWidth
+                            }
                         }
+                    }
+
+                    Loader {
+                        id: controlViewLoader
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: 600
+
+                        asynchronous: true
+
+                        onStatusChanged: {
+                            if (status === Loader.Ready) {
+                                // Tear Down creation context
+                                delete NavigationControl.context.class_id
+                                delete NavigationControl.context.device_id
+
+                                toolBarListView.recompiling = false
+                                if (toolBarListView.currentIndex === toolBarListView.viewTab
+                                        || source === NavigationControl.screens.LOAD_ERROR) {
+                                    viewStack.currentIndex = 2
+                                }
+                            } else if (status === Loader.Error) {
+                                // Tear Down creation context
+                                delete NavigationControl.context.class_id
+                                delete NavigationControl.context.device_id
+
+                                toolBarListView.recompiling = false
+                                console.error("Error while loading control view")
+                                setSource(NavigationControl.screens.LOAD_ERROR,
+                                          { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
+                                          );
+                            }
+                        }
+                    }
+
+                    DebugPanel {
+                        id: debugPanel
+                        Layout.fillHeight: true
                     }
                 }
 
                 Loader {
-                    id: controlViewLoader
-                    Layout.fillHeight: true
+                    id: consoleLoader
+                    sourceComponent: viewStack.consoleSource
+                    Layout.minimumHeight: 30
+                    Layout.maximumHeight: 750
                     Layout.fillWidth: true
-                    Layout.minimumWidth: 600
+                    state: "normal"
 
-                    asynchronous: true
-
-                    onStatusChanged: {
-                        if (status === Loader.Ready) {
-                            // Tear Down creation context
-                            delete NavigationControl.context.class_id
-                            delete NavigationControl.context.device_id
-
-                            toolBarListView.recompiling = false
-                            if (toolBarListView.currentIndex === toolBarListView.viewTab
-                                    || source === NavigationControl.screens.LOAD_ERROR) {
-                                viewStack.currentIndex = 2
+                    states:[
+                        State {
+                            name: "maximize"
+                            PropertyChanges {
+                                target: consoleLoader
+                                height: 750
                             }
-                        } else if (status === Loader.Error) {
-                            // Tear Down creation context
-                            delete NavigationControl.context.class_id
-                            delete NavigationControl.context.device_id
-
-                            toolBarListView.recompiling = false
-                            console.error("Error while loading control view")
-                            setSource(NavigationControl.screens.LOAD_ERROR,
-                                      { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
-                                      );
+                        }, State {
+                            name: "normal"
+                            PropertyChanges {
+                                target: consoleLoader
+                                height: 200
+                            }
+                        }, State {
+                            name: "minimize"
+                            PropertyChanges {
+                                target: consoleLoader
+                                height: 30
+                            }
                         }
-                    }
+                    ]
                 }
+            }
+        }
+        Component {
+            id: consoleContainer
+            ConsoleContainer {
 
-                DebugPanel {
-                    id: debugPanel
-                    Layout.fillHeight: true
-                }
             }
         }
     }

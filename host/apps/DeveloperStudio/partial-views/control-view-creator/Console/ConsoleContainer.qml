@@ -12,6 +12,8 @@ Rectangle {
     id: root
     Layout.fillHeight: true
     Layout.fillWidth: true
+    visible: !startContainer.visible
+
     color: "#eee"
     z: 3
 
@@ -124,7 +126,7 @@ Rectangle {
                     Layout.preferredWidth: 30
                     source: "qrc:/sgimages/plus.svg"
 
-                    function functionHandler() {
+                    onClicked: {
                         consoleLogger.fontMultiplier += 0.1
                     }
                 }
@@ -134,7 +136,7 @@ Rectangle {
                     Layout.preferredWidth: 30
                     source: "qrc:/sgimages/minus.svg"
 
-                    function functionHandler() {
+                    onClicked: {
                         consoleLogger.fontMultiplier -= 0.1
                     }
                 }
@@ -144,7 +146,7 @@ Rectangle {
                     Layout.preferredWidth: 30
                     source: "qrc:/sgimages/broom.svg"
 
-                    function functionHandler() {
+                    onClicked:  {
                         consoleLogger.clearLogs()
                     }
                 }
@@ -161,14 +163,14 @@ Rectangle {
                         Layout.preferredHeight: 30
                         Layout.preferredWidth: 30
                         Layout.alignment: Qt.AlignRight
-                        rotation: consoleContainer.state !== "normal" && consoleContainer.state !== "minimize" ? 180 : 0
+                        rotation: consoleLoader.state !== "normal" && consoleLoader.state !== "minimize" ? 180 : 0
                         source: "qrc:/sgimages/chevron-up.svg"
 
-                        function functionHandler() {
-                            if(consoleContainer.state !== "normal" && consoleContainer.state !== "minimize"){
-                                consoleContainer.state = "normal"
+                        onClicked: {
+                            if(consoleLoader.state !== "normal" && consoleLoader.state !== "minimize"){
+                                consoleLoader.state = "normal"
                             } else {
-                                consoleContainer.state = "maximize"
+                                consoleLoader.state = "maximize"
                             }
                         }
                     }
@@ -179,9 +181,9 @@ Rectangle {
                         source: "qrc:/sgimages/times.svg"
                         Layout.alignment: Qt.AlignRight
 
-                        function functionHandler() {
-                            consoleContainer.state = "minimize"
-                            consoleContainer.height = topBar.height
+                        onClicked:  {
+                            consoleLoader.state = "minimize"
+                            consoleLoader.height = topBar.height
                         }
                     }
                 }
@@ -195,3 +197,4 @@ Rectangle {
         }
     }
 }
+

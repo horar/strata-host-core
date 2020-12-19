@@ -27,6 +27,10 @@ ScrollView {
         }
     }
 
+    onSearchTextChanged: {
+        consoleItems.invalidate()
+    }
+
     ListView {
         id: consoleLogs
         anchors.fill: parent

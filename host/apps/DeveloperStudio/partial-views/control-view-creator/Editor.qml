@@ -9,7 +9,6 @@ import tech.strata.SGFileTabModel 1.0
 
 import "Editor/"
 import "Sidebar/"
-import "Console/"
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "../"
 
@@ -19,6 +18,8 @@ Item {
     property alias openFilesModel: openFilesModel
     property alias fileTreeModel: treeModel
     property alias errorRectangle: parsingErrorRect
+
+    property alias consoleTarget: consoleLoader.sourceComponent
 
     SGQrcTreeModel {
         id: treeModel
@@ -331,7 +332,7 @@ Item {
                     verticalAlignment: Text.AlignVCenter
                 }
             }
-            
+
             ConfirmClosePopup {
                 id: confirmClosePopup
                 parent: controlViewCreatorRoot
@@ -354,80 +355,78 @@ Item {
                     controlViewCreatorRoot.isConfirmCloseOpen = false
                 }
             }
-
-            SGSplitView{
-                id: splitView
-                Layout.fillWidth: true
+            SGSplitView {
                 Layout.fillHeight: true
+                Layout.fillWidth: true
                 orientation: Qt.Vertical
-                visible: true
 
                 StackLayout {
-                    id: fileStack
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    currentIndex: openFilesModel.currentIndex
-                    visible: !parsingErrorRect.visible
+                id: fileStack
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                currentIndex: openFilesModel.currentIndex
+                visible: !parsingErrorRect.visible
 
 
-                    Repeater {
-                        id: fileEditorRepeater
-                        model: openFilesModel
+                Repeater {
+                    id: fileEditorRepeater
+                    model: openFilesModel
 
-                        delegate: Component {
-                            Loader {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                    delegate: Component {
+                        Loader {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
-                                source: switch(model.filetype) {
-                                        case "svg":
-                                        case "jpg":
-                                        case "jpeg":
-                                        case "png":
-                                        case "gif":
-                                            return "./Editor/ImageContainer.qml"
-                                        case "qml":
-                                        case "csv":
-                                        case "html":
-                                        case "txt":
-                                        case "json":
-                                            return "./Editor/TextEditorContainer.qml"
-                                        default:
-                                            return "./Editor/UnsupportedFileType.qml"
-                                        }
-                            }
+                            source: switch(model.filetype) {
+                                    case "svg":
+                                    case "jpg":
+                                    case "jpeg":
+                                    case "png":
+                                    case "gif":
+                                        return "./Editor/ImageContainer.qml"
+                                    case "qml":
+                                    case "csv":
+                                    case "html":
+                                    case "txt":
+                                    case "json":
+                                        return "./Editor/TextEditorContainer.qml"
+                                    default:
+                                        return "./Editor/UnsupportedFileType.qml"
+                                    }
                         }
-                    }
-
-                    NoActiveFile {
-                        id: noActiveFile
                     }
                 }
 
-                ConsoleContainer {
-                    id: consoleContainer
+                NoActiveFile {
+                    id: noActiveFile
+                }
+            }
+
+                Loader {
+                    id: consoleLoader
                     Layout.minimumHeight: 30
                     Layout.maximumHeight: 750
                     Layout.fillWidth: true
-                    visible: !noActiveFile.visible
+
                     state: "normal"
+
                     states:[
                         State {
                             name: "maximize"
                             PropertyChanges {
-                                target: consoleContainer
+                                target: consoleLoader
                                 height: 750
                             }
                         }, State {
                             name: "normal"
                             PropertyChanges {
-                                target: consoleContainer
+                                target: consoleLoader
                                 height: 200
                             }
                         }, State {
                             name: "minimize"
                             PropertyChanges {
-                                target: consoleContainer
+                                target: consoleLoader
                                 height: 30
                             }
                         }
