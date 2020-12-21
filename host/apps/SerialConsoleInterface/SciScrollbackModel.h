@@ -1,5 +1,4 @@
-#ifndef SCI_SCROLLBACK_MODEL_H
-#define SCI_SCROLLBACK_MODEL_H
+#pragma once
 
 #include <QAbstractListModel>
 #include <QDateTime>
@@ -108,5 +107,3 @@ struct ScrollbackModelItem {
 };
 
 Q_DECLARE_METATYPE(SciScrollbackModel::MessageType)
-
-#endif //SCI_SCROLLBACK_MODEL_H

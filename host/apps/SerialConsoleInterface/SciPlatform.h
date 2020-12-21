@@ -1,5 +1,4 @@
-#ifndef SCI_PLATFORM_H
-#define SCI_PLATFORM_H
+#pragma once
 
 #include "SciScrollbackModel.h"
 #include "SciCommandHistoryModel.h"
@@ -119,5 +118,3 @@ private:
 
     void setProgramInProgress(bool programInProgress);
 };
-
-#endif //SCI_PLATFORM_H
