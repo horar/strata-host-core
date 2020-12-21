@@ -21,7 +21,7 @@
           "disabled": false, "admin_channels": ["*"]
         },
         "username": {
-          "disabled": false, "admin_channels": ["*"], "password":"password"
+          "disabled": false, "admin_channels": ["*"], "password": "password"
         }
       },
 

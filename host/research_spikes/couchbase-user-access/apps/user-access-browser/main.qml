@@ -19,6 +19,8 @@ Window {
 
     property bool loggedIn: false
 
+    property var username: null
+    property var endpoint: null
     property var channels: null
     property var user_access_map: null
 
@@ -133,16 +135,12 @@ Window {
 
                         onClicked: {
                             if (!loggedIn) {
-                                let channels = root.authenticate(strataLoginUsernameTextfield.text)
-                                if (channels) {
-                                    root.channels = channels
-                                    userAccessBrowser.loginAndStartReplication(strataLoginUsernameTextfield.text, root.channels, endpointTextfield.text)
-                                    loggedIn = true
-                                }
+                                root.username = strataLoginUsernameTextfield.text
+                                root.endpoint = endpointTextfield.text
+                                root.processLogin(root.username, root.endpoint)
                             } else {
-                                userAccessBrowser.logoutAndStopReplication()
+                                root.processLogout()
                                 resultText.text = ""
-                                loggedIn = false
                             }
                         }
                     }
@@ -203,16 +201,32 @@ Window {
         }
     }
 
+    function processLogin(username, endpoint) {
+        let channels = root.authenticate(username)
+        if (channels) {
+            root.channels = channels
+            userAccessBrowser.loginAndStartReplication(username, channels, endpoint)
+            root.loggedIn = true
+        }
+    }
+
+    function processLogout() {
+        userAccessBrowser.logoutAndStopReplication()
+        root.loggedIn = false
+    }
+
     // Receives username, returns list of channels to which that user has access
     function authenticate(username) {
         resultText.text = ""
         if (!root.user_access_map) {
             console.error("Do not have a valid user access map!")
+            return
         }
 
         const all_channels = root.user_access_map["user_access_map"]
         if (!all_channels) {
             console.error("Do not have a valid user access map!")
+            return
         }
 
         let user_access_channels = []
@@ -238,6 +252,9 @@ Window {
         onUserAccessMapReceived: {
             if (user_access_map) {
                 root.user_access_map = user_access_map
+                if (root.loggedIn) {
+                    root.processLogin(root.username, root.endpoint)
+                }
             } else {
                 console.error("Received invalid user access map!")
                 resultScrollView.append("Received invalid user access map!")
@@ -248,6 +265,10 @@ Window {
             if (total_docs != 0) {
                 let docIDs = userAccessBrowser.getAllDocumentIDs()
                 if (docIDs) {
+                    let channels = root.authenticate(username)
+                    if (channels) {
+                        root.channels = channels
+                    }
                     resultScrollView.parseDocs(docIDs)
                 } else {
                     console.info("Error: received no documents from getAllDocumentIDs().")

@@ -22,14 +22,14 @@ void UserAccessBrowser::getUserAccessMap(const QString &endpointURL) {
 
     auto changeListener = [this, userAccessDB](cbl::Replicator, const CBLReplicatorStatus status) {
         qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!";
-        if (status.activity == kCBLReplicatorStopped) {
+        if (status.activity == kCBLReplicatorIdle) {
             auto db_obj = userAccessDB->getDatabaseAsJsonObj();
             emit userAccessMapReceived(db_obj);
         }
     };
 
     // Start replicator
-    if (userAccessDB->startReplicator(endpointURL, "", "", "pull", changeListener)) {
+    if (userAccessDB->startReplicator(endpointURL, "", "", "pull", changeListener, nullptr, true)) {
         qDebug() << "Replicator successfully started.";
     } else {
         qDebug() << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid.";
@@ -55,14 +55,14 @@ void UserAccessBrowser::loginAndStartReplication(const QString &strataLoginUsern
 
     auto changeListener = [this](cbl::Replicator, const CBLReplicatorStatus status) {
         qDebug() << "Couchbase UserAccessBrowser changeListener -> replication status changed!";
-        if (status.activity == kCBLReplicatorStopped) {
+        if (status.activity == kCBLReplicatorIdle) {
             auto db_obj = DB_->getDatabaseAsJsonObj();
             emit statusUpdated(db_obj.size());
         }
     };
 
     // Start replicator
-    if (DB_->startReplicator(endpointURL_, "", "", "pull", changeListener)) {
+    if (DB_->startReplicator(endpointURL_, "", "", "pull", changeListener, nullptr, true)) {
         qDebug() << "Replicator successfully started.";
     } else {
         qDebug() << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid.";
@@ -76,7 +76,8 @@ void UserAccessBrowser::logoutAndStopReplication() {
 }
 
 void UserAccessBrowser::clearUserDir(const QString &strataLoginUsername) {
-    DB_->clearUserDir(strataLoginUsername, dbDirName_);
+    DatabaseManager tempMgr;
+    DB_->clearUserDir(strataLoginUsername, tempMgr.getDbDirName());
 }
 
 QStringList UserAccessBrowser::getAllDocumentIDs() {
