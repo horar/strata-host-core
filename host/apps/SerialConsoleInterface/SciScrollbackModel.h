@@ -84,7 +84,7 @@ private:
     QHash<int, QByteArray> roleByEnumHash_;
     QHash<QByteArray, int> roleByNameHash_;
     QList<ScrollbackModelItem> data_;
-    bool condensedMode_ = true;
+    bool condensedMode_ = false;
     int maximumCount_ = 1;
     bool autoExportIsActive_ = false;
     QString exportFilePath_;
