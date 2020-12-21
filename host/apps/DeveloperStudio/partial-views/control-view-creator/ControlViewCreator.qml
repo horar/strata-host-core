@@ -189,6 +189,23 @@ Rectangle {
                     }
                 }
 
+                SGSideNavItem {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 70
+                    iconText: "Logs"
+                    iconSource: "qrc:/sgimages/bars.svg"
+                    color: consoleContainer.visible  && enabled ? Theme.palette.green : "transparent"
+                    enabled: !startContainer.visible
+
+                    function onClicked() {
+                        if(consoleContainer.visible){
+                            consoleContainer.visible = false
+                        } else {
+                            consoleContainer.visible = true
+                        }
+                    }
+                }
+
                 Item {
                     id: filler
                     Layout.fillHeight: true
@@ -205,30 +222,34 @@ Rectangle {
             }
         }
 
-        StackLayout {
+        SGSplitView {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            orientation: Qt.Vertical
+
+            StackLayout {
             id: viewStack
             Layout.fillHeight: true
             Layout.fillWidth: true
-
-            property Component consoleSource: consoleContainer
 
             Start {
                 id: startContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                onVisibleChanged: {
+                    if(visible){
+                        consoleContainer.visible = false
+                    }
+                }
             }
 
             Editor {
                 id: editor
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                consoleTarget: viewStack.consoleSource
             }
 
-            SGSplitView {
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                orientation: Qt.Vertical
 
                 SGSplitView {
                     id: controlViewContainer
@@ -283,43 +304,10 @@ Rectangle {
                         Layout.fillHeight: true
                     }
                 }
-
-                Loader {
-                    id: consoleLoader
-                    sourceComponent: viewStack.consoleSource
-                    Layout.minimumHeight: 30
-                    Layout.maximumHeight: 750
-                    Layout.fillWidth: true
-                    state: "normal"
-
-                    states:[
-                        State {
-                            name: "maximize"
-                            PropertyChanges {
-                                target: consoleLoader
-                                height: 750
-                            }
-                        }, State {
-                            name: "normal"
-                            PropertyChanges {
-                                target: consoleLoader
-                                height: 200
-                            }
-                        }, State {
-                            name: "minimize"
-                            PropertyChanges {
-                                target: consoleLoader
-                                height: 30
-                            }
-                        }
-                    ]
-                }
             }
-        }
-        Component {
-            id: consoleContainer
-            ConsoleContainer {
 
+            ConsoleContainer {
+                id:consoleContainer
             }
         }
     }

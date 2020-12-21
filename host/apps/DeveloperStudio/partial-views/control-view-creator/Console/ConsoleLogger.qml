@@ -7,17 +7,13 @@ import tech.strata.commoncpp 1.0
 
 import "ConsoleMessages"
 
-ScrollView {
+Item {
     id: root
     width: parent.width
     height: parent.height
-    clip: true
-    wheelEnabled: true
 
     property double fontMultiplier: 1.3
     property string searchText: ""
-    property int defaultRole: 1
-    property int hit: -1
 
     onFontMultiplierChanged: {
         if(fontMultiplier >= 2.5){
@@ -37,6 +33,27 @@ ScrollView {
         model: consoleItems
         clip: true
         spacing: 0
+        property bool stopScrolling: false
+        property int currentBottom: 0
+
+        onCountChanged: {
+            if(!stopScrolling){
+                positionViewAtIndex(count - 1, ListView.Visible)
+                currentBottom = contentY
+            }
+        }
+
+        onContentYChanged: {
+            if(contentY < currentBottom){
+                stopScrolling = true
+            } else {
+                stopScrolling = false
+            }
+        }
+
+        ScrollBar.vertical: ScrollBar {
+            active: true
+        }
 
         delegate: ConsoleDelegate {
             id: consoleDelegate
@@ -66,13 +83,6 @@ ScrollView {
                         return false
                     }
                 }
-                if (searchBox.useRegular){
-                    if(searchMsg.match(searchText)) {
-                        return true
-                    } else {
-                        return false
-                    }
-                }
                 if(searchMsg.toLowerCase().includes(searchText.toLowerCase())){
                     return true
                 } else {
@@ -90,7 +100,7 @@ ScrollView {
         id: srcConnection
         target: logger
         onLogMsg: {
-            if(parent.visible){
+            if(controlViewCreatorRoot.visible){
                 if(consoleModel.count > 0 && recompileRequested){
                     for (var i = 0; i < consoleModel.count; i++){
                         consoleModel.get(i).current = false
@@ -156,10 +166,5 @@ ScrollView {
         consoleModel.clear();
         errorCount = 0
         warningCount = 0
-    }
-
-    TextMetrics {
-        id: textMetric
-        font.pixelSize: 13 * fontMultiplier
     }
 }

@@ -19,8 +19,6 @@ Item {
     property alias fileTreeModel: treeModel
     property alias errorRectangle: parsingErrorRect
 
-    property alias consoleTarget: consoleLoader.sourceComponent
-
     SGQrcTreeModel {
         id: treeModel
 
@@ -355,12 +353,8 @@ Item {
                     controlViewCreatorRoot.isConfirmCloseOpen = false
                 }
             }
-            SGSplitView {
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                orientation: Qt.Vertical
 
-                StackLayout {
+            StackLayout {
                 id: fileStack
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -402,37 +396,6 @@ Item {
                 }
             }
 
-                Loader {
-                    id: consoleLoader
-                    Layout.minimumHeight: 30
-                    Layout.maximumHeight: 750
-                    Layout.fillWidth: true
-
-                    state: "normal"
-
-                    states:[
-                        State {
-                            name: "maximize"
-                            PropertyChanges {
-                                target: consoleLoader
-                                height: 750
-                            }
-                        }, State {
-                            name: "normal"
-                            PropertyChanges {
-                                target: consoleLoader
-                                height: 200
-                            }
-                        }, State {
-                            name: "minimize"
-                            PropertyChanges {
-                                target: consoleLoader
-                                height: 30
-                            }
-                        }
-                    ]
-                }
-            }
         }
     }
 }

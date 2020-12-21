@@ -10,9 +10,28 @@ import "../components"
 
 Rectangle {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
     visible: !startContainer.visible
+
+    Layout.minimumHeight: 30
+    Layout.maximumHeight: 750
+    Layout.fillWidth: true
+    state: "normal"
+
+    states:[
+        State {
+            name: "maximize"
+            PropertyChanges {
+                target: root
+                height: 750
+            }
+        }, State {
+            name: "normal"
+            PropertyChanges {
+                target: root
+                height: 200
+            }
+        }
+    ]
 
     color: "#eee"
     z: 3
@@ -53,7 +72,7 @@ Rectangle {
                         SGIcon {
                             anchors.centerIn: parent
                             source: "qrc:/sgimages/exclamation-triangle.svg"
-                            iconColor: "#ffea61"
+                            iconColor: Theme.palette.warning
                             height: 25
                             width: height
                             enabled: warningCount > 0
@@ -163,14 +182,14 @@ Rectangle {
                         Layout.preferredHeight: 30
                         Layout.preferredWidth: 30
                         Layout.alignment: Qt.AlignRight
-                        rotation: consoleLoader.state !== "normal" && consoleLoader.state !== "minimize" ? 180 : 0
+                        rotation: root.state !== "normal" ? 180 : 0
                         source: "qrc:/sgimages/chevron-up.svg"
 
                         onClicked: {
-                            if(consoleLoader.state !== "normal" && consoleLoader.state !== "minimize"){
-                                consoleLoader.state = "normal"
+                            if(root.state !== "normal"){
+                                root.state = "normal"
                             } else {
-                                consoleLoader.state = "maximize"
+                                root.state = "maximize"
                             }
                         }
                     }
@@ -182,8 +201,7 @@ Rectangle {
                         Layout.alignment: Qt.AlignRight
 
                         onClicked:  {
-                            consoleLoader.state = "minimize"
-                            consoleLoader.height = topBar.height
+                            consoleContainer.visible = false
                         }
                     }
                 }

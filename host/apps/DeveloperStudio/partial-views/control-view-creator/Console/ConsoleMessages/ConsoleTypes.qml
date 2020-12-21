@@ -47,8 +47,8 @@ Item {
 
     function getMsgColor(type){
         switch(type){
-        case "debug": return "#00bcd4"
-        case "warning": return "#c0ca33"
+        case "debug": return Theme.palette.lightBlue
+        case "warning": return Theme.palette.warning
         case "error": return Theme.palette.error
         case "info": return Theme.palette.green
         default: return "#aaa"

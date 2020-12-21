@@ -12,7 +12,6 @@ RowLayout {
     id: root
 
     property alias text: textField.text
-    property alias useRegular: useRegular.checked
     property alias useCase: useCaseSensitive.checked
 
     spacing: 0
@@ -41,22 +40,15 @@ RowLayout {
         SGTextField {
             id: textField
             font.pixelSize: 14
-            anchors.fill: parent
-            placeholderText: "search here..."
+            anchors.fill: searchFilter
             leftPadding: 5
         }
     }
 
     Menu {
         id: menu
-        width: 100
+        width: root.width
         y: -menu.height
-        MenuItem {
-            SGCheckBox {
-                id: useRegular
-                text: "Use Regular Expressions"
-            }
-        }
 
         MenuItem {
             SGCheckBox {
