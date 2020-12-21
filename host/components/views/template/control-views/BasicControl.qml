@@ -15,13 +15,23 @@ Item {
     property var intervalState : 200
     property alias gpio: gpio
     property var xValue: 0
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            forceActiveFocus()
+        }
+    }
 
     property var obj: {
         "notification" : {
             "value": "my_cmd_simple_periodic",
             "payload": {
                 "adc_read": platformInterface.notifications.my_cmd_simple_periodic.adc_read,
+                "gauge_ramp": platformInterface.notifications.my_cmd_simple_periodic.gauge_ramp,
                 "io_read": platformInterface.notifications.my_cmd_simple_periodic.io_read,
                 "random_float": platformInterface.notifications.my_cmd_simple_periodic.random_float,
                 "random_float_array": platformInterface.notifications.my_cmd_simple_periodic.random_float_array,
@@ -31,6 +41,7 @@ Item {
         }
     }
 
+
     //  property var notification: ({ })
 
     function set_random_array(max,value){
@@ -39,7 +50,6 @@ Item {
             var idxName = `index_${y}`
             var yValue = value[idxName]
             dataArray.push(yValue)
-
         }
         return dataArray
     }
@@ -57,12 +67,9 @@ Item {
         "payload": {
             "run_state": enableSwitch.checked,
             "interval": intervalState,
-            "run_count": run_count
+            "run_count": parseInt(run_count)
         }
     }
-
-
-
 
     property var my_cmd_simple_obj: {
         "cmd": "my_cmd_simple",
@@ -202,8 +209,6 @@ Item {
                     Layout.preferredWidth: parent.width/2.5
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 25
-
-
                     color: "light gray"
                     ScrollView {
                         id: frame3
@@ -211,16 +216,17 @@ Item {
                         anchors.fill: parent
                         //other properties
                         ScrollBar.vertical.policy: ScrollBar.AsNeeded
-                        SGText {
+                        TextEdit {
                             id: firstCommand
                             anchors.fill: parent
                             text: JSON.stringify(my_cmd_simple_obj,null,4)
+                            selectByMouse: true
+                            readOnly : true
                         }
                     }
                 }
             } //end of row
         }
-
 
 
         Rectangle {
@@ -279,12 +285,12 @@ Item {
                         width: parent.width - graphLabel.width
                         height:  parent.height
                         Item  {
-                            Layout.preferredHeight: parent.height/4
+                            Layout.preferredHeight: parent.height/5
                             Layout.fillWidth: true
 
                             Item{
                                 id: toggleSwitchContainer
-                                width:parent.width/2
+                                width:parent.width/3
                                 height: parent.height
                                 SGAlignedLabel {
                                     id: toggleLEDLabel
@@ -298,7 +304,7 @@ Item {
 
                                     SGStatusLight {
                                         id: toggleLED
-                                        width : 40
+                                        width : 30
                                         status: {
                                             if(platformInterface.notifications.my_cmd_simple_periodic.toggle_bool === true)
                                                 return SGStatusLight.Green
@@ -309,32 +315,59 @@ Item {
                                 }
 
                             }
+                            SGButtonStrip {
+                                id: buttonStrip2
+                                model: ["Graph","Gauge"]
+                                anchors {
+                                    centerIn: parent
+                                    left: toggleSwitchContainer.right
+                                }
+                                onClicked: {
+                                    if(index === 0) {
+                                        timedGraphPoints.visible = true
+                                        lable1.visible = true
+                                        lable2.visible = true
+                                    }
+                                    else { timedGraphPoints.visible = false
+                                        lable1.visible = false
+                                        lable2.visible = false
+
+                                    }
+                                    if(index === 1) {
+                                        sgCircularGauge.visible = true
+                                        lable1.visible = false
+                                        lable2.visible = false
+                                    }
+                                    else  {
+                                        sgCircularGauge.visible = false
+                                        lable1.visible = true
+                                        lable2.visible = true
+                                    }
+                                }
+                            }
                             Item{
                                 id: inputSwitchConter
-                                width:parent.width/2
+                                width:parent.width/3
                                 height: parent.height
-                                anchors.left: toggleSwitchContainer.right
+                                anchors {
+                                    left: buttonStrip2.right
+                                }
                                 SGAlignedLabel {
                                     id: inputLEDLabel
                                     target: inputLED
                                     alignment: SGAlignedLabel.SideTopCenter
-                                    anchors {
-                                        centerIn: parent
-                                    }
+                                    anchors.centerIn: parent
                                     text: "IO Input"
                                     font.bold: true
                                     SGStatusLight {
                                         id: inputLED
-                                        width : 40
+                                        width : 30
                                         status: {
                                             if(platformInterface.notifications.my_cmd_simple_periodic.io_read === true)
                                                 return SGStatusLight.Green
                                             else return SGStatusLight.Off
                                         }
-                                        property var  test: platformInterface.notifications.my_cmd_simple_periodic.io_read
-                                        onTestChanged: {
-                                            console.info(test)
-                                        }
+
 
                                     }
                                 }
@@ -349,8 +382,6 @@ Item {
                                 title: "Periodic Notification Graph "
                                 yMin: 0
                                 yMax: 1
-                                //                                xMin:  platformInterface.notifications.my_cmd_simple_periodic.random_increment
-                                //                                xMax: platformInterface.notifications.my_cmd_simple_periodic.random_increment
                                 xTitle: "Interval Count"
                                 yTitle: "Values"
                                 panXEnabled: false
@@ -367,7 +398,6 @@ Item {
                                 Component.onCompleted: {
                                     curve.color = "orange"
                                     curve2.color = "blue"
-
                                 }
 
                                 Connections {
@@ -380,9 +410,6 @@ Item {
                                         timedGraphPoints.xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
                                         timedGraphPoints.xMax =  platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
                                         xValue = timedGraphPoints.xMin
-
-                                        console.log("test",xValue)
-
                                         for(let y = 0; y < random_float_array.length ; y++) {
                                             var yValue = platformInterface.notifications.my_cmd_simple_periodic.random_float_array[y]
                                             dataArray.push({"x":xValue, "y":yValue})
@@ -410,6 +437,19 @@ Item {
                                     }
                                 }
                             }
+
+                            SGCircularGauge {
+                                id: sgCircularGauge
+                                width: parent.width/2
+                                height: parent.height
+                                anchors.centerIn: parent
+                                value: platformInterface.notifications.my_cmd_simple_periodic.gauge_ramp
+                                unitText: "Ramp\nvalue"               // Default: ""
+                                minimumValue: 0                 // Default: 0
+                                maximumValue: 5               // Default: 100
+                                // tickmarkStepSize: 0.5           // Default: (maxVal-minVal)/10
+                                visible: buttonStrip2.index === 1 ? true : false
+                            }
                         }
                     }
 
@@ -421,42 +461,46 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         ColumnLayout {
                             anchors.fill: parent
+
                             SGText {
+                                id: lable1
                                 text:" ADC \n Input"
                                 color: "blue"
                                 font.bold: true
+                                visible: buttonStrip2.index === 1 ? false : true
+                                Layout.topMargin: 10
                             }
                             SGText {
+                                id: lable2
                                 text:" Random"
                                 color: "orange"
                                 font.bold: true
+                                visible: buttonStrip2.index === 1 ? false : true
                             }
-
                         }
                     }
-
                 }
                 Rectangle {
-                    Layout.preferredHeight: parent.height/1.5
+                    Layout.preferredHeight: parent.height/1.05
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
                     color: "light gray"
-
                     ScrollView {
                         id: frame2
                         clip: true
                         anchors.fill: parent
                         ScrollBar.vertical.policy: ScrollBar.AsNeeded
-                        SGText {
+
+                        TextEdit {
                             anchors.fill: parent
+                            readOnly: true
+                            selectByMouse: true
                             text: {
                                 JSON.stringify(obj, null, 4)
                             }
                         }
                     }
-
                 }
-
             } //end of row
         }
         Rectangle {
@@ -468,7 +512,7 @@ Item {
                 height: parent.height/9
                 Text {
                     id: configperiodicNotificationHeading
-                    text: "Periodic Notification"
+                    text: "Configure Periodic Notification"
                     font.bold: true
                     font.pixelSize: ratioCalc * 20
                     color: "#696969"
@@ -513,32 +557,61 @@ Item {
                     ColumnLayout{
                         anchors.fill: parent
 
-
                         Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+                            RowLayout{
+                                anchors.fill: parent
+                                Item {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
 
-                            SGAlignedLabel {
-                                id: enableLabel
-                                target: enableSwitch
-                                text: "Run State"
-                                font.bold: true
-                                anchors {
-                                    centerIn: parent
-                                }
-                                alignment: SGAlignedLabel.SideTopCenter
+                                    SGAlignedLabel {
+                                        id: enableLabel
+                                        target: enableSwitch
+                                        text: "Run State"
+                                        font.bold: true
+                                        anchors.centerIn: parent
 
-                                SGSwitch {
-                                    id: enableSwitch
-                                    width: 50
-                                    checked: true
-                                    onToggled: {
-                                        platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,checked)
+                                        alignment: SGAlignedLabel.SideTopCenter
+
+                                        SGSwitch {
+                                            id: enableSwitch
+                                            width: 50
+                                            checked: true
+                                            onToggled: {
+                                                platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,checked)
+                                            }
+                                            onCheckedChanged: {
+                                                if(checked) {
+                                                    timedGraphPoints.xMin = 0
+                                                    timedGraphPoints.xMax = (intervalState/1000) * 5
+                                                }
+                                            }
+                                        }
                                     }
-                                    onCheckedChanged: {
-                                        if(checked) {
-                                            timedGraphPoints.xMin = 0
-                                            timedGraphPoints.xMax = (intervalState/1000) * 5
+                                }
+
+                                Item {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    SGAlignedLabel {
+                                        id: intervalLabel
+                                        target: interval
+                                        text: "Interval"
+                                        font.bold: true
+                                        anchors.centerIn: parent
+                                        alignment: SGAlignedLabel.SideTopCenter
+
+                                        SGSubmitInfoBox {
+                                            id: interval
+                                            width: 80
+                                            text: "200"
+                                            unit: "ms"
+                                            onEditingFinished:{
+                                                intervalState = parseInt(text)
+                                                platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
+                                            }
                                         }
                                     }
                                 }
@@ -572,7 +645,7 @@ Item {
                                                     platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,enableSwitch.checked)
                                                 }
                                                 else {
-                                                    run_count = 1
+                                                    run_count = parseInt(runcount.text)
                                                     platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,enableSwitch.checked)
                                                 }
                                             }
@@ -584,23 +657,23 @@ Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
-                                        id: intervalLabel
-                                        target: interval
-                                        text: "Interval"
+                                        id: runcountLabel
+                                        target: runcount
+                                        text: "Run Count"
                                         font.bold: true
-                                        anchors.centerIn: parent
+                                        anchors.horizontalCenter: parent.horizontalCenter
                                         alignment: SGAlignedLabel.SideTopCenter
+                                        enabled: (runStateSwitch.checked) ? false : true
+                                        opacity: (runStateSwitch.checked) ? 0.5 : 1.0
 
                                         SGSubmitInfoBox {
-                                            id: interval
+                                            id: runcount
                                             width: 60
                                             text: "200"
-                                            unit: "ms"
+                                            IntValidator { }
+
                                             onEditingFinished:{
-                                                intervalState = parseInt(text)
-//                                                timedGraphPoints.xMin = 0
-//                                                timedGraphPoints.xMax = (intervalState/1000) * 5
-//                                                console.info(timedGraphPoints.xMax)
+                                                run_count = parseInt(runcount.text)
                                                 platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                             }
                                         }
@@ -622,8 +695,10 @@ Item {
                         anchors.fill: parent
                         //other properties
                         ScrollBar.vertical.policy: ScrollBar.AsNeeded
-                        SGText {
+                        TextEdit {
                             anchors.fill: parent
+                            readOnly: true
+                            selectByMouse: true
                             text: {
                                 JSON.stringify(my_cmd_simple_start_periodic_obj, null, 4)
                             }

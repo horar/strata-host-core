@@ -31,6 +31,7 @@ PlatformInterfaceBase {
         // @property toggle_bool: bool
         property QtObject my_cmd_simple_periodic: QtObject {
             property double adc_read: 0.0
+            property double gauge_ramp: 0.0
             property bool io_read: false
             property double random_float: 0.0
             property var random_float_array: []

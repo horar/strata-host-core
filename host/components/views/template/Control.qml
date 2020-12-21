@@ -34,7 +34,7 @@ Item {
             id: basicButton
             KeyNavigation.right: this
             KeyNavigation.left: this
-            text: qsTr("Basic")
+            text: qsTr("Commands and Notifications")
             onClicked: {
                 controlContainer.currentIndex = 0
             }
