@@ -448,6 +448,55 @@ Module {
         }
     }
     Component {
+        name: "SGJsonFormatter"
+        prototype: "QObject"
+        exports: ["tech.strata.commoncpp/SGJsonFormatter 1.0"]
+        isCreatable: false
+        isSingleton: true
+        exportMetaObjectRevisions: [0]
+        Enum {
+            name: "TokenType"
+            values: {
+                "Integer": 0,
+                "Real": 1,
+                "String": 2,
+                "Bool": 3,
+                "Null": 4,
+                "LeftBracket": 5,
+                "RightBracket": 6,
+                "LeftSquareBracket": 7,
+                "RightSquareBracket": 8,
+                "Colon": 9,
+                "Comma": 10,
+                "SyntaxError": 11,
+                "TextAtEnd": 12
+            }
+        }
+        Method {
+            name: "prettifyJson"
+            type: "string"
+            Parameter { name: "jsonString"; type: "string" }
+            Parameter { name: "indentSize"; type: "int" }
+            Parameter { name: "softWrap"; type: "bool" }
+        }
+        Method {
+            name: "prettifyJson"
+            type: "string"
+            Parameter { name: "jsonString"; type: "string" }
+            Parameter { name: "indentSize"; type: "int" }
+        }
+        Method {
+            name: "prettifyJson"
+            type: "string"
+            Parameter { name: "jsonString"; type: "string" }
+        }
+        Method {
+            name: "minifyJson"
+            type: "string"
+            Parameter { name: "jsonString"; type: "string" }
+        }
+    }
+    Component {
         name: "SGJsonSyntaxHighlighter"
         prototype: "QSyntaxHighlighter"
         exports: ["tech.strata.commoncpp/SGJsonSyntaxHighlighter 1.0"]
@@ -806,22 +855,6 @@ Module {
             name: "toHex"
             type: "string"
             Parameter { name: "number"; type: "qlonglong" }
-        }
-        Method {
-            name: "prettifyJson"
-            type: "QByteArray"
-            Parameter { name: "json"; type: "QByteArray" }
-            Parameter { name: "indentSize"; type: "int" }
-        }
-        Method {
-            name: "prettifyJson"
-            type: "QByteArray"
-            Parameter { name: "json"; type: "QByteArray" }
-        }
-        Method {
-            name: "minifyJson"
-            type: "QByteArray"
-            Parameter { name: "json"; type: "QByteArray" }
         }
     }
     Component {
