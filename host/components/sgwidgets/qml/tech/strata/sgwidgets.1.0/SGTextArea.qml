@@ -17,6 +17,7 @@ FocusScope {
     property alias readOnly: edit.readOnly
     property bool keepCursorAtEnd: false
     property bool isValid: true
+    property alias background: bg
 
     // This is to match look and feel of other controls
     Control {
@@ -27,7 +28,8 @@ FocusScope {
         id: bg
         anchors.fill: parent
 
-        color: dummyControl.palette.base
+        // color: dummyControl.palette.base
+        color: "light gray"
         border {
             width: control.activeFocus ? 2 : 1
             color: {
@@ -78,6 +80,7 @@ FocusScope {
             cursorShape: Qt.IBeamCursor
             onClicked: {
                 edit.forceActiveFocus()
+
                 edit.cursorPosition = edit.text.length
             }
         }

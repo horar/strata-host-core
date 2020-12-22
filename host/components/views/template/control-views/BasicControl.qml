@@ -11,6 +11,7 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1200/820
     property alias firstCommand: firstCommand
     property var intervalState : 200
     property alias gpio: gpio
@@ -41,8 +42,6 @@ Item {
         }
     }
 
-
-    //  property var notification: ({ })
 
     function set_random_array(max,value){
         let dataArray = []
@@ -485,20 +484,15 @@ Item {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
                     color: "light gray"
-                    ScrollView {
-                        id: frame2
-                        clip: true
-                        anchors.fill: parent
-                        ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
-                        TextEdit {
-                            anchors.fill: parent
-                            readOnly: true
-                            selectByMouse: true
-                            text: {
-                                JSON.stringify(obj, null, 4)
-                            }
-                        }
+                    SGTextArea {
+                        id: delegateText
+                        text:JSON.stringify(obj, null, 4)
+                        anchors.fill: parent
+                        readOnly: true
+                        background.color: "light gray"
+                        background.border.color: "light gray"
+
                     }
                 }
             } //end of row
@@ -693,6 +687,7 @@ Item {
                         id: frame4
                         clip: true
                         anchors.fill: parent
+                        focusPolicy: Qt.WheelFocus
                         //other properties
                         ScrollBar.vertical.policy: ScrollBar.AsNeeded
                         TextEdit {
