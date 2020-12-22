@@ -27,9 +27,7 @@ FocusScope {
     Rectangle {
         id: bg
         anchors.fill: parent
-
-        // color: dummyControl.palette.base
-        color: "light gray"
+        color: dummyControl.palette.base
         border {
             width: control.activeFocus ? 2 : 1
             color: {
