@@ -673,6 +673,11 @@ Module {
             type: "int"
             Parameter { name: "i"; type: "int" }
         }
+        Method {
+            name: "matches"
+            type: "bool"
+            Parameter { name: "text"; type: "string" }
+        }
     }
     Component {
         name: "SGUserSettings"
@@ -750,6 +755,11 @@ Module {
         }
         Method {
             name: "isFile"
+            type: "bool"
+            Parameter { name: "file"; type: "string" }
+        }
+        Method {
+            name: "isValidImage"
             type: "bool"
             Parameter { name: "file"; type: "string" }
         }
