@@ -2,6 +2,7 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <SGUtilsCpp.h>
+#include <SGJsonFormatter.h>
 
 #include <QJsonDocument>
 #include <QStandardPaths>
@@ -175,7 +176,7 @@ void SciPlatform::resetPropertiesFromDevice()
     setDeviceName(device_->deviceName());
 }
 
-bool SciPlatform::sendMessage(const QByteArray &message, bool onlyValidJson)
+bool SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
 {
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
@@ -184,10 +185,14 @@ bool SciPlatform::sendMessage(const QByteArray &message, bool onlyValidJson)
         return false;
     }
 
-    QByteArray compactMessage = message;
+    QByteArray messageUtf8 = message.toUtf8();
+
+    // replace all soft wraps as QJsonDocument cannot handle them
+    messageUtf8 = messageUtf8.replace(QChar(0x2028),"");
+
     if (onlyValidJson) {
         QJsonParseError parseError;
-        QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
+        QJsonDocument doc = QJsonDocument::fromJson(messageUtf8, &parseError);
 
         if (parseError.error != QJsonParseError::NoError) {
             QString error = QString("JSON error at position %1 - %2")
@@ -198,14 +203,14 @@ bool SciPlatform::sendMessage(const QByteArray &message, bool onlyValidJson)
             return false;
         }
 
-        compactMessage = SGUtilsCpp::minifyJson(message);
+        messageUtf8 = doc.toJson(QJsonDocument::Compact);
     } else {
-        compactMessage = compactMessage.replace('\n',"");
+        ; //message is sent as is
     }
 
-    bool result = device_->sendMessage(compactMessage);
+    bool result = device_->sendMessage(messageUtf8);
     if (result) {
-        commandHistoryModel_->add(compactMessage);
+        commandHistoryModel_->add(messageUtf8);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
     }
 

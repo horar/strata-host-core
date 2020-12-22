@@ -21,6 +21,7 @@ class SciScrollbackModel: public QAbstractListModel
     Q_PROPERTY(bool autoExportIsActive READ autoExportIsActive NOTIFY autoExportIsActiveChanged)
     Q_PROPERTY(QString autoExportFilePath READ autoExportFilePath NOTIFY autoExportFilePathChanged)
     Q_PROPERTY(QString autoExportErrorString READ autoExportErrorString NOTIFY autoExportErrorStringChanged)
+    Q_PROPERTY(QString timestampFormat READ timestampFormat CONSTANT)
 
 public:
     explicit SciScrollbackModel(SciPlatform *platform);
@@ -46,7 +47,7 @@ public:
     int count() const;
     void append(const QByteArray &message, MessageType type);
 
-    Q_INVOKABLE void setAllCondensed(bool condensed);
+    Q_INVOKABLE void setIsCondensedAll(bool condensed);
     Q_INVOKABLE void setIsCondensed(int index, bool condensed);
     Q_INVOKABLE void clear();
     Q_INVOKABLE void clearAutoExportError();
@@ -63,10 +64,10 @@ public:
     QString exportFilePath() const;
     void setExportFilePath(const QString &filePath);
     bool autoExportIsActive() const;
-
     QString autoExportFilePath() const;
     void setAutoExportFilePath(const QString &filePath);
     QString autoExportErrorString() const;
+    QString timestampFormat() const;
 
 signals:
     void countChanged();
@@ -91,6 +92,7 @@ private:
     QFile exportFile_;
     SciPlatform *platform_;
     QString autoExportErrorString_;
+    QString timestampFormat_ = "hh:mm:ss.zzz";
 
     void setModelRoles();
     void sanitize();
@@ -99,7 +101,7 @@ private:
 };
 
 struct ScrollbackModelItem {
-    QByteArray message;
+    QString message;
     SciScrollbackModel::MessageType type;
     QDateTime timestamp;
     bool isCondensed;

@@ -53,6 +53,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::CouchbaseLiteCPP
     strata::QtLogger
     strata::SGUtilsCpp
+    strata::SGJsonSyntaxHighlighter
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

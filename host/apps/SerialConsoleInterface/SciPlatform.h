@@ -58,7 +58,7 @@ public:
     void setDeviceName(const QString &deviceName);
 
     void resetPropertiesFromDevice();
-    Q_INVOKABLE bool sendMessage(const QByteArray &message, bool onlyValidJson);
+    Q_INVOKABLE bool sendMessage(const QString &message, bool onlyValidJson);
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
 
     //settings handlers
