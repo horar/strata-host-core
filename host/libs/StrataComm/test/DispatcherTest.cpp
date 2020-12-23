@@ -108,7 +108,6 @@ void DispatcherTest::testDispatchHandlersUsingSignal()
 
 void DispatcherTest::testDispatchHandlersInDispatcherThread()
 {
-    QSKIP("Thread deadlock in Windows.");
     Dispatcher *dispatcher = new Dispatcher();
     QThread *myThread = new QThread();
 
@@ -130,6 +129,7 @@ void DispatcherTest::testDispatchHandlersInDispatcherThread()
     ClientMessage cm;
     cm.clientID = QByteArray("mg");
     cm.handlerName = "handler_1";
+    cm.messageID = 0;
 
     emit disp(cm);
     emit disp(cm);
@@ -139,8 +139,7 @@ void DispatcherTest::testDispatchHandlersInDispatcherThread()
     emit disp(cm);
     emit disp(cm);
 
-    //    QThread::sleep(2);
-    myThread->terminate();
+    myThread->quit();
     myThread->wait();
 }
 
@@ -192,7 +191,6 @@ void DispatcherTest::testLargeNumberOfHandlers()
 
 void DispatcherTest::testLargeNumberOfHandlersUsingDispatcherThread()
 {
-    QSKIP("Thread deadlock in Windows.");
     Dispatcher *dispatcher = new Dispatcher();
     QThread *myThread = new QThread();
 
@@ -212,6 +210,14 @@ void DispatcherTest::testLargeNumberOfHandlersUsingDispatcherThread()
         emit disp({QString::number(i), {}, 1, "mg", ClientMessage::MessageType::Command});
     }
 
-    myThread->terminate();
+    // wait for all events to be dispatched
+    QTimer timer;
+    timer.setSingleShot(true);
+    timer.start(100);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
+
+    myThread->quit();
     myThread->wait();
 }
