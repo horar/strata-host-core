@@ -75,6 +75,25 @@ public:
      */
     QString generateHelperFunctions();
 
+    /**
+     * @brief generateArrayComponent Generates the reusable Array component that handles the repeater for sub arrays
+     * @return Returns the array component string
+     */
+    QString generateArrayComponent();
+
+    /**
+     * @brief generateObjectComponent Generates the reusable Object component that handles the repeater for sub objects
+     * @return Returns the object component string
+     */
+    QString generateObjectComponent();
+
+    /**
+     * @brief generateSGSwitch Generates the SGSwitch
+     * @param modelName Either "model" or "modelData"
+     * @return Returns the SGSwitch string
+     */
+    QString generateSGSwitch(const QString &modelName);
+
 private:
     int indentLevel = 0;
 

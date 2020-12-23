@@ -18,7 +18,8 @@ void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
 
     const auto resources = {
-        QStringLiteral("component-sgwidgets.rcc")
+        QStringLiteral("component-sgwidgets.rcc"),
+        QStringLiteral("component-theme.rcc")
     };
 
 #ifdef Q_OS_MACOS
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
     QGuiApplication app(argc, argv);
-    app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
+    app.setWindowIcon(QIcon(":/images/PIGIcon.svg"));
 
     loadResources();
 

@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>JsonImporter.qml</file>
         <file>PlatformInterfaceCreator.qml</file>
         <file>AlertToast.qml</file>
         <file>PayloadPropertyDelegate.qml</file>
@@ -9,5 +8,6 @@
         <file>PayloadObjectPropertyDelegate.qml</file>
         <file>PayloadArrayPropertyDelegate.qml</file>
         <file>TypeSelectorComboBox.qml</file>
+        <file>images/PIGIcon.svg</file>
     </qresource>
 </RCC>
