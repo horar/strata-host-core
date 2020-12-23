@@ -45,7 +45,7 @@ RowLayout {
         id: providerBackground
         color: !providerMouseArea.containsMouse && !providerPopup.opened
                ? Theme.palette.green : providerMouseArea.pressed && !providerPopup.opened
-                 ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
         radius: 10
         Layout.preferredWidth: textSize.width + textSize.height
         Layout.fillWidth: true
@@ -143,7 +143,7 @@ RowLayout {
         radius: 10
         color: !iconMouse.containsMouse
                ? Theme.palette.green : iconMouse.pressed
-                 ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
         implicitWidth: height
         implicitHeight: parent.height
 
@@ -153,7 +153,6 @@ RowLayout {
             height: parent.height
             color: parent.color
         }
-
 
         SGIcon {
             id: urlIcon

@@ -390,7 +390,6 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("Layout.fillWidth: true");
     text += writeLine("Layout.maximumWidth: 175");
-    text += writeLine("text: placeholderText");
     text += writeLine("placeholderText: generatePlaceholder(model.type, model.value)");
     text += writeLine("selectByMouse: true");
     text += writeLine("visible: model.type !== \"array\" && model.type !== \"object\" && model.type !== \"bool\"");
@@ -408,7 +407,7 @@ QString DebugMenuGenerator::generateMainListView()
     indentLevel--;
     text += writeLine("} else {");
     indentLevel++;
-    text += writeLine("return /^*$/");
+    text += writeLine("return /^.*$/");
     indentLevel--;
     text += writeLine("}");
     indentLevel--;
@@ -820,7 +819,7 @@ QString DebugMenuGenerator::generateArrayComponent()
     indentLevel--;
     text += writeLine("} else {");
     indentLevel++;
-    text += writeLine("return /^*$/");
+    text += writeLine("return /^.*$/");
     indentLevel--;
     text += writeLine("}");
     indentLevel--;
@@ -965,7 +964,7 @@ QString DebugMenuGenerator::generateObjectComponent()
     indentLevel--;
     text += writeLine("} else {");
     indentLevel++;
-    text += writeLine("return /^*$/");
+    text += writeLine("return /^.*$/");
     indentLevel--;
     text += writeLine("}");
     indentLevel--;
