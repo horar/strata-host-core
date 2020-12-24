@@ -136,6 +136,19 @@ bool SciPlatform::programInProgress() const
     return programInProgress_;
 }
 
+QString SciPlatform::deviceName() const
+{
+    return deviceName_;
+}
+
+void SciPlatform::setDeviceName(const QString &deviceName)
+{
+    if (deviceName_ != deviceName) {
+        deviceName_ = deviceName;
+        emit deviceNameChanged();
+    }
+}
+
 void SciPlatform::resetPropertiesFromDevice()
 {
     if (device_ == nullptr) {
@@ -159,6 +172,7 @@ void SciPlatform::resetPropertiesFromDevice()
     setVerboseName(verboseName);
     setAppVersion(appVersion);
     setBootloaderVersion(bootloaderVersion);
+    setDeviceName(device_->deviceName());
 }
 
 bool SciPlatform::sendMessage(const QByteArray &message, bool onlyValidJson)
