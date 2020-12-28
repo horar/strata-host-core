@@ -8,5 +8,6 @@
         <file>PayloadObjectPropertyDelegate.qml</file>
         <file>PayloadArrayPropertyDelegate.qml</file>
         <file>TypeSelectorComboBox.qml</file>
+        <file>images/PIGIcon.svg</file>
     </qresource>
 </RCC>

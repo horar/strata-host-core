@@ -77,7 +77,7 @@ ColumnLayout {
             Layout.preferredHeight: 30
             placeholderText: "Property key"
             validator: RegExpValidator {
-                regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
+                regExp: /^(?!default)[a-z_][a-zA-Z0-9_]*/
             }
 
             background: Rectangle {

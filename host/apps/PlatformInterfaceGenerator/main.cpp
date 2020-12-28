@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
     QGuiApplication app(argc, argv);
-    app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
+    app.setWindowIcon(QIcon(":/images/PIGIcon.svg"));
 
     loadResources();
 
