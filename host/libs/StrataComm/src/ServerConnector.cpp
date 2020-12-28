@@ -51,12 +51,27 @@ void ServerConnector::readMessages() {
     }
 }
 
-void ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &message) {
-    qCDebug(logCategoryStrataServerConnector) << "Sending message. Client ID:" << clientId.toHex() << "Message:" << message;
+bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &message)
+{
+    qCDebug(logCategoryStrataServerConnector)
+        << "Sending message. Client ID:" << clientId.toHex() << "Message:" << message;
 
-    // interesting design in connector. Assumes there is only one "dealer". i.e. one and only one client.
-    connector_->setDealerID(clientId.toStdString());
-    if (false == connector_->send(message.toStdString())) {
-        qCCritical(logCategoryStrataServerConnector) << "Failed to send message to client ID:" << clientId;
+    if (connector_) {
+        // interesting design in connector. Assumes there is only one "dealer". i.e. one and only
+        // one client.
+        connector_->setDealerID(clientId.toStdString());
+
+        // Based on zmq implementation, there is no stright forward way to verify if a client with a
+        // specific client id is connected.
+        if (false == connector_->send(message.toStdString())) {
+            qCCritical(logCategoryStrataServerConnector)
+                << "Failed to send message to client ID:" << clientId;
+            return false;
+        }
+    } else {
+        qCCritical(logCategoryStrataServerConnector)
+            << "Failed to send message. Connector is not initilized.";
+        return false;
     }
+    return true;
 }

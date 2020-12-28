@@ -15,7 +15,7 @@ public:
 
     bool initilize();
     void readMessages();
-    void sendMessage(const QByteArray &clientId, const QByteArray &message);
+    bool sendMessage(const QByteArray &clientId, const QByteArray &message);
 
 signals:
     void newMessageRecived(const QByteArray &clientId, const QByteArray &message);

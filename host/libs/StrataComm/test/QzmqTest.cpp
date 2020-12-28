@@ -218,3 +218,13 @@ void ServerConnectorTest::testFailedToSendMessageFromClientConnector()
     QVERIFY_(client.disconnectClient());
     QVERIFY_(false == client.sendMessage("This should fail!"));
 }
+
+void ServerConnectorTest::testFailedToSendMessageFromServerConnector()
+{
+    strata::strataComm::ServerConnector server(address_);
+
+    QVERIFY_(false == server.sendMessage("RANDOMID", "This should fail."));
+
+    QVERIFY_(server.initilize());
+    QVERIFY_(server.sendMessage("RANDOMID", "This should fail."));
+}
