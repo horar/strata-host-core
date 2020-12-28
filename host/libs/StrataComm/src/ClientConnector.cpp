@@ -85,25 +85,26 @@ void ClientConnector::readMessages()
     }
 }
 
-void ClientConnector::sendMessage(const QByteArray &message)
+bool ClientConnector::sendMessage(const QByteArray &message)
 {
     qCDebug(logCategoryStrataClientConnector) << "Sending message. Message:" << message;
-    // TODO: Add test case for this.
     if (connector_) {
         if (false == connector_->isConnected()) {
             qCCritical(logCategoryStrataClientConnector)
                 << "Failed to send message. Client is not connected";
-            return;
+            return false;
         }
 
         if (false == connector_->send(message.toStdString())) {
             qCCritical(logCategoryStrataClientConnector) << "Failed to send message.";
-            return;
+            return false;
         }
 
     } else {
         qCCritical(logCategoryStrataClientConnector)
             << "Failed to send message. Connector is not initilized.";
-        return;
+        return false;
     }
+
+    return true;
 }

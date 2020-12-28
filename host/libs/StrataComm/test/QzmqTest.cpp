@@ -103,7 +103,7 @@ void ServerConnectorTest::testFloodTheServer()
                 if (message == "Start Test") {
                     server.sendMessage(clientId, "Hello from ServerConnector!");
                 } else {
-                    qDebug() << message;
+                    // qDebug() << message;
                 }
             });
 
@@ -143,7 +143,7 @@ void ServerConnectorTest::testFloodTheClient()
     QCOMPARE_(client.initilize(), true);
 
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
-            [](const QByteArray &message) { qDebug() << message; });
+            [](const QByteArray &) {});
 
     client.sendMessage("Start Test");
 
@@ -161,12 +161,11 @@ void ServerConnectorTest::testDisconnectClient()
     strata::strataComm::ServerConnector server(address_);
     QCOMPARE_(server.initilize(), true);
 
-    connect(
-        &server, &strata::strataComm::ServerConnector::newMessageRecived, this,
-        [&serverRecivedMessage, &server](const QByteArray &clientId, const QByteArray &) {
-            serverRecivedMessage = true;
-            server.sendMessage(clientId, "test from the server");
-        });
+    connect(&server, &strata::strataComm::ServerConnector::newMessageRecived, this,
+            [&serverRecivedMessage, &server](const QByteArray &clientId, const QByteArray &) {
+                serverRecivedMessage = true;
+                server.sendMessage(clientId, "test from the server");
+            });
 
     bool clientRecivedMessage = false;
     strata::strataComm::ClientConnector client(address_, "AA");
@@ -205,4 +204,17 @@ void ServerConnectorTest::testDisconnectClient()
     QCOMPARE_(client.connectClient(), true);
     QCOMPARE_(client.connectClient(), false);
     QCOMPARE_(client.disconnectClient(), true);
+}
+
+void ServerConnectorTest::testFailedToSendMessageFromClientConnector()
+{
+    strata::strataComm::ClientConnector client(address_);
+
+    QVERIFY_(false == client.sendMessage("This should fail!"));
+
+    QVERIFY_(client.initilize());
+    QVERIFY_(client.sendMessage("This should pass!"));
+
+    QVERIFY_(client.disconnectClient());
+    QVERIFY_(false == client.sendMessage("This should fail!"));
 }

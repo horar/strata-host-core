@@ -7,7 +7,8 @@
 
 using namespace strata::strataComm;
 
-StrataClient::StrataClient(QString serverAddress, QObject *parent) : QObject(parent), dispatcher_(this), connector_(serverAddress)
+StrataClient::StrataClient(QString serverAddress, QObject *parent)
+    : QObject(parent), dispatcher_(this), connector_(serverAddress)
 {
 }
 
@@ -22,7 +23,8 @@ bool StrataClient::connectServer()
         return false;
     }
 
-    connect(&connector_, &ClientConnector::newMessageRecived, this, &StrataClient::newServerMessage);
+    connect(&connector_, &ClientConnector::newMessageRecived, this,
+            &StrataClient::newServerMessage);
     connect(this, &StrataClient::dispatchHandler, &dispatcher_, &Dispatcher::dispatchHandler);
 
     sendRequest("register_client", {{"api_version", "1.0"}});
@@ -30,12 +32,13 @@ bool StrataClient::connectServer()
     return true;
 }
 
-bool StrataClient::disconnectServer() 
+bool StrataClient::disconnectServer()
 {
     qCDebug(logCategoryStrataClient) << "Disconnecting client";
 
     sendRequest("unregister", {});
-    disconnect(&connector_, &ClientConnector::newMessageRecived, this, &StrataClient::newServerMessage);
+    disconnect(&connector_, &ClientConnector::newMessageRecived, this,
+               &StrataClient::newServerMessage);
 
     if (false == connector_.disconnectClient()) {
         qCCritical(logCategoryStrataClient) << "Failed to disconnect client";
@@ -80,7 +83,7 @@ bool StrataClient::registerHandler(const QString &handlerName, StrataHandler han
 bool StrataClient::unregisterHandler(const QString &handlerName)
 {
     qCDebug(logCategoryStrataClient) << "Unregistering handler:" << handlerName;
-    if (false == dispatcher_.unregisterHandler(handlerName)) { // always return true.
+    if (false == dispatcher_.unregisterHandler(handlerName)) {  // always return true.
         qCCritical(logCategoryStrataClient) << "Failed to unregister handler.";
         return false;
     }
@@ -98,8 +101,7 @@ bool StrataClient::sendRequest(const QString &method, const QJsonObject &payload
         return false;
     }
 
-    connector_.sendMessage(message);
-    return true;
+    return connector_.sendMessage(message);
 }
 
 bool StrataClient::buildServerMessage(const QByteArray &serverMessage, ClientMessage *clientMessage)

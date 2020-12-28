@@ -27,7 +27,7 @@ public:
     bool disconnectClient();
     bool connectClient();
     void readMessages();
-    void sendMessage(const QByteArray &message);
+    bool sendMessage(const QByteArray &message);
 
 signals:
     void newMessageRecived(const QByteArray &message);

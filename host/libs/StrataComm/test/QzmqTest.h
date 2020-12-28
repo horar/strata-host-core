@@ -19,6 +19,7 @@ private slots:
     void testFloodTheServer();
     void testFloodTheClient();
     void testDisconnectClient();
+    void testFailedToSendMessageFromClientConnector();
 
 private:
     void waitForZmqMessages(int delay = 100);
