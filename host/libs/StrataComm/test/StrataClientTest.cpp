@@ -137,3 +137,36 @@ void StrataClientTest::testBuildRequest()
     waitForZmqMessages();
     QVERIFY_(serverRevicedMessage);
 }
+
+void StrataClientTest::testNonDefaultDealerId()
+{
+    bool defaultIdRecieved = false;
+    bool customIdRecieved = false;
+
+    strata::strataComm::ServerConnector server(address_);
+    server.initilize();
+
+    // add a handler to verify client ids!
+    connect(&server, &strata::strataComm::ServerConnector::newMessageRecived, this,
+            [&defaultIdRecieved, &customIdRecieved](const QByteArray &clientId,
+                                                    const QByteArray &message) {
+                if (clientId == "customId") {
+                    customIdRecieved = true;
+                } else if (clientId == "StrataClient") {
+                    defaultIdRecieved = true;
+                }
+            });
+
+    // create client with the default id
+    StrataClient client_1(address_);
+    client_1.connectServer();
+
+    // create client with the custom id
+    StrataClient client_2(address_, "customId");
+    client_2.connectServer();
+
+    // verify the thing!
+    waitForZmqMessages();
+    QVERIFY_(defaultIdRecieved);
+    QVERIFY_(customIdRecieved);
+}
