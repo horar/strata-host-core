@@ -14,6 +14,7 @@ class StrataClient : public QObject
 
 public:
     StrataClient(QString serverAddress, QObject *parent = nullptr);
+    StrataClient(QString serverAddress, QByteArray dealerId, QObject *parent = nullptr);
     ~StrataClient();
 
     bool connectServer();

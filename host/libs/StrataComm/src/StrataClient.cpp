@@ -12,6 +12,11 @@ StrataClient::StrataClient(QString serverAddress, QObject *parent)
 {
 }
 
+StrataClient::StrataClient(QString serverAddress, QByteArray dealerId, QObject *parent)
+    : QObject(parent), dispatcher_(this), connector_(serverAddress, dealerId)
+{
+}
+
 StrataClient::~StrataClient()
 {
 }
