@@ -191,6 +191,7 @@ Rectangle {
     }
 
     ListView {
+        visible: parent.visible && sortedModel.count > 0
         anchors {
             top: headerContainer.bottom
             bottom: parent.bottom
@@ -202,6 +203,22 @@ Rectangle {
         delegate: NotificationsInboxDelegate {
             modelIndex: index
         }
+    }
+
+    Text {
+        visible: parent.visible && sortedModel.count === 0
+        anchors {
+            top: headerContainer.bottom
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
+        text: "No Notifications"
+        color: Theme.palette.lightGray
+        font.pixelSize: 24
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        wrapMode: Text.WrapAnywhere
     }
 
     NumberAnimation {
