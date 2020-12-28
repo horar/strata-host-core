@@ -152,12 +152,11 @@ TEST_F(ConnectorTest, ReqRep_NonBlocking_Read)
 }
 
 bool ConnectorTest::nonBlockingReadPolling(std::unique_ptr<Connector> &connector, std::string &message)   {
-    // Polling on the non-blocking call with ~200ms timeout
-    for(uint32_t i = 0; i < 20; i++) {
-        if(connector->read(message, ReadMode::NONBLOCKING))  {
+    // Polling on the non-blocking call with ~2000ms timeout
+    for(uint32_t i = 0; i < 200; i++) {
+        if(connector->read(message, ReadMode::NONBLOCKING)) {
             return true;
-        }
-        else {
+        } else {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
