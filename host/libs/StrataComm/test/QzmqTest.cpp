@@ -226,5 +226,5 @@ void ServerConnectorTest::testFailedToSendMessageFromServerConnector()
     QVERIFY_(false == server.sendMessage("RANDOMID", "This should fail."));
 
     QVERIFY_(server.initilize());
-    QVERIFY_(server.sendMessage("RANDOMID", "This should fail."));
+    QVERIFY_(server.sendMessage("RANDOMID", "This should pass."));
 }
