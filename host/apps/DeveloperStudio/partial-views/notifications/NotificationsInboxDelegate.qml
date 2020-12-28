@@ -77,9 +77,8 @@ Rectangle {
 
                 Text {
                     text: {
-                        const oneDay = 86400000; // One day in milliseconds
                         if (!datesAreOnSameDay(new Date(), model.date)) {
-                            return model.date.toLocaleString(Qt.locale(), "dd/MM")
+                            return model.date.toLocaleString(Qt.locale(), "MM/dd")
                         } else {
                             return model.date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
                         }
