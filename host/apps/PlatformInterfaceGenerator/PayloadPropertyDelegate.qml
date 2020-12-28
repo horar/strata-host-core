@@ -17,14 +17,14 @@ ColumnLayout {
             // static array
             if (arrayListModel.count === 0) {
                 objectListModel.clear()
-                arrayListModel.append({"type": "int", "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel})
+                arrayListModel.append({"type": generator.TYPE_INT, "indexSelected": 0, "array": [], "object": [], "parent": arrayListModel})
                 commandsListView.contentY += 50
             }
         } else if (index === 6) {
             // Object with known properties
             if (objectListModel.count === 0) {
                 arrayListModel.clear()
-                objectListModel.append({"key": "", "type": "int", "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel})
+                objectListModel.append({"key": "", "type": generator.TYPE_INT, "indexSelected": 0, "valid": true, "array": [], "object": [], "parent": objectListModel})
             }
         } else {
             arrayListModel.clear()
@@ -77,7 +77,7 @@ ColumnLayout {
             Layout.preferredHeight: 30
             placeholderText: "Property key"
             validator: RegExpValidator {
-                regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]*/
+                regExp: /^(?!default)[a-z_][a-zA-Z0-9_]*/
             }
 
             background: Rectangle {
@@ -97,6 +97,7 @@ ColumnLayout {
             }
 
             Component.onCompleted: {
+                text = model.name
                 forceActiveFocus()
             }
 
@@ -114,7 +115,12 @@ ColumnLayout {
         TypeSelectorComboBox {
             id: propertyType
             Component.onCompleted: {
-                currentIndex = indexSelected
+                if (indexSelected === -1) {
+                    currentIndex = getIndexOfType(type)
+                    indexSelected = currentIndex
+                } else {
+                    currentIndex = indexSelected
+                }
             }
 
             onActivated: {
