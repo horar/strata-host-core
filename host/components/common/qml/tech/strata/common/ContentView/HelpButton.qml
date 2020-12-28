@@ -11,9 +11,9 @@ SGIcon {
 
     property var helpTour_document_list: {
         "class_id": "help_docs_demo",
-        "datasheets": [{"category":"Standard Logic","datasheet":"https://www.onsemi.com/pub/Collateral/NL7SZ97-D.PDF","name":"Demo Datasheets","opn":"Demo","subcategory":"Demo"}],
-        "documents": [{"category":"view","md5":"Demo","name":"Demo Documents","prettyname":"Demo.pdf","uri":"HelpTourDocument.pdf"},
-                      {"category":"download","filesize":11292,"md5":"DemoDownloads","name":"DemoDownloads","prettyname":"DemoDownloads.pdf","uri":"qrc:/tech/strata/common/ContentView/images/HelpTourDocument.pdf"}],
+        "datasheets": [{"category":"Part Category","datasheet":"https://www.onsemi.com/pub/Collateral/NL7SZ97-D.PDF","name":"Demo Datasheet","opn":"Demo","subcategory":"Demo"}],
+        "documents": [{"category":"view","md5":"Demo","name":"Demo Document","prettyname":"Demo.pdf","uri":"HelpTourDocument.pdf"},
+                      {"category":"download","filesize":11292,"md5":"DemoDownload","name":"DemoDownload","prettyname":"DemoDownload.pdf","uri":"qrc:/tech/strata/common/ContentView/images/HelpTourDocument.pdf"}],
 
         "type":"document"
     }

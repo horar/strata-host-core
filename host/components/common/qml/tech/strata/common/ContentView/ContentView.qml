@@ -80,10 +80,10 @@ Rectangle {
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
         helpIcon.class_id = view.class_id
-        Help.registerTarget(pdfViewerContainer,"Here you can see all browse files/documents",0,"contentViewHelp")
-        Help.registerTarget(accordion.contentItem.children[0],"Here you can find platform-specific documents.",1,"contentViewHelp")
-        Help.registerTarget(accordion.contentItem.children[1],"Here you can find platform-specific datasheets.",2,"contentViewHelp")
-        Help.registerTarget(accordion.contentItem.children[2],"Here you can download platform-specific documents.",3,"contentViewHelp")
+        Help.registerTarget(accordion.contentItem.children[0],"Use this menu to select platform-specific documents for viewing.",0,"contentViewHelp")
+        Help.registerTarget(accordion.contentItem.children[1],"This menu includes part-specific datasheets for viewing.",1,"contentViewHelp")
+        Help.registerTarget(accordion.contentItem.children[2],"Select and download files related to this platform here.",2,"contentViewHelp")
+        Help.registerTarget(pdfViewerContainer,"This pane displays the documents selected from the left menu.",3,"contentViewHelp")
     }
 
     Connections {
@@ -316,10 +316,11 @@ Rectangle {
             }
 
             url: ""
+
             Item {
                 id: pdfViewerContainer
                 width: parent.width
-                height: parent.height/1.3
+                height: parent.height - 250
                 anchors {
                     top: pdfViewer.top
                     topMargin: 10
