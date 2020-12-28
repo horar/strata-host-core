@@ -26,6 +26,7 @@ private slots:
     void identifyTest();
     void switchToBootloaderAndBackTest();
     void cancelOperationTest();
+    void identifyLegacyTest();
 
 protected slots:
     void handleOperationFinished(strata::device::operation::Result result, int, QString);

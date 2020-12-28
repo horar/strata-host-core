@@ -14,6 +14,7 @@ import "qrc:/js/core_update.js" as CoreUpdate
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 SGWidgets.SGMainWindow {
     id: mainWindow
@@ -120,19 +121,8 @@ SGWidgets.SGMainWindow {
                 delegate: SGPlatformView {}
             }
 
-            Loader {
+            ControlViewDevContainer {
                 id: controlViewDevContainer
-                objectName: "controlViewDevContainer"
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-
-                asynchronous: true
-
-                onStatusChanged: {
-                    if (status === Loader.Null || status === Loader.Error) {
-                        setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": "Could not load control view"})
-                    }
-                }
             }
         }
     }

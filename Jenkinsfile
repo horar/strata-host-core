@@ -24,6 +24,7 @@ pipeline {
                     INSTALLER_PATH = INSTALLER_PATH.minus("\n")
                 }
                 echo "Installer Path: $INSTALLER_PATH"
+                // Tests are disabled at the moment
                 //powershell "${env.workspace}/host/test/release-testing/Test-StrataRelease.ps1 '${INSTALLER_PATH}'"              
             }
         }
@@ -32,13 +33,9 @@ pipeline {
                 sh "python -m venv ${env.workspace}/deployment/OTA/ota-deploy-env"
                 sh "source ${env.workspace}/deployment/OTA/ota-deploy-env/Scripts/activate"
                 sh "python -m pip install -r ${env.workspace}/deployment/OTA/requirements.txt"
-                sh """python '${env.workspace}/deployment/OTA/deploy.py' \
+                sh """python '${env.workspace}/deployment/OTA/main.py' view \
                     --dir '${BUILD_NAME}' \
-                    --hcs '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/hcs.exe' \
-                    --devstudio '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/Strata Developer Studio.exe' \
-                    --views '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin' \
-                    --qmlcomponents '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin' \
-                    --libs '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
+                    '${env.workspace}/${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
                     """
                 archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/Strata*.exe", onlyIfSuccessful: true
             }

@@ -154,7 +154,7 @@ private:
     void onCmdDownloadControlView(const rapidjson::Value* );
     void onCmdGetUpdateInfo(const rapidjson::Value* );
 
-    void platformConnected(const int deviceId, bool hasAnyClassId);
+    void platformConnected(const int deviceId);
     void platformDisconnected(const int deviceId);
 
     Client* getSenderClient() const { return current_client_; }     //TODO: only one client

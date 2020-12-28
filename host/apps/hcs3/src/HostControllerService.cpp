@@ -427,14 +427,9 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
     }
 }
 
-void HostControllerService::platformConnected(const int deviceId, bool hasAnyClassId)
+void HostControllerService::platformConnected(const int deviceId)
 {
     Q_UNUSED(deviceId)
-
-    if (hasAnyClassId == false) {
-        qCCritical(logCategoryHcs) << "Class ID or controller class ID of connected platform is not set.";
-        return;
-    }
 
     //send update to all clients
     broadcastMessage(boardsController_.createPlatformsList());

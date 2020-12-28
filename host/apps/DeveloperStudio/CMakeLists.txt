@@ -31,6 +31,10 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/RunGuard.cpp
     source/CoreUpdate.cpp
 
+    source/config/Url.cpp
+    source/config/ConfigFile.cpp
+    source/config/AppConfig.cpp
+
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
     signals/qml/tech/strata/signals/qml.qrc
@@ -38,6 +42,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
+    ${CMAKE_SOURCE_DIR}/assets/config/sds.qrc
 
     $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
 
