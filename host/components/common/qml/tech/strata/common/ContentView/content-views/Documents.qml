@@ -8,6 +8,8 @@ Item {
     height: wrapper.height + 20
 
     property alias model: repeater.model
+    property var documentCurrentIndex: 0
+
 
     Column {
         id: wrapper
@@ -24,19 +26,52 @@ Item {
             delegate: BaseDocDelegate {
                 id: delegate
                 width: wrapper.width
-
                 bottomPadding: 2
+                onCategorySelected: {
+                    if(helpIcon.class_id != "help_docs_demo") {
+                        documentCurrentIndex = index
+                        categoryOpened = "platfrom documents"
+                    }
+                }
+
+                Component.onCompleted: {
+                     if(helpIcon.class_id === "help_docs_demo") {
+                         console.log("visible",visible)
+                         finished()
+                     }
+                }
 
                 property string effectiveUri: {
                     if(helpIcon.class_id === "help_docs_demo") {
                         return "qrc:/tech/strata/common/ContentView/images/" + model.uri
                     }
-                    else return "file://localhost/" + model.uri
+                    else {
+                        return "file://localhost/" + model.uri
+                    }
                 }
+
+                property var currentDocumentCategory: view.currentDocumentCategory
+                onCurrentDocumentCategoryChanged: {
+                    if(categoryOpened === "platfrom documents") {
+                        if(currentDocumentCategory) {
+                            for (var i = 0; i < repeater.count ; ++i) {
+                                if(i === documentCurrentIndex) {
+                                    if(repeater.itemAt(documentCurrentIndex)) {
+                                        repeater.itemAt(documentCurrentIndex).checked  = true
+                                    }
+                                    return
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Binding {
                     target: delegate
                     property: "checked"
-                    value: pdfViewer.url.toString() === effectiveUri
+                    value: {
+                        pdfViewer.url.toString() === effectiveUri
+                    }
                 }
 
                 onCheckedChanged: {
@@ -44,6 +79,7 @@ Item {
                         pdfViewer.url = effectiveUri
                     }
                 }
+
 
                 contentSourceComponent: Item {
                     height: textItem.contentHeight + 20

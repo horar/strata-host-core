@@ -14,9 +14,17 @@ Rectangle {
 
     property string class_id: ""
     property var classDocuments: null
+    property var fakeHelpDocuments: null
     property var pdfAccordionState
     property var datasheetAccordionState
     property var downloadAccordionState
+    property var currentDocumentCategory : false
+    property string categoryOpened: "platfrom documents"
+    signal finished()
+
+    onFinished: {
+       helpIcon.clickAction()
+    }
 
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
     onTotalDocumentsChanged: {
@@ -49,6 +57,7 @@ Rectangle {
             pdfAccordionState = ""
             datasheetAccordionState = ""
             downloadAccordionState = ""
+            currentDocumentCategory = false
         }
     }
 
@@ -73,6 +82,7 @@ Rectangle {
                 accordion.contentItem.children[0].open = pdfAccordionState
                 accordion.contentItem.children[1].open = datasheetAccordionState
                 accordion.contentItem.children[2].open = downloadAccordionState
+                currentDocumentCategory = true
             }
         }
     }
@@ -103,6 +113,10 @@ Rectangle {
                 if(!accordion.contentItem.children[0].open) {
                     accordion.contentItem.children[0].open = true
                 }
+                //                else {
+                //                   accordion.contentItem.children[0].open = false
+                //                   accordion.contentItem.children[0].open = true
+                //                }
             }
             if(Help.current_tour_targets[index]["target"] === accordion.contentItem.children[1]){
                 accordion.contentItem.children[1].open = true
@@ -205,8 +219,10 @@ Rectangle {
                             }
                         }
                         onAnimationCompleted: {
+                            console.log("datasheet animation completed 1")
                             Help.liveResize()
                         }
+
                     }
 
                     SGAccordionItem {
@@ -226,6 +242,7 @@ Rectangle {
                             }
                         }
                         onAnimationCompleted: {
+                            console.log("datasheet animation completed 2")
                             Help.liveResize()
                         }
                     }
@@ -248,6 +265,7 @@ Rectangle {
                             }
                         }
                         onAnimationCompleted: {
+                            console.log("datasheet animation completed 3")
                             Help.liveResize()
                         }
                     }
