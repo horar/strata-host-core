@@ -153,6 +153,8 @@ TEST_F(ConnectorTest, ReqRep_NonBlocking_Read)
 
 bool ConnectorTest::nonBlockingReadPolling(std::unique_ptr<Connector> &connector, std::string &message)   {
     // Polling on the non-blocking call with ~2000ms timeout
+    // This call will fail if the message was lost (failure in ZMQ library) or never send (failure in test itself)
+    // But can also fail if computer resources are exhausted and the ~2000ms timeout is exceeded
     for(uint32_t i = 0; i < 200; i++) {
         if(connector->read(message, ReadMode::NONBLOCKING)) {
             return true;
