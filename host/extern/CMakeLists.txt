@@ -750,3 +750,32 @@ endif()
 if(WIN32)
     target_link_libraries(strata::Couchbase-Lite-C INTERFACE zlib wsock32 ws2_32)
 endif()
+
+
+#
+# libzmq
+#
+get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/libzmq" "${EXTERN_INSTALL_DIR_PATH}/libzmq")
+if(NOT LIB_INSTALLED)
+    file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include)
+    file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib)
+
+    ExternalProject_Add(libzmq
+            INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}
+            SOURCE_DIR ${SOURCE_DIR_EXTERN}/libzmq
+            EXCLUDE_FROM_ALL ON
+            CMAKE_ARGS "${CMAKE_ARGS}"
+            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+
+            INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+            )
+endif()
+
+add_library(zeromq::libzmq STATIC IMPORTED GLOBAL)
+set_target_properties(zeromq::libzmq PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include"
+        IMPORTED_LOCATION "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zmq${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        )
+add_dependencies(zeromq::libzmq DEPENDS libzmq)
+# TODO: cppzmq (c++ headers only zmq wrapper) & zhelper.hpp are still referenced from our source code
+# https://jira.onsemi.com/browse/CS-1416
