@@ -12,7 +12,7 @@ void StrataClientServerIntegrationTest::waitForZmqMessages(int delay)
     } while (timer.isActive());
 }
 
-void StrataClientServerIntegrationTest::testCase_1() 
+void StrataClientServerIntegrationTest::testSingleClient() 
 {
 
     // variables to verify That handlers got executed.
@@ -187,4 +187,77 @@ void StrataClientServerIntegrationTest::testCase_1()
     QVERIFY_(clientRecivedPlatformNotification);
     QVERIFY_(clientRecivedServerNotification);
     QVERIFY_(false == clientRecievedUnregisterClient);
+}
+
+void StrataClientServerIntegrationTest::testMultipleClients()
+{
+    bool serverRecievedClient1Register = false;
+    bool serverRecievedClient2Register = false;
+    bool client1ReceivedServerResponse = false;
+    bool client1ReceivedServerBroadcast = false;
+    bool client2ReceivedServerResponse = false;
+    bool client2ReceivedServerBroadcast = false;
+
+    StrataServer server(address_);
+    StrataClient client_1(address_, "client_1");
+    StrataClient client_2(address_, "client_2");
+
+    server.registerHandler("register_client",
+                           [&server, &serverRecievedClient1Register,
+                            &serverRecievedClient2Register](const ClientMessage &cm) {
+                               if (cm.clientID == "client_1") {
+                                   serverRecievedClient1Register = true;
+                                   server.notifyClient(cm, {{"destination", "client_1"}},
+                                                       ClientMessage::ResponseType::Response);
+                               } else if (cm.clientID == "client_2") {
+                                   serverRecievedClient2Register = true;
+                                   server.notifyClient(cm, {{"destination", "client_2"}},
+                                                       ClientMessage::ResponseType::Response);
+                               }
+                           });
+
+    client_1.registerHandler(
+        "register_client", [&client1ReceivedServerResponse](const ClientMessage &cm) {
+            qDebug() << cm.payload;
+            if (cm.payload.contains("destination") && cm.payload["destination"] == "client_1") {
+                client1ReceivedServerResponse = true;
+            } else {
+                QFAIL_("Server responded to the wrong client");
+            }
+        });
+
+    client_2.registerHandler(
+        "register_client", [&client2ReceivedServerResponse](const ClientMessage &cm) {
+            if (cm.payload.contains("destination") && cm.payload["destination"] == "client_2") {
+                client2ReceivedServerResponse = true;
+            } else {
+                QFAIL_("Server responded to the wrong client");
+            }
+        });
+
+    client_1.registerHandler("broadcasted_message",
+                             [&client1ReceivedServerBroadcast](const ClientMessage &cm) {
+                                 client1ReceivedServerBroadcast = true;
+                             });
+
+    client_2.registerHandler("broadcasted_message",
+                             [&client2ReceivedServerBroadcast](const ClientMessage &cm) {
+                                 client2ReceivedServerBroadcast = true;
+                             });
+
+    server.init();
+    client_1.connectServer();
+    client_2.connectServer();
+    waitForZmqMessages();
+
+    QVERIFY_(serverRecievedClient1Register);
+    QVERIFY_(serverRecievedClient2Register);
+    QVERIFY_(client1ReceivedServerResponse);
+    QVERIFY_(client2ReceivedServerResponse);
+
+    server.notifyAllClients("broadcasted_message", {{"message", "message to all clients."}});
+    waitForZmqMessages();
+
+    QVERIFY_(client1ReceivedServerBroadcast);
+    QVERIFY_(client2ReceivedServerBroadcast);
 }
