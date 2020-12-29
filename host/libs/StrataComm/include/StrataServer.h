@@ -23,7 +23,7 @@ public:
 
 public slots:
     void newClientMessage(const QByteArray &clientId, const QByteArray &message);
-    void notifyClient(const ClientMessage &clientMessage, const QJsonObject &jsonObject, ClientMessage::ResponseType responseType);
+    void notifyClient(const ClientMessage &clientMessage, const QJsonObject &jsonObject, ResponseType responseType);
     void notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject);
 
 signals:
@@ -33,8 +33,8 @@ private:
     bool buildClientMessageAPIv2(const QJsonObject &jsonObject, ClientMessage *clientMessage);
     bool buildClientMessageAPIv1(const QJsonObject &jsonObject, ClientMessage *clientMessage);
 
-    QByteArray buildServerMessageAPIv2(const ClientMessage &clientMessage, const QJsonObject &payload, ClientMessage::ResponseType responseType);
-    QByteArray buildServerMessageAPIv1(const ClientMessage &clientMessage, const QJsonObject &payload, ClientMessage::ResponseType responseType);
+    QByteArray buildServerMessageAPIv2(const ClientMessage &clientMessage, const QJsonObject &payload, ResponseType responseType);
+    QByteArray buildServerMessageAPIv1(const ClientMessage &clientMessage, const QJsonObject &payload, ResponseType responseType);
 
     // QString buidNotification(const ClientMessage &ClientMessage, const QJsonObject &payload);   // maybe we need to change it to QByteArray based on what zmq requires
     // QString buildResponse(const ClientMessage &ClientMessage, const QJsonObject &payload);      // ^ same comment!

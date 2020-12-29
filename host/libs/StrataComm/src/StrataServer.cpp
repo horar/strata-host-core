@@ -161,7 +161,7 @@ bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Client
     }
 
     // populate message type --> request.
-    clientMessage->messageType = ClientMessage::MessageType::Command;
+    clientMessage->messageType = MessageType::Command;
     return true;
 }
 
@@ -208,12 +208,12 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Client
 
     clientMessage->payload = payloadJsonObject;
     clientMessage->messageID = 0;
-    clientMessage->messageType = ClientMessage::MessageType::Command;
+    clientMessage->messageType = MessageType::Command;
 
     return true;
 }
 
-void StrataServer::notifyClient(const ClientMessage &clientMessage, const QJsonObject &jsonObject, ClientMessage::ResponseType responseType) {
+void StrataServer::notifyClient(const ClientMessage &clientMessage, const QJsonObject &jsonObject, ResponseType responseType) {
     // determine the Api version of the client.
     // determine the type of the response.
 
@@ -246,8 +246,8 @@ void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObjec
     ClientMessage tempClientMessage;
     tempClientMessage.handlerName = handlerName;
 
-    QByteArray serverMessageAPI_v1 = buildServerMessageAPIv1(tempClientMessage, jsonObject, strataComm::ClientMessage::ResponseType::Notification);
-    QByteArray serverMessageAPI_v2 = buildServerMessageAPIv2(tempClientMessage, jsonObject, strataComm::ClientMessage::ResponseType::Notification);
+    QByteArray serverMessageAPI_v1 = buildServerMessageAPIv1(tempClientMessage, jsonObject, strataComm::ResponseType::Notification);
+    QByteArray serverMessageAPI_v2 = buildServerMessageAPIv2(tempClientMessage, jsonObject, strataComm::ResponseType::Notification);
 
     // get all clients.
     auto allClients = clientsController_.getAllClients();
@@ -277,26 +277,26 @@ void StrataServer::unregisterClientHandler(const ClientMessage &clientMessage) {
     qCDebug(logCategoryStrataServer) << "Handle Client Unregisteration. Client ID:" << clientMessage.clientID;
 }
 
-QByteArray StrataServer::buildServerMessageAPIv2(const ClientMessage &clientMessage, const QJsonObject &payload, ClientMessage::ResponseType responseType) {
+QByteArray StrataServer::buildServerMessageAPIv2(const ClientMessage &clientMessage, const QJsonObject &payload, ResponseType responseType) {
     QJsonObject jsonObject{{"jsonrpc", "2.0"}};
 
     switch (responseType) {
-        case strata::strataComm::ClientMessage::ResponseType::Notification:
+        case strata::strataComm::ResponseType::Notification:
             jsonObject.insert("method", clientMessage.handlerName);
             jsonObject.insert("params", payload);
             break;
 
-        case strata::strataComm::ClientMessage::ResponseType::Response:
+        case strata::strataComm::ResponseType::Response:
             jsonObject.insert("result", payload);
             jsonObject.insert("id", clientMessage.messageID);
             break;
 
-        case strata::strataComm::ClientMessage::ResponseType::Error:
+        case strata::strataComm::ResponseType::Error:
             jsonObject.insert("error", payload);
             jsonObject.insert("id", clientMessage.messageID);
             break;
 
-        case strata::strataComm::ClientMessage::ResponseType::PlatformMessage:
+        case strata::strataComm::ResponseType::PlatformMessage:
             jsonObject.insert("method", "platform_notification");
             jsonObject.insert("params", payload);
             break;
@@ -308,14 +308,14 @@ QByteArray StrataServer::buildServerMessageAPIv2(const ClientMessage &clientMess
     return jsonByteArray;
 }
 
-QByteArray StrataServer::buildServerMessageAPIv1(const ClientMessage &clientMessage, const QJsonObject &payload, ClientMessage::ResponseType responseType) {
+QByteArray StrataServer::buildServerMessageAPIv1(const ClientMessage &clientMessage, const QJsonObject &payload, ResponseType responseType) {
     QJsonObject jsonObject;
     QString notificationType = "";
     QJsonObject tempPayload(payload);
 
     switch (responseType) {
-        case strata::strataComm::ClientMessage::ResponseType::Notification:
-        case strata::strataComm::ClientMessage::ResponseType::Response:
+        case strata::strataComm::ResponseType::Notification:
+        case strata::strataComm::ResponseType::Response:
             // determine the notification type
             // "load_documents" --> "cloud::notification"
             // "platform" message --> "notification"
@@ -329,12 +329,12 @@ QByteArray StrataServer::buildServerMessageAPIv1(const ClientMessage &clientMess
             jsonObject.insert(notificationType, tempPayload);
             break;
 
-        case strata::strataComm::ClientMessage::ResponseType::Error:
+        case strata::strataComm::ResponseType::Error:
             qDebug(logCategoryStrataServer) << "Error messages are not supported in API v1";
             return "";
             break;
 
-        case strata::strataComm::ClientMessage::ResponseType::PlatformMessage:
+        case strata::strataComm::ResponseType::PlatformMessage:
             jsonObject.insert("notification", payload);
             break;
     }

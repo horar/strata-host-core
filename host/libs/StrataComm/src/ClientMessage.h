@@ -6,26 +6,32 @@
 
 namespace strata::strataComm {
 
-// TODO: This can be used in both the server and client. find a good way to reuse this.
-struct ClientMessage {
-    enum MessageType {
-        Notifiation,
-        Command,
-        none
-    };
+enum MessageType {
+    Notifiation,
+    Command,
+    none
+};
 
-    enum ResponseType {
-        Response,
-        Notification,
-        PlatformMessage,
-        Error
-    };
+enum ResponseType {
+    Response,
+    Notification,
+    PlatformMessage,
+    Error
+};
 
+struct Message {
     QString handlerName;
     QJsonObject payload;
     double messageID;
-    QByteArray clientID;
     MessageType messageType;
+};
+
+struct ClientMessage : public Message {
+    QByteArray clientID;
+};
+
+struct ServerMessage : public Message {
+    ResponseType responseType;
 };
 
 typedef std::function<void(const ClientMessage &)> StrataHandler;

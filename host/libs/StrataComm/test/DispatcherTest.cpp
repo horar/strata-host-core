@@ -4,11 +4,11 @@
 
 DispatcherTest::DispatcherTest()
 {
-    cm_.push_back({"handler_1", {}, 1, "mg", ClientMessage::MessageType::Command});
-    cm_.push_back({"handler_2", {}, 2, "mg", ClientMessage::MessageType::Notifiation});
-    cm_.push_back({"handler_3", {}, 3, "mg", ClientMessage::MessageType::none});
-    cm_.push_back({"handler_4", {}, 4, "mg", ClientMessage::MessageType::Command});
-    cm_.push_back({"handler_5", {}, 5, "mg", ClientMessage::MessageType::Command});
+    cm_.push_back({"handler_1", {}, 1, strata::strataComm::MessageType::Command, "mg"});
+    cm_.push_back({"handler_2", {}, 2, strata::strataComm::MessageType::Notifiation, "mg"});
+    cm_.push_back({"handler_3", {}, 3, strata::strataComm::MessageType::none, "mg"});
+    cm_.push_back({"handler_4", {}, 4, strata::strataComm::MessageType::Command, "mg"});
+    cm_.push_back({"handler_5", {}, 5, strata::strataComm::MessageType::Command, "mg"});
 }
 
 void DispatcherTest::testStartDispatcher()
@@ -185,7 +185,7 @@ void DispatcherTest::testLargeNumberOfHandlers()
     }
 
     for (int i = 0; i < 1000; i++) {
-        dispatcher.dispatch({QString::number(i), {}, 1, "mg", ClientMessage::MessageType::Command});
+        dispatcher.dispatch({QString::number(i), {}, 1, strata::strataComm::MessageType::Command, "mg"});
     }
 }
 
@@ -207,7 +207,7 @@ void DispatcherTest::testLargeNumberOfHandlersUsingDispatcherThread()
     }
 
     for (int i = 0; i < 1000; i++) {
-        emit disp({QString::number(i), {}, 1, "mg", ClientMessage::MessageType::Command});
+        emit disp({QString::number(i), {}, 1, strata::strataComm::MessageType::Command, "mg"});
     }
 
     // wait for all events to be dispatched
