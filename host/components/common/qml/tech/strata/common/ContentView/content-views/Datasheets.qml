@@ -53,13 +53,13 @@ Item {
                 onCategorySelected: {
                     if(helpIcon.class_id != "help_docs_demo") {
                         datasheetCurrentIndex = index
-                        categoryOpened = "platfrom datasheets"
+                        categoryOpened = "platform datasheets"
                     }
                 }
 
                 property var currentDocumentCategory: view.currentDocumentCategory
                 onCurrentDocumentCategoryChanged: {
-                    if(categoryOpened === "platfrom datasheets") {
+                    if(categoryOpened === "platform datasheets") {
                         if(currentDocumentCategory) {
                             for (var i = 0; i < repeater.count ; ++i) {
                                 if(i === datasheetCurrentIndex) {

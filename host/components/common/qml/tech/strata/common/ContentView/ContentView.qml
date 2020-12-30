@@ -19,7 +19,7 @@ Rectangle {
     property var datasheetAccordionState
     property var downloadAccordionState
     property var currentDocumentCategory : false
-    property string categoryOpened: "platfrom documents"
+    property string categoryOpened: "platform documents"
     signal finished()
 
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count

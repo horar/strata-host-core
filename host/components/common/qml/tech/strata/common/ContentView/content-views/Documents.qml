@@ -30,7 +30,7 @@ Item {
                 onCategorySelected: {
                     if (helpIcon.class_id != "help_docs_demo") {
                         documentCurrentIndex = index
-                        categoryOpened = "platfrom documents"
+                        categoryOpened = "platform documents"
                     }
                 }
 
@@ -45,7 +45,7 @@ Item {
 
                 property var currentDocumentCategory: view.currentDocumentCategory
                 onCurrentDocumentCategoryChanged: {
-                    if(categoryOpened === "platfrom documents") {
+                    if(categoryOpened === "platform documents") {
                         if(currentDocumentCategory) {
                             for (var i = 0; i < repeater.count ; ++i) {
                                 if(i === documentCurrentIndex) {
