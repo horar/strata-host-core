@@ -22,10 +22,6 @@ Rectangle {
     property string categoryOpened: "platfrom documents"
     signal finished()
 
-    onFinished: {
-       helpIcon.clickAction()
-    }
-
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
     onTotalDocumentsChanged: {
         if(helpIcon.class_id === "help_docs_demo" ) {
@@ -218,11 +214,18 @@ Rectangle {
                                 pdfAccordion.closeContent.start();
                             }
                         }
+
                         onAnimationCompleted: {
-                            console.log("datasheet animation completed 1")
-                            Help.liveResize()
+                            if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
+                                Help.liveResize()
+                            }
                         }
 
+                        onHeightChanged: {
+                            if (helpIcon.class_id === "help_docs_demo" && Help.current_tour_targets[Help.internal_tour_index]["target"] === pdfAccordion && Help.tour_running) {
+                                Help.liveResize()
+                            }
+                        }
                     }
 
                     SGAccordionItem {
@@ -241,9 +244,11 @@ Rectangle {
                                 datasheetAccordion.closeContent.start();
                             }
                         }
+
                         onAnimationCompleted: {
-                            console.log("datasheet animation completed 2")
-                            Help.liveResize()
+                            if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
+                                Help.liveResize()
+                            }
                         }
                     }
 
@@ -264,9 +269,11 @@ Rectangle {
                                 downloadAccordion.closeContent.start();
                             }
                         }
+
                         onAnimationCompleted: {
-                            console.log("datasheet animation completed 3")
-                            Help.liveResize()
+                            if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
+                                Help.liveResize()
+                            }
                         }
                     }
                 }

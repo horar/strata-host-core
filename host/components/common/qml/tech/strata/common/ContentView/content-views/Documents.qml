@@ -10,7 +10,6 @@ Item {
     property alias model: repeater.model
     property var documentCurrentIndex: 0
 
-
     Column {
         id: wrapper
         width: parent.width - 20
@@ -27,18 +26,12 @@ Item {
                 id: delegate
                 width: wrapper.width
                 bottomPadding: 2
+
                 onCategorySelected: {
-                    if(helpIcon.class_id != "help_docs_demo") {
+                    if (helpIcon.class_id != "help_docs_demo") {
                         documentCurrentIndex = index
                         categoryOpened = "platfrom documents"
                     }
-                }
-
-                Component.onCompleted: {
-                     if(helpIcon.class_id === "help_docs_demo") {
-                         console.log("visible",visible)
-                         finished()
-                     }
                 }
 
                 property string effectiveUri: {
@@ -79,7 +72,6 @@ Item {
                         pdfViewer.url = effectiveUri
                     }
                 }
-
 
                 contentSourceComponent: Item {
                     height: textItem.contentHeight + 20

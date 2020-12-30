@@ -3,7 +3,6 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
 import "qrc:/js/help_layout_manager.js" as Help
 
-
 SGIcon {
     id: helpIcon
     source: "qrc:/sgimages/question-circle.svg"
@@ -17,11 +16,13 @@ SGIcon {
 
         "type":"document"
     }
+
     property string class_id: ""
 
     function clickAction() {
         Help.startHelpTour("contentViewHelp", "strataMain")
     }
+
     Component.onCompleted: {
         fakeHelpDocuments = sdsModel.documentManager.getClassDocuments("help_docs_demo")
         fakeHelpDocuments.populateModels(helpTour_document_list)
@@ -33,23 +34,15 @@ SGIcon {
         anchors {
             fill: helpIcon
         }
-        property var count: 0
-        property var callCount: 0
 
         onClicked: {
-            count = 0
-            callCount = 0
             //store previously opened accordion
             view.pdfAccordionState = accordion.contentItem.children[0].open
             view.datasheetAccordionState = accordion.contentItem.children[1].open
             view.downloadAccordionState = accordion.contentItem.children[2].open
             class_id = "help_docs_demo"
             classDocuments = fakeHelpDocuments
-            //   helpIcon.clickAction()
-
-
+            helpIcon.clickAction()
         }
     }
 }
-
-
