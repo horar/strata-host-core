@@ -12,7 +12,6 @@ Item {
     Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-    property alias firstCommand: firstCommand
     property var intervalState : 200
     property alias gpio: gpio
     property var xValue: 0
@@ -42,7 +41,6 @@ Item {
         }
     }
 
-
     function set_random_array(max,value){
         let dataArray = []
         for(let y = 0; y < max; y++) {
@@ -54,13 +52,7 @@ Item {
     }
 
 
-    //    property var my_cmd_simple_periodic_random_float_array: platformInterface.my_cmd_simple_periodic.random_float_array
-    //    onMy_cmd_simple_periodic_random_float_arrayChanged: {
-    //        console.info("tanya")
-    //    }
-
     property var run_count: -1
-
     property var my_cmd_simple_start_periodic_obj: {
         "cmd": "my_cmd_simple_periodic_update",
         "payload": {
@@ -88,16 +80,7 @@ Item {
         anchors.leftMargin: 20
         anchors.right: parent.right
         anchors.rightMargin: 20
-        spacing: 10
-
-
-
-        function openFile(fileUrl) {
-            var request = new XMLHttpRequest();
-            request.open("GET", fileUrl, false);
-            request.send(null);
-            return request.responseText;
-        }
+        spacing: 20
 
         Item {
             Layout.preferredHeight: parent.height/4
@@ -105,7 +88,10 @@ Item {
             Rectangle{
                 id: headingCommandHandler
                 width: parent.width
-                height: parent.height/9
+                height: parent.height/5
+                border.color: "lightgray"
+                color: "lightgray"
+
                 Text {
                     id: powerControlHeading
                     text: "Simple Command Handler"
@@ -123,24 +109,25 @@ Item {
                     source: "images/commandicon.png"
                     anchors {
                         top: parent.top
-                        topMargin: -5
-                        right: parent.right
-                    }
-                }
 
-                Rectangle {
-                    id: line1
-                    height: 1.5
-                    Layout.alignment: Qt.AlignCenter
-                    width: parent.width
-                    border.color: "lightgray"
-                    radius: 2
-                    anchors {
-                        top: powerControlHeading.bottom
-                        topMargin: 7
+                        horizontalCenter: parent.horizontalCenter
+                        horizontalCenterOffset: 100
                     }
                 }
             }
+
+            //            Rectangle {
+            //                id: line1
+            //                height: 1.5
+            //                Layout.alignment: Qt.AlignCenter
+            //                width: parent.width
+            //                border.color: "lightgray"
+            //                radius: 2
+            //                anchors {
+            //                    top: headingCommandHandler.bottom
+            //                    topMargin: 7
+            //                }
+            //            }
             RowLayout {
                 anchors.top: headingCommandHandler.bottom
                 anchors.topMargin: 5
@@ -169,10 +156,9 @@ Item {
                                     id: gpio
                                     width: 50
                                     checked: false
-
                                     onToggled:  {
                                         platformInterface.commands.my_cmd_simple.update(dac.value,gpio.checked)
-                                        firstCommand.text =  JSON.stringify(my_cmd_simple_obj,null,4)
+                                        delegateText1.text =  JSON.stringify(my_cmd_simple_obj,null,4)
                                     }
                                 }
                             }
@@ -195,7 +181,7 @@ Item {
                                     to: 1
                                     onUserSet: {
                                         platformInterface.commands.my_cmd_simple.update(dac.value,gpio.checked)
-                                        firstCommand.text = JSON.stringify(my_cmd_simple_obj,null,4)
+                                        delegateText1.text = JSON.stringify(my_cmd_simple_obj,null,4)
 
                                     }
                                 }
@@ -207,34 +193,31 @@ Item {
                     Layout.fillHeight: true
                     Layout.preferredWidth: parent.width/2.5
                     Layout.alignment: Qt.AlignCenter
-                    Layout.topMargin: 25
+                    Layout.topMargin: 15
                     color: "light gray"
-                    ScrollView {
-                        id: frame3
-                        clip: true
+                    Flickable {
                         anchors.fill: parent
-                        //other properties
-                        ScrollBar.vertical.policy: ScrollBar.AsNeeded
-                        TextEdit {
-                            id: firstCommand
+                        TextArea.flickable: TextArea {
+                            id: delegateText1
                             anchors.fill: parent
-                            text: JSON.stringify(my_cmd_simple_obj,null,4)
+                            readOnly: true
                             selectByMouse: true
-                            readOnly : true
+                            text: JSON.stringify(my_cmd_simple_obj,null,4)
                         }
+                        ScrollBar.vertical: ScrollBar { }
                     }
                 }
             } //end of row
         }
 
-
-        Rectangle {
+        Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
             Rectangle {
                 id: periodicNotification
                 width: parent.width
                 height: parent.height/9
+                color: "lightgray"
                 Text {
                     id: periodicNotificationHeading
                     text: "Periodic Notification"
@@ -246,30 +229,34 @@ Item {
                         left: parent.left
                         leftMargin: 10
                     }
+                    z:2
                 }
                 Image {
                     id: name2
                     source: "images/notificationicon.png"
                     anchors {
                         top: parent.top
-                        topMargin: -5
-                        right: parent.right
+                        horizontalCenter: parent.horizontalCenter
+                        horizontalCenterOffset: 100
                     }
+                    z:2
                 }
 
-                Rectangle {
-                    id: line2
-                    height: 1.5
-                    Layout.alignment: Qt.AlignCenter
-                    width: parent.width
-                    border.color: "lightgray"
-                    radius: 2
-                    anchors {
-                        top: periodicNotificationHeading.bottom
-                        topMargin: 7
-                    }
-                }
             }
+
+            //            Rectangle {
+            //                id: line2
+            //                height: 1.5
+            //                Layout.alignment: Qt.AlignCenter
+            //                width: parent.width
+            //                border.color: "lightgray"
+            //                radius: 2
+            //                anchors {
+            //                    top: periodicNotification.bottom
+            //                    topMargin: 7
+            //                }
+            //            }
+
             RowLayout {
                 anchors.top: periodicNotification.bottom
                 anchors.topMargin: 5
@@ -484,16 +471,27 @@ Item {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
                     color: "light gray"
-
-                    SGTextArea {
-                        id: delegateText
-                        text:JSON.stringify(obj, null, 4)
+                    Flickable {
+                        id: flickable
                         anchors.fill: parent
-                        readOnly: true
-                        background.color: "light gray"
-                        background.border.color: "light gray"
+                        TextArea.flickable: TextArea {
+                            id: delegateText
+                            anchors.fill: parent
+                            readOnly: true
+                            selectByMouse: true
+                            property var cmd_simple_periodicText: obj
+                            onCmd_simple_periodicTextChanged: {
 
+                                var end =  selectionEnd
+                                var start = selectionStart
+                                console.log(end, start)
+                                text = JSON.stringify(obj, null, 4)
+                                select(start,end)
+                            }
+                        }
+                        ScrollBar.vertical: ScrollBar { }
                     }
+
                 }
             } //end of row
         }
@@ -503,7 +501,8 @@ Item {
             Rectangle {
                 id: configperiodicNotification
                 width: parent.width
-                height: parent.height/9
+                height: parent.height/5
+                color: "lightgray"
                 Text {
                     id: configperiodicNotificationHeading
                     text: "Configure Periodic Notification"
@@ -522,23 +521,27 @@ Item {
                     anchors {
                         top: parent.top
                         topMargin: -5
-                        right: parent.right
+                        horizontalCenter: parent.horizontalCenter
+                        horizontalCenterOffset: 100
                     }
                 }
 
-                Rectangle {
-                    id: line3
-                    height: 1.5
-                    Layout.alignment: Qt.AlignCenter
-                    width: parent.width
-                    border.color: "lightgray"
-                    radius: 2
-                    anchors {
-                        top: configperiodicNotificationHeading.bottom
-                        topMargin: 7
-                    }
-                }
+
             }
+
+            //            Rectangle {
+            //                id: line3
+            //                height: 1.5
+            //                Layout.alignment: Qt.AlignCenter
+            //                width: parent.width
+            //                border.color: "lightgray"
+            //                radius: 2
+            //                anchors {
+            //                    top: configperiodicNotification.bottom
+            //                    topMargin: 7
+            //                }
+            //            }
+
             RowLayout {
                 anchors.top: configperiodicNotification.bottom
                 anchors.topMargin: 5
@@ -599,8 +602,8 @@ Item {
 
                                         SGSubmitInfoBox {
                                             id: interval
-                                            width: 80
-                                            text: "200"
+                                            width: 90
+                                            text: "2000"
                                             unit: "ms"
                                             onEditingFinished:{
                                                 intervalState = parseInt(text)
@@ -662,9 +665,10 @@ Item {
 
                                         SGSubmitInfoBox {
                                             id: runcount
-                                            width: 60
-                                            text: "200"
+                                            width: 85
+                                            text: "2000"
                                             IntValidator { }
+                                            unit: "  "
 
                                             onEditingFinished:{
                                                 run_count = parseInt(runcount.text)
@@ -683,21 +687,17 @@ Item {
                     color: "light gray"
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 25
-                    ScrollView {
-                        id: frame4
-                        clip: true
+
+                    Flickable {
                         anchors.fill: parent
-                        focusPolicy: Qt.WheelFocus
-                        //other properties
-                        ScrollBar.vertical.policy: ScrollBar.AsNeeded
-                        TextEdit {
+                        TextArea.flickable: TextArea {
+                            id: delegateText2
                             anchors.fill: parent
                             readOnly: true
                             selectByMouse: true
-                            text: {
-                                JSON.stringify(my_cmd_simple_start_periodic_obj, null, 4)
-                            }
+                            text: JSON.stringify(my_cmd_simple_start_periodic_obj, null, 4)
                         }
+                        ScrollBar.vertical: ScrollBar { }
                     }
 
                 }
