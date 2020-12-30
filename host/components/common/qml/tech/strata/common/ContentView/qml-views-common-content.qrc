@@ -14,5 +14,4 @@
         <file>HelpButton.qml</file>
         <file>images/HelpTourDocument.pdf</file>
     </qresource>
-    <qresource prefix="/"/>
 </RCC>
