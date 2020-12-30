@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QMap>
 
-#include "ClientMessage.h"
+#include "Message.h"
 
 namespace strata::strataComm {
 
@@ -16,12 +16,12 @@ public:
     ~Dispatcher();
     bool start();
     bool stop();
-    bool dispatch(const ClientMessage &clientMessage);
+    bool dispatch(const Message &clientMessage);
     bool registerHandler(const QString &handlerName, StrataHandler handler);
     bool unregisterHandler(const QString &handlerName);
 
 public slots:
-    void dispatchHandler(const ClientMessage &clientMessage);
+    void dispatchHandler(const Message &clientMessage);
 
 private:
     bool isRegisteredHandler(const QString &handlerName);

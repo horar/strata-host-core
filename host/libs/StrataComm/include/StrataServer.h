@@ -23,24 +23,21 @@ public:
 
 public slots:
     void newClientMessage(const QByteArray &clientId, const QByteArray &message);
-    void notifyClient(const ClientMessage &clientMessage, const QJsonObject &jsonObject, ResponseType responseType);
+    void notifyClient(const Message &clientMessage, const QJsonObject &jsonObject, ResponseType responseType);
     void notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject);
 
 signals:
-    void dispatchHandler(const ClientMessage &clientMessage);
+    void dispatchHandler(const Message &clientMessage);
 
 private:
-    bool buildClientMessageAPIv2(const QJsonObject &jsonObject, ClientMessage *clientMessage);
-    bool buildClientMessageAPIv1(const QJsonObject &jsonObject, ClientMessage *clientMessage);
+    bool buildClientMessageAPIv2(const QJsonObject &jsonObject, Message *clientMessage);
+    bool buildClientMessageAPIv1(const QJsonObject &jsonObject, Message *clientMessage);
 
-    QByteArray buildServerMessageAPIv2(const ClientMessage &clientMessage, const QJsonObject &payload, ResponseType responseType);
-    QByteArray buildServerMessageAPIv1(const ClientMessage &clientMessage, const QJsonObject &payload, ResponseType responseType);
+    QByteArray buildServerMessageAPIv2(const Message &clientMessage, const QJsonObject &payload, ResponseType responseType);
+    QByteArray buildServerMessageAPIv1(const Message &clientMessage, const QJsonObject &payload, ResponseType responseType);
 
-    // QString buidNotification(const ClientMessage &ClientMessage, const QJsonObject &payload);   // maybe we need to change it to QByteArray based on what zmq requires
-    // QString buildResponse(const ClientMessage &ClientMessage, const QJsonObject &payload);      // ^ same comment!
-
-    void registerNewClientHandler(const ClientMessage &clientMessage);
-    void unregisterClientHandler(const ClientMessage &clientMessage);
+    void registerNewClientHandler(const Message &clientMessage);
+    void unregisterClientHandler(const Message &clientMessage);
 
     Dispatcher dispatcher_;
     ClientsController clientsController_;

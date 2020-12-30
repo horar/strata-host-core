@@ -2,12 +2,12 @@
 
 #include <QObject>
 
-#include "../src/ClientMessage.h"
+#include "../src/Message.h"
 #include "../src/Dispatcher.h"
 #include "QtTest.h"
 #include "TestHandlers.h"
 
-using strata::strataComm::ClientMessage;
+using strata::strataComm::Message;
 using strata::strataComm::Dispatcher;
 
 class DispatcherTest : public QObject
@@ -23,15 +23,15 @@ private slots:
     void testDispatchHandlers();
     void testDispatchHandlersUsingSignal();
     void testDispatchHandlersInDispatcherThread();
-    void testDispatchHandlersLocalClientMessage();
+    void testDispatchHandlersLocalMessage();
 
     void testLargeNumberOfHandlers();
     void testLargeNumberOfHandlersUsingDispatcherThread();
 
 private:
     TestHandlers th_;
-    QVector<ClientMessage> cm_;
+    QVector<Message> cm_;
 
 signals:
-    void disp(const ClientMessage &clientMessage);
+    void disp(const Message &clientMessage);
 };

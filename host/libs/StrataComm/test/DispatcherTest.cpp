@@ -4,11 +4,11 @@
 
 DispatcherTest::DispatcherTest()
 {
-    cm_.push_back({"handler_1", {}, 1, strata::strataComm::MessageType::Command, "mg"});
-    cm_.push_back({"handler_2", {}, 2, strata::strataComm::MessageType::Notifiation, "mg"});
-    cm_.push_back({"handler_3", {}, 3, strata::strataComm::MessageType::none, "mg"});
-    cm_.push_back({"handler_4", {}, 4, strata::strataComm::MessageType::Command, "mg"});
-    cm_.push_back({"handler_5", {}, 5, strata::strataComm::MessageType::Command, "mg"});
+    cm_.push_back({"handler_1", {}, 1, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
+    cm_.push_back({"handler_2", {}, 2, "mg", strata::strataComm::MessageType::Notifiation, strata::strataComm::ResponseType::None});
+    cm_.push_back({"handler_3", {}, 3, "mg", strata::strataComm::MessageType::None, strata::strataComm::ResponseType::None});
+    cm_.push_back({"handler_4", {}, 4, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
+    cm_.push_back({"handler_5", {}, 5, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
 }
 
 void DispatcherTest::testStartDispatcher()
@@ -29,7 +29,7 @@ void DispatcherTest::testRegisteringHandlers()
 {
     Dispatcher dispatcher;
 
-    ClientMessage cm;
+    Message cm;
     cm.clientID = QByteArray("mg");
     cm.handlerName = "handler_1";
 
@@ -57,7 +57,7 @@ void DispatcherTest::testDispatchHandlers()
 {
     Dispatcher dispatcher;
 
-    ClientMessage cm;
+    Message cm;
     cm.clientID = QByteArray("mg");
     cm.handlerName = "handler_1";
 
@@ -85,7 +85,7 @@ void DispatcherTest::testDispatchHandlersUsingSignal()
 {
     Dispatcher dispatcher;
 
-    qRegisterMetaType<ClientMessage>("ClientMessage");
+    qRegisterMetaType<Message>("Message");
     connect(this, &DispatcherTest::disp, &dispatcher, &Dispatcher::dispatchHandler);
 
     QVERIFY_(dispatcher.registerHandler(
@@ -114,7 +114,7 @@ void DispatcherTest::testDispatchHandlersInDispatcherThread()
     dispatcher->moveToThread(myThread);
     myThread->start();
 
-    qRegisterMetaType<ClientMessage>("ClientMessage");
+    qRegisterMetaType<Message>("Message");
     connect(this, &DispatcherTest::disp, dispatcher, &Dispatcher::dispatchHandler);
 
     QVERIFY_(dispatcher->registerHandler(
@@ -126,7 +126,7 @@ void DispatcherTest::testDispatchHandlersInDispatcherThread()
     QVERIFY_(dispatcher->registerHandler(
         "handler_4", std::bind(&TestHandlers::handler_4, th_, std::placeholders::_1)));
 
-    ClientMessage cm;
+    Message cm;
     cm.clientID = QByteArray("mg");
     cm.handlerName = "handler_1";
     cm.messageID = 0;
@@ -143,12 +143,12 @@ void DispatcherTest::testDispatchHandlersInDispatcherThread()
     myThread->wait();
 }
 
-void DispatcherTest::testDispatchHandlersLocalClientMessage()
+void DispatcherTest::testDispatchHandlersLocalMessage()
 {
     Dispatcher dispatcher;
     dispatcher.start();
 
-    qRegisterMetaType<ClientMessage>("ClientMessage");
+    qRegisterMetaType<Message>("Message");
     connect(this, &DispatcherTest::disp, &dispatcher, &Dispatcher::dispatchHandler,
             Qt::QueuedConnection);
 
@@ -161,7 +161,7 @@ void DispatcherTest::testDispatchHandlersLocalClientMessage()
     dispatcher.registerHandler("handler_4",
                                std::bind(&TestHandlers::handler_4, th_, std::placeholders::_1));
 
-    ClientMessage cm;
+    Message cm;
     cm.clientID = QByteArray("mg");
     cm.handlerName = "handler_1";
 
@@ -179,13 +179,13 @@ void DispatcherTest::testLargeNumberOfHandlers()
     Dispatcher dispatcher;
 
     for (int i = 0; i < 1000; i++) {
-        dispatcher.registerHandler(QString::number(i), [i](const ClientMessage &cm) {
+        dispatcher.registerHandler(QString::number(i), [i](const Message &cm) {
             QCOMPARE_(cm.handlerName, QString::number(i));
         });
     }
 
     for (int i = 0; i < 1000; i++) {
-        dispatcher.dispatch({QString::number(i), {}, 1, strata::strataComm::MessageType::Command, "mg"});
+        dispatcher.dispatch({QString::number(i), {}, 1, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
     }
 }
 
@@ -194,20 +194,20 @@ void DispatcherTest::testLargeNumberOfHandlersUsingDispatcherThread()
     Dispatcher *dispatcher = new Dispatcher();
     QThread *myThread = new QThread();
 
-    qRegisterMetaType<ClientMessage>("ClientMessage");
+    qRegisterMetaType<Message>("Message");
     connect(this, &DispatcherTest::disp, dispatcher, &Dispatcher::dispatchHandler);
 
     dispatcher->moveToThread(myThread);
     myThread->start();
 
     for (int i = 0; i < 1000; i++) {
-        dispatcher->registerHandler(QString::number(i), [i](const ClientMessage &cm) {
+        dispatcher->registerHandler(QString::number(i), [i](const Message &cm) {
             QCOMPARE_(cm.handlerName, QString::number(i));
         });
     }
 
     for (int i = 0; i < 1000; i++) {
-        emit disp({QString::number(i), {}, 1, strata::strataComm::MessageType::Command, "mg"});
+        emit disp({QString::number(i), {}, 1, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
     }
 
     // wait for all events to be dispatched

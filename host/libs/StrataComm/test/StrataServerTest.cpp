@@ -114,7 +114,7 @@ void StrataServerTest::testServerFunctionality() {
 
     // add a handler to handler the client message.
     // add a handler to create a response
-    server.registerHandler("register_client", [&server](const strata::strataComm::ClientMessage &cm) {
+    server.registerHandler("register_client", [&server](const strata::strataComm::Message &cm) {
         server.notifyClient(cm, {{"status", "client registered."}}, strata::strataComm::ResponseType::Response);
     });
 
@@ -180,7 +180,7 @@ void StrataServerTest::testBuildNotificationApiV2() {
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
 
-    server.registerHandler("test_notification", [&server](const strata::strataComm::ClientMessage &cm){
+    server.registerHandler("test_notification", [&server](const strata::strataComm::Message &cm){
         server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ResponseType::Notification);
     });
 
@@ -223,7 +223,7 @@ void StrataServerTest::testBuildResponseApiV2() {
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
 
-    server.registerHandler("test_response", [&server](const strata::strataComm::ClientMessage &cm){
+    server.registerHandler("test_response", [&server](const strata::strataComm::Message &cm){
         server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ResponseType::Response);
     });
 
@@ -266,7 +266,7 @@ void StrataServerTest::testBuildErrorApiV2() {
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
 
-    server.registerHandler("test_error", [&server](const strata::strataComm::ClientMessage &cm){
+    server.registerHandler("test_error", [&server](const strata::strataComm::Message &cm){
         server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ResponseType::Error);
     });
 
@@ -311,7 +311,7 @@ void StrataServerTest::testBuildPlatformMessageApiV2() {
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
 
-    server.registerHandler("platform_notification", [&server](const strata::strataComm::ClientMessage &cm){
+    server.registerHandler("platform_notification", [&server](const strata::strataComm::Message &cm){
         server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ResponseType::PlatformMessage);
     });
 
@@ -349,7 +349,7 @@ void StrataServerTest::testBuildNotificationApiV1() {
 
     client.sendMessage(R"({"cmd":"register_client", "payload":{}})");
 
-    server.registerHandler("test_notification", [&server](const strata::strataComm::ClientMessage &cm){
+    server.registerHandler("test_notification", [&server](const strata::strataComm::Message &cm){
         server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ResponseType::Notification);
     });
 
@@ -387,7 +387,7 @@ void StrataServerTest::testBuildResponseApiV1() {
 
     client.sendMessage(R"({"cmd":"register_client", "payload":{}})");
 
-    server.registerHandler("test_response", [&server](const strata::strataComm::ClientMessage &cm){
+    server.registerHandler("test_response", [&server](const strata::strataComm::Message &cm){
         server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ResponseType::Response);
     });
 
@@ -409,7 +409,7 @@ void StrataServerTest::testParsePlatformMessageAPIv1() {
     bool handlerCalled = false;
     QString currentCommandName  = "";
 
-    server.registerHandler("platform_message", [&handlerCalled, &currentCommandName](const strata::strataComm::ClientMessage &cm) {
+    server.registerHandler("platform_message", [&handlerCalled, &currentCommandName](const strata::strataComm::Message &cm) {
         QCOMPARE_(cm.payload.value("message").toObject().value("cmd").toString(), currentCommandName);
         handlerCalled = true;
     });
@@ -457,7 +457,7 @@ void StrataServerTest::testBuildPlatformMessageApiV1() {
 
     client.sendMessage(R"({"cmd":"register_client", "payload":{}})");
 
-    server.registerHandler("platform_notification", [&server](const strata::strataComm::ClientMessage &cm){
+    server.registerHandler("platform_notification", [&server](const strata::strataComm::Message &cm){
         server.notifyClient(cm, {{"key", "value"}, {"test", "test"}}, strata::strataComm::ResponseType::PlatformMessage);
     });
 

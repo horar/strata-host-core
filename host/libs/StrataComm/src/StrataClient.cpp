@@ -58,7 +58,7 @@ void StrataClient::newServerMessage(const QByteArray &serverMessage)
     qCDebug(logCategoryStrataClient) << "New message from the server:" << serverMessage;
 
     // parse the message.
-    ClientMessage message;
+    Message message;
     if (false == buildServerMessage(serverMessage, &message)) {
         qCCritical(logCategoryStrataClient) << "Failed to build server message.";
         return;
@@ -109,7 +109,7 @@ bool StrataClient::sendRequest(const QString &method, const QJsonObject &payload
     return connector_.sendMessage(message);
 }
 
-bool StrataClient::buildServerMessage(const QByteArray &serverMessage, ClientMessage *clientMessage)
+bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *clientMessage)
 {
     // Parse the message
     QJsonParseError jsonParseError;

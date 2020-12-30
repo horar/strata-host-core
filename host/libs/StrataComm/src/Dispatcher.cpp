@@ -47,10 +47,9 @@ bool Dispatcher::unregisterHandler(const QString &handlerName) {
         qCCritical(logCategoryStrataDispatcher()) << "Handler not found" << handlerName;
         return true;
     }
-
 }
 
-bool Dispatcher::dispatch(const ClientMessage &clientMessage) {
+bool Dispatcher::dispatch(const Message &clientMessage) {
     qCInfo(logCategoryStrataDispatcher) << "Dispatching " << clientMessage.handlerName;
 
     if(auto it = handlersList_.find(clientMessage.handlerName); it == handlersList_.end()) {
@@ -63,7 +62,7 @@ bool Dispatcher::dispatch(const ClientMessage &clientMessage) {
     return true;
 }
 
-void Dispatcher::dispatchHandler(const ClientMessage &clientMessage) {
+void Dispatcher::dispatchHandler(const Message &clientMessage) {
     qCInfo(logCategoryStrataDispatcher) << "Dispatching " << clientMessage.handlerName;
 
     if(auto it = handlersList_.find(clientMessage.handlerName); it == handlersList_.end()) {

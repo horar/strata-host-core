@@ -18,12 +18,12 @@ void StrataClientTest::testRegisterAndUnregisterHandlers()
 
     // register new handler
     QVERIFY_(client.registerHandler("handler_1",
-                                    [](const strata::strataComm::ClientMessage &) { return; }));
+                                    [](const strata::strataComm::Message &) { return; }));
     QVERIFY_(client.registerHandler("handler_2",
-                                    [](const strata::strataComm::ClientMessage &) { return; }));
+                                    [](const strata::strataComm::Message &) { return; }));
     QVERIFY_(false ==
              client.registerHandler("handler_2",
-                                    [](const strata::strataComm::ClientMessage &) { return; }));
+                                    [](const strata::strataComm::Message &) { return; }));
 
     QVERIFY_(client.unregisterHandler("handler_1"));
     QVERIFY_(client.unregisterHandler("handler_2"));
