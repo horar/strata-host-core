@@ -99,7 +99,7 @@ Item {
                     font.pixelSize: ratioCalc * 20
                     color: "#696969"
                     anchors {
-                        top: parent.top
+                        verticalCenter: parent.verticalCenter
                         left: parent.left
                         leftMargin: 10
                     }
@@ -109,7 +109,6 @@ Item {
                     source: "images/commandicon.png"
                     anchors {
                         top: parent.top
-
                         horizontalCenter: parent.horizontalCenter
                         horizontalCenterOffset: 100
                     }
@@ -225,7 +224,7 @@ Item {
                     font.pixelSize: ratioCalc * 20
                     color: "#696969"
                     anchors {
-                        top: parent.top
+                        verticalCenter: parent.verticalCenter
                         left: parent.left
                         leftMargin: 10
                     }
@@ -481,7 +480,6 @@ Item {
                             selectByMouse: true
                             property var cmd_simple_periodicText: obj
                             onCmd_simple_periodicTextChanged: {
-
                                 var end =  selectionEnd
                                 var start = selectionStart
                                 console.log(end, start)
@@ -510,7 +508,7 @@ Item {
                     font.pixelSize: ratioCalc * 20
                     color: "#696969"
                     anchors {
-                        top: parent.top
+                        verticalCenter: parent.verticalCenter
                         left: parent.left
                         leftMargin: 10
                     }
@@ -520,7 +518,6 @@ Item {
                     source: "images/commandicon.png"
                     anchors {
                         top: parent.top
-                        topMargin: -5
                         horizontalCenter: parent.horizontalCenter
                         horizontalCenterOffset: 100
                     }
