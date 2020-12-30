@@ -15,6 +15,8 @@
 #include <qwt/qwt_plot_layout.h>
 #include <qwt/qwt_text_label.h>
 #include <qwt/qwt_plot_grid.h>
+#include <qwt/qwt_symbol.h>
+
 
 #include <QDebug>
 
@@ -199,6 +201,8 @@ public:
     Q_INVOKABLE int count();
     Q_INVOKABLE void shiftPoints(double offsetX, double offsetY);
     Q_INVOKABLE void update();
+  //  Q_INVOKABLE void setSymbol(QwtSymbol style, QBrush brush,  QPen pen, QSize size);
+    Q_INVOKABLE void setSymbol(int newStyle , QColor b ,  QString c , int d);
 
 
 

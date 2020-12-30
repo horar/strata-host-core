@@ -46,6 +46,8 @@ Item {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
                         curve.appendList(dataArray)
+
+                        curve.setSymbol(2,"red","NoPen",5)
                     }
                 }
 
