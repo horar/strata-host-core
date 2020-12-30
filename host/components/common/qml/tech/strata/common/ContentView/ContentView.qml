@@ -57,7 +57,7 @@ Rectangle {
         }
     }
 
-    HelpButton{
+    HelpButton {
         id: helpIcon
         height: 30
         width: 30
@@ -105,26 +105,10 @@ Rectangle {
     Connections {
         target: Help.utility
         onInternal_tour_indexChanged: {
-            if(Help.current_tour_targets[index]["target"] === accordion.contentItem.children[0]){
-                if(!accordion.contentItem.children[0].open) {
-                    accordion.contentItem.children[0].open = true
-                }
-                //                else {
-                //                   accordion.contentItem.children[0].open = false
-                //                   accordion.contentItem.children[0].open = true
-                //                }
-            }
-            if(Help.current_tour_targets[index]["target"] === accordion.contentItem.children[1]){
-                accordion.contentItem.children[1].open = true
-            }
-            else {
-                accordion.contentItem.children[1].open = false
-            }
-            if(Help.current_tour_targets[index]["target"] === accordion.contentItem.children[2]){
-                accordion.contentItem.children[2].open = true
-            }
-            else {
-                accordion.contentItem.children[2].open = false
+            if (helpIcon.class_id === "help_docs_demo") {
+                accordion.contentItem.children[0].open = (Help.current_tour_targets[index]["target"] === accordion.contentItem.children[0])
+                accordion.contentItem.children[1].open = (Help.current_tour_targets[index]["target"] === accordion.contentItem.children[1])
+                accordion.contentItem.children[2].open = (Help.current_tour_targets[index]["target"] === accordion.contentItem.children[2])
             }
         }
     }
