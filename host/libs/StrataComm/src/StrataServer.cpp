@@ -13,22 +13,17 @@ StrataServer::~StrataServer() {
     qCDebug(logCategoryStrataServer) << "StrataServer Destructor";
 }
 
-void StrataServer::init() {
-    qCDebug(logCategoryStrataServer) << "StrataServer Init";
-    connector_.initilize();
-    connect(&connector_, &ServerConnector::newMessageRecived, this, &StrataServer::newClientMessage);
-    connect(this, &StrataServer::dispatchHandler, &dispatcher_, &Dispatcher::dispatchHandler);
+bool StrataServer::initializeServer() {
+    if ( true == connector_.initilize()) {
+        qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
+        connect(&connector_, &ServerConnector::newMessageRecived, this, &StrataServer::newClientMessage);
+        connect(this, &StrataServer::dispatchHandler, &dispatcher_, &Dispatcher::dispatchHandler);
+        return true;
+    } else {
+        qCCritical(logCategoryStrataServer) << "Failed to initialize Strata Server.";
+        return false;
+    }
 }
-
-// void StrataServer::start(){
-//     qCDebug(logCategoryStrataServer) << "StrataServer start";
-
-// }
-
-// void StrataServer::notifyClient(){
-//     qCDebug(logCategoryStrataServer) << "StrataServer notifyClient";
-
-// }
 
 bool StrataServer::registerHandler(const QString &handlerName, StrataHandler handler) {
     qCDebug(logCategoryStrataServer) << "Registering handler:" << handlerName;

@@ -141,7 +141,7 @@ void StrataClientServerIntegrationTest::testSingleClient()
                                QCOMPARE_(message.messageType, strata::strataComm::Message::MessageType::Notification);
                            });
 
-    server.init();
+    QVERIFY_(server.initializeServer());
     client.connectServer();
     waitForZmqMessages();
 
@@ -237,7 +237,7 @@ void StrataClientServerIntegrationTest::testMultipleClients()
                                  client2ReceivedServerBroadcast = true;
                              });
 
-    server.init();
+    QVERIFY_(server.initializeServer());
     client_1.connectServer();
     client_2.connectServer();
     waitForZmqMessages();

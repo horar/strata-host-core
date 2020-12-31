@@ -15,9 +15,7 @@ public:
     StrataServer(QString address, QObject *parent = nullptr);
     ~StrataServer();
 
-    void init(); // TODO: make it bool and use better naming
-    // void start();
-    // void notifyClient();
+    bool initializeServer();
     bool registerHandler(const QString &handlerName, StrataHandler handler);
     bool unregisterHandler(const QString &handlerName);
 

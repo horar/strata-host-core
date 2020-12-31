@@ -110,7 +110,7 @@ void StrataServerTest::testFloodTheServer() {
 
 void StrataServerTest::testServerFunctionality() {
     StrataServer server(address_);
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     // add a handler to handler the client message.
     // add a handler to create a response
@@ -157,7 +157,7 @@ void StrataServerTest::testServerFunctionality() {
 void StrataServerTest::testBuildNotificationApiV2() {
     bool testExecuted = false;
     StrataServer server(address_);
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
     client.initilize();
@@ -200,7 +200,7 @@ void StrataServerTest::testBuildNotificationApiV2() {
 void StrataServerTest::testBuildResponseApiV2() {
     bool testExecuted = false;
     StrataServer server(address_);
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
     client.initilize();
@@ -243,7 +243,7 @@ void StrataServerTest::testBuildResponseApiV2() {
 void StrataServerTest::testBuildErrorApiV2() {
     bool testExecuted = false;
     StrataServer server(address_);
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
     client.initilize();
@@ -287,7 +287,7 @@ void StrataServerTest::testBuildErrorApiV2() {
 void StrataServerTest::testBuildPlatformMessageApiV2() {
     bool testExecuted = false;
     StrataServer server(address_);
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
     client.initilize();
@@ -331,7 +331,7 @@ void StrataServerTest::testBuildPlatformMessageApiV2() {
 void StrataServerTest::testBuildNotificationApiV1() {
     bool testExecuted = false;
     StrataServer server(address_);
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
     client.initilize();
@@ -369,7 +369,7 @@ void StrataServerTest::testBuildNotificationApiV1() {
 void StrataServerTest::testBuildResponseApiV1() {
     bool testExecuted = false;
     StrataServer server(address_);
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
     client.initilize();
@@ -414,7 +414,7 @@ void StrataServerTest::testParsePlatformMessageAPIv1() {
         handlerCalled = true;
     });
     
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     handlerCalled = false;
     currentCommandName = "test_1";
@@ -440,7 +440,7 @@ void StrataServerTest::testParsePlatformMessageAPIv1() {
 void StrataServerTest::testBuildPlatformMessageApiV1() {
     bool testExecuted = false;
     StrataServer server(address_);
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
     client.initilize();
@@ -481,7 +481,7 @@ void StrataServerTest::testNotifyAllClients() {
     int counter = 0;
     int clientsCount = 10;
 
-    server.init();
+    QVERIFY_(server.initializeServer());
 
     // half the clients use API v2
     for (int i = 0; i < clientsCount/2; i++) {
@@ -571,4 +571,13 @@ void StrataServerTest::testNotifyAllClients() {
     for (auto client : clientsList) {
         delete client;
     }
+}
+
+void StrataServerTest::testInitializeServerFail() 
+{
+    StrataServer server(address_);
+    StrataServer duplicateServer(address_);
+
+    QVERIFY_(server.initializeServer());
+    QVERIFY_(false == duplicateServer.initializeServer());
 }

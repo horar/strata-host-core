@@ -30,6 +30,8 @@ private slots:
     void testServerFunctionality();
     void testNotifyAllClients();
 
+    void testInitializeServerFail();
+
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
 };
