@@ -133,24 +133,28 @@ bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *
     // Type? Response, Notification, Error?
     // outline -->
 
+    // Response
     // {
     //     "jsonrpc": "2.0",
     //     "result": {},
     //     "id": 1
     // }
 
+    // Error
     // {
     //     "jsonrpc": "2.0",
     //     "error": {},
     //     "id": "1"
     // }
 
+    // Notification
     // {
     //     "jsonrpc": "2.0",
     //     "method":"Handler Name",
     //     "params": {}
     // }
 
+    // Notification
     // {
     //     "jsonrpc": "2.0",
     //     "method": "platform_notification",
@@ -160,8 +164,8 @@ bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *
     // check if the message has an id
     if (true == jsonObject.contains("id") && true == jsonObject.value("id").isDouble()) {
         clientMessage->messageID = jsonObject.value("id").toDouble();
-        clientMessage->messageType = MessageType::Command;
 
+        // Get the handler name from the request controller based on the message id 
         if (QString handlerName =
                 requestController_.getMethodName(jsonObject.value("id").toDouble());
             false == handlerName.isEmpty()) {
@@ -179,22 +183,25 @@ bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *
         if (true == jsonObject.contains("result") &&
             true == jsonObject.value("result").isObject()) {
             clientMessage->payload = jsonObject.value("result").toObject();
+            clientMessage->messageType = Message::MessageType::Response;
         } else if (true == jsonObject.contains("error") &&
                    true == jsonObject.value("error").isObject()) {
             clientMessage->payload = jsonObject.value("error").toObject();
+            clientMessage->messageType = Message::MessageType::Error;
         } else {
             qCDebug(logCategoryStrataClient) << "No payload.";
             clientMessage->payload = QJsonObject{};
+            clientMessage->messageType = Message::MessageType::Response;
         }
 
     } else if (true == jsonObject.contains("method") &&
                true == jsonObject.value("method").isString()) {
         clientMessage->handlerName = jsonObject.value("method").toString();
+        clientMessage->messageType = Message::MessageType::Notification;
 
         if (true == jsonObject.contains("params") &&
             true == jsonObject.value("params").isObject()) {
             clientMessage->payload = jsonObject.value("params").toObject();
-            clientMessage->messageType = MessageType::Notifiation;
         }
 
     } else {
@@ -202,5 +209,6 @@ bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *
         return false;
     }
 
+    clientMessage->clientID = "";
     return true;
 }

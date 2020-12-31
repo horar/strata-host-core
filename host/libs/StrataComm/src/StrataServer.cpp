@@ -161,7 +161,7 @@ bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Messag
     }
 
     // populate message type --> request.
-    clientMessage->messageType = MessageType::Command;
+    clientMessage->messageType = Message::MessageType::Command;
     return true;
 }
 
@@ -208,7 +208,7 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
 
     clientMessage->payload = payloadJsonObject;
     clientMessage->messageID = 0;
-    clientMessage->messageType = MessageType::Command;
+    clientMessage->messageType = Message::MessageType::Command;
 
     return true;
 }
@@ -314,7 +314,6 @@ QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage, c
     QJsonObject tempPayload(payload);
 
     switch (responseType) {
-        case strata::strataComm::ResponseType::None:
         case strata::strataComm::ResponseType::Notification:
         case strata::strataComm::ResponseType::Response:
             // determine the notification type

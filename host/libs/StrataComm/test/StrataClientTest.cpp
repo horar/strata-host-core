@@ -146,15 +146,15 @@ void StrataClientTest::testNonDefaultDealerId()
     strata::strataComm::ServerConnector server(address_);
     server.initilize();
 
-    connect(&server, &strata::strataComm::ServerConnector::newMessageRecived, this,
-            [&defaultIdRecieved, &customIdRecieved](const QByteArray &clientId,
-                                                    const QByteArray &message) {
-                if (clientId == "customId") {
-                    customIdRecieved = true;
-                } else if (clientId == "StrataClient") {
-                    defaultIdRecieved = true;
-                }
-            });
+    connect(
+        &server, &strata::strataComm::ServerConnector::newMessageRecived, this,
+        [&defaultIdRecieved, &customIdRecieved](const QByteArray &clientId, const QByteArray &) {
+            if (clientId == "customId") {
+                customIdRecieved = true;
+            } else if (clientId == "StrataClient") {
+                defaultIdRecieved = true;
+            }
+        });
 
     StrataClient client_1(address_);
     client_1.connectServer();

@@ -4,11 +4,11 @@
 
 DispatcherTest::DispatcherTest()
 {
-    cm_.push_back({"handler_1", {}, 1, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
-    cm_.push_back({"handler_2", {}, 2, "mg", strata::strataComm::MessageType::Notifiation, strata::strataComm::ResponseType::None});
-    cm_.push_back({"handler_3", {}, 3, "mg", strata::strataComm::MessageType::None, strata::strataComm::ResponseType::None});
-    cm_.push_back({"handler_4", {}, 4, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
-    cm_.push_back({"handler_5", {}, 5, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
+    cm_.push_back({"handler_1", {}, 1, "mg", strata::strataComm::Message::MessageType::Command});
+    cm_.push_back({"handler_2", {}, 2, "mg", strata::strataComm::Message::MessageType::Notification});
+    cm_.push_back({"handler_3", {}, 3, "mg", strata::strataComm::Message::MessageType::Response});
+    cm_.push_back({"handler_4", {}, 4, "mg", strata::strataComm::Message::MessageType::Error});
+    cm_.push_back({"handler_5", {}, 5, "mg", strata::strataComm::Message::MessageType::Command});
 }
 
 void DispatcherTest::testStartDispatcher()
@@ -185,7 +185,7 @@ void DispatcherTest::testLargeNumberOfHandlers()
     }
 
     for (int i = 0; i < 1000; i++) {
-        dispatcher.dispatch({QString::number(i), {}, 1, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
+        dispatcher.dispatch({QString::number(i), {}, 1, "mg", strata::strataComm::Message::MessageType::Command});
     }
 }
 
@@ -207,7 +207,7 @@ void DispatcherTest::testLargeNumberOfHandlersUsingDispatcherThread()
     }
 
     for (int i = 0; i < 1000; i++) {
-        emit disp({QString::number(i), {}, 1, "mg", strata::strataComm::MessageType::Command, strata::strataComm::ResponseType::None});
+        emit disp({QString::number(i), {}, 1, "mg", strata::strataComm::Message::MessageType::Command});
     }
 
     // wait for all events to be dispatched

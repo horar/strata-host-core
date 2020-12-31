@@ -6,17 +6,17 @@
 
 namespace strata::strataComm
 {
-enum class MessageType { Notifiation, Command, None };
 
-enum class ResponseType { Response, Notification, PlatformMessage, Error, None };
+enum class ResponseType { Response, Notification, PlatformMessage, Error };
 
 struct Message {
+    enum class MessageType { Notification, Command, Response, Error };
+
     QString handlerName;
     QJsonObject payload;
     double messageID;
     QByteArray clientID;
     MessageType messageType;
-    ResponseType responseType;
 };
 
 typedef std::function<void(const Message &)> StrataHandler;
