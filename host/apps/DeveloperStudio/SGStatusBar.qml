@@ -116,6 +116,12 @@ Rectangle {
             spacing: 1
             clip: true
 
+            onCountChanged: {
+                if(count > 0) {
+                    Qt.callLater( positionViewAtIndex, NavigationControl.stack_container_.currentIndex - 1, ListView.Visible )
+                }
+            }
+
             model: NavigationControl.platform_view_model_
         }
 
