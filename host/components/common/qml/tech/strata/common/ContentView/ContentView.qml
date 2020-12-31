@@ -48,15 +48,6 @@ Rectangle {
         }
     }
 
-    onVisibleChanged: {
-        if(!visible) {
-            pdfAccordionState = ""
-            datasheetAccordionState = ""
-            downloadAccordionState = ""
-            currentDocumentCategory = false
-        }
-    }
-
     HelpButton {
         id: helpIcon
         height: 30
@@ -72,13 +63,13 @@ Rectangle {
     Connections {
         target: Help.utility
         onTour_runningChanged: {
-            if(tour_running === false) {
+            if(tour_running === false && visible) {
                 helpIcon.class_id = view.class_id
-                classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
                 accordion.contentItem.children[0].open = pdfAccordionState
                 accordion.contentItem.children[1].open = datasheetAccordionState
                 accordion.contentItem.children[2].open = downloadAccordionState
                 currentDocumentCategory = true
+                classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
             }
         }
     }

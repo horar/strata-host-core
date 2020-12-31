@@ -20,6 +20,7 @@ SGIcon {
     property string class_id: ""
 
     function clickAction() {
+        accordion.contentItem.children[0].open = true
         Help.startHelpTour("contentViewHelp", "strataMain")
     }
 
