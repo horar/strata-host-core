@@ -4,11 +4,11 @@
 
 DispatcherTest::DispatcherTest()
 {
-    cm_.push_back({"handler_1", {}, 1, "mg", strata::strataComm::Message::MessageType::Command});
-    cm_.push_back({"handler_2", {}, 2, "mg", strata::strataComm::Message::MessageType::Notification});
-    cm_.push_back({"handler_3", {}, 3, "mg", strata::strataComm::Message::MessageType::Response});
-    cm_.push_back({"handler_4", {}, 4, "mg", strata::strataComm::Message::MessageType::Error});
-    cm_.push_back({"handler_5", {}, 5, "mg", strata::strataComm::Message::MessageType::Command});
+    messageList_.push_back({"handler_1", {}, 1, "mg", strata::strataComm::Message::MessageType::Command});
+    messageList_.push_back({"handler_2", {}, 2, "mg", strata::strataComm::Message::MessageType::Notification});
+    messageList_.push_back({"handler_3", {}, 3, "mg", strata::strataComm::Message::MessageType::Response});
+    messageList_.push_back({"handler_4", {}, 4, "mg", strata::strataComm::Message::MessageType::Error});
+    messageList_.push_back({"handler_5", {}, 5, "mg", strata::strataComm::Message::MessageType::Command});
 }
 
 void DispatcherTest::testStartDispatcher()
@@ -29,9 +29,9 @@ void DispatcherTest::testRegisteringHandlers()
 {
     Dispatcher dispatcher;
 
-    Message cm;
-    cm.clientID = QByteArray("mg");
-    cm.handlerName = "handler_1";
+    Message message;
+    message.clientID = QByteArray("mg");
+    message.handlerName = "handler_1";
 
     QCOMPARE_(dispatcher.registerHandler(
                   "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)),
@@ -57,9 +57,9 @@ void DispatcherTest::testDispatchHandlers()
 {
     Dispatcher dispatcher;
 
-    Message cm;
-    cm.clientID = QByteArray("mg");
-    cm.handlerName = "handler_1";
+    Message message;
+    message.clientID = QByteArray("mg");
+    message.handlerName = "handler_1";
 
     QVERIFY_(dispatcher.registerHandler(
         "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)));
@@ -70,15 +70,15 @@ void DispatcherTest::testDispatchHandlers()
     QVERIFY_(dispatcher.registerHandler(
         "handler_4", std::bind(&TestHandlers::handler_4, th_, std::placeholders::_1)));
 
-    QCOMPARE_(dispatcher.dispatch(cm_[0]), true);
-    QCOMPARE_(dispatcher.dispatch(cm_[1]), true);
-    QCOMPARE_(dispatcher.dispatch(cm_[2]), true);
-    QCOMPARE_(dispatcher.dispatch(cm_[3]), true);
-    QCOMPARE_(dispatcher.dispatch(cm_[4]), false);
-    QCOMPARE_(dispatcher.dispatch(cm_[2]), true);
-    QCOMPARE_(dispatcher.dispatch(cm_[4]), false);
-    QCOMPARE_(dispatcher.dispatch(cm_[3]), true);
-    QCOMPARE_(dispatcher.dispatch(cm_[0]), true);
+    QCOMPARE_(dispatcher.dispatch(messageList_[0]), true);
+    QCOMPARE_(dispatcher.dispatch(messageList_[1]), true);
+    QCOMPARE_(dispatcher.dispatch(messageList_[2]), true);
+    QCOMPARE_(dispatcher.dispatch(messageList_[3]), true);
+    QCOMPARE_(dispatcher.dispatch(messageList_[4]), false);
+    QCOMPARE_(dispatcher.dispatch(messageList_[2]), true);
+    QCOMPARE_(dispatcher.dispatch(messageList_[4]), false);
+    QCOMPARE_(dispatcher.dispatch(messageList_[3]), true);
+    QCOMPARE_(dispatcher.dispatch(messageList_[0]), true);
 }
 
 void DispatcherTest::testDispatchHandlersUsingSignal()
@@ -97,13 +97,13 @@ void DispatcherTest::testDispatchHandlersUsingSignal()
     QVERIFY_(dispatcher.registerHandler(
         "handler_4", std::bind(&TestHandlers::handler_4, th_, std::placeholders::_1)));
 
-    emit disp(cm_[0]);
-    emit disp(cm_[1]);
-    emit disp(cm_[2]);
-    emit disp(cm_[3]);
-    emit disp(cm_[3]);
-    emit disp(cm_[4]);
-    emit disp(cm_[0]);
+    emit disp(messageList_[0]);
+    emit disp(messageList_[1]);
+    emit disp(messageList_[2]);
+    emit disp(messageList_[3]);
+    emit disp(messageList_[3]);
+    emit disp(messageList_[4]);
+    emit disp(messageList_[0]);
 }
 
 void DispatcherTest::testDispatchHandlersInDispatcherThread()
@@ -126,18 +126,18 @@ void DispatcherTest::testDispatchHandlersInDispatcherThread()
     QVERIFY_(dispatcher->registerHandler(
         "handler_4", std::bind(&TestHandlers::handler_4, th_, std::placeholders::_1)));
 
-    Message cm;
-    cm.clientID = QByteArray("mg");
-    cm.handlerName = "handler_1";
-    cm.messageID = 0;
+    Message message;
+    message.clientID = QByteArray("mg");
+    message.handlerName = "handler_1";
+    message.messageID = 0;
 
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
 
     myThread->quit();
     myThread->wait();
@@ -161,17 +161,17 @@ void DispatcherTest::testDispatchHandlersLocalMessage()
     dispatcher.registerHandler("handler_4",
                                std::bind(&TestHandlers::handler_4, th_, std::placeholders::_1));
 
-    Message cm;
-    cm.clientID = QByteArray("mg");
-    cm.handlerName = "handler_1";
+    Message message;
+    message.clientID = QByteArray("mg");
+    message.handlerName = "handler_1";
 
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
-    emit disp(cm);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
+    emit disp(message);
 }
 
 void DispatcherTest::testLargeNumberOfHandlers()
@@ -179,8 +179,8 @@ void DispatcherTest::testLargeNumberOfHandlers()
     Dispatcher dispatcher;
 
     for (int i = 0; i < 1000; i++) {
-        dispatcher.registerHandler(QString::number(i), [i](const Message &cm) {
-            QCOMPARE_(cm.handlerName, QString::number(i));
+        dispatcher.registerHandler(QString::number(i), [i](const Message &message) {
+            QCOMPARE_(message.handlerName, QString::number(i));
         });
     }
 
@@ -201,8 +201,8 @@ void DispatcherTest::testLargeNumberOfHandlersUsingDispatcherThread()
     myThread->start();
 
     for (int i = 0; i < 1000; i++) {
-        dispatcher->registerHandler(QString::number(i), [i](const Message &cm) {
-            QCOMPARE_(cm.handlerName, QString::number(i));
+        dispatcher->registerHandler(QString::number(i), [i](const Message &message) {
+            QCOMPARE_(message.handlerName, QString::number(i));
         });
     }
 

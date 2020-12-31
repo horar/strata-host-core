@@ -24,14 +24,14 @@ public:
     bool sendRequest(const QString &method, const QJsonObject &payload);
 
 signals:
-    void dispatchHandler(const Message &clientMessage);
+    void dispatchHandler(const Message &serverMessage);
     void sendMessage(const QByteArray &message);
 
 private slots:
-    void newServerMessage(const QByteArray &serverMessage);
+    void newServerMessage(const QByteArray &jsonServerMessage);
 
 private:
-    bool buildServerMessage(const QByteArray &serverMessage, Message *clientMessage);
+    bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage);
 
     Dispatcher dispatcher_;
     ClientConnector connector_;

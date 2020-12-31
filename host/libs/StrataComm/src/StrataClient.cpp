@@ -53,26 +53,26 @@ bool StrataClient::disconnectServer()
     return true;
 }
 
-void StrataClient::newServerMessage(const QByteArray &serverMessage)
+void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
 {
-    qCDebug(logCategoryStrataClient) << "New message from the server:" << serverMessage;
+    qCDebug(logCategoryStrataClient) << "New message from the server:" << jsonServerMessage;
 
     // parse the message.
-    Message message;
-    if (false == buildServerMessage(serverMessage, &message)) {
+    Message serverMessage;
+    if (false == buildServerMessage(jsonServerMessage, &serverMessage)) {
         qCCritical(logCategoryStrataClient) << "Failed to build server message.";
         return;
     }
 
     qCDebug(logCategoryStrataClient) << "#########################################";
-    qCDebug(logCategoryStrataClient) << "message:" << serverMessage;
-    qCDebug(logCategoryStrataClient) << "message id:" << message.messageID;
-    qCDebug(logCategoryStrataClient) << "method:" << message.handlerName;
-    qCDebug(logCategoryStrataClient) << "payload:" << message.payload;
-    qCDebug(logCategoryStrataClient) << "message type:" << static_cast<int>(message.messageType);
+    qCDebug(logCategoryStrataClient) << "message:" << jsonServerMessage;
+    qCDebug(logCategoryStrataClient) << "message id:" << serverMessage.messageID;
+    qCDebug(logCategoryStrataClient) << "method:" << serverMessage.handlerName;
+    qCDebug(logCategoryStrataClient) << "payload:" << serverMessage.payload;
+    qCDebug(logCategoryStrataClient) << "message type:" << static_cast<int>(serverMessage.messageType);
     qCDebug(logCategoryStrataClient) << "#########################################";
 
-    emit dispatchHandler(message);
+    emit dispatchHandler(serverMessage);
 }
 
 bool StrataClient::registerHandler(const QString &handlerName, StrataHandler handler)
@@ -109,11 +109,10 @@ bool StrataClient::sendRequest(const QString &method, const QJsonObject &payload
     return connector_.sendMessage(message);
 }
 
-bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *clientMessage)
+bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage)
 {
-    // Parse the message
     QJsonParseError jsonParseError;
-    QJsonDocument jsonDocument = QJsonDocument::fromJson(serverMessage, &jsonParseError);
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(jsonServerMessage, &jsonParseError);
 
     if (jsonParseError.error != QJsonParseError::NoError) {
         qCDebug(logCategoryStrataServer) << "invalid JSON message.";
@@ -121,7 +120,6 @@ bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *
     }
     QJsonObject jsonObject = jsonDocument.object();
 
-    // Is it valid API?
     if (true == jsonObject.contains("jsonrpc") && true == jsonObject.value("jsonrpc").isString() &&
         jsonObject.value("jsonrpc").toString() == "2.0") {
         qCDebug(logCategoryStrataClient) << "API v2.0";
@@ -130,8 +128,7 @@ bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *
         return false;
     }
 
-    // Type? Response, Notification, Error?
-    // outline -->
+    // Possible message types
 
     // Response
     // {
@@ -161,15 +158,14 @@ bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *
     //     "params": { }
     // }
 
-    // check if the message has an id
     if (true == jsonObject.contains("id") && true == jsonObject.value("id").isDouble()) {
-        clientMessage->messageID = jsonObject.value("id").toDouble();
+        serverMessage->messageID = jsonObject.value("id").toDouble();
 
         // Get the handler name from the request controller based on the message id 
         if (QString handlerName =
                 requestController_.getMethodName(jsonObject.value("id").toDouble());
             false == handlerName.isEmpty()) {
-            clientMessage->handlerName = handlerName;
+            serverMessage->handlerName = handlerName;
         } else {
             qCritical(logCategoryStrataClient) << "Failed to get handler name.";
             return false;
@@ -182,26 +178,26 @@ bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *
 
         if (true == jsonObject.contains("result") &&
             true == jsonObject.value("result").isObject()) {
-            clientMessage->payload = jsonObject.value("result").toObject();
-            clientMessage->messageType = Message::MessageType::Response;
+            serverMessage->payload = jsonObject.value("result").toObject();
+            serverMessage->messageType = Message::MessageType::Response;
         } else if (true == jsonObject.contains("error") &&
                    true == jsonObject.value("error").isObject()) {
-            clientMessage->payload = jsonObject.value("error").toObject();
-            clientMessage->messageType = Message::MessageType::Error;
+            serverMessage->payload = jsonObject.value("error").toObject();
+            serverMessage->messageType = Message::MessageType::Error;
         } else {
             qCDebug(logCategoryStrataClient) << "No payload.";
-            clientMessage->payload = QJsonObject{};
-            clientMessage->messageType = Message::MessageType::Response;
+            serverMessage->payload = QJsonObject{};
+            serverMessage->messageType = Message::MessageType::Response;
         }
 
     } else if (true == jsonObject.contains("method") &&
                true == jsonObject.value("method").isString()) {
-        clientMessage->handlerName = jsonObject.value("method").toString();
-        clientMessage->messageType = Message::MessageType::Notification;
+        serverMessage->handlerName = jsonObject.value("method").toString();
+        serverMessage->messageType = Message::MessageType::Notification;
 
         if (true == jsonObject.contains("params") &&
             true == jsonObject.value("params").isObject()) {
-            clientMessage->payload = jsonObject.value("params").toObject();
+            serverMessage->payload = jsonObject.value("params").toObject();
         }
 
     } else {
@@ -209,6 +205,6 @@ bool StrataClient::buildServerMessage(const QByteArray &serverMessage, Message *
         return false;
     }
 
-    clientMessage->clientID = "";
+    serverMessage->clientID = "";
     return true;
 }

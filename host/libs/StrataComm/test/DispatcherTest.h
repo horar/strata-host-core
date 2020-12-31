@@ -30,7 +30,7 @@ private slots:
 
 private:
     TestHandlers th_;
-    QVector<Message> cm_;
+    QVector<Message> messageList_;
 
 signals:
     void disp(const Message &clientMessage);

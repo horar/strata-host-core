@@ -49,28 +49,28 @@ bool Dispatcher::unregisterHandler(const QString &handlerName) {
     }
 }
 
-bool Dispatcher::dispatch(const Message &clientMessage) {
-    qCInfo(logCategoryStrataDispatcher) << "Dispatching " << clientMessage.handlerName;
+bool Dispatcher::dispatch(const Message &message) {
+    qCInfo(logCategoryStrataDispatcher) << "Dispatching " << message.handlerName;
 
-    if(auto it = handlersList_.find(clientMessage.handlerName); it == handlersList_.end()) {
-        qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << clientMessage.handlerName;
+    if(auto it = handlersList_.find(message.handlerName); it == handlersList_.end()) {
+        qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << message.handlerName;
         return false;
     } else {
-//        it.value()(clientMessage);    // QMap
-        it->second(clientMessage);
+//        it.value()(message);    // QMap
+        it->second(message);
     }
     return true;
 }
 
-void Dispatcher::dispatchHandler(const Message &clientMessage) {
-    qCInfo(logCategoryStrataDispatcher) << "Dispatching " << clientMessage.handlerName;
+void Dispatcher::dispatchHandler(const Message &message) {
+    qCInfo(logCategoryStrataDispatcher) << "Dispatching " << message.handlerName;
 
-    if(auto it = handlersList_.find(clientMessage.handlerName); it == handlersList_.end()) {
-        qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << clientMessage.handlerName;
+    if(auto it = handlersList_.find(message.handlerName); it == handlersList_.end()) {
+        qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << message.handlerName;
         return;
     } else {
-//        it.value()(clientMessage);    // QMap
-        it->second(clientMessage);
+//        it.value()(message);    // QMap
+        it->second(message);
     }
 }
 

@@ -16,12 +16,12 @@ public:
     ~Dispatcher();
     bool start();
     bool stop();
-    bool dispatch(const Message &clientMessage);
+    bool dispatch(const Message &message);
     bool registerHandler(const QString &handlerName, StrataHandler handler);
     bool unregisterHandler(const QString &handlerName);
 
 public slots:
-    void dispatchHandler(const Message &clientMessage);
+    void dispatchHandler(const Message &message);
 
 private:
     bool isRegisteredHandler(const QString &handlerName);

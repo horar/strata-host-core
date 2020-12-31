@@ -37,54 +37,54 @@ void StrataClientServerIntegrationTest::testSingleClient()
 
     // Server handlers
     server.registerHandler("register_client",
-                           [&server, &serverRecviedRegisterClient](const Message &cm) {
+                           [&server, &serverRecviedRegisterClient](const Message &message) {
                                serverRecviedRegisterClient = true;
-                               server.notifyClient(cm, {}, strata::strataComm::ResponseType::Response);
+                               server.notifyClient(message, {}, strata::strataComm::ResponseType::Response);
                            });
 
     server.registerHandler("unregister",
-                           [&server, &serverRecievedUnregisterClient](const Message &cm) {
+                           [&server, &serverRecievedUnregisterClient](const Message &message) {
                                serverRecievedUnregisterClient = true;
-                               server.notifyClient(cm, {}, strata::strataComm::ResponseType::Response);
+                               server.notifyClient(message, {}, strata::strataComm::ResponseType::Response);
                            });
 
     server.registerHandler(
         "example_command_sends_response",
-        [&server, &serverReceivedExampleCommand1](const Message &cm) {
+        [&server, &serverReceivedExampleCommand1](const Message &message) {
             serverReceivedExampleCommand1 = true;
-            server.notifyClient(cm, {{"test", 1}}, strata::strataComm::ResponseType::Response);
+            server.notifyClient(message, {{"test", 1}}, strata::strataComm::ResponseType::Response);
         });
 
     server.registerHandler("example_command_sends_response_and_notification",
-                           [&server, &serverReceivedExampleCommand2](const Message &cm) {
+                           [&server, &serverReceivedExampleCommand2](const Message &message) {
                                serverReceivedExampleCommand2 = true;
-                               server.notifyClient(cm, {{"message_type", "response"}},
+                               server.notifyClient(message, {{"message_type", "response"}},
                                                    strata::strataComm::ResponseType::Response);
-                               server.notifyClient(cm, {{"message_type", "notification"}},
+                               server.notifyClient(message, {{"message_type", "notification"}},
                                                    strata::strataComm::ResponseType::Notification);
                            });
 
     server.registerHandler("example_command_sends_error", [&server, &serverReceivedErrorCommand](
-                                                              const Message &cm) {
+                                                              const Message &message) {
         serverReceivedErrorCommand = true;
-        server.notifyClient(cm, {{"test", 1}}, strata::strataComm::ResponseType::Error);
+        server.notifyClient(message, {{"test", 1}}, strata::strataComm::ResponseType::Error);
     });
 
     server.registerHandler("platform_message",
-                           [&server, &serverReceivedPlatformMessage](const Message &cm) {
+                           [&server, &serverReceivedPlatformMessage](const Message &message) {
                                serverReceivedPlatformMessage = true;
-                               server.notifyClient(cm, {{"device_id", 100}, {"message", {}}},
+                               server.notifyClient(message, {{"device_id", 100}, {"message", {}}},
                                                    strata::strataComm::ResponseType::Notification);
-                               server.notifyClient(cm, {{"device_id", 100}, {"message", {}}},
+                               server.notifyClient(message, {{"device_id", 100}, {"message", {}}},
                                                    strata::strataComm::ResponseType::PlatformMessage);
                            });
 
     // Client Handlers
     client.registerHandler("register_client",
-                           [&clientRecviedRegisterClient](const Message &cm) {
+                           [&clientRecviedRegisterClient](const Message &message) {
                                clientRecviedRegisterClient = true;
-                               QCOMPARE_(cm.handlerName, "register_client");
-                               QCOMPARE_(cm.messageType, strata::strataComm::Message::Message::MessageType::Response);
+                               QCOMPARE_(message.handlerName, "register_client");
+                               QCOMPARE_(message.messageType, strata::strataComm::Message::Message::MessageType::Response);
                            });
 
     client.registerHandler("unregister",
@@ -95,23 +95,23 @@ void StrataClientServerIntegrationTest::testSingleClient()
                            });
 
     client.registerHandler("example_command_sends_response",
-                           [&clientReceivedExampleCommand1](const Message &cm) {
+                           [&clientReceivedExampleCommand1](const Message &message) {
                                clientReceivedExampleCommand1 = true;
-                               QCOMPARE_(cm.handlerName, "example_command_sends_response");
-                               QCOMPARE_(cm.messageType, strata::strataComm::Message::MessageType::Response);
+                               QCOMPARE_(message.handlerName, "example_command_sends_response");
+                               QCOMPARE_(message.messageType, strata::strataComm::Message::MessageType::Response);
                            });
 
     client.registerHandler(
         "example_command_sends_response_and_notification",
         [&clientReceivedExampleCommand2Notification,
-         &clientReceivedExampleCommand2Response](const Message &cm) {
+         &clientReceivedExampleCommand2Response](const Message &message) {
             // check once for the response and once for the notification
-            QVERIFY_((cm.messageType == strata::strataComm::Message::MessageType::Response) ||
-                     (cm.messageType == strata::strataComm::Message::MessageType::Notification));
+            QVERIFY_((message.messageType == strata::strataComm::Message::MessageType::Response) ||
+                     (message.messageType == strata::strataComm::Message::MessageType::Notification));
 
-            if (cm.messageType == strata::strataComm::Message::MessageType::Response) {
+            if (message.messageType == strata::strataComm::Message::MessageType::Response) {
                 clientReceivedExampleCommand2Response = true;
-            } else if (cm.messageType == strata::strataComm::Message::MessageType::Notification) {
+            } else if (message.messageType == strata::strataComm::Message::MessageType::Notification) {
                 clientReceivedExampleCommand2Notification = true;
             }
         });
@@ -196,22 +196,22 @@ void StrataClientServerIntegrationTest::testMultipleClients()
 
     server.registerHandler("register_client",
                            [&server, &serverRecievedClient1Register,
-                            &serverRecievedClient2Register](const Message &cm) {
-                               if (cm.clientID == "client_1") {
+                            &serverRecievedClient2Register](const Message &message) {
+                               if (message.clientID == "client_1") {
                                    serverRecievedClient1Register = true;
-                                   server.notifyClient(cm, {{"destination", "client_1"}},
+                                   server.notifyClient(message, {{"destination", "client_1"}},
                                                        strata::strataComm::ResponseType::Response);
-                               } else if (cm.clientID == "client_2") {
+                               } else if (message.clientID == "client_2") {
                                    serverRecievedClient2Register = true;
-                                   server.notifyClient(cm, {{"destination", "client_2"}},
+                                   server.notifyClient(message, {{"destination", "client_2"}},
                                                        strata::strataComm::ResponseType::Response);
                                }
                            });
 
     client_1.registerHandler(
-        "register_client", [&client1ReceivedServerResponse](const Message &cm) {
-            qDebug() << cm.payload;
-            if (cm.payload.contains("destination") && cm.payload["destination"] == "client_1") {
+        "register_client", [&client1ReceivedServerResponse](const Message &message) {
+            qDebug() << message.payload;
+            if (message.payload.contains("destination") && message.payload["destination"] == "client_1") {
                 client1ReceivedServerResponse = true;
             } else {
                 QFAIL_("Server responded to the wrong client");
@@ -219,8 +219,8 @@ void StrataClientServerIntegrationTest::testMultipleClients()
         });
 
     client_2.registerHandler(
-        "register_client", [&client2ReceivedServerResponse](const Message &cm) {
-            if (cm.payload.contains("destination") && cm.payload["destination"] == "client_2") {
+        "register_client", [&client2ReceivedServerResponse](const Message &message) {
+            if (message.payload.contains("destination") && message.payload["destination"] == "client_2") {
                 client2ReceivedServerResponse = true;
             } else {
                 QFAIL_("Server responded to the wrong client");

@@ -7,12 +7,12 @@ class TestHandlers {
 public:
     TestHandlers() {}
     ~TestHandlers() {}
-    void handler_1(const Message &clientMessage);
-    void handler_2(const Message &clientMessage);
-    void handler_3(const Message &clientMessage);
-    void handler_4(const Message &clientMessage);
+    void handler_1(const Message &message);
+    void handler_2(const Message &message);
+    void handler_3(const Message &message);
+    void handler_4(const Message &message);
 
 private:
 
-    void printClientMessage(const Message &cm);
+    void printClientMessage(const Message &message);
 };
