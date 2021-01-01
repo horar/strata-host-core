@@ -142,13 +142,7 @@ void StrataServerTest::testServerFunctionality() {
     client_2.initilize();
     client_2.sendMessage(R"({"cmd":"register_client", "payload":{}})");
 
-    QTimer timer;
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
 
     QVERIFY_(clientGotResponse);
     QVERIFY_(clientGotResponse_2);
@@ -186,13 +180,7 @@ void StrataServerTest::testBuildNotificationApiV2() {
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"test_notification","params":{},"id":2})");
 
-    QTimer timer;
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
 
     QVERIFY_(testExecuted);
 }
@@ -229,13 +217,7 @@ void StrataServerTest::testBuildResponseApiV2() {
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"test_response","params":{},"id":1})");
 
-    QTimer timer;
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
 
     QVERIFY_(testExecuted);
 }
@@ -273,13 +255,7 @@ void StrataServerTest::testBuildErrorApiV2() {
     client.sendMessage(R"({"jsonrpc": "2.0","method":"test_error","params":{},"id":3})");
 
     // verify that the thing is valid in the handlers.
-    QTimer timer;
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
 
     QVERIFY_(testExecuted);
 }
@@ -317,13 +293,7 @@ void StrataServerTest::testBuildPlatformMessageApiV2() {
 
     client.sendMessage(R"({"jsonrpc": "2.0","method":"platform_notification","params":{},"id":4})");
 
-    QTimer timer;
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
     
     QVERIFY_(testExecuted);
 }
@@ -355,13 +325,7 @@ void StrataServerTest::testBuildNotificationApiV1() {
 
     client.sendMessage(R"({"hcs::cmd":"test_notification","payload":{}})");
 
-    QTimer timer;
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
 
     QVERIFY_(testExecuted);
 }
@@ -393,13 +357,7 @@ void StrataServerTest::testBuildResponseApiV1() {
 
     client.sendMessage(R"({"hcs::cmd":"test_response","payload":{}})");
 
-    QTimer timer;
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
     
     QVERIFY_(testExecuted);
 }
@@ -463,13 +421,7 @@ void StrataServerTest::testBuildPlatformMessageApiV1() {
 
     client.sendMessage(R"({"hcs::cmd":"platform_notification","payload":{}})");
 
-    QTimer timer;
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
 
     QVERIFY_(testExecuted);
 }
@@ -549,12 +501,7 @@ void StrataServerTest::testNotifyAllClients() {
         clientsList[i]->sendMessage(R"({"cmd":"register_client", "payload":{}})");
     }
 
-    // wait for the messages
-    timer.setSingleShot(true);
-    timer.start(100);
-    do {
-        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-    } while (timer.isActive());
+    waitForZmqMessages();
 
     server.notifyAllClients("test_broadcast", {{"test", "test"}});
 
@@ -573,6 +520,57 @@ void StrataServerTest::testNotifyAllClients() {
     }
 }
 
+void StrataServerTest::testNotifyClientByClientId()
+{
+    bool testExecuted = false;
+    StrataServer server(address_);
+    QVERIFY_(server.initializeServer());
+
+    strata::strataComm::ClientConnector client(address_, "AA");
+    client.initilize();
+
+    client.sendMessage(
+        R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
+    waitForZmqMessages();
+
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
+            [&testExecuted](const QByteArray &message) {
+                QJsonParseError jsonParseError;
+                QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+
+                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+
+                QJsonObject jsonObject = jsonDocument.object();
+
+                QVERIFY_(jsonObject.contains("method"));
+                QVERIFY_(jsonObject.value("method").isString());
+                QCOMPARE_(jsonObject.value("method").toString(), "test_handler");
+                testExecuted = true;
+            });
+
+    server.notifyClient("AA", "test_handler", QJsonObject({{"key", "value"}}),
+                        strata::strataComm::ResponseType::Notification);
+    waitForZmqMessages();
+
+    QVERIFY_(testExecuted);
+}
+
+void StrataServerTest::testNotifyClientToNonExistingClient()
+{
+    StrataServer server(address_);
+    QVERIFY_(server.initializeServer());
+
+    strata::strataComm::ClientConnector client(address_, "AA");
+    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
+            [](const QByteArray &message) {
+                QFAIL_("Messages should not be sent to unregistered Clients.");
+            });
+
+    server.notifyClient("AA", "test_handler", QJsonObject({{"key", "value"}}),
+                        strata::strataComm::ResponseType::Notification);
+    waitForZmqMessages();
+}
+
 void StrataServerTest::testInitializeServerFail() 
 {
     StrataServer server(address_);
@@ -580,4 +578,14 @@ void StrataServerTest::testInitializeServerFail()
 
     QVERIFY_(server.initializeServer());
     QVERIFY_(false == duplicateServer.initializeServer());
+}
+
+void StrataServerTest::waitForZmqMessages(int delay)
+{
+    QTimer timer;
+    timer.setSingleShot(true);
+    timer.start(delay);
+    do {
+        QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
+    } while (timer.isActive());
 }

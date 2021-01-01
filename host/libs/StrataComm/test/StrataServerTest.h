@@ -2,12 +2,13 @@
 
 #include "QtTest.h"
 
-#include <QObject>
 #include <StrataServer.h>
+#include <QObject>
 
 using strata::strataComm::StrataServer;
 
-class StrataServerTest : public QObject {
+class StrataServerTest : public QObject
+{
     Q_OBJECT
 
 signals:
@@ -29,9 +30,12 @@ private slots:
     void testFloodTheServer();
     void testServerFunctionality();
     void testNotifyAllClients();
+    void testNotifyClientByClientId();
+    void testNotifyClientToNonExistingClient();
 
     void testInitializeServerFail();
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
+    void waitForZmqMessages(int delay=100);
 };

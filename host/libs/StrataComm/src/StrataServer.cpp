@@ -180,7 +180,6 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
         return false;
     }
 
-    // populate the payload
     // documentation show messages with no payload are valid.
     bool hasPayload = (true == jsonObject.contains("payload")) && (jsonObject.value("payload").isObject());
     QJsonObject payloadJsonObject{};
@@ -209,9 +208,6 @@ bool StrataServer::buildClientMessageAPIv1(const QJsonObject &jsonObject, Messag
 }
 
 void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject &jsonObject, ResponseType responseType) {
-    // determine the Api version of the client.
-    // determine the type of the response.
-
     QByteArray serverMessage;
 
     switch (clientsController_.getClientApiVersion(clientMessage.clientID)) {
@@ -229,12 +225,24 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
             break;
 
         case ApiVersion::none:
-            qCCritical(logCategoryStrataServer) << "unsupported API version.";
+            qCCritical(logCategoryStrataServer) << "unsupported API version or client is not registered.";
             return;
             break;
     }
 
     connector_.sendMessage(clientMessage.clientID, serverMessage);
+}
+
+void StrataServer::notifyClient(const QByteArray &clientId, const QString &handlerName,
+                                const QJsonObject &jsonObject, ResponseType responseType)
+{
+    Message message;
+    message.clientID = clientId;
+    message.handlerName = handlerName;
+    message.messageID = 0;
+    message.messageType = Message::MessageType::Command;
+    message.payload = QJsonObject({});
+    notifyClient(message, jsonObject, responseType);
 }
 
 void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject) {
