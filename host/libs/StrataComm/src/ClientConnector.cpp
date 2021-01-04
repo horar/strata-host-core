@@ -102,7 +102,7 @@ bool ClientConnector::sendMessage(const QByteArray &message)
 
     } else {
         qCCritical(logCategoryStrataClientConnector)
-            << "Failed to send message. Connector is not initilized.";
+            << "Failed to send message. Connector is not initialized.";
         return false;
     }
 
