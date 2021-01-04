@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QTEST_SET_MAIN_SOURCE_PATH
     DispatcherTest tc1;
     ClientsControllerTest tc2;
-    ServerConnectorTest tc3;
+    ConnectorsTest tc3;
     StrataServerTest tc4;
     StrataClientTest tc5;
     RequestsControllerTest tc6;

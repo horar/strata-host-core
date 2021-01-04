@@ -8,7 +8,7 @@
 #include "../src/ServerConnector.h"
 #include "QtTest.h"
 
-class ServerConnectorTest : public QObject
+class ConnectorsTest : public QObject
 {
     Q_OBJECT
 

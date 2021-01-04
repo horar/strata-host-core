@@ -2,7 +2,7 @@
 
 #include <QVector>
 
-void ServerConnectorTest::waitForZmqMessages(int delay)
+void ConnectorsTest::waitForZmqMessages(int delay)
 {
     QTimer timer;
 
@@ -14,7 +14,7 @@ void ServerConnectorTest::waitForZmqMessages(int delay)
     } while (timer.isActive());
 }
 
-void ServerConnectorTest::testOpenServerConnectorFaild()
+void ConnectorsTest::testOpenServerConnectorFaild()
 {
     strata::strataComm::ServerConnector connector(address_);
     QCOMPARE(connector.initilize(), true);
@@ -23,7 +23,7 @@ void ServerConnectorTest::testOpenServerConnectorFaild()
     QCOMPARE(connectorDublicate.initilize(), false);
 }
 
-void ServerConnectorTest::testServerAndClient()
+void ConnectorsTest::testServerAndClient()
 {
     QTimer timer;
     bool testPassed = false;
@@ -61,7 +61,7 @@ void ServerConnectorTest::testServerAndClient()
     QVERIFY_(testPassed);
 }
 
-void ServerConnectorTest::testMultipleClients()
+void ConnectorsTest::testMultipleClients()
 {
     strata::strataComm::ServerConnector server(address_);
     QCOMPARE_(server.initilize(), true);
@@ -93,7 +93,7 @@ void ServerConnectorTest::testMultipleClients()
     }
 }
 
-void ServerConnectorTest::testFloodTheServer()
+void ConnectorsTest::testFloodTheServer()
 {
     strata::strataComm::ServerConnector server(address_);
     QCOMPARE_(server.initilize(), true);
@@ -122,7 +122,7 @@ void ServerConnectorTest::testFloodTheServer()
     waitForZmqMessages();
 }
 
-void ServerConnectorTest::testFloodTheClient()
+void ConnectorsTest::testFloodTheClient()
 {
     QTimer timer;
 
@@ -155,7 +155,7 @@ void ServerConnectorTest::testFloodTheClient()
     } while (timer.isActive());
 }
 
-void ServerConnectorTest::testDisconnectClient()
+void ConnectorsTest::testDisconnectClient()
 {
     bool serverRecivedMessage = false;
     strata::strataComm::ServerConnector server(address_);
@@ -206,7 +206,7 @@ void ServerConnectorTest::testDisconnectClient()
     QCOMPARE_(client.disconnectClient(), true);
 }
 
-void ServerConnectorTest::testFailedToSendMessageFromClientConnector()
+void ConnectorsTest::testFailedToSendMessageFromClientConnector()
 {
     strata::strataComm::ClientConnector client(address_);
 
@@ -219,7 +219,7 @@ void ServerConnectorTest::testFailedToSendMessageFromClientConnector()
     QVERIFY_(false == client.sendMessage("This should fail!"));
 }
 
-void ServerConnectorTest::testFailedToSendMessageFromServerConnector()
+void ConnectorsTest::testFailedToSendMessageFromServerConnector()
 {
     strata::strataComm::ServerConnector server(address_);
 
