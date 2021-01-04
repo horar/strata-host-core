@@ -398,11 +398,14 @@ Window {
                                 hoverEnabled: true
 
                                 onClicked: {
+                                    model.connected = false
+                                    updateConnectedPlatforms()
                                     platformModel.remove(index)
                                     storeState()
                                 }
                             }
                         }
+
 
                         RowLayout {
                             Layout.preferredHeight: 40
@@ -718,10 +721,10 @@ Window {
             const updatedPlatform = platformModel.get(i)
             if (updatedPlatform.connected) {
                 injectList.list.push({
-                              "class_id": updatedPlatform.class_id,
-                              "device_id": updatedPlatform.device_id + Constants.DEBUG_DEVICE_ID,
-                              "firmware_version": updatedPlatform.firmware_version
-                          })
+                                         "class_id": updatedPlatform.class_id,
+                                         "device_id": updatedPlatform.device_id + Constants.DEBUG_DEVICE_ID,
+                                         "firmware_version": updatedPlatform.firmware_version
+                                     })
             }
         }
 
