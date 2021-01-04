@@ -34,12 +34,13 @@ Item {
         clip: true
         spacing: 0
         property bool stopScrolling: false
-        property int currentBottom: 0
+        property int currentBottom: contentY
+        signal logAdded()
 
-        onCountChanged: {
+        onLogAdded: {
             if(!stopScrolling){
-                positionViewAtIndex(count - 1, ListView.Visible)
-                currentBottom = contentY
+                positionViewAtEnd()
+                currentBottom = contentHeight - height
             }
         }
 
@@ -50,6 +51,11 @@ Item {
                 stopScrolling = false
             }
         }
+
+        onContentHeightChanged: {
+            currentBottom = contentHeight - height
+        }
+
 
         ScrollBar.vertical: ScrollBar {
             active: true
@@ -107,7 +113,8 @@ Item {
                     }
                 }
 
-                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg, current: true})
+                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg, current: true})                
+                consoleLogs.logAdded()
 
                 if(type === 1){
                     warningCount += 1

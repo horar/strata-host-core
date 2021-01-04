@@ -10,16 +10,6 @@ Item{
     height: consoleMessage.height
     width: consoleLogs.width
     anchors.bottomMargin: 5
-    signal clicked()
-
-    onClicked: {
-        if(model.index < consoleLogs.count - 1){
-            consoleLogs.positionViewAtIndex(model.index, ListView.Visible)
-            consoleLogs.stopScrolling = true
-        } else if(consoleLogs.stopScrolling){
-            consoleLogs.stopScrolling = false
-        }
-    }
 
     ConsoleTime {
         id: consoleTime
@@ -47,14 +37,6 @@ Item{
         anchors.right: parent.right
         anchors.leftMargin: 10
         current: model.current
-    }
-
-    MouseArea {
-        anchors.fill: parent
-
-        onClicked: {
-            parent.clicked()
-        }
     }
 }
 
