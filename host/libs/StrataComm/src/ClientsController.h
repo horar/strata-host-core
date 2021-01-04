@@ -19,8 +19,7 @@ public:
     {
     }
 
-    void notifyAllClients(const QString &handlerName,
-                          const QJsonObject &payload);
+    void notifyAllClients(const QString &handlerName, const QJsonObject &payload);
     QList<Client> getAllClients();
     bool isRegisteredClient(const QByteArray &clientID);
     bool registerClient(const Client &client);
