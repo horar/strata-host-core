@@ -1,16 +1,20 @@
 #pragma once
 
+#include <Connector.h>
 #include <QObject>
 #include <QSocketNotifier>
-#include <Connector.h>
 
-namespace strata::strataComm {
-
-class ServerConnector : public QObject {
+namespace strata::strataComm
+{
+class ServerConnector : public QObject
+{
     Q_OBJECT
 
 public:
-    ServerConnector(QString serverAddress, QObject *parent = nullptr) : QObject(parent), connector_(nullptr), serverAddress_(serverAddress){}
+    ServerConnector(QString serverAddress, QObject *parent = nullptr)
+        : QObject(parent), connector_(nullptr), serverAddress_(serverAddress)
+    {
+    }
     ~ServerConnector();
 
     bool initilize();
@@ -29,4 +33,4 @@ private:
     QString serverAddress_;
 };
 
-}   // namespace strata::strataComm
+}  // namespace strata::strataComm

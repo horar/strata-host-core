@@ -1,21 +1,15 @@
 #pragma once
 
-#include <QtCore>
 #include <QByteArray>
 #include <QString>
+#include <QtCore>
 
-namespace strata::strataComm {
-    
-enum class ApiVersion {
-        v1,
-        v2,
-        none
-};
+namespace strata::strataComm
+{
+enum class ApiVersion { v1, v2, none };
 
 class Client
 {
-    
-
 public:
     Client(const QByteArray clientId, const ApiVersion APIVersion);
     ~Client();
@@ -27,4 +21,4 @@ private:
     ApiVersion APIVersion_;
 };
 
-}   // namespace strata::strataComm
+}  // namespace strata::strataComm

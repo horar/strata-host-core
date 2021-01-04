@@ -57,7 +57,6 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
 {
     qCDebug(logCategoryStrataClient) << "New message from the server:" << jsonServerMessage;
 
-    // parse the message.
     Message serverMessage;
     if (false == buildServerMessage(jsonServerMessage, &serverMessage)) {
         qCCritical(logCategoryStrataClient) << "Failed to build server message.";
@@ -69,7 +68,8 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
     qCDebug(logCategoryStrataClient) << "message id:" << serverMessage.messageID;
     qCDebug(logCategoryStrataClient) << "method:" << serverMessage.handlerName;
     qCDebug(logCategoryStrataClient) << "payload:" << serverMessage.payload;
-    qCDebug(logCategoryStrataClient) << "message type:" << static_cast<int>(serverMessage.messageType);
+    qCDebug(logCategoryStrataClient)
+        << "message type:" << static_cast<int>(serverMessage.messageType);
     qCDebug(logCategoryStrataClient) << "#########################################";
 
     emit dispatchHandler(serverMessage);
@@ -161,7 +161,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     if (true == jsonObject.contains("id") && true == jsonObject.value("id").isDouble()) {
         serverMessage->messageID = jsonObject.value("id").toDouble();
 
-        // Get the handler name from the request controller based on the message id 
+        // Get the handler name from the request controller based on the message id
         if (QString handlerName =
                 requestController_.getMethodName(jsonObject.value("id").toDouble());
             false == handlerName.isEmpty()) {

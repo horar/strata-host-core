@@ -47,13 +47,14 @@ bool RequestsController::removePendingRequest(int id)
     return requestsList_.remove(id) > 0;
 }
 
-QString RequestsController::getMethodName(int id) 
+QString RequestsController::getMethodName(int id)
 {
     auto it = requestsList_.find(id);
     if (it == requestsList_.end()) {
         qCDebug(logCategoryRequestsController) << "Request id not found.";
         return "";
     }
-    qCDebug(logCategoryRequestsController) << "request id" << it->messageId << "method" << it->method;
+    qCDebug(logCategoryRequestsController)
+        << "request id" << it->messageId << "method" << it->method;
     return it->method;
 }

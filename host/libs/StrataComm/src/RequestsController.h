@@ -1,13 +1,14 @@
 #pragma once
 
-#include <QObject>
 #include <QHash>
+#include <QObject>
 
 #include "Request.h"
 
-namespace strata::strataComm {
-
-class RequestsController : public QObject {
+namespace strata::strataComm
+{
+class RequestsController : public QObject
+{
     Q_OBJECT
 
 public:
@@ -26,4 +27,4 @@ private:
     int currentRequestId_;
 };
 
-} // namespace strata::strataComm
+}  // namespace strata::strataComm

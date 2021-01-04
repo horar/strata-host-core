@@ -1,13 +1,11 @@
 #pragma once
 
 #include <QObject>
-#include <QThread>
-#include <QMap>
 
 #include "Message.h"
 
-namespace strata::strataComm {
-
+namespace strata::strataComm
+{
 class Dispatcher : public QObject
 {
     Q_OBJECT
@@ -25,8 +23,7 @@ public slots:
 
 private:
     bool isRegisteredHandler(const QString &handlerName);
-//    QMap<QString, StrataHandler> handlersList_;
     std::map<QString, StrataHandler> handlersList_;
 };
 
-}   // namespace strata::strataComm
+}  // namespace strata::strataComm

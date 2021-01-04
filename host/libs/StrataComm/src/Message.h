@@ -6,7 +6,6 @@
 
 namespace strata::strataComm
 {
-
 enum class ResponseType { Response, Notification, PlatformMessage, Error };
 
 struct Message {

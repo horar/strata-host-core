@@ -6,9 +6,10 @@
 #include "../src/Dispatcher.h"
 #include "../src/ServerConnector.h"
 
-namespace strata::strataComm {
-
-class StrataServer : public QObject {
+namespace strata::strataComm
+{
+class StrataServer : public QObject
+{
     Q_OBJECT
 
 public:
@@ -21,8 +22,10 @@ public:
 
 public slots:
     void newClientMessage(const QByteArray &clientId, const QByteArray &message);
-    void notifyClient(const Message &clientMessage, const QJsonObject &jsonObject, ResponseType responseType);
-    void notifyClient(const QByteArray &clientId, const QString &handlerName, const QJsonObject &jsonObject, ResponseType responseType);
+    void notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
+                      ResponseType responseType);
+    void notifyClient(const QByteArray &clientId, const QString &handlerName,
+                      const QJsonObject &jsonObject, ResponseType responseType);
     void notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject);
 
 signals:
@@ -32,8 +35,10 @@ private:
     bool buildClientMessageAPIv2(const QJsonObject &jsonObject, Message *clientMessage);
     bool buildClientMessageAPIv1(const QJsonObject &jsonObject, Message *clientMessage);
 
-    QByteArray buildServerMessageAPIv2(const Message &clientMessage, const QJsonObject &payload, ResponseType responseType);
-    QByteArray buildServerMessageAPIv1(const Message &clientMessage, const QJsonObject &payload, ResponseType responseType);
+    QByteArray buildServerMessageAPIv2(const Message &clientMessage, const QJsonObject &payload,
+                                       ResponseType responseType);
+    QByteArray buildServerMessageAPIv1(const Message &clientMessage, const QJsonObject &payload,
+                                       ResponseType responseType);
 
     void registerNewClientHandler(const Message &clientMessage);
     void unregisterClientHandler(const Message &clientMessage);
@@ -43,4 +48,4 @@ private:
     ServerConnector connector_;
 };
 
-}   // namespace strata::strataComm
+}  // namespace strata::strataComm
