@@ -17,13 +17,12 @@ void StrataClientTest::testRegisterAndUnregisterHandlers()
     StrataClient client(address_);
 
     // register new handler
-    QVERIFY_(client.registerHandler("handler_1",
-                                    [](const strata::strataComm::Message &) { return; }));
-    QVERIFY_(client.registerHandler("handler_2",
-                                    [](const strata::strataComm::Message &) { return; }));
-    QVERIFY_(false ==
-             client.registerHandler("handler_2",
-                                    [](const strata::strataComm::Message &) { return; }));
+    QVERIFY_(
+        client.registerHandler("handler_1", [](const strata::strataComm::Message &) { return; }));
+    QVERIFY_(
+        client.registerHandler("handler_2", [](const strata::strataComm::Message &) { return; }));
+    QVERIFY_(false == client.registerHandler("handler_2",
+                                             [](const strata::strataComm::Message &) { return; }));
 
     QVERIFY_(client.unregisterHandler("handler_1"));
     QVERIFY_(client.unregisterHandler("handler_2"));
@@ -80,7 +79,6 @@ void StrataClientTest::testConnectDisconnectToTheServer()
     waitForZmqMessages();
     QVERIFY_(serverRevicedMessage);
     QVERIFY_(clientRecivedMessage);
-
 }
 
 void StrataClientTest::testBuildRequest()
@@ -92,27 +90,27 @@ void StrataClientTest::testBuildRequest()
 
     strata::strataComm::ServerConnector server(address_);
     server.initilize();
-    connect(
-        &server, &strata::strataComm::ServerConnector::newMessageRecived, this,
-        [&expectedId, &expectedMethod, &serverRevicedMessage](const QByteArray &, const QByteArray &message) {
-            QJsonObject jsonObject(QJsonDocument::fromJson(message).object());
+    connect(&server, &strata::strataComm::ServerConnector::newMessageRecived, this,
+            [&expectedId, &expectedMethod, &serverRevicedMessage](const QByteArray &,
+                                                                  const QByteArray &message) {
+                QJsonObject jsonObject(QJsonDocument::fromJson(message).object());
 
-            QVERIFY_(jsonObject.contains("jsonrpc"));
-            QVERIFY_(jsonObject.value("jsonrpc").isString());
+                QVERIFY_(jsonObject.contains("jsonrpc"));
+                QVERIFY_(jsonObject.value("jsonrpc").isString());
 
-            QVERIFY_(jsonObject.contains("id"));
-            QVERIFY_(jsonObject.value("id").isDouble());
-            QCOMPARE_(jsonObject.value("id").toDouble(), expectedId);
+                QVERIFY_(jsonObject.contains("id"));
+                QVERIFY_(jsonObject.value("id").isDouble());
+                QCOMPARE_(jsonObject.value("id").toDouble(), expectedId);
 
-            QVERIFY_(jsonObject.contains("method"));
-            QVERIFY_(jsonObject.value("method").isString());
-            QCOMPARE_(jsonObject.value("method").toString(), expectedMethod);
+                QVERIFY_(jsonObject.contains("method"));
+                QVERIFY_(jsonObject.value("method").isString());
+                QCOMPARE_(jsonObject.value("method").toString(), expectedMethod);
 
-            QVERIFY_(jsonObject.contains("params"));
-            QVERIFY_(jsonObject.value("params").isObject());
+                QVERIFY_(jsonObject.contains("params"));
+                QVERIFY_(jsonObject.value("params").isObject());
 
-            serverRevicedMessage = true;
-        });
+                serverRevicedMessage = true;
+            });
 
     StrataClient client(address_);
 

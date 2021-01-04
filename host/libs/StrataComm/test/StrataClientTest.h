@@ -2,12 +2,13 @@
 
 #include "QtTest.h"
 
-#include <QObject>
 #include <StrataClient.h>
+#include <QObject>
 
 using strata::strataComm::StrataClient;
 
-class StrataClientTest : public QObject {
+class StrataClientTest : public QObject
+{
     Q_OBJECT
 
 private slots:
@@ -17,6 +18,6 @@ private slots:
     void testNonDefaultDealerId();
 
 private:
-    void waitForZmqMessages(int delay=100);
+    void waitForZmqMessages(int delay = 100);
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
 };

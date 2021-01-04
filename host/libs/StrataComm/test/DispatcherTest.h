@@ -2,13 +2,13 @@
 
 #include <QObject>
 
-#include "../src/Message.h"
 #include "../src/Dispatcher.h"
+#include "../src/Message.h"
 #include "QtTest.h"
 #include "TestHandlers.h"
 
-using strata::strataComm::Message;
 using strata::strataComm::Dispatcher;
+using strata::strataComm::Message;
 
 class DispatcherTest : public QObject
 {

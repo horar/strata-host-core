@@ -1,12 +1,12 @@
 #include <QtTest>
 
 #include "ClientsControllerTest.h"
-#include "DispatcherTest.h"
 #include "ConnectorsTest.h"
+#include "DispatcherTest.h"
 #include "RequestsControllerTest.h"
+#include "StrataClientServerIntegrationTest.h"
 #include "StrataClientTest.h"
 #include "StrataServerTest.h"
-#include "StrataClientServerIntegrationTest.h"
 
 int main(int argc, char *argv[])
 {

@@ -5,7 +5,8 @@
 #include <QObject>
 #include "../src/RequestsController.h"
 
-class RequestsControllerTest : public QObject {
+class RequestsControllerTest : public QObject
+{
     Q_OBJECT
 
 private slots:
