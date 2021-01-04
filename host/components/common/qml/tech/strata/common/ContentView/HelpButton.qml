@@ -21,7 +21,7 @@ SGIcon {
 
     function clickAction() {
         accordion.contentItem.children[0].open = true
-        Help.startHelpTour("contentViewHelp", "strataMain")
+        Help.startHelpTour("contentViewHelp", view.help_tour_id)
     }
 
     Component.onCompleted: {

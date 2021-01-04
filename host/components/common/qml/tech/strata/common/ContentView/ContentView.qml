@@ -13,6 +13,7 @@ Rectangle {
     }
 
     property string class_id: ""
+    property string help_tour_id: ""
     property var classDocuments: null
     property var fakeHelpDocuments: null
     property var pdfAccordionState
@@ -77,10 +78,18 @@ Rectangle {
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
         helpIcon.class_id = view.class_id
+        let previousDeviceId = Help.current_device_id
+        // generate a uuidv4
+        help_tour_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        })
+        Help.setClassId(help_tour_id)
         Help.registerTarget(accordion.contentItem.children[0],"Use this menu to select platform-specific documents for viewing.",0,"contentViewHelp")
         Help.registerTarget(accordion.contentItem.children[1],"This menu includes part-specific datasheets for viewing.",1,"contentViewHelp")
         Help.registerTarget(accordion.contentItem.children[2],"Select and download files related to this platform here.",2,"contentViewHelp")
         Help.registerTarget(pdfViewerContainer,"This pane displays the documents selected from the left menu.",3,"contentViewHelp")
+        Help.current_device_id = previousDeviceId
     }
 
     Connections {
