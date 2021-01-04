@@ -13,7 +13,7 @@ add_executable(${PROJECT_NAME}-test
     DispatcherTest.cpp
     TestHandlers.cpp
     ClientsControllerTest.cpp
-    QzmqTest.cpp
+    ConnectorsTest.cpp
     StrataServerTest.cpp
     StrataClientTest.cpp
     RequestsControllerTest.cpp

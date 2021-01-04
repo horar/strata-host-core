@@ -2,7 +2,7 @@
 
 #include "ClientsControllerTest.h"
 #include "DispatcherTest.h"
-#include "QzmqTest.h"
+#include "ConnectorsTest.h"
 #include "RequestsControllerTest.h"
 #include "StrataClientTest.h"
 #include "StrataServerTest.h"
