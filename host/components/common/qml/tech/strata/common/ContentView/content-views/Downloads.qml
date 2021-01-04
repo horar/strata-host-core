@@ -373,8 +373,7 @@ Item {
 
             onClicked: {
                 if(!fileDialog.visible){
-                    fileDialog.close()
-                    fileDialog.open()
+                   Qt.openUrlExternally(CommonCpp.SGUtilsCpp.pathToUrl(savePath))
                 }
             }
         }
