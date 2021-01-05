@@ -399,7 +399,6 @@ Window {
 
                                 onClicked: {
                                     model.connected = false
-                                    updateConnectedPlatforms()
                                     platformModel.remove(index)
                                     storeState()
                                 }
