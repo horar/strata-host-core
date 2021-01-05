@@ -275,6 +275,7 @@ FocusScope {
                                 rightMargin: 2
                             }
 
+                            textFormat: Text.PlainText
                             font.family: "monospace"
                             wrapMode: Text.WordWrap
                             selectByKeyboard: true
@@ -572,6 +573,84 @@ FocusScope {
 
                     onSuggestionDelegateRemoveRequested: {
                         model.platform.commandHistoryModel.removeAt(index)
+                    }
+
+                    suggestionListDelegate: Item {
+                        width: ListView.view.width
+                        height: textEdit.paintedHeight + 10
+
+                        Loader {
+                            id: suggestionListHighlighterLoader
+                            sourceComponent: model.isJsonValid ? suggestionListHighlighterComponent : null
+                        }
+
+                        Component {
+                            id: suggestionListHighlighterComponent
+                            CommonCpp.SGJsonSyntaxHighlighter {
+                                textDocument: textEdit.textDocument
+                            }
+                        }
+
+                        Rectangle {
+                            anchors.fill: parent
+                            color: {
+                                if (parent.ListView.isCurrentItem) {
+                                    return Qt.lighter(cmdInput.palette.highlight, 1.7)
+                                } else if (delegateMouseArea.containsMouse || removeBtn.hovered) {
+                                    return Qt.lighter(cmdInput.palette.highlight, 1.9)
+                                }
+
+                                return "transparent"
+                            }
+                        }
+
+                        SGWidgets.SGTextEdit {
+                            id: textEdit
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                left: parent.left
+                                leftMargin: 4
+                                right: removeBtn.left
+                                rightMargin: 4
+                            }
+
+                            textFormat: Text.PlainText
+                            readOnly: true
+                            wrapMode: Text.WrapAnywhere
+                            text: model.message
+                        }
+
+                        MouseArea {
+                            id: delegateMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: {
+                                parent.ListView.view.currentIndex = index
+                                cmdInput.suggestionDelegateSelected(index)
+                            }
+                        }
+
+                        SGWidgets.SGIconButton {
+                            id: removeBtn
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                right: parent.right
+                                rightMargin: 2 + 8
+                            }
+
+                            iconSize: SGWidgets.SGSettings.fontPixelSize
+                            hintText: qsTr("Remove")
+                            visible: delegateMouseArea.containsMouse
+                                     || removeBtn.hovered
+                                     || parent.ListView.isCurrentItem
+
+                            iconColor: "white"
+                            icon.source: "qrc:/sgimages/times.svg"
+                            highlightImplicitColor: Theme.palette.error
+                            onClicked: {
+                                cmdInput.suggestionDelegateRemoveRequested(index)
+                            }
+                        }
                     }
                 }
 
