@@ -33,29 +33,13 @@ Item {
         model: consoleItems
         clip: true
         spacing: 0
-        property bool stopScrolling: false
-        property int currentBottom: contentY
-        signal logAdded()
 
-        onLogAdded: {
-            if(!stopScrolling){
+        function logAdded() {
+            // if user is at end of list, scroll to end of list to focus on new logs
+            if (contentY >= (contentHeight - height)){
                 positionViewAtEnd()
-                currentBottom = contentHeight - height
             }
         }
-
-        onContentYChanged: {
-            if(contentY < currentBottom){
-                stopScrolling = true
-            } else {
-                stopScrolling = false
-            }
-        }
-
-        onContentHeightChanged: {
-            currentBottom = contentHeight - height
-        }
-
 
         ScrollBar.vertical: ScrollBar {
             active: true
@@ -113,7 +97,7 @@ Item {
                     }
                 }
 
-                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg, current: true})                
+                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg, current: true})
                 consoleLogs.logAdded()
 
                 if(type === 1){
@@ -125,7 +109,6 @@ Item {
             }
         }
     }
-
 
     function getMsgType(type){
         switch(type){
