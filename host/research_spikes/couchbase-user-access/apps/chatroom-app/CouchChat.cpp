@@ -1,5 +1,6 @@
 #include "CouchChat.h"
 #include "DatabaseManager.h"
+#include "DatabaseAccess.h"
 
 #include <QDebug>
 #include <thread>

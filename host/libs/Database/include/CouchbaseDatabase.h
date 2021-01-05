@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonArray>
 
 #include <couchbase-lite-C/CouchbaseLite.hh>
 #include "CouchbaseDocument.h"
@@ -46,6 +47,10 @@ public:
     bool save(CouchbaseDocument *doc);
 
     bool deleteDoc(const std::string &id);
+
+    void joinChannel(const QString &strataLoginUsername, const QString &channel);
+
+    void leaveChannel(const QString &strataLoginUsername, const QString &channel);
 
     /**
      * Returns a document by given ID

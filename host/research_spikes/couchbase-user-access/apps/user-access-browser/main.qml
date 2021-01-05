@@ -21,8 +21,11 @@ Window {
 
     property var username: null
     property var endpoint: null
-    property var channels: null
-    property var user_access_map: null
+
+    property var channels_access_granted: null
+    property var channels_access_available: null
+
+    property var userAccessMap: null
 
     Row {
         spacing: 5
@@ -145,6 +148,199 @@ Window {
                         }
                     }
                 }
+
+                // Divider bar
+                Rectangle {
+                    border.width: 4
+                    border.color: "lightgrey"
+                    height: 5
+                    width: inputContainer.width
+
+                    Layout.leftMargin: 5
+                    Layout.preferredHeight: 30
+                    Layout.bottomMargin: 10
+                }
+
+                ColumnLayout {
+                    spacing: -10
+
+                    Label {
+                        color: "black"
+                        visible: true
+                        text: "Join existing channel"
+
+                        font.pointSize: 14
+                        Layout.leftMargin: 5
+                        Layout.topMargin: 5
+                        Layout.preferredHeight: 30
+                    }
+
+                    RowLayout {
+                        spacing: 10
+
+                        ComboBox {
+                            id: joinChannelCombobox
+                            width: inputContainer.width
+                            Layout.leftMargin: 5
+                            enabled: loggedIn && root.channels_access_available.length > 0
+                            model: root.channels_access_available
+                        }
+
+                        Button {
+                            id: joinChannelButton
+                            height: joinChannelCombobox.height
+                            width: 150
+                            x: 5
+                            enabled: joinChannelCombobox.enabled
+
+                            background: Rectangle {
+                                anchors.fill: parent
+                                color: joinChannelButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
+                            }
+
+                            contentItem: Text {
+                                text: qsTr("OK")
+                                color: joinChannelCombobox.enabled ? "white" : "lightgrey"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                font.pointSize: 14
+                            }
+
+                            MouseArea {
+                                id: joinChannelButtonMouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+                                onClicked: {
+                                    userAccessBrowser.joinChannel(root.username, joinChannelCombobox.currentText)
+                                }
+                            }
+                        }
+                    }
+
+                    Label {
+                        color: "black"
+                        visible: true
+                        text: "Create and join channel"
+
+                        font.pointSize: 14
+                        Layout.leftMargin: 5
+                        Layout.topMargin: 20
+                        Layout.bottomMargin: -5
+                        Layout.preferredHeight: 30
+                    }
+
+                    RowLayout {
+                        spacing: 10
+
+                        Rectangle {
+                            border.width: 1
+                            border.color: "black"
+                            Layout.leftMargin: 5
+                            Layout.preferredHeight: 30
+
+                            TextField {
+                                id: createChannelTextfield
+                                text: ""
+                                selectByMouse: true
+                                width: joinChannelCombobox.width
+                                height: 40
+                                font.pointSize: 14
+                                enabled: loggedIn
+                            }
+                        }
+
+                        Button {
+                            id: createChannelButton
+                            height: joinChannelCombobox.height
+                            width: 150
+                            enabled: createChannelTextfield.text != ""
+                            Layout.leftMargin: createChannelTextfield.width
+                            Layout.topMargin: 10
+
+                            background: Rectangle {
+                                anchors.fill: parent
+                                color: createChannelButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
+                            }
+
+                            contentItem: Text {
+                                text: qsTr("OK")
+                                color: createChannelTextfield.enabled ? "white" : "lightgrey"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                font.pointSize: 14
+                            }
+
+                            MouseArea {
+                                id: createChannelButtonMouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+                                onClicked: {
+                                    userAccessBrowser.joinChannel(root.username, createChannelTextfield.text)
+                                    createChannelTextfield.text = ""
+                                }
+                            }
+                        }
+                    }
+
+                    Label {
+                        color: "black"
+                        visible: true
+                        text: "Leave channel"
+
+                        font.pointSize: 14
+                        Layout.leftMargin: 5
+                        Layout.topMargin: 25
+                        Layout.preferredHeight: 30
+                    }
+
+                    RowLayout {
+                        spacing: 10
+
+                        ComboBox {
+                            id: leaveChannelCombobox
+                            width: inputContainer.width
+                            Layout.leftMargin: 5
+                            enabled: loggedIn && root.channels_access_granted.length > 0
+                            model: root.channels_access_granted
+                        }
+
+                        Button {
+                            id: leaveChannelButton
+                            height: leaveChannelCombobox.height
+                            width: 150
+                            x: 5
+                            enabled: leaveChannelCombobox.enabled
+
+                            background: Rectangle {
+                                anchors.fill: parent
+                                color: joinChannelButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
+                            }
+
+                            contentItem: Text {
+                                text: qsTr("OK")
+                                color: leaveChannelCombobox.enabled ? "white" : "lightgrey"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                                font.pointSize: 14
+                            }
+
+                            MouseArea {
+                                id: leaveChannelButtonMouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+                                onClicked: {
+                                    userAccessBrowser.leaveChannel(root.username, leaveChannelCombobox.currentText)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -180,13 +376,13 @@ Window {
                 function parseDocs(docIDs) {
                     resultText.text = ""
                     append("Successfully connected user.")
-                    resultText.append("Granted access to channels:")
-                    for (var i = 0; i < root.channels.length; i++) {
-                        resultText.append(root.channels[i])
+                    append("<br>Granted access to channels:")
+                    for (var i = 0; i < root.channels_access_granted.length; i++) {
+                        resultText.append(root.channels_access_granted[i])
                     }
 
-                    append("Number of database documents received: " + docIDs.length)
-                    append("Document ID's:")
+                    append("<br>Number of database documents received: " + docIDs.length)
+                    append("<br>Document ID's:")
                     for (var i = 0; i < docIDs.length; i++) {
                         append(docIDs[i])
                     }
@@ -203,9 +399,15 @@ Window {
 
     function processLogin(username, endpoint) {
         let channels = root.authenticate(username)
-        if (channels) {
-            root.channels = channels
-            userAccessBrowser.loginAndStartReplication(username, channels, endpoint)
+        if (!channels) {
+            console.error("Do not have a valid user access map!")
+            return
+        }
+
+        channels_access_granted = channels[0]
+        if (channels_access_granted) {
+            root.channels_access_granted = channels_access_granted
+            userAccessBrowser.loginAndStartReplication(username, channels_access_granted, endpoint)
             root.loggedIn = true
         }
     }
@@ -215,43 +417,45 @@ Window {
         root.loggedIn = false
     }
 
-    // Receives username, returns list of channels to which that user has access
     function authenticate(username) {
         resultText.text = ""
-        if (!root.user_access_map) {
+        if (!root.userAccessMap) {
             console.error("Do not have a valid user access map!")
             return
         }
 
-        const all_channels = root.user_access_map["user_access_map"]
+        const all_channels = root.userAccessMap["user_access_map"]
         if (!all_channels) {
             console.error("Do not have a valid user access map!")
             return
         }
 
-        let user_access_channels = []
+        let channels_access_granted = []
+        let channels_access_available = []
         Object.keys(all_channels).forEach(function(key) {
             const this_channel = all_channels[key]
             if (this_channel.includes(username)) {
-                user_access_channels.push(key)
+                channels_access_granted.push(key)
+            } else {
+                channels_access_available.push(key)
             }
         })
 
-        if (user_access_channels.length == 0) {
+        if (channels_access_granted.length == 0) {
             userAccessBrowser.clearUserDir(username)
             console.error("Username not found in access map!")
             resultScrollView.append("Username not found in access map!")
             return
         }
-        return user_access_channels
+        return [channels_access_granted, channels_access_available]
     }
 
     Connections {
         target: userAccessBrowser
 
         onUserAccessMapReceived: {
-            if (user_access_map) {
-                root.user_access_map = user_access_map
+            if (userAccessMap) {
+                root.userAccessMap = userAccessMap
                 if (root.loggedIn) {
                     root.processLogin(root.username, root.endpoint)
                 }
@@ -262,12 +466,17 @@ Window {
         }
 
         onStatusUpdated: {
-            if (total_docs != 0) {
+            if (totalDocs != 0) {
                 let docIDs = userAccessBrowser.getAllDocumentIDs()
                 if (docIDs) {
                     let channels = root.authenticate(username)
-                    if (channels) {
-                        root.channels = channels
+                    channels_access_granted = channels[0]
+                    channels_access_available = channels[1]
+                    if (channels_access_granted) {
+                        root.channels_access_granted = channels_access_granted
+                    }
+                    if (channels_access_available) {
+                        root.channels_access_available = channels_access_available
                     }
                     resultScrollView.parseDocs(docIDs)
                 } else {

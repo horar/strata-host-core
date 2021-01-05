@@ -19,17 +19,25 @@ public:
 
     Q_INVOKABLE void logoutAndStopReplication();
 
+    Q_INVOKABLE void joinChannel(const QString &strataLoginUsername, const QString &channel);
+
+    Q_INVOKABLE void leaveChannel(const QString &strataLoginUsername, const QString &channel);
+
     Q_INVOKABLE void clearUserDir(const QString &strataLoginUsername);
 
     Q_INVOKABLE QStringList getAllDocumentIDs();
 
 signals:
-    void userAccessMapReceived(QJsonObject user_access_map);
+    void userAccessMapReceived(QJsonObject userAccessMap);
 
-    void statusUpdated(int total_docs);
+    void statusUpdated(int totalDocs);
 
 private:
+    std::unique_ptr<DatabaseManager> databaseManager_ = nullptr;
+
     DatabaseAccess* DB_ = nullptr;
+
+    DatabaseAccess* userAccessDB_ = nullptr;
 
     QString strataLoginUsername_ = "";
 

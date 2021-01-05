@@ -1,6 +1,7 @@
 #include <thread>
 
 #include "DatabaseManager.h"
+#include "DatabaseAccess.h"
 #include "CouchbaseDocument.h"
 
 #include <QDir>

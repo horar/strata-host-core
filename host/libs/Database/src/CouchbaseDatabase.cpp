@@ -252,6 +252,53 @@ void CouchbaseDatabase::stopReplicator() {
     latest_replication_.reset();
 }
 
+void CouchbaseDatabase::joinChannel(const QString &strataLoginUsername, const QString &channel) {
+    auto temp_doc = database_->getMutableDocument(database_name_);
+    auto read_dict = temp_doc.properties();
+
+    QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+    QJsonArray channels_arr = json_doc[channel].toArray();
+    channels_arr.append(strataLoginUsername);
+
+    QJsonObject json_obj = json_doc.object();
+    json_obj.insert(channel, channels_arr);
+    QJsonDocument final_Doc(json_obj);
+
+    temp_doc.setPropertiesAsJSON(final_Doc.toJson(QJsonDocument::Compact));
+    database_->saveDocument(temp_doc);
+}
+
+void CouchbaseDatabase::leaveChannel(const QString &strataLoginUsername, const QString &channel) {
+    auto temp_doc = database_->getMutableDocument(database_name_);
+    auto read_dict = temp_doc.properties();
+
+    QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+    QJsonArray channels_arr = json_doc[channel].toArray();
+
+    // find matching value
+    int ctr = 0;
+    for(auto it = channels_arr.begin(); it != channels_arr.end(); ++it) {
+        QJsonValue this_value = *it;
+        if (!this_value.isString()) {
+            qCCritical(logCategoryCouchbaseDatabase) << "Error: channel is not in string format";
+            continue;
+        }
+        if (this_value.toString() == strataLoginUsername) {
+            qCCritical(logCategoryCouchbaseDatabase) << "Found channel, removing: " << this_value.toString();
+            channels_arr.removeAt(ctr);
+            break;
+        }
+        ++ctr;
+    }
+
+    QJsonObject json_obj = json_doc.object();
+    json_obj.insert(channel, channels_arr);
+    QJsonDocument final_Doc(json_obj);
+
+    temp_doc.setPropertiesAsJSON(final_Doc.toJson(QJsonDocument::Compact));
+    database_->saveDocument(temp_doc);
+}
+
 void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLReplicatorStatus &status) {
     error_code_ = rep.status().error.code;
 
