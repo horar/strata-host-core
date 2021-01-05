@@ -21,6 +21,7 @@ TextField {
 
     /* properties for suggestion list */
     property variant suggestionListModel
+    property Component suggestionListDelegate
     property string suggestionModelTextRole
     property int suggestionPosition: Item.Bottom
     property string suggestionEmptyModelText: "No Suggestion"
@@ -166,6 +167,7 @@ TextField {
         SGWidgets.SGSuggestionPopup {
             textEditor: control
             model: suggestionListModel
+            delegate: control.suggestionListDelegate ? control.suggestionListDelegate : implicitDelegate
             textRole: suggestionModelTextRole
             controlWithSpace: false
             position: suggestionPosition
@@ -182,7 +184,7 @@ TextField {
             }
 
             onRemoveRequested: {
-                suggestionDelegateRemoveRequested(index)
+                control.suggestionDelegateRemoveRequested(index)
             }
         }
     }
