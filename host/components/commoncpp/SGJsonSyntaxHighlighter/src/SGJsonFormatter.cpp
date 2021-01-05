@@ -263,7 +263,8 @@ void SGJsonFormatter::resolveNextToken(
 
     if (state == ScannerState::MaybeReal
             || state == ScannerState::MaybeExpReal
-            || state == ScannerState::MaybeExpRealSign ) {
+            || state == ScannerState::MaybeExpRealSign
+            || state == ScannerState::OnlyLettersType) {
         nextToken.type = TokenType::SyntaxError;
     }
 
