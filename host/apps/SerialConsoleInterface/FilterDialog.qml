@@ -302,6 +302,7 @@ SGWidgets.SGDialog {
                 readOnly: true
                 font.family: "monospace"
                 text: "Example:\n"
+                      + "{\n"
                       + "    \"notification\": {\n"
                       + "        \"attribute-1\": \"value-1\",\n"
                       + "        \"attribute-2\": \"value-2\"\n"
