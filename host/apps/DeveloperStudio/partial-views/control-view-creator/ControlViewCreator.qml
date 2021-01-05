@@ -179,6 +179,7 @@ Rectangle {
                     iconSource: "qrc:/sgimages/tools.svg"
                     enabled: viewStack.currentIndex === 2 && debugPanel.visible
                     color: debugPanel.expanded ? Theme.palette.green : "transparent"
+                    tooltipDescription: "Toggle debug panel"
 
                     function onClicked() {
                         if (debugPanel.expanded) {
@@ -196,6 +197,7 @@ Rectangle {
                     iconSource: "qrc:/sgimages/bars.svg"
                     color: consoleContainer.visible  && enabled ? Theme.palette.green : "transparent"
                     enabled: !startContainer.visible
+                    tooltipDescription: "Toggle logger panel"
 
                     function onClicked() {
                         if(consoleContainer.visible){

@@ -35,8 +35,8 @@ Item {
         spacing: 0
 
         function logAdded() {
-            // if user is at end of list, scroll to end of list to focus on new logs
-            if (contentY >= (contentHeight - height)){
+            // if user is at end of list +/- 10px, scroll to end of list to focus on new logs
+            if (contentY >= (contentHeight - height) - 10){
                 positionViewAtEnd()
             }
         }

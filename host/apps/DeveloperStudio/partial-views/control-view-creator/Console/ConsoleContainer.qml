@@ -13,25 +13,8 @@ Rectangle {
     visible: !startContainer.visible
 
     Layout.minimumHeight: 30
-    Layout.maximumHeight: 750
+    implicitHeight: 200
     Layout.fillWidth: true
-    state: "normal"
-
-    states:[
-        State {
-            name: "maximize"
-            PropertyChanges {
-                target: root
-                height: 750
-            }
-        }, State {
-            name: "normal"
-            PropertyChanges {
-                target: root
-                height: 200
-            }
-        }
-    ]
 
     color: "#eee"
     z: 3
@@ -177,22 +160,6 @@ Rectangle {
 
                 RowLayout{
                     Layout.alignment: Qt.AlignRight
-
-                    SGControlViewIconButton{
-                        Layout.preferredHeight: 30
-                        Layout.preferredWidth: 30
-                        Layout.alignment: Qt.AlignRight
-                        rotation: root.state !== "normal" ? 180 : 0
-                        source: "qrc:/sgimages/chevron-up.svg"
-
-                        onClicked: {
-                            if(root.state !== "normal"){
-                                root.state = "normal"
-                            } else {
-                                root.state = "maximize"
-                            }
-                        }
-                    }
 
                     SGControlViewIconButton {
                         Layout.preferredHeight: 30
