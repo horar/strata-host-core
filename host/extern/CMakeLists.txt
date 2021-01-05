@@ -760,7 +760,21 @@ if(NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib)
 
-    ExternalProject_Add(libzmq
+    if(WIN32)
+        ExternalProject_Add(libzmq
+            INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}
+            SOURCE_DIR ${SOURCE_DIR_EXTERN}/libzmq
+            EXCLUDE_FROM_ALL ON
+            CMAKE_ARGS "${CMAKE_ARGS}"
+            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+
+            PATCH_COMMAND ${GIT_EXECUTABLE} apply --verbose --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/libzmq/libzmq-windows-v4.2.2.patch
+
+            INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <INSTALL_DIR>/bin/libzmq-mt$<$<NOT:$<CONFIG:RELEASE>>:-gd>-4_2_2${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
+        )
+    else()
+        ExternalProject_Add(libzmq
             INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}
             SOURCE_DIR ${SOURCE_DIR_EXTERN}/libzmq
             EXCLUDE_FROM_ALL ON
@@ -768,14 +782,26 @@ if(NOT LIB_INSTALLED)
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
             INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
-            )
+        )
+    endif()
 endif()
 
-add_library(zeromq::libzmq STATIC IMPORTED GLOBAL)
-set_target_properties(zeromq::libzmq PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include"
-        IMPORTED_LOCATION "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zmq${CMAKE_STATIC_LIBRARY_SUFFIX}"
-        )
+add_library(zeromq::libzmq SHARED IMPORTED GLOBAL)
+
+if(WIN32)
+    set_target_properties(zeromq::libzmq PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include"
+            IMPORTED_LOCATION "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq-mt-gd-4_2_2${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            IMPORTED_LOCATION_RELEASE "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq-mt-4_2_2${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            IMPORTED_IMPLIB "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmq-mt-gd-4_2_2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            IMPORTED_IMPLIB_RELEASE "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmq-mt-4_2_2${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    )
+else()
+    set_target_properties(zeromq::libzmq PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include"
+            IMPORTED_LOCATION "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    )
+endif()
 add_dependencies(zeromq::libzmq DEPENDS libzmq)
 # TODO: cppzmq (c++ headers only zmq wrapper) & zhelper.hpp are still referenced from our source code
 # https://jira.onsemi.com/browse/CS-1416
