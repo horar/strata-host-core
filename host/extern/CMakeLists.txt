@@ -784,6 +784,14 @@ if(NOT LIB_INSTALLED)
             INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
         )
     endif()
+else()
+    if(WIN32)
+        file(GLOB LIBZMQ_DLL_LIB
+                "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/*zmq*.dll"
+        )
+        file(COPY "${LIBZMQ_DLL_LIB}"
+        DESTINATION ${CMAKE_BINARY_DIR}/bin)
+    endif()
 endif()
 
 add_library(zeromq::libzmq SHARED IMPORTED GLOBAL)
