@@ -807,7 +807,7 @@ if(WIN32)
 else()
     set_target_properties(zeromq::libzmq PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include"
-            IMPORTED_LOCATION "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            IMPORTED_LOCATION "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
     )
 endif()
 add_dependencies(zeromq::libzmq DEPENDS libzmq)
