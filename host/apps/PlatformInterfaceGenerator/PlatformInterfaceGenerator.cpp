@@ -172,6 +172,7 @@ QString PlatformInterfaceGenerator::generateImports()
     QString imports = "import QtQuick 2.12\n";
     imports += "import QtQuick.Controls 2.12\n";
     imports += "import tech.strata.common 1.0\n";
+    imports += "import QtQml 2.12\n";
     imports += "\n\n";
     return imports;
 }
@@ -302,11 +303,14 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
         }
 
         propertiesBody += insertTabs(indentLevel) + "property " + propType + " " + payloadProperty + ": " + getPropertyValue(propValue, propType, indentLevel) + "\n";
+
         if (lastError_.length() > 0) {
             qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
             return "";
         }
     }
+
+    propertiesBody += "\n" + insertTabs(indentLevel) + "signal notificationFinished()\n";
 
     notificationBody = childrenDocumentationBody + notificationBody + propertiesBody;
     notificationBody += childrenNotificationBody;
@@ -337,6 +341,9 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
         // Generate a property for each element in array
         notificationBody += insertTabs(indentLevel) + "property QtObject " + id + ": QtObject {\n";
 
+        // Add object name
+        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"array\"\n";
+
         // This documentation text will be passed back to parent
         // This allows us to generate comments above each QtObject for their properties
         documentation += generateComment("@property " + id + ": " + propType, indentLevel - 1);
@@ -354,12 +361,12 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
 
             QString childType = getType(element);
             if (childType.isNull()) {
-                lastError_ = "Unrecognized type of property for notificaition " + parentId;
+                lastError_ = "Unrecognized type of property for notification " + parentId;
                 qCCritical(logCategoryPlatformInterfaceGenerator) << lastError_;
                 return;
             }
 
-            if (element.isArray() && element.toArray().count() > 0) {
+            if ((element.isArray() && element.toArray().count() > 0) || element.isObject()) {
                 continue;
             }
 
@@ -380,6 +387,9 @@ void PlatformInterfaceGenerator::generateNotificationProperty(int indentLevel, c
 
         // Generate a property for each element in array
         notificationBody += insertTabs(indentLevel) + "property QtObject " + id + ": QtObject {\n";
+
+        // Add object name
+        notificationBody += insertTabs(indentLevel + 1) + "objectName: \"object\"\n";
 
         // This documentation text will be passed back to parent
         // This allows us to generate comments above each QtObject for their properties
@@ -454,17 +464,17 @@ QString PlatformInterfaceGenerator::getType(const QJsonValue &value)
         return "var";
     } else if (value.isString()) {
         QString str = value.toString();
-        if (str == "string") {
-            return "string";
-        } else if (str == "int") {
-            return "int";
-        } else if (str == "double") {
-            return "double";
-        } else if (str == "bool") {
-            return "bool";
-        } else if (str == "array-dynamic") {
+        if (str == TYPE_STRING) {
+            return TYPE_STRING;
+        } else if (str == TYPE_INT) {
+            return TYPE_INT;
+        } else if (str == TYPE_DOUBLE) {
+            return TYPE_DOUBLE;
+        } else if (str == TYPE_BOOL) {
+            return TYPE_BOOL;
+        } else if (str == TYPE_ARRAY_DYNAMIC) {
             return "var";
-        } else if (str == "object-dynamic") {
+        } else if (str == TYPE_OBJECT_DYNAMIC) {
             return "var";
         } else {
             lastError_ = "Unknown type " + str;
@@ -491,13 +501,13 @@ QString PlatformInterfaceGenerator::getPropertyValue(const QJsonValue &value, co
         }
         returnText += "]";
         return returnText;
-    } else if (propertyType == "bool") {
+    } else if (propertyType == TYPE_BOOL) {
         return "false";
-    } else if (propertyType == "string") {
+    } else if (propertyType == TYPE_STRING) {
         return "\"\"";
-    } else if (propertyType == "int") {
+    } else if (propertyType == TYPE_INT) {
         return "0";
-    } else if (propertyType == "double") {
+    } else if (propertyType == TYPE_DOUBLE) {
         return "0.0";
     } else if (propertyType == "var" && value.isObject()) {
         QString returnText = "{\n";
@@ -516,7 +526,7 @@ QString PlatformInterfaceGenerator::getPropertyValue(const QJsonValue &value, co
     } else if (propertyType == "var") {
         // Handle array-dynamic and object-dynamic
         QString type = value.toString();
-        if (type == "array-dynamic") {
+        if (type == TYPE_ARRAY_DYNAMIC) {
             return "[]";
         } else {
             return "({})";

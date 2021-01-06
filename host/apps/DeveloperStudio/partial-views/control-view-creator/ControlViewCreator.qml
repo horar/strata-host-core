@@ -93,6 +93,25 @@ Rectangle {
         }
     }
 
+    SGConfirmationPopup {
+        id: missingControlQml
+        modal: true
+        padding: 0
+        closePolicy: Popup.NoAutoClose
+
+        buttons: [okButtonObject]
+
+        property var okButtonObject: ({
+            buttonText: "Ok",
+            buttonColor: acceptButtonColor,
+            buttonHoverColor: acceptButtonHoverColor,
+            closeReason: acceptCloseReason
+        });
+
+        titleText: "Missing Control.qml"
+        popupText: "You are missing a Control.qml file at the root of your project. This will cause errors when trying to build the project."
+    }
+
     RowLayout {
         anchors {
             fill: parent

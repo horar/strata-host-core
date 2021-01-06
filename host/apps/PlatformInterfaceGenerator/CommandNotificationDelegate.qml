@@ -72,6 +72,7 @@ ColumnLayout {
             }
 
             Component.onCompleted: {
+                text = model.name
                 forceActiveFocus()
             }
 
@@ -107,13 +108,20 @@ ColumnLayout {
         Accessible.name: addPropertyButton.text
         Accessible.role: Accessible.Button
         Accessible.onPressAction: {
-            addPropertyButton.clicked()
+            addPropertyButtonMouseArea.clicked()
         }
 
-        onClicked: {
-            commandsColumn.payloadModel.append(templatePayload)
-            if (commandsColumn.modelIndex === commandsListView.count - 1) {
-                commandsListView.contentY += 70
+        MouseArea {
+            id: addPropertyButtonMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+
+            onClicked: {
+                commandsColumn.payloadModel.append(templatePayload)
+                if (commandsColumn.modelIndex === commandsListView.count - 1) {
+                    commandsListView.contentY += 70
+                }
             }
         }
     }

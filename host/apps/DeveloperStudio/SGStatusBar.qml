@@ -82,7 +82,7 @@ Rectangle {
             Layout.preferredHeight:40
             Layout.preferredWidth: 120
 
-            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.green : "#444"
+            color: platformSelectorMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.green : "#444"
 
             property color menuColor: Theme.palette.green
 
@@ -180,7 +180,7 @@ Rectangle {
             height: profileIconHover.containsMouse ? profileIconContainer.height : profileIconContainer.height - 6
             width: height
             radius: height / 2
-            color: "#00b842"
+            color: Theme.palette.green
 
             Text {
                 id: profileInitial
@@ -209,7 +209,7 @@ Rectangle {
             height: 12
             width: height
             radius: height / 2
-            color: "#00b842"
+            color: Theme.palette.green
 
             SGIcon {
                 id: alertIcon
@@ -264,7 +264,7 @@ Rectangle {
                     context.lineTo(width, height);
                     context.lineTo(0, height);
                     context.closePath();
-                    context.fillStyle = "#00b842";
+                    context.fillStyle = Theme.palette.green;
                     context.fill();
                 }
             }
