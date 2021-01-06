@@ -10,7 +10,7 @@ ClientConnector::~ClientConnector()
     disconnectClient();
 }
 
-bool ClientConnector::initilize()
+bool ClientConnector::initializeClient()
 {
     using Connector = strata::connector::Connector;
     connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER);

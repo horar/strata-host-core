@@ -32,7 +32,7 @@ void ConnectorsTest::testServerAndClient()
 
     QByteArray client_id = "client_1";
     strata::strataComm::ClientConnector client(address_, client_id);
-    QCOMPARE_(client.initilize(), true);
+    QCOMPARE_(client.initializeClient(), true);
 
     connect(&server, &strata::strataComm::ServerConnector::newMessageRecived, this,
             [&server](const QByteArray &clientId, const QByteArray &message) {
@@ -75,7 +75,7 @@ void ConnectorsTest::testMultipleClients()
     for (int i = 0; i < 15; i++) {
         clientsList.push_back(
             new strata::strataComm::ClientConnector(address_, QByteArray::number(i)));
-        clientsList.back()->initilize();
+        clientsList.back()->initializeClient();
         connect(clientsList.back(), &strata::strataComm::ClientConnector::newMessageRecived, this,
                 [i](const QByteArray &message) { QCOMPARE_(message, QByteArray::number(i)); });
     }
@@ -108,7 +108,7 @@ void ConnectorsTest::testFloodTheServer()
             });
 
     strata::strataComm::ClientConnector client(address_);
-    QCOMPARE_(client.initilize(), true);
+    QCOMPARE_(client.initializeClient(), true);
 
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [&client](const QByteArray &) {
@@ -140,7 +140,7 @@ void ConnectorsTest::testFloodTheClient()
             });
 
     strata::strataComm::ClientConnector client(address_);
-    QCOMPARE_(client.initilize(), true);
+    QCOMPARE_(client.initializeClient(), true);
 
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [](const QByteArray &) {});
@@ -169,7 +169,7 @@ void ConnectorsTest::testDisconnectClient()
 
     bool clientRecivedMessage = false;
     strata::strataComm::ClientConnector client(address_, "AA");
-    QCOMPARE_(client.initilize(), true);
+    QCOMPARE_(client.initializeClient(), true);
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [&clientRecivedMessage](const QByteArray &) { clientRecivedMessage = true; });
 
@@ -212,7 +212,7 @@ void ConnectorsTest::testFailedToSendMessageFromClientConnector()
 
     QVERIFY_(false == client.sendMessage("This should fail!"));
 
-    QVERIFY_(client.initilize());
+    QVERIFY_(client.initializeClient());
     QVERIFY_(client.sendMessage("This should pass!"));
 
     QVERIFY_(client.disconnectClient());

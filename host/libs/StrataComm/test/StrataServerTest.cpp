@@ -146,7 +146,7 @@ void StrataServerTest::testServerFunctionality()
                 "{\"id\":1,\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"client registered.\"}}");
             clientGotResponse = true;
         });
-    client.initilize();
+    client.initializeClient();
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
 
@@ -159,7 +159,7 @@ void StrataServerTest::testServerFunctionality()
                           "registered.\",\"type\":\"register_client\"}}");
                 clientGotResponse_2 = true;
             });
-    client_2.initilize();
+    client_2.initializeClient();
     client_2.sendMessage(R"({"cmd":"register_client", "payload":{}})");
 
     waitForZmqMessages();
@@ -175,7 +175,7 @@ void StrataServerTest::testBuildNotificationApiV2()
     QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
-    client.initilize();
+    client.initializeClient();
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
@@ -217,7 +217,7 @@ void StrataServerTest::testBuildResponseApiV2()
     QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
-    client.initilize();
+    client.initializeClient();
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
@@ -258,7 +258,7 @@ void StrataServerTest::testBuildErrorApiV2()
     QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
-    client.initilize();
+    client.initializeClient();
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
@@ -300,7 +300,7 @@ void StrataServerTest::testBuildPlatformMessageApiV2()
     QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
-    client.initilize();
+    client.initializeClient();
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
@@ -343,7 +343,7 @@ void StrataServerTest::testBuildNotificationApiV1()
     QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
-    client.initilize();
+    client.initializeClient();
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
@@ -379,7 +379,7 @@ void StrataServerTest::testBuildResponseApiV1()
     QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
-    client.initilize();
+    client.initializeClient();
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
@@ -451,7 +451,7 @@ void StrataServerTest::testBuildPlatformMessageApiV1()
     QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
-    client.initilize();
+    client.initializeClient();
     connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
@@ -493,7 +493,7 @@ void StrataServerTest::testNotifyAllClients()
     for (int i = 0; i < clientsCount / 2; i++) {
         clientsList.push_back(
             new strata::strataComm::ClientConnector(address_, QByteArray::number(i)));
-        clientsList.back()->initilize();
+        clientsList.back()->initializeClient();
         connect(clientsList.back(), &strata::strataComm::ClientConnector::newMessageRecived, this,
                 [&counter](const QByteArray &message) {
                     // validate for API v2
@@ -529,7 +529,7 @@ void StrataServerTest::testNotifyAllClients()
     for (int i = clientsCount / 2; i < clientsCount; i++) {
         clientsList.push_back(
             new strata::strataComm::ClientConnector(address_, QByteArray::number(i)));
-        clientsList.back()->initilize();
+        clientsList.back()->initializeClient();
         connect(clientsList.back(), &strata::strataComm::ClientConnector::newMessageRecived, this,
                 [&counter](const QByteArray &message) {
                     // validate for API v1
@@ -587,7 +587,7 @@ void StrataServerTest::testNotifyClientByClientId()
     QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
-    client.initilize();
+    client.initializeClient();
 
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");

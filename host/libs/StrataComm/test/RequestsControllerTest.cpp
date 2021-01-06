@@ -3,8 +3,6 @@
 void RequestsControllerTest::testAddRequest()
 {
     strata::strataComm::RequestsController rc;
-    connect(&rc, &strata::strataComm::RequestsController::sendRequest, this,
-            [](const QByteArray &request) { qDebug() << request; });
 
     rc.addNewRequest("method_1", {{"api", "v1"}});
     rc.addNewRequest("method_1", {{"api", "v1"}});

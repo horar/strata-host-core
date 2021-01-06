@@ -18,7 +18,7 @@ QByteArray RequestsController::addNewRequest(const QString &method, const QJsonO
 
     const auto it = requestsList_.find(currentRequestId_);
     if (it != requestsList_.end()) {
-        qCCritical(logCategoryRequestsController) << "Dublicate request id.";
+        qCCritical(logCategoryRequestsController) << "Duplicate request id.";
         return "";
     }
 
