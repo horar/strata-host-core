@@ -14,6 +14,8 @@ Item {
     property bool whiteBgWhenSelected: true
     property alias headerSourceComponent: headerLoader.sourceComponent
     property alias contentSourceComponent: contentLoader.sourceComponent
+    signal categorySelected()
+
 
     Loader {
         id: headerLoader
@@ -56,13 +58,13 @@ Item {
         anchors.fill: bg
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
-        onClicked: {
+        onClicked:  {
+            categorySelected()
             if (delegate.pressable == false) {
                 return
             }
-
             if (delegate.checked) {
-                if (uncheckable ) {
+                if (uncheckable) {
                     delegate.checked = false
                 }
             } else {

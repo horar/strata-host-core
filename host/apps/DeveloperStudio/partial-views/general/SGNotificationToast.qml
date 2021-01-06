@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQml 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import QtQuick.Layouts 1.3
@@ -16,6 +17,12 @@ Rectangle {
     property alias text: alertText.text
     property bool running: alertAnimation.running || hideAlertAnimation.running
     property alias interval: closeAlertTimer.interval
+
+    onVisibleChanged: {
+        if (!visible && closeAlertTimer.running) {
+            closeAlertTimer.stop()
+        }
+    }
 
     SGIcon {
         id: alertIcon
@@ -98,5 +105,4 @@ Rectangle {
     function hide () {
         hideAlertAnimation.start()
     }
-
 }
