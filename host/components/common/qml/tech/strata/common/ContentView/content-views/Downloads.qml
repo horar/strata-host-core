@@ -376,6 +376,13 @@ Item {
                    Qt.openUrlExternally(CommonCpp.SGUtilsCpp.pathToUrl(savePath))
                 }
             }
+
+            MouseArea {
+                id: buttonCursor2
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
+            }
         }
 
         Item {
