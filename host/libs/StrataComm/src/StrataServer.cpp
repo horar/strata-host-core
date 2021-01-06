@@ -6,12 +6,10 @@ using namespace strata::strataComm;
 StrataServer::StrataServer(QString address, QObject *parent)
     : QObject(parent), dispatcher_(this), clientsController_(this), connector_(address, this)
 {
-    qCDebug(logCategoryStrataServer) << "StrataServer constructor";
 }
 
 StrataServer::~StrataServer()
 {
-    qCDebug(logCategoryStrataServer) << "StrataServer Destructor";
 }
 
 bool StrataServer::initializeServer()
@@ -30,7 +28,6 @@ bool StrataServer::initializeServer()
 
 bool StrataServer::registerHandler(const QString &handlerName, StrataHandler handler)
 {
-    qCDebug(logCategoryStrataServer) << "Registering handler:" << handlerName;
     if (false == dispatcher_.registerHandler(handlerName, handler)) {
         qCCritical(logCategoryStrataServer) << "Failed to register handler";
         return false;
@@ -40,7 +37,6 @@ bool StrataServer::registerHandler(const QString &handlerName, StrataHandler han
 
 bool StrataServer::unregisterHandler(const QString &handlerName)
 {
-    qCDebug(logCategoryStrataServer) << "Unregistering handler:" << handlerName;
     if (false == dispatcher_.unregisterHandler(handlerName)) {
         qCCritical(logCategoryStrataServer) << "Failed to unregister handler";
         return false;
@@ -50,14 +46,14 @@ bool StrataServer::unregisterHandler(const QString &handlerName)
 
 void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray &message)
 {
-    qCDebug(logCategoryStrataServer) << "StrataServer newClientMessage";
-    qCDebug(logCategoryStrataServer) << "Client ID:" << clientId << "Message:" << message;
+    qCDebug(logCategoryStrataServer) << "StrataServer newClientMessage"
+                                     << "Client ID:" << clientId << "Message:" << message;
 
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
 
     if (jsonParseError.error != QJsonParseError::NoError) {
-        qCDebug(logCategoryStrataServer) << "invalid JSON message.";
+        qCCritical(logCategoryStrataServer) << "invalid JSON message.";
         return;
     }
     QJsonObject jsonObject = jsonDocument.object();
@@ -109,35 +105,14 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
         }
     }
 
-    qCDebug(logCategoryStrataServer)
-        << "------------------------------------------------------------";
-    qCDebug(logCategoryStrataServer) << "parsed client message:";
-    qCDebug(logCategoryStrataServer) << "Json message" << message;
-    qCDebug(logCategoryStrataServer) << "handlerName" << clientMessage.handlerName;
-    qCDebug(logCategoryStrataServer) << "payload" << clientMessage.payload;
-    qCDebug(logCategoryStrataServer) << "messageID" << clientMessage.messageID;
-    qCDebug(logCategoryStrataServer)
-        << "messageType" << static_cast<int>(clientMessage.messageType);
-    qCDebug(logCategoryStrataServer) << "clientID" << clientMessage.clientID;
-    qCDebug(logCategoryStrataServer) << "Api Version" << static_cast<int>(apiVersion);
-    qCDebug(logCategoryStrataServer)
-        << "------------------------------------------------------------";
-
     emit dispatchHandler(clientMessage);
 }
 
 bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Message *clientMessage)
 {
-    if ((true == jsonObject.contains("jsonrpc")) &&
-        (true == jsonObject.value("jsonrpc").isString())) {
-        if (jsonObject.value("jsonrpc") == "2.0") {
-            qCDebug(logCategoryStrataServer) << "valid API Identifier";
-        } else {
-            qCCritical(logCategoryStrataServer) << "Invalid or missing api version";
-            return false;
-        }
-    } else {
-        qCCritical(logCategoryStrataServer) << "Invalid or missing api identifier";
+    if (false == jsonObject.contains("jsonrpc") ||
+        false == jsonObject.value("jsonrpc").isString() || jsonObject.value("jsonrpc") != "2.0") {
+        qCCritical(logCategoryStrataServer) << "Invalid or missing API identifier.";
         return false;
     }
 
@@ -362,7 +337,7 @@ QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
             break;
 
         case strata::strataComm::ResponseType::Error:
-            qDebug(logCategoryStrataServer) << "Error messages are not supported in API v1";
+            qCDebug(logCategoryStrataServer) << "Error messages are not supported in API v1.";
             return "";
             break;
 

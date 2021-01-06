@@ -6,8 +6,6 @@ using namespace strata::strataComm;
 
 ServerConnector::~ServerConnector()
 {
-    qCDebug(logCategoryStrataServerConnector) << "destroying the server";
-
     if (connector_) {
         connector_->close();
     }
@@ -56,9 +54,6 @@ void ServerConnector::readMessages()
         if (connector_->read(message) == false) {
             break;
         }
-        qCDebug(logCategoryStrataServerConnector)
-            << QByteArray::fromStdString(connector_->getDealerID());
-        qCDebug(logCategoryStrataServerConnector) << QByteArray::fromStdString(message);
     }
 }
 

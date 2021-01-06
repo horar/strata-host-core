@@ -5,17 +5,15 @@ using namespace strata::strataComm;
 
 Dispatcher::Dispatcher(QObject *parent) : QObject(parent)
 {
-    qCInfo(logCategoryStrataDispatcher) << "dispatcher created.";
 }
 
 Dispatcher::~Dispatcher()
 {
-    qCInfo(logCategoryStrataDispatcher) << "dispatcher destroyed.";
 }
 
 bool Dispatcher::registerHandler(const QString &handlerName, StrataHandler handler)
 {
-    qCInfo(logCategoryStrataDispatcher) << "registering " << handlerName << " handler.";
+    qCDebug(logCategoryStrataDispatcher) << "registering " << handlerName << " handler.";
 
     if (true == isRegisteredHandler(handlerName)) {
         qCDebug(logCategoryStrataDispatcher()) << handlerName << " is already registered.";
@@ -28,7 +26,7 @@ bool Dispatcher::registerHandler(const QString &handlerName, StrataHandler handl
 
 bool Dispatcher::unregisterHandler(const QString &handlerName)
 {
-    qCInfo(logCategoryStrataDispatcher) << "unregistering " << handlerName << " handler.";
+    qCDebug(logCategoryStrataDispatcher) << "unregistering " << handlerName << " handler.";
 
     if (true == isRegisteredHandler(handlerName)) {
         handlersList_.erase(handlerName);
@@ -41,7 +39,7 @@ bool Dispatcher::unregisterHandler(const QString &handlerName)
 
 bool Dispatcher::dispatch(const Message &message)
 {
-    qCInfo(logCategoryStrataDispatcher) << "Dispatching " << message.handlerName;
+    qCDebug(logCategoryStrataDispatcher) << "Dispatching " << message.handlerName;
 
     if (auto it = handlersList_.find(message.handlerName); it == handlersList_.end()) {
         qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << message.handlerName;
@@ -54,7 +52,7 @@ bool Dispatcher::dispatch(const Message &message)
 
 void Dispatcher::dispatchHandler(const Message &message)
 {
-    qCInfo(logCategoryStrataDispatcher) << "Dispatching " << message.handlerName;
+    qCDebug(logCategoryStrataDispatcher) << "Dispatching " << message.handlerName;
 
     if (auto it = handlersList_.find(message.handlerName); it == handlersList_.end()) {
         qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << message.handlerName;

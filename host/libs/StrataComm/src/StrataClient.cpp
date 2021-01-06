@@ -39,8 +39,6 @@ bool StrataClient::connectServer()
 
 bool StrataClient::disconnectServer()
 {
-    qCDebug(logCategoryStrataClient) << "Disconnecting client";
-
     sendRequest("unregister", {});
     disconnect(&connector_, &ClientConnector::newMessageRecived, this,
                &StrataClient::newServerMessage);
@@ -63,15 +61,6 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
         return;
     }
 
-    qCDebug(logCategoryStrataClient) << "#########################################";
-    qCDebug(logCategoryStrataClient) << "message:" << jsonServerMessage;
-    qCDebug(logCategoryStrataClient) << "message id:" << serverMessage.messageID;
-    qCDebug(logCategoryStrataClient) << "method:" << serverMessage.handlerName;
-    qCDebug(logCategoryStrataClient) << "payload:" << serverMessage.payload;
-    qCDebug(logCategoryStrataClient)
-        << "message type:" << static_cast<int>(serverMessage.messageType);
-    qCDebug(logCategoryStrataClient) << "#########################################";
-
     emit dispatchHandler(serverMessage);
 }
 
@@ -88,7 +77,7 @@ bool StrataClient::registerHandler(const QString &handlerName, StrataHandler han
 bool StrataClient::unregisterHandler(const QString &handlerName)
 {
     qCDebug(logCategoryStrataClient) << "Unregistering handler:" << handlerName;
-    if (false == dispatcher_.unregisterHandler(handlerName)) {  // always return true.
+    if (false == dispatcher_.unregisterHandler(handlerName)) {
         qCCritical(logCategoryStrataClient) << "Failed to unregister handler.";
         return false;
     }
@@ -97,8 +86,6 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
 
 bool StrataClient::sendRequest(const QString &method, const QJsonObject &payload)
 {
-    qCDebug(logCategoryStrataClient) << "building request: " << method;
-
     auto message = requestController_.addNewRequest(method, payload);
 
     if (true == message.isEmpty()) {
@@ -115,7 +102,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     QJsonDocument jsonDocument = QJsonDocument::fromJson(jsonServerMessage, &jsonParseError);
 
     if (jsonParseError.error != QJsonParseError::NoError) {
-        qCDebug(logCategoryStrataServer) << "invalid JSON message.";
+        qCCritical(logCategoryStrataServer) << "invalid JSON message.";
         return false;
     }
     QJsonObject jsonObject = jsonDocument.object();
@@ -124,7 +111,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
         jsonObject.value("jsonrpc").toString() == "2.0") {
         qCDebug(logCategoryStrataClient) << "API v2.0";
     } else {
-        qCDebug(logCategoryStrataClient) << "Invalid API.";
+        qCCritical(logCategoryStrataClient) << "Invalid API.";
         return false;
     }
 
