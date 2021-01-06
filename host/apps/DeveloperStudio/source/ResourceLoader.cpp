@@ -341,3 +341,20 @@ void ResourceLoader::setLastLoggedError(QString &error_str) {
 QString ResourceLoader::getLastLoggedError() {
     return lastLoggedError;
 }
+
+QString ResourceLoader::fetchBuildFolder(const QString &module, const QString &subFolder, const QString &file)
+{
+    QDir dir(ResourcePath::coreResourcePath());
+    dir.cdUp();
+    dir.cd("3p-d");
+    dir.cd(module);
+    dir.cd("package");
+    dir.cd(subFolder);
+
+    if(!file.isEmpty()){
+        qDebug() << QUrl(dir.absoluteFilePath(file)).toString();
+        return dir.absoluteFilePath(file);
+    } else {
+        return dir.absolutePath();
+    }
+}

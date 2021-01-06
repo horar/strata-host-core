@@ -94,6 +94,8 @@ public:
 
     Q_INVOKABLE QString getLastLoggedError();
 
+    Q_INVOKABLE QString fetchBuildFolder(const QString &module, const QString &subFolder = QString(""), const QString &file = QString(""));
+
 signals:
     void finishedRecompiling(QString filepath);
 

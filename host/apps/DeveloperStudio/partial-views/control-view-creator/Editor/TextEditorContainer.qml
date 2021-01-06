@@ -9,7 +9,7 @@ import QtWebChannel 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
-
+import "./textEditorHelper.js" as Helper
 import "../../general"
 import "../"
 
@@ -258,7 +258,6 @@ Item {
 
     WebEngineView {
         id: webEngine
-
         webChannel: channel
         settings.localContentCanAccessRemoteUrls: false
         settings.localContentCanAccessFileUrls: true
@@ -270,6 +269,14 @@ Item {
         settings.javascriptCanAccessClipboard: true
         settings.pluginsEnabled: true
         settings.showScrollBars: false
+
+        function runInit() {
+            // runJavaScript("script0 = document.getElementById(\"s0\"); path = document.createTextNode("+ { paths: { vs: SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs"),"folder")}}+"); script0.appendChild(path);")
+            runJavaScript("script1 = document.getElementById(\"s1\"); script1.src="+SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.js"))+";")
+            runJavaScript("script2 = document.getElementById(\"s2\");   script2.src="+SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/","loader.js"))+";")
+            runJavaScript("script3 = document.getElementById(\"s3\");   script3.src ="+SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.nls.js"))+"")
+            runJavaScript("link0 = document.getElementById(\"l0\"); link0.setAttribute(\"href\","+SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.css"))+");")
+        }
 
         anchors {
             top: alertRow.bottom
@@ -293,6 +300,10 @@ Item {
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             }
+        }
+
+        Component.onCompleted: {
+            runInit()
         }
 
         url: "qrc:///partial-views/control-view-creator/editor.html"
