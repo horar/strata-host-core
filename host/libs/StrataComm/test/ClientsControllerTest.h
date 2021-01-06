@@ -22,7 +22,6 @@ private slots:
     void testRegisterClient();
     void testRegisterDublicateClient();
     void testUnregisterClient();
-    void testNotifyAllCleints();
     void testGetApiVersion();
     void testGetClient();
 

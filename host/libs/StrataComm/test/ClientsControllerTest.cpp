@@ -73,28 +73,6 @@ void ClientsControllerTest::testUnregisterClient()
     QCOMPARE_(clientsController.unregisterClient(client2.getClientID()), false);
 }
 
-void ClientsControllerTest::testNotifyAllCleints()
-{
-    ClientsController clientsController;
-    QSignalSpy signalSpy(&clientsController, &ClientsController::notifyClientSignal);
-
-    connect(&clientsController, &ClientsController::notifyClientSignal, this,
-            &ClientsControllerTest::notifyClientMock);
-
-    clientsController.registerClient(Client("AA", strata::strataComm::ApiVersion::v1));
-    clientsController.registerClient(Client("BB", strata::strataComm::ApiVersion::v2));
-    clientsController.registerClient(Client("CC", strata::strataComm::ApiVersion::v2));
-    clientsController.registerClient(Client("DD", strata::strataComm::ApiVersion::v1));
-    clientsController.registerClient(Client("EE", strata::strataComm::ApiVersion::v2));
-
-    clientsController.notifyAllClients("test", QJsonObject({{"key", 1}}));
-
-    QCOMPARE_(signalSpy.count(), 5);
-
-    disconnect(&clientsController, &ClientsController::notifyClientSignal, this,
-               &ClientsControllerTest::notifyClientMock);
-}
-
 void ClientsControllerTest::testGetApiVersion()
 {
     ClientsController clientsController;
