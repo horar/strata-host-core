@@ -23,7 +23,7 @@ StrataClient::~StrataClient()
 
 bool StrataClient::connectServer()
 {
-    if (false == connector_.initializeClient()) {
+    if (false == connector_.initializeConnector()) {
         qCCritical(logCategoryStrataClient) << "Failed to connect to the server";
         return false;
     }

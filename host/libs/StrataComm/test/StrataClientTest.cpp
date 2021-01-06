@@ -34,7 +34,7 @@ void StrataClientTest::testConnectDisconnectToTheServer()
 {
     // serverConnector set up
     strata::strataComm::ServerConnector server(address_);
-    server.initilize();
+    server.initilizeConnector();
     bool serverRevicedMessage = false;
     connect(
         &server, &strata::strataComm::ServerConnector::newMessageRecived, this,
@@ -89,7 +89,7 @@ void StrataClientTest::testBuildRequest()
     int expectedId = 0;
 
     strata::strataComm::ServerConnector server(address_);
-    server.initilize();
+    server.initilizeConnector();
     connect(&server, &strata::strataComm::ServerConnector::newMessageRecived, this,
             [&expectedId, &expectedMethod, &serverRevicedMessage](const QByteArray &,
                                                                   const QByteArray &message) {
@@ -142,7 +142,7 @@ void StrataClientTest::testNonDefaultDealerId()
     bool customIdRecieved = false;
 
     strata::strataComm::ServerConnector server(address_);
-    server.initilize();
+    server.initilizeConnector();
 
     connect(
         &server, &strata::strataComm::ServerConnector::newMessageRecived, this,

@@ -37,7 +37,7 @@ public:
      * @return True if the initialization is successful and "register_client" request is sent to the
      * server. False otherwise.
      */
-    bool initializeClient();
+    bool initializeConnector();
 
     /**
      * disconnect the client from the server by sending "unregister" command, disconnect QSignals,

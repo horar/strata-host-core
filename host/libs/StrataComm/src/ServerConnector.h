@@ -30,7 +30,7 @@ public:
      * signals.
      * @return True if the initialization is successful, False otherwise.
      */
-    bool initilize();
+    bool initilizeConnector();
 
     /**
      * Empties the receive buffer and emits newMessageReceived signal for each new message.

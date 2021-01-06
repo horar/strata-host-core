@@ -13,7 +13,7 @@ ServerConnector::~ServerConnector()
     }
 }
 
-bool ServerConnector::initilize()
+bool ServerConnector::initilizeConnector()
 {
     using Connector = strata::connector::Connector;
     connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
