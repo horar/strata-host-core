@@ -24,16 +24,16 @@ public:
     ~Client();
 
     /**
-     * getter for the client id
+     * Getter for the client id
      * @return client id
      */
-    QByteArray getClientID() const;
+    [[nodiscard]] QByteArray getClientID() const;
 
     /**
      * Getter for the client's api version
      * @return enum of the client API version.
      */
-    ApiVersion getApiVersion() const;
+    [[nodiscard]] ApiVersion getApiVersion() const;
 
 private:
     QByteArray clientId_;

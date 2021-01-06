@@ -118,7 +118,7 @@ private:
      * @return QByteArray of the json message. Empty QByteArray when there is an error while
      * building the message.
      */
-    QByteArray buildServerMessageAPIv2(const Message &clientMessage, const QJsonObject &payload,
+    [[nodiscard]] QByteArray buildServerMessageAPIv2(const Message &clientMessage, const QJsonObject &payload,
                                        ResponseType responseType);
 
     /**
@@ -130,7 +130,7 @@ private:
      * @return QByteArray of the json message. Empty QByteArray when there is an error while
      * building the message.
      */
-    QByteArray buildServerMessageAPIv1(const Message &clientMessage, const QJsonObject &payload,
+    [[nodiscard]] QByteArray buildServerMessageAPIv1(const Message &clientMessage, const QJsonObject &payload,
                                        ResponseType responseType);
 
     /**

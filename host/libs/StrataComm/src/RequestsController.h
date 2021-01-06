@@ -28,7 +28,7 @@ public:
      * @param [in] payload QJsonObject of the request payload.
      * @return QByteArray of json formatted request.
      */
-    QByteArray addNewRequest(const QString &method, const QJsonObject &payload);
+    [[nodiscard]] QByteArray addNewRequest(const QString &method, const QJsonObject &payload);
 
     /**
      * Checks if there is a pending request with a specific id
@@ -51,7 +51,7 @@ public:
      * @return QString of the handler name. This will return an empty string if there is no pending
      * request with the same id.
      */
-    QString getMethodName(int id);
+    [[nodiscard]] QString getMethodName(int id);
 
 private:
     QHash<int, strata::strataComm::Request> requestsList_;

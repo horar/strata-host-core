@@ -4,35 +4,9 @@ void RequestsControllerTest::testAddRequest()
 {
     strata::strataComm::RequestsController rc;
 
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
-    rc.addNewRequest("method_1", {{"api", "v1"}});
+    for (int i = 1; i < 30; i++) {
+        QVERIFY(false == rc.addNewRequest("method_1", {{"api", "v1"}}).isEmpty());
+    }
 
     QVERIFY_(rc.isPendingRequest(1));
     QVERIFY_(false == rc.isPendingRequest(100));
@@ -50,7 +24,7 @@ void RequestsControllerTest::testLargeNumberOfPendingRequests()
     strata::strataComm::RequestsController rc;
 
     for (int i = 0; i < 300; i++) {
-        rc.addNewRequest(QString::number(i), {{"message_id", i}});
+        QVERIFY(false == rc.addNewRequest(QString::number(i), {{"message_id", i}}).isEmpty());
     }
 }
 
@@ -71,8 +45,8 @@ void RequestsControllerTest::testGetMethodName()
 {
     strata::strataComm::RequestsController rc;
 
-    rc.addNewRequest("method_handler_1", {});
-    rc.addNewRequest("method_handler_2", {});
+    QVERIFY(false == rc.addNewRequest("method_handler_1", {}).isEmpty());
+    QVERIFY(false == rc.addNewRequest("method_handler_2", {}).isEmpty());
 
     QVERIFY_(rc.isPendingRequest(1));
     QCOMPARE_(rc.getMethodName(1), "method_handler_1");
