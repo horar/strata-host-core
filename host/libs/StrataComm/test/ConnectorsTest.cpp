@@ -102,8 +102,6 @@ void ConnectorsTest::testFloodTheServer()
             [&server](const QByteArray &clientId, const QByteArray &message) {
                 if (message == "Start Test") {
                     server.sendMessage(clientId, "Hello from ServerConnector!");
-                } else {
-                    // qDebug() << message;
                 }
             });
 

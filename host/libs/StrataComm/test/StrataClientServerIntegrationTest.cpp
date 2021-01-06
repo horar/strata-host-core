@@ -211,7 +211,6 @@ void StrataClientServerIntegrationTest::testMultipleClients()
 
     client_1.registerHandler("register_client",
                              [&client1ReceivedServerResponse](const Message &message) {
-                                 qDebug() << message.payload;
                                  if (message.payload.contains("destination") &&
                                      message.payload["destination"] == "client_1") {
                                      client1ReceivedServerResponse = true;
