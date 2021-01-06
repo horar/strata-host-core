@@ -158,7 +158,7 @@ Item {
                         anchors {
                             left: statusLight.right
                             leftMargin: 2
-                            verticalCenter: parent.verticalCenter
+                            top: statusLight.top
                             right: deleteButton.shown ? deleteButton.left : parent.right
                             rightMargin: 2
                         }
@@ -167,6 +167,21 @@ Item {
                         font: dummyText.font
                         fontSizeMultiplier: dummyText.fontSizeMultiplier
                         color: "black"
+                        elide: Text.ElideRight
+                    }
+
+                    SGWidgets.SGText {
+                        id: deviceNameText
+                        anchors {
+                            left: buttonText.left
+                            top: buttonText.bottom
+                            right: buttonText.right
+                        }
+
+                        text: model.platform.deviceName
+                        fontSizeMultiplier: 0.9
+                        color: "black"
+                        opacity: 0.6
                         elide: Text.ElideRight
                     }
 

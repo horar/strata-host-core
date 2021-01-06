@@ -1013,7 +1013,7 @@ FocusScope {
 
     function resolveAbsoluteFileUrl(path) {
         return CommonCpp.SGUtilsCpp.pathToUrl(
-            CommonCpp.SGUtilsCpp.fileAbsolutePath(path))
+            CommonCpp.SGUtilsCpp.parentDirectoryPath(path))
     }
 
     function searchJLinkExePath() {
