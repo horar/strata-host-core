@@ -725,6 +725,11 @@ Module {
             Parameter { name: "path"; type: "string" }
         }
         Method {
+            name: "parentDirectoryPath"
+            type: "string"
+            Parameter { name: "filepath"; type: "string" }
+        }
+        Method {
             name: "pathToUrl"
             type: "QUrl"
             Parameter { name: "path"; type: "string" }

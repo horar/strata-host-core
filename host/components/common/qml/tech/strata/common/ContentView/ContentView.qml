@@ -4,6 +4,7 @@ import "content-views"
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
+import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: view
@@ -12,16 +13,29 @@ Rectangle {
     }
 
     property string class_id: ""
+    property string help_tour_id: ""
     property var classDocuments: null
+    property var fakeHelpDocuments: null
+    property var pdfAccordionState
+    property var datasheetAccordionState
+    property var downloadAccordionState
+    property var currentDocumentCategory : false
+    property string categoryOpened: "platform documents"
+    signal finished()
 
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
     onTotalDocumentsChanged: {
-        if (classDocuments.pdfListModel.count > 0) {
-            pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
-        } else if (classDocuments.datasheetListModel.count > 0) {
-            pdfViewer.url = classDocuments.datasheetListModel.getFirstUri()
-        } else {
-            pdfViewer.url = ""
+        if(helpIcon.class_id === "help_docs_demo" ) {
+            pdfViewer.url = "qrc:/tech/strata/common/ContentView/images/" + classDocuments.pdfListModel.getFirstUri()
+        }
+        else {
+            if (classDocuments.pdfListModel.count > 0) {
+                pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
+            } else if (classDocuments.datasheetListModel.count > 0) {
+                pdfViewer.url = classDocuments.datasheetListModel.getFirstUri()
+            } else {
+                pdfViewer.url = ""
+            }
         }
 
         if (classDocuments.downloadDocumentListModel.count > 0){
@@ -35,8 +49,47 @@ Rectangle {
         }
     }
 
+    HelpButton {
+        id: helpIcon
+        height: 30
+        width: 30
+        anchors {
+            right: view.right
+            bottom: view.bottom
+            margins: 40
+        }
+        z: 2
+    }
+
+    Connections {
+        target: Help.utility
+        onTour_runningChanged: {
+            if(tour_running === false && visible) {
+                helpIcon.class_id = view.class_id
+                accordion.contentItem.children[0].open = pdfAccordionState
+                accordion.contentItem.children[1].open = datasheetAccordionState
+                accordion.contentItem.children[2].open = downloadAccordionState
+                currentDocumentCategory = true
+                classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+            }
+        }
+    }
+
     Component.onCompleted: {
-         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+        classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+        helpIcon.class_id = view.class_id
+        let previousDeviceId = Help.current_device_id
+        // generate a uuidv4
+        help_tour_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        })
+        Help.setClassId(help_tour_id)
+        Help.registerTarget(accordion.contentItem.children[0],"Use this menu to select platform-specific documents for viewing.",0,"contentViewHelp")
+        Help.registerTarget(accordion.contentItem.children[1],"This menu includes part-specific datasheets for viewing.",1,"contentViewHelp")
+        Help.registerTarget(accordion.contentItem.children[2],"Select and download files related to this platform here.",2,"contentViewHelp")
+        Help.registerTarget(pdfViewerContainer,"This pane displays the documents selected from the left menu.",3,"contentViewHelp")
+        Help.current_device_id = previousDeviceId
     }
 
     Connections {
@@ -45,6 +98,17 @@ Rectangle {
             if (classDocuments.errorString.length > 0) {
                 pdfViewer.url = ""
                 loadingImage.currentFrame = 0
+            }
+        }
+    }
+
+    Connections {
+        target: Help.utility
+        onInternal_tour_indexChanged: {
+            if (helpIcon.class_id === "help_docs_demo") {
+                accordion.contentItem.children[0].open = (Help.current_tour_targets[index]["target"] === accordion.contentItem.children[0])
+                accordion.contentItem.children[1].open = (Help.current_tour_targets[index]["target"] === accordion.contentItem.children[1])
+                accordion.contentItem.children[2].open = (Help.current_tour_targets[index]["target"] === accordion.contentItem.children[2])
             }
         }
     }
@@ -134,6 +198,18 @@ Rectangle {
                                 pdfAccordion.closeContent.start();
                             }
                         }
+
+                        onAnimationCompleted: {
+                            if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
+                                Help.liveResize()
+                            }
+                        }
+
+                        onHeightChanged: {
+                            if (helpIcon.class_id === "help_docs_demo" && Help.current_tour_targets[Help.internal_tour_index]["target"] === pdfAccordion && Help.tour_running) {
+                                Help.liveResize()
+                            }
+                        }
                     }
 
                     SGAccordionItem {
@@ -150,6 +226,12 @@ Rectangle {
                                 datasheetAccordion.openContent.start();
                             } else {
                                 datasheetAccordion.closeContent.start();
+                            }
+                        }
+
+                        onAnimationCompleted: {
+                            if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
+                                Help.liveResize()
                             }
                         }
                     }
@@ -169,6 +251,12 @@ Rectangle {
                                 downloadAccordion.openContent.start();
                             } else {
                                 downloadAccordion.closeContent.start();
+                            }
+                        }
+
+                        onAnimationCompleted: {
+                            if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
+                                Help.liveResize()
                             }
                         }
                     }
@@ -237,6 +325,16 @@ Rectangle {
             }
 
             url: ""
+
+            Item {
+                id: pdfViewerContainer
+                width: parent.width
+                height: parent.height - 250
+                anchors {
+                    top: pdfViewer.top
+                    topMargin: 10
+                }
+            }
         }
 
         EmptyDocuments {

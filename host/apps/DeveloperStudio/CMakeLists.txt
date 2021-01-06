@@ -7,13 +7,18 @@ set(PROJECT_WIN32_ICO resources/icons/app/on-logo.ico)
 set(PROJECT_MACOS_ICNS on-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
+set(QT5_MINIMUM_VERSION 5.12.4)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts RemoteObjects Svg
+    COMPONENTS Core Gui Widgets Quick Qml Xml WebEngine Charts RemoteObjects Svg
     REQUIRED
 )
+
+if (Qt5_VERSION VERSION_LESS QT5_MINIMUM_VERSION)
+    message(FATAL_ERROR "Minimum Qt version supported is ${QT5_MINIMUM_VERSION}. Current version in use is ${Qt5_VERSION}. Please update your version via the Qt Maintenance Tool")
+endif()
 
 qt5_generate_repc(NODE_RO_SRCS ${CMAKE_SOURCE_DIR}/apps/hcs3/src/HostControllerService.rep REPLICA)
 
@@ -27,6 +32,10 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/DownloadDocumentListModel.cpp
     source/VersionedListModel.cpp
     source/ClassDocuments.cpp
+    source/SGQrcTreeModel.cpp
+    source/SGQrcTreeNode.cpp
+    source/SGFileTabModel.cpp
+    source/SGNewControlView.cpp
     $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
     source/RunGuard.cpp
 
@@ -38,6 +47,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     logging/qml/tech/strata/logger/qml.qrc
     signals/qml/tech/strata/signals/qml.qrc
     notifications/qml/tech/strata/notifications/qml.qrc
+    partial-views/control-view-creator/template-views.qrc
 
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
@@ -69,6 +79,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Gui
     Qt5::Widgets
     Qt5::Qml
+    Qt5::Xml
     Qt5::WebEngine
     Qt5::RemoteObjects
     Qt5::Svg
@@ -76,6 +87,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::connector
     strata::HostControllerClient
     strata::PlatformInterface
+    strata::SGUtilsCpp
     strata::SGVersionUtils
 
     strata::QtLogger
