@@ -39,6 +39,34 @@ bool SGUtilsCpp::isFile(const QString &file)
     return info.isFile();
 }
 
+bool SGUtilsCpp::createFile(const QString &filepath)
+{
+    QFile file(filepath);
+    if (file.exists()) {
+        file.close();
+        return false;
+    }
+
+    bool success = file.open(QIODevice::WriteOnly);
+    file.close();
+    return success;
+}
+
+bool SGUtilsCpp::removeFile(const QString &filepath)
+{
+    return QFile::remove(filepath);
+}
+
+bool SGUtilsCpp::copyFile(const QString &fromPath, const QString &toPath)
+{
+    return QFile::copy(fromPath, toPath);
+}
+
+QString SGUtilsCpp::fileSuffix(const QString &filename)
+{
+    return QFileInfo(filename).suffix();
+}
+
 bool SGUtilsCpp::isValidImage(const QString &file)
 {
     QImageReader reader(file);
@@ -63,13 +91,19 @@ QString SGUtilsCpp::fileName(const QString &file)
 QString SGUtilsCpp::fileAbsolutePath(const QString &file)
 {
     QFileInfo fi(file);
-    return fi.absolutePath();
+    return fi.absoluteFilePath();
 }
 
 QString SGUtilsCpp::dirName(const QString &path)
 {
     QDir dir(path);
     return dir.dirName();
+}
+
+QString SGUtilsCpp::parentDirectoryPath(const QString &filepath)
+{
+    QFileInfo fi(filepath);
+    return fi.absolutePath();
 }
 
 QUrl SGUtilsCpp::pathToUrl(const QString &path, const QString &scheme)
@@ -98,6 +132,19 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
     return file.commit();
 }
 
+bool SGUtilsCpp::fileIsChildOfDir(const QString &filePath, QString dirPath)
+{
+    if (dirPath.length() > 0 && dirPath[dirPath.length() - 1] != QDir::separator()) {
+        dirPath.append(QDir::separator());
+    }
+
+    if (filePath.startsWith(dirPath)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 QString SGUtilsCpp::readTextFileContent(const QString &path)
 {
     QFile file(path);
@@ -123,6 +170,11 @@ QString SGUtilsCpp::joinFilePath(const QString &path, const QString &fileName)
 {
     QDir dir(path);
     return dir.filePath(fileName);
+}
+
+bool SGUtilsCpp::exists(const QString &filepath)
+{
+    return QFileInfo::exists(filepath);
 }
 
 QString SGUtilsCpp::formattedDataSize(qint64 bytes, int precision)
