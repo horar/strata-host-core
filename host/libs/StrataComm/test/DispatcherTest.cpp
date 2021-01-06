@@ -16,27 +16,9 @@ DispatcherTest::DispatcherTest()
         {"handler_5", {}, 5, "mg", strata::strataComm::Message::MessageType::Command});
 }
 
-void DispatcherTest::testStartDispatcher()
-{
-    Dispatcher dispatcher;
-
-    QVERIFY_(dispatcher.start());
-}
-
-void DispatcherTest::testStopDispatcher()
-{
-    Dispatcher dispatcher;
-
-    QVERIFY_(dispatcher.stop());
-}
-
 void DispatcherTest::testRegisteringHandlers()
 {
     Dispatcher dispatcher;
-
-    Message message;
-    message.clientID = QByteArray("mg");
-    message.handlerName = "handler_1";
 
     QCOMPARE_(dispatcher.registerHandler(
                   "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)),
@@ -58,13 +40,20 @@ void DispatcherTest::testRegisteringHandlers()
               true);
 }
 
-void DispatcherTest::testDispatchHandlers()
+void DispatcherTest::testUregisterHandlers()
 {
     Dispatcher dispatcher;
 
-    Message message;
-    message.clientID = QByteArray("mg");
-    message.handlerName = "handler_1";
+    QVERIFY_(false == dispatcher.unregisterHandler("not_registered_handler"));
+
+    QVERIFY_(dispatcher.registerHandler("example_handler", [](const Message &) {}));
+    QVERIFY_(dispatcher.unregisterHandler("example_handler"));
+    QVERIFY_(false == dispatcher.unregisterHandler("example_handler"));
+}
+
+void DispatcherTest::testDispatchHandlers()
+{
+    Dispatcher dispatcher;
 
     QVERIFY_(dispatcher.registerHandler(
         "handler_1", std::bind(&TestHandlers::handler_1, th_, std::placeholders::_1)));
@@ -151,7 +140,6 @@ void DispatcherTest::testDispatchHandlersInDispatcherThread()
 void DispatcherTest::testDispatchHandlersLocalMessage()
 {
     Dispatcher dispatcher;
-    dispatcher.start();
 
     qRegisterMetaType<Message>("Message");
     connect(this, &DispatcherTest::disp, &dispatcher, &Dispatcher::dispatchHandler,

@@ -21,18 +21,6 @@ public:
     ~Dispatcher();
 
     /**
-     * Start dispatching.
-     * @return True if the dispatcher started successfully, False otherwise.
-     */
-    bool start();
-
-    /**
-     * Stop dispatching.
-     * @return True if the dispatcher stopped successfully, False otherwise.
-     */
-    bool stop();
-
-    /**
      * Dispatch the handler in message.handlerName
      * @param [in] message Message object that contains meta data about the which handler to execute
      * and it's arguments.
@@ -53,7 +41,7 @@ public:
     /**
      * Unregister a handler.
      * @param [in] handlerName the name of the handler.
-     * @return always returns True, even if the handler was not registered.
+     * @return returns True if the handler was found and remove successfully, False if the handler was not registered.
      */
     bool unregisterHandler(const QString &handlerName);
 

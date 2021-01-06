@@ -13,18 +13,6 @@ Dispatcher::~Dispatcher()
     qCInfo(logCategoryStrataDispatcher) << "dispatcher destroyed.";
 }
 
-bool Dispatcher::start()
-{
-    qCInfo(logCategoryStrataDispatcher) << "dispatcher started.";
-    return true;
-}
-
-bool Dispatcher::stop()
-{
-    qCInfo(logCategoryStrataDispatcher) << "dispatcher stopped.";
-    return true;
-}
-
 bool Dispatcher::registerHandler(const QString &handlerName, StrataHandler handler)
 {
     qCInfo(logCategoryStrataDispatcher) << "registering " << handlerName << " handler.";
@@ -47,7 +35,7 @@ bool Dispatcher::unregisterHandler(const QString &handlerName)
         return true;
     } else {
         qCCritical(logCategoryStrataDispatcher()) << "Handler not found" << handlerName;
-        return true;
+        return false;
     }
 }
 

@@ -17,14 +17,12 @@ public:
     DispatcherTest();
 
 private slots:
-    void testStartDispatcher();
-    void testStopDispatcher();
     void testRegisteringHandlers();
+    void testUregisterHandlers();
     void testDispatchHandlers();
     void testDispatchHandlersUsingSignal();
     void testDispatchHandlersInDispatcherThread();
     void testDispatchHandlersLocalMessage();
-
     void testLargeNumberOfHandlers();
     void testLargeNumberOfHandlersUsingDispatcherThread();
 

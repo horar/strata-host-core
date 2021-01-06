@@ -26,8 +26,8 @@ void StrataClientTest::testRegisterAndUnregisterHandlers()
 
     QVERIFY_(client.unregisterHandler("handler_1"));
     QVERIFY_(client.unregisterHandler("handler_2"));
-    QVERIFY_(client.unregisterHandler("handler_2"));
-    QVERIFY_(client.unregisterHandler("not_registered_handler"));
+    QVERIFY_(false == client.unregisterHandler("handler_2"));
+    QVERIFY_(false == client.unregisterHandler("not_registered_handler"));
 }
 
 void StrataClientTest::testConnectDisconnectToTheServer()
