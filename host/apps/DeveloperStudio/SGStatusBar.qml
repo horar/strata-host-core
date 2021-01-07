@@ -37,6 +37,8 @@ Rectangle {
     property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
 
+    property alias platformTabListView: platformTabListView
+
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
@@ -109,13 +111,16 @@ Rectangle {
         }
 
         ListView {
-            id: platformTabRepeater
+            id: platformTabListView
             Layout.fillHeight: true
             Layout.fillWidth: true
             delegate: SGPlatformTab {}
             orientation: ListView.Horizontal
             spacing: 1
             clip: true
+
+            highlightMoveDuration: 200
+            highlightMoveVelocity: -1
 
             model: NavigationControl.platform_view_model_
         }
