@@ -37,6 +37,8 @@ QVariant DocumentListModel::data(const QModelIndex &index, int role) const
         return item->dirname;
     case PreviousDirnameRole:
         return data(DocumentListModel::index(row - 1, 0), DirnameRole);
+    case HistoryStateRole:
+        return item->historyState;
     }
 
     return QVariant();
@@ -107,6 +109,7 @@ QHash<int, QByteArray> DocumentListModel::roleNames() const
     names[PrettyNameRole] = "prettyName";
     names[DirnameRole] = "dirname";
     names[PreviousDirnameRole] = "previousDirname";
+    names[HistoryStateRole] = "historyState";
 
     return names;
 }
@@ -115,9 +118,25 @@ QString DocumentListModel::getMD5()
 {
     QJsonObject jsonObj;
     for (const auto &item : data_) {
-        jsonObj.insert(item->prettyName, item->md5);
+        jsonObj.insert(item->dirname + "_" + item->prettyName, item->md5);
     }
     QJsonDocument doc(jsonObj);
     QString strJson(doc.toJson(QJsonDocument::Compact));
     return strJson;
+}
+
+void DocumentListModel::setHistoryState(const QString &doc, const QString &state) {
+    for (int i = 0; i < data_.length(); ++i) {
+        DocumentItem* item = data_.at(i);
+        if (item == nullptr) {
+            qCCritical(logCategoryDocumentManager) << "item is empty" << i;
+            continue;
+        }
+
+        if (item->dirname + "_" + item->prettyName == doc) {
+            item->historyState = state;
+            emit dataChanged(createIndex(i, 0), createIndex(i, 0));
+            return;
+        }
+    }
 }

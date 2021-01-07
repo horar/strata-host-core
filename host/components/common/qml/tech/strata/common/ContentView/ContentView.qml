@@ -54,43 +54,7 @@ Rectangle {
         }
 
         onMd5Ready: {
-            // Read existing 'documents-history' file
-            let previousDocHistory = documentHistory.loadSettings()
-
-            // Downloads
-            let downloadDocumentsData = classDocuments.downloadDocumentListModel.getMD5()
-            downloadDocumentsData = JSON.parse(downloadDocumentsData)
-
-            // Views
-            let pdfData = classDocuments.pdfListModel.getMD5()
-            pdfData = JSON.parse(pdfData)
-
-            var newDocHistory = {}
-            for (var _obj in downloadDocumentsData) {
-                newDocHistory[_obj] = downloadDocumentsData[_obj]
-            }
-            for (var _obj in pdfData) {
-                newDocHistory[_obj] = pdfData[_obj]
-            }
-
-            if (Object.keys(previousDocHistory).length > 0) {
-                Object.keys(newDocHistory).forEach(function(key) {
-
-                    if (!previousDocHistory.hasOwnProperty(key)) {
-
-                        // Key did not exist in old documents-history
-                        console.error("Key '" + key + "' did not exist in old documents-history!!")
-
-                    } else if (previousDocHistory[key] != newDocHistory[key]) {
-
-                        // Key has changed from old documents-history
-                        console.error("Key '" + key + "' has changed from old documents-history!!")
-
-                    }
-                })
-            }
-
-            documentHistory.saveSettings(newDocHistory)
+            documentsHistory.processDocumentsHistory()
         }
     }
 
@@ -360,18 +324,94 @@ Rectangle {
         }
     }
 
-    SGUserSettings {
-        id: documentHistory
-        classId: view.class_id + "-documents-history"
-        user: NavigationControl.context.user_id
+    Item {
+        id: documentsHistory
 
-        function loadSettings() {
-            const settings = readFile("documents-history.json")
-            return settings
+        SGUserSettings {
+            id: documentsHistorySettings
+            classId: "documents-history"
+            user: NavigationControl.context.user_id
+
+            property var documentsHistoryFilename: view.class_id + ".json"
+
+            function loadDocumentsHistory() {
+                const settings = readFile(documentsHistoryFilename)
+                return settings
+            }
+
+            function saveDocumentsHistory(documentsHistory) {
+                writeFile(documentsHistoryFilename, documentsHistory)
+            }
         }
 
-        function saveSettings(settings) {
-            documentHistory.writeFile("documents-history.json", settings)
+        function processDocumentsHistory() {
+            // Read existing 'documents-history' file
+            let previousDocHistory = documentsHistorySettings.loadDocumentsHistory()
+
+            // Downloads
+            let downloadDocumentsData = classDocuments.downloadDocumentListModel.getMD5()
+            downloadDocumentsData = JSON.parse(downloadDocumentsData)
+
+            // Views
+            let pdfData = classDocuments.pdfListModel.getMD5()
+            pdfData = JSON.parse(pdfData)
+
+            var newDocHistory = {}
+            Object.keys(downloadDocumentsData).forEach(function(key) {
+                var insideObj = {"md5": downloadDocumentsData[key], "state": "seen"}
+                newDocHistory[key] = insideObj
+            })
+
+            Object.keys(pdfData).forEach(function(key) {
+                var insideObj = {"md5": pdfData[key], "state": "seen"}
+                newDocHistory[key] = insideObj
+            })
+
+            var documentChanges = {}
+            if (Object.keys(previousDocHistory).length > 0) {
+                Object.keys(newDocHistory).forEach(function(key) {
+                    if (!previousDocHistory.hasOwnProperty(key)) {
+                        // Key did not exist in old documents-history
+                        console.debug("Key '" + key + "' did not exist in old documents-history!!")
+                        newDocHistory[key]["state"] = "new_document"
+                        classDocuments.pdfListModel.setHistoryState(key, "new_document")
+                        classDocuments.downloadDocumentListModel.setHistoryState(key, "new_document")
+                    } else if (previousDocHistory[key]["md5"] != newDocHistory[key]["md5"]) {
+                        // Key has changed from old documents-history
+                        console.debug("Key '" + key + "' has changed from old documents-history!!")
+                        newDocHistory[key]["state"] = "different_md5"
+                        classDocuments.pdfListModel.setHistoryState(key, "different_md5")
+                        classDocuments.downloadDocumentListModel.setHistoryState(key, "different_md5")
+                    } else if (previousDocHistory[key]["state"] == "new_document") {
+                        newDocHistory[key]["state"] = "new_document"
+                        classDocuments.pdfListModel.setHistoryState(key, "new_document")
+                        classDocuments.downloadDocumentListModel.setHistoryState(key, "new_document")
+                    } else if (previousDocHistory[key]["state"] == "different_md5") {
+                        newDocHistory[key]["state"] = "different_md5"
+                        classDocuments.pdfListModel.setHistoryState(key, "different_md5")
+                        classDocuments.downloadDocumentListModel.setHistoryState(key, "different_md5")
+                    }
+                })
+            }
+
+            documentsHistorySettings.saveDocumentsHistory(newDocHistory)
+        }
+
+        function markDocumentAsSeen(documentName) {
+            let history = documentsHistorySettings.loadDocumentsHistory()
+            if (!history.hasOwnProperty(documentName)) {
+                console.debug("Documents history: Failed to mark document as seen, '" + documentName + "' not found")
+                return
+            }
+
+            if (history[documentName]["state"] == "seen") {
+                return
+            }
+
+            history[documentName]["state"] = "seen"
+            documentsHistorySettings.saveDocumentsHistory(history)
+            classDocuments.pdfListModel.setHistoryState(documentName, "seen")
+            classDocuments.downloadDocumentListModel.setHistoryState(documentName, "seen")
         }
     }
 }

@@ -24,7 +24,6 @@ Item {
             delegate: BaseDocDelegate {
                 id: delegate
                 width: wrapper.width
-
                 bottomPadding: 2
 
                 property string effectiveUri: "file://localhost/" + model.uri
@@ -38,6 +37,7 @@ Item {
                 onCheckedChanged: {
                     if (checked) {
                         pdfViewer.url = effectiveUri
+                        documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
                     }
                 }
 
@@ -85,6 +85,20 @@ Item {
 
                          color: "#33b13b"
                          visible: delegate.checked
+                     }
+
+                     SGWidgets.SGIcon {
+                         id: historyUpdate
+                         height: 20
+                         width: height
+                         anchors {
+                             right: textItem.right
+                             rightMargin: 2
+                             verticalCenter: parent.verticalCenter
+                         }
+
+                         source: "qrc:/sgimages/exclamation-triangle.svg"
+                         visible: model.historyState != "seen"
                      }
 
                      SGWidgets.SGIcon {

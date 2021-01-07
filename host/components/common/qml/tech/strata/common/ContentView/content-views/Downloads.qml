@@ -79,6 +79,7 @@ Item {
 
                     onCheckedChanged: {
                         repeater.model.setSelected(index, checked)
+                        documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
                     }
 
                     Binding {
@@ -187,6 +188,20 @@ Item {
                             elide: Text.ElideNone
                             textFormat: Text.PlainText
                             maximumLineCount: 2
+                        }
+
+                        SGWidgets.SGIcon {
+                            id: historyUpdate
+                            height: 20
+                            width: height
+                            anchors {
+                                right: textItem.right
+                                rightMargin: 2
+                                verticalCenter: parent.verticalCenter
+                            }
+
+                            source: "qrc:/sgimages/exclamation-triangle.svg"
+                            visible: model.historyState != "seen"
                         }
 
                         Rectangle {
