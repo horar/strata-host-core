@@ -187,6 +187,7 @@ function globalEventHandler(event,data)
 
         // Show Login Screen
         navigation_state_ = states.LOGIN_STATE
+
         updateState(events.PROMPT_LOGIN_EVENT)
         break;
 
