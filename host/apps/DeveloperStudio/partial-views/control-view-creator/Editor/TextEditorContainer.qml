@@ -9,7 +9,6 @@ import QtWebChannel 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
-import "./textEditorHelper.js" as Helper
 import "../../general"
 import "../"
 
@@ -270,12 +269,19 @@ Item {
         settings.pluginsEnabled: true
         settings.showScrollBars: false
 
+        property string main: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.js")
+        property string nls: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.nls.js")
+        property string loader: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/","loader.js")
+        property string css: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.css")
+
         function runInit() {
-            // runJavaScript("script0 = document.getElementById(\"s0\"); path = document.createTextNode("+ { paths: { vs: SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs"),"folder")}}+"); script0.appendChild(path);")
-            runJavaScript("script1 = document.getElementById(\"s1\"); script1.src="+SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.js"))+";")
-            runJavaScript("script2 = document.getElementById(\"s2\");   script2.src="+SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/","loader.js"))+";")
-            runJavaScript("script3 = document.getElementById(\"s3\");   script3.src ="+SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.nls.js"))+"")
-            runJavaScript("link0 = document.getElementById(\"l0\"); link0.setAttribute(\"href\","+SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.css"))+");")
+            //runJavaScript(`script = document.getElementById(\"s0\"); path = document.createTextNode(${require = { paths: { vs: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs")}}}); script.appendChild(path);`)
+            const mainUrl = String(main)
+            const loaderUrl = String(loader)
+            const nlsUrl = String(nls)
+            runJavaScript("script = document.getElementById(\"s1\"); script.setAttribute(\"src\","+encodeURIComponent(mainUrl)+");")
+            runJavaScript("script = document.getElementById(\"s2\"); script.setAttribute(\"src\","+encodeURIComponent(loaderUrl)+");")
+            runJavaScript("script = document.getElementById(\"s3\"); script.setAttribute(\"src\","+encodeURIComponent(nlsUrl)+");")
         }
 
         anchors {
@@ -295,15 +301,12 @@ Item {
 
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
+                runInit()
                 channelObject.setContainerHeight(height.toString())
                 let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             }
-        }
-
-        Component.onCompleted: {
-            runInit()
         }
 
         url: "qrc:///partial-views/control-view-creator/editor.html"

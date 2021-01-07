@@ -14,7 +14,5 @@
         <file>template-views/images/basic.jpg</file>
         <file>template-views/images/template.jpg</file>
     </qresource>
-    <qresource prefix="/">
-        <file>Editor/textEditorHelper.js</file>
-    </qresource>
+    <qresource prefix="/"/>
 </RCC>
