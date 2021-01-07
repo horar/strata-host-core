@@ -144,6 +144,16 @@ FocusScope {
                     right: parent.right
                 }
 
+                property int buttonRowIconSize: SGWidgets.SGSettings.fontPixelSize - 4
+                property int buttonRowSpacing: 2
+
+                SGWidgets.SGIconButton {
+                    id: dummyIconButton
+                    visible: false
+                    icon.source: "qrc:/sgimages/chevron-right.svg"
+                    iconSize: scrollBackWrapper.buttonRowIconSize
+                }
+
                 Rectangle {
                     anchors.fill: parent
                     color: "white"
@@ -168,14 +178,10 @@ FocusScope {
                         visible: scrollbackView.height < scrollbackView.contentHeight
                     }
 
-                    onContentYChanged: {
-                        automaticScroll = scrollbackView.atYEnd
-                    }
-
                     delegate: Item {
                         id: cmdDelegate
                         width: ListView.view.width
-                        height: divider.y + divider.height
+                        height: cmdText.height + 3
 
                         property color helperTextColor: "#333333"
 
@@ -224,66 +230,38 @@ FocusScope {
                                 leftMargin: 1
                             }
 
-                            text: {
-                                var date = new Date(model.timestamp)
-                                return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
-                            }
-
+                            text: model.timestamp
                             font.family: "monospace"
                             color: cmdDelegate.helperTextColor
                         }
 
-                        Row {
+                        Item {
                             id: buttonRow
+                            height: dummyIconButton.height
+                            width: 2*dummyIconButton.width + scrollBackWrapper.buttonRowSpacing
                             anchors {
                                 left: timeText.right
-                                leftMargin: 2
+                                leftMargin: scrollBackWrapper.buttonRowSpacing
                                 verticalCenter: timeText.verticalCenter
                             }
 
-                            spacing: 2
-                            property int iconSize: timeText.font.pixelSize - 4
-
-                            Item {
-                                height: condenseButtonWrapper.height
-                                width: condenseButtonWrapper.width
-
-                                Loader {
-                                    sourceComponent: model.type === Sci.SciScrollbackModel.Request ? resendButtonComponent : undefined
+                            Loader {
+                                anchors {
+                                    left: parent.left
+                                    leftMargin: scrollBackWrapper.buttonRowSpacing
+                                    verticalCenter: parent.verticalCenter
                                 }
 
-                                Component {
-                                    id: resendButtonComponent
-                                    SGWidgets.SGIconButton {
-                                        iconColor: cmdDelegate.helperTextColor
-                                        hintText: qsTr("Resend")
-                                        icon.source: "qrc:/images/redo.svg"
-                                        iconSize: buttonRow.iconSize
-                                        onClicked: {
-                                            cmdInput.text = model.message
-                                        }
-                                    }
-                                }
+                                sourceComponent: model.type === Sci.SciScrollbackModel.Request ? resendButtonComponent : null
                             }
 
-                            Item {
-                                id: condenseButtonWrapper
-                                height: childrenRect.height
-                                width: childrenRect.width
-
-                                SGWidgets.SGIconButton {
-                                    id: condenseButton
-
-                                    iconColor: cmdDelegate.helperTextColor
-                                    hintText: qsTr("Condensed mode")
-                                    icon.source: model.isCondensed ? "qrc:/sgimages/chevron-right.svg" : "qrc:/sgimages/chevron-down.svg"
-                                    iconSize: buttonRow.iconSize
-
-                                    onClicked: {
-                                        var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
-                                        var item = scrollbackModel.setIsCondensed(sourceIndex, !model.isCondensed)
-                                    }
+                            Loader {
+                                anchors {
+                                    left: parent.left
+                                    leftMargin: dummyIconButton.width + scrollBackWrapper.buttonRowSpacing
                                 }
+
+                                sourceComponent: condensedButtonComponent
                             }
                         }
 
@@ -298,18 +276,11 @@ FocusScope {
                             }
 
                             font.family: "monospace"
-                            wrapMode: Text.WrapAnywhere
+                            wrapMode: Text.WordWrap
                             selectByKeyboard: true
                             selectByMouse: true
                             readOnly: true
-
-                            text: {
-                                if (model.isCondensed === false && model.isJsonValid) {
-                                    return CommonCpp.SGUtilsCpp.prettifyJson(model.message)
-                                }
-
-                                return model.message
-                            }
+                            text: model.message
 
                             MouseArea {
                                 anchors.fill: parent
@@ -321,13 +292,6 @@ FocusScope {
                         Loader {
                             id: syntaxHighlighterLoader
                             sourceComponent: model.isJsonValid ? syntaxHighlighterComponent : null
-                        }
-
-                        Component {
-                            id: syntaxHighlighterComponent
-                            CommonCpp.SGJsonSyntaxHighlighter {
-                                textDocument: cmdText.textDocument
-                            }
                         }
 
                         Rectangle {
@@ -342,6 +306,47 @@ FocusScope {
 
                             color: "black"
                             opacity: 0.2
+                        }
+
+                        Component {
+                            id: resendButtonComponent
+                            SGWidgets.SGIconButton {
+                                iconColor: cmdDelegate.helperTextColor
+                                hintText: qsTr("Resend")
+                                iconSize: scrollBackWrapper.buttonRowIconSize
+                                icon.source: "qrc:/images/redo.svg"
+                                onClicked: {
+                                    cmdInput.text = CommonCpp.SGJsonFormatter.minifyJson(model.message);
+                                }
+                            }
+                        }
+
+                        Component {
+                            id: condensedButtonComponent
+                            SGWidgets.SGIconButton {
+                                iconColor: cmdDelegate.helperTextColor
+                                hintText: qsTr("Condensed mode")
+                                iconSize: scrollBackWrapper.buttonRowIconSize
+                                enabled: model.isJsonValid
+                                icon.source: {
+                                    if (model.isCondensed || model.isJsonValid === false) {
+                                        return "qrc:/sgimages/chevron-right.svg"
+                                    }
+                                     return "qrc:/sgimages/chevron-down.svg"
+                                }
+
+                                onClicked: {
+                                    var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
+                                    var item = scrollbackModel.setIsCondensed(sourceIndex, !model.isCondensed)
+                                }
+                            }
+                        }
+
+                        Component {
+                            id: syntaxHighlighterComponent
+                            CommonCpp.SGJsonSyntaxHighlighter {
+                                textDocument: cmdText.textDocument
+                            }
                         }
                     }
                 }
@@ -394,6 +399,7 @@ FocusScope {
                     }
 
                     SGWidgets.SGIconButton {
+                        id: toggleExpandButton
                         text: scrollbackModel.condensedMode ? "Expand" : "Collapse"
                         minimumWidthText: "Collapse"
                         hintText: {
@@ -620,8 +626,14 @@ FocusScope {
             }
 
             function toggleExpand() {
+                if (toggleExpandButton.enabled === false) {
+                    return
+                }
+
+                toggleExpandButton.enabled = false
                 scrollbackModel.condensedMode = ! scrollbackModel.condensedMode
-                scrollbackModel.setAllCondensed(scrollbackModel.condensedMode)
+                scrollbackModel.setIsCondensedAll(scrollbackModel.condensedMode)
+                toggleExpandButton.enabled = true
             }
 
             function openFilterDialog() {

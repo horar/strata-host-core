@@ -1,5 +1,4 @@
-#ifndef SCI_PLATFORM_H
-#define SCI_PLATFORM_H
+#pragma once
 
 #include "SciScrollbackModel.h"
 #include "SciCommandHistoryModel.h"
@@ -59,7 +58,7 @@ public:
     void setDeviceName(const QString &deviceName);
 
     void resetPropertiesFromDevice();
-    Q_INVOKABLE bool sendMessage(const QByteArray &message, bool onlyValidJson);
+    Q_INVOKABLE bool sendMessage(const QString &message, bool onlyValidJson);
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
 
     //settings handlers
@@ -119,5 +118,3 @@ private:
 
     void setProgramInProgress(bool programInProgress);
 };
-
-#endif //SCI_PLATFORM_H

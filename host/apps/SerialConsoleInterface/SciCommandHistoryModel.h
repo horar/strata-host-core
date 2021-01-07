@@ -1,5 +1,4 @@
-#ifndef SCI_COMMAND_HISTORY_MODEL_H
-#define SCI_COMMAND_HISTORY_MODEL_H
+#pragma once
 
 #include <QAbstractListModel>
 
@@ -52,5 +51,3 @@ private:
 
     void sanitize();
 };
-
-#endif //SCI_COMMAND_HISTORY_MODEL_H

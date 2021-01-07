@@ -39,21 +39,6 @@ public:
     Q_INVOKABLE static bool validateJson(const QByteArray &json, const QByteArray &schema);
     Q_INVOKABLE static QString toHex(qint64 number, int width = 0);
 
-    /*!
-     * Format valid json string.
-     * \param json valid json string
-     * \param indentSize number of spaces used for indentation
-     * \return formatted json string
-     */
-    Q_INVOKABLE static QByteArray prettifyJson(const QByteArray &json, int indentSize=4);
-
-    /*!
-     * Removes all unnecessary white spaces from valid json string.
-     * \param json valid json string
-     * \return json string without unnecessary spaces
-     */
-    Q_INVOKABLE static QByteArray minifyJson(const QByteArray &json);
-
 private:
     const QStringList fileSizePrefixList_;
 };

@@ -1,7 +1,7 @@
 #include "SciCommandHistoryModel.h"
 #include "logging/LoggingQtCategories.h"
 #include "SciPlatform.h"
-
+#include "SGJsonFormatter.h"
 
 SciCommandHistoryModel::SciCommandHistoryModel(SciPlatform *platform)
     : QAbstractListModel(platform),
@@ -68,9 +68,11 @@ void SciCommandHistoryModel::setMaximumCount(int maximumCount)
 
 void SciCommandHistoryModel::add(const QString &message)
 {
+    QString compactMessage = SGJsonFormatter::minifyJson(message);
+
     int index = -1;
     for (int i = 0; i < commandList_.length(); ++i) {
-        if (commandList_.at(i).message == message) {
+        if (commandList_.at(i).message == compactMessage) {
             index = i;
             break;
         }
@@ -81,7 +83,7 @@ void SciCommandHistoryModel::add(const QString &message)
         beginInsertRows(QModelIndex(), commandList_.length(), commandList_.length());
 
         SciCommandHistoryModelItem item;
-        item.message = message;
+        item.message = compactMessage;
         commandList_.append(item);
 
         endInsertRows();
