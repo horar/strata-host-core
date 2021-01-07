@@ -18,8 +18,8 @@ Rectangle {
 
     property string class_id: ""
     property var classDocuments: null
-
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
+
     onTotalDocumentsChanged: {
         if (classDocuments.pdfListModel.count > 0) {
             pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri()
@@ -135,6 +135,7 @@ Rectangle {
                         }
                         open: pdfAccordion.visible
                         visible: classDocuments.pdfListModel.count > 0
+                        displayAlert: true
 
                         onOpenChanged: {
                             if(open){
@@ -356,44 +357,60 @@ Rectangle {
             let pdfData = classDocuments.pdfListModel.getMD5()
             pdfData = JSON.parse(pdfData)
 
-            var newDocHistory = {}
+            var newDownloadsHistory = {}
             Object.keys(downloadDocumentsData).forEach(function(key) {
                 var insideObj = {"md5": downloadDocumentsData[key], "state": "seen"}
-                newDocHistory[key] = insideObj
+                newDownloadsHistory[key] = insideObj
             })
 
+            var newViewsHistory = {}
             Object.keys(pdfData).forEach(function(key) {
                 var insideObj = {"md5": pdfData[key], "state": "seen"}
-                newDocHistory[key] = insideObj
+                newViewsHistory[key] = insideObj
             })
 
             var documentChanges = {}
             if (Object.keys(previousDocHistory).length > 0) {
-                Object.keys(newDocHistory).forEach(function(key) {
+                Object.keys(newDownloadsHistory).forEach(function(key) {
                     if (!previousDocHistory.hasOwnProperty(key)) {
                         // Key did not exist in old documents-history
-                        console.debug("Key '" + key + "' did not exist in old documents-history!!")
-                        newDocHistory[key]["state"] = "new_document"
-                        classDocuments.pdfListModel.setHistoryState(key, "new_document")
+                        newDownloadsHistory[key]["state"] = "new_document"
                         classDocuments.downloadDocumentListModel.setHistoryState(key, "new_document")
-                    } else if (previousDocHistory[key]["md5"] != newDocHistory[key]["md5"]) {
+                    } else if (previousDocHistory[key]["md5"] != newDownloadsHistory[key]["md5"]) {
                         // Key has changed from old documents-history
-                        console.debug("Key '" + key + "' has changed from old documents-history!!")
-                        newDocHistory[key]["state"] = "different_md5"
-                        classDocuments.pdfListModel.setHistoryState(key, "different_md5")
+                        newDownloadsHistory[key]["state"] = "different_md5"
                         classDocuments.downloadDocumentListModel.setHistoryState(key, "different_md5")
                     } else if (previousDocHistory[key]["state"] == "new_document") {
-                        newDocHistory[key]["state"] = "new_document"
-                        classDocuments.pdfListModel.setHistoryState(key, "new_document")
+                        newDownloadsHistory[key]["state"] = "new_document"
                         classDocuments.downloadDocumentListModel.setHistoryState(key, "new_document")
                     } else if (previousDocHistory[key]["state"] == "different_md5") {
-                        newDocHistory[key]["state"] = "different_md5"
-                        classDocuments.pdfListModel.setHistoryState(key, "different_md5")
+                        newDownloadsHistory[key]["state"] = "different_md5"
                         classDocuments.downloadDocumentListModel.setHistoryState(key, "different_md5")
+                    }
+                })
+
+                Object.keys(newViewsHistory).forEach(function(key) {
+                    if (!previousDocHistory.hasOwnProperty(key)) {
+                        // Key did not exist in old documents-history
+                        newViewsHistory[key]["state"] = "new_document"
+                        classDocuments.pdfListModel.setHistoryState(key, "new_document")
+                    } else if (previousDocHistory[key]["md5"] != newViewsHistory[key]["md5"]) {
+                        // Key has changed from old documents-history
+                        newViewsHistory[key]["state"] = "different_md5"
+                        classDocuments.pdfListModel.setHistoryState(key, "different_md5")
+                    } else if (previousDocHistory[key]["state"] == "new_document") {
+                        newViewsHistory[key]["state"] = "new_document"
+                        classDocuments.pdfListModel.setHistoryState(key, "new_document")
+                    } else if (previousDocHistory[key]["state"] == "different_md5") {
+                        newViewsHistory[key]["state"] = "different_md5"
+                        classDocuments.pdfListModel.setHistoryState(key, "different_md5")
                     }
                 })
             }
 
+            var newDocHistory = {};
+            Object.keys(newDownloadsHistory).forEach(key => newDocHistory[key] = newDownloadsHistory[key]);
+            Object.keys(newViewsHistory).forEach(key => newDocHistory[key] = newViewsHistory[key]);
             documentsHistorySettings.saveDocumentsHistory(newDocHistory)
         }
 

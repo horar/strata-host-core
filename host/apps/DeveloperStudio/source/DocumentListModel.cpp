@@ -125,7 +125,8 @@ QString DocumentListModel::getMD5()
     return strJson;
 }
 
-void DocumentListModel::setHistoryState(const QString &doc, const QString &state) {
+void DocumentListModel::setHistoryState(const QString &doc, const QString &state)
+{
     for (int i = 0; i < data_.length(); ++i) {
         DocumentItem* item = data_.at(i);
         if (item == nullptr) {

@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 // SGAccordionItem is a clickable title bar that drops down an area that can be filled with items
 
@@ -27,6 +28,7 @@ Rectangle {
     property alias dividerColor: divider.color
     property alias closeContent: closeContent
     property alias openContent: openContent
+    property bool displayAlert: false
 
     onOpenChanged: {
         if (open && exclusive && root.parent) {
@@ -56,6 +58,20 @@ Rectangle {
                 leftMargin: 10
                 right: minMaxContainer.left
             }
+        }
+
+        SGWidgets.SGIcon {
+            id: alertIcon
+            height: 20
+            width: height
+            anchors {
+                right: titleText.right
+                rightMargin: 2
+                verticalCenter: parent.verticalCenter
+            }
+
+            source: "qrc:/sgimages/exclamation-triangle.svg"
+            visible: displayAlert
         }
 
         Item {
