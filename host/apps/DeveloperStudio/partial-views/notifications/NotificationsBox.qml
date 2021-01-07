@@ -84,7 +84,11 @@ Item {
         }
 
         onValidationResult: {
-            currentUser = Authenticator.settings.user
+            if (result === "Current token is valid") {
+                currentUser = Authenticator.settings.user
+            } else {
+                currentUser = ""
+            }
         }
     }
 }
