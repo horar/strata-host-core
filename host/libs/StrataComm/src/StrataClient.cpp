@@ -1,9 +1,8 @@
 #include "StrataClient.h"
+#include "Request.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <QJsonDocument>
-
-#include "Request.h"
 
 using namespace strata::strataComm;
 

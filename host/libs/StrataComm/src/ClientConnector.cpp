@@ -1,6 +1,7 @@
 #include "ClientConnector.h"
-#include <QString>
 #include "logging/LoggingQtCategories.h"
+
+#include <QString>
 
 using namespace strata::strataComm;
 

@@ -1,6 +1,8 @@
 #include "StrataServer.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <QJsonDocument>
+
 using namespace strata::strataComm;
 
 StrataServer::StrataServer(QString address, QObject *parent)

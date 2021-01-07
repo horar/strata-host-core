@@ -2,6 +2,7 @@
 
 #include <QJsonObject>
 #include <QString>
+
 #include <functional>
 
 namespace strata::strataComm

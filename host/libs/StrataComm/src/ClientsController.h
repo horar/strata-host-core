@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QList>
-#include <QObject>
-
 #include "Client.h"
 #include "logging/LoggingQtCategories.h"
+
+#include <QList>
+#include <QObject>
 
 namespace strata::strataComm
 {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QObject>
-
 #include "Message.h"
+
+#include <QObject>
 
 namespace strata::strataComm
 {
@@ -41,7 +41,8 @@ public:
     /**
      * Unregister a handler.
      * @param [in] handlerName the name of the handler.
-     * @return returns True if the handler was found and remove successfully, False if the handler was not registered.
+     * @return returns True if the handler was found and remove successfully, False if the handler
+     * was not registered.
      */
     bool unregisterHandler(const QString &handlerName);
 

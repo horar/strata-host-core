@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Request.h"
+
 #include <QHash>
 #include <QObject>
-
-#include "Request.h"
 
 namespace strata::strataComm
 {

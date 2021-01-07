@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Connector.h>
+
 #include <QObject>
 #include <QSocketNotifier>
 

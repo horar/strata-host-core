@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QByteArray>
-#include <QString>
-#include <QtCore>
 
 namespace strata::strataComm
 {
