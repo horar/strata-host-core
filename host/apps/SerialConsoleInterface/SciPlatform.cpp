@@ -190,11 +190,12 @@ bool SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
     // replace all soft wraps as QJsonDocument cannot handle them
     messageUtf8 = messageUtf8.replace(QChar(0x2028),"");
 
-    if (onlyValidJson) {
-        QJsonParseError parseError;
-        QJsonDocument doc = QJsonDocument::fromJson(messageUtf8, &parseError);
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(messageUtf8, &parseError);
+    bool isJsonValid = parseError.error == QJsonParseError::NoError;
 
-        if (parseError.error != QJsonParseError::NoError) {
+    if (onlyValidJson) {
+        if (isJsonValid == false) {
             QString error = QString("JSON error at position %1 - %2")
                     .arg(parseError.offset)
                     .arg(parseError.errorString());
@@ -210,7 +211,7 @@ bool SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
 
     bool result = device_->sendMessage(messageUtf8);
     if (result) {
-        commandHistoryModel_->add(messageUtf8);
+        commandHistoryModel_->add(messageUtf8, isJsonValid);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
     }
 

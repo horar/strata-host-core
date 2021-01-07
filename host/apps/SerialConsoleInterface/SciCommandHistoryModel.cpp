@@ -3,6 +3,8 @@
 #include "SciPlatform.h"
 #include "SGJsonFormatter.h"
 
+#include <QJsonDocument>
+
 SciCommandHistoryModel::SciCommandHistoryModel(SciPlatform *platform)
     : QAbstractListModel(platform),
       platform_(platform)
@@ -25,6 +27,8 @@ QVariant SciCommandHistoryModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case MessageRole:
         return item.message;
+    case IsJsonValidRole:
+        return item.isJsonValid;
     }
 
     return QVariant();
@@ -49,6 +53,7 @@ QVariantMap SciCommandHistoryModel::get(int row)
 
     QVariantMap map;
     map["message"] = commandList_.at(row).message;
+    map["isJsonValid"] = commandList_.at(row).isJsonValid;
 
     return map;
 }
@@ -66,7 +71,7 @@ void SciCommandHistoryModel::setMaximumCount(int maximumCount)
     }
 }
 
-void SciCommandHistoryModel::add(const QString &message)
+void SciCommandHistoryModel::add(const QString &message, bool isJsonValid)
 {
     QString compactMessage = SGJsonFormatter::minifyJson(message);
 
@@ -84,6 +89,7 @@ void SciCommandHistoryModel::add(const QString &message)
 
         SciCommandHistoryModelItem item;
         item.message = compactMessage;
+        item.isJsonValid = isJsonValid;
         commandList_.append(item);
 
         endInsertRows();
@@ -105,10 +111,14 @@ void SciCommandHistoryModel::populate(const QStringList &list)
     beginResetModel();
     commandList_.clear();
 
-    for (const QString &message : list) {
-         SciCommandHistoryModelItem item;
-         item.message = message;
-         commandList_.append(item);
+    for (QString message : list) {
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+
+        SciCommandHistoryModelItem item;
+        item.message = message;
+        item.isJsonValid = parseError.error == QJsonParseError::NoError;
+        commandList_.append(item);
     }
 
     endResetModel();
@@ -146,6 +156,7 @@ QHash<int, QByteArray> SciCommandHistoryModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[MessageRole] = "message";
+    roles[IsJsonValidRole] = "isJsonValid";
 
     return roles;
 }
