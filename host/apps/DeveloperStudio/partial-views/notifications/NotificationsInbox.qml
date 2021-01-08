@@ -255,13 +255,13 @@ Rectangle {
     }
 
     function open() {
-        if (!showAnimation.running) {
+        if (!isOpen && !showAnimation.running) {
             showAnimation.start()
         }
     }
 
     function close() {
-        if (!hideAnimation.running) {
+        if (isOpen && !hideAnimation.running) {
             hideAnimation.start()
         }
     }

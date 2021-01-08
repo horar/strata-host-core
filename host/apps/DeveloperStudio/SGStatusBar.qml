@@ -322,7 +322,7 @@ Rectangle {
                     iconSource: hasNotifications ? "qrc:/sgimages/exclamation-circle.svg" : ""
                     onClicked: {
                         profileMenu.close()
-                        mainWindow.notificationsInbox.toggle()
+                        mainWindow.notificationsInbox.open()
                     }
                 }
 
