@@ -123,6 +123,38 @@ Rectangle {
             highlightMoveVelocity: -1
 
             model: NavigationControl.platform_view_model_
+            ScrollBar.horizontal: ScrollBar {
+                id: horizontalScrollBar
+                orientation: Qt.Vertical
+            }
+            MouseArea {
+                anchors.fill: parent
+                onWheel: {
+                    // to scroll the list we have to increase / decrease scrollbar by a given step size
+                    // step size of 1.0 scrolls the entire content width in 1 step
+                    // step size of 0.1 scrolls the entire content width in ~10 steps
+                    // step size scrolls based on content width, but we want to scroll based on width
+                    // so for example 10 steps would scroll 1 window of content
+                    // as input we have angleDelta which is in multiples of 120, where 120 is one scroll step
+                    let angleDelta = 0.0
+                    if (Math.abs(wheel.angleDelta.x) > Math.abs(wheel.angleDelta.y))
+                        angleDelta = wheel.angleDelta.x
+                    else
+                        angleDelta = wheel.angleDelta.y
+
+                    let adjustesdStepSize = 0.0
+                    if(platformTabListView.contentWidth != 0)
+                        adjustesdStepSize = Math.abs(angleDelta) * (((platformTabListView.width / platformTabListView.contentWidth) / 120.0) / 10.0)
+
+                    horizontalScrollBar.stepSize = adjustesdStepSize
+                    if (angleDelta > 0.0) {
+                        horizontalScrollBar.decrease()
+                    } else if (angleDelta < 0.0) {
+                        horizontalScrollBar.increase()
+                    }
+                    horizontalScrollBar.stepSize = 0.0
+                }
+            }
         }
 
         CVCButton {
