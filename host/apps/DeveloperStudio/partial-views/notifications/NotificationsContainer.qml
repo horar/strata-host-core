@@ -41,6 +41,7 @@ Item {
         width: parent.width
         height: parent.height
         anchors.bottom: parent.bottom
+        visible: !notificationsInbox.isOpen
         model: filteredNotifications
         spacing: 10
         clip: true
