@@ -30,11 +30,11 @@ Item {
         radius: 4
         clip: true
         border.color: {
-            if (model.level === Notifications.info) {
+            if (model.level === Notifications.Level.Info) {
                 return Theme.palette.gray;
-            } else if (model.level === Notifications.warning) {
+            } else if (model.level === Notifications.Level.Warning) {
                 return Theme.palette.warning;
-            } else if (model.level === Notifications.critical) {
+            } else if (model.level === Notifications.Level.Critical) {
                 return Theme.palette.error;
             }
         }
@@ -72,11 +72,11 @@ Item {
                 visible: model.iconSource !== ""
 
                 iconColor: {
-                    if (model.level === Notifications.info) {
+                    if (model.level === Notifications.Level.Info) {
                         return Theme.palette.gray;
-                    } else if (model.level === Notifications.warning) {
+                    } else if (model.level === Notifications.Level.Warning) {
                         return Theme.palette.warning;
-                    } else if (model.level === Notifications.critical) {
+                    } else if (model.level === Notifications.Level.Critical) {
                         return Theme.palette.error;
                     }
                 }

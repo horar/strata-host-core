@@ -71,7 +71,7 @@ Rectangle {
         invokeCustomFilter: true
 
         function filterAcceptsRow(index) {
-            return sourceModel.get(index).level === Notifications.critical
+            return sourceModel.get(index).level === Notifications.Level.Critical
         }
     }
 

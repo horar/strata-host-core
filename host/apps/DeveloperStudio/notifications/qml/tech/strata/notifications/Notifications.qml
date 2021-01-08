@@ -9,12 +9,13 @@ import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
-    // Constants
-    readonly property int info: 0
-    readonly property int warning: 1
-    readonly property int critical: 2
-
     property alias model: model_
+
+    enum Level {
+        Info = 0,
+        Warning = 1,
+        Critical = 2
+    }
 
     SGUserSettings {
         id: notificationSettings
@@ -47,14 +48,14 @@ Item {
             - saveToDisk: Whether to save the notification to disk | DEFAULT: False
             - singleton: Only allow one notification with this title to be exposed to the user | DEFAULT: False
             - timeout: The timeout for the notification  (in milliseconds) | DEFAULT: 10000ms for non-critical notifications
-            - iconSource: The icon's source url | DEFAULT: level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
+            - iconSource: The icon's source url | DEFAULT: level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
      **/
     function createNotification(title, level, to, additionalParameters = {}) {
         const description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";
         const actions = additionalParameters.hasOwnProperty("actions") ? additionalParameters["actions"].map((action) => ({"action": action})) : [];
         const saveToDisk = additionalParameters.hasOwnProperty("saveToDisk") ? additionalParameters["saveToDisk"] : false;
         const singleton = additionalParameters.hasOwnProperty("singleton") ? additionalParameters["singleton"] : false;
-        const iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
+        const iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
         let timeout = additionalParameters.hasOwnProperty("timeout") ? additionalParameters["timeout"] : -1;
 
         if (timeout < 0) {
