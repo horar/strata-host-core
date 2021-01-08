@@ -10,9 +10,10 @@ BoardManagerDerivate::BoardManagerDerivate() : BoardManager()
 {
 }
 
-void BoardManagerDerivate::init(bool requireFwInfoResponse)
+void BoardManagerDerivate::init(bool requireFwInfoResponse, bool keepDevicesOpen)
 {
     reqFwInfoResp_ = requireFwInfoResponse;
+    keepDevicesOpen_ = keepDevicesOpen;
 }
 
 void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString deviceName)

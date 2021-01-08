@@ -35,8 +35,9 @@ namespace strata {
         /**
          * Initialize BoardManager (start managing connected devices).
          * @param requireFwInfoResponse if true require response to get_firmware_info command during device identification
+         * @param keepDevicesOpen if true communication channel is not released (closed) if device is not recognized
          */
-        virtual void init(bool requireFwInfoResponse = true);
+        virtual void init(bool requireFwInfoResponse, bool keepDevicesOpen);
 
         /**
          * Disconnect from the device.
@@ -135,6 +136,8 @@ namespace strata {
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;
+        // flag if communication channel should stay open if device is not recognized
+        bool keepDevicesOpen_;
 
     private:
         void startIdentifyOperation(const device::DevicePtr device);

@@ -16,7 +16,7 @@ void BoardManagerTest::init()
     boardManager_ = std::make_shared<BoardManagerDerivate>();
     connect(boardManager_.get(), &strata::BoardManager::boardDisconnected, this,
             &BoardManagerTest::onBoardDisconnected);
-    boardManager_->init();
+    boardManager_->init(true, false);
 }
 
 void BoardManagerTest::cleanup()

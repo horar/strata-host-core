@@ -29,8 +29,9 @@ BoardManager::BoardManager() {
 
 BoardManager::~BoardManager() { }
 
-void BoardManager::init(bool requireFwInfoResponse) {
+void BoardManager::init(bool requireFwInfoResponse, bool keepDevicesOpen) {
     reqFwInfoResp_ = requireFwInfoResponse;
+    keepDevicesOpen_ = keepDevicesOpen;
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
@@ -46,6 +47,7 @@ bool BoardManager::disconnectDevice(const int deviceId) {
         }
     }
     if (success) {
+        qCInfo(logCategoryBoardManager).nospace() << "Disconnected serial device 0x" << hex << static_cast<uint>(deviceId);
         emit boardDisconnected(deviceId);
     } else {
         logInvalidDeviceId(QStringLiteral("Cannot disconnect"), deviceId);
@@ -203,13 +205,12 @@ bool BoardManager::addSerialPort(const int deviceId) {
     DevicePtr device = std::make_shared<device::serial::SerialDevice>(deviceId, name);
 
     if (openDevice(device) == false) {
-        qCWarning(logCategoryBoardManager).nospace()
-            << "Cannot open device: ID: 0x" << hex << static_cast<uint>(deviceId)
-            << ", name: " << name;
+        qCWarning(logCategoryBoardManager).nospace() <<
+            "Cannot open device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
         return false;
     }
-    qCInfo(logCategoryBoardManager).nospace() << "Added new serial device: ID: 0x" << hex
-                                              << static_cast<uint>(deviceId) << ", name: " << name;
+    qCInfo(logCategoryBoardManager).nospace() <<
+        "Added new serial device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
     startDeviceOperations(device);
     return true;
 }
@@ -292,6 +293,16 @@ void BoardManager::handleOperationFinished(operation::Result result, int status,
         if (result != operation::Result::Cancel) {
             bool boardRecognized = (result == operation::Result::Success);
             emit boardInfoChanged(deviceId, boardRecognized);
+            if (boardRecognized == false && keepDevicesOpen_ == false) {
+                qCInfo(logCategoryBoardManager).nospace() << "Device 0x" << hex << static_cast<uint>(deviceId)
+                                                          << " was not recognized, going to release communication channel.";
+                // Device cannot be removed in this slot (this slot is connected to signal emitted by device).
+                // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
+                // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
+                QTimer::singleShot(0, this, [this, deviceId](){
+                    disconnectDevice(deviceId);
+                });
+            }
         }
     }
 }
@@ -311,14 +322,7 @@ void BoardManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) 
         // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
         // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
         QTimer::singleShot(0, this, [this, deviceId](){
-            bool removed = false;
-            {
-                QMutexLocker lock(&mutex_);
-                removed = closeDevice(deviceId);  // modifies openedDevices_ - call it while mutex_ is locked
-            }
-            if (removed) {
-                emit boardDisconnected(deviceId);
-            }
+            disconnectDevice(deviceId);
         });
     }
 }
