@@ -771,7 +771,7 @@ if(NOT LIB_INSTALLED)
             && ${GIT_EXECUTABLE} apply --verbose --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/libzmq/remove-library-name-postfix.patch
 
             INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different <INSTALL_DIR>/bin/libzmq$<$<NOT:$<CONFIG:RELEASE>>:d>${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <INSTALL_DIR>/bin/libzmq$<$<CONFIG:DEBUG>>:d>${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
         )
     else()
         ExternalProject_Add(libzmq
@@ -788,11 +788,11 @@ else()
     if(WIN32)
         # TODO: RS: File output build dependency for ExternalProject_Add in CMake
         # https://jira.onsemi.com/browse/CS-1442
-        if("${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}" STREQUAL "Release")
-            file(COPY "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
+        if("${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}" STREQUAL "Debug")
+            file(COPY "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmqd${CMAKE_SHARED_LIBRARY_SUFFIX}"
                     DESTINATION "${CMAKE_BINARY_DIR}/bin")
         else()
-            file(COPY "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmqd${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            file(COPY "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
                     DESTINATION "${CMAKE_BINARY_DIR}/bin")
         endif()
     endif()
@@ -803,10 +803,10 @@ add_library(zeromq::libzmq SHARED IMPORTED GLOBAL)
 if(WIN32)
     set_target_properties(zeromq::libzmq PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include"
-            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/bin/libzmqd${CMAKE_SHARED_LIBRARY_SUFFIX}"
-            IMPORTED_LOCATION_RELEASE "${CMAKE_BINARY_DIR}/bin/libzmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
-            IMPORTED_IMPLIB "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmqd${CMAKE_STATIC_LIBRARY_SUFFIX}"
-            IMPORTED_IMPLIB_RELEASE "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmq${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/bin/libzmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            IMPORTED_LOCATION_DEBUG "${CMAKE_BINARY_DIR}/bin/libzmqd${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            IMPORTED_IMPLIB "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmq${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            IMPORTED_IMPLIB_DEBUG "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmqd${CMAKE_STATIC_LIBRARY_SUFFIX}"
     )
 else()
     set_target_properties(zeromq::libzmq PROPERTIES
