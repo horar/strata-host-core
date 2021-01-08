@@ -31,6 +31,15 @@
         <file>partial-views/control-view-creator/utils/template_selection.js</file>
         <file>partial-views/control-view-creator/components/SGControlViewButton.qml</file>
         <file>partial-views/control-view-creator/CVCButton.qml</file>
+        <file>partial-views/control-view-creator/Console/ConsoleLogger.qml</file>
+        <file>partial-views/control-view-creator/Console/ConsoleContainer.qml</file>
+        <file>partial-views/control-view-creator/components/SGControlViewButton.qml</file>
+        <file>partial-views/control-view-creator/Console/ConsoleMessages/ConsoleDelegate.qml</file>
+        <file>partial-views/control-view-creator/Console/ConsoleMessages/ConsoleMessage.qml</file>
+        <file>partial-views/control-view-creator/Console/ConsoleMessages/ConsoleTime.qml</file>
+        <file>partial-views/control-view-creator/Console/ConsoleMessages/ConsoleTypes.qml</file>
+        <file>partial-views/control-view-creator/components/SGControlViewIconButton.qml</file>
+        <file>partial-views/control-view-creator/components/SGControlSearchComboBox.qml</file>
         <file>partial-views/control-view-creator/DebugPanel.qml</file>
     </qresource>
 </RCC>

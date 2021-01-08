@@ -99,5 +99,7 @@
         <file>partial-views/platform-selector/PlatformImage.qml</file>
         <file>partial-views/general/WebPopup/SGWebControls.qml</file>
         <file>partial-views/general/WebPopup/SGWebView.qml</file>
+        <file>partial-views/notifications/NotificationDelegate.qml</file>
+        <file>partial-views/notifications/NotificationsBox.qml</file>
     </qresource>
 </RCC>
