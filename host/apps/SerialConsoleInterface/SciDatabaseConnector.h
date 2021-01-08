@@ -1,5 +1,4 @@
-#ifndef SCIDATABASCONNECTOR
-#define SCIDATABASCONNECTOR
+#pragma once
 
 #include <couchbaselitecpp/SGCouchBaseLite.h>
 #include <QObject>
@@ -39,5 +38,3 @@ private:
 
     void setRunning(const bool running);
 };
-
-#endif //SCIDATABASCONNECTOR

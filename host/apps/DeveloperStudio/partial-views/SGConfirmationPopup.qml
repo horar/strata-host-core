@@ -7,7 +7,7 @@ import tech.strata.sgwidgets 1.0
 
 Popup {
     id: root
-    width: 400
+    width: 500
     height: confirmationContainer.height
     x: parent.width/2 - width/2
     y: parent.height/2 - height/2
@@ -16,15 +16,37 @@ Popup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
     property alias titleText: confirmTitle.text
-    property alias acceptButtonText: acceptButton.text
-    property alias cancelButtonText: cancelButton.text
     property alias popupText: confirmText.text
-    property alias acceptButton: acceptButton
-    property alias cancelButton: cancelButton
-    property string acceptButtonColor: "#999"
-    property string acceptButtonHoverColor: "#666"
-    property string cancelButtonColor: "#999"
-    property string cancelButtonHoverColor: "#666"
+    property var defaultButtons: [
+        {
+            buttonText: acceptButtonText,
+            buttonColor: acceptButtonColor,
+            buttonHoverColor: acceptButtonHoverColor,
+            closeReason: root.acceptCloseReason
+        },
+        {
+            buttonText: cancelButtonText,
+            buttonColor: cancelButtonColor,
+            buttonHoverColor: cancelButtonHoverColor,
+            closeReason: root.cancelCloseReason
+        }
+    ]
+    property var buttons: defaultButtons
+    property string acceptButtonText: "Accept"
+    property string cancelButtonText: "Cancel"
+    property color acceptButtonColor: "#999"
+    property color acceptButtonHoverColor: "#666"
+    property color cancelButtonColor: "#999"
+    property color cancelButtonHoverColor: "#666"
+
+    readonly property int cancelCloseReason: 0
+    readonly property int acceptCloseReason: 1
+
+    signal popupClosed(int closeReason);
+
+    onPopupClosed: {
+        close();
+    }
 
     DropShadow {
         width: root.width
@@ -63,6 +85,7 @@ Popup {
                     anchors {
                         left: confirmTitleBox.left
                         leftMargin: 10
+                        right: confirmTitleText.left
                         verticalCenter: confirmTitleBox.verticalCenter
                         verticalCenterOffset: 2
                     }
@@ -88,7 +111,10 @@ Popup {
                         anchors {
                             fill: confirmTitleText
                         }
-                        onClicked: root.close()
+                        onClicked: {
+                            root.popupClosed(root.cancelCloseReason)
+                            close()
+                        }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                     }
@@ -96,6 +122,7 @@ Popup {
             }
 
             Row {
+                width: confirmationContainer.width - 10
                 anchors {
                     horizontalCenter: column2.horizontalCenter
                 }
@@ -104,6 +131,9 @@ Popup {
                     id: confirmText
                     color: "black"
                     text: "Are you sure you would like to continue?"
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
                 }
             }
 
@@ -114,97 +144,54 @@ Popup {
                     horizontalCenter: column2.horizontalCenter
                 }
 
-                Button {
-                    id: acceptButton
-                    text: "Accept"
+                Repeater {
+                    id: buttonRepeater
+                    model: buttons
 
-                    contentItem: Text {
-                        text: acceptButton.text
-                        font.pixelSize: 12
-                        font.family: Fonts.franklinGothicBook
-                        color: "white"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                    }
+                    delegate: Button {
+                        id: delegateRoot
+                        text: modelData.buttonText
 
-                    background: Rectangle {
-                        id: acceptBtnBg
-                        implicitWidth: 100
-                        implicitHeight: 40
-                        color: acceptButtonColor
-                    }
-
-                    onClicked: {
-                        root.close()
-                    }
-
-                    Accessible.onPressAction: function() {
-                        clicked()
-                    }
-
-                    MouseArea {
-                        id: acceptBtnCursor
-
-                        hoverEnabled: true
-                        anchors.fill: parent
-                        onPressed:  mouse.accepted = false
-                        cursorShape: Qt.PointingHandCursor
-
-                        onEntered: {
-                            acceptBtnBg.color = acceptButtonHoverColor
+                        contentItem: Text {
+                            text: delegateRoot.text
+                            font.pixelSize: 12
+                            font.family: Fonts.franklinGothicBook
+                            color: "white"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
                         }
 
-                        onExited: {
-                            acceptBtnBg.color = acceptButtonColor
-                        }
-                    }
-                }
-
-                Button {
-                    id: cancelButton
-                    text: "Cancel"
-                    visible: text !== ""
-
-                    contentItem: Text {
-                        text: cancelButton.text
-                        font.pixelSize: 12
-                        font.family: Fonts.franklinGothicBook
-                        color: "white"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                    }
-
-                    background: Rectangle {
-                        id: cancelBtnBg
-                        implicitWidth: 100
-                        implicitHeight: 40
-                        color: cancelButtonColor
-                    }
-
-                    onClicked: {
-                        root.close()
-                    }
-
-                    Accessible.onPressAction: function() {
-                        clicked()
-                    }
-
-                    MouseArea {
-                        id: cancelBtnCursor
-
-                        hoverEnabled: true
-                        anchors.fill: parent
-                        onPressed:  mouse.accepted = false
-                        cursorShape: Qt.PointingHandCursor
-
-                        onEntered: {
-                            cancelBtnBg.color = cancelButtonHoverColor
+                        background: Rectangle {
+                            id: btnBg
+                            implicitWidth: 100
+                            implicitHeight: 40
+                            color: modelData.buttonColor
                         }
 
-                        onExited: {
-                            cancelBtnBg.color = cancelButtonColor
+                        onClicked: {
+                            root.popupClosed(modelData.closeReason)
+                        }
+
+                        Accessible.onPressAction: function() {
+                            clicked()
+                        }
+
+                        MouseArea {
+                            id: btnCursor
+
+                            hoverEnabled: true
+                            anchors.fill: parent
+                            onPressed:  mouse.accepted = false
+                            cursorShape: Qt.PointingHandCursor
+
+                            onEntered: {
+                                btnBg.color = modelData.buttonHoverColor
+                            }
+
+                            onExited: {
+                                btnBg.color = modelData.buttonColor
+                            }
                         }
                     }
                 }

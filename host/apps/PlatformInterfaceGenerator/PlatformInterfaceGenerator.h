@@ -9,6 +9,13 @@ class PlatformInterfaceGenerator : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString lastError READ lastError)
+    Q_PROPERTY(QString TYPE_INT MEMBER TYPE_INT CONSTANT)
+    Q_PROPERTY(QString TYPE_DOUBLE MEMBER TYPE_DOUBLE CONSTANT)
+    Q_PROPERTY(QString TYPE_STRING MEMBER TYPE_STRING CONSTANT)
+    Q_PROPERTY(QString TYPE_BOOL MEMBER TYPE_BOOL CONSTANT)
+    Q_PROPERTY(QString TYPE_ARRAY_DYNAMIC MEMBER TYPE_ARRAY_DYNAMIC CONSTANT)
+    Q_PROPERTY(QString TYPE_OBJECT_DYNAMIC MEMBER TYPE_OBJECT_DYNAMIC CONSTANT)
+
 public:
     PlatformInterfaceGenerator(QObject *parent = nullptr);
     virtual ~PlatformInterfaceGenerator();
@@ -16,7 +23,14 @@ public:
     static const int API_VERSION = 2;
     static QString lastError_;
 
-    QString static lastError();
+    inline static const QString TYPE_INT = "int";
+    inline static const QString TYPE_DOUBLE = "double";
+    inline static const QString TYPE_STRING = "string";
+    inline static const QString TYPE_BOOL = "bool";
+    inline static const QString TYPE_ARRAY_DYNAMIC = "array-dynamic";
+    inline static const QString TYPE_OBJECT_DYNAMIC = "object-dynamic";
+
+    static QString lastError();
 
     /**
      * @brief generate The main function that starts the generation of a PlatformInterface.qml file

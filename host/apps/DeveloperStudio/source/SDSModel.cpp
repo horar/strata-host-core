@@ -1,6 +1,8 @@
 #include "SDSModel.h"
 
 #include "DocumentManager.h"
+#include "ResourceLoader.h"
+#include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "ResourceLoader.h"
 #include "logging/LoggingQtCategories.h"
@@ -19,6 +21,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, QObject *parent)
       coreInterface_(new CoreInterface(this, dealerAddress.toString().toStdString())),
       documentManager_(new DocumentManager(coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
+      newControlView_(new SGNewControlView(this)),
       remoteHcsNode_(new HcsNode(this))
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
@@ -29,6 +32,7 @@ SDSModel::~SDSModel()
     delete documentManager_;
     delete coreInterface_;
     delete resourceLoader_;
+    delete newControlView_;
     delete remoteHcsNode_;
 }
 
@@ -154,6 +158,11 @@ CoreInterface *SDSModel::coreInterface() const
 ResourceLoader *SDSModel::resourceLoader() const
 {
     return resourceLoader_;
+}
+
+SGNewControlView *SDSModel::newControlView() const
+{
+    return newControlView_;
 }
 
 void SDSModel::shutdownService()
