@@ -19,6 +19,8 @@ Rectangle {
     property string class_id: ""
     property var classDocuments: null
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
+    property bool displayPdfUnseenAlert: false
+    property bool displayDownloadUnseenAlert: false
 
     onTotalDocumentsChanged: {
         if (classDocuments.pdfListModel.count > 0) {
@@ -135,7 +137,7 @@ Rectangle {
                         }
                         open: pdfAccordion.visible
                         visible: classDocuments.pdfListModel.count > 0
-                        displayAlert: true
+                        displayAlert: displayPdfUnseenAlert
 
                         onOpenChanged: {
                             if(open){
@@ -173,6 +175,7 @@ Rectangle {
                         }
                         open: !pdfAccordion.visible && !datasheetAccordion.visible && downloadAccordion.visible
                         visible: classDocuments.downloadDocumentListModel.count > 0
+                        displayAlert: displayDownloadUnseenAlert
 
                         onOpenChanged: {
                             if(open){
@@ -412,6 +415,9 @@ Rectangle {
             Object.keys(newDownloadsHistory).forEach(key => newDocHistory[key] = newDownloadsHistory[key]);
             Object.keys(newViewsHistory).forEach(key => newDocHistory[key] = newViewsHistory[key]);
             documentsHistorySettings.saveDocumentsHistory(newDocHistory)
+
+            displayPdfUnseenAlert = classDocuments.pdfListModel.anyItemsUnseen()
+            displayDownloadUnseenAlert = classDocuments.downloadDocumentListModel.anyItemsUnseen()
         }
 
         function markDocumentAsSeen(documentName) {
@@ -429,6 +435,23 @@ Rectangle {
             documentsHistorySettings.saveDocumentsHistory(history)
             classDocuments.pdfListModel.setHistoryState(documentName, "seen")
             classDocuments.downloadDocumentListModel.setHistoryState(documentName, "seen")
+
+            displayPdfUnseenAlert = classDocuments.pdfListModel.anyItemsUnseen()
+            displayDownloadUnseenAlert = classDocuments.downloadDocumentListModel.anyItemsUnseen()
+        }
+
+        function markAllDocumentsAsSeen() {
+            let history = documentsHistorySettings.loadDocumentsHistory()
+            Object.keys(history).forEach(function(key) {
+                history[key]["state"] = "seen"
+            })
+            documentsHistorySettings.saveDocumentsHistory(history)
+
+            classDocuments.pdfListModel.setAllHistoryStateToSeen()
+            classDocuments.downloadDocumentListModel.setAllHistoryStateToSeen()
+
+            displayPdfUnseenAlert = false
+            displayDownloadUnseenAlert = false
         }
     }
 }

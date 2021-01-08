@@ -362,7 +362,8 @@ QString DownloadDocumentListModel::getMD5()
     return strJson;
 }
 
-void DownloadDocumentListModel::setHistoryState(const QString &doc, const QString &state) {
+void DownloadDocumentListModel::setHistoryState(const QString &doc, const QString &state)
+{
     for (int i = 0; i < data_.length(); ++i) {
         DownloadDocumentItem* item = data_.at(i);
         if (item == nullptr) {
@@ -376,4 +377,21 @@ void DownloadDocumentListModel::setHistoryState(const QString &doc, const QStrin
             return;
         }
     }
+}
+
+void DownloadDocumentListModel::setAllHistoryStateToSeen()
+{
+    for (const auto &item : data_) {
+        item->historyState = "seen";
+    }
+}
+
+bool DownloadDocumentListModel::anyItemsUnseen()
+{
+    for (const auto &item : data_) {
+        if (item->historyState != "seen") {
+            return true;
+        }
+    }
+    return false;
 }

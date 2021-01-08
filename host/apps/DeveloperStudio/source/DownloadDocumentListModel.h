@@ -58,6 +58,8 @@ public:
     Q_INVOKABLE void downloadSelectedFiles(const QUrl &saveUrl);
     Q_INVOKABLE QString getMD5();
     Q_INVOKABLE void setHistoryState(const QString &doc, const QString &state);
+    Q_INVOKABLE void setAllHistoryStateToSeen();
+    Q_INVOKABLE bool anyItemsUnseen();
 
 signals:
     void countChanged();

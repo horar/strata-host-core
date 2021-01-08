@@ -42,80 +42,101 @@ Item {
                 }
 
                 contentSourceComponent: Item {
-                     height: textItem.contentHeight + 20
+                    height: textItem.contentHeight + 20
 
-                     SGWidgets.SGText {
-                         id: textItem
+                    SGWidgets.SGText {
+                        id: textItem
 
-                         anchors {
-                             verticalCenter: parent.verticalCenter
-                             left: parent.left
-                             leftMargin: chevronImage.width + chevronImage.anchors.rightMargin
-                             right: parent.right
-                             rightMargin: textItem.anchors.leftMargin
-                         }
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            left: parent.left
+                            leftMargin: chevronImage.width + chevronImage.anchors.rightMargin
+                            right: parent.right
+                            rightMargin: textItem.anchors.leftMargin
+                        }
 
-                         font.bold: delegate.checked ? false : true
-                         horizontalAlignment: Text.AlignHCenter
-                         text: {
-                             /*
-                                 the first regexp is looking for HTML RichText
-                                 the second regexp is looking for spaces after string
-                                 the third regexp is looking for spaces before string
-                                 the fourth regexp is looking for tabs throughout the string
-                             */
-                             const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
-                             return model.dirname.replace(htmlTags,"");
-                         }
-                         alternativeColorEnabled: delegate.checked === false
-                         fontSizeMultiplier: 1.1
-                         wrapMode: Text.Wrap
-                         textFormat: Text.PlainText
-                     }
+                        font.bold: delegate.checked ? false : true
+                        horizontalAlignment: Text.AlignHCenter
+                        text: {
+                            /*
+                                the first regexp is looking for HTML RichText
+                                the second regexp is looking for spaces after string
+                                the third regexp is looking for spaces before string
+                                the fourth regexp is looking for tabs throughout the string
+                            */
+                            const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
+                            return model.dirname.replace(htmlTags,"");
+                        }
+                        alternativeColorEnabled: delegate.checked === false
+                        fontSizeMultiplier: 1.1
+                        wrapMode: Text.Wrap
+                        textFormat: Text.PlainText
+                    }
 
-                     Rectangle {
-                         id: underline
-                         width: textItem.contentWidth
-                         height: 1
-                         anchors {
-                             top: textItem.bottom
-                             topMargin: 2
-                             horizontalCenter: textItem.horizontalCenter
-                         }
+                    Rectangle {
+                        id: underline
+                        width: textItem.contentWidth
+                        height: 1
+                        anchors {
+                            top: textItem.bottom
+                            topMargin: 2
+                            horizontalCenter: textItem.horizontalCenter
+                        }
 
-                         color: "#33b13b"
-                         visible: delegate.checked
-                     }
+                        color: "#33b13b"
+                        visible: delegate.checked
+                    }
 
-                     SGWidgets.SGIcon {
-                         id: historyUpdate
-                         height: 20
-                         width: height
-                         anchors {
-                             right: textItem.right
-                             rightMargin: 2
-                             verticalCenter: parent.verticalCenter
-                         }
+                    Rectangle {
+                        id: historyUpdate
+                        width: model.historyState == "new_document" ? 50 : 80
+                        height: 20
+                        radius: width/2
+                        color: "green"
+                        visible: model.historyState != "seen"
+                        anchors {
+                            right: textItem.right
+                            rightMargin: 2
+                            verticalCenter: parent.verticalCenter
+                        }
 
-                         source: "qrc:/sgimages/exclamation-triangle.svg"
-                         visible: model.historyState != "seen"
-                     }
+                        Label {
+                            anchors.centerIn: parent
+                            text: {
+                                if (model.historyState == "new_document") {
+                                    return "NEW"
+                                }
+                                if (model.historyState == "different_md5") {
+                                    return "UPDATED"
+                                }
+                                return ""
+                            }
+                            color: "white"
+                            font.bold: true
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
 
-                     SGWidgets.SGIcon {
-                         id: chevronImage
-                         height: 20
-                         width: height
-                         anchors {
-                             right: parent.right
-                             rightMargin: 2
-                             verticalCenter: parent.verticalCenter
-                         }
+                    SGWidgets.SGIcon {
+                        id: chevronImage
+                        height: 20
+                        width: height
+                        anchors {
+                            right: parent.right
+                            rightMargin: 2
+                            verticalCenter: parent.verticalCenter
+                        }
 
-                         source: "qrc:/sgimages/chevron-right.svg"
-                         visible: delegate.checked
-                     }
+                        source: "qrc:/sgimages/chevron-right.svg"
+                        visible: delegate.checked
+                    }
                 }
             }
         }
+    }
+
+    Component.onDestruction: {
+        documentsHistory.markAllDocumentsAsSeen()
     }
 }

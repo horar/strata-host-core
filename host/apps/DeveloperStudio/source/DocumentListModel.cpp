@@ -141,3 +141,20 @@ void DocumentListModel::setHistoryState(const QString &doc, const QString &state
         }
     }
 }
+
+void DocumentListModel::setAllHistoryStateToSeen()
+{
+    for (const auto &item : data_) {
+        item->historyState = "seen";
+    }
+}
+
+bool DocumentListModel::anyItemsUnseen()
+{
+    for (const auto &item : data_) {
+        if (item->historyState != "seen") {
+            return true;
+        }
+    }
+    return false;
+}

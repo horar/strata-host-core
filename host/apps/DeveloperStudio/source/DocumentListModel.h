@@ -54,6 +54,8 @@ public:
     Q_INVOKABLE QString dirname(int index);
     Q_INVOKABLE QString getMD5();
     Q_INVOKABLE void setHistoryState(const QString &doc, const QString &state);
+    Q_INVOKABLE void setAllHistoryStateToSeen();
+    Q_INVOKABLE bool anyItemsUnseen();
 
 signals:
     void countChanged();

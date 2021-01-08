@@ -190,18 +190,35 @@ Item {
                             maximumLineCount: 2
                         }
 
-                        SGWidgets.SGIcon {
+                        Rectangle {
                             id: historyUpdate
+                            width: model.historyState == "new_document" ? 50 : 80
                             height: 20
-                            width: height
+                            radius: width/2
+                            color: "green"
+                            visible: model.historyState != "seen"
                             anchors {
                                 right: textItem.right
                                 rightMargin: 2
                                 verticalCenter: parent.verticalCenter
                             }
 
-                            source: "qrc:/sgimages/exclamation-triangle.svg"
-                            visible: model.historyState != "seen"
+                            Label {
+                                anchors.centerIn: parent
+                                text: {
+                                    if (model.historyState == "new_document") {
+                                        return "NEW"
+                                    }
+                                    if (model.historyState == "different_md5") {
+                                        return "UPDATED"
+                                    }
+                                    return ""
+                                }
+                                color: "white"
+                                font.bold: true
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                            }
                         }
 
                         Rectangle {
@@ -418,5 +435,9 @@ Item {
         onAccepted: {
             savePath = CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.folder)
         }
+    }
+
+    Component.onDestruction: {
+        documentsHistory.markAllDocumentsAsSeen()
     }
 }
