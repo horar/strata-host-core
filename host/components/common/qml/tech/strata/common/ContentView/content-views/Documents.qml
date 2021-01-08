@@ -8,6 +8,7 @@ Item {
     height: wrapper.height + 20
 
     property alias model: repeater.model
+    property var documentCurrentIndex: 0
 
     Column {
         id: wrapper
@@ -26,12 +27,44 @@ Item {
                 width: wrapper.width
                 bottomPadding: 2
 
-                property string effectiveUri: "file://localhost/" + model.uri
+                onCategorySelected: {
+                    if (helpIcon.class_id != "help_docs_demo") {
+                        documentCurrentIndex = index
+                        categoryOpened = "platform documents"
+                    }
+                }
+
+                property string effectiveUri: {
+                    if(helpIcon.class_id === "help_docs_demo") {
+                        return "qrc:/tech/strata/common/ContentView/images/" + model.uri
+                    }
+                    else {
+                        return "file://localhost/" + model.uri
+                    }
+                }
+
+                property var currentDocumentCategory: view.currentDocumentCategory
+                onCurrentDocumentCategoryChanged: {
+                    if(categoryOpened === "platform documents") {
+                        if(currentDocumentCategory) {
+                            for (var i = 0; i < repeater.count ; ++i) {
+                                if(i === documentCurrentIndex) {
+                                    if(repeater.itemAt(documentCurrentIndex)) {
+                                        repeater.itemAt(documentCurrentIndex).checked  = true
+                                    }
+                                    return
+                                }
+                            }
+                        }
+                    }
+                }
 
                 Binding {
                     target: delegate
                     property: "checked"
-                    value: pdfViewer.url.toString() === effectiveUri
+                    value: {
+                        pdfViewer.url.toString() === effectiveUri
+                    }
                 }
 
                 onCheckedChanged: {
@@ -59,11 +92,11 @@ Item {
                         horizontalAlignment: Text.AlignHCenter
                         text: {
                             /*
-                                the first regexp is looking for HTML RichText
-                                the second regexp is looking for spaces after string
-                                the third regexp is looking for spaces before string
-                                the fourth regexp is looking for tabs throughout the string
-                            */
+                                 the first regexp is looking for HTML RichText
+                                 the second regexp is looking for spaces after string
+                                 the third regexp is looking for spaces before string
+                                 the fourth regexp is looking for tabs throughout the string
+                             */
                             const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
                             return model.dirname.replace(htmlTags,"");
                         }

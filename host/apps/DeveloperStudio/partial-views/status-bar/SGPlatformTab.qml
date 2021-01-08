@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/navigation_control.js" as NavigationControl
@@ -12,7 +13,7 @@ Item {
     height: 40
     width: 200
 
-    property color menuColor: "#33b13b"
+    property color menuColor: Theme.palette.green
 
     property string view: model.view
     property string name: model.name
@@ -123,7 +124,7 @@ Item {
         spacing: 0
 
         Rectangle {
-            color: mouse.containsMouse ? "#34993b" : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
+            color: mouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
             Layout.fillHeight: true
             Layout.fillWidth: true
 
@@ -155,7 +156,7 @@ Item {
         Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: height
-            color: mouseMenu.containsMouse ? "#34993b" : inView ? platformTabRoot.menuColor : mouse.containsMouse ? platformTabRoot.menuColor :"#444"
+            color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouse.containsMouse ? platformTabRoot.menuColor :"#444"
 
             MouseArea {
                 id: mouseMenu
@@ -197,7 +198,7 @@ Item {
 
         Rectangle {
             id: menu
-            color: "#34993b"
+            color: Qt.darker(Theme.palette.green, 1.15)
             width: platformTabRoot.width
             height: menuColumn.height + 1
 

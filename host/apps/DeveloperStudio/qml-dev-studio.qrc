@@ -11,7 +11,6 @@
         <file>js/restclient.js</file>
         <file>main.qml</file>
         <file>SplashScreen.qml</file>
-        <file>partial-views/SGPrivacyPolicyPopUp.qml</file>
         <file>partial-views/help-tour/SGPeekThroughOverlay.qml</file>
         <file>partial-views/help-tour/SGTourControl.qml</file>
         <file>partial-views/help-tour/images/corner-fade.png</file>
@@ -92,6 +91,7 @@
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
         <file>partial-views/general/SGNotificationToast.qml</file>
+        <file>js/template_data.js</file>
         <file>partial-views/general/SGWebPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsCheckbox.qml</file>
@@ -99,5 +99,7 @@
         <file>partial-views/platform-selector/PlatformImage.qml</file>
         <file>partial-views/general/WebPopup/SGWebControls.qml</file>
         <file>partial-views/general/WebPopup/SGWebView.qml</file>
+        <file>partial-views/notifications/NotificationDelegate.qml</file>
+        <file>partial-views/notifications/NotificationsBox.qml</file>
     </qresource>
 </RCC>

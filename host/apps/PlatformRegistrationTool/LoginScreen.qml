@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.prt.authenticator 1.0
+import tech.strata.theme 1.0
 
 FocusScope {
     id: loginScreen
@@ -167,9 +168,9 @@ FocusScope {
 
                     iconColor: {
                         if (loginStatus === LoginScreen.LoginSucceed) {
-                            return SGWidgets.SGColorsJS.STRATA_GREEN
+                            return Theme.palette.green
                         } else if (loginStatus === LoginScreen.LoginFailed) {
-                            return SGWidgets.SGColorsJS.TANGO_SCARLETRED2
+                            return TangoTheme.palette.scarletRed2
                         }
 
                         return "black"
@@ -197,7 +198,7 @@ FocusScope {
 
                 color: {
                     if (loginStatus === LoginScreen.LoginFailed) {
-                        return SGWidgets.SGColorsJS.ERROR_COLOR
+                        return TangoTheme.palette.error
                     }
 
                     return "transparent"

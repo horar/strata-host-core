@@ -125,7 +125,7 @@ void Device::setAssistedProperties(const char* platformId, const char* classId, 
     if (classId) { controllerClassId_ = classId; }
     else { controllerClassId_.clear(); }
 
-    if (fwClassId) { firmwareClassId_ = classId; }
+    if (fwClassId) { firmwareClassId_ = fwClassId; }
     else { firmwareClassId_.clear(); }
 }
 

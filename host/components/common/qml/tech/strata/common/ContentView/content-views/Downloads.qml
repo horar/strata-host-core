@@ -7,6 +7,7 @@ import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.DownloadDocumentListModel 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: downloadSection
@@ -245,7 +246,7 @@ Item {
                                     bottom: parent.bottom
                                 }
 
-                                color: SGWidgets.SGColorsJS.STRATA_GREEN
+                                color: Theme.palette.green
                             }
                         }
 
@@ -260,7 +261,7 @@ Item {
                             height: infoItem.contentHeight + 2
 
                             radius: 2
-                            color: SGWidgets.SGColorsJS.ERROR_COLOR
+                            color: Theme.palette.error
                             visible: model.status === DownloadDocumentListModel.FinishedWithError
                         }
 
@@ -377,6 +378,42 @@ Item {
                     onPressed:  mouse.accepted = false
                     cursorShape: Qt.PointingHandCursor
                 }
+            }
+        }
+
+        Item {
+            width: 1
+            height: 10
+        }
+
+        Button {
+            anchors.horizontalCenter: wrapper.horizontalCenter
+            opacity: enabled ? 1 : 0.2
+            enabled: savePath !== ""
+
+            contentItem: SGWidgets.SGText{
+                text: "Open Selected Save Folder"
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            background: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 40
+                color: Theme.palette.lightGray
+            }
+
+            onClicked: {
+                if(!fileDialog.visible){
+                   Qt.openUrlExternally(CommonCpp.SGUtilsCpp.pathToUrl(savePath))
+                }
+            }
+
+            MouseArea {
+                id: buttonCursor2
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
             }
         }
 

@@ -2,6 +2,9 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
+import tech.strata.commoncpp 1.0 as CommonCpp
+
 
 SGWidgets.SGDialog {
     id: dialog
@@ -246,7 +249,7 @@ SGWidgets.SGDialog {
                             SGWidgets.SGIconButton {
                                 anchors.verticalCenter: parent.verticalCenter
                                 icon.source: "qrc:/sgimages/times-circle.svg"
-                                iconColor: SGWidgets.SGColorsJS.ERROR_COLOR
+                                iconColor: TangoTheme.palette.error
 
                                 onClicked: {
                                     filterConditionModel.remove(index)
@@ -288,17 +291,23 @@ SGWidgets.SGDialog {
                 }
             }
 
-            SGWidgets.SGText {
+            CommonCpp.SGJsonSyntaxHighlighter {
+                textDocument: noteText.textDocument
+            }
+
+            SGWidgets.SGTextEdit {
                 id: noteText
                 width: conditionView.width
-                wrapMode: Text.Wrap
-                text: "Example:"
-                      + "<pre><b>{<br>"
-                      + "    \"notification\": {<br>"
-                      + "        <font color='green'>\"attribute-1\"</font>:<font color='green'>\"value-1\"</font>,<br>"
-                      + "        <font color='green'>\"attribute-2\"</font>:<font color='green'>\"value-2\"</font><br>"
-                      + "    }<br>"
-                      + "}</pre></b>"
+                wrapMode: Text.WordWrap
+                readOnly: true
+                font.family: "monospace"
+                text: "Example:\n"
+                      + "{\n"
+                      + "    \"notification\": {\n"
+                      + "        \"attribute-1\": \"value-1\",\n"
+                      + "        \"attribute-2\": \"value-2\"\n"
+                      + "    }\n"
+                      + "}\n"
                       + "Note: only first-level attribute-value pairs of notification element are checked."
             }
         }
