@@ -80,6 +80,7 @@ bool BoardManager::reconnectDevice(const int deviceId) {
         emit boardDisconnected(deviceId);
     }
     if (ok) {
+        qCInfo(logCategoryBoardManager).nospace() << "Reconnected serial device 0x" << hex << static_cast<uint>(deviceId);
         emit boardConnected(deviceId);
     } else {
         logInvalidDeviceId(QStringLiteral("Cannot reconnect"), deviceId);
@@ -97,7 +98,7 @@ DevicePtr BoardManager::device(const int deviceId) {
     }
 }
 
-QVector<int> BoardManager::readyDeviceIds() {
+QVector<int> BoardManager::activeDeviceIds() {
     QMutexLocker lock(&mutex_);
     return QVector<int>::fromList(openedDevices_.keys());
 }
@@ -171,14 +172,11 @@ void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial por
         serialPortsList_ = std::move(ports);
     }
 
-    if (deleted.empty() == false || opened.empty() == false) {
-        for (auto deviceId : deleted) {
-            emit boardDisconnected(deviceId);
-        }
-        for (auto deviceId : opened) {
-            emit boardConnected(deviceId);
-        }
-        emit readyDeviceIdsChanged();
+    for (auto deviceId : deleted) {
+        emit boardDisconnected(deviceId);
+    }
+    for (auto deviceId : opened) {
+        emit boardConnected(deviceId);
     }
 }
 
@@ -289,7 +287,7 @@ void BoardManager::handleOperationFinished(operation::Result result, int status,
         }
 
         // If identify operation is cancelled, another identify operation will be started soon.
-        // So there is no need for emitting boardInfoChanged signal.
+        // So there is no need for emitting boardInfoChanged signal. (See handlePlatformIdChanged() function.)
         if (result != operation::Result::Cancel) {
             bool boardRecognized = (result == operation::Result::Success);
             emit boardInfoChanged(deviceId, boardRecognized);

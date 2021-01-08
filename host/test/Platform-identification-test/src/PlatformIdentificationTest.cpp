@@ -176,7 +176,7 @@ void PlatformIdentificationTest::connectToPlatform() {
     std::cout << "Connecting to platform" << std::endl;
     if (testDeviceId_ == 0) {
         // get the connected devices and set testDeviceId_
-        auto connectedDevicesList = boardManager_.readyDeviceIds();
+        auto connectedDevicesList = boardManager_.activeDeviceIds();
         if (connectedDevicesList.empty()) {
             std::cerr << "No connected devices. Aborting..." << std::endl;
             testFailed_ = true;

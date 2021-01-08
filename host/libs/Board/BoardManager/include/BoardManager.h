@@ -26,8 +26,6 @@ namespace strata {
         Q_OBJECT
         Q_DISABLE_COPY(BoardManager)
 
-        Q_PROPERTY(QVector<int> readyDeviceIds READ readyDeviceIds NOTIFY readyDeviceIdsChanged)
-
     public:
         BoardManager();
         ~BoardManager();
@@ -60,10 +58,11 @@ namespace strata {
         device::DevicePtr device(const int deviceId);
 
         /**
-         * Get list of available device IDs.
-         * @return list of available device IDs (those, which have serial port opened)
+         * Get list of active device IDs.
+         * @return list of active device IDs (those, which have
+         *         communication channel (serial port) opened)
          */
-        QVector<int> readyDeviceIds();
+        QVector<int> activeDeviceIds();
 
     signals:
         /**
@@ -91,11 +90,6 @@ namespace strata {
          * @param message error description
          */
         void boardError(int deviceId, QString message);
-
-        /**
-         * Emitted when device IDs has changed (available device ID list has changed).
-         */
-        void readyDeviceIdsChanged();
 
         /**
          * Emitted when platform_id_changed notification was received (signal only for internal use).
