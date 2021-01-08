@@ -348,11 +348,9 @@ QString ResourceLoader::fetchBuildFolder(const QString &module, const QString &s
     dir.cdUp();
     dir.cd("3p-d");
     dir.cd(module);
-    dir.cd("package");
     dir.cd(subFolder);
 
     if(!file.isEmpty()){
-        qDebug() << QUrl(dir.absoluteFilePath(file)).toString();
         return dir.absoluteFilePath(file);
     } else {
         return dir.absolutePath();

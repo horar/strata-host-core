@@ -269,21 +269,6 @@ Item {
         settings.pluginsEnabled: true
         settings.showScrollBars: false
 
-        property string main: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.js")
-        property string nls: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.nls.js")
-        property string loader: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/","loader.js")
-        property string css: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs/editor/","editor.main.css")
-
-        function runInit() {
-            //runJavaScript(`script = document.getElementById(\"s0\"); path = document.createTextNode(${require = { paths: { vs: sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0","min/vs")}}}); script.appendChild(path);`)
-            const mainUrl = String(main)
-            const loaderUrl = String(loader)
-            const nlsUrl = String(nls)
-            runJavaScript("script = document.getElementById(\"s1\"); script.setAttribute(\"src\","+encodeURIComponent(mainUrl)+");")
-            runJavaScript("script = document.getElementById(\"s2\"); script.setAttribute(\"src\","+encodeURIComponent(loaderUrl)+");")
-            runJavaScript("script = document.getElementById(\"s3\"); script.setAttribute(\"src\","+encodeURIComponent(nlsUrl)+");")
-        }
-
         anchors {
             top: alertRow.bottom
             left: parent.left
@@ -301,15 +286,15 @@ Item {
 
         onLoadingChanged: {
             if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
-                runInit()
                 channelObject.setContainerHeight(height.toString())
                 let fileText = openFile(model.filepath)
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             }
+
         }
 
-        url: "qrc:///partial-views/control-view-creator/editor.html"
+        url: SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0",".","editor.html"))
 
         Rectangle {
             id: barContainer
