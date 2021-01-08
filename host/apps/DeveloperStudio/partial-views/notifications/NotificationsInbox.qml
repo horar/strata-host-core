@@ -38,6 +38,10 @@ Rectangle {
         sortedModel.invalidate()
     }
 
+    onIsOpenChanged: {
+        Notifications.inboxIsOpen = isOpen
+    }
+
     MouseArea {
         anchors.fill: parent
         propagateComposedEvents: false

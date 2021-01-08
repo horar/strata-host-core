@@ -20,6 +20,7 @@ Module {
         Property { name: "info"; type: "int"; isReadonly: true }
         Property { name: "warning"; type: "int"; isReadonly: true }
         Property { name: "critical"; type: "int"; isReadonly: true }
+        Property { name: "inboxIsOpen"; type: "bool" }
         Property { name: "model"; type: "QQmlListModel"; isReadonly: true; isPointer: true }
 
         Method {

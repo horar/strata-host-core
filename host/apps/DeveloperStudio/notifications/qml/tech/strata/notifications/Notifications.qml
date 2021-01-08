@@ -15,7 +15,7 @@ Item {
     readonly property int critical: 2
 
     property alias model: model_
-
+    property bool inboxIsOpen: false
     SGUserSettings {
         id: notificationSettings
         user: "strata"

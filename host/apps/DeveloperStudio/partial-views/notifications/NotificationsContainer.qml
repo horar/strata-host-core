@@ -13,7 +13,7 @@ Item {
     width: 350
 
     clip: true
-
+    visible: !Notifications.inboxIsOpen
     property string currentUser: Constants.GUEST_USER_ID
 
     onCurrentUserChanged: {
