@@ -6,6 +6,7 @@
 
 #include <QSaveFile>
 #include <QJsonDocument>
+#include <QJsonObject>
 
 SciScrollbackModel::SciScrollbackModel(SciPlatform *platform)
     : QAbstractListModel(platform),
@@ -41,6 +42,8 @@ QVariant SciScrollbackModel::data(const QModelIndex &index, int role) const
         return item.isCondensed;
     case IsJsonValidRole:
         return item.isJsonValid;
+    case ValueRole:
+        return item.value;
     }
 
     return QVariant();
@@ -63,16 +66,40 @@ int SciScrollbackModel::count() const
     return data_.length();
 }
 
-void SciScrollbackModel::append(const QByteArray &message, MessageType type)
+void SciScrollbackModel::append(const QByteArray &message, bool isRequest)
 {
-    QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
-
-    bool isJsonValid = parseError.error == QJsonParseError::NoError;
-
     ScrollbackModelItem item;
 
-    if (isJsonValid) {
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
+    item.isJsonValid = parseError.error == QJsonParseError::NoError;
+
+    if (isRequest) {
+        item.type = MessageType::Request;
+    } else {
+        item.type = MessageType::UnknownReply;
+
+        if (item.isJsonValid && doc.isObject()) {
+            QJsonObject root = doc.object();
+            if (root.contains("notification")) {
+                item.type = MessageType::NotificationReply;
+
+                QString value = root.value("notification").toObject().value("value").toString();
+                if (value.isEmpty() == false) {
+                    item.value = value.toLower();
+                }
+            } else if (root.contains("ack")) {
+                item.type = MessageType::AckReply;
+
+                QString value = root.value("ack").toString();
+                if (value.isEmpty() == false) {
+                    item.value = value.toLower();
+                }
+            }
+        }
+    }
+
+    if (item.isJsonValid) {
         if (condensedMode_) {
             item.message = SGJsonFormatter::minifyJson(message);
         } else {
@@ -83,10 +110,8 @@ void SciScrollbackModel::append(const QByteArray &message, MessageType type)
         item.message = message;
     }
 
-    item.type = type;
     item.timestamp = QDateTime::currentDateTime();
     item.isCondensed = condensedMode_;
-    item.isJsonValid = isJsonValid;
 
     beginInsertRows(QModelIndex(), data_.length(), data_.length());
 
@@ -341,6 +366,7 @@ void SciScrollbackModel::setModelRoles()
     roleByEnumHash_.insert(TimestampRole, "timestamp");
     roleByEnumHash_.insert(IsCondensedRole, "isCondensed");
     roleByEnumHash_.insert(IsJsonValidRole, "isJsonValid");
+    roleByEnumHash_.insert(ValueRole, "value");
 
     QHash<int, QByteArray>::const_iterator i = roleByEnumHash_.constBegin();
     while (i != roleByEnumHash_.constEnd()) {
