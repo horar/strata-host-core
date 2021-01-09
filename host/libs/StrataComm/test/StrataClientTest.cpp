@@ -1,6 +1,6 @@
 #include "StrataClientTest.h"
 
-#include "../src/ServerConnector.h"
+#include "ServerConnector.h"
 
 void StrataClientTest::waitForZmqMessages(int delay)
 {

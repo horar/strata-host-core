@@ -4,8 +4,8 @@
 #include <QEventLoop>
 #include <QObject>
 
-#include "../src/ClientConnector.h"
-#include "../src/ServerConnector.h"
+#include "ClientConnector.h"
+#include "ServerConnector.h"
 #include "QtTest.h"
 
 class ConnectorsTest : public QObject

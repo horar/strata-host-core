@@ -1,5 +1,5 @@
 #include "StrataServerTest.h"
-#include "../src/ClientConnector.h"
+#include "ClientConnector.h"
 
 void StrataServerTest::testValidApiVer2Message()
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "../src/Message.h"
+#include "Message.h"
 
 using strata::strataComm::Message;
 

@@ -7,8 +7,6 @@ find_package(Qt5 ${VERSION_QT5}
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-#set(CMAKE_AUTOMOC ON)
-
 add_executable(${PROJECT_NAME}-test
     DispatcherTest.cpp
     TestHandlers.cpp

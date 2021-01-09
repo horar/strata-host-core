@@ -1,4 +1,5 @@
 #include "ClientsController.h"
+#include "logging/LoggingQtCategories.h"
 
 using namespace strata::strataComm;
 

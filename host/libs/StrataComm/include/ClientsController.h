@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Client.h"
-#include "logging/LoggingQtCategories.h"
 
 #include <QList>
 #include <QObject>

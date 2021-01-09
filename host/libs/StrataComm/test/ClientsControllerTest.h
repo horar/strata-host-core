@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QSignalSpy>
 
-#include "../src/ClientsController.h"
+#include "ClientsController.h"
 #include "QtTest.h"
 
 using strata::strataComm::Client;

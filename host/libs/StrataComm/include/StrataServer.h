@@ -2,9 +2,9 @@
 
 #include <QObject>
 
-#include "../src/ClientsController.h"
-#include "../src/Dispatcher.h"
-#include "../src/ServerConnector.h"
+#include "ClientsController.h"
+#include "Dispatcher.h"
+#include "ServerConnector.h"
 
 namespace strata::strataComm
 {

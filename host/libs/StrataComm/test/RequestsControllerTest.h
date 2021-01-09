@@ -3,7 +3,7 @@
 #include "QtTest.h"
 
 #include <QObject>
-#include "../src/RequestsController.h"
+#include "RequestsController.h"
 
 class RequestsControllerTest : public QObject
 {

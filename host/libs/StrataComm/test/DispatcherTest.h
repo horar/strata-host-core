@@ -2,8 +2,8 @@
 
 #include <QObject>
 
-#include "../src/Dispatcher.h"
-#include "../src/Message.h"
+#include "Dispatcher.h"
+#include "Message.h"
 #include "QtTest.h"
 #include "TestHandlers.h"
 

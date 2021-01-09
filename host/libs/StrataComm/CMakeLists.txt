@@ -18,15 +18,20 @@ add_library(${PROJECT_NAME}
     src/ClientConnector.cpp
     src/RequestsController.cpp
     src/logging/LoggingQtCategories.cpp
+
     include/StrataServer.h
     include/StrataClient.h
+    include/Dispatcher.h
+    include/ClientsController.h
+    include/ServerConnector.h
+    include/ClientConnector.h
+    include/RequestsController.h
 )
 
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_link_libraries(${PROJECT_NAME}
