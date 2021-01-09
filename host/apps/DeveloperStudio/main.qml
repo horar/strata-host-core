@@ -14,9 +14,14 @@ import "qrc:/partial-views/platform-view"
 import "qrc:/partial-views/control-view-creator"
 import "qrc:/partial-views/debug-bar"
 
+import "partial-views/notifications"
+
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
+import tech.strata.notifications 1.0
+
+import QtQml 2.12
 
 SGWidgets.SGMainWindow {
     id: mainWindow
@@ -83,6 +88,7 @@ SGWidgets.SGMainWindow {
     ColumnLayout {
         spacing: 0
         anchors.fill: parent
+        z: 1
 
         Item {
             id: statusBarContainer
@@ -128,6 +134,18 @@ SGWidgets.SGMainWindow {
         }
     }
 
+    NotificationsBox {
+        z: 2
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+            top: parent.top
+            topMargin: statusBarContainer.height
+            bottomMargin: 25
+            rightMargin: 20
+        }
+    }
+
     Connections {
         id: coreInterfaceConnection
         target: sdsModel.coreInterface
@@ -149,6 +167,8 @@ SGWidgets.SGMainWindow {
     }
 
     SGDebugBar {
+        id: debugBar
+        z: 3
         anchors {
             fill: parent
         }
