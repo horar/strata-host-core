@@ -5,8 +5,8 @@
 #include <QObject>
 
 #include "ClientConnector.h"
-#include "ServerConnector.h"
 #include "QtTest.h"
+#include "ServerConnector.h"
 
 class ConnectorsTest : public QObject
 {

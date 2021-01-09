@@ -621,10 +621,9 @@ void StrataServerTest::testNotifyClientToNonExistingClient()
     QVERIFY_(server.initializeServer());
 
     strata::strataComm::ClientConnector client(address_, "AA");
-    connect(&client, &strata::strataComm::ClientConnector::newMessageRecived, this,
-            [](const QByteArray &) {
-                QFAIL_("Messages should not be sent to unregistered Clients.");
-            });
+    connect(
+        &client, &strata::strataComm::ClientConnector::newMessageRecived, this,
+        [](const QByteArray &) { QFAIL_("Messages should not be sent to unregistered Clients."); });
 
     server.notifyClient("AA", "test_handler", QJsonObject({{"key", "value"}}),
                         strata::strataComm::ResponseType::Notification);

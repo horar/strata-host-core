@@ -118,8 +118,9 @@ private:
      * @return QByteArray of the json message. Empty QByteArray when there is an error while
      * building the message.
      */
-    [[nodiscard]] QByteArray buildServerMessageAPIv2(const Message &clientMessage, const QJsonObject &payload,
-                                       ResponseType responseType);
+    [[nodiscard]] QByteArray buildServerMessageAPIv2(const Message &clientMessage,
+                                                     const QJsonObject &payload,
+                                                     ResponseType responseType);
 
     /**
      * Build server message to be sent to clients using API v1.
@@ -130,8 +131,9 @@ private:
      * @return QByteArray of the json message. Empty QByteArray when there is an error while
      * building the message.
      */
-    [[nodiscard]] QByteArray buildServerMessageAPIv1(const Message &clientMessage, const QJsonObject &payload,
-                                       ResponseType responseType);
+    [[nodiscard]] QByteArray buildServerMessageAPIv1(const Message &clientMessage,
+                                                     const QJsonObject &payload,
+                                                     ResponseType responseType);
 
     /**
      * StrataServer handler for client registration.

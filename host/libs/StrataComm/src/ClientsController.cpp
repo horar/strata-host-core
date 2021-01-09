@@ -27,8 +27,9 @@ bool ClientsController::isRegisteredClient(const QByteArray &clientId)
 
 bool ClientsController::registerClient(const Client &client)
 {
-    qCInfo(logCategoryStrataClientsController) << "Registering Client: " << client.getClientID()
-                                               << "API:" << static_cast<int>(client.getApiVersion());
+    qCInfo(logCategoryStrataClientsController)
+        << "Registering Client: " << client.getClientID()
+        << "API:" << static_cast<int>(client.getApiVersion());
 
     if (true == isRegisteredClient(client.getClientID())) {
         qCCritical(logCategoryStrataClientsController)
