@@ -97,19 +97,21 @@ set_target_properties(spdlog::spdlog PROPERTIES
 add_dependencies(spdlog::spdlog DEPENDS spdlog)
 #
 # monaco-editor
+# This will download and install a third party IDE Editor resource into the extern build folder
+# Because this repo does not have source code in Git and is already compiled, the resource can
+# simply be unarchived and the min/vs,min-maps/vs, and the monaco.d.ts can be "installed" to the build folder
 #
-file(GLOB_RECURSE INSTALLED ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package/package.json)
-if(NOT INSTALLED)
 set(MONACO_TAG 0.20.0)
 
 set (monaco-editor-source "https://registry.npmjs.org/monaco-editor/-/monaco-editor-${MONACO_TAG}.tgz")
 set (monaco-editor-sum 5d5009343a550124426cb4d965a4d27a348b4dea)
 set (monaco-editor-archive "${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar/monaco-editor.tgz")
-
-
+file(GLOB_RECURSE DOWNLOADED ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar/monaco-editor.tgz)
+if(NOT DOWNLOADED)
 file(DOWNLOAD "${monaco-editor-source}" "${monaco-editor-archive}"
     EXPECTED_HASH SHA1=${monaco-editor-sum}
 )
+endif() 
 
     execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar/monaco-editor.tgz WORKING_DIRECTORY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG})
     execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package/min/vs ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}/min/vs)
@@ -122,9 +124,7 @@ ExternalProject_Add(monaco-editor-${MONACO_TAG}
     INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}
     DOWNLOAD_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar/
     EXCLUDE_FROM_ALL ON
-    )
-
-endif() 
+)
 
 #
 # pdf.js

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- This file will be copied to the Debug/<3p-d>/monaco-folder after build so that any changes made will be reflected in that build-->
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,10 +15,16 @@
             id="container"
             style="width: 100%; height: 300px;"
         ></div>
+        <!-- 
+            the "loader.js" adds the editor and initializes the require variable
+            the "editor.main.js" inits and defines the MonacoEditor
+            the "editor.main.nls.js" defines the key bindings and definitions of the Monaco Editor
+        -->
+
         <script>
             var require = { paths: { vs: './min/vs' } };
         </script>
-        <script src="./min/vs/loader.js"></script>
+        <script src="./min/vs/loader.js"></script> 
         <script src="./min/vs/editor/editor.main.nls.js"></script>
         <script src="./min/vs/editor/editor.main.js"></script>
         <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
