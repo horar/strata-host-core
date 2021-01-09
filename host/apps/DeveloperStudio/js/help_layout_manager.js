@@ -105,7 +105,7 @@ function locateTour(device_id, tourName) {
 }
 
 function startHelpTour(tourName, device_id) {
-    if (device_id !== "strataMain") {
+    if (device_id === undefined) {
         device_id = NavigationControl.platform_view_model_.get(stackContainer.currentIndex-1).device_id
     }
 
