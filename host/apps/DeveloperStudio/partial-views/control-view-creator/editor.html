@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <link
+            rel="stylesheet"
+            data-name="vs/editor/editor.main"
+            href="./node_modules/monaco-editor/min/vs/editor/editor.main.css"
+        />
+    </head>
+    <body>
+        <div
+            id="container"
+            style="width: 100%; height: 300px;"
+        ></div>
+        <script>
+            var require = { paths: { vs: './node_modules/monaco-editor/min/vs' } };
+        </script>
+        <script src="./node_modules/monaco-editor/min/vs/loader.js"></script>
+        <script src="./node_modules/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+        <script src="./node_modules/monaco-editor/min/vs/editor/editor.main.js"></script>
+        <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+        <script type="text/javascript">
+        new QWebChannel(qt.webChannelTransport, function(channel) {
+            // all published objects are available in channel.objects under
+            // the identifier set in their attached WebChannel.id property
+            var link = channel.objects.valueLink;
+
+            link.setValue.connect(function(value) {
+                editor.setValue(value);
+            });
+
+            link.setContainerHeight.connect(function(height) {
+                document.getElementById("container").setAttribute("style", `height:${height}px`);
+                editor.layout()
+            });
+
+            link.setContainerWidth.connect(function(width) {
+                document.getElementById("container").setAttribute("style", `width:${width}px`);
+                editor.layout()
+            });
+
+            link.undo.connect(function() {
+                editor.trigger('undoClicked', 'undo');
+            });
+
+            link.redo.connect(function() {
+                editor.trigger('redoClicked', 'redo');
+            });
+
+            editor.getModel().onDidChangeContent((event) => {
+                link.fileText = editor.getValue();
+                link.setVersionId(editor.getModel().getAlternativeVersionId());
+            });
+        });
+        </script>
+
+        <script>
+            monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                noSemanticValidation: true,
+                noSyntaxValidation: true,
+            });
+
+            var editor = monaco.editor.create(document.getElementById('container'), {
+                value: "",
+                language: 'javascript',
+                theme: "vs",
+                insertSpaces: true,
+                detectIndentation: false
+            });
+
+            function getValue() {
+                return editor.getValue();
+            }
+
+            function setValue(value) {
+                editor.setValue(value)
+            }
+        </script>
+    </body>
+</html>
