@@ -263,12 +263,12 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
 
 void SciPlatform::messageFromDeviceHandler(QByteArray message)
 {
-    scrollbackModel_->append(message, SciScrollbackModel::MessageType::Response);
+    scrollbackModel_->append(message, false);
 }
 
 void SciPlatform::messageToDeviceHandler(QByteArray message)
 {
-    scrollbackModel_->append(message, SciScrollbackModel::MessageType::Request);
+    scrollbackModel_->append(message, true);
 }
 
 void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)

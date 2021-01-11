@@ -17,7 +17,7 @@ BoardController::BoardController() {
 }
 
 void BoardController::initialize() {
-    boardManager_.init(false);
+    boardManager_.init(false, false);
 }
 
 bool BoardController::sendMessage(const int deviceId, const QByteArray& message) {
