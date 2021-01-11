@@ -283,8 +283,8 @@ SGWidgets.SGDialog {
                 id: noteText
                 width: conditionView.width
                 wrapMode: Text.WordWrap
-                readOnly: true
                 font.family: "monospace"
+                enabled: false
                 text: "Example:\n"
                       + "{\n"
                       + "    \"notification\": {\n"
@@ -292,12 +292,6 @@ SGWidgets.SGDialog {
                       + "        \"payload\": {...}\n"
                       + "    }\n"
                       + "}"
-
-                //do not show IBeamCursor
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.NoButton
-                }
             }
         }
     }
