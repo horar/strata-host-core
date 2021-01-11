@@ -243,10 +243,10 @@ void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObjec
     Message tempClientMessage;
     tempClientMessage.handlerName = handlerName;
 
-    QByteArray serverMessageAPI_v1 = buildServerMessageAPIv1(
-        tempClientMessage, jsonObject, strataRPC::ResponseType::Notification);
-    QByteArray serverMessageAPI_v2 = buildServerMessageAPIv2(
-        tempClientMessage, jsonObject, strataRPC::ResponseType::Notification);
+    QByteArray serverMessageAPI_v1 = buildServerMessageAPIv1(tempClientMessage, jsonObject,
+                                                             strataRPC::ResponseType::Notification);
+    QByteArray serverMessageAPI_v2 = buildServerMessageAPIv2(tempClientMessage, jsonObject,
+                                                             strataRPC::ResponseType::Notification);
 
     // get all clients.
     auto allClients = clientsController_.getAllClients();
@@ -272,12 +272,23 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
 {
     qCDebug(logCategoryStrataServer)
         << "Handle New Client Registration. Client ID:" << clientMessage.clientID;
+    if (true == clientsController_.isRegisteredClient(clientMessage.clientID)) {
+        notifyClient(clientMessage, {{"status", "client registered."}}, ResponseType::Response);
+    } else {
+        notifyClient(clientMessage, {{"massage", "Failed to register client"}},
+                     ResponseType::Error);
+    }
 }
 
 void StrataServer::unregisterClientHandler(const Message &clientMessage)
 {
     qCDebug(logCategoryStrataServer)
         << "Handle Client Unregistration. Client ID:" << clientMessage.clientID;
+    if (true == clientsController_.isRegisteredClient(clientMessage.clientID)) {
+        qCCritical(logCategoryStrataServer) << "Failed to unregister client.";
+        notifyClient(clientMessage, {{"massage", "Failed to unregister client"}},
+                     ResponseType::Error);
+    }
 }
 
 QByteArray StrataServer::buildServerMessageAPIv2(const Message &clientMessage,

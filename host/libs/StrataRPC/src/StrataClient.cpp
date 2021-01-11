@@ -141,7 +141,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     // {
     //     "jsonrpc": "2.0",
     //     "method": "platform_notification",
-    //     "params": { }
+    //     "params": {}
     // }
 
     if (true == jsonObject.contains("id") && true == jsonObject.value("id").isDouble()) {
