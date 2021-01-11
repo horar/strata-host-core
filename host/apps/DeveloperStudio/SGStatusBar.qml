@@ -15,6 +15,7 @@ import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
 import "qrc:/partial-views/profile-popup"
 import "qrc:/js/help_layout_manager.js" as Help
+import "partial-views/control-view-creator"
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
@@ -117,6 +118,11 @@ Rectangle {
             clip: true
 
             model: NavigationControl.platform_view_model_
+        }
+
+        CVCButton {
+            id: cvcButton
+            visible: false
         }
 
         SGPlatformTab {
@@ -302,6 +308,16 @@ Rectangle {
                         settingsLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("CVC")
+                    visible: cvcButton.state === "debug"
+                    width: profileMenu.width
+
+                    onClicked: {
+                        cvcButton.toggleVisibility()
+                    }
                 }
 
                 Rectangle {

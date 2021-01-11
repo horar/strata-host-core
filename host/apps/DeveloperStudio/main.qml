@@ -1,15 +1,18 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import QtQml 2.12
 
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
-import "qrc:/partial-views"
-import "qrc:/partial-views/debug-bar"
-import "qrc:/partial-views/platform-view"
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "qrc:/partial-views/platform-view"
+
+// imports below must be qrc:/ due to qrc aliases for debug/release differences
+import "qrc:/partial-views/control-view-creator"
+import "qrc:/partial-views/debug-bar"
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
@@ -43,6 +46,11 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
+        if (controlViewCreator.blockWindowClose()) {
+            close.accepted = false
+            return
+        }
+
         SessionUtils.close_session()
 
         // End session with HCS
@@ -108,6 +116,12 @@ SGWidgets.SGMainWindow {
                 delegate: SGPlatformView {}
             }
 
+            ControlViewCreator {
+                id: controlViewCreator
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+            }
+            
             ControlViewDevContainer {
                 id: controlViewDevContainer
             }
