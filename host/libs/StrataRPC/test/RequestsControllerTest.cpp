@@ -5,7 +5,7 @@ void RequestsControllerTest::testAddRequest()
     strata::strataRPC::RequestsController rc;
 
     for (int i = 1; i < 30; i++) {
-        QVERIFY(false == rc.addNewRequest("method_1", {{"api", "v1"}}).isEmpty());
+        QVERIFY_(false == rc.addNewRequest("method_1", {{"api", "v1"}}).isEmpty());
     }
 
     QVERIFY_(rc.isPendingRequest(1));
@@ -24,7 +24,7 @@ void RequestsControllerTest::testLargeNumberOfPendingRequests()
     strata::strataRPC::RequestsController rc;
 
     for (int i = 0; i < 300; i++) {
-        QVERIFY(false == rc.addNewRequest(QString::number(i), {{"message_id", i}}).isEmpty());
+        QVERIFY_(false == rc.addNewRequest(QString::number(i), {{"message_id", i}}).isEmpty());
     }
 }
 
@@ -45,8 +45,8 @@ void RequestsControllerTest::testGetMethodName()
 {
     strata::strataRPC::RequestsController rc;
 
-    QVERIFY(false == rc.addNewRequest("method_handler_1", {}).isEmpty());
-    QVERIFY(false == rc.addNewRequest("method_handler_2", {}).isEmpty());
+    QVERIFY_(false == rc.addNewRequest("method_handler_1", {}).isEmpty());
+    QVERIFY_(false == rc.addNewRequest("method_handler_2", {}).isEmpty());
 
     QVERIFY_(rc.isPendingRequest(1));
     QCOMPARE_(rc.getMethodName(1), "method_handler_1");

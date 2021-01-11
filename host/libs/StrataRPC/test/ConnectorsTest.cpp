@@ -17,10 +17,10 @@ void ConnectorsTest::waitForZmqMessages(int delay)
 void ConnectorsTest::testOpenServerConnectorFaild()
 {
     strata::strataRPC::ServerConnector connector(address_);
-    QCOMPARE(connector.initilizeConnector(), true);
+    QCOMPARE_(connector.initilizeConnector(), true);
 
     strata::strataRPC::ServerConnector connectorDublicate(address_);
-    QCOMPARE(connectorDublicate.initilizeConnector(), false);
+    QCOMPARE_(connectorDublicate.initilizeConnector(), false);
 }
 
 void ConnectorsTest::testServerAndClient()
