@@ -54,7 +54,7 @@ public:
     [[nodiscard]] QString getMethodName(int id);
 
 private:
-    QHash<int, strata::strataRPC::Request> requestsList_;
+    QHash<int, Request> requestsList_;
     int currentRequestId_;
 };
 
