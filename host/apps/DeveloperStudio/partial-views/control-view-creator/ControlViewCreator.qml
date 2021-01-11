@@ -11,6 +11,7 @@ import "navigation"
 import "../"
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/help_layout_manager.js" as Help
+import "Console"
 
 Rectangle {
     id: controlViewCreatorRoot
@@ -19,9 +20,9 @@ Rectangle {
     property bool rccInitialized: false
     property bool recompileRequested: false
     property var debugPlatform: ({
-      deviceId: Constants.NULL_DEVICE_ID,
-      classId: ""
-    })
+                                     deviceId: Constants.NULL_DEVICE_ID,
+                                     classId: ""
+                                 })
 
     onDebugPlatformChanged: {
         recompileControlViewQrc();
@@ -197,12 +198,31 @@ Rectangle {
                     iconSource: "qrc:/sgimages/tools.svg"
                     enabled: viewStack.currentIndex === 2 && debugPanel.visible
                     color: debugPanel.expanded ? Theme.palette.green : "transparent"
+                    tooltipDescription: "Toggle debug panel"
 
                     function onClicked() {
                         if (debugPanel.expanded) {
                             debugPanel.collapse()
                         } else {
                             debugPanel.expand()
+                        }
+                    }
+                }
+
+                SGSideNavItem {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 70
+                    iconText: "Logs"
+                    iconSource: "qrc:/sgimages/bars.svg"
+                    color: consoleContainer.visible  && enabled ? Theme.palette.green : "transparent"
+                    enabled: !startContainer.visible
+                    tooltipDescription: "Toggle logger panel"
+
+                    function onClicked() {
+                        if(consoleContainer.visible){
+                            consoleContainer.visible = false
+                        } else {
+                            consoleContainer.visible = true
                         }
                     }
                 }
@@ -219,10 +239,16 @@ Rectangle {
                     Layout.minimumHeight: footer.implicitHeight
                     Layout.fillWidth: true
                 }
+
             }
         }
 
-        StackLayout {
+        SGSplitView {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            orientation: Qt.Vertical
+
+            StackLayout {
             id: viewStack
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -231,6 +257,12 @@ Rectangle {
                 id: startContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                onVisibleChanged: {
+                    if(visible){
+                        consoleContainer.visible = false
+                    }
+                }
             }
 
             Editor {
@@ -239,62 +271,67 @@ Rectangle {
                 Layout.fillWidth: true
             }
 
-            SGSplitView {
-                id: controlViewContainer
-                Layout.fillHeight: true
-                Layout.fillWidth: true
 
-                onResizingChanged: {
-                    if (!resizing) {
-                        if (debugPanel.width >= debugPanel.minimumExpandWidth) {
-                            debugPanel.expandWidth = debugPanel.width
-                        } else {
-                            debugPanel.expandWidth = debugPanel.minimumExpandWidth
-                        }
-                    }
-                }
-
-                Loader {
-                    id: controlViewLoader
+                SGSplitView {
+                    id: controlViewContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    Layout.minimumWidth: 600
 
-                    asynchronous: true
-
-                    onStatusChanged: {
-                        if (status === Loader.Ready) {
-                            // Tear Down creation context
-                            delete NavigationControl.context.class_id
-                            delete NavigationControl.context.device_id
-
-                            toolBarListView.recompiling = false
-                            if (toolBarListView.currentIndex === toolBarListView.viewTab
-                                    || source === NavigationControl.screens.LOAD_ERROR) {
-                                viewStack.currentIndex = 2
+                    onResizingChanged: {
+                        if (!resizing) {
+                            if (debugPanel.width >= debugPanel.minimumExpandWidth) {
+                                debugPanel.expandWidth = debugPanel.width
+                            } else {
+                                debugPanel.expandWidth = debugPanel.minimumExpandWidth
                             }
-                        } else if (status === Loader.Error) {
-                            // Tear Down creation context
-                            delete NavigationControl.context.class_id
-                            delete NavigationControl.context.device_id
-
-                            toolBarListView.recompiling = false
-                            console.error("Error while loading control view")
-                            setSource(NavigationControl.screens.LOAD_ERROR,
-                                      { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
-                            );
                         }
                     }
-                }
 
-                DebugPanel {
-                    id: debugPanel
-                    Layout.fillHeight: true
+                    Loader {
+                        id: controlViewLoader
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: 600
+
+                        asynchronous: true
+
+                        onStatusChanged: {
+                            if (status === Loader.Ready) {
+                                // Tear Down creation context
+                                delete NavigationControl.context.class_id
+                                delete NavigationControl.context.device_id
+
+                                toolBarListView.recompiling = false
+                                if (toolBarListView.currentIndex === toolBarListView.viewTab
+                                        || source === NavigationControl.screens.LOAD_ERROR) {
+                                    viewStack.currentIndex = 2
+                                }
+                            } else if (status === Loader.Error) {
+                                // Tear Down creation context
+                                delete NavigationControl.context.class_id
+                                delete NavigationControl.context.device_id
+
+                                toolBarListView.recompiling = false
+                                console.error("Error while loading control view")
+                                setSource(NavigationControl.screens.LOAD_ERROR,
+                                          { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
+                                          );
+                            }
+                        }
+                    }
+
+                    DebugPanel {
+                        id: debugPanel
+                        Layout.fillHeight: true
+                    }
                 }
+            }
+
+            ConsoleContainer {
+                id:consoleContainer
             }
         }
     }
-
     function recompileControlViewQrc () {
         if (editor.fileTreeModel.url.toString() !== '') {
             recompileRequested = true
@@ -334,3 +371,4 @@ Rectangle {
         return false
     }
 }
+
