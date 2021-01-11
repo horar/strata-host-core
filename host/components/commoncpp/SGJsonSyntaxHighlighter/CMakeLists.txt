@@ -8,7 +8,9 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 add_library(${PROJECT_NAME}
+    src/SGJsonFormatter.cpp
     src/SGJsonSyntaxHighlighter.cpp
+    include/SGJsonFormatter.h
     include/SGJsonSyntaxHighlighter.h
 )
 

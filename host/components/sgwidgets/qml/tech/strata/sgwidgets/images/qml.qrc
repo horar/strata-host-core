@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/sgimages/">
+    <qresource prefix="/sgimages">
         <file>arrow-list-bottom.svg</file>
         <file>ban.svg</file>
         <file>bolt.svg</file>
@@ -53,5 +53,9 @@
         <file>sliders-h.svg</file>
         <file>sliders-v.svg</file>
         <file>list.svg</file>
+        <file>folder-plus.svg</file>
+        <file>redo.svg</file>
+        <file>undo.svg</file>
+        <file>minus.svg</file>
     </qresource>
 </RCC>
