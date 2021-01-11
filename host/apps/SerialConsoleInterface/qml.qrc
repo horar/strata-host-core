@@ -13,5 +13,6 @@
         <file>ProgramDeviceView.qml</file>
         <file>StatusNode.qml</file>
         <file>InfoPopup.qml</file>
+        <file>ScrollbackView.qml</file>
     </qresource>
 </RCC>
