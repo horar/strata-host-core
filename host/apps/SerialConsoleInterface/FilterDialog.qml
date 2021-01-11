@@ -52,7 +52,7 @@ SGWidgets.SGDialog {
         function addNew() {
             var item = {
                 "condition": "equal",
-                "filter_string": "",
+                "filter_string": ""
             }
             append(item)
         }
