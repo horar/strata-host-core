@@ -73,7 +73,7 @@ signals:
      * Signal when there are new messages ready to be read
      * @param [in] message QByteArray of the new message.
      */
-    void newMessageRecived(const QByteArray &message);
+    void newMessageReceived(const QByteArray &message);
 
 private slots:
     /**

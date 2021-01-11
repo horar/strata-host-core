@@ -27,7 +27,7 @@ bool StrataClient::connectServer()
         return false;
     }
 
-    connect(&connector_, &ClientConnector::newMessageRecived, this,
+    connect(&connector_, &ClientConnector::newMessageReceived, this,
             &StrataClient::newServerMessage);
     connect(this, &StrataClient::dispatchHandler, &dispatcher_, &Dispatcher::dispatchHandler);
 
@@ -39,7 +39,7 @@ bool StrataClient::connectServer()
 bool StrataClient::disconnectServer()
 {
     sendRequest("unregister", {});
-    disconnect(&connector_, &ClientConnector::newMessageRecived, this,
+    disconnect(&connector_, &ClientConnector::newMessageReceived, this,
                &StrataClient::newServerMessage);
 
     if (false == connector_.disconnectClient()) {

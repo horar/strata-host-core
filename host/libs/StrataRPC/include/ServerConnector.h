@@ -52,7 +52,7 @@ signals:
      * @param [in] clientId sender client id.
      * @param [in] message QByteArray of the new message.
      */
-    void newMessageRecived(const QByteArray &clientId, const QByteArray &message);
+    void newMessageReceived(const QByteArray &clientId, const QByteArray &message);
 
 private slots:
     /**

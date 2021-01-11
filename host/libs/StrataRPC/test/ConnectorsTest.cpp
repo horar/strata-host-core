@@ -34,7 +34,7 @@ void ConnectorsTest::testServerAndClient()
     strata::strataRPC::ClientConnector client(address_, client_id);
     QCOMPARE_(client.initializeConnector(), true);
 
-    connect(&server, &strata::strataRPC::ServerConnector::newMessageRecived, this,
+    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server](const QByteArray &clientId, const QByteArray &message) {
                 QCOMPARE_(clientId, "client_1");
                 if (message == "Start Test") {
@@ -42,7 +42,7 @@ void ConnectorsTest::testServerAndClient()
                 }
             });
 
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&client, &timer, &testPassed]() {
                 client.sendMessage("Hello from ClientConnector!");
                 testPassed = true;
@@ -66,7 +66,7 @@ void ConnectorsTest::testMultipleClients()
     strata::strataRPC::ServerConnector server(address_);
     QCOMPARE_(server.initilizeConnector(), true);
 
-    connect(&server, &strata::strataRPC::ServerConnector::newMessageRecived, this,
+    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server](const QByteArray &clientId, const QString &) {
                 server.sendMessage(clientId, clientId);
             });
@@ -76,7 +76,7 @@ void ConnectorsTest::testMultipleClients()
         clientsList.push_back(
             new strata::strataRPC::ClientConnector(address_, QByteArray::number(i)));
         clientsList.back()->initializeConnector();
-        connect(clientsList.back(), &strata::strataRPC::ClientConnector::newMessageRecived, this,
+        connect(clientsList.back(), &strata::strataRPC::ClientConnector::newMessageReceived, this,
                 [i](const QByteArray &message) { QCOMPARE_(message, QByteArray::number(i)); });
     }
 
@@ -98,7 +98,7 @@ void ConnectorsTest::testFloodTheServer()
     strata::strataRPC::ServerConnector server(address_);
     QCOMPARE_(server.initilizeConnector(), true);
 
-    connect(&server, &strata::strataRPC::ServerConnector::newMessageRecived, this,
+    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server](const QByteArray &clientId, const QByteArray &message) {
                 if (message == "Start Test") {
                     server.sendMessage(clientId, "Hello from ServerConnector!");
@@ -108,7 +108,7 @@ void ConnectorsTest::testFloodTheServer()
     strata::strataRPC::ClientConnector client(address_);
     QCOMPARE_(client.initializeConnector(), true);
 
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&client](const QByteArray &) {
                 for (int i = 0; i < 10000; i++) {
                     client.sendMessage(QByteArray::number(i));
@@ -127,7 +127,7 @@ void ConnectorsTest::testFloodTheClient()
     strata::strataRPC::ServerConnector server(address_);
     QCOMPARE_(server.initilizeConnector(), true);
 
-    connect(&server, &strata::strataRPC::ServerConnector::newMessageRecived, this,
+    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server, &timer](const QByteArray &clientId, const QByteArray &message) {
                 if (message == "Start Test") {
                     for (int i = 0; i < 10000; i++) {
@@ -140,7 +140,7 @@ void ConnectorsTest::testFloodTheClient()
     strata::strataRPC::ClientConnector client(address_);
     QCOMPARE_(client.initializeConnector(), true);
 
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [](const QByteArray &) {});
 
     client.sendMessage("Start Test");
@@ -155,48 +155,48 @@ void ConnectorsTest::testFloodTheClient()
 
 void ConnectorsTest::testDisconnectClient()
 {
-    bool serverRecivedMessage = false;
+    bool serverReceivedMessage = false;
     strata::strataRPC::ServerConnector server(address_);
     QCOMPARE_(server.initilizeConnector(), true);
 
-    connect(&server, &strata::strataRPC::ServerConnector::newMessageRecived, this,
-            [&serverRecivedMessage, &server](const QByteArray &clientId, const QByteArray &) {
-                serverRecivedMessage = true;
+    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+            [&serverReceivedMessage, &server](const QByteArray &clientId, const QByteArray &) {
+                serverReceivedMessage = true;
                 server.sendMessage(clientId, "test from the server");
             });
 
-    bool clientRecivedMessage = false;
+    bool clientReceivedMessage = false;
     strata::strataRPC::ClientConnector client(address_, "AA");
     QCOMPARE_(client.initializeConnector(), true);
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
-            [&clientRecivedMessage](const QByteArray &) { clientRecivedMessage = true; });
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
+            [&clientReceivedMessage](const QByteArray &) { clientReceivedMessage = true; });
 
-    serverRecivedMessage = false;
-    clientRecivedMessage = false;
+    serverReceivedMessage = false;
+    clientReceivedMessage = false;
     client.sendMessage("test from the client");
     waitForZmqMessages();
-    QVERIFY_(true == serverRecivedMessage);
-    QVERIFY_(true == clientRecivedMessage);
+    QVERIFY_(true == serverReceivedMessage);
+    QVERIFY_(true == clientReceivedMessage);
 
     QCOMPARE_(client.disconnectClient(), true);
     waitForZmqMessages();
 
     QCOMPARE_(client.connectClient(), true);
 
-    serverRecivedMessage = false;
-    clientRecivedMessage = false;
+    serverReceivedMessage = false;
+    clientReceivedMessage = false;
     client.sendMessage("test from the client");
     waitForZmqMessages();
-    QVERIFY_(true == serverRecivedMessage);
-    QVERIFY_(true == clientRecivedMessage);
+    QVERIFY_(true == serverReceivedMessage);
+    QVERIFY_(true == clientReceivedMessage);
 
-    serverRecivedMessage = false;
-    clientRecivedMessage = false;
+    serverReceivedMessage = false;
+    clientReceivedMessage = false;
     QCOMPARE_(client.disconnectClient(), true);
     server.sendMessage("AA", "test from the server");
     waitForZmqMessages();
-    QVERIFY_(false == serverRecivedMessage);
-    QVERIFY_(false == clientRecivedMessage);
+    QVERIFY_(false == serverReceivedMessage);
+    QVERIFY_(false == clientReceivedMessage);
 
     QCOMPARE_(client.disconnectClient(), false);
     QCOMPARE_(client.connectClient(), true);

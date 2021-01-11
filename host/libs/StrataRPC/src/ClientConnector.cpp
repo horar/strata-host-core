@@ -77,7 +77,7 @@ void ClientConnector::readMessages()
         if (connector_->read(message) == false) {
             break;
         }
-        emit newMessageRecived(QByteArray::fromStdString(message));
+        emit newMessageReceived(QByteArray::fromStdString(message));
     }
 }
 

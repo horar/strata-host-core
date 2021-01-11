@@ -5,7 +5,7 @@ void StrataServerTest::testValidApiVer2Message()
 {
     StrataServer server(address_);
     bool validMessage = false;
-    connect(this, &StrataServerTest::mockNewMessageRecived, &server,
+    connect(this, &StrataServerTest::mockNewMessageReceived, &server,
             &StrataServer::newClientMessage);
 
     // Connect a handler to verify that the message got parsed and the dispatch signal got emitted.
@@ -14,47 +14,47 @@ void StrataServerTest::testValidApiVer2Message()
 
     // This will register the client and sets the api as v2
     validMessage = false;
-    emit mockNewMessageRecived(
+    emit mockNewMessageReceived(
         "AAA",
         R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived(
+    emit mockNewMessageReceived(
         "AAA",
         R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived(
+    emit mockNewMessageReceived(
         "AAA",
         R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived(
+    emit mockNewMessageReceived(
         "AAA",
         R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"({"cmd":"load_documents","payload":{}})");
+    emit mockNewMessageReceived("AAA", R"({"cmd":"load_documents","payload":{}})");
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"()");
+    emit mockNewMessageReceived("AAA", R"()");
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"(0000)");
+    emit mockNewMessageReceived("AAA", R"(0000)");
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"(invalid message)");
+    emit mockNewMessageReceived("AAA", R"(invalid message)");
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived(
+    emit mockNewMessageReceived(
         "AAA",
         R"({"jsonrpc": 2.0,"method":"register_client","params":{"api_version": "1.0"},"id":1})");
     QVERIFY_(false == validMessage);
@@ -64,44 +64,44 @@ void StrataServerTest::testValidApiVer1Message()
 {
     StrataServer server(address_);
     bool validMessage = false;
-    connect(this, &StrataServerTest::mockNewMessageRecived, &server,
+    connect(this, &StrataServerTest::mockNewMessageReceived, &server,
             &StrataServer::newClientMessage);
     connect(&server, &StrataServer::dispatchHandler, this,
             [&validMessage]() { validMessage = true; });
 
     // This will register the client and sets the api as v1
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"({"cmd":"register_client", "payload":{}})");
+    emit mockNewMessageReceived("AAA", R"({"cmd":"register_client", "payload":{}})");
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"({"cmd":"load_documents","payload":{}})");
+    emit mockNewMessageReceived("AAA", R"({"cmd":"load_documents","payload":{}})");
     QVERIFY_(validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"({"sscmd":"load_documents","payload":{}})");
+    emit mockNewMessageReceived("AAA", R"({"sscmd":"load_documents","payload":{}})");
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"({"cmd":0,"payload":{}})");
+    emit mockNewMessageReceived("AAA", R"({"cmd":0,"payload":{}})");
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived(
+    emit mockNewMessageReceived(
         "AAA",
         R"({"jsonrpc": "2.0","method":"register_client","params":{"api_version": "1.0"},"id":1})");
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"()");
+    emit mockNewMessageReceived("AAA", R"()");
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"(0000)");
+    emit mockNewMessageReceived("AAA", R"(0000)");
     QVERIFY_(false == validMessage);
 
     validMessage = false;
-    emit mockNewMessageRecived("AAA", R"(invalid message)");
+    emit mockNewMessageReceived("AAA", R"(invalid message)");
     QVERIFY_(false == validMessage);
 }
 
@@ -111,12 +111,12 @@ void StrataServerTest::testFloodTheServer()
     StrataServer server(address_);
     int counter = 0;
     int testSize = 1000;
-    connect(this, &StrataServerTest::mockNewMessageRecived, &server,
+    connect(this, &StrataServerTest::mockNewMessageReceived, &server,
             &StrataServer::newClientMessage);
     connect(&server, &StrataServer::dispatchHandler, this, [&counter]() { counter++; });
 
     for (int i = 0; i < testSize; i++) {
-        emit mockNewMessageRecived(QByteArray::number(i),
+        emit mockNewMessageReceived(QByteArray::number(i),
                                    R"({"cmd":"register_client", "payload":{}})");
     }
 
@@ -139,7 +139,7 @@ void StrataServerTest::testServerFunctionality()
     bool clientGotResponse = false;
     strata::strataRPC::ClientConnector client(address_, "AA");
     connect(
-        &client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+        &client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
         [&clientGotResponse](const QByteArray &message) {
             QCOMPARE_(
                 message,
@@ -152,7 +152,7 @@ void StrataServerTest::testServerFunctionality()
 
     bool clientGotResponse_2 = false;
     strata::strataRPC::ClientConnector client_2(address_, "BB");
-    connect(&client_2, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client_2, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&clientGotResponse_2](const QByteArray &message) {
                 QCOMPARE_(message,
                           "{\"hcs::notification\":{\"status\":\"client "
@@ -176,7 +176,7 @@ void StrataServerTest::testBuildNotificationApiV2()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -218,7 +218,7 @@ void StrataServerTest::testBuildResponseApiV2()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -259,7 +259,7 @@ void StrataServerTest::testBuildErrorApiV2()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -301,7 +301,7 @@ void StrataServerTest::testBuildPlatformMessageApiV2()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -344,7 +344,7 @@ void StrataServerTest::testBuildNotificationApiV1()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -380,7 +380,7 @@ void StrataServerTest::testBuildResponseApiV1()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -452,7 +452,7 @@ void StrataServerTest::testBuildPlatformMessageApiV1()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -494,7 +494,7 @@ void StrataServerTest::testNotifyAllClients()
         clientsList.push_back(
             new strata::strataRPC::ClientConnector(address_, QByteArray::number(i)));
         clientsList.back()->initializeConnector();
-        connect(clientsList.back(), &strata::strataRPC::ClientConnector::newMessageRecived, this,
+        connect(clientsList.back(), &strata::strataRPC::ClientConnector::newMessageReceived, this,
                 [&counter](const QByteArray &message) {
                     // validate for API v2
                     // expected response format:
@@ -530,7 +530,7 @@ void StrataServerTest::testNotifyAllClients()
         clientsList.push_back(
             new strata::strataRPC::ClientConnector(address_, QByteArray::number(i)));
         clientsList.back()->initializeConnector();
-        connect(clientsList.back(), &strata::strataRPC::ClientConnector::newMessageRecived, this,
+        connect(clientsList.back(), &strata::strataRPC::ClientConnector::newMessageReceived, this,
                 [&counter](const QByteArray &message) {
                     // validate for API v1
                     // expected response format:
@@ -593,7 +593,7 @@ void StrataServerTest::testNotifyClientByClientId()
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
     waitForZmqMessages();
 
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&testExecuted](const QByteArray &message) {
                 QJsonParseError jsonParseError;
                 QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
@@ -622,7 +622,7 @@ void StrataServerTest::testNotifyClientToNonExistingClient()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     connect(
-        &client, &strata::strataRPC::ClientConnector::newMessageRecived, this,
+        &client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
         [](const QByteArray &) { QFAIL_("Messages should not be sent to unregistered Clients."); });
 
     server.notifyClient("AA", "test_handler", QJsonObject({{"key", "value"}}),

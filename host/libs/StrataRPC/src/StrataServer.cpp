@@ -18,7 +18,7 @@ bool StrataServer::initializeServer()
 {
     if (true == connector_.initilizeConnector()) {
         qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
-        connect(&connector_, &ServerConnector::newMessageRecived, this,
+        connect(&connector_, &ServerConnector::newMessageReceived, this,
                 &StrataServer::newClientMessage);
         connect(this, &StrataServer::dispatchHandler, &dispatcher_, &Dispatcher::dispatchHandler);
         return true;

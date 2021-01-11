@@ -42,7 +42,7 @@ void ServerConnector::readNewMessages(/*int socket*/)
             << "message received. Client ID:"
             << QByteArray::fromStdString(connector_->getDealerID()).toHex()
             << "Message:" << QByteArray::fromStdString(message);
-        emit newMessageRecived(QByteArray::fromStdString(connector_->getDealerID()),
+        emit newMessageReceived(QByteArray::fromStdString(connector_->getDealerID()),
                                QByteArray::fromStdString(message));
     }
     readSocketNotifier_->setEnabled(true);

@@ -37,7 +37,7 @@ void StrataClientTest::testConnectDisconnectToTheServer()
     server.initilizeConnector();
     bool serverRevicedMessage = false;
     connect(
-        &server, &strata::strataRPC::ServerConnector::newMessageRecived, this,
+        &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
         [&server, &serverRevicedMessage](const QByteArray &clientId, const QByteArray &message) {
             qDebug() << "ServerConnector new message handler. client id:" << clientId << "message"
                      << message;
@@ -48,37 +48,37 @@ void StrataClientTest::testConnectDisconnectToTheServer()
     // StrataClient set up
     StrataClient client(address_);
 
-    bool clientRecivedMessage = false;
+    bool clientReceivedMessage = false;
     connect(&client, &StrataClient::dispatchHandler, this,
-            [&clientRecivedMessage] { clientRecivedMessage = true; });
+            [&clientReceivedMessage] { clientReceivedMessage = true; });
 
     serverRevicedMessage = false;
-    clientRecivedMessage = false;
+    clientReceivedMessage = false;
     QVERIFY_(client.connectServer());
     waitForZmqMessages();
     QVERIFY_(serverRevicedMessage);
-    QVERIFY_(clientRecivedMessage);
+    QVERIFY_(clientReceivedMessage);
 
     serverRevicedMessage = false;
-    clientRecivedMessage = false;
+    clientReceivedMessage = false;
     QVERIFY_(client.disconnectServer());
     waitForZmqMessages();
     QVERIFY_(serverRevicedMessage);
-    QVERIFY_(false == clientRecivedMessage);
+    QVERIFY_(false == clientReceivedMessage);
 
     serverRevicedMessage = false;
-    clientRecivedMessage = false;
+    clientReceivedMessage = false;
     server.sendMessage("StrataClient", "test message");
     waitForZmqMessages();
     QVERIFY_(false == serverRevicedMessage);
-    QVERIFY_(false == clientRecivedMessage);
+    QVERIFY_(false == clientReceivedMessage);
 
     serverRevicedMessage = false;
-    clientRecivedMessage = false;
+    clientReceivedMessage = false;
     QVERIFY_(client.connectServer());
     waitForZmqMessages();
     QVERIFY_(serverRevicedMessage);
-    QVERIFY_(clientRecivedMessage);
+    QVERIFY_(clientReceivedMessage);
 }
 
 void StrataClientTest::testBuildRequest()
@@ -90,7 +90,7 @@ void StrataClientTest::testBuildRequest()
 
     strata::strataRPC::ServerConnector server(address_);
     server.initilizeConnector();
-    connect(&server, &strata::strataRPC::ServerConnector::newMessageRecived, this,
+    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&expectedId, &expectedMethod, &serverRevicedMessage](const QByteArray &,
                                                                   const QByteArray &message) {
                 QJsonObject jsonObject(QJsonDocument::fromJson(message).object());
@@ -145,7 +145,7 @@ void StrataClientTest::testNonDefaultDealerId()
     server.initilizeConnector();
 
     connect(
-        &server, &strata::strataRPC::ServerConnector::newMessageRecived, this,
+        &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
         [&defaultIdRecieved, &customIdRecieved](const QByteArray &clientId, const QByteArray &) {
             if (clientId == "customId") {
                 customIdRecieved = true;
