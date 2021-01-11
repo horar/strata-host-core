@@ -33,11 +33,14 @@ public:
         TimestampRole,
         IsCondensedRole,
         IsJsonValidRole,
+        ValueRole,
     };
 
     enum class MessageType {
         Request,
-        Response,
+        UnknownReply,
+        NotificationReply,
+        AckReply,
     };
     Q_ENUM(MessageType)
 
@@ -45,7 +48,7 @@ public:
     Q_INVOKABLE QVariant data(int row, const QByteArray &role) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int count() const;
-    void append(const QByteArray &message, MessageType type);
+    void append(const QByteArray &message, bool isRequest);
 
     Q_INVOKABLE void setIsCondensedAll(bool condensed);
     Q_INVOKABLE void setIsCondensed(int index, bool condensed);
@@ -106,6 +109,7 @@ struct ScrollbackModelItem {
     QDateTime timestamp;
     bool isCondensed;
     bool isJsonValid;
+    QString value;
 };
 
 Q_DECLARE_METATYPE(SciScrollbackModel::MessageType)
