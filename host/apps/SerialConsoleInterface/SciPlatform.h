@@ -1,5 +1,4 @@
-#ifndef SCI_PLATFORM_H
-#define SCI_PLATFORM_H
+#pragma once
 
 #include "SciScrollbackModel.h"
 #include "SciCommandHistoryModel.h"
@@ -19,11 +18,13 @@ class SciPlatform: public QObject {
     Q_PROPERTY(QString verboseName READ verboseName NOTIFY verboseNameChanged)
     Q_PROPERTY(QString appVersion READ appVersion NOTIFY appVersionChanged)
     Q_PROPERTY(QString bootloaderVersion READ bootloaderVersion NOTIFY bootloaderVersionChanged)
+    Q_PROPERTY(QString deviceName READ deviceName NOTIFY deviceNameChanged)
     Q_PROPERTY(PlatformStatus status READ status NOTIFY statusChanged)
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
     Q_PROPERTY(bool programInProgress READ programInProgress NOTIFY programInProgressChanged)
+
 
 public:
     SciPlatform(SciPlatformSettings *settings, QObject *parent = nullptr);
@@ -53,9 +54,11 @@ public:
     QString errorString();
     void setErrorString(const QString &errorString);
     bool programInProgress() const;
+    QString deviceName() const;
+    void setDeviceName(const QString &deviceName);
 
     void resetPropertiesFromDevice();
-    Q_INVOKABLE bool sendMessage(const QByteArray &message, bool onlyValidJson);
+    Q_INVOKABLE bool sendMessage(const QString &message, bool onlyValidJson);
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
 
     //settings handlers
@@ -70,6 +73,7 @@ signals:
     void statusChanged();
     void errorStringChanged();
     void programInProgressChanged();
+    void deviceNameChanged();
     void flasherProgramProgress(int chunk, int total);
     void flasherBackupProgress(int chunk, int total);
     void flasherRestoreProgress(int chunk, int total);
@@ -105,6 +109,7 @@ private:
     PlatformStatus status_;
     QString errorString_;
     bool programInProgress_ = false;
+    QString deviceName_;
 
     SciScrollbackModel *scrollbackModel_;
     SciCommandHistoryModel *commandHistoryModel_;
@@ -113,5 +118,3 @@ private:
 
     void setProgramInProgress(bool programInProgress);
 };
-
-#endif //SCI_PLATFORM_H

@@ -1,5 +1,4 @@
-#ifndef SCI_PLATFORM_SETTINGS_H
-#define SCI_PLATFORM_SETTINGS_H
+#pragma once
 
 #include <QObject>
 #include <QHash>
@@ -41,5 +40,3 @@ private:
     void loadData();
     void saveData();
 };
-
-#endif //SCI_PLATFORM_SETTINGS_H
