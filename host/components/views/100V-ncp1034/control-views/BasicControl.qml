@@ -9,14 +9,57 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    property real ratioCalc: root.width/1200
-    property real initialAspectRatio: Screen.width/Screen.height
+    property real ratioCalc: root.width / 1200
+    property real initialAspectRatio: 1225/648
     anchors.centerIn: parent
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+    height: parent.height
 
     Component.onCompleted: {
         platformInterface.get_status_command.update()
+        Help.registerTarget(enableSwitch, "This switch will enable the buck converter by setting the SS/SD# pin high.", 0, "100VcontrolHelp")
+        Help.registerTarget(setSwitchFreq, "This switch will enable the buck converter by setting the SS/SD# pin high.", 1, "100VcontrolHelp")
+        Help.registerTarget(softStart, "This dropdown selections contains the estimated soft start time for the buck converter. The exact time depends on the output voltage so this is just an estimate.", 2, "100VcontrolHelp")
+        Help.registerTarget(outputVolslider, "Allows the user to set the output voltage between 5V and 24V.",3, "100VcontrolHelp")
+        Help.registerTarget(filterHelpContainer, "All measured voltages and currents on the board are shown here. Input/Output Voltage and Current are measured at the input and output to the evaluation board.",4, "100VcontrolHelp")
+        Help.registerTarget(logFault, "This status list contains all the error messages and will store them in order received with the most recent error messages displayed on top.",5, "100VcontrolHelp")
+        Help.registerTarget(outputVoltAdjustment, "This switch will turn on/off the ability for the user to adjust the output voltage. This fixed voltage if this is off is 17V.",6, "100VcontrolHelp")
+        Help.registerTarget(enableVCCLDO, "This switch turns on/off the LDO providing the power rail for VCC to the NCP1034 controller. When enabled, VCC is drawn from the input voltage. If this is disabled, the user would need to apply VCC power separately.",7, "100VcontrolHelp")
+        Help.registerTarget(inputpowerGauge, "These gauges show the input and output power to the evaluation board. They are calculated from the measured voltages and currents at input and output. The current readings max out at 2.2A so if more current is being drawn the numbers here will be inaccurate.",8, "100VcontrolHelp")
+        Help.registerTarget(buckOutputPowerGauge, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature.",9, "100VcontrolHelp")
+        Help.registerTarget(effGauge, "The buck converter efficiency is calculated by taking the calculated Output power divided by the calculated input power.",10, "100VcontrolHelp")
+        Help.registerTarget(ldoTemp, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. ",11, "100VcontrolHelp")
+        Help.registerTarget(boardTemp, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature.", 12, "100VcontrolHelp")
+        Help.registerTarget(sgstatusHelpContainer, "Green indicates that the parameter is within specification and operating normally. Red signals there is a problem. Check the Status list for more information on errors. ", 13, "100VcontrolHelp")
+    }
+
+
+    Item {
+        id: filterHelpContainer
+        property point topLeft
+        property point bottomRight
+        width:  telemetryContainer1.width + telemetryContainer2.width
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = telemetryContainer1.mapToItem(root, 0,  0)
+            bottomRight = telemetryContainer2.mapToItem(root, telemetryContainer2.width, telemetryContainer2.height)
+        }
+    }
+
+    Connections {
+        target: Help.utility
+        onTour_runningChanged:{
+            filterHelpContainer.update()
+        }
+    }
+
+    onWidthChanged: {
+        filterHelpContainer.update()
+    }
+    onHeightChanged: {
+        filterHelpContainer.update()
     }
 
     property var error_msg: platformInterface.error_msg.value
@@ -240,7 +283,7 @@ Item {
                                             toText.fontSizeMultiplier: 0.9
                                             onUserSet: {
                                                 platformInterface.set_vout.update(value.toFixed(2))
-                                                 inputBox.text = value.toFixed(2)
+                                                inputBox.text = value.toFixed(2)
 
                                             }
                                             onValueChanged: {
@@ -433,7 +476,7 @@ Item {
                                             RowLayout{
                                                 anchors.fill: parent
                                                 Item {
-
+                                                    id:telemetryContainer1
                                                     Layout.fillWidth: true
                                                     Layout.fillHeight: true
                                                     ColumnLayout{
@@ -545,6 +588,7 @@ Item {
                                                 }
 
                                                 Item {
+                                                    id:telemetryContainer2
                                                     Layout.fillWidth: true
                                                     Layout.fillHeight: true
                                                     ColumnLayout{
@@ -960,8 +1004,19 @@ Item {
                         Item {
                             Layout.fillWidth: true
                             Layout.preferredHeight: parent.height/6
+                            Item {
+                                id: sgstatusHelpContainer
+                                width:  statusLed.width - 50
+                                height: statusLed.height/2.2
+                                anchors.top: parent.top
+                                anchors.topMargin: 40
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.horizontalCenterOffset: 15
+                            }
+
 
                             ColumnLayout{
+                                id: statusLed
                                 anchors.fill: parent
                                 Text {
                                     id: statusIndicator
@@ -982,6 +1037,7 @@ Item {
                                     radius: 2
                                 }
 
+
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
@@ -989,6 +1045,7 @@ Item {
                                     RowLayout{
                                         anchors.fill: parent
                                         Item {
+                                            id: vinLedcontainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGAlignedLabel {
@@ -1070,6 +1127,7 @@ Item {
                                         }
 
                                         Item {
+                                            id: tempAlertContainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGAlignedLabel {

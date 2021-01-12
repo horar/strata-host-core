@@ -24,35 +24,30 @@ Item {
         //Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
     }
 
-    BasicControl{
-        anchors.fill: parent
+    BasicControl{ }
+
+    SGIcon {
+        id: helpIcon
+        anchors {
+            right: controlNavigation.right
+            top: controlNavigation.top
+            margins: 20
+        }
+        source: "qrc:/sgimages/question-circle.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        height: 40
+        width: 40
+
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+                Help.startHelpTour("100VcontrolHelp")
+            }
+            hoverEnabled: true
+        }
     }
-
-//    SGIcon {
-//        id: helpIcon
-//        anchors {
-//            right: controlContainer.right
-//            top: controlContainer.top
-//            margins: 20
-//        }
-//        source: "control-views/question-circle-solid.svg"
-//        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-//        height: 40
-//        width: 40
-
-//        MouseArea {
-//            id: helpMouse
-//            anchors {
-//                fill: helpIcon
-//            }
-//            onClicked: {
-//                // Make sure view is set to Basic before starting tour
-//                controlContainer.currentIndex = 0
-//                basicButton.clicked()
-//                Help.startHelpTour("controlHelp")
-//            }
-//            hoverEnabled: true
-//        }
-//    }
 
 }
