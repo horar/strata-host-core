@@ -17,6 +17,9 @@ Item {
     property var xValue: 0
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+    property var curve: timedGraphPoints.createCurve("movingCurve")
+    property var curve2: timedGraphPoints.createCurve("movingCurve2")
+    property var firstNotification: 1
 
     MouseArea {
         id: containMouseArea
@@ -66,7 +69,7 @@ Item {
         "cmd": "my_cmd_simple",
         "payload": {
             "io": gpio.checked,
-            "dac": dac.value.toFixed(1)
+            "dac": dac.value.toFixed(2)
         }
     }
 
@@ -133,16 +136,14 @@ Item {
                 width: parent.width
                 height: parent.height - headingCommandHandler.height
 
-                Rectangle {
+                Item {
                     Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    color: "transparent"
+                    Layout.preferredWidth: parent.width/1.6
                     ColumnLayout {
                         anchors.fill: parent
-                        Rectangle {
+                        Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            color: "transparent"
                             SGAlignedLabel {
                                 id: gpioSwitchLabel
                                 target: gpio
@@ -162,7 +163,7 @@ Item {
                                 }
                             }
                         }
-                        Rectangle {
+                        Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGAlignedLabel {
@@ -179,7 +180,7 @@ Item {
                                     from: 0                          // Default: 0.0
                                     to: 1
                                     onUserSet: {
-                                        platformInterface.commands.my_cmd_simple.update(dac.value,gpio.checked)
+                                        platformInterface.commands.my_cmd_simple.update(dac.value.toFixed(2),gpio.checked)
                                         delegateText1.text = JSON.stringify(my_cmd_simple_obj,null,4)
 
                                     }
@@ -367,6 +368,8 @@ Item {
                                 title: "Periodic Notification Graph "
                                 yMin: 0
                                 yMax: 1
+                                xMin: 0
+                                xMax: 5
                                 xTitle: "Interval Count"
                                 yTitle: "Values"
                                 panXEnabled: false
@@ -375,10 +378,9 @@ Item {
                                 zoomYEnabled: false
                                 xGrid: true
                                 yGrid: true
-                                property var curve: createCurve("movingCurve")
-                                property var curve2: createCurve("movingCurve2")
+
                                 property real lastTime
-                                property var firstNotification: 1
+
 
                                 Component.onCompleted: {
                                     curve.color = "orange"
@@ -402,22 +404,21 @@ Item {
                                             xValue++
                                         }
                                         console.log(JSON.stringify(dataArray))
-                                        console.log(dataArray.length, dataArray2.length, timedGraphPoints.firstNotification)
+                                        console.log(dataArray.length, dataArray2.length, firstNotification)
 
-                                        if(dataArray.length > 0 && timedGraphPoints.firstNotification !== 1) {
-                                            timedGraphPoints.curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
-                                            timedGraphPoints.firstNotification++
+                                        if(dataArray.length > 0 && firstNotification !== 1) {
+                                            curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
+                                            firstNotification++
                                         }
-                                        if(dataArray2.length > 0 && timedGraphPoints.firstNotification !== 1) {
-                                            timedGraphPoints.curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
-                                            timedGraphPoints.firstNotification++
+                                        if(dataArray2.length > 0 && firstNotification !== 1) {
+                                            curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
+                                            firstNotification++
                                         }
                                         // If the array contains more than one value at the first notification, append all the data points on curve
-                                        else if(timedGraphPoints.firstNotification === 1) {
-                                            console.log("tanya",timedGraphPoints.firstNotification)
-                                            timedGraphPoints.curve.appendList(dataArray)
-                                            timedGraphPoints.curve2.appendList(dataArray2)
-                                            timedGraphPoints.firstNotification++
+                                        else if(firstNotification === 1) {
+                                            curve.appendList(dataArray)
+                                            curve2.appendList(dataArray2)
+                                            firstNotification++
                                         }
                                     }
                                 }
@@ -432,6 +433,7 @@ Item {
                                 unitText: "Ramp\nvalue"               // Default: ""
                                 minimumValue: 0                 // Default: 0
                                 maximumValue: 5               // Default: 100
+                                valueDecimalPlaces: 0
                                 // tickmarkStepSize: 0.5           // Default: (maxVal-minVal)/10
                                 visible: buttonStrip2.index === 1 ? true : false
                             }
@@ -493,7 +495,7 @@ Item {
                 }
             } //end of row
         }
-        Rectangle {
+        Item {
             Layout.preferredHeight: parent.height/4
             Layout.fillWidth: true
             Rectangle {
@@ -547,10 +549,9 @@ Item {
 
                 Item {
                     Layout.fillHeight: true
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: parent.width/1.6
                     ColumnLayout{
                         anchors.fill: parent
-
                         Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
@@ -574,14 +575,28 @@ Item {
                                             width: 50
                                             checked: true
                                             onToggled: {
+                                                if(!checked) {
+                                                    console.log(timedGraphPoints.count)
+                                                    timedGraphPoints.curve(0).clear()
+                                                    timedGraphPoints.curve(1).clear()
+                                                    firstNotification = 1
+                                                    //                                                    for (let i = 0; i < timedGraphPoints.count; i++) {
+                                                    //                                                        if (timedGraphPoints.curve(i).name === "movingCurve") {
+                                                    //                                                            timedGraphPoints.curve(0).clear()
+                                                    //                                                            break
+                                                    //                                                        }
+                                                    //                                                    }
+
+                                                }
+
                                                 platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,checked)
                                             }
-                                            onCheckedChanged: {
-                                                if(checked) {
-                                                    timedGraphPoints.xMin = 0
-                                                    timedGraphPoints.xMax = (intervalState/1000) * 5
-                                                }
-                                            }
+                                            //                                            onCheckedChanged: {
+                                            //                                                if(checked) {
+                                            //                                                    timedGraphPoints.xMin = 0
+                                            //                                                    timedGraphPoints.xMax = (intervalState/1000) * 5
+                                            //                                                }
+                                            //                                            }
                                         }
                                     }
                                 }
@@ -599,12 +614,19 @@ Item {
 
                                         SGSubmitInfoBox {
                                             id: interval
-                                            width: 90
+                                            width: 100
                                             text: "2000"
                                             unit: "ms"
+                                            IntValidator {
+                                                bottom: 250
+                                                top: 10000
+                                            }
+                                            placeholderText: "250-10000"
                                             onEditingFinished:{
-                                                intervalState = parseInt(text)
-                                                platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
+                                                if(text) {
+                                                    intervalState = parseInt(text)
+                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
+                                                }
                                             }
                                         }
                                     }
@@ -656,20 +678,23 @@ Item {
                                         text: "Run Count"
                                         font.bold: true
                                         anchors.horizontalCenter: parent.horizontalCenter
+                                        anchors.horizontalCenterOffset: -5
                                         alignment: SGAlignedLabel.SideTopCenter
                                         enabled: (runStateSwitch.checked) ? false : true
                                         opacity: (runStateSwitch.checked) ? 0.5 : 1.0
 
                                         SGSubmitInfoBox {
                                             id: runcount
-                                            width: 85
-                                            text: "2000"
-                                            IntValidator { }
+                                            width: 90
+                                            text: "10"
+                                            IntValidator {  }
                                             unit: "  "
 
                                             onEditingFinished:{
-                                                run_count = parseInt(runcount.text)
-                                                platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
+                                                if(text) {
+                                                    run_count = parseInt(runcount.text)
+                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
+                                                }
                                             }
                                         }
                                     }
@@ -680,7 +705,7 @@ Item {
                 }
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: parent.width/2.5
+                    Layout.fillWidth: true
                     color: "light gray"
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 25
