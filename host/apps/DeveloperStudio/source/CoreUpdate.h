@@ -10,7 +10,7 @@ class CoreUpdate : public QObject
 public:
     Q_INVOKABLE QString requestUpdateApplication();
 
-Q_SIGNALS:
+signals:
     void applicationTerminationRequested();
 
 private:

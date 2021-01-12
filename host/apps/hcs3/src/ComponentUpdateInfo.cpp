@@ -35,18 +35,18 @@ void ComponentUpdateInfo::handleUpdateInfoResponse(const QByteArray &clientId, Q
 QString ComponentUpdateInfo::acquireUpdateInfo(const QString &updateMetadata, QJsonArray &updateInfo) {
     QMap<QString, QString> componentMap;
     QString error = getCurrentVersionOfComponents(componentMap);
-    if (error.isEmpty()) {
-        QString errorMsg;
-        int errorColumn = 0;
-        QDomDocument xmlDocument("MaintenanceToolOutput");
-        if (xmlDocument.setContent(updateMetadata, false, &errorMsg, &errorColumn) == false) {
-            qCCritical(logCategoryHcs) << "Could not parse updateMetadata: " << errorMsg << ", errorColumn: " << errorColumn;
-            return "Error parsing update metadata: " + errorMsg;
-        }
-        return parseUpdateMetadata(xmlDocument, componentMap, updateInfo);
+    if (error.isEmpty() == false) {
+        return error;
     }
 
-    return error;
+    QString errorMsg;
+    int errorColumn = 0;
+    QDomDocument xmlDocument("MaintenanceToolOutput");
+    if (xmlDocument.setContent(updateMetadata, false, &errorMsg, &errorColumn) == false) {
+        qCCritical(logCategoryHcs) << "Could not parse updateMetadata: " << errorMsg << ", errorColumn: " << errorColumn;
+        return "Error parsing update metadata: " + errorMsg;
+    }
+    return parseUpdateMetadata(xmlDocument, componentMap, updateInfo);
 }
 
 QString ComponentUpdateInfo::getCurrentVersionOfComponents(QMap<QString, QString>& componentMap) {
@@ -181,6 +181,8 @@ QString ComponentUpdateInfo::locateMaintenanceTool(const QDir &applicationDir, Q
     return QString();
 }
 
+#define MAINTENANCE_TOOL_START_TIMEOUT 2000 // msecs
+#define MAINTENANCE_TOOL_FINISH_TIMEOUT 5000 // msecs
 QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMaintenanceTool, const QDir &applicationDir, QString &updateMetadata) {
     qCInfo(logCategoryHcs) << "Launching Strata Maintenance Tool";
     QStringList arguments;
@@ -193,10 +195,13 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
     maintenanceToolProcess.start();
 
     // Wait until the update tool is finished
-    maintenanceToolProcess.waitForFinished();
-
-    if (maintenanceToolProcess.error() != QProcess::UnknownError) {
-        return "Error checking for updates: " + QString::number(maintenanceToolProcess.error());
+    if ((maintenanceToolProcess.waitForStarted(MAINTENANCE_TOOL_START_TIMEOUT) == false) ||
+        (maintenanceToolProcess.waitForFinished(MAINTENANCE_TOOL_FINISH_TIMEOUT) == false) ||
+        (maintenanceToolProcess.exitStatus() != QProcess::NormalExit) ||
+        (maintenanceToolProcess.exitCode() != EXIT_SUCCESS)) {
+        return "Error checking for updates (" +
+                QString::number(maintenanceToolProcess.error()) + "): " + maintenanceToolProcess.errorString()
+                + ", error output: " + maintenanceToolProcess.readAllStandardError();
     }
 
     // Read the output

@@ -752,21 +752,24 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     }
 }
 
-void HostControllerService::onCmdGetUpdateInfo(const rapidjson::Value * ) {
+void HostControllerService::onCmdGetUpdateInfo(const rapidjson::Value * )
+{
     emit updateInfoRequested(getSenderClient()->getClientId());
 }
 
-void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, const QJsonArray &componentList, const QString &errorString) {
+void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, const QJsonArray &componentList, const QString &errorString)
+{
+    QJsonObject payload;
+    payload.insert("type", "updates_available");
+    if ((componentList.isEmpty() == false) || errorString.isEmpty()) {  // if list is empty, but no error is set, it means we have no updates available
+        payload.insert("component_list", componentList);
+    }
+    if (errorString.isEmpty() == false) {
+        payload.insert("error_string", errorString);
+    }
+
     QJsonDocument doc;
     QJsonObject message;
-    QJsonObject payload;
-
-    payload.insert("type", "updates_available");
-    if ((componentList.isEmpty() == false) || errorString.isEmpty())    // if list is empty, but no error is set, it means we have no updates available
-        payload.insert("component_list", componentList);
-    if (errorString.isEmpty() == false)
-        payload.insert("error_string", errorString);
-
     message.insert("hcs::notification", payload);
     doc.setObject(message);
 
