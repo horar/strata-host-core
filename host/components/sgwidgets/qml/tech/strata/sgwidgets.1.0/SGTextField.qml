@@ -21,6 +21,7 @@ TextField {
 
     /* properties for suggestion list */
     property variant suggestionListModel
+    property Component suggestionListDelegate
     property string suggestionModelTextRole
     property int suggestionPosition: Item.Bottom
     property string suggestionEmptyModelText: "No Suggestion"
@@ -37,8 +38,8 @@ TextField {
     signal suggestionDelegateRemoveRequested(int index)
 
     /*private*/
-    property bool hasRightIcons: cursorInfoLoader.status === Loader.Ready
-                                 || revelPasswordLoader.status ===  Loader.Ready
+    property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
+                                 || (revelPasswordLoader !== null && revelPasswordLoader.status ===  Loader.Ready)
 
     property bool revealPassword: false
 
@@ -166,6 +167,7 @@ TextField {
         SGWidgets.SGSuggestionPopup {
             textEditor: control
             model: suggestionListModel
+            delegate: control.suggestionListDelegate ? control.suggestionListDelegate : implicitDelegate
             textRole: suggestionModelTextRole
             controlWithSpace: false
             position: suggestionPosition
@@ -182,7 +184,7 @@ TextField {
             }
 
             onRemoveRequested: {
-                suggestionDelegateRemoveRequested(index)
+                control.suggestionDelegateRemoveRequested(index)
             }
         }
     }

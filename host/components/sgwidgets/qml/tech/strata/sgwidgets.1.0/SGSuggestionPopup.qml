@@ -10,7 +10,7 @@ Popup {
 
     property Item textEditor
     property variant model
-    property Component delegate: delegateComponent
+    property Component delegate: implicitDelegate
     property Component header: headerComponent
     property alias footer: view.footer
     property string textRole: "text"
@@ -27,6 +27,8 @@ Popup {
     property bool delegateNumbering: false
     property bool delegateRemovable: false
     property bool delegateTextWrap: false
+
+    readonly property Component implicitDelegate: delegateComponent
 
     signal delegateSelected(int index)
     signal removeRequested(int index)
@@ -218,8 +220,8 @@ Popup {
 
     Component {
         id: delegateComponent
-        Item {
 
+        Item {
             width: ListView.view.width
             height: text.paintedHeight + 10
 
