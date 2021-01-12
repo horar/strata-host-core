@@ -106,7 +106,15 @@ function locateTour(device_id, tourName) {
 
 function startHelpTour(tourName, device_id) {
     if (device_id === undefined) {
-        device_id = NavigationControl.platform_view_model_.get(stackContainer.currentIndex-1).device_id
+        const platformView = NavigationControl.platform_view_model_.get(stackContainer.currentIndex-1)
+
+        // If the view was instantiated through the platform_view_model_, then get the device_id that way
+        // Otherwise, use the current_device_id 
+        if (platformView) {
+            device_id = platformView.device_id
+        } else {
+            device_id = current_device_id
+        }
     }
 
     let tourLocation = locateTour(device_id, tourName)
