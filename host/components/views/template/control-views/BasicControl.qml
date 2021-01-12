@@ -69,7 +69,7 @@ Item {
         "cmd": "my_cmd_simple",
         "payload": {
             "io": gpio.checked,
-            "dac": dac.value.toFixed(2)
+            "dac": parseFloat(dac.value.toFixed(2))
         }
     }
 
@@ -107,15 +107,7 @@ Item {
                         leftMargin: 10
                     }
                 }
-                Image {
-                    id: name
-                    source: "images/commandicon.png"
-                    anchors {
-                        top: parent.top
-                        horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: 100
-                    }
-                }
+
             }
 
             //            Rectangle {
@@ -176,13 +168,21 @@ Item {
 
                                 SGSlider {
                                     id: dac
-                                    width: 200
-                                    from: 0                          // Default: 0.0
-                                    to: 1
+                                    width: 250
+                                    from: 0.00                         // Default: 0.0
+                                    to: 1.00
+                                    stepSize: 0.01
+                                    inputBox.validator: DoubleValidator { }
+                                    inputBox.text: dac.value.toFixed(2)
                                     onUserSet: {
-                                        platformInterface.commands.my_cmd_simple.update(dac.value.toFixed(2),gpio.checked)
+                                        // var valueSet = parseFloat(dac.value)
+                                        inputBox.text = parseFloat(value.toFixed(2))
+                                        platformInterface.commands.my_cmd_simple.update( parseFloat(value.toFixed(2)),gpio.checked)
                                         delegateText1.text = JSON.stringify(my_cmd_simple_obj,null,4)
 
+                                    }
+                                    onValueChanged: {
+                                        inputBox.text = parseFloat(value.toFixed(2))
                                     }
                                 }
                             }
@@ -191,10 +191,18 @@ Item {
                 }
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: parent.width/2.5
+                    Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 15
                     color: "light gray"
+                    Image {
+                        id: name
+                        source: "images/commandicon.png"
+                        anchors {
+                            right: parent.right
+                            top: parent.top
+                        }
+                    }
                     Flickable {
                         anchors.fill: parent
                         TextArea.flickable: TextArea {
@@ -231,16 +239,7 @@ Item {
                     }
                     z:2
                 }
-                Image {
-                    id: name2
-                    source: "images/notificationicon.png"
-                    anchors {
-                        top: parent.top
-                        horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: 100
-                    }
-                    z:2
-                }
+
 
             }
 
@@ -472,6 +471,15 @@ Item {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
                     color: "light gray"
+                    Image {
+                        id: name2
+                        source: "images/notificationicon.png"
+                        anchors {
+                            right: parent.right
+                            top: parent.top
+                        }
+                        z:2
+                    }
                     Flickable {
                         id: flickable
                         anchors.fill: parent
@@ -515,15 +523,7 @@ Item {
                         leftMargin: 10
                     }
                 }
-                Image {
-                    id: name3
-                    source: "images/commandicon.png"
-                    anchors {
-                        top: parent.top
-                        horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset: 100
-                    }
-                }
+
 
 
             }
@@ -709,6 +709,14 @@ Item {
                     color: "light gray"
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 25
+                    Image {
+                        id: name3
+                        source: "images/commandicon.png"
+                        anchors {
+                            right: parent.right
+                            top: parent.top
+                        }
+                    }
 
                     Flickable {
                         anchors.fill: parent
