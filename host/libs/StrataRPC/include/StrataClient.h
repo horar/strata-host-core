@@ -76,12 +76,6 @@ signals:
      */
     void dispatchHandler(const Message &serverMessage);
 
-    /**
-     * Emitted when a message is constructed and ready to be transmitted to StrataServer.
-     * @param [in] message QByteArray of the message json to be transmitted.
-     */
-    void sendMessage(const QByteArray &message);
-
 private slots:
     /**
      * Slot to handle new incoming messages from StrataServer.
