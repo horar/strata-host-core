@@ -100,6 +100,9 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(jsonServerMessage, &jsonParseError);
 
+    serverMessage->clientID = "";
+    serverMessage->messageID = 0;
+
     if (jsonParseError.error != QJsonParseError::NoError) {
         qCCritical(logCategoryStrataServer) << "invalid JSON message.";
         return false;
@@ -191,6 +194,5 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
         return false;
     }
 
-    serverMessage->clientID = "";
     return true;
 }
