@@ -23,6 +23,7 @@ QString CoreUpdate::requestUpdateApplication() {
     return error;
 }
 
+// TODO: this function is duplicated in SDS/HCS, should be unified in future
 QString CoreUpdate::locateMaintenanceTool(const QDir &applicationDir, QString &absPathMaintenanceTool) {
 #if defined(Q_OS_WIN)
     const QString maintenanceToolFilename = "Strata Maintenance Tool.exe";
