@@ -10,6 +10,7 @@ namespace strata::strataRPC
 class RequestsController : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(RequestsController);
 
 public:
     /**

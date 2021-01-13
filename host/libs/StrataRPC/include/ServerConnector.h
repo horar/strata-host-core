@@ -10,6 +10,7 @@ namespace strata::strataRPC
 class ServerConnector : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(ServerConnector);
 
 public:
     /**

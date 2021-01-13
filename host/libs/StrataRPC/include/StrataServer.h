@@ -11,6 +11,7 @@ namespace strata::strataRPC
 class StrataServer : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(StrataServer);
 
 public:
     /**

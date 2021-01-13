@@ -15,6 +15,7 @@ namespace strata::strataRPC
 class ClientConnector : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(ClientConnector);
 
 public:
     /**

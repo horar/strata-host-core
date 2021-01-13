@@ -9,6 +9,8 @@ namespace strata::strataRPC
 class Dispatcher : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(Dispatcher);
+
 public:
     /**
      * Dispatcher constructor.
