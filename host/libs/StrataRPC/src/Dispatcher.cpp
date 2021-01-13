@@ -15,51 +15,45 @@ bool Dispatcher::registerHandler(const QString &handlerName, StrataHandler handl
 {
     qCDebug(logCategoryStrataDispatcher) << "registering " << handlerName << " handler.";
 
-    if (true == isRegisteredHandler(handlerName)) {
+    const auto [it, inserted] = handlersList_.insert(std::make_pair(handlerName, handler));
+    if(false == inserted) {
         qCDebug(logCategoryStrataDispatcher()) << handlerName << " is already registered.";
-        return false;
     }
 
-    handlersList_.insert(std::make_pair(handlerName, handler));
-    return true;
+    return inserted;
 }
 
 bool Dispatcher::unregisterHandler(const QString &handlerName)
 {
     qCDebug(logCategoryStrataDispatcher) << "unregistering " << handlerName << " handler.";
 
-    if (true == isRegisteredHandler(handlerName)) {
-        handlersList_.erase(handlerName);
-        return true;
-    } else {
+    size_t removedCount = handlersList_.erase(handlerName);
+    if (removedCount == 0) {
         qCCritical(logCategoryStrataDispatcher()) << "Handler not found" << handlerName;
-        return false;
     }
+
+    return removedCount != 0;
 }
 
 bool Dispatcher::dispatch(const Message &message)
 {
     qCDebug(logCategoryStrataDispatcher) << "Dispatching " << message.handlerName;
 
-    if (auto it = handlersList_.find(message.handlerName); it == handlersList_.end()) {
+    auto it = handlersList_.find(message.handlerName);
+
+    if (it == handlersList_.end()) {
         qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << message.handlerName;
         return false;
-    } else {
-        it->second(message);
     }
+
+    it->second(message);
+
     return true;
 }
 
 void Dispatcher::dispatchHandler(const Message &message)
 {
-    qCDebug(logCategoryStrataDispatcher) << "Dispatching " << message.handlerName;
-
-    if (auto it = handlersList_.find(message.handlerName); it == handlersList_.end()) {
-        qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << message.handlerName;
-        return;
-    } else {
-        it->second(message);
-    }
+    dispatch(message);
 }
 
 bool Dispatcher::isRegisteredHandler(const QString &handlerName)
