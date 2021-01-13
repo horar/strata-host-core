@@ -65,11 +65,11 @@ Rectangle {
 
         Rectangle {
             id: alertIcon
-            width: 80
-            height: 20
+            width: 60
+            height: 14
             radius: width/2
             color: "green"
-            visible: displayAlert
+            visible: displayAlert && !root.open
             anchors {
                 right: titleText.right
                 rightMargin: 2
@@ -81,6 +81,7 @@ Rectangle {
                 text: displayAlert ? "UPDATED" : ""
                 color: "white"
                 font.bold: true
+                font.pointSize: 10
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
             }

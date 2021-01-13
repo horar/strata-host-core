@@ -21,8 +21,6 @@ import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
 
-import QtQml 2.12
-
 SGWidgets.SGMainWindow {
     id: mainWindow
     visible: true

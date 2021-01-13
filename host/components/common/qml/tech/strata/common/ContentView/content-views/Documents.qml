@@ -32,6 +32,7 @@ Item {
                         documentCurrentIndex = index
                         categoryOpened = "platform documents"
                     }
+                    documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
                 }
 
                 property string effectiveUri: {
@@ -70,7 +71,6 @@ Item {
                 onCheckedChanged: {
                     if (checked) {
                         pdfViewer.url = effectiveUri
-                        documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
                     }
                 }
 
@@ -122,8 +122,8 @@ Item {
 
                     Rectangle {
                         id: historyUpdate
-                        width: model.historyState == "new_document" ? 50 : 80
-                        height: 20
+                        width: model.historyState == "new_document" ? 40 : 60
+                        height: 14
                         radius: width/2
                         color: "green"
                         visible: model.historyState != "seen"
@@ -146,6 +146,7 @@ Item {
                             }
                             color: "white"
                             font.bold: true
+                            font.pointSize: 10
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHCenter
                         }

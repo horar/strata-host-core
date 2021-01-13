@@ -6,6 +6,9 @@ import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
+import QtQuick.Controls 2.12
+import tech.strata.notifications 1.0
+
 StackLayout {
     id: platformStack
     currentIndex: {
@@ -61,9 +64,9 @@ StackLayout {
     }
 
     ControlViewContainer {
-         id: controlViewContainer
-         Layout.fillHeight: true
-         Layout.fillWidth: true
+        id: controlViewContainer
+        Layout.fillHeight: true
+        Layout.fillWidth: true
     }
 
     Item {
@@ -73,6 +76,21 @@ StackLayout {
 
         ContentView {
             class_id: model.class_id
+        }
+
+        function launchDocumentsHistoryNotification() {
+            if (platformStack.currentIndex == 0) { // check if control view is displayed
+                Notifications.createNotification(
+                    "A document has been updated",
+                    Notifications.info,
+                    "current",
+                    {
+                        "description": name + ": A document has been updated",
+                        "saveToDisk": true,
+                        "iconSource": "qrc:/sgimages/exclamation-circle.svg"
+                    }
+                )
+            }
         }
     }
 
