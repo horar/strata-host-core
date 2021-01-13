@@ -58,8 +58,27 @@ Item {
         style : CircularGaugeStyle {
             id: gaugeStyle
             needle: null
+
+            tickmarkInset: -gauge.width / 34
+            labelInset: -gauge.width / (12.8 - Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length))  // Base label distance from gauge center on max/minValue
+
             minimumValueAngle: -145
             maximumValueAngle: 145
+            tickmarkStepSize: gauge.tickmarkStepSize
+
+            tickmarkLabel:  SGText {
+                                text: styleData.value.toFixed(root.tickmarkDecimalPlaces)
+                                color: root.outerTextColor
+                                antialiasing: true
+                                fontSizeMultiplier: root.outerTextFontSizeMultiplier * (outerRadius * (1/100))
+                            }
+
+            tickmark: Rectangle {
+                        color: root.outerTextColor
+                        width: gauge.width / 100
+                        height: gauge.width / 30
+                        antialiasing: true
+                    }
 
             function degreesToRadians(deg){
                 return deg * (Math.PI / 180)
@@ -126,8 +145,6 @@ Item {
             }
 
             minorTickmark: null
-            tickmarkLabel: null
-            tickmark: null
             foreground: null
 
         }
