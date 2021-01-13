@@ -125,10 +125,11 @@ Rectangle {
             model: NavigationControl.platform_view_model_
             ScrollBar.horizontal: ScrollBar {
                 id: horizontalScrollBar
-                orientation: Qt.Vertical
             }
+
             MouseArea {
                 anchors.fill: parent
+                propagateComposedEvents: true
                 onWheel: {
                     // to scroll the list we have to increase / decrease scrollbar by a given step size
                     // step size of 1.0 scrolls the entire content width in 1 step
@@ -153,6 +154,9 @@ Rectangle {
                         horizontalScrollBar.increase()
                     }
                     horizontalScrollBar.stepSize = 0.0
+                    wheel.accepted = true
+
+                    // TODO: redo through platformTabListView.flick(angleDelta, 0) and use wheel.pixelDelta if available
                 }
             }
         }
