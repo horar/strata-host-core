@@ -12,7 +12,7 @@ Item {
     Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-    property var intervalState : 200
+    property var intervalState : 2000
     property alias gpio: gpio
     property var xValue: 0
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
@@ -617,7 +617,7 @@ Item {
                                             width: 100
                                             text: "2000"
                                             unit: "ms"
-                                            IntValidator {
+                                            validator: IntValidator {
                                                 bottom: 250
                                                 top: 10000
                                             }
