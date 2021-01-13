@@ -38,7 +38,7 @@ Item {
             verticalCenter: root.verticalCenter
             verticalCenterOffset: 0.05 * root.height
         }
-        maximumValue: 100
+        maximumValue: 200
         minimumValue: 0
 
         signal update()
@@ -70,20 +70,20 @@ Item {
                 return value * Math.pow(10,decimalPlaces)
             }
 
-            function countDecimalPlaces(value){
+            function countDecimalPlaces(value) {
                 // found this on stack overflow for a simple decimal counter
                 if(Math.floor(value.valueOf()) === value.valueOf()) return 0
                 return value.toString().split(".")[1].length || 0
             }
 
-            function scaleAngleValue(value, index){
+            function scaleAngleValue(value, index) {
                 const decimalPlaces = countDecimalPlaces(value)
                 return index * Math.pow(10, -decimalPlaces)
             }
 
             function getOffset() {
                 const decimalValue = toDecimalPoint(root.maximumValue)
-                return Math.ceil(decimalValue / 100)
+                return Math.ceil(decimalValue / 200)
             }
 
             background: Canvas {
@@ -103,7 +103,7 @@ Item {
                     ctx.stroke()
 
                     for(var i = root.minimumValue; i < toDecimalPoint(gauge.value); i += getOffset()){
-                        const currVal = scaleAngleValue(root.maximumValue,i);
+                        const currVal = scaleAngleValue(root.maximumValue,i - getOffset());
                         const nextVal = scaleAngleValue(root.maximumValue, i + getOffset())
 
                         overCtx.beginPath()
