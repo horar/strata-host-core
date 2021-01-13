@@ -29,6 +29,7 @@ Item {
         }
     }
 
+
     property var obj: {
         "notification" : {
             "value": "my_cmd_simple_periodic",
