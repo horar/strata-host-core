@@ -198,11 +198,14 @@ Item {
                     color: "light gray"
                     Image {
                         id: name
-                        source: "images/commandicon.png"
+                        source: "images/StrataToBoard.png"
                         anchors {
                             right: parent.right
                             top: parent.top
                         }
+                        width: 100
+                        height: 50
+                        fillMode: Image.PreserveAspectFit
                     }
                     Flickable {
                         anchors.fill: parent
@@ -403,8 +406,8 @@ Item {
                                             dataArray2.push({"x":xValue, "y":adc_read})
                                             xValue++
                                         }
-                                        console.log(JSON.stringify(dataArray))
-                                        console.log(dataArray.length, dataArray2.length, firstNotification)
+                                        //console.log(JSON.stringify(dataArray))
+                                        //console.log(dataArray.length, dataArray2.length, firstNotification)
 
                                         if(dataArray.length > 0 && firstNotification !== 1) {
                                             curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
@@ -474,12 +477,14 @@ Item {
                     color: "light gray"
                     Image {
                         id: name2
-                        source: "images/notificationicon.png"
+                        source: "images/BoardToStrata.png"
                         anchors {
                             right: parent.right
                             top: parent.top
                         }
-                        z:2
+                        width: 100
+                        height: 50
+                        fillMode: Image.PreserveAspectFit
                     }
                     Flickable {
                         id: flickable
@@ -493,7 +498,7 @@ Item {
                             onCmd_simple_periodicTextChanged: {
                                 var end =  selectionEnd
                                 var start = selectionStart
-                                console.log(end, start)
+                                // console.log(end, start)
                                 text = JSON.stringify(obj, null, 4)
                                 select(start,end)
                             }
@@ -577,7 +582,7 @@ Item {
                                             checked: true
                                             onToggled: {
                                                 if(!checked) {
-                                                    console.log(timedGraphPoints.count)
+                                                    //console.log(timedGraphPoints.count)
                                                     timedGraphPoints.curve(0).clear()
                                                     timedGraphPoints.curve(1).clear()
                                                     firstNotification = 1
@@ -688,7 +693,10 @@ Item {
                                             id: runcount
                                             width: 90
                                             text: "10"
-                                            IntValidator {  }
+                                            validator: IntValidator {
+                                                top: 32767
+                                                bottom: 1
+                                            }
                                             unit: "  "
 
                                             onEditingFinished:{
@@ -712,11 +720,14 @@ Item {
                     Layout.topMargin: 25
                     Image {
                         id: name3
-                        source: "images/commandicon.png"
+                        source: "images/StrataToBoard.png"
                         anchors {
                             right: parent.right
                             top: parent.top
                         }
+                        width: 100
+                        height: 50
+                        fillMode: Image.PreserveAspectFit
                     }
 
                     Flickable {
