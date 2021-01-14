@@ -30,7 +30,7 @@ void FirmwareUpdateController::initialize(BoardController *boardController, stra
     downloadManager_ = downloadManager;
 }
 
-void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5)
+void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5, bool adjustController)
 {
     if (boardController_.isNull() || downloadManager_.isNull()) {
         QString errStr("FirmwareUpdateController is not properly initialized.");
@@ -55,7 +55,7 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
         return;
     }
 
-    FirmwareUpdater *fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5);
+    FirmwareUpdater *fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5, adjustController);
     UpdateData *updateData = new UpdateData(clientId, fwUpdater);
     updates_.insert(deviceId, updateData);
 
@@ -83,6 +83,9 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
         switch (operation) {
         case UpdateOperation::Download :
             progress->downloadError = errorString;
+            break;
+        case UpdateOperation::SetFwClassId :
+            progress->setFwClassIdError = errorString;
             break;
         case UpdateOperation::Prepare :
             progress->prepareError = errorString;

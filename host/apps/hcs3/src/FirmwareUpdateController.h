@@ -42,6 +42,7 @@ public:
      */
     enum class UpdateOperation {
         Download,
+        SetFwClassId,
         Prepare,
         Backup,
         Flash,
@@ -70,6 +71,7 @@ public:
         int complete;
         int total;
         QString downloadError;
+        QString setFwClassIdError;
         QString prepareError;
         QString backupError;
         QString flashError;
@@ -87,8 +89,9 @@ public slots:
      * @param deviceId
      * @param firmwareUrl
      * @param firmwareMD5
+     * @param adjustController
      */
-    void updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5);
+    void updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5, bool adjustController);
 
 private slots:
     void handleUpdateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation,

@@ -31,6 +31,7 @@ HostControllerService::HostControllerService(QObject* parent)
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
+    hostCmdHandler_.insert( { std::string("adjust_controller"), std::bind(&HostControllerService::onCmdAdjustController, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
 }
@@ -565,7 +566,24 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
         qCWarning(logCategoryHcs) << "md5 attribute is empty";
     }
 
-    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5);
+    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, false);
+}
+
+void HostControllerService::onCmdAdjustController(const rapidjson::Value *payload)
+{
+    QByteArray clientId = getSenderClient()->getClientId();
+
+    const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
+    if (deviceIdValue.IsInt() == false) {
+        qCWarning(logCategoryHcs) << "device_id attribute has bad format";
+        return;
+    }
+    int deviceId = deviceIdValue.GetInt();
+
+    qCWarning(logCategoryHcs) << "XXXXX";
+
+    // get firmware url
+    emit firmwareUpdateRequested(clientId, deviceId, QUrl(""), "", false);
 }
 
 void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)
@@ -687,6 +705,9 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     case FirmwareUpdateController::UpdateOperation::Download :
         operation = "download";
         break;
+    case FirmwareUpdateController::UpdateOperation::SetFwClassId :
+        operation = "set_fw_class_id";
+        break;
     case FirmwareUpdateController::UpdateOperation::Prepare :
         operation = "prepare";
         break;
@@ -728,6 +749,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     payload.insert("complete", progress.complete);
     payload.insert("total", progress.total);
     payload.insert("download_error", progress.downloadError);
+    payload.insert("set_fw_class_id_error", progress.setFwClassIdError);
     payload.insert("prepare_error", progress.prepareError);
     payload.insert("backup_error", progress.backupError);
     payload.insert("flash_error", progress.flashError);

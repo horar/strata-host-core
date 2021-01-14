@@ -5,25 +5,33 @@
 
 #include <DownloadManager.h>
 
+#include <Device/Operations/SetAssistedPlatformId.h>
+
 #include "logging/LoggingQtCategories.h"
 
 using strata::DownloadManager;
 using strata::FlasherConnector;
 
+namespace deviceOperation = strata::device::operation;
+
 FirmwareUpdater::FirmwareUpdater(
         const strata::device::DevicePtr& devPtr,
         strata::DownloadManager *downloadManager,
         const QUrl& url,
-        const QString& md5)
+        const QString& md5,
+        bool adjustController)
     : running_(false),
+      adjustController_(adjustController),
       device_(devPtr),
       deviceId_(devPtr->deviceId()),
       downloadManager_(downloadManager),
       firmwareUrl_(url),
       firmwareMD5_(md5),
-      firmwareFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("hcs_new_firmware")))
+      firmwareFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("hcs_new_firmware"))),
+      flasherFinished_(false)
 {
     connect(this, &FirmwareUpdater::flashFirmware, this, &FirmwareUpdater::handleFlashFirmware, Qt::QueuedConnection);
+    connect(this, &FirmwareUpdater::setFirmwareClassId, this, &FirmwareUpdater::handleSetFirmwareClassId, Qt::QueuedConnection);
 }
 
 FirmwareUpdater::~FirmwareUpdater()
@@ -32,6 +40,11 @@ FirmwareUpdater::~FirmwareUpdater()
         flasherConnector_->disconnect();
         flasherConnector_->stop();
         flasherConnector_->deleteLater();
+    }
+
+    if (setAssistPlatfIdOper_.isNull() == false) {
+        setAssistPlatfIdOper_->disconnect();
+        setAssistPlatfIdOper_->deleteLater();
     }
 }
 
@@ -44,24 +57,28 @@ void FirmwareUpdater::updateFirmware()
         return;
     }
 
+    if (firmwareFile_.open() == false) {
+        QString errStr("Cannot create temporary file for firmware download.");
+        qCCritical(logCategoryHcsFwUpdater) << device_ << errStr;
+        emit updaterError(deviceId_, errStr);
+        return;
+    }
+    // file is created on disk, no need to keep descriptor open
+    firmwareFile_.close();
+
     running_ = true;
 
     downloadFirmware();
 }
 
+void FirmwareUpdater::updateFinished(FirmwareUpdateController::UpdateStatus status)
+{
+    emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, status);
+    running_ = false;
+}
+
 void FirmwareUpdater::downloadFirmware()
 {
-    if (firmwareFile_.open() == false) {
-        QString errStr("Cannot create temporary file for firmware download.");
-        qCCritical(logCategoryHcsFwUpdater) << device_ << errStr;
-        emit updaterError(deviceId_, errStr);
-        running_ = false;
-        return;
-    }
-
-    //file is created on disk, no need to keep descriptor open
-    firmwareFile_.close();
-
     QList<DownloadManager::DownloadRequestItem> downloadRequestList;
 
     DownloadManager::DownloadRequestItem firmwareItem;
@@ -81,7 +98,7 @@ void FirmwareUpdater::downloadFirmware()
 
     downloadId_ = downloadManager_->download(downloadRequestList, settings);
 
-    qDebug(logCategoryHcsFwUpdater).nospace().noquote() << "Downloading new firmware for device 0x"
+    qCDebug(logCategoryHcsFwUpdater).nospace().noquote() << "Downloading new firmware for device 0x"
         << hex << static_cast<uint>(deviceId_) << " to '" << firmwareFile_.fileName() << "'. Download ID: '" << downloadId_ <<"'.";
 }
 
@@ -95,12 +112,16 @@ void FirmwareUpdater::handleDownloadFinished(QString downloadId, QString errorSt
 
     if (errorString.isEmpty() == false) {
         emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Download, FirmwareUpdateController::UpdateStatus::Failure, -1, -1, errorString);
-        emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, FirmwareUpdateController::UpdateStatus::Unsuccess);
-        running_ = false;
+        updateFinished(FirmwareUpdateController::UpdateStatus::Unsuccess);
         return;
     }
 
-    emit flashFirmware(QPrivateSignal());
+    if (adjustController_) {
+        // clear firmware Class ID - set it to null UUID v4
+        emit setFirmwareClassId(QStringLiteral("00000000-0000-4000-0000-000000000000"), QPrivateSignal());
+    } else {
+        emit flashFirmware(QPrivateSignal());
+    }
 }
 
 void FirmwareUpdater::handleSingleDownloadProgress(QString downloadId, QString filePath, qint64 bytesReceived, qint64 bytesTotal)
@@ -114,13 +135,7 @@ void FirmwareUpdater::handleSingleDownloadProgress(QString downloadId, QString f
 
 void FirmwareUpdater::handleFlashFirmware()
 {
-    if (flasherConnector_.isNull() == false) {
-        QString errStr("Cannot create firmware flasher, other one already exists.");
-        qCCritical(logCategoryHcsFwUpdater) << device_ << errStr;
-        emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, FirmwareUpdateController::UpdateStatus::Unsuccess);
-        emit updaterError(deviceId_, errStr);
-        return;
-    }
+    Q_ASSERT(flasherConnector_.isNull());
 
     flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName(), firmwareMD5_, this);
 
@@ -130,7 +145,25 @@ void FirmwareUpdater::handleFlashFirmware()
     connect(flasherConnector_, &FlasherConnector::restoreProgress, this, &FirmwareUpdater::handleRestoreProgress);
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
 
-    flasherConnector_->flash(true);
+    // if we are flashing new firmware to assisted controller (dongle) there is no need to backup old firmware
+    bool backupOldFirmware = (adjustController_ == false);
+    flasherConnector_->flash(backupOldFirmware);
+}
+
+void FirmwareUpdater::handleSetFirmwareClassId(QString fwClassId)
+{
+    Q_ASSERT(setAssistPlatfIdOper_.isNull());
+
+    qCDebug(logCategoryHcsFwUpdater) << device_ << "Going to set '" << fwClassId << "' as firmware class ID.";
+
+    setAssistPlatfIdOper_ = new deviceOperation::SetAssistedPlatformId(device_);
+    setAssistPlatfIdOper_->setFwClassId(fwClassId);
+
+    connect(setAssistPlatfIdOper_, &deviceOperation::SetAssistedPlatformId::finished, this, &FirmwareUpdater::handleSetFirmwareClassIdFinished);
+
+    emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::SetFwClassId, FirmwareUpdateController::UpdateStatus::Running);
+
+    setAssistPlatfIdOper_->run();
 }
 
 void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
@@ -138,6 +171,8 @@ void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
     flasherConnector_->deleteLater();
 
     firmwareFile_.remove();
+
+    flasherFinished_ = true;
 
     FirmwareUpdateController::UpdateStatus status = FirmwareUpdateController::UpdateStatus::Failure;
     switch (result) {
@@ -152,9 +187,39 @@ void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
         break;
     }
 
-    emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, status);
+    if (adjustController_ && (result == FlasherConnector::Result::Success)) {
+        QString classId = device_->classId();
+        if (classId.isEmpty() == false) {
+            emit setFirmwareClassId(classId, QPrivateSignal());
+        } else {
+            QString errStr("Device has no class ID, cannot set firmware class ID.");
+            qCWarning(logCategoryHcsFwUpdater) << device_ << errStr;
+            emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::SetFwClassId, FirmwareUpdateController::UpdateStatus::Failure, -1, -1, errStr);
+            updateFinished(FirmwareUpdateController::UpdateStatus::Unsuccess);
+        }
+    } else {
+        updateFinished(status);
+    }
+}
 
-    running_ = false;
+void FirmwareUpdater::handleSetFirmwareClassIdFinished(deviceOperation::Result result, int status, QString errorString)
+{
+    Q_UNUSED(status)
+
+    setAssistPlatfIdOper_->deleteLater();
+
+    if (result == deviceOperation::Result::Success) {
+        if (flasherFinished_) {
+            updateFinished(FirmwareUpdateController::UpdateStatus::Success);
+        } else {
+            emit flashFirmware(QPrivateSignal());
+        }
+    } else {
+        QString errorMessage = QStringLiteral("Cannot set firmware class ID. ") + errorString;
+        qCWarning(logCategoryHcsFwUpdater) << device_ << errorMessage;
+        emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::SetFwClassId, FirmwareUpdateController::UpdateStatus::Failure, -1, -1, errorMessage);
+        updateFinished(FirmwareUpdateController::UpdateStatus::Unsuccess);
+    }
 }
 
 void FirmwareUpdater::handleFlashProgress(int chunk, int total)
@@ -179,7 +244,7 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
     switch (state) {
     case FlasherConnector::State::Started :
         if (operation != FlasherConnector::Operation::Preparation) {
-            // We do not care about strat of any operation except 'Preparation',
+            // We do not care about start of any operation except 'Preparation',
             // other operations will be covered by xyProgress() signals.
             return;
         }
