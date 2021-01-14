@@ -442,48 +442,7 @@ Item {
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
                 fontSizeMultiplier: fontSlider.value
-                /*
-                  To setSymbol() you need to pass in 4 arguments:
-                   SetSymbol (
-                               Symbol Style (int),
-                               brush to fill the interior (string),
-                               outline pen(int),
-                               size(int)
-                            )
 
-                    ----------------
-                    Symbol Style  Enum
-                    -----------------
-                    NoSymbol = -1,  //No Style. The symbol cannot be drawn.
-                    Ellipse = 0,    //Ellipse or circle.
-                    Rect = 1,       //Rectangle.
-                    Diamond = 2,    // Diamond.
-                    Triangle = 3,   //Triangle pointing upwards.
-                    DTriangle = 4,  //Triangle pointing downwards.
-                    UTriangle = 5,  //Triangle pointing upwards.
-                    LTriangle = 6,  //Triangle pointing left.
-                    RTriangle = 7,  //Triangle pointing right.
-                    Cross = 8,      //Cross (+)
-                    XCross 9,       //Diagonal cross (X)
-                    HLine = 10,     //Horizontal line.
-                    VLine = 11,     //Vertical line.
-                    Star1 = 12,     //X combined with +.
-                    Star2 = 13,     //Six-pointed star.
-                    Hexagon = 14   //Hexagon.
-                    ----------------------
-
-                    ------------------
-                    Outline Pen Enum
-                    -------------------
-                    "NoPen"  = 0 ,
-                    "SolidLine" 1 ,
-                    "DashLine" =  2,
-                    "DotLine" = 3 ,
-                    "DashDotLine" = 4,
-                    "DashDotLine" = 5,
-                    "CustomDashLine" = 6
-                     ------------------
-                */
                 Component.onCompleted: {
                     let curve = styleGraph.createCurve("graphCurve" + styleGraph.count)
                     curve.color = sgGraphExample.randomColor()
@@ -492,8 +451,51 @@ Item {
                         dataArray.push({"x":i/5, "y":sgGraphExample.yourDataValueHere()})
                     }
                     curve.appendList(dataArray)
+                    /*
+                      To setSymbol() you need to pass in 4 arguments:
+                       SetSymbol (
+                                   Symbol Style (int),
+                                   brush to fill the interior (string),
+                                   outline pen(int),
+                                   size(int)
+                                )
 
-                    curve.setSymbol(2,"green",0,7)
+                        --------------------------------------------------
+                        Symbol Style: Assign a symbol.
+                        Enum
+                        ----------------------------------------------------
+                        NoSymbol = -1,  //No Style. The symbol cannot be drawn.
+                        Ellipse = 0,    //Ellipse or circle.
+                        Rect = 1,       //Rectangle.
+                        Diamond = 2,    // Diamond.
+                        Triangle = 3,   //Triangle pointing upwards.
+                        DTriangle = 4,  //Triangle pointing downwards.
+                        UTriangle = 5,  //Triangle pointing upwards.
+                        LTriangle = 6,  //Triangle pointing left.
+                        RTriangle = 7,  //Triangle pointing right.
+                        Cross = 8,      //Cross (+)
+                        XCross 9,       //Diagonal cross (X)
+                        HLine = 10,     //Horizontal line.
+                        VLine = 11,     //Vertical line.
+                        Star1 = 12,     //X combined with +.
+                        Star2 = 13,     //Six-pointed star.
+                        Hexagon = 14   //Hexagon.
+                        ----------------------------------------------
+
+                        ------------------------------------------------
+                        Outline Pen: Draw lines and outlines of shapes
+                        Enum
+                        ------------------------------------------------
+                        "NoPen"  = 0 ,
+                        "SolidLine" 1 ,
+                        "DashLine" =  2,
+                        "DotLine" = 3 ,
+                        "DashDotLine" = 4,
+                        "DashDotLine" = 5,
+                        "CustomDashLine" = 6
+                         ------------------------------------------------
+                    */
+                    curve.setSymbol(2,"gray", 0 , 7)
                 }
             }
 

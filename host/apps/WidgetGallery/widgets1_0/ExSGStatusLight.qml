@@ -54,6 +54,7 @@ Item {
             SGStatusLight {
                 id: sgStatusLightCustomize
 
+
                 // Optional Configuration:
                 status: SGStatusLight.CustomColor   // Default: "SGStatusLight.Off" (see notes below)
                 customColor: "pink"                 // Default: white (must set the status to SGStatusLight.CustomColor to use this color)

@@ -660,7 +660,6 @@ QPointF SGQWTPlot::mapToPositionYRight(QPointF point)
 SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
 {
     curve_ = new QwtPlotCurve(name);
-    // curve_->setSymbol(new QwtSymbol( QwtSymbol::Diamond,QBrush(Qt::red),Qt::NoPen,QSize(5,5)));
 
     curve_->setStyle(QwtPlotCurve::Lines);
     curve_->setRenderHint(QwtPlotItem::RenderAntialiased);
@@ -831,7 +830,7 @@ void SGQWTPlotCurve::shiftPoints(double offsetX, double offsetY)
     }
 }
 
-void SGQWTPlotCurve::setSymbol(int newStyle , QColor color ,  int penStyle , int size)
+void SGQWTPlotCurve::setSymbol(int newStyle , QColor color , int penStyle , int size)
 {
     return curve_->setSymbol(new QwtSymbol(QwtSymbol::Style(newStyle),QBrush(color),QPen(penStyle),QSize(size,size)));
 }
