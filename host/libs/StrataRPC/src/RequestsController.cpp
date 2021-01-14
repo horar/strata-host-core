@@ -20,7 +20,6 @@ std::pair<int, QByteArray> RequestsController::addNewRequest(const QString &meth
     const auto it = requestsList_.find(currentRequestId_);
     if (it != requestsList_.end()) {
         qCCritical(logCategoryRequestsController) << "Duplicate request id.";
-        --currentRequestId_;
         return {0, ""};
     }
 
