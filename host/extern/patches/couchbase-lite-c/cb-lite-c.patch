@@ -43,19 +43,19 @@ index 4035afa..34e0845 100644
  
  
  /** @} */
-diff --git a/cmake/platform_win.cmake b/cmake/platform_win.cmake
-index e135e75..21e77cf 100644
---- a/cmake/platform_win.cmake
-+++ b/cmake/platform_win.cmake
-@@ -49,8 +49,8 @@ function(set_dylib_properties)
-         set_target_properties(CouchbaseLiteC PROPERTIES COMPILE_FLAGS /ZW)
-         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /nodefaultlib:kernel32.lib /nodefaultlib:ole32.lib")
-     endif()
--    set_target_properties(CouchbaseLiteC PROPERTIES LINK_FLAGS
--        "/def:${PROJECT_SOURCE_DIR}/src/CBL.def")
-+    # set_target_properties(CouchbaseLiteC PROPERTIES LINK_FLAGS
-+    #     "/def:${PROJECT_SOURCE_DIR}/src/CBL.def")
-     target_link_libraries(CouchbaseLiteC PRIVATE zlibstatic Ws2_32)
-     target_compile_definitions(CouchbaseLiteCStatic PRIVATE LITECORE_EXPORTS)
- endfunction()
-\ No newline at end of file
+# diff --git a/cmake/platform_win.cmake b/cmake/platform_win.cmake
+# index e135e75..21e77cf 100644
+# --- a/cmake/platform_win.cmake
+# +++ b/cmake/platform_win.cmake
+# @@ -49,8 +49,8 @@ function(set_dylib_properties)
+#          set_target_properties(CouchbaseLiteC PROPERTIES COMPILE_FLAGS /ZW)
+#          set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /nodefaultlib:kernel32.lib /nodefaultlib:ole32.lib")
+#      endif()
+# -    set_target_properties(CouchbaseLiteC PROPERTIES LINK_FLAGS
+# -        "/def:${PROJECT_SOURCE_DIR}/src/CBL.def")
+# +    # set_target_properties(CouchbaseLiteC PROPERTIES LINK_FLAGS
+# +    #     "/def:${PROJECT_SOURCE_DIR}/src/CBL.def")
+#      target_link_libraries(CouchbaseLiteC PRIVATE zlibstatic Ws2_32)
+#      target_compile_definitions(CouchbaseLiteCStatic PRIVATE LITECORE_EXPORTS)
+#  endfunction()
+# \ No newline at end of file
