@@ -18,19 +18,18 @@ Item {
     Component.onCompleted: {
         platformInterface.get_status_command.update()
         Help.registerTarget(enableSwitch, "This switch will enable the buck converter by setting the SS/SD# pin high.", 0, "100VcontrolHelp")
-        Help.registerTarget(setSwitchFreq, "This switch will enable the buck converter by setting the SS/SD# pin high.", 1, "100VcontrolHelp")
+        Help.registerTarget(setSwitchFreq, "This switch allows the user to switch between the standard 100kHz switching frequency or a manually set frequency using potentiometer R33.", 1, "100VcontrolHelp")
         Help.registerTarget(softStart, "This dropdown selections contains the estimated soft start time for the buck converter. The exact time depends on the output voltage so this is just an estimate.", 2, "100VcontrolHelp")
-        Help.registerTarget(outputVolslider, "Allows the user to set the output voltage between 5V and 24V.",3, "100VcontrolHelp")
+        Help.registerTarget(outputVolslider, "The slider and the text box both allow the user to set the output voltage between 5V and 24V.",3, "100VcontrolHelp")
         Help.registerTarget(filterHelpContainer, "All measured voltages and currents on the board are shown here. Input/Output Voltage and Current are measured at the input and output to the evaluation board.",4, "100VcontrolHelp")
-        Help.registerTarget(logFault, "This status list contains all the error messages and will store them in order received with the most recent error messages displayed on top.",5, "100VcontrolHelp")
+        Help.registerTarget(logFault, "This status list contains all the error messages, and will store them in the order received with the most recent error messages displayed on top.",5, "100VcontrolHelp")
         Help.registerTarget(outputVoltAdjustment, "This switch will turn on/off the ability for the user to adjust the output voltage. This fixed voltage if this is off is 17V.",6, "100VcontrolHelp")
         Help.registerTarget(enableVCCLDO, "This switch turns on/off the LDO providing the power rail for VCC to the NCP1034 controller. When enabled, VCC is drawn from the input voltage. If this is disabled, the user would need to apply VCC power separately.",7, "100VcontrolHelp")
-        Help.registerTarget(inputpowerGauge, "These gauges show the input and output power to the evaluation board. They are calculated from the measured voltages and currents at input and output. The current readings max out at 2.2A so if more current is being drawn the numbers here will be inaccurate.",8, "100VcontrolHelp")
-        Help.registerTarget(buckOutputPowerGauge, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature.",9, "100VcontrolHelp")
-        Help.registerTarget(effGauge, "The buck converter efficiency is calculated by taking the calculated Output power divided by the calculated input power.",10, "100VcontrolHelp")
-        Help.registerTarget(ldoTemp, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. ",11, "100VcontrolHelp")
-        Help.registerTarget(boardTemp, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature.", 12, "100VcontrolHelp")
-        Help.registerTarget(sgstatusHelpContainer, "Green indicates that the parameter is within specification and operating normally. Red signals there is a problem. Check the Status list for more information on errors. ", 13, "100VcontrolHelp")
+        Help.registerTarget(filterHelp2Container, "These gauges show the input and output power to the evaluation board. They are calculated from the measured voltages and currents at input and output. The current readings max out at 2.2A so if more current is being drawn the numbers here will be inaccurate.",8, "100VcontrolHelp")
+        Help.registerTarget(effGauge, "The buck converter efficiency is calculated by taking the calculated Output power divided by the calculated input power.",9, "100VcontrolHelp")
+        Help.registerTarget(ldoTemp, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. ",10, "100VcontrolHelp")
+        Help.registerTarget(boardTemp, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature.", 11, "100VcontrolHelp")
+        Help.registerTarget(sgstatusHelpContainer, "Green indicates that the parameter is within specification and operating normally. Red signals there is a problem. Check the Status list for more information on errors. ", 12, "100VcontrolHelp")
     }
 
 
@@ -48,18 +47,35 @@ Item {
         }
     }
 
+    Item {
+        id: filterHelp2Container
+        property point topLeft
+        property point bottomRight
+        width:  inputpowerGauge.width + inputpowerGauge.width
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = inputpowerGauge.mapToItem(root, 0,  0)
+            bottomRight = buckOutputPowerGauge.mapToItem(root, buckOutputPowerGauge.width, buckOutputPowerGauge.height)
+        }
+    }
+
     Connections {
         target: Help.utility
         onTour_runningChanged:{
             filterHelpContainer.update()
+            filterHelp2Container.update()
         }
     }
 
     onWidthChanged: {
         filterHelpContainer.update()
+        filterHelp2Container.update()
     }
     onHeightChanged: {
         filterHelpContainer.update()
+        filterHelp2Container.update()
     }
 
     property var error_msg: platformInterface.error_msg.value
@@ -854,7 +870,7 @@ Item {
                                             SGAlignedLabel {
                                                 id:  buckOutputPowerGaugeLabel
                                                 target:  buckOutputPowerGauge
-                                                text: "Buck \n Output Power"
+                                                text: "Output \n Power"
                                                 margin: -15
                                                 anchors.top: parent.top
                                                 alignment: SGAlignedLabel.SideBottomCenter
