@@ -77,47 +77,24 @@ FocusScope {
                     }
 
                     var type = sourceModel.data(row, "type")
-
-                    if (type === Sci.SciScrollbackModel.Request) {
+                    if (type !== Sci.SciScrollbackModel.NotificationReply) {
                         return true
                     }
 
-                    var message = sourceModel.data(row, "message")
-
-                    try {
-                        var notificationItem = JSON.parse(message)["notification"]
-                    } catch(error) {
-                        return true
-                    }
-
-                    if (notificationItem === undefined) {
-                        return true
-                    }
+                    var value = sourceModel.data(row, "value")
 
                     for (var i = 0; i < platformDelegate.filterList.length; ++i) {
-                        var filterItem = platformDelegate.filterList[i]
-                        if (notificationItem.hasOwnProperty(filterItem["property"])) {
-                            var value = notificationItem[filterItem["property"]]
-                            var valueType = typeof(value)
+                        var filterString = platformDelegate.filterList[i]["filter_string"].toString().toLowerCase();
+                        var filterCondition = platformDelegate.filterList[i]["condition"].toString();
 
-                            if (valueType === "string"
-                                    || valueType === "boolean"
-                                    || valueType === "number"
-                                    || valueType === "bigint") {
-
-                                var filterValue = filterItem["value"].toString().toLowerCase()
-                                value = value.toString().toLowerCase()
-
-                                if (filterItem["condition"] === "contains" && value.includes(filterValue)) {
-                                    return false
-                                } else if(filterItem["condition"] === "equal" && value === filterValue) {
-                                    return false
-                                } else if(filterItem["condition"] === "startswith" && value.startsWith(filterValue)) {
-                                    return false
-                                } else if(filterItem["condition"] === "endswith" && value.endsWith(filterValue)) {
-                                    return false
-                                }
-                            }
+                        if (filterCondition === "contains" && value.includes(filterString)) {
+                            return false
+                        } else if (filterCondition === "equal" && value === filterString) {
+                            return false
+                        } else if (filterCondition === "startswith" && value.startsWith(filterString)) {
+                            return false
+                        } else if (filterCondition === "endswith" && value.endsWith(filterString)) {
+                            return false
                         }
                     }
 
