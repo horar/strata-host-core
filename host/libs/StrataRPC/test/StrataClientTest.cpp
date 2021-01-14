@@ -49,7 +49,7 @@ void StrataClientTest::testConnectDisconnectToTheServer()
     StrataClient client(address_);
 
     bool clientReceivedMessage = false;
-    connect(&client, &StrataClient::dispatchHandler, this,
+    connect(&client, &StrataClient::newServerMessageParsed, this,
             [&clientReceivedMessage] { clientReceivedMessage = true; });
 
     serverRevicedMessage = false;

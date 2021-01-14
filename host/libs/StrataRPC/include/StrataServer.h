@@ -91,7 +91,7 @@ signals:
      * Signal emitted when a new client message is parsed and ready to be dispatched
      * @param [in] clientMessage populated Message object with the command/notification metadata.
      */
-    void dispatchHandler(const Message &clientMessage);
+    void newClientMessageParsed(const Message &clientMessage);
 
 private:
     /**

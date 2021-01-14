@@ -20,7 +20,7 @@ bool StrataServer::initializeServer()
         qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
         connect(&connector_, &ServerConnector::newMessageReceived, this,
                 &StrataServer::newClientMessage);
-        connect(this, &StrataServer::dispatchHandler, &dispatcher_, &Dispatcher::dispatchHandler);
+        connect(this, &StrataServer::newClientMessageParsed, &dispatcher_, &Dispatcher::dispatchHandler);
         return true;
     } else {
         qCCritical(logCategoryStrataServer) << "Failed to initialize Strata Server.";
@@ -107,7 +107,7 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
         }
     }
 
-    emit dispatchHandler(clientMessage);
+    emit newClientMessageParsed(clientMessage);
 }
 
 bool StrataServer::buildClientMessageAPIv2(const QJsonObject &jsonObject, Message *clientMessage)

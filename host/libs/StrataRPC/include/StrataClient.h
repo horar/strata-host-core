@@ -74,7 +74,7 @@ signals:
      * Emitted when a new server message is parsed and ready to be handled
      * @param [in] serverMessage populated Message object with the notification meta data.
      */
-    void dispatchHandler(const Message &serverMessage);
+    void newServerMessageParsed(const Message &serverMessage);
 
 private slots:
     /**

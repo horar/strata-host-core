@@ -9,7 +9,7 @@ void StrataServerTest::testValidApiVer2Message()
             &StrataServer::newClientMessage);
 
     // Connect a handler to verify that the message got parsed and the dispatch signal got emitted.
-    connect(&server, &StrataServer::dispatchHandler, this,
+    connect(&server, &StrataServer::newClientMessageParsed, this,
             [&validMessage]() { validMessage = true; });
 
     // This will register the client and sets the api as v2
@@ -66,7 +66,7 @@ void StrataServerTest::testValidApiVer1Message()
     bool validMessage = false;
     connect(this, &StrataServerTest::mockNewMessageReceived, &server,
             &StrataServer::newClientMessage);
-    connect(&server, &StrataServer::dispatchHandler, this,
+    connect(&server, &StrataServer::newClientMessageParsed, this,
             [&validMessage]() { validMessage = true; });
 
     // This will register the client and sets the api as v1
@@ -113,7 +113,7 @@ void StrataServerTest::testFloodTheServer()
     int testSize = 1000;
     connect(this, &StrataServerTest::mockNewMessageReceived, &server,
             &StrataServer::newClientMessage);
-    connect(&server, &StrataServer::dispatchHandler, this, [&counter]() { counter++; });
+    connect(&server, &StrataServer::newClientMessageParsed, this, [&counter]() { counter++; });
 
     for (int i = 0; i < testSize; i++) {
         emit mockNewMessageReceived(QByteArray::number(i),

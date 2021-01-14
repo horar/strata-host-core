@@ -29,7 +29,7 @@ bool StrataClient::connectServer()
 
     connect(&connector_, &ClientConnector::newMessageReceived, this,
             &StrataClient::newServerMessage);
-    connect(this, &StrataClient::dispatchHandler, &dispatcher_, &Dispatcher::dispatchHandler);
+    connect(this, &StrataClient::newServerMessageParsed, &dispatcher_, &Dispatcher::dispatchHandler);
 
     sendRequest("register_client", {{"api_version", "1.0"}});
 
@@ -60,7 +60,7 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
         return;
     }
 
-    emit dispatchHandler(serverMessage);
+    emit newServerMessageParsed(serverMessage);
 }
 
 bool StrataClient::registerHandler(const QString &handlerName, StrataHandler handler)
