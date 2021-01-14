@@ -67,6 +67,11 @@ int main(int argc, char *argv[])
         cacheDir.append(QString("/%1").arg(parser.value(QStringLiteral("c"))).toUpper());
         qDebug() << "Cache location:" << cacheDir;
 
+        if (!QDir(cacheDir).exists()) {
+            qWarning() << "Choosen folder with application cached data does not exist!";
+            return EXIT_FAILURE;
+        }
+
         for (const auto& folder : {QStringLiteral("db"), QStringLiteral("documents")}) {
             QDir dir(QString("%1/%2").arg(cacheDir).arg(folder));
             qInfo() << "Removing" << dir.path() << ":" << dir.removeRecursively();
