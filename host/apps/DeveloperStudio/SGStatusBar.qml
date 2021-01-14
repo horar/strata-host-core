@@ -123,40 +123,48 @@ Rectangle {
             highlightMoveVelocity: -1
 
             model: NavigationControl.platform_view_model_
-            ScrollBar.horizontal: ScrollBar {
-                id: horizontalScrollBar
+
+            flickableDirection: Flickable.HorizontalFlick
+            boundsMovement: Flickable.StopAtBounds
+            boundsBehavior: Flickable.StopAtBounds
+
+            Behavior on contentX {
+                SmoothedAnimation {
+                    duration: 100
+                    velocity: 1000
+                    reversingMode: SmoothedAnimation.Immediate
+                }
             }
 
             MouseArea {
                 anchors.fill: parent
                 propagateComposedEvents: true
                 onWheel: {
-                    // to scroll the list we have to increase / decrease scrollbar by a given step size
-                    // step size of 1.0 scrolls the entire content width in 1 step
-                    // step size of 0.1 scrolls the entire content width in ~10 steps
-                    // step size scrolls based on content width, but we want to scroll based on width
-                    // so for example 10 steps would scroll 1 window of content
-                    // as input we have angleDelta which is in multiples of 120, where 120 is one scroll step
-                    let angleDelta = 0.0
-                    if (Math.abs(wheel.angleDelta.x) > Math.abs(wheel.angleDelta.y))
-                        angleDelta = wheel.angleDelta.x
-                    else
-                        angleDelta = wheel.angleDelta.y
-
-                    let adjustesdStepSize = 0.0
-                    if(platformTabListView.contentWidth != 0)
-                        adjustesdStepSize = Math.abs(angleDelta) * (((platformTabListView.width / platformTabListView.contentWidth) / 120.0) / 10.0)
-
-                    horizontalScrollBar.stepSize = adjustesdStepSize
-                    if (angleDelta > 0.0) {
-                        horizontalScrollBar.decrease()
-                    } else if (angleDelta < 0.0) {
-                        horizontalScrollBar.increase()
+                    let movementDelta = 0
+                    if (wheel.pixelDelta != null) {
+                        // as input we have pixelDelta which is how many pixels we have to move in this scroll step
+                        if (Math.abs(wheel.pixelDelta.x) > Math.abs(wheel.pixelDelta.y)) {
+                            movementDelta = wheel.pixelDelta.x
+                        } else {
+                            movementDelta = wheel.pixelDelta.y
+                        }
                     }
-                    horizontalScrollBar.stepSize = 0.0
-                    wheel.accepted = true
 
-                    // TODO: redo through platformTabListView.flick(angleDelta, 0) and use wheel.pixelDelta if available
+                    if (wheel.angleDelta != null && movementDelta === 0) {
+                        // as input we have angleDelta which is in multiples of 120, where 120 is one scroll step
+                        if (Math.abs(wheel.angleDelta.x) > Math.abs(wheel.angleDelta.y)) {
+                            movementDelta = wheel.angleDelta.x
+                        } else {
+                            movementDelta = wheel.angleDelta.y
+                        }
+                        // we make it so that 10 scrolls will move 1 page
+                        movementDelta = ((movementDelta / 120.0) * (platformTabListView.width / 10.0))
+                    }
+
+                    if (movementDelta !== 0) {
+                        platformTabListView.contentX -= movementDelta
+                    }
+                    wheel.accepted = true
                 }
             }
         }
