@@ -114,7 +114,13 @@ Rectangle {
             id: platformTabListView
             Layout.fillHeight: true
             Layout.fillWidth: true
-            delegate: SGPlatformTab {}
+
+            property int platformTabWidth: ((width > 0) && (count > 0)) ?
+                    Math.max(Math.min(Math.floor((width - (count + 1)) / count), 250), 140) : 250
+
+            delegate: SGPlatformTab {
+                tabWidth: platformTabListView.platformTabWidth
+            }
             orientation: ListView.Horizontal
             spacing: 1
             clip: true
