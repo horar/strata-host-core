@@ -476,14 +476,14 @@ Module {
             name: "prettifyJson"
             type: "string"
             Parameter { name: "jsonString"; type: "string" }
-            Parameter { name: "indentSize"; type: "int" }
             Parameter { name: "softWrap"; type: "bool" }
+            Parameter { name: "indentSize"; type: "int" }
         }
         Method {
             name: "prettifyJson"
             type: "string"
             Parameter { name: "jsonString"; type: "string" }
-            Parameter { name: "indentSize"; type: "int" }
+            Parameter { name: "softWrap"; type: "bool" }
         }
         Method {
             name: "prettifyJson"
