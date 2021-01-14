@@ -108,12 +108,11 @@ function startHelpTour(tourName, device_id) {
     if (device_id === undefined) {
         const platformView = NavigationControl.platform_view_model_.get(stackContainer.currentIndex-1)
 
-        // If the view was instantiated through the platform_view_model_, then get the device_id that way
-        // Otherwise, use the current_device_id 
+        // If the current stack view is not in the platform_view_model_, indicates debug control view
         if (platformView) {
             device_id = platformView.device_id
         } else {
-            device_id = current_device_id
+            device_id = Constants.NULL_DEVICE_ID // Matches default in ControlViewCreator.qml and SGControlViewDevPopup.qml
         }
     }
 
