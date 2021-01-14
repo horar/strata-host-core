@@ -296,9 +296,7 @@ Item {
         text: qsTr("%1 QML warnings").arg(qmlErrorModel.count)
         checked: qmlErrorListPopUp.visible
 
-        onCheckedChanged: {
-            qmlErrorListPopUp.visible = checked
-        }
+        onCheckedChanged: checked ? qmlErrorListPopUp.open() : qmlErrorListPopUp.close()
 
         ListModel {
             id: qmlErrorModel
