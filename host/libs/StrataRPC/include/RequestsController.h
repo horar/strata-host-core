@@ -29,7 +29,8 @@ public:
      * @param [in] payload QJsonObject of the request payload.
      * @return QByteArray of json formatted request.
      */
-    [[nodiscard]] QByteArray addNewRequest(const QString &method, const QJsonObject &payload);
+    [[nodiscard]] std::pair<int, QByteArray> addNewRequest(const QString &method,
+                                                           const QJsonObject &payload);
 
     /**
      * Checks if there is a pending request with a specific id

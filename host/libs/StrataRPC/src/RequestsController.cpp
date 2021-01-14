@@ -12,14 +12,16 @@ RequestsController::~RequestsController()
 {
 }
 
-QByteArray RequestsController::addNewRequest(const QString &method, const QJsonObject &payload)
+std::pair<int, QByteArray> RequestsController::addNewRequest(const QString &method,
+                                                             const QJsonObject &payload)
 {
     ++currentRequestId_;
 
     const auto it = requestsList_.find(currentRequestId_);
     if (it != requestsList_.end()) {
         qCCritical(logCategoryRequestsController) << "Duplicate request id.";
-        return "";
+        --currentRequestId_;
+        return {0, ""};
     }
 
     qCDebug(logCategoryRequestsController)
@@ -28,7 +30,7 @@ QByteArray RequestsController::addNewRequest(const QString &method, const QJsonO
     const auto request =
         requestsList_.insert(currentRequestId_, Request(method, payload, currentRequestId_));
 
-    return request.value().toJson();
+    return {currentRequestId_, request.value().toJson()};
 }
 
 bool RequestsController::isPendingRequest(int id)

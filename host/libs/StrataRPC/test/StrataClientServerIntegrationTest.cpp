@@ -146,16 +146,26 @@ void StrataClientServerIntegrationTest::testSingleClient()
     client.connectServer();
     waitForZmqMessages();
 
-    client.sendRequest("example_command_sends_response", {{"key", "value"}});
+    auto requestInfo_1 = client.sendRequest("example_command_sends_response", {{"key", "value"}});
+    QVERIFY_(true == requestInfo_1.first);
+    QVERIFY_(requestInfo_1.second != 0);
     waitForZmqMessages();
 
-    client.sendRequest("example_command_sends_response_and_notification", {{"key", "value"}});
+    auto requestInfo_2 =
+        client.sendRequest("example_command_sends_response_and_notification", {{"key", "value"}});
+    QVERIFY_(true == requestInfo_2.first);
+    QVERIFY_(requestInfo_2.second != 0);
     waitForZmqMessages();
 
-    client.sendRequest("example_command_sends_error", {{"key", "value"}});
+    auto requestInfo_3 = client.sendRequest("example_command_sends_error", {{"key", "value"}});
+    QVERIFY_(true == requestInfo_3.first);
+    QVERIFY_(requestInfo_3.second != 0);
     waitForZmqMessages();
 
-    client.sendRequest("platform_message", {{"device_id", 2020}, {"message", "json string!"}});
+    auto requestInfo_4 =
+        client.sendRequest("platform_message", {{"device_id", 2020}, {"message", "json string!"}});
+    QVERIFY_(true == requestInfo_4.first);
+    QVERIFY_(requestInfo_4.second != 0);
     waitForZmqMessages();
 
     server.notifyAllClients("server_notification", {{"list", "of platforms"}});

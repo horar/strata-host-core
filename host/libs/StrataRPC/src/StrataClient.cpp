@@ -29,7 +29,8 @@ bool StrataClient::connectServer()
 
     connect(&connector_, &ClientConnector::newMessageReceived, this,
             &StrataClient::newServerMessage);
-    connect(this, &StrataClient::newServerMessageParsed, &dispatcher_, &Dispatcher::dispatchHandler);
+    connect(this, &StrataClient::newServerMessageParsed, &dispatcher_,
+            &Dispatcher::dispatchHandler);
 
     sendRequest("register_client", {{"api_version", "1.0"}});
 
@@ -83,16 +84,16 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
     return true;
 }
 
-bool StrataClient::sendRequest(const QString &method, const QJsonObject &payload)
+std::pair<bool, int> StrataClient::sendRequest(const QString &method, const QJsonObject &payload)
 {
-    auto message = requestController_.addNewRequest(method, payload);
+    const auto [requestId, message] = requestController_.addNewRequest(method, payload);
 
     if (true == message.isEmpty()) {
         qCCritical(logCategoryStrataClient) << "Failed to add request.";
-        return false;
+        return {false, 0};
     }
 
-    return connector_.sendMessage(message);
+    return {connector_.sendMessage(message), requestId};
 }
 
 bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage)

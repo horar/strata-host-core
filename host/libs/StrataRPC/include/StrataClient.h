@@ -66,8 +66,10 @@ public:
      * Sends a request to the server.
      * @param [in] method The handler name in StrataServer.
      * @param [in] payload QJsonObject of the request payload.
+     * @return std::pair<bool, int>, Boolean to indicate if the request was sent successfully or
+     * not, and an int of the request id.
      */
-    bool sendRequest(const QString &method, const QJsonObject &payload);
+    std::pair<bool, int> sendRequest(const QString &method, const QJsonObject &payload);
 
 signals:
     /**

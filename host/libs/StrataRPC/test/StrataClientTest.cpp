@@ -124,14 +124,18 @@ void StrataClientTest::testBuildRequest()
     expectedMethod = "method_1";
     expectedId = 2;
     serverRevicedMessage = false;
-    client.sendRequest("method_1", {{"param_1", 0}});
+    auto requestInfo_1 = client.sendRequest("method_1", {{"param_1", 0}});
+    QVERIFY_(true == requestInfo_1.first);
+    QVERIFY_(requestInfo_1.second != 0);
     waitForZmqMessages();
     QVERIFY_(serverRevicedMessage);
 
     expectedMethod = "method_2";
     expectedId = 3;
     serverRevicedMessage = false;
-    client.sendRequest("method_2", {});
+    auto requestInfo_2 = client.sendRequest("method_2", {});
+    QVERIFY_(true == requestInfo_2.first);
+    QVERIFY_(requestInfo_2.second != 0);
     waitForZmqMessages();
     QVERIFY_(serverRevicedMessage);
 }
