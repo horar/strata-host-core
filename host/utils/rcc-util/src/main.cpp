@@ -4,6 +4,7 @@
 #include <QResource>
 #include <QSettings>
 
+#include "rcc-utilTimestamp.h"
 #include "Version.h"
 
 int main(int argc, char* argv[])
@@ -17,7 +18,9 @@ int main(int argc, char* argv[])
 
     QCommandLineParser parser;
     parser.setApplicationDescription(
-        QCoreApplication::translate("main", "Strata RCC files utility"));
+        QCoreApplication::translate("main", "Strata RCC files utility\nBuild on %1 at %2")
+        .arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data())
+        );
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOptions(
