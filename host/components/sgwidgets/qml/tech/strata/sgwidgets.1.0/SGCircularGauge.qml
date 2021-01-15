@@ -1,6 +1,6 @@
 import QtQuick 2.12
+import QtQml 2.12
 import QtQuick.Extras 1.4
-import QtQuick.Extras.Private 1.0
 import QtQuick.Controls.Styles 1.4
 
 import tech.strata.sgwidgets 1.0
@@ -38,33 +38,29 @@ Item {
             verticalCenter: root.verticalCenter
             verticalCenterOffset: 0.05 * root.height
         }
-        maximumValue: 200
-        minimumValue: 0
-
-        signal update()
 
         property real tickMarkStepRange: 10
-
         property real tickmarkStepSize: (maximumValue - minimumValue)/tickMarkStepRange
         property int decimalPlacesFromStepSize: {
                 return (Math.floor(gauge.tickmarkStepSize) === gauge.tickmarkStepSize) ?  0 :
                         gauge.tickmarkStepSize.toString().split(".")[1].length || 0
                 }
 
-       onValueChanged: {
-            update()
-       }
-
         style : CircularGaugeStyle {
             id: gaugeStyle
             needle: null
-
             tickmarkInset: -gauge.width / 34
             labelInset: -gauge.width / (12.8 - Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length))  // Base label distance from gauge center on max/minValue
-
             minimumValueAngle: -145
             maximumValueAngle: 145
             tickmarkStepSize: gauge.tickmarkStepSize
+            minorTickmark: null
+
+            readonly property int maxSlices: 40
+            property var center: { "x": outerRadius, "y": outerRadius}
+            property real lineWidth: outerRadius * 0.45
+            property real radius: outerRadius - lineWidth/2
+            property real ratio: Math.max(0, Math.min(root.value/root.maximumValue, 1)) // bound to 0, 1
 
             tickmarkLabel:  SGText {
                                 text: styleData.value.toFixed(root.tickmarkDecimalPlaces)
@@ -80,73 +76,91 @@ Item {
                         antialiasing: true
                     }
 
-            function degreesToRadians(deg){
-                return deg * (Math.PI / 180)
-            }
-
-            function toDecimalPoint(value) {
-                const decimalPlaces = countDecimalPlaces(root.maximumValue)
-                return value * Math.pow(10,decimalPlaces)
-            }
-
-            function countDecimalPlaces(value) {
-                // found this on stack overflow for a simple decimal counter
-                if(Math.floor(value.valueOf()) === value.valueOf()) return 0
-                return value.toString().split(".")[1].length || 0
-            }
-
-            function scaleAngleValue(value, index) {
-                const decimalPlaces = countDecimalPlaces(value)
-                return index * Math.pow(10, -decimalPlaces)
-            }
-
-            function getOffset() {
-                const decimalValue = toDecimalPoint(root.maximumValue)
-                return Math.ceil(decimalValue / 200)
-            }
-
             background: Canvas {
                 id: background
 
                 onPaint: {
                     var ctx = getContext("2d")
-                    var overCtx = getContext("2d")
                     ctx.reset()
-                    overCtx.reset()
 
                     ctx.beginPath()
                     ctx.strokeStyle = gaugeBackgroundColor
-                    ctx.lineWidth = outerRadius * 0.5
+                    ctx.lineWidth = lineWidth
 
-                    ctx.arc(outerRadius, outerRadius, outerRadius - ctx.lineWidth/2, degreesToRadians(valueToAngle(root.minimumValue) - 90), degreesToRadians(valueToAngle(root.maximumValue) - 90))
+                    const angleStart = (Math.PI * .695)
+                    const angleEnd = (Math.PI * 1.614) + angleStart
+
+                    ctx.arc(center.x, center.y, radius, angleStart, angleEnd)
                     ctx.stroke()
+                }
+            }
 
-                    for(var i = root.minimumValue; i < toDecimalPoint(gauge.value); i += getOffset()){
-                        const currVal = scaleAngleValue(root.maximumValue,i - getOffset());
-                        const nextVal = scaleAngleValue(root.maximumValue, i + getOffset())
+            foreground: Canvas {
+                id: foreground
 
-                        overCtx.beginPath()
-                        overCtx.lineWidth = ctx.lineWidth
-                        overCtx.strokeStyle  = lerpColor(gaugeFillColor1,gaugeFillColor2,currVal/root.maximumValue)
-                        overCtx.arc(outerRadius, outerRadius, outerRadius - overCtx.lineWidth/2,degreesToRadians(valueToAngle(currVal) - 90),degreesToRadians(valueToAngle(nextVal) - 90))
-                        overCtx.stroke()
+                onPaint: {
+                    let ctx = getContext("2d")
+                    ctx.reset()
+                    ctx.lineWidth = lineWidth;
+
+                    const rawSlices = ratio * maxSlices
+                    const totalSlices = Math.ceil(rawSlices)
+                    const partialSlice = rawSlices - (totalSlices -1)
+
+                    let slices = [];
+
+                    // Build slice model.
+                    for (let k = 0; k < totalSlices; k++) {
+                        let buildSlice = {
+                                       // ((80.7% of circle to match min/maximumValueAngle) * (slice size)) + (offset to angle notch down)
+                            "angleStart": ((Math.PI * 1.614) * (k/maxSlices) -.01) + (Math.PI * .695), // -.01 for small overlap, otherwise can see seams
+                        }
+
+                        if (k === totalSlices-1) { // partial slice at end of arc
+                            buildSlice.angleEnd = ((Math.PI * 1.614) * ((k+partialSlice)/maxSlices)) + (Math.PI * .695)
+                            buildSlice.colorStops = [
+                                        { "stop": 0, "color": lerpColor(gaugeFillColor1, gaugeFillColor2, (k/maxSlices)) },
+                                        { "stop": 1, "color": lerpColor(gaugeFillColor1, gaugeFillColor2, ((k+partialSlice)/maxSlices)) }
+                                    ]
+                        } else {
+                            buildSlice.angleEnd = ((Math.PI * 1.614) * ((k+1)/maxSlices)) + (Math.PI * .695)
+                            buildSlice.colorStops = [
+                                        { "stop": 0, "color": lerpColor(gaugeFillColor1, gaugeFillColor2, (k/maxSlices)) },
+                                        { "stop": 1, "color": lerpColor(gaugeFillColor1, gaugeFillColor2, ((k+1)/maxSlices)) }
+                                    ]
+                        }
+
+                        buildSlice.x1 = center.x + radius * Math.cos(buildSlice.angleStart)
+                        buildSlice.y1 = center.y + radius * Math.sin(buildSlice.angleStart)
+                        buildSlice.x2 = center.x + radius * Math.cos(buildSlice.angleEnd)
+                        buildSlice.y2 = center.y + radius * Math.sin(buildSlice.angleEnd)
+
+                        slices.push(buildSlice)
                     }
 
+                    // Draw arc slices.
+                    for (let i = 0; i < slices.length; ++i) {
+                        const slice = slices[i];
+                        let gradient = ctx.createLinearGradient(slice.x1, slice.y1, slice.x2, slice.y2);
+                        for (let j = 0; j < slice.colorStops.length; ++j) {
+                            let cs = slice.colorStops[j];
+                            gradient.addColorStop(cs.stop, cs.color);
+                        }
+                        ctx.beginPath();
+                        ctx.arc(center.x, center.y, radius, slice.angleStart, slice.angleEnd);
+                        ctx.strokeStyle = gradient;
+                        ctx.stroke();
+                    }
                 }
 
                 Connections {
                     target: gauge
 
-                    onUpdate: {
-                        background.requestPaint()
+                    onValueChanged: {
+                        foreground.requestPaint()
                     }
                 }
-
             }
-
-            minorTickmark: null
-            foreground: null
-
         }
 
         SGText {
