@@ -2,12 +2,14 @@
 
 #include <QObject>
 
-#include "ClientsController.h"
-#include "Dispatcher.h"
-#include "ServerConnector.h"
+#include "Message.h"
 
 namespace strata::strataRPC
 {
+class Dispatcher;
+class ServerConnector;
+class ClientsController;
+
 class StrataServer : public QObject
 {
     Q_OBJECT
@@ -148,9 +150,9 @@ private:
      */
     void unregisterClientHandler(const Message &clientMessage);
 
-    Dispatcher dispatcher_;
-    ClientsController clientsController_;
-    ServerConnector connector_;
+    std::unique_ptr<Dispatcher> dispatcher_;
+    std::unique_ptr<ClientsController> clientsController_;
+    std::unique_ptr<ServerConnector> connector_;
 };
 
 }  // namespace strata::strataRPC

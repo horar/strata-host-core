@@ -1,5 +1,7 @@
 #include "StrataClient.h"
-#include "Request.h"
+#include "ClientConnector.h"
+#include "Dispatcher.h"
+#include "RequestsController.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <QJsonDocument>
@@ -7,12 +9,18 @@
 using namespace strata::strataRPC;
 
 StrataClient::StrataClient(QString serverAddress, QObject *parent)
-    : QObject(parent), dispatcher_(this), connector_(serverAddress)
+    : QObject(parent),
+      dispatcher_(new Dispatcher(this)),
+      connector_(new ClientConnector(serverAddress)),
+      requestController_(new RequestsController())
 {
 }
 
 StrataClient::StrataClient(QString serverAddress, QByteArray dealerId, QObject *parent)
-    : QObject(parent), dispatcher_(this), connector_(serverAddress, dealerId)
+    : QObject(parent),
+      dispatcher_(new Dispatcher(this)),
+      connector_(new ClientConnector(serverAddress, dealerId)),
+      requestController_(new RequestsController())
 {
 }
 
@@ -22,14 +30,14 @@ StrataClient::~StrataClient()
 
 bool StrataClient::connectServer()
 {
-    if (false == connector_.initializeConnector()) {
+    if (false == connector_->initializeConnector()) {
         qCCritical(logCategoryStrataClient) << "Failed to connect to the server";
         return false;
     }
 
-    connect(&connector_, &ClientConnector::newMessageReceived, this,
+    connect(connector_.get(), &ClientConnector::newMessageReceived, this,
             &StrataClient::newServerMessage);
-    connect(this, &StrataClient::newServerMessageParsed, &dispatcher_,
+    connect(this, &StrataClient::newServerMessageParsed, dispatcher_.get(),
             &Dispatcher::dispatchHandler);
 
     sendRequest("register_client", {{"api_version", "1.0"}});
@@ -40,10 +48,10 @@ bool StrataClient::connectServer()
 bool StrataClient::disconnectServer()
 {
     sendRequest("unregister", {});
-    disconnect(&connector_, &ClientConnector::newMessageReceived, this,
+    disconnect(connector_.get(), &ClientConnector::newMessageReceived, this,
                &StrataClient::newServerMessage);
 
-    if (false == connector_.disconnectClient()) {
+    if (false == connector_->disconnectClient()) {
         qCCritical(logCategoryStrataClient) << "Failed to disconnect client";
         return false;
     }
@@ -67,7 +75,7 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
 bool StrataClient::registerHandler(const QString &handlerName, StrataHandler handler)
 {
     qCDebug(logCategoryStrataClient) << "Registering Handler:" << handlerName;
-    if (false == dispatcher_.registerHandler(handlerName, handler)) {
+    if (false == dispatcher_->registerHandler(handlerName, handler)) {
         qCCritical(logCategoryStrataClient) << "Failed to register handler.";
         return false;
     }
@@ -77,7 +85,7 @@ bool StrataClient::registerHandler(const QString &handlerName, StrataHandler han
 bool StrataClient::unregisterHandler(const QString &handlerName)
 {
     qCDebug(logCategoryStrataClient) << "Unregistering handler:" << handlerName;
-    if (false == dispatcher_.unregisterHandler(handlerName)) {
+    if (false == dispatcher_->unregisterHandler(handlerName)) {
         qCCritical(logCategoryStrataClient) << "Failed to unregister handler.";
         return false;
     }
@@ -86,14 +94,14 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
 
 std::pair<bool, int> StrataClient::sendRequest(const QString &method, const QJsonObject &payload)
 {
-    const auto [requestId, message] = requestController_.addNewRequest(method, payload);
+    const auto [requestId, message] = requestController_->addNewRequest(method, payload);
 
     if (true == message.isEmpty()) {
         qCCritical(logCategoryStrataClient) << "Failed to add request.";
         return {false, 0};
     }
 
-    return {connector_.sendMessage(message), requestId};
+    return {connector_->sendMessage(message), requestId};
 }
 
 bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage)
@@ -153,7 +161,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
 
         // Get the handler name from the request controller based on the message id
         if (QString handlerName =
-                requestController_.getMethodName(jsonObject.value("id").toDouble());
+                requestController_->getMethodName(jsonObject.value("id").toDouble());
             false == handlerName.isEmpty()) {
             serverMessage->handlerName = handlerName;
         } else {
@@ -161,7 +169,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
             return false;
         }
 
-        if (false == requestController_.removePendingRequest(jsonObject.value("id").toDouble())) {
+        if (false == requestController_->removePendingRequest(jsonObject.value("id").toDouble())) {
             qCCritical(logCategoryStrataClient) << "Failed to remove pending request.";
             return false;
         }

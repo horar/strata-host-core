@@ -2,12 +2,14 @@
 
 #include <QObject>
 
-#include "ClientConnector.h"
-#include "Dispatcher.h"
-#include "RequestsController.h"
+#include "Message.h"
 
 namespace strata::strataRPC
 {
+class Dispatcher;
+class ClientConnector;
+class RequestsController;
+
 class StrataClient : public QObject
 {
     Q_OBJECT
@@ -94,8 +96,8 @@ private:
      */
     bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage);
 
-    Dispatcher dispatcher_;
-    ClientConnector connector_;
-    RequestsController requestController_;
+    std::unique_ptr<Dispatcher> dispatcher_;
+    std::unique_ptr<ClientConnector> connector_;
+    std::unique_ptr<RequestsController> requestController_;
 };
 }  // namespace strata::strataRPC

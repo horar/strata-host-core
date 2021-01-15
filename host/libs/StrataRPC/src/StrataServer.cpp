@@ -1,4 +1,7 @@
 #include "StrataServer.h"
+#include "ClientsController.h"
+#include "Dispatcher.h"
+#include "ServerConnector.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <QJsonDocument>
@@ -6,7 +9,10 @@
 using namespace strata::strataRPC;
 
 StrataServer::StrataServer(QString address, QObject *parent)
-    : QObject(parent), dispatcher_(this), clientsController_(this), connector_(address, this)
+    : QObject(parent),
+      dispatcher_(new Dispatcher(this)),
+      clientsController_(new ClientsController(this)),
+      connector_(new ServerConnector(address, this))
 {
 }
 
@@ -16,11 +22,12 @@ StrataServer::~StrataServer()
 
 bool StrataServer::initializeServer()
 {
-    if (true == connector_.initilizeConnector()) {
+    if (true == connector_->initilizeConnector()) {
         qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
-        connect(&connector_, &ServerConnector::newMessageReceived, this,
+        connect(connector_.get(), &ServerConnector::newMessageReceived, this,
                 &StrataServer::newClientMessage);
-        connect(this, &StrataServer::newClientMessageParsed, &dispatcher_, &Dispatcher::dispatchHandler);
+        connect(this, &StrataServer::newClientMessageParsed, dispatcher_.get(),
+                &Dispatcher::dispatchHandler);
         return true;
     } else {
         qCCritical(logCategoryStrataServer) << "Failed to initialize Strata Server.";
@@ -30,7 +37,7 @@ bool StrataServer::initializeServer()
 
 bool StrataServer::registerHandler(const QString &handlerName, StrataHandler handler)
 {
-    if (false == dispatcher_.registerHandler(handlerName, handler)) {
+    if (false == dispatcher_->registerHandler(handlerName, handler)) {
         qCCritical(logCategoryStrataServer) << "Failed to register handler";
         return false;
     }
@@ -39,7 +46,7 @@ bool StrataServer::registerHandler(const QString &handlerName, StrataHandler han
 
 bool StrataServer::unregisterHandler(const QString &handlerName)
 {
-    if (false == dispatcher_.unregisterHandler(handlerName)) {
+    if (false == dispatcher_->unregisterHandler(handlerName)) {
         qCCritical(logCategoryStrataServer) << "Failed to unregister handler";
         return false;
     }
@@ -65,7 +72,7 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
     ApiVersion apiVersion;
 
     // Check if registered client
-    if (false == clientsController_.isRegisteredClient(clientId)) {
+    if (false == clientsController_->isRegisteredClient(clientId)) {
         qCDebug(logCategoryStrataServer) << "client not registered";
 
         // Find out the client api version.
@@ -85,7 +92,7 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
         }
 
         // Register the client.
-        if (false == clientsController_.registerClient(Client(clientId, apiVersion))) {
+        if (false == clientsController_->registerClient(Client(clientId, apiVersion))) {
             qCCritical(logCategoryStrataServer) << "Failed to register client";
             return;
         }
@@ -94,7 +101,7 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
 
     } else {
         // Returning client. get the api from the client controller.
-        apiVersion = clientsController_.getClientApiVersion(clientId);
+        apiVersion = clientsController_->getClientApiVersion(clientId);
     }
 
     if (apiVersion == ApiVersion::v2) {
@@ -202,7 +209,7 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
 {
     QByteArray serverMessage;
 
-    switch (clientsController_.getClientApiVersion(clientMessage.clientID)) {
+    switch (clientsController_->getClientApiVersion(clientMessage.clientID)) {
         case ApiVersion::v1:
             qCDebug(logCategoryStrataServer) << "building message for API v1";
             serverMessage = buildServerMessageAPIv1(clientMessage, jsonObject, responseType);
@@ -223,7 +230,7 @@ void StrataServer::notifyClient(const Message &clientMessage, const QJsonObject 
             break;
     }
 
-    connector_.sendMessage(clientMessage.clientID, serverMessage);
+    connector_->sendMessage(clientMessage.clientID, serverMessage);
 }
 
 void StrataServer::notifyClient(const QByteArray &clientId, const QString &handlerName,
@@ -249,16 +256,16 @@ void StrataServer::notifyAllClients(const QString &handlerName, const QJsonObjec
         buildServerMessageAPIv2(tempClientMessage, jsonObject, ResponseType::Notification);
 
     // get all clients.
-    auto allClients = clientsController_.getAllClients();
+    auto allClients = clientsController_->getAllClients();
 
     for (const auto &client : allClients) {
         switch (client.getApiVersion()) {
             case ApiVersion::v1:
-                connector_.sendMessage(client.getClientID(), serverMessageAPI_v1);
+                connector_->sendMessage(client.getClientID(), serverMessageAPI_v1);
                 break;
 
             case ApiVersion::v2:
-                connector_.sendMessage(client.getClientID(), serverMessageAPI_v2);
+                connector_->sendMessage(client.getClientID(), serverMessageAPI_v2);
                 break;
 
             case ApiVersion::none:
@@ -272,7 +279,7 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
 {
     qCDebug(logCategoryStrataServer)
         << "Handle New Client Registration. Client ID:" << clientMessage.clientID;
-    if (true == clientsController_.isRegisteredClient(clientMessage.clientID)) {
+    if (true == clientsController_->isRegisteredClient(clientMessage.clientID)) {
         notifyClient(clientMessage, {{"status", "client registered."}}, ResponseType::Response);
     } else {
         notifyClient(clientMessage, {{"massage", "Failed to register client"}},
@@ -284,7 +291,7 @@ void StrataServer::unregisterClientHandler(const Message &clientMessage)
 {
     qCDebug(logCategoryStrataServer)
         << "Handle Client Unregistration. Client ID:" << clientMessage.clientID;
-    if (true == clientsController_.isRegisteredClient(clientMessage.clientID)) {
+    if (true == clientsController_->isRegisteredClient(clientMessage.clientID)) {
         qCCritical(logCategoryStrataServer) << "Failed to unregister client.";
         notifyClient(clientMessage, {{"massage", "Failed to unregister client"}},
                      ResponseType::Error);
