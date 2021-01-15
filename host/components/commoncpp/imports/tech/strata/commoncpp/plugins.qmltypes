@@ -749,6 +749,43 @@ Module {
         isSingleton: true
         exportMetaObjectRevisions: [0]
         Method {
+            name: "createFile"
+            type: "bool"
+            Parameter { name: "filepath"; type: "string" }
+        }
+        Method {
+            name: "removeFile"
+            type: "bool"
+            Parameter { name: "filepath"; type: "string" }
+        }
+        Method {
+            name: "copyFile"
+            type: "bool"
+            Parameter { name: "fromPath"; type: "string" }
+            Parameter { name: "toPath"; type: "string" }
+        }
+        Method {
+            name: "fileSuffix"
+            type: "string"
+            Parameter { name: "filename"; type: "string" }
+        }
+        Method {
+            name: "parentDirectoryPath"
+            type: "string"
+            Parameter { name: "filepath"; type: "string" }
+        }
+        Method {
+            name: "exists"
+            type: "bool"
+            Parameter { name: "filepath"; type: "string" }
+        }
+        Method {
+            name: "fileIsChildOfDir"
+            type: "bool"
+            Parameter { name: "filePath"; type: "string" }
+            Parameter { name: "dirPath"; type: "string" }
+        }
+        Method {
             name: "urlToLocalFile"
             type: "string"
             Parameter { name: "url"; type: "QUrl" }
@@ -782,11 +819,6 @@ Module {
             name: "dirName"
             type: "string"
             Parameter { name: "path"; type: "string" }
-        }
-        Method {
-            name: "parentDirectoryPath"
-            type: "string"
-            Parameter { name: "filepath"; type: "string" }
         }
         Method {
             name: "pathToUrl"
