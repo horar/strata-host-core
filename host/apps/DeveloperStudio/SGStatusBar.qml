@@ -121,7 +121,7 @@ Rectangle {
                 id: leftArrowTimer
                 interval: 10; running: false; repeat: true
                 onTriggered:  {
-                    platformTabListView.contentX -= 10
+                    platformTabListView.setPlatformTabContentX(-30)
                 }
             }
 
@@ -140,8 +140,9 @@ Rectangle {
                 id: leftArrowMouse
                 anchors.fill: parent
                 hoverEnabled: true
+                pressAndHoldInterval: 300
                 onClicked: {
-                    platformTabListView.contentX -= 100
+                    platformTabListView.setPlatformTabContentX(-100)
                 }
                 onPressAndHold: {
                     leftArrowTimer.running=true
@@ -178,10 +179,12 @@ Rectangle {
             boundsBehavior: Flickable.StopAtBounds
 
             Behavior on contentX {
-                SmoothedAnimation {
+                NumberAnimation {
+                    id: platformTabAnimation
                     duration: 100
-                    velocity: 1000
-                    reversingMode: SmoothedAnimation.Immediate
+                    easing.type: Easing.Linear
+
+                    property int animationContentX: 0   // to facilitate smooth mouse movements
                 }
             }
 
@@ -211,10 +214,26 @@ Rectangle {
                     }
 
                     if (movementDelta !== 0) {
-                        platformTabListView.contentX -= movementDelta
+                        platformTabListView.setPlatformTabContentX(-movementDelta)
                     }
                     wheel.accepted = true
                 }
+            }
+
+            function setPlatformTabContentX(val) {
+                if (platformTabAnimation.running == false) {
+                    platformTabAnimation.animationContentX = platformTabListView.contentX
+                }
+                platformTabAnimation.animationContentX += val
+                if (platformTabAnimation.animationContentX < 0) {
+                    platformTabAnimation.animationContentX = 0
+                } else {
+                    let maxContentX = Math.max(platformTabListView.contentWidth - platformTabListView.width, 0)
+                    if (platformTabAnimation.animationContentX > maxContentX) {
+                        platformTabAnimation.animationContentX = maxContentX
+                    }
+                }
+                platformTabListView.contentX = platformTabAnimation.animationContentX
             }
         }
 
@@ -229,7 +248,7 @@ Rectangle {
                 id: rightArrowTimer
                 interval: 10; running: false; repeat: true
                 onTriggered:  {
-                    platformTabListView.contentX += 10
+                    platformTabListView.setPlatformTabContentX(30)
                 }
             }
 
@@ -248,8 +267,9 @@ Rectangle {
                 id: rightArrowMouse
                 anchors.fill: parent
                 hoverEnabled: true
+                pressAndHoldInterval: 300
                 onClicked: {
-                    platformTabListView.contentX += 100
+                    platformTabListView.setPlatformTabContentX(100)
                 }
                 onPressAndHold: {
                     rightArrowTimer.running=true
