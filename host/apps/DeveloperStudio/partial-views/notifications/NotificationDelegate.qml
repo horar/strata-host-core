@@ -24,19 +24,20 @@ Item {
     Rectangle {
         id: notificationContainer
         width: parent.width - (2 * notificationShadow.radius)
-        height: columnLayout.implicitHeight + 20
+        y: notificationShadow.radius - notificationShadow.verticalOffset
+        x: notificationShadow.radius - notificationShadow.horizontalOffset
+        height: columnLayout.implicitHeight + (row.anchors.margins * 2)
         radius: 4
         clip: true
         border.color: {
-            if (model.level === Notifications.info) {
+            if (model.level === Notifications.Level.Info) {
                 return Theme.palette.gray;
-            } else if (model.level === Notifications.warning) {
+            } else if (model.level === Notifications.Level.Warning) {
                 return Theme.palette.warning;
-            } else if (model.level === Notifications.critical) {
+            } else if (model.level === Notifications.Level.Critical) {
                 return Theme.palette.error;
             }
         }
-
         border.width: 1
         color: "white"
 
@@ -56,14 +57,12 @@ Item {
         }
 
         RowLayout {
+            id: row
             anchors {
-                left: parent.left
-                leftMargin: 10
-                right: parent.right
-                rightMargin: 10
-                top: parent.top
-                topMargin: 10
+                fill: parent
+                margins: 15
             }
+            spacing: 10
 
             SGIcon {
                 Layout.preferredWidth: 15
@@ -73,11 +72,11 @@ Item {
                 visible: model.iconSource !== ""
 
                 iconColor: {
-                    if (model.level === Notifications.info) {
+                    if (model.level === Notifications.Level.Info) {
                         return Theme.palette.gray;
-                    } else if (model.level === Notifications.warning) {
+                    } else if (model.level === Notifications.Level.Warning) {
                         return Theme.palette.warning;
-                    } else if (model.level === Notifications.critical) {
+                    } else if (model.level === Notifications.Level.Critical) {
                         return Theme.palette.error;
                     }
                 }
@@ -87,11 +86,9 @@ Item {
             ColumnLayout {
                 id: columnLayout
                 Layout.fillWidth: true
-                Layout.leftMargin: 5
                 spacing: 5
 
                 RowLayout {
-                    Layout.minimumHeight: 30
                     Layout.fillHeight: model.description.length === 0
                     Layout.fillWidth: true
                     spacing: 5
@@ -125,20 +122,12 @@ Item {
                         verticalAlignment: Text.AlignVCenter
                     }
 
-                    RoundButton {
+                    SGIcon {
                         Layout.preferredHeight: 17
                         Layout.preferredWidth: 17
                         Layout.alignment: Qt.AlignVCenter
-                        padding: 0
-                        hoverEnabled: true
-
-                        icon {
-                            source: "qrc:/sgimages/times.svg"
-                            color: closeNotificationButton.containsMouse ? Theme.palette.darkGray : "black"
-                            height: 10
-                            width: 10
-                            name: "Close"
-                        }
+                        source: "qrc:/sgimages/times-circle.svg"
+                        iconColor: closeNotificationButton.containsMouse ? Theme.palette.darkGray : Theme.palette.lightGray
 
                         Accessible.name: "Close notification"
                         Accessible.role: Accessible.Button
@@ -194,11 +183,10 @@ Item {
 
                         delegate: Rectangle {
                             id: button
-
                             Layout.preferredWidth: metrics.tightBoundingRect.width + 20
-                            Layout.preferredHeight: 25
+                            Layout.preferredHeight: metrics.tightBoundingRect.height + 20
                             color: "transparent"
-                            border.color: actionMouseArea.containsMouse ? Theme.palette.highlight : "transparent"
+                            border.color: actionMouseArea.containsMouse ? Qt.darker(Theme.palette.highlight) : Theme.palette.highlight
                             border.width: 1
                             radius: 4
 
@@ -233,15 +221,14 @@ Item {
                     }
                 }
             }
-
         }
     }
 
     DropShadow {
         id: notificationShadow
-        anchors.fill: root
+        anchors.fill: notificationContainer
         source: notificationContainer
-        color: Theme.palette.gray
+        color: Qt.rgba(0, 0, 0, .5)
         horizontalOffset: 1
         verticalOffset: 3
         cached: true

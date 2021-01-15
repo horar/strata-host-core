@@ -41,6 +41,7 @@ Item {
         width: parent.width
         height: parent.height
         anchors.bottom: parent.bottom
+        visible: !notificationsInbox.isOpen
         model: filteredNotifications
         spacing: 10
         clip: true
@@ -84,7 +85,11 @@ Item {
         }
 
         onValidationResult: {
-            currentUser = Authenticator.settings.user
+            if (result === "Current token is valid") {
+                currentUser = Authenticator.settings.user
+            } else {
+                currentUser = ""
+            }
         }
     }
 }

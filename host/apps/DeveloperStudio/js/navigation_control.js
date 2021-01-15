@@ -65,6 +65,7 @@ var main_container_ = null
 var status_bar_container_ = null
 var platform_view_repeater_ = null
 var platform_view_model_ = null
+var platform_tab_list_view_ = null
 var stack_container_ = null
 var resource_loader_ = null
 var main_qml_object_ = null
@@ -260,6 +261,7 @@ function updateState(event, data)
                 status_bar_container_.visible = true
                 context.mainWindow = main_qml_object_
                 let statusBar = createView(screens.STATUS_BAR, status_bar_container_)
+                platform_tab_list_view_ = statusBar.platformTabListView
 
                 createView(screens.PLATFORM_SELECTOR, main_container_)
 
@@ -369,6 +371,16 @@ function updateState(event, data)
                 if (stack_container_.currentIndex !== data.index) {
                     stack_container_.currentIndex = data.index
                 }
+
+                if ((platform_tab_list_view_ !== undefined) && (platform_tab_list_view_ !== null)) {
+                    if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
+                        (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
+                        platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
+                    } else {
+                         platform_tab_list_view_.currentIndex =  -1
+                    }
+                }
+
                 break;
 
             default:

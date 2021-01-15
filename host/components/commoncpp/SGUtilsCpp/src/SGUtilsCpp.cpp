@@ -39,6 +39,34 @@ bool SGUtilsCpp::isFile(const QString &file)
     return info.isFile();
 }
 
+bool SGUtilsCpp::createFile(const QString &filepath)
+{
+    QFile file(filepath);
+    if (file.exists()) {
+        file.close();
+        return false;
+    }
+
+    bool success = file.open(QIODevice::WriteOnly);
+    file.close();
+    return success;
+}
+
+bool SGUtilsCpp::removeFile(const QString &filepath)
+{
+    return QFile::remove(filepath);
+}
+
+bool SGUtilsCpp::copyFile(const QString &fromPath, const QString &toPath)
+{
+    return QFile::copy(fromPath, toPath);
+}
+
+QString SGUtilsCpp::fileSuffix(const QString &filename)
+{
+    return QFileInfo(filename).suffix();
+}
+
 bool SGUtilsCpp::isValidImage(const QString &file)
 {
     QImageReader reader(file);
@@ -63,13 +91,19 @@ QString SGUtilsCpp::fileName(const QString &file)
 QString SGUtilsCpp::fileAbsolutePath(const QString &file)
 {
     QFileInfo fi(file);
-    return fi.absolutePath();
+    return fi.absoluteFilePath();
 }
 
 QString SGUtilsCpp::dirName(const QString &path)
 {
     QDir dir(path);
     return dir.dirName();
+}
+
+QString SGUtilsCpp::parentDirectoryPath(const QString &filepath)
+{
+    QFileInfo fi(filepath);
+    return fi.absolutePath();
 }
 
 QUrl SGUtilsCpp::pathToUrl(const QString &path, const QString &scheme)
@@ -98,6 +132,19 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
     return file.commit();
 }
 
+bool SGUtilsCpp::fileIsChildOfDir(const QString &filePath, QString dirPath)
+{
+    if (dirPath.length() > 0 && dirPath[dirPath.length() - 1] != QDir::separator()) {
+        dirPath.append(QDir::separator());
+    }
+
+    if (filePath.startsWith(dirPath)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 QString SGUtilsCpp::readTextFileContent(const QString &path)
 {
     QFile file(path);
@@ -123,6 +170,11 @@ QString SGUtilsCpp::joinFilePath(const QString &path, const QString &fileName)
 {
     QDir dir(path);
     return dir.filePath(fileName);
+}
+
+bool SGUtilsCpp::exists(const QString &filepath)
+{
+    return QFileInfo::exists(filepath);
 }
 
 QString SGUtilsCpp::formattedDataSize(qint64 bytes, int precision)
@@ -217,109 +269,4 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
 QString SGUtilsCpp::toHex(qint64 number, int width)
 {
     return QStringLiteral("0x") + QString::number(number, 16).rightJustified(width, '0');
-}
-
-QByteArray SGUtilsCpp::prettifyJson(const QByteArray &json, int indentSize)
-{
-    QByteArray prettifiedJson;
-    int level = 0;
-    bool inString = false;
-    bool inEscapeSequence = false;
-
-    for (int i = 0; i < json.size(); ++i) {
-        char c = json.at(i);
-
-        if (inString == false && std::isspace(c)) {
-            continue;
-        }
-
-        prettifiedJson.append(c);
-
-        if (inEscapeSequence) {
-            inEscapeSequence = false;
-            continue;
-        }
-
-        if (c == '\\') {
-            inEscapeSequence = true;
-            continue;
-        }
-
-        if (inString == false) {
-            if (c == '{' || c == '[') {
-                 ++level;
-
-                //do not wrap when object or array is empty
-                int j = i+1;
-                char firstNoSpaceChar = 0;
-                while (j < json.size()) {
-                    firstNoSpaceChar = json.at(j);
-                    if (std::isspace(firstNoSpaceChar) == false) {
-                        break;
-                    }
-
-                    ++j;
-                }
-
-                if (firstNoSpaceChar != '}' && firstNoSpaceChar != ']') {
-                    prettifiedJson += '\n';
-                    prettifiedJson.append(indentSize * level, ' ');
-                }
-
-            } else if (c == '}' || c == ']') {
-                --level;
-
-                char previousC = prettifiedJson.at(prettifiedJson.size()-2);
-                if (previousC != '{' && previousC != '[') {
-                    prettifiedJson.insert(prettifiedJson.size()-1, '\n');
-                    prettifiedJson.insert(prettifiedJson.size()-1, indentSize * level, ' ');
-                }
-
-            } else if (c == ',') {
-                prettifiedJson += '\n';
-                prettifiedJson.append(indentSize * level, ' ');
-            } else if (c == ':') {
-                prettifiedJson.append(' ');
-            }
-        }
-
-        if (c == '"') {
-            inString = !inString;
-        }
-    }
-
-    return prettifiedJson;
-}
-
-QByteArray SGUtilsCpp::minifyJson(const QByteArray &json)
-{
-    QByteArray minifiedJson;
-    bool inString = false;
-    bool inEscapeSequence = false;
-
-    for (int i = 0; i < json.size(); ++i) {
-        char c = json.at(i);
-
-        if (inString == false && std::isspace(c)) {
-            continue;
-        }
-
-        minifiedJson.append(c);
-
-        if (inEscapeSequence) {
-            inEscapeSequence = false;
-            continue;
-        }
-
-        if (c == '\\') {
-            inEscapeSequence = true;
-            continue;
-        }
-
-        if (inEscapeSequence == false && c == '"') {
-            inString = !inString;
-        }
-    }
-
-    return minifiedJson;
 }

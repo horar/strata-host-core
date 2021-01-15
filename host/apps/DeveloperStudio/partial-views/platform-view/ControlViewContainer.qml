@@ -21,12 +21,43 @@ Item {
 
     readonly property string staticVersion: "static"
 
-    SGText {
-        anchors.centerIn: parent
-        text: "Loading Control View..."
-        fontSizeMultiplier: 2
-        color: "#666"
+    Loader {
+        id: controlLoader
+        anchors.fill: parent
+        asynchronous: true
+
+        onStatusChanged: {
+            if (status === Loader.Ready) {
+                // Tear Down creation context
+                delete NavigationControl.context.class_id
+                delete NavigationControl.context.device_id
+
+                controlLoaded = true
+                loadingBarContainer.visible = false;
+                loadingBar.value = 0.0;
+            } else if (status === Loader.Error) {
+                // Tear Down creation context
+                delete NavigationControl.context.class_id
+                delete NavigationControl.context.device_id
+
+                createErrorScreen("Failed to load file: " + source + "\nError: " + sourceComponent.errorString());
+            }
+        }
+    }
+
+    Rectangle {
+        id: loadingControlViewContainer
+        anchors {
+            fill: parent
+        }
         visible: controlLoader.status === Loader.Loading && loadingBarContainer.visible === false
+
+        SGText {
+            anchors.centerIn: parent
+            text: "Loading Control View..."
+            fontSizeMultiplier: 2
+            color: "#666"
+        }
     }
 
     Rectangle {
@@ -71,35 +102,6 @@ Item {
         }
     }
 
-    Item {
-        id: controlContainer
-        anchors.fill: parent
-
-        Loader {
-            id: controlLoader
-            anchors.fill: parent
-            asynchronous: true
-
-            onStatusChanged: {
-                if (status === Loader.Ready) {
-                    // Tear Down creation context
-                    delete NavigationControl.context.class_id
-                    delete NavigationControl.context.device_id
-
-                    controlLoaded = true
-                    loadingBarContainer.visible = false;
-                    loadingBar.value = 0.0;
-                } else if (status === Loader.Error) {
-                    // Tear Down creation context
-                    delete NavigationControl.context.class_id
-                    delete NavigationControl.context.device_id
-
-                    createErrorScreen("Failed to load file: " + source + "\nError: " + sourceComponent.errorString());
-                }
-            }
-        }
-    }
-
     DisconnectedOverlay {
         visible: platformStack.connected === false
     }
@@ -123,7 +125,7 @@ Item {
     }
 
     /*
-      Loads Control.qml from the installed resource file into controlContainer
+      Loads Control.qml from the installed resource file into controlLoader
     */
     function loadControl () {
         let version = controlViewContainer.staticVersion
@@ -252,11 +254,11 @@ Item {
         if (UuidMap.uuid_map.hasOwnProperty(platformStack.class_id)) {
             let name = UuidMap.uuid_map[platformStack.class_id];
             let RCCpath = sdsModel.resourceLoader.getStaticResourcesString() + "/views-" + name + ".rcc"
-            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, RCCpath, controlViewContainer.staticVersion, controlContainer);
+            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, RCCpath, controlViewContainer.staticVersion, controlLoader);
         }
 
         for (let i = 0; i < otaVersionsToRemove.length; i++) {
-            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlContainer);
+            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlLoader);
         }
 
         otaVersionsToRemove = []
@@ -318,7 +320,7 @@ Item {
     }
 
     /*
-      Removes the control view from controlContainer
+      Registers a resource file by path and version
     */
     function registerResource (filepath, version) {
         let success = sdsModel.resourceLoader.registerControlViewResource(filepath, platformStack.class_id, version);
@@ -332,7 +334,7 @@ Item {
     }
 
     /*
-      Removes the control view from controlContainer
+      Removes the control view from controlLoader
     */
     function removeControl () {
         if (controlLoaded) {
@@ -342,7 +344,7 @@ Item {
     }
 
     /*
-      Populates controlContainer with an error string
+      Populates controlLoader with an error string
     */
     function createErrorScreen(errorString) {
         removeControl();
