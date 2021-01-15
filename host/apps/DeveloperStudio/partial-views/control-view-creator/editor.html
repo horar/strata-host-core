@@ -62,10 +62,8 @@
             monaco.languages.setMonarchTokensProvider('qml',{
                 tokenizer: {
                     root: [
-                        [/\*(?!\/)/ ,'begin'],
-                        [/\*\\/, 'end'],
+                        [/\/\/[\w\s]*/ ,'comment'],
                         [/\b(import)\s+/, 'import-statement'],
-                        [`//.*$`, 'line-comment'],
                         [/([\w\d\.]+)\s+(\d+\.\d+)(?:\s+(as)\s+([A-Z][\w\d]*))?/, 'namespace'],
                         [/(\"[^\"]+\")(?:\s+(as)\s+([A-Z][\w\d]*))?/, 'dirjs'],
                         [/(((^|\{)\s*)|\b)on[A-Z]\w*\b/,'on-handler'],
@@ -74,11 +72,11 @@
                         [/\b(signal)\s+(\w+)\s/,'signal-def'],
                         [/;|(?=\/)|$/,'signal-handler'],
                         [/(\w+)\s+(\w+)/,'signal-params'],
-                        [/(?:\b|\s+)(?:(true|false|null|undefined)|(var|void)|(on|as|enum|connect|break|case|catch|continue|debugger|default|delete|do|else|finally|for|if|in|instanceof|new|return|switch|this|throw|try|typeof|while|with))\b/, 'js-def'],
+                        [/(?:\b|\s+)(?:(true|false|null|undefined)|(var|void|const|let)|(on|as|enum|connect|break|case|catch|continue|debugger|default|delete|do|else|finally|for|if|in|instanceof|new|return|switch|this|throw|try|typeof|while|with))\b/, 'js-def'],
                         [/\b(function)\s+([\w_]+)\s*(?=\()/, 'function-handler'],
                         [/\b[\w_]+\s*(?=\()/,'func-call'],
                         [/(?:^|\{|;)\s*[a-z][\w\.]*\s*(?=\:)/,'prop-def'],
-                        [`(?:\&lt;=\.)\b\w*`,'var-name'],
+                        [/(?:\&lt;=\.)\b\w*/,'var-name'],
                     ]
                 }
             })
@@ -113,10 +111,8 @@
                 base:'vs',
                 inherit: false,
                 rules:[
-                    {token: 'begin', foreground: '#32C132'},
-                    {token: 'end', foreground: '#32C132'},
+                    {token: 'comment', foreground: '#32C132'},
                     {token: 'import-statement', foreground: '#C6CC18'},
-                    {token: 'line-comment', foreground: '#32C132'},
                     {token: 'namespace', foreground: '#AB0033'},
                     {token: 'dirjs', foreground: '#67CF0C'},
                     {token: 'on-handler',foreground: '#D41142'},
