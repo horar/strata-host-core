@@ -1,5 +1,5 @@
 #pragma once
-#include "Message.h"
+#include <StrataRPC/Message.h>
 
 using strata::strataRPC::Message;
 

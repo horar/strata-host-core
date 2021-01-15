@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Message.h"
-
+#include <StrataRPC/Message.h>
 #include <QObject>
 
 namespace strata::strataRPC

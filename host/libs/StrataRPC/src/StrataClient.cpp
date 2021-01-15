@@ -1,9 +1,9 @@
-#include "StrataClient.h"
 #include "ClientConnector.h"
 #include "Dispatcher.h"
 #include "RequestsController.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <StrataRPC/StrataClient.h>
 #include <QJsonDocument>
 
 using namespace strata::strataRPC;

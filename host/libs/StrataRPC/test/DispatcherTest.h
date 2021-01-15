@@ -1,9 +1,9 @@
 #pragma once
 
 #include <QObject>
+#include <StrataRPC/Message.h>
 
 #include "Dispatcher.h"
-#include "Message.h"
 #include "QtTest.h"
 #include "TestHandlers.h"
 

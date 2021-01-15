@@ -2,7 +2,7 @@
 
 #include "QtTest.h"
 
-#include <StrataClient.h>
+#include <StrataRPC/StrataClient.h>
 #include <QObject>
 
 using strata::strataRPC::StrataClient;
