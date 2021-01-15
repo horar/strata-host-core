@@ -11,7 +11,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 Item {
     id: platformTabRoot
     height: 40
-    width: 40   // resized to tabWidth to make an animation
+    width: tabWidth
 
     property color menuColor: Theme.palette.green
 
@@ -24,24 +24,16 @@ Item {
     property int index: model.index
     property bool inView: NavigationControl.stack_container_.currentIndex === index + 1
     property string selectedButtonIcon: ""
-    property int tabWidth: 250  // will be set by the listview
+    property real tabWidth: 250 // will be set by the listview
 
     Component.onCompleted: {
         populateButtons()
         setControlIcon()
         setSelectedButton()
-        width = Qt.binding(function() { return tabWidth })  // will make a nice animation
     }
 
     onConnectedChanged: {
         setControlIcon()
-    }
-
-    Behavior on width {
-        SmoothedAnimation {
-            duration: 200
-            reversingMode: SmoothedAnimation.Immediate
-        }
     }
 
     function menuClicked(index) {

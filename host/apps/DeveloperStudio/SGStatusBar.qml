@@ -110,13 +110,56 @@ Rectangle {
             }
         }
 
+        Rectangle {
+            id: platformLeftArrow
+            Layout.preferredHeight:40
+            Layout.preferredWidth: 20
+            visible: (platformTabListView.contentWidth > platformTabListView.width)
+            color: leftArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            Timer {
+                id: leftArrowTimer
+                interval: 10; running: false; repeat: true
+                onTriggered:  {
+                    platformTabListView.contentX -= 10
+                }
+            }
+
+            SGIcon {
+                id: leftArrowIcon
+                height: width
+                width: parent.width - 4
+                anchors {
+                    centerIn: parent
+                }
+                source: "qrc:/sgimages/chevron-left.svg"
+                iconColor : "white"
+            }
+
+            MouseArea {
+                id: leftArrowMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    platformTabListView.contentX -= 100
+                }
+                onPressAndHold: {
+                    leftArrowTimer.running=true
+                }
+                onReleased: {
+                    leftArrowTimer.running=false
+                }
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
+
         ListView {
             id: platformTabListView
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            property int platformTabWidth: ((width > 0) && (count > 0)) ?
-                    Math.max(Math.min(Math.floor((width - (count + 1)) / count), 250), 140) : 250
+            property real platformTabWidth: ((count > 0) && (width > count)) ?
+                    Math.max(Math.min(((width - count) / count), 250), 140) : 250
 
             delegate: SGPlatformTab {
                 tabWidth: platformTabListView.platformTabWidth
@@ -172,6 +215,49 @@ Rectangle {
                     }
                     wheel.accepted = true
                 }
+            }
+        }
+
+        Rectangle {
+            id: platformRightArrow
+            Layout.preferredHeight:40
+            Layout.preferredWidth: 20
+            visible: (platformTabListView.contentWidth > platformTabListView.width)
+            color: rightArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            Timer {
+                id: rightArrowTimer
+                interval: 10; running: false; repeat: true
+                onTriggered:  {
+                    platformTabListView.contentX += 10
+                }
+            }
+
+            SGIcon {
+                id: rightArrowIcon
+                height: width
+                width: parent.width - 4
+                anchors {
+                    centerIn: parent
+                }
+                source: "qrc:/sgimages/chevron-right.svg"
+                iconColor : "white"
+            }
+
+            MouseArea {
+                id: rightArrowMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    platformTabListView.contentX += 100
+                }
+                onPressAndHold: {
+                    rightArrowTimer.running=true
+                }
+                onReleased: {
+                    rightArrowTimer.running=false
+                }
+                cursorShape: Qt.PointingHandCursor
             }
         }
 
