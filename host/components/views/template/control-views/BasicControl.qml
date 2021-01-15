@@ -8,8 +8,8 @@ import QtQuick.Controls 2.12
 
 Item {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
+    //    Layout.fillHeight: true
+    //    Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
     property var intervalState : 2000
@@ -20,15 +20,16 @@ Item {
     property var curve: timedGraphPoints.createCurve("movingCurve")
     property var curve2: timedGraphPoints.createCurve("movingCurve2")
     property var firstNotification: 1
+    property bool showGraph: true
 
     MouseArea {
         id: containMouseArea
-        anchors.fill:root
+        anchors.fill: root
+        z: 0
         onClicked: {
             forceActiveFocus()
         }
     }
-
 
     property var obj: {
         "notification" : {
@@ -57,6 +58,7 @@ Item {
 
 
     property var run_count: -1
+    property var run_countTextValue: 10
     property var my_cmd_simple_start_periodic_obj: {
         "cmd": "my_cmd_simple_periodic_update",
         "payload": {
@@ -74,6 +76,7 @@ Item {
         }
     }
 
+
     ColumnLayout {
         width: parent.width
         height: parent.height/1.1
@@ -85,6 +88,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 20
         spacing: 20
+
 
         Item {
             Layout.preferredHeight: parent.height/4
@@ -110,19 +114,6 @@ Item {
                 }
 
             }
-
-            //            Rectangle {
-            //                id: line1
-            //                height: 1.5
-            //                Layout.alignment: Qt.AlignCenter
-            //                width: parent.width
-            //                border.color: "lightgray"
-            //                radius: 2
-            //                anchors {
-            //                    top: headingCommandHandler.bottom
-            //                    topMargin: 7
-            //                }
-            //            }
             RowLayout {
                 anchors.top: headingCommandHandler.bottom
                 anchors.topMargin: 5
@@ -247,18 +238,6 @@ Item {
 
             }
 
-            //            Rectangle {
-            //                id: line2
-            //                height: 1.5
-            //                Layout.alignment: Qt.AlignCenter
-            //                width: parent.width
-            //                border.color: "lightgray"
-            //                radius: 2
-            //                anchors {
-            //                    top: periodicNotification.bottom
-            //                    topMargin: 7
-            //                }
-            //            }
 
             RowLayout {
                 anchors.top: periodicNotification.bottom
@@ -385,14 +364,18 @@ Item {
                                 property real lastTime
 
 
-                                Component.onCompleted: {
-                                    curve.color = "orange"
-                                    curve2.color = "blue"
-                                }
-
                                 Connections {
                                     target: platformInterface.notifications.my_cmd_simple_periodic
                                     onNotificationFinished: {
+                                        if(!showGraph) {
+                                            showGraph = true
+                                            timedGraphPoints.curve(0).clear()
+                                            timedGraphPoints.curve(1).clear()
+                                            firstNotification = 1
+                                        }
+                                        curve.color = "orange"
+                                        curve2.color = "blue"
+
                                         let dataArray = []
                                         let dataArray2 = []
                                         let random_float_array = platformInterface.notifications.my_cmd_simple_periodic.random_float_array
@@ -419,6 +402,7 @@ Item {
                                         }
                                         // If the array contains more than one value at the first notification, append all the data points on curve
                                         else if(firstNotification === 1) {
+                                            console.log(JSON.stringify(dataArray))
                                             curve.appendList(dataArray)
                                             curve2.appendList(dataArray2)
                                             firstNotification++
@@ -437,7 +421,7 @@ Item {
                                 minimumValue: 0                 // Default: 0
                                 maximumValue: 5               // Default: 100
                                 valueDecimalPlaces: 0
-                                // tickmarkStepSize: 0.5           // Default: (maxVal-minVal)/10
+                                tickmarkStepSize: 1           // Default: (maxVal-minVal)/10
                                 visible: buttonStrip2.index === 1 ? true : false
                             }
                         }
@@ -582,27 +566,14 @@ Item {
                                             checked: true
                                             onToggled: {
                                                 if(!checked) {
-                                                    //console.log(timedGraphPoints.count)
-                                                    timedGraphPoints.curve(0).clear()
-                                                    timedGraphPoints.curve(1).clear()
-                                                    firstNotification = 1
-                                                    //                                                    for (let i = 0; i < timedGraphPoints.count; i++) {
-                                                    //                                                        if (timedGraphPoints.curve(i).name === "movingCurve") {
-                                                    //                                                            timedGraphPoints.curve(0).clear()
-                                                    //                                                            break
-                                                    //                                                        }
-                                                    //                                                    }
-
+                                                    showGraph = false
+                                                    //                                                    timedGraphPoints.curve(0).clear()
+                                                    //                                                    timedGraphPoints.curve(1).clear()
+                                                    //                                                    firstNotification = 1
                                                 }
 
-                                                platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,checked)
+                                                platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,checked)
                                             }
-                                            //                                            onCheckedChanged: {
-                                            //                                                if(checked) {
-                                            //                                                    timedGraphPoints.xMin = 0
-                                            //                                                    timedGraphPoints.xMax = (intervalState/1000) * 5
-                                            //                                                }
-                                            //                                            }
                                         }
                                     }
                                 }
@@ -610,6 +581,7 @@ Item {
                                 Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
+
                                     SGAlignedLabel {
                                         id: intervalLabel
                                         target: interval
@@ -617,21 +589,28 @@ Item {
                                         font.bold: true
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideTopCenter
-
-                                        SGSubmitInfoBox {
+                                        SGInfoBox{
                                             id: interval
                                             width: 100
                                             text: "2000"
                                             unit: "ms"
+                                            readOnly: false
+
                                             validator: IntValidator {
                                                 bottom: 250
                                                 top: 10000
                                             }
                                             placeholderText: "250-10000"
                                             onEditingFinished:{
-                                                if(text) {
+                                                if(interval.text) {
                                                     intervalState = parseInt(text)
                                                     platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
+                                                }
+                                            }
+                                            onFocusChanged: {
+                                                if(!focus){
+                                                    console.log(focus)
+                                                    interval.text = intervalState.toString()
                                                 }
                                             }
                                         }
@@ -664,11 +643,12 @@ Item {
                                             onToggled: {
                                                 if(checked) {
                                                     run_count = -1
-                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,enableSwitch.checked)
+                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,-1,enableSwitch.checked)
                                                 }
                                                 else {
-                                                    run_count = parseInt(runcount.text)
-                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(parseInt(interval.text),run_count,enableSwitch.checked)
+                                                    console.info(run_countTextValue)
+                                                    run_count = run_countTextValue
+                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                                 }
                                             }
                                         }
@@ -689,7 +669,7 @@ Item {
                                         enabled: (runStateSwitch.checked) ? false : true
                                         opacity: (runStateSwitch.checked) ? 0.5 : 1.0
 
-                                        SGSubmitInfoBox {
+                                        SGInfoBox {
                                             id: runcount
                                             width: 90
                                             text: "10"
@@ -698,13 +678,21 @@ Item {
                                                 bottom: 1
                                             }
                                             unit: "  "
+                                            readOnly: false
+                                            enabled: (runStateSwitch.checked) ? false : true
+                                            opacity: (runStateSwitch.checked) ? 0.5 : 1.0
 
                                             onEditingFinished:{
-                                                if(text) {
+                                                if(runcount.text) {
                                                     run_count = parseInt(runcount.text)
+                                                    run_countTextValue = run_count
                                                     platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                                 }
                                             }
+                                            onFocusChanged: {
+                                                runcount.text = run_count.toString()
+                                            }
+
                                         }
                                     }
                                 }
