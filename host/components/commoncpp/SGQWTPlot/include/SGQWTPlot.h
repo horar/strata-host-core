@@ -17,7 +17,6 @@
 #include <qwt/qwt_plot_grid.h>
 #include <qwt/qwt_symbol.h>
 
-
 #include <QDebug>
 
 //forward declaration

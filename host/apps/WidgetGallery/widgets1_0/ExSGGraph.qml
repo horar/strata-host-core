@@ -453,7 +453,7 @@ Item {
                     curve.appendList(dataArray)
                     /*
                       To setSymbol() you need to pass in 4 arguments:
-                       SetSymbol (
+                      SetSymbol (
                                    Symbol Style (int),
                                    brush to fill the interior (string),
                                    outline pen(int),

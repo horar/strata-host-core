@@ -835,7 +835,6 @@ void SGQWTPlotCurve::setSymbol(int newStyle , QColor color , int penStyle , int 
     return curve_->setSymbol(new QwtSymbol(QwtSymbol::Style(newStyle),QBrush(color),QPen(penStyle),QSize(size,size)));
 }
 
-
 /*-----------------------
     SGQWTPlotCurveData Class
 ------------------------*/
