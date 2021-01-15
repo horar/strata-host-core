@@ -14,5 +14,6 @@
         <file>StatusNode.qml</file>
         <file>InfoPopup.qml</file>
         <file>ScrollbackView.qml</file>
+        <file>MessageEditor.qml</file>
     </qresource>
 </RCC>
