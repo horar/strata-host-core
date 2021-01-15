@@ -61,8 +61,7 @@ Widget09.SGResponsiveScrollView {
             }
             height: 200
             width: 200
-            minimumValue: 0
-            maximumValue: 100
+
             value: platformInterface._motor_speed
         }
     }
