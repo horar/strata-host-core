@@ -11,7 +11,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 Item {
     id: platformTabRoot
     height: 40
-    width: tabWidth
+    width: 250 // will be set by the listview
 
     property color menuColor: Theme.palette.green
 
@@ -24,7 +24,6 @@ Item {
     property int index: model.index
     property bool inView: NavigationControl.stack_container_.currentIndex === index + 1
     property string selectedButtonIcon: ""
-    property real tabWidth: 250 // will be set by the listview
 
     Component.onCompleted: {
         populateButtons()

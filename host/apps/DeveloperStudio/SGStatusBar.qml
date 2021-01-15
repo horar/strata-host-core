@@ -163,7 +163,7 @@ Rectangle {
                     Math.max(Math.min(((width - count) / count), 250), 140) : 250
 
             delegate: SGPlatformTab {
-                tabWidth: platformTabListView.platformTabWidth
+                width: platformTabListView.platformTabWidth
             }
             orientation: ListView.Horizontal
             spacing: 1
