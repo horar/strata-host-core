@@ -784,8 +784,11 @@ if(NOT LIB_INSTALLED)
             SOURCE_DIR ${SOURCE_DIR_EXTERN}/libzmq
             EXCLUDE_FROM_ALL ON
             CMAKE_ARGS "${CMAKE_ARGS}"
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DCMAKE_MACOSX_RPATH=1
+                -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+                -DCMAKE_MACOSX_RPATH=1
+                -DWITH_PERF_TOOL=OFF
+                -DZMQ_BUILD_TESTS=OFF
+                -DENABLE_CPACK=OFF
 
             INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
         )
