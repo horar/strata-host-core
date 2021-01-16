@@ -789,13 +789,8 @@ else()
     if(WIN32)
         # TODO: RS: File output build dependency for ExternalProject_Add in CMake
         # https://jira.onsemi.com/browse/CS-1442
-        if("${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}" STREQUAL "Debug")
-            file(COPY "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmqd${CMAKE_SHARED_LIBRARY_SUFFIX}"
-                    DESTINATION "${CMAKE_BINARY_DIR}/bin")
-        else()
-            file(COPY "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
-                    DESTINATION "${CMAKE_BINARY_DIR}/bin")
-        endif()
+        file(COPY "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            DESTINATION "${CMAKE_BINARY_DIR}/bin")
     endif()
 endif()
 
