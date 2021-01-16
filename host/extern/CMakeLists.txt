@@ -765,7 +765,12 @@ if(NOT LIB_INSTALLED)
             INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}
             SOURCE_DIR ${SOURCE_DIR_EXTERN}/libzmq
             EXCLUDE_FROM_ALL ON
-            CMAKE_ARGS "${CMAKE_ARGS}" -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PDB_OUTPUT_DIRECTORY=<INSTALL_DIR>/bin
+            CMAKE_ARGS "${CMAKE_ARGS}"
+                -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+                -DCMAKE_PDB_OUTPUT_DIRECTORY=<INSTALL_DIR>/bin
+                -DWITH_PERF_TOOL=OFF
+                -DZMQ_BUILD_TESTS=OFF
+                -DENABLE_CPACK=OFF
 
             PATCH_COMMAND ${GIT_EXECUTABLE} reset --hard && ${GIT_EXECUTABLE} apply --verbose --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/libzmq/jom-build-support.patch
             && ${GIT_EXECUTABLE} apply --verbose --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/libzmq/remove-library-name-postfix.patch
