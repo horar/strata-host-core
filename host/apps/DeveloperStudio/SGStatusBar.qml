@@ -139,7 +139,8 @@ Rectangle {
                     centerIn: parent
                 }
                 source: "qrc:/sgimages/chevron-left.svg"
-                iconColor : parent.leftArrowActive ? "white" : "grey"
+                iconColor : "white"
+                opacity: parent.leftArrowActive ? 1 : 0.4
             }
 
             MouseArea {
@@ -248,7 +249,7 @@ Rectangle {
 
         Rectangle {
             id: platformRightArrow
-            Layout.preferredHeight:40
+            Layout.preferredHeight: 40
             Layout.preferredWidth: 20
 
             property bool rightArrowActive: platformTabListView.contentX < Math.max(platformTabListView.contentWidth - platformTabListView.width, 0)
@@ -275,7 +276,8 @@ Rectangle {
                     centerIn: parent
                 }
                 source: "qrc:/sgimages/chevron-right.svg"
-                iconColor : parent.rightArrowActive ? "white" : "grey"
+                iconColor : "white"
+                opacity: parent.rightArrowActive ? 1 : 0.4
             }
 
             MouseArea {
