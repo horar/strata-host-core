@@ -112,14 +112,20 @@ Rectangle {
 
         Rectangle {
             id: platformLeftArrow
-            Layout.preferredHeight:40
+            Layout.preferredHeight: 40
             Layout.preferredWidth: 20
-            visible: (platformTabListView.contentWidth > platformTabListView.width)
-            color: leftArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            property bool leftArrowActive: platformTabListView.contentX > 0
+
+            visible: platformTabListView.contentWidth > platformTabListView.width
+
+            color: leftArrowMouse.containsMouse && leftArrowActive ? Qt.darker(Theme.palette.green, 1.15) : "#444"
 
             Timer {
                 id: leftArrowTimer
-                interval: 10; running: false; repeat: true
+                interval: 10
+                running: false
+                repeat: true
                 onTriggered:  {
                     platformTabListView.setPlatformTabContentX(-30)
                 }
@@ -133,7 +139,7 @@ Rectangle {
                     centerIn: parent
                 }
                 source: "qrc:/sgimages/chevron-left.svg"
-                iconColor : "white"
+                iconColor : parent.leftArrowActive ? "white" : "grey"
             }
 
             MouseArea {
@@ -145,10 +151,10 @@ Rectangle {
                     platformTabListView.setPlatformTabContentX(-100)
                 }
                 onPressAndHold: {
-                    leftArrowTimer.running=true
+                    leftArrowTimer.start()
                 }
                 onReleased: {
-                    leftArrowTimer.running=false
+                    leftArrowTimer.stop()
                 }
                 cursorShape: Qt.PointingHandCursor
             }
@@ -159,11 +165,15 @@ Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            property real platformTabWidth: ((count > 0) && (width > count)) ?
-                    Math.max(Math.min(((width - count) / count), 250), 140) : 250
+            property int platformTabWidth: ((count > 0) && (width > count)) ?
+                    Math.max(Math.min(Math.floor((width - count) / count), 250), 140) : 250
+
+            property int platformTabWidthRemainder : (platformTabWidth < 250) ?
+                    Math.max(width - ((platformTabWidth * count) + count), 0) : 0
 
             delegate: SGPlatformTab {
-                width: platformTabListView.platformTabWidth
+                width: platformTabListView.platformTabWidth +
+                       (index == (platformTabListView.count - 1) ? platformTabListView.platformTabWidthRemainder : 0)
             }
             orientation: ListView.Horizontal
             spacing: 1
@@ -175,7 +185,6 @@ Rectangle {
             model: NavigationControl.platform_view_model_
 
             flickableDirection: Flickable.HorizontalFlick
-            boundsMovement: Flickable.StopAtBounds
             boundsBehavior: Flickable.StopAtBounds
 
             Behavior on contentX {
@@ -241,12 +250,18 @@ Rectangle {
             id: platformRightArrow
             Layout.preferredHeight:40
             Layout.preferredWidth: 20
-            visible: (platformTabListView.contentWidth > platformTabListView.width)
-            color: rightArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            property bool rightArrowActive: platformTabListView.contentX < Math.max(platformTabListView.contentWidth - platformTabListView.width, 0)
+
+            visible: platformTabListView.contentWidth > platformTabListView.width
+
+            color: rightArrowMouse.containsMouse && rightArrowActive ? Qt.darker(Theme.palette.green, 1.15) : "#444"
 
             Timer {
                 id: rightArrowTimer
-                interval: 10; running: false; repeat: true
+                interval: 10
+                running: false
+                repeat: true
                 onTriggered:  {
                     platformTabListView.setPlatformTabContentX(30)
                 }
@@ -260,7 +275,7 @@ Rectangle {
                     centerIn: parent
                 }
                 source: "qrc:/sgimages/chevron-right.svg"
-                iconColor : "white"
+                iconColor : parent.rightArrowActive ? "white" : "grey"
             }
 
             MouseArea {
@@ -272,10 +287,10 @@ Rectangle {
                     platformTabListView.setPlatformTabContentX(100)
                 }
                 onPressAndHold: {
-                    rightArrowTimer.running=true
+                    rightArrowTimer.start()
                 }
                 onReleased: {
-                    rightArrowTimer.running=false
+                    rightArrowTimer.stop()
                 }
                 cursorShape: Qt.PointingHandCursor
             }
