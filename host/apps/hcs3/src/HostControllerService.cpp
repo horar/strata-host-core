@@ -580,10 +580,37 @@ void HostControllerService::onCmdAdjustController(const rapidjson::Value *payloa
     }
     int deviceId = deviceIdValue.GetInt();
 
-    qCWarning(logCategoryHcs) << "XXXXX";
+    strata::device::DevicePtr device = boardsController_.getDevice(deviceId);
+    if (device == nullptr) {
+        qCWarning(logCategoryHcs).nospace() << "device_id 0x" << hex << static_cast<uint>(deviceId) << " doesn't exist";
+        return;
+    }
 
-    // get firmware url
-    emit firmwareUpdateRequested(clientId, deviceId, QUrl(""), "", false);
+    if (device->isControllerConnectedToPlatform() == false) {
+        qCWarning(logCategoryHcs) << "controller (dongle) is not connected to platform (board)";
+        return;
+    }
+
+    QString classId = device->classId();
+    QString controllerClassId = device->controllerClassId();
+    if (classId.isEmpty() || controllerClassId.isEmpty()) {
+        qCWarning(logCategoryHcs) << "classId or controllerClassId is not set";
+        return;
+    }
+
+    QString architecture = storageManager_.getControllerClassDevice(controllerClassId);
+    if (architecture.isEmpty()) {
+        qCWarning(logCategoryHcs) << "cannot get device architecture";
+        return;
+    }
+
+    QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(classId, architecture);
+    if (firmware.first.isEmpty()) {
+        qCWarning(logCategoryHcs) << "cannot get latest firmware";
+        return;
+    }
+
+    emit firmwareUpdateRequested(clientId, deviceId, firmware.first, firmware.second, true);
 }
 
 void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)

@@ -74,6 +74,43 @@ QUrl StorageManager::getBaseUrl() const
     return baseUrl_;
 }
 
+QString StorageManager::getControllerClassDevice(const QString &classId)
+{
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc) {
+        QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+        if (firmwareList.isEmpty() == false) {
+            return firmwareList.first().controllerClassDevice;
+        }
+    }
+
+    return QString();
+}
+
+QPair<QUrl,QString> StorageManager::getLatestFirmware(const QString &classId, const QString &controllerClassDevice)
+{
+    QUrl uri;
+    QString md5;
+
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc) {
+        QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+        QString timestamp;  // timestamp is empty
+        for (const auto &item : firmwareList) {
+            if (item.controllerClassDevice == controllerClassDevice) {
+                if (item.timestamp > timestamp) {  // empty string is "less" than non-empty
+                    timestamp = item.timestamp;
+                    uri = item.partialUri;
+                    md5 = item.md5;
+                }
+            }
+        }
+    }
+
+    return qMakePair(uri, md5);
+}
+
+
 QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix) const
 {
     QString tmpName = QDir(prefix).filePath( item );

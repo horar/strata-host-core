@@ -113,7 +113,7 @@ bool PlatformDocument::parseDocument(const QString &document)
         // TODO: Nowadays, server does not support firmware object. Return false when it will be supported.
         //return false;
     }
-    else {  // TODO: Remove this else line when server will support firmware object.
+    else {  // TODO: Remove this else line when server will support firmware object. Do not remove content of else block.
         QJsonValue firmwareValue = rootObject.value("firmware");
         if (firmwareValue.isArray()) {
             populateFirmwareList(firmwareValue.toArray(), firmwareList_);
@@ -129,7 +129,7 @@ bool PlatformDocument::parseDocument(const QString &document)
         // TODO: Nowadays, server does not support control_view object. Return false when it will be supported.
         //return false;
     }
-    else {  // TODO: Remove this else line when server will support control_view object.
+    else {  // TODO: Remove this else line when server will support control_view object. Do not remove content of else block.
         QJsonValue controlViewValue = rootObject.value("control_view");
         if (controlViewValue.isArray()) {
             populateControlViewList(controlViewValue.toArray(), controlViewList_);
@@ -201,22 +201,34 @@ bool PlatformDocument::populateFileObject(const QJsonObject &jsonObject, Platfor
 
 bool PlatformDocument::populateFirmwareObject(const QJsonObject &jsonObject, FirmwareFileItem &firmwareFile)
 {
-    if (jsonObject.contains("file") == false
-            || jsonObject.contains("device") == false
-            || jsonObject.contains("md5") == false
-            || jsonObject.contains("timestamp") == false
-            || jsonObject.contains("version") == false)
-    {
-        return false;
+    uint flags = 0x00;
+    bool success = false;
+
+    if (jsonObject.contains("file"))      { flags |= 0x01; }  // 00001
+    if (jsonObject.contains("device"))    { flags |= 0x02; }  // 00010
+    if (jsonObject.contains("md5"))       { flags |= 0x04; }  // 00100
+    if (jsonObject.contains("timestamp")) { flags |= 0x08; }  // 01000
+    if (jsonObject.contains("version"))   { flags |= 0x10; }  // 10000
+
+    switch (flags) {
+    case 0x1F :
+        firmwareFile.partialUri = jsonObject.value("file").toString();
+        firmwareFile.controllerClassDevice = jsonObject.value("device").toString();
+        firmwareFile.md5 = jsonObject.value("md5").toString();
+        firmwareFile.timestamp = jsonObject.value("timestamp").toString();
+        firmwareFile.version = jsonObject.value("version").toString();
+        success = true;
+        break;
+    case 0x02 :
+        firmwareFile.controllerClassDevice = jsonObject.value("device").toString();
+        success = true;
+        break;
+    default :
+        success = false;
+        break;
     }
 
-    firmwareFile.partialUri = jsonObject.value("file").toString();
-    firmwareFile.controllerClassDevice = jsonObject.value("device").toString();
-    firmwareFile.md5 = jsonObject.value("md5").toString();
-    firmwareFile.timestamp = jsonObject.value("timestamp").toString();
-    firmwareFile.version = jsonObject.value("version").toString();
-
-    return true;
+    return success;
 }
 
 bool PlatformDocument::populateControlViewObject(const QJsonObject &jsonObject, ControlViewFileItem &controlViewFile)
