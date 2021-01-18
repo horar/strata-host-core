@@ -1,0 +1,43 @@
+{
+  "_id": "6057eb97-5e00-4adc-8bff-9c5e8205b353",
+  "_rev": "2-ab508f6626ea92a2c03774bb901e6b29",
+  "channels": "6057eb97-5e00-4adc-8bff-9c5e8205b353",
+  "control_view": [
+    {
+      "file": "ota/4add1ba7e5b821e0d8f0974cdbc21975.rcc",
+      "filename": "views-bldcMotorControl",
+      "filesize": 1000,
+      "md5": "4add1ba7e5b821e0d8f0974cdbc21975",
+      "name": "views-bldcMotorControl",
+      "prettyName": "views-bldcMotorControl",
+      "timestamp": "2020-11-03T03:39:25.180Z",
+      "version": "2.0.2"
+    }
+  ],
+  "documents": {
+    "datasheets": [
+      
+    ],
+    "downloads": [
+      
+    ],
+    "views": [
+      
+    ]
+  },
+  "firmware": [
+    {
+      "device": "water-heater"
+    }
+  ],
+  "name": "STR-WATER-HEATER-GEVB",
+  "platform_selector": {
+    "file": "6057eb97-5e00-4adc-8bff-9c5e8205b353/8fd574a9a22c59d5348e1fe4b13336a5.jpeg",
+    "filename": "image.jpeg",
+    "filesize": "38314",
+    "md5": "8fd574a9a22c59d5348e1fe4b13336a5",
+    "name": "platform_selector",
+    "prettyName": "image.jpeg",
+    "timestamp": "2020-11-03T03:39:25.176Z"
+  }
+}

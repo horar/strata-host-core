@@ -9,6 +9,43 @@
                 "order": false,
                 "unlisted": false
             },
+            "class_id": "7bdcea96-0fb8-41de-9822-dec20ae1032a",
+            "description": "Mock for assisted Strata testing. Level shifters.",
+            "filters": [
+                "segment-automotive",
+                "segment-iot",
+                "category-interface",
+                "subcategory-interface-usbc"
+            ],
+            "opn": "STR-LEVEL-SHIFTERS-GEVB",
+            "verbose_name": "Level Shifters",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": true,
+                "documents": true,
+                "order": true,
+                "unlisted": false
+            },
+            "class_id": "15411d3f-829f-4b65-b607-13e8dec840aa",
+            "description": "Mock for assisted Strata testing. The Strata low voltage DC-DC evaluation boards series is an evaluation environment for NCV81599 Automotive Buck Boost Controller",
+            "filters": [
+                "segment-automotive",
+                "category-power-management",
+                "subcategory-powerman-dcdc"
+            ],
+            "opn": "STR-PWRNCV81599-R0-GEVK",
+            "verbose_name": "NCV81599 Automotive Buck Boost Controller",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": false,
+                "documents": true,
+                "order": false,
+                "unlisted": false
+            },
             "class_id": "202",
             "description": "The 2-Port USB-PD Source showcases ON Semiconductor's broad portfolio of USB-PD power solutions.",
             "filters": [

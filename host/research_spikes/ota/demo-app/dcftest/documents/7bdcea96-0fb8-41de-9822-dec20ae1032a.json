@@ -1,0 +1,269 @@
+{
+  "_id": "7bdcea96-0fb8-41de-9822-dec20ae1032a",
+  "_rev": "5-3ea8d8fab95c7cf9a2dd266b7deafe75",
+  "channels": "7bdcea96-0fb8-41de-9822-dec20ae1032a",
+  "documents": {
+    "datasheets": [
+      {
+        "category": "Discretes \u0026 Drivers",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/1SMB5913BT3-D.PDF",
+        "name": "1SMB5937BT3G",
+        "opn": "1SMB5937BT3G",
+        "subcategory": "Diodes \u0026 Rectifiers"
+      },
+      {
+        "category": "Discretes \u0026 Drivers",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/MBRAF360-D.PDF",
+        "name": "NRVBAF360T3G",
+        "opn": "NRVBAF360T3G",
+        "subcategory": "Diodes \u0026 Rectifiers"
+      },
+      {
+        "category": "Discretes \u0026 Drivers",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/NVMFS5C460NL-D.PDF",
+        "name": "NVMFS5C460NLAFT1G",
+        "opn": "NVMFS5C460NLAFT1G",
+        "subcategory": "MOSFETs"
+      },
+      {
+        "category": "Discretes \u0026 Drivers",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/NZ9F2V4S-D.PDF",
+        "name": "NZ9F3V3ST5G",
+        "opn": "NZ9F3V3ST5G",
+        "subcategory": "Diodes \u0026 Rectifiers"
+      },
+      {
+        "category": "Discretes \u0026 Drivers",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/BZX84C2V4LT1-D.PDF",
+        "name": "SZBZX84C15LT1G",
+        "opn": "SZBZX84C15LT1G",
+        "subcategory": "Diodes \u0026 Rectifiers"
+      },
+      {
+        "category": "Power Management",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/NCV6357-D.PDF",
+        "name": "NCV6357MTWDTXG",
+        "opn": "NCV6357MTWDTXG",
+        "subcategory": "DC-DC Controllers, Converters, \u0026 Regulators"
+      },
+      {
+        "category": "Power Management",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/NCV881930-D.PDF",
+        "name": "NCV881930MW00R2G",
+        "opn": "NCV881930MW00R2G",
+        "subcategory": "DC-DC Controllers, Converters, \u0026 Regulators"
+      },
+      {
+        "category": "Memory",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/CAT24C512-D.PDF",
+        "name": "CAT24C512HU5IGT3",
+        "opn": "CAT24C512HU5IGT3",
+        "subcategory": "EEPROM Memory"
+      },
+      {
+        "category": "Discretes \u0026 Drivers",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/2N7002W-D.PDF",
+        "name": "2V7002W",
+        "opn": "2V7002W",
+        "subcategory": "MOSFETs"
+      },
+      {
+        "category": "Discretes \u0026 Drivers",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/NVATS5A108PLZ-D.PDF",
+        "name": "NVATS5A108PLZ",
+        "opn": "NVATS5A108PLZ",
+        "subcategory": "MOSFETs"
+      },
+      {
+        "category": "Amplifiers \u0026 Comparators",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/NCS210R-D.PDF",
+        "name": "NCS214RSQT2G",
+        "opn": "NCS214RSQT2G",
+        "subcategory": "Current Sense Amplifiers"
+      },
+      {
+        "category": "Sensors",
+        "datasheet": "https://www.onsemi.com/pub/Collateral/NCT375-D.PDF",
+        "name": "NCT375MNR2G",
+        "opn": "NCT375MNR2G",
+        "subcategory": "Thermal Management"
+      }
+    ],
+    "downloads": [
+      {
+        "file": "243/cad/0c3a25e37c1e95076dcb70e663611dbf.DSN",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_cad.DSN",
+        "filesize": "660480",
+        "md5": "0c3a25e37c1e95076dcb70e663611dbf",
+        "name": "cad",
+        "order": 1,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_cad.DSN",
+        "timestamp": "2020-04-11T02:11:44.794Z"
+      },
+      {
+        "file": "243/cad/110821e49f53f4a12a03ea02fc4610bf.brd",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_cad.brd",
+        "filesize": "5666020",
+        "md5": "110821e49f53f4a12a03ea02fc4610bf",
+        "name": "cad",
+        "order": 1,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_cad.brd",
+        "timestamp": "2020-04-11T02:11:44.795Z"
+      },
+      {
+        "file": "243/bom/b4747486358c55cab63eff57d71dc02e.xlsx",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_bom.xlsx",
+        "filesize": "23907",
+        "md5": "b4747486358c55cab63eff57d71dc02e",
+        "name": "bom",
+        "order": 0,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_bom.xlsx",
+        "timestamp": "2020-04-11T02:11:44.797Z"
+      },
+      {
+        "file": "243/fab/a03ddfa5bad6ddfe17d34e25ca7f8f46.pdf",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_fab.pdf",
+        "filesize": "357341",
+        "md5": "a03ddfa5bad6ddfe17d34e25ca7f8f46",
+        "name": "fab",
+        "order": 2,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_fab.pdf",
+        "timestamp": "2020-04-11T02:11:44.799Z"
+      },
+      {
+        "file": "243/fab/4543431004e6015fc01b0e49d97ad6d4.bin",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_fab.bin",
+        "filesize": "141136",
+        "md5": "4543431004e6015fc01b0e49d97ad6d4",
+        "name": "fab",
+        "order": 2,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_fab.bin",
+        "timestamp": "2020-04-11T02:11:44.800Z"
+      },
+      {
+        "file": "243/fab/5e968193ad922a38a8d73a959c950141.zip",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_fab.zip",
+        "filesize": "668421",
+        "md5": "5e968193ad922a38a8d73a959c950141",
+        "name": "fab",
+        "order": 2,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_fab.zip",
+        "timestamp": "2020-04-11T02:11:44.801Z"
+      }
+    ],
+    "views": [
+      {
+        "file": "243/schematic/4d6b75166103e5ab3a588c624799c1d3.pdf",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_schematic.pdf",
+        "filesize": "143081",
+        "md5": "4d6b75166103e5ab3a588c624799c1d3",
+        "name": "schematic",
+        "order": 4,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_schematic.pdf",
+        "timestamp": "2020-04-11T02:11:44.775Z"
+      },
+      {
+        "file": "243/test_report/b53ee0550e255cf7076496975eafba5f.pdf",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_test_report.pdf",
+        "filesize": "1986771",
+        "md5": "b53ee0550e255cf7076496975eafba5f",
+        "name": "test_report",
+        "order": 5,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_test_report.pdf",
+        "timestamp": "2020-04-11T02:11:44.777Z"
+      },
+      {
+        "file": "243/demo_setup/7fb1b511239feb6a95717b0f55c6f3e8.pdf",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_demo_setup.pdf",
+        "filesize": "323989",
+        "md5": "7fb1b511239feb6a95717b0f55c6f3e8",
+        "name": "demo_setup",
+        "order": 2,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_demo_setup.pdf",
+        "timestamp": "2020-04-11T02:11:44.779Z"
+      },
+      {
+        "file": "243/user_guide/bf8584824dc09529ffc9759738e42bc5.pdf",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_user_guide.pdf",
+        "filesize": "1362761",
+        "md5": "bf8584824dc09529ffc9759738e42bc5",
+        "name": "user_guide",
+        "order": 6,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_user_guide.pdf",
+        "timestamp": "2020-04-11T02:11:44.781Z"
+      },
+      {
+        "file": "243/block_diagram/ea4601a938e2886e9865a593e129711f.pdf",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_block_diagram.pdf",
+        "filesize": "71441",
+        "md5": "ea4601a938e2886e9865a593e129711f",
+        "name": "block_diagram",
+        "order": 1,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_block_diagram.pdf",
+        "timestamp": "2020-04-11T02:11:44.787Z"
+      },
+      {
+        "file": "243/layout/c4fcf6c35998e18335d67a4b3b468f92.pdf",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_layout.pdf",
+        "filesize": "867418",
+        "md5": "c4fcf6c35998e18335d67a4b3b468f92",
+        "name": "layout",
+        "order": 3,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_layout.pdf",
+        "timestamp": "2020-04-11T02:11:44.788Z"
+      },
+      {
+        "file": "243/application_note/e11ca280edbcba91ff5e6bf7e35cd5ec.pdf",
+        "filename": "STR-ADAS-PREREGULATOR-GEVB_application_note.pdf",
+        "filesize": "911496",
+        "md5": "e11ca280edbcba91ff5e6bf7e35cd5ec",
+        "name": "application_note",
+        "order": 0,
+        "prettyName": "STR-ADAS-PREREGULATOR-GEVB_application_note.pdf",
+        "timestamp": "2020-04-11T02:11:44.789Z"
+      },
+      {
+        "file": "243/datasheet/datasheet.csv",
+        "filename": "datasheet.csv",
+        "filesize": 1106,
+        "md5": "f0dd58ed7a3bbfc2e691c46bee6a5201",
+        "name": "datasheet",
+        "prettyName": "datasheet.csv",
+        "timestamp": "2020-04-11T02:11:44.802Z"
+      }
+    ],
+    "firmware": [
+      {
+        "file": "str-level-shifters-gevb-v001.bin",
+        "device": "water-heater",
+        "md5": "00000000000000000000000000000001",
+        "timestamp": "2021-01-18 12:41:26",
+        "version": "0.0.1"
+      },
+      {
+        "file": "str-level-shifters-gevb-v102.bin",
+        "device": "water-heater",
+        "md5": "00000000000000000000000000000002",
+        "timestamp": "2020-06-25 12:41:31",
+        "version": "1.0.2"
+      },
+      {
+        "file": "str-level-shifters-gevb-rsl10-v110.bin",
+        "device": "RSL10",
+        "md5": "00000000000000000000000000000003",
+        "timestamp": "2021-01-20 13:41:31",
+        "version": "1.1.0"
+      }
+    ]
+  },
+  "name": "STR-LEVEL-SHIFTERS-GEVB",
+  "platform_selector": {
+    "file": "7bdcea96-0fb8-41de-9822-dec20ae1032a/platform_selector/thumb.jpeg",
+    "filename": "thumbnail",
+    "filesize": "10112",
+    "md5": "ad6d3f9463b9e919bf8d04f7655ea761",
+    "name": "platform_selector",
+    "prettyName": "thumbnail",
+    "timestamp": "2020-04-11T02:11:44.802Z"
+  }
+}
