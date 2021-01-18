@@ -362,12 +362,12 @@ void StorageManager::requestPlatformDocuments(
     QJsonArray controlViewList, firmwareList;
 
     //firmwares
-    QList<VersionedFileItem> firmwareItems = platDoc->getFirmwareList();
+    QList<FirmwareFileItem> firmwareItems = platDoc->getFirmwareList();
     for (const auto &item : firmwareItems) {
         QJsonObject object {
             {"uri", item.partialUri},
+            {"device", item.controllerClassDevice},
             {"md5", item.md5},
-            {"name", item.name},
             {"timestamp", item.timestamp},
             {"version", item.version}
         };
@@ -376,7 +376,7 @@ void StorageManager::requestPlatformDocuments(
     }
 
     //control views
-    QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
+    QList<ControlViewFileItem> controlViewItems = platDoc->getControlViewList();
     for (const auto &item : controlViewItems) {
         QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views" + (classId.isEmpty() ? "" : "/" + classId));
         if (downloadManager_->verifyFileHash(filePath, item.md5) == false) {
