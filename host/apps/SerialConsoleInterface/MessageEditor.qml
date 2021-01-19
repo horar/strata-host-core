@@ -282,7 +282,7 @@ FocusScope {
             if (item.isJsonValid) {
                 edit.text = CommonCpp.SGJsonFormatter.prettifyJson(item.message)
             } else {
-                edit.text = CommonCpp.SGJsonFormatter.minifyJson(item.message)
+                edit.text = item.message
             }
         }
 

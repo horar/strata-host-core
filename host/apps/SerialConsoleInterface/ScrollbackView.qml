@@ -261,7 +261,13 @@ Item {
                     iconSize: scrollbackView.buttonRowIconSize
                     icon.source: "qrc:/images/redo.svg"
                     onClicked: {
-                        resendMessageRequested(CommonCpp.SGJsonFormatter.prettifyJson(model.message))
+                        if (model.isJsonValid) {
+                            var msg = CommonCpp.SGJsonFormatter.prettifyJson(model.message)
+                        } else {
+                            msg = model.message
+                        }
+
+                        resendMessageRequested(msg)
                     }
                 }
             }
