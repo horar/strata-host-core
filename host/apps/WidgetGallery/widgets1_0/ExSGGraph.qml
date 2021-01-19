@@ -441,7 +441,6 @@ Item {
                 yMax: 1
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
-                fontSizeMultiplier: fontSlider.value
 
                 Component.onCompleted: {
                     let curve = styleGraph.createCurve("graphCurve" + styleGraph.count)
