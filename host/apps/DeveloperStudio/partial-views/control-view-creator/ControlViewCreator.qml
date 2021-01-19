@@ -331,11 +331,35 @@ Rectangle {
                 id:consoleContainer
             }
         }
+
+        ConfirmClosePopup {
+            id: confirmBuildClean
+
+            visible: isConfirmCloseOpen
+            titleText: "Stopping build due to unsaved changes in this file"
+            popupText: "Some Files have unsaved Changes Would you like to save the changes or revert the file changes?"
+
+            acceptButtonText: "Save File"
+            closeButtonText: "Revert"
+
+            onPopupClosed: {
+                if(closeReason === acceptCloseReason){
+                    editor.openFilesModel.saveFileAt(editor.openFilesModel.currentIndex, false)
+                } else if(closeReason === closeFilesReason){
+                    editor.openFilesModel.closeTabAt(editor.openFilesModel.currentIndex)
+
+                }
+                isConfirmCloseOpen = false
+                toolBarListView.recompiling = false
+            }
+        }
     }
     function recompileControlViewQrc () {
-        if (editor.fileTreeModel.url.toString() !== '') {
+        if (editor.fileTreeModel.url.toString() !== '' && editor.openFilesModel.getUnsavedCount() === 0) {
             recompileRequested = true
             sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
+        } else if(editor.openFilesModel.getUnsavedCount() > 0){
+            isConfirmCloseOpen = true;
         }
     }
 
