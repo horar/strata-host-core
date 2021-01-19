@@ -356,7 +356,7 @@ bool DownloadManager::postNextDownloadRequest(InternalDownloadRequest *internalR
         return false;
     }
 
-    qCDebug(logCategoryDownloadManager) << "start download " << internalRequest->url << "into" << internalRequest->savedFile.fileName();
+    qCDebug(logCategoryDownloadManager) << "start download " << internalRequest->url.toString() << "into" << internalRequest->savedFile.fileName();
 
     QNetworkReply *reply = postNetworkRequest(internalRequest->url, internalRequest);
     if (reply == nullptr) {
@@ -378,7 +378,7 @@ void DownloadManager::processRequest(InternalDownloadRequest *internalRequest, c
 
     qCDebug(logCategoryDownloadManager)
             << "download item"
-            << internalRequest->url << internalRequest->originalFilePath;
+            << internalRequest->url.toString() << "to" << internalRequest->originalFilePath;
 
     if (request.url.isValid() == false) {
         internalRequest->state = InternalDownloadRequest::DownloadState::FinishedWithError;
