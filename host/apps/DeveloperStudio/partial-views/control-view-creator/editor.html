@@ -62,7 +62,7 @@
             monaco.languages.setMonarchTokensProvider('qml',{
                 tokenizer: {
                     root: [
-                        [/\/\/[\w\s]*/ ,'comment'],
+                        [/(?:\r\n|\n|^)(?:[^'"])*?(?:'(?:[^\r\n\\']|\\'|[\\]{2})*'|"(?:[^\r\n\\"]|\\"|[\\]{2})*")*?(?:[^'"])*?(\/\*(?:[\s\S]*?)\*\/|\/\/.*)/ ,'comment'],
                         [/\b(import)\s+/, 'import-statement'],
                         [/([\w\d\.]+)\s+(\d+\.\d+)(?:\s+(as)\s+([A-Z][\w\d]*))?/, 'namespace'],
                         [/(\"[^\"]+\")(?:\s+(as)\s+([A-Z][\w\d]*))?/, 'dirjs'],
