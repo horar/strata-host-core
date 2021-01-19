@@ -103,7 +103,7 @@ void SciScrollbackModel::append(const QByteArray &message, bool isRequest)
         if (condensedMode_) {
             item.message = SGJsonFormatter::minifyJson(message);
         } else {
-            item.message = SGJsonFormatter::prettifyJson(message);
+            item.message = SGJsonFormatter::prettifyJson(message, true);
         }
     } else {
         //store invalid json message as is
@@ -145,7 +145,7 @@ void SciScrollbackModel::setIsCondensedAll(bool condensed)
         if (condensed) {
             item.message = SGJsonFormatter::minifyJson(item.message);
         } else {
-            item.message = SGJsonFormatter::prettifyJson(item.message);
+            item.message = SGJsonFormatter::prettifyJson(item.message, true);
         }
     }
 
@@ -166,7 +166,7 @@ void SciScrollbackModel::setIsCondensed(int index, bool condensed)
     if (condensed) {
         data_[index].message = SGJsonFormatter::minifyJson(data_.at(index).message);
     } else {
-        data_[index].message = SGJsonFormatter::prettifyJson(data_.at(index).message);
+        data_[index].message = SGJsonFormatter::prettifyJson(data_.at(index).message, true);
     }
 
     emit dataChanged(

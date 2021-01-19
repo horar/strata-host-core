@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
 )
 
 generate_app_version(GITTAG_PREFIX "rccutil_" MACBUNDLE OFF)
+generate_app_build_timestamp()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON

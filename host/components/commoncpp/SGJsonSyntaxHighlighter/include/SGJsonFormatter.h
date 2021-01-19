@@ -41,8 +41,8 @@ public:
      */
     Q_INVOKABLE static QString prettifyJson(
             const QString &jsonString,
-            int indentSize=4,
-            bool softWrap=true);
+            bool softWrap=false,
+            int indentSize=4);
 
     /*!
      * Removes all unnecessary white spaces from valid json string.
