@@ -609,8 +609,9 @@ void HostControllerService::onCmdAdjustController(const rapidjson::Value *payloa
         qCWarning(logCategoryHcs) << "cannot get latest firmware";
         return;
     }
+    QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
 
-    emit firmwareUpdateRequested(clientId, deviceId, firmware.first, firmware.second, true);
+    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmware.second, true);
 }
 
 void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)

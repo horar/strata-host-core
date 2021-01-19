@@ -76,6 +76,8 @@ QUrl StorageManager::getBaseUrl() const
 
 QString StorageManager::getControllerClassDevice(const QString &classId)
 {
+    qCDebug(logCategoryHcsStorage) << "Searching for controller class device of" << classId;
+
     PlatformDocument *platfDoc = fetchPlatformDoc(classId);
     if (platfDoc) {
         QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
@@ -89,6 +91,8 @@ QString StorageManager::getControllerClassDevice(const QString &classId)
 
 QPair<QUrl,QString> StorageManager::getLatestFirmware(const QString &classId, const QString &controllerClassDevice)
 {
+    qCDebug(logCategoryHcsStorage) << "Searching for latest firmware URI for" << classId << "and" << controllerClassDevice;
+
     QUrl uri;
     QString md5;
 
