@@ -38,6 +38,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/SGNewControlView.cpp
     $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
     source/RunGuard.cpp
+    source/UrlConfiguration.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp
