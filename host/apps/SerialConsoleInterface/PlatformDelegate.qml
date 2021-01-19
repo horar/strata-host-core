@@ -355,12 +355,10 @@ FocusScope {
 
                     spacing: 6
 
-                    SGWidgets.SGButton {
-                        id: buttonItem
+                    SGWidgets.SGIconButton {
                         anchors.verticalCenter: parent.verticalCenter
-
+                        hintText: "Clear input"
                         icon.source: "qrc:/sgimages/broom.svg"
-                        scaleToFit: true
                         onClicked: {
                             messageEditor.forceActiveFocus()
                             messageEditor.clear()
