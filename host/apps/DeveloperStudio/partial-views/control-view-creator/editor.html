@@ -72,11 +72,12 @@
                         [/\b(signal)\s+(\w+)\s/,'signal-def'],
                         [/;|(?=\/)|$/,'signal-handler'],
                         [/(\w+)\s+(\w+)/,'signal-params'],
-                        [/(?:\b|\s+)(?:(true|false|null|undefined)|(var|void|const|let)|(on|as|enum|connect|break|case|catch|continue|debugger|default|delete|do|else|finally|for|if|in|instanceof|new|return|switch|this|throw|try|typeof|while|with))\b/, 'js-def'],
+                        [/(?:\b|\s+)(?:(true|false|null|undefined)|(var|void|const|let)|(as|enum|connect|break|case|catch|continue|debugger|default|delete|do|else|finally|for|if|in|instanceof|new|return|switch|this|throw|try|typeof|while|with))\b/, 'js-def'],
                         [/\b(function)\s+([\w_]+)\s*(?=\()/, 'function-handler'],
                         [/\b[\w_]+\s*(?=\()/,'func-call'],
                         [/(?:^|\{|;)\s*[a-z][\w\.]*\s*(?=\:)/,'prop-def'],
                         [/(?:\&lt;=\.)\b\w*/,'var-name'],
+                        [/\b([A-Za-z_]\w*)\b/,'assumed-variable']
                     ]
                 }
             })
@@ -125,7 +126,8 @@
                     {token: 'function-handler', foreground: '#C6CC18'},
                     {token: 'func-call', foreground: '#000000'},
                     {token: 'prop-def', foreground: '#D41142'},
-                    {token: 'var-name', foreground: '#9542A6'},
+                    {token: 'var-name', foreground: '#000000', fontStyle: 'italic'},
+                    {token: 'assumed-variable', foreground: "#000000", fontStyle: 'italic'},
                 ]
             })
 
