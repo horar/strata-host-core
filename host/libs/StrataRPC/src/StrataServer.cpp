@@ -303,6 +303,8 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
                 clientsController_->unregisterClient(clientMessage.clientID);
                 return;
             }
+        } else {
+            qCDebug(logCategoryStrataServer) << "No API version in payload, Assuming API v2.";
         }
     }
 
