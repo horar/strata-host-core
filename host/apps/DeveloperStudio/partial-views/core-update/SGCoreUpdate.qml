@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "qrc:/partial-views"
 import "../status-bar"
+import '../'
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -119,16 +120,12 @@ SGStrataPopup {
                 }
 
                 onClicked: {
-                  function checkReply(reply) {
-                        if (reply !== "") {
-                            console.error(Logger.devStudioCategory, "Received error message:", reply)
-                            errorPopup.popupText = reply
-                            errorPopup.open()
-                        }
-                    }
-
                     var reply = coreUpdate.requestUpdateApplication()
-                    checkReply(reply)
+                    if (reply !== "") {
+                        console.error(Logger.devStudioCategory, "Received error message:", reply)
+                        errorPopup.popupText = reply
+                        errorPopup.open()
+                    }
                     root.close()
                 }
             }
@@ -168,16 +165,20 @@ SGStrataPopup {
 
     SGConfirmationPopup {
         id: errorPopup
-        cancelButtonText: ""
-        acceptButtonText: "OK"
-        titleText: "Error"
+        titleText: "Error when trying to perform software update"
         popupText: ""
 
-        Connections {
-            target: errorPopup.acceptButton
-            onClicked: {
-                errorPopup.close()
-            }
-        }
+        property var closeButtonObject: [{
+            buttonText: closeButtonText,
+            buttonColor: closeButtonColor,
+            buttonHoverColor: closeButtonHoverColor,
+            closeReason: popupCloseReason
+        }]
+        property color closeButtonColor: "#999"
+        property color closeButtonHoverColor: "#666"
+        property string closeButtonText: "Close"
+        readonly property int popupCloseReason: 2
+
+        buttons: closeButtonObject
     }
 }
