@@ -334,8 +334,8 @@ Rectangle {
 
         ConfirmClosePopup {
             id: confirmBuildClean
+            parent: mainWindow.contentItem
 
-            visible: isConfirmCloseOpen
             titleText: "Stopping build due to unsaved changes in this file"
             popupText: "Some Files have unsaved Changes Would you like to save the changes or revert the file changes?"
 
@@ -359,7 +359,8 @@ Rectangle {
             recompileRequested = true
             sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
         } else if(editor.openFilesModel.getUnsavedCount() > 0){
-            isConfirmCloseOpen = true;
+            confirmBuildClean.open();
+            recompileRequested = false
         }
     }
 
