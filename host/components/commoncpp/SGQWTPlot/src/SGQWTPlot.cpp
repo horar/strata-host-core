@@ -665,7 +665,6 @@ SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
     curve_->setData(new SGQWTPlotCurveData(&curveData_));
     curve_->setPaintAttribute( QwtPlotCurve::FilterPoints , true );
     curve_->setItemAttribute(QwtPlotItem::AutoScale, true);
-
 }
 
 SGQWTPlotCurve::~SGQWTPlotCurve()
@@ -832,14 +831,8 @@ void SGQWTPlotCurve::shiftPoints(double offsetX, double offsetY)
 
 void SGQWTPlotCurve::setSymbol(int newStyle , QColor color , int penStyle , int size)
 {
-
-    //    symbol_= new QwtSymbol();
-    //    symbol_->setSize(size,size);
-    //    symbol_->setBrush(QBrush(color));
-    //    symbol_->setPen(QPen(penStyle));
-    //    symbol_->setStyle(QwtSymbol::Style(newStyle));
-    //    curve_->setSymbol(symbol_);
     curve_->setSymbol(new QwtSymbol(QwtSymbol::Style(newStyle),QBrush(color),QPen(penStyle),QSize(size,size)));
+
     if (autoUpdate_) {
         update();
     }

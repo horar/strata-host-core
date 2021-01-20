@@ -442,8 +442,6 @@ Item {
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
 
-
-
                 Component.onCompleted: {
                     let curve = styleGraph.createCurve("graphCurve" + styleGraph.count)
                     curve.color = sgGraphExample.randomColor()
@@ -497,8 +495,7 @@ Item {
                         "CustomDashLine" = 6
                          ------------------------------------------------
                     */
-                      curve.setSymbol(2,"gray", 0 , 7)
-
+                    curve.setSymbol(2,"gray", 0 , 7)
                 }
             }
 
@@ -511,18 +508,16 @@ Item {
                 Button {
                     text: "Clear Symbol"
                     onClicked: {
-                       styleGraph.curve(0).setSymbol(-1,"gray", 0 , 7)
+                        styleGraph.curve(0).setSymbol(-1,"gray", 0 , 7)
                     }
                 }
                 Button {
                     text: "Random Symbol"
                     onClicked: {
-                       styleGraph.curve(0).setSymbol(randomStyle(),"gray", 0 , 7)
+                        styleGraph.curve(0).setSymbol(randomStyle(),"gray", 0 , 7)
                     }
                 }
-
             }
-
         }
 
         Row {
@@ -646,6 +641,6 @@ Item {
         return Qt.rgba(Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, 1)
     }
     function randomStyle() {
-      return Math.random() * (14 - 0) + 0;
+        return Math.random() * (14 - 0) + 0;
     }
 }
