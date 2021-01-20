@@ -157,7 +157,7 @@ Rectangle {
                 onReleased: {
                     leftArrowTimer.stop()
                 }
-                cursorShape: Qt.PointingHandCursor
+                cursorShape: parent.leftArrowActive ? Qt.PointingHandCursor : Qt.ArrowCursor
             }
         }
 
@@ -294,7 +294,7 @@ Rectangle {
                 onReleased: {
                     rightArrowTimer.stop()
                 }
-                cursorShape: Qt.PointingHandCursor
+                cursorShape: parent.rightArrowActive ? Qt.PointingHandCursor : Qt.ArrowCursor
             }
         }
 
