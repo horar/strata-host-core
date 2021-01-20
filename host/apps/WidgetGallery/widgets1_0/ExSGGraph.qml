@@ -442,9 +442,12 @@ Item {
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
 
+
+
                 Component.onCompleted: {
                     let curve = styleGraph.createCurve("graphCurve" + styleGraph.count)
                     curve.color = sgGraphExample.randomColor()
+
                     let dataArray = []
                     for (let i = 0; i <= 5; i++) {
                         dataArray.push({"x":i/5, "y":sgGraphExample.yourDataValueHere()})
@@ -478,7 +481,7 @@ Item {
                         VLine = 11,     //Vertical line.
                         Star1 = 12,     //X combined with +.
                         Star2 = 13,     //Six-pointed star.
-                        Hexagon = 14   //Hexagon.
+                        Hexagon = 14  //Hexagon.
                         ----------------------------------------------
 
                         ------------------------------------------------
@@ -494,8 +497,30 @@ Item {
                         "CustomDashLine" = 6
                          ------------------------------------------------
                     */
-                    curve.setSymbol(2,"gray", 0 , 7)
+                      curve.setSymbol(2,"gray", 0 , 7)
+
                 }
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+
+                Button {
+                    text: "Clear Symbol"
+                    onClicked: {
+                       styleGraph.curve(0).setSymbol(-1,"gray", 0 , 7)
+                    }
+                }
+                Button {
+                    text: "Random Symbol"
+                    onClicked: {
+                       styleGraph.curve(0).setSymbol(randomStyle(),"gray", 0 , 7)
+                    }
+                }
+
             }
 
         }
@@ -619,5 +644,8 @@ Item {
 
     function randomColor() {
         return Qt.rgba(Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, 1)
+    }
+    function randomStyle() {
+      return Math.random() * (14 - 0) + 0;
     }
 }

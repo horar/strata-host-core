@@ -203,7 +203,6 @@ public:
     Q_INVOKABLE void setSymbol(int newStyle , QColor color ,  int penStyle , int size);
 
 
-
 protected:
     void setGraph(SGQWTPlot* graph);
     void unsetGraph();
