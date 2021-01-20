@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
         QObject::tr("Clear cache data of Host Controller Service for <stage>."),
     });
     parser.addPositionalArgument(QStringLiteral("<stage>"),
-                                QCoreApplication::translate("main", "Specifies folder to be cleared."));
+                                QObject::tr("Specifies folder to be cleared."));
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
@@ -64,11 +64,12 @@ int main(int argc, char *argv[])
         if (stageArgs.count() == 0 ) {
             qInfo() << "Folder with application cached data not entered. Listing all potential folders:" ;
             QDir dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-            dir.setFilter(QDir::AllDirs);
+            dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
 
             QStringList list = dir.entryList();
-            for (const auto& i : list) 
+            for (const auto& i : list) {
                 qInfo() << i;
+            }
             return EXIT_FAILURE;
         } 
         else if (stageArgs.count() > 1) {
@@ -85,7 +86,7 @@ int main(int argc, char *argv[])
         qDebug() << "Cache location:" << cacheDir;
 
         QDir dir(cacheDir);
-        if (!dir.exists()) {
+        if (dir.exists() == false) {
             qWarning() << "Choosen folder with application cached data does not exist!";
             return EXIT_FAILURE;
         }
