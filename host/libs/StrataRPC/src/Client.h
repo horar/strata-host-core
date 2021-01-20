@@ -33,6 +33,11 @@ public:
      */
     [[nodiscard]] ApiVersion getApiVersion() const;
 
+    /**
+     * Updates client's API version
+     */
+    void UpdateClientApiVersion(ApiVersion newAPIVersion);
+
 private:
     QByteArray clientId_;
     ApiVersion APIVersion_;

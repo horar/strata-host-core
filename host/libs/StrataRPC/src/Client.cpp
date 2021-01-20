@@ -20,3 +20,8 @@ ApiVersion Client::getApiVersion() const
 {
     return APIVersion_;
 }
+
+void Client::UpdateClientApiVersion(ApiVersion newAPIVersion)
+{
+    APIVersion_ = newAPIVersion;
+}

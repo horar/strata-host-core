@@ -104,3 +104,19 @@ void ClientsControllerTest::testGetClient()
     QCOMPARE_(client.getClientID(), "AA");
     QCOMPARE_(client.getApiVersion(), strata::strataRPC::ApiVersion::v1);
 }
+
+void ClientsControllerTest::testUpdateClientApiVersion() 
+{
+    ClientsController clientsController;
+    clientsController.registerClient(Client("AA", strata::strataRPC::ApiVersion::v1));
+
+    Client client = clientsController.getClient("AA");
+    QCOMPARE_(client.getApiVersion(), strata::strataRPC::ApiVersion::v1);
+
+    QVERIFY_(false == clientsController.updateClientApiVersion("INVALID_ID", strata::strataRPC::ApiVersion::v2));
+
+    QVERIFY_(clientsController.updateClientApiVersion("AA", strata::strataRPC::ApiVersion::v2));
+    
+    Client clientUpdated = clientsController.getClient("AA");
+    QCOMPARE_(clientUpdated.getApiVersion(), strata::strataRPC::ApiVersion::v2);
+}

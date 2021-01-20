@@ -90,3 +90,18 @@ Client ClientsController::getClient(const QByteArray &clientId)
     }
     return clientsList_[std::distance(clientsList_.begin(), it)];
 }
+
+bool ClientsController::updateClientApiVersion(const QByteArray &clientId, ApiVersion newApiVersion)
+{
+    qCDebug(logCategoryStrataClientsController) << "Updating API Version. client id:" << clientId;
+    auto it = std::find_if(clientsList_.begin(), clientsList_.end(), [&clientId](Client &client) {
+        return client.getClientID() == clientId;
+    });
+    if (it == clientsList_.end()) {
+        qCDebug(logCategoryStrataClientsController)
+            << "Client is not registered. clientId: " << clientId;
+        return false;
+    }
+    it->UpdateClientApiVersion(newApiVersion);
+    return true;
+}

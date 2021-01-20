@@ -72,6 +72,14 @@ public:
      */
     [[nodiscard]] Client getClient(const QByteArray &clientId);
 
+    /**
+     * Updates client's API version
+     * @param [in] clientId client id to update its API version
+     * @param [in] newAPIVersion new API Version.
+     * @return True if the client was found and its API Version got updated, False otherwise.
+     */
+    bool updateClientApiVersion(const QByteArray &clientId, ApiVersion newApiVersion);
+
 private:
     QList<Client> clientsList_;
 };
