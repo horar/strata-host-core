@@ -66,10 +66,12 @@ int ClassDocuments::loadingProgressPercentage() const
 
 void ClassDocuments::loadPlatformDocuments()
 {
-    setLoadingProgressPercentage(0);
-    setLoading(true);
-    setErrorString("");
-    coreInterface_->loadDocuments(classId_);
+    if(classId_ != "help_docs_demo") {
+        setLoadingProgressPercentage(0);
+        setLoading(true);
+        setErrorString("");
+        coreInterface_->loadDocuments(classId_);
+    }
 }
 
 void ClassDocuments::updateLoadingProgress(QJsonObject data)

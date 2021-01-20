@@ -2,6 +2,7 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <SGUtilsCpp.h>
+#include <SGJsonFormatter.h>
 
 #include <QJsonDocument>
 #include <QStandardPaths>
@@ -136,6 +137,19 @@ bool SciPlatform::programInProgress() const
     return programInProgress_;
 }
 
+QString SciPlatform::deviceName() const
+{
+    return deviceName_;
+}
+
+void SciPlatform::setDeviceName(const QString &deviceName)
+{
+    if (deviceName_ != deviceName) {
+        deviceName_ = deviceName;
+        emit deviceNameChanged();
+    }
+}
+
 void SciPlatform::resetPropertiesFromDevice()
 {
     if (device_ == nullptr) {
@@ -159,43 +173,49 @@ void SciPlatform::resetPropertiesFromDevice()
     setVerboseName(verboseName);
     setAppVersion(appVersion);
     setBootloaderVersion(bootloaderVersion);
+    setDeviceName(device_->deviceName());
 }
 
-bool SciPlatform::sendMessage(const QByteArray &message, bool onlyValidJson)
+QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
 {
+    QVariantMap retStatus;
+
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
 
-        setErrorString("Platform not connected");
-        return false;
+        retStatus["error"] = "not_connected";
+        return retStatus;
     }
 
-    QByteArray compactMessage = message;
+    QByteArray messageUtf8 = message.toUtf8();
+
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(messageUtf8, &parseError);
+    bool isJsonValid = parseError.error == QJsonParseError::NoError;
+
     if (onlyValidJson) {
-        QJsonParseError parseError;
-        QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
-
-        if (parseError.error != QJsonParseError::NoError) {
-            QString error = QString("JSON error at position %1 - %2")
-                    .arg(parseError.offset)
-                    .arg(parseError.errorString());
-
-            setErrorString(error);
-            return false;
+        if (isJsonValid == false) {
+            retStatus["error"] = "json_error";
+            retStatus["offset"] = parseError.offset;
+            retStatus["message"] = parseError.errorString();
+            return retStatus;
         }
 
-        compactMessage = SGUtilsCpp::minifyJson(message);
+        messageUtf8 = doc.toJson(QJsonDocument::Compact);
     } else {
-        compactMessage = compactMessage.replace('\n',"");
+        ; //message is sent as is
     }
 
-    bool result = device_->sendMessage(compactMessage);
+    bool result = device_->sendMessage(messageUtf8);
     if (result) {
-        commandHistoryModel_->add(compactMessage);
+        commandHistoryModel_->add(messageUtf8, isJsonValid);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+        retStatus["error"] = "no_error";
+    } else {
+        retStatus["error"] = "send_error";
     }
 
-    return result;
+    return retStatus;
 }
 
 bool SciPlatform::programDevice(QString filePath, bool doBackup)
@@ -243,12 +263,12 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
 
 void SciPlatform::messageFromDeviceHandler(QByteArray message)
 {
-    scrollbackModel_->append(message, SciScrollbackModel::MessageType::Response);
+    scrollbackModel_->append(message, false);
 }
 
 void SciPlatform::messageToDeviceHandler(QByteArray message)
 {
-    scrollbackModel_->append(message, SciScrollbackModel::MessageType::Request);
+    scrollbackModel_->append(message, true);
 }
 
 void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)

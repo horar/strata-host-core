@@ -3,6 +3,8 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
+import tech.strata.commoncpp 1.0 as CommonCpp
+
 
 SGWidgets.SGDialog {
     id: dialog
@@ -43,16 +45,14 @@ SGWidgets.SGDialog {
         id: filterConditionModel
 
         ListElement {
-            property: ""
             condition: "equal"
-            value: ""
+            filter_string: ""
         }
 
         function addNew() {
             var item = {
-                "property": "",
                 "condition": "equal",
-                "value": ""
+                "filter_string": ""
             }
             append(item)
         }
@@ -84,29 +84,21 @@ SGWidgets.SGDialog {
 
                 Item {
                     id: header
-                    height: Math.max(headerFirstLabel.contentHeight, headerThirdLabel.contentHeight) + 4
+                    height: headerThirdLabel.contentHeight + 4
                     width: headerThirdLabel.x + headerThirdLabel.width
-
-                    SGWidgets.SGText {
-                        id: headerFirstLabel
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: contentColumn.firstColumnCenter - width / 2
-
-                        text: "Attribute"
-                    }
 
                     SGWidgets.SGText {
                         id: headerThirdLabel
                         anchors.verticalCenter: parent.verticalCenter
                         x: contentColumn.thirdColumnCenter - width / 2
 
-                        text: "Value"
+                        text: "Filter String"
                     }
                 }
 
                 ListView {
                     id: conditionView
-                    width: contentColumn.delegateWidth + 8
+                    width: contentColumn.delegateWidth
                     height: 180
 
                     model: filterConditionModel
@@ -143,7 +135,7 @@ SGWidgets.SGDialog {
                             if (index === 0) {
                                 contentColumn.delegateWidth = width
                                 contentColumn.firstColumnCenter = nameFieldTextField.x + nameFieldTextField.width / 2
-                                contentColumn.thirdColumnCenter = valueTextField.x + valueTextField.width / 2
+                                contentColumn.thirdColumnCenter = filterStringTextField.x + filterStringTextField.width / 2
                             }
                         }
 
@@ -181,18 +173,12 @@ SGWidgets.SGDialog {
                         Row {
                             id: contentRow
                             spacing: 4
-                            SGWidgets.SGTextField {
+
+                            SGWidgets.SGText {
                                 id: nameFieldTextField
-
-                                onTextChanged: {
-                                    filterConditionModel.setProperty(index, "property", text)
-                                }
-
-                                Binding {
-                                    target: nameFieldTextField
-                                    property: "text"
-                                    value: model["property"]
-                                }
+                                anchors.verticalCenter: contentRow.verticalCenter
+                                text: "Value\nattribute "
+                                horizontalAlignment: Text.AlignHCenter
                             }
 
                             ComboBox {
@@ -231,16 +217,16 @@ SGWidgets.SGDialog {
                             }
 
                             SGWidgets.SGTextField {
-                                id: valueTextField
+                                id: filterStringTextField
 
                                 onTextChanged: {
-                                    filterConditionModel.setProperty(index, "value", text)
+                                    filterConditionModel.setProperty(index, "filter_string", text)
                                 }
 
                                 Binding {
-                                    target: valueTextField
+                                    target: filterStringTextField
                                     property: "text"
-                                    value: model["value"]
+                                    value: model["filter_string"]
                                 }
                             }
 
@@ -289,18 +275,23 @@ SGWidgets.SGDialog {
                 }
             }
 
-            SGWidgets.SGText {
+            CommonCpp.SGJsonSyntaxHighlighter {
+                textDocument: noteText.textDocument
+            }
+
+            SGWidgets.SGTextEdit {
                 id: noteText
                 width: conditionView.width
-                wrapMode: Text.Wrap
-                text: "Example:"
-                      + "<pre><b>{<br>"
-                      + "    \"notification\": {<br>"
-                      + "        <font color='green'>\"attribute-1\"</font>:<font color='green'>\"value-1\"</font>,<br>"
-                      + "        <font color='green'>\"attribute-2\"</font>:<font color='green'>\"value-2\"</font><br>"
-                      + "    }<br>"
-                      + "}</pre></b>"
-                      + "Note: only first-level attribute-value pairs of notification element are checked."
+                wrapMode: Text.WordWrap
+                font.family: "monospace"
+                enabled: false
+                text: "Example:\n"
+                      + "{\n"
+                      + "    \"notification\": {\n"
+                      + "        \"value\": \"get_firmware_info\",\n"
+                      + "        \"payload\": {...}\n"
+                      + "    }\n"
+                      + "}"
             }
         }
     }
@@ -330,7 +321,7 @@ SGWidgets.SGDialog {
         for (var i = 0; i < filterConditionModel.count; ++i) {
             var item = filterConditionModel.get(i)
 
-            if (item["property"].length > 0) {
+            if (item["filter_string"].length > 0) {
                 list.push(item)
             }
         }

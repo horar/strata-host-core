@@ -59,11 +59,9 @@ Rectangle {
 
         property Item callback: null
 
-        Connections {
-            target: warningPop.acceptButton
-            onClicked: {
+        onPopupClosed: {
+            if (closeReason === warningPop.acceptCloseReason) {
                 warningPop.callback.callback()
-                warningPop.close()
             }
         }
     }

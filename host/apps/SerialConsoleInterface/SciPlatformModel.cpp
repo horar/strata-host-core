@@ -140,6 +140,7 @@ void SciPlatformModel::boardConnectedHandler(int deviceId)
         platformList_.at(index)->setErrorString("");
         platformList_.at(index)->setDevice(boardManager_->device(deviceId));
         platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Connected);
+        platformList_.at(index)->resetPropertiesFromDevice();
 
         emit platformConnected(index);
     }
@@ -155,9 +156,9 @@ void SciPlatformModel::boardReadyHandler(int deviceId, bool recognized)
 
     SciPlatform *platform = platformList_[index];
 
-    if (recognized) {
-        platform->resetPropertiesFromDevice();
+    platform->resetPropertiesFromDevice();
 
+    if (recognized) {
         SciPlatformSettingsItem *settingsItem = sciSettings_.getBoardData(platform->verboseName());
         if (settingsItem != nullptr) {
             platform->commandHistoryModel()->populate(settingsItem->commandHistoryList);
@@ -199,7 +200,7 @@ void SciPlatformModel::appendNewPlatform(int deviceId)
 {
     strata::device::DevicePtr device = boardManager_->device(deviceId);
     if (device == nullptr) {
-        qCCritical(logCategorySci()) << "device not found by its id";
+        qCCritical(logCategorySci) << "device not found by its id";
         return;
     }
 
@@ -210,6 +211,7 @@ void SciPlatformModel::appendNewPlatform(int deviceId)
     item->setStatus(SciPlatform::PlatformStatus::Connected);
     item->scrollbackModel()->setMaximumCount(maxScrollbackCount_);
     item->commandHistoryModel()->setMaximumCount(maxCmdInHistoryCount_);
+    item->setDeviceName(device->deviceName());
     platformList_.append(item);
 
     endInsertRows();

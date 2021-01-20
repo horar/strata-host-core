@@ -17,6 +17,30 @@ Item {
     property int controlViewListCount: controlViewList.count
     property bool controlLoaded: false
 
+    Loader {
+        id: controlLoader
+        anchors.fill: parent
+        asynchronous: true
+
+        onStatusChanged: {
+            if (status === Loader.Ready) {
+                // Tear Down creation context
+                delete NavigationControl.context.class_id
+                delete NavigationControl.context.device_id
+
+                controlLoaded = true
+                loadingBarContainer.visible = false;
+                loadingBar.value = 0.0;
+            } else if (status === Loader.Error) {
+                // Tear Down creation context
+                delete NavigationControl.context.class_id
+                delete NavigationControl.context.device_id
+
+                createErrorScreen("Failed to load file: " + source + "\nError: " + sourceComponent.errorString());
+            }
+        }
+    }
+
     SGText {
         anchors.centerIn: parent
         text: "Loading Control View..."
@@ -67,35 +91,6 @@ Item {
         }
     }
 
-    Item {
-        id: controlContainer
-        anchors.fill: parent
-
-        Loader {
-            id: controlLoader
-            anchors.fill: parent
-            asynchronous: true
-
-            onStatusChanged: {
-                if (status === Loader.Ready) {
-                    // Tear Down creation context
-                    delete NavigationControl.context.class_id
-                    delete NavigationControl.context.device_id
-
-                    controlLoaded = true
-                    loadingBarContainer.visible = false;
-                    loadingBar.value = 0.0;
-                } else if (status === Loader.Error) {
-                    // Tear Down creation context
-                    delete NavigationControl.context.class_id
-                    delete NavigationControl.context.device_id
-
-                    createErrorScreen("Failed to load file: " + source + "\nError: " + sourceComponent.errorString());
-                }
-            }
-        }
-    }
-
     DisconnectedOverlay {
         visible: platformStack.connected === false
     }
@@ -120,7 +115,7 @@ Item {
     }
 
     /*
-      Loads Control.qml from the installed resource file into controlContainer
+      Loads Control.qml from the installed resource file into controlLoader
     */
     function loadControl () {
 
@@ -223,7 +218,7 @@ Item {
     */
     function cleanUpResources() {
         for (let i = 0; i < otaVersionsToRemove.length; i++) {
-            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlContainer);
+            sdsModel.resourceLoader.requestUnregisterDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlLoader);
         }
 
         otaVersionsToRemove = []
@@ -284,7 +279,7 @@ Item {
     }
 
     /*
-      Removes the control view from controlContainer
+      Registers a resource file by path and version
     */
     function registerResource (filepath, version) {
         let success = sdsModel.resourceLoader.registerControlViewResource(filepath, platformStack.class_id, version);
@@ -298,7 +293,7 @@ Item {
     }
 
     /*
-      Removes the control view from controlContainer
+      Removes the control view from controlLoader
     */
     function removeControl () {
         if (controlLoaded) {
@@ -308,7 +303,7 @@ Item {
     }
 
     /*
-      Populates controlContainer with an error string
+      Populates controlLoader with an error string
     */
     function createErrorScreen(errorString) {
         removeControl();
