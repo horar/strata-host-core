@@ -294,16 +294,9 @@ Item {
 
         visible: qmlErrorModel.count !== 0
         text: qsTr("%1 QML warnings").arg(qmlErrorModel.count)
+        checked: qmlErrorListPopUp.visible
 
-        onCheckedChanged: {
-            if (checked) {
-                qmlErrorListPopUp.open()
-                stopAnimation()
-            } else {
-                qmlErrorListPopUp.close()
-                startAnimation()
-            }
-        }
+        onCheckedChanged: checked ? qmlErrorListPopUp.open() : qmlErrorListPopUp.close()
 
         ListModel {
             id: qmlErrorModel
@@ -319,18 +312,10 @@ Item {
 
     SGQmlErrorListPopUp {
         id: qmlErrorListPopUp
-
         topMargin: 32
         leftMargin: 32
-        topPadding: errorListDetailsChecked ? undefined : 1
-        bottomPadding: errorListDetailsChecked ? undefined : 1
-
-        anchors.centerIn: errorListDetailsChecked ? ApplicationWindow.overlay : undefined
-        opacity: errorListDetailsChecked ? 0.9 : 0.7
-
+        anchors.centerIn: ApplicationWindow.overlay
         title: qmlErrorListButton.text
-
-
         qmlErrorListModel: qmlErrorModel
     }
 }

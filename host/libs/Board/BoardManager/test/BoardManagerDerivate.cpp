@@ -10,9 +10,10 @@ BoardManagerDerivate::BoardManagerDerivate() : BoardManager()
 {
 }
 
-void BoardManagerDerivate::init(bool requireFwInfoResponse)
+void BoardManagerDerivate::init(bool requireFwInfoResponse, bool keepDevicesOpen)
 {
     reqFwInfoResp_ = requireFwInfoResponse;
+    keepDevicesOpen_ = keepDevicesOpen;
 }
 
 void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString deviceName)
@@ -59,14 +60,11 @@ void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString de
         serialPortsList_ = std::move(ports);
     }
 
-    if (deleted.empty() == false || opened.empty() == false) {
-        for (auto deletedDeviceId : deleted) {
-            emit boardDisconnected(deletedDeviceId);
-        }
-        for (auto openedDeviceId : opened) {
-            emit boardConnected(openedDeviceId);
-        }
-        emit readyDeviceIdsChanged();
+    for (auto deletedDeviceId : deleted) {
+        emit boardDisconnected(deletedDeviceId);
+    }
+    for (auto openedDeviceId : opened) {
+        emit boardConnected(openedDeviceId);
     }
 }
 
