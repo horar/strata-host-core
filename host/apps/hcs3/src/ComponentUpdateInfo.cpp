@@ -200,20 +200,25 @@ QString ComponentUpdateInfo::launchMaintenanceTool(const QString &absPathMainten
         (maintenanceToolProcess.waitForFinished(MAINTENANCE_TOOL_FINISH_TIMEOUT) == false) ||
         (maintenanceToolProcess.exitStatus() != QProcess::NormalExit) ||
         (maintenanceToolProcess.exitCode() != EXIT_SUCCESS)) {
-        return "Error checking for updates (" +
-                QString::number(maintenanceToolProcess.error()) + "): " + maintenanceToolProcess.errorString()
-                + ", error output: " + maintenanceToolProcess.readAllStandardError();
+        // Note that when no updates are available, the exit code will be 1
+        QString errorOutput = maintenanceToolProcess.readAllStandardError();
+        if ((maintenanceToolProcess.exitCode() == EXIT_FAILURE) && errorOutput.startsWith("There are currently no updates available.")) {
+            qCInfo(logCategoryHcs) << "No updates available";
+            return QString();
+        } else {
+            qCCritical(logCategoryHcs) << "Error code returned when checking for updates (" +
+                    QString::number(maintenanceToolProcess.error()) + "): " +
+                    maintenanceToolProcess.errorString() + ", error output: " + errorOutput;
+            return "Error code returned when checking for updates";
+        }
     }
 
     // Read the output
     QByteArray maintenanceToolOutput = maintenanceToolProcess.readAllStandardOutput();
-
-    // No output means no updates available
-    // Note that the exit code will also be 1, but we don't use that
-    // Also note that we should parse the output instead of just checking if it is empty if we want specific update info
     if (maintenanceToolOutput.isEmpty()) {
-        qCInfo(logCategoryHcs) << "No updates available";
-        return QString();
+        qCCritical(logCategoryHcs) << "Error acquiring maintenance tool output: no standard output, error output: " +
+                                      maintenanceToolProcess.readAllStandardError();
+        return "Error acquiring maintenance tool output";
     }
 
     QString updateData = maintenanceToolOutput;
