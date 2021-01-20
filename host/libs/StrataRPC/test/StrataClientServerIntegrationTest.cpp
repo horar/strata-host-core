@@ -32,7 +32,7 @@ void StrataClientServerIntegrationTest::testSingleClient()
     bool clientReceivedPlatformNotification = false;
     bool clientReceivedServerNotification = false;
 
-    StrataServer server(address_);
+    StrataServer server(address_, false);
     StrataClient client(address_);
 
     // Server handlers
@@ -201,7 +201,7 @@ void StrataClientServerIntegrationTest::testMultipleClients()
     bool client2ReceivedServerResponse = false;
     bool client2ReceivedServerBroadcast = false;
 
-    StrataServer server(address_);
+    StrataServer server(address_, false);
     StrataClient client_1(address_, "client_1");
     StrataClient client_2(address_, "client_2");
 

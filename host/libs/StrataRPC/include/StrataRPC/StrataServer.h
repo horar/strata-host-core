@@ -19,8 +19,10 @@ public:
     /**
      * StrataServer constructor
      * @param [in] address Sets the server address
+     * @param [in] useDefaultHandlers boolean to use the built in handlers for register_client and
+     * unregister commands. The default value is true.
      */
-    StrataServer(QString address, QObject *parent = nullptr);
+    StrataServer(QString address, bool useDefaultHandlers = true, QObject *parent = nullptr);
 
     /**
      * StrataServer destructor

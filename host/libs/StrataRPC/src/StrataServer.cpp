@@ -8,12 +8,16 @@
 
 using namespace strata::strataRPC;
 
-StrataServer::StrataServer(QString address, QObject *parent)
+StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *parent)
     : QObject(parent),
       dispatcher_(new Dispatcher(this)),
       clientsController_(new ClientsController(this)),
       connector_(new ServerConnector(address, this))
 {
+    if (true == useDefaultHandlers) {
+        dispatcher_->registerHandler("register_client", std::bind(&StrataServer::registerNewClientHandler, this, std::placeholders::_1));
+        dispatcher_->registerHandler("unregister", std::bind(&StrataServer::unregisterClientHandler, this, std::placeholders::_1));
+    }
 }
 
 StrataServer::~StrataServer()
@@ -279,6 +283,29 @@ void StrataServer::registerNewClientHandler(const Message &clientMessage)
 {
     qCDebug(logCategoryStrataServer)
         << "Handle New Client Registration. Client ID:" << clientMessage.clientID;
+
+    // Find the client API version, if it was v1, ignore the parsing.
+    if (ApiVersion currentApiVersion =
+            clientsController_->getClientApiVersion(clientMessage.clientID);
+        ApiVersion::v1 != currentApiVersion) {
+        if (true == clientMessage.payload.contains("api_version") &&
+            true == clientMessage.payload.value("api_version").isString()) {
+            
+            QString apiVersionPayload = clientMessage.payload.value("api_version").toString();
+            
+            // list of available api versions.
+            if (apiVersionPayload == "2.0") {
+                clientsController_->updateClientApiVersion(clientMessage.clientID, ApiVersion::v2);
+            } else {
+                qCCritical(logCategoryStrataServer) << "Unknown API version.";
+                notifyClient(clientMessage, {{"massage", "Failed to register client, Unknown API Version."}},
+                     ResponseType::Error);
+                clientsController_->unregisterClient(clientMessage.clientID);
+                return;
+            }
+        }
+    }
+
     if (true == clientsController_->isRegisteredClient(clientMessage.clientID)) {
         notifyClient(clientMessage, {{"status", "client registered."}}, ResponseType::Response);
     } else {
