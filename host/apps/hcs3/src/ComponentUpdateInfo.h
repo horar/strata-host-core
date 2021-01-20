@@ -24,6 +24,8 @@ private:
 
     QString parseUpdateMetadata(const QDomDocument &xmlDocument, const QMap<QString, QString>& componentMap, QJsonArray &updateInfo);
 
+    QString parseUpdateSize(QString updateSize);
+
     QString getCurrentVersionOfComponents(QMap<QString, QString>& componentMap);
 
     QString acquireUpdateMetadata(QString &updateMetadata);

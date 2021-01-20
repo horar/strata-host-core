@@ -97,6 +97,11 @@ function processUpdateInfo (component_list) {
             continue;
         }
 
+        if ((component_list[i].hasOwnProperty("update_size") === false) || (component_list[i].update_size.length === 0)) {
+            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'update_size' property");
+            continue;
+        }
+
         if ((component_list[i].hasOwnProperty("current_version") === false) || (component_list[i].current_version.length === 0)) {
             console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "missing 'current_version' property");
             continue;
@@ -106,6 +111,7 @@ function processUpdateInfo (component_list) {
         update_info_string += "New Version: <b>" + component_list[i].latest_version + "</b>";
         if (component_list[i].current_version !== "N/A")
             update_info_string += " (<b>" + component_list[i].current_version + "</b>)";
+        update_info_string += "<br>Update Size: <b>" + component_list[i].update_size + "</b>";
         update_info_string += "</p>"
         compact_update_info_string += "/" + component_list[i].name + "/" + component_list[i].latest_version
     }

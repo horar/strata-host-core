@@ -123,12 +123,14 @@ QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument
         QDomElement updateInfoElement = updateInfoNode.toElement(); // try to convert the node to an element.
         if (updateInfoElement.isNull() == false) {
             if (updateInfoElement.tagName() == "update") {
-                if (updateInfoElement.hasAttribute("name") && updateInfoElement.hasAttribute("version")) {
+                if (updateInfoElement.hasAttribute("name") && updateInfoElement.hasAttribute("version") && updateInfoElement.hasAttribute("size")) {
                     QString updateName = updateInfoElement.attribute("name");
                     QString updateVersion = updateInfoElement.attribute("version");
+                    QString updateSize = parseUpdateSize(updateInfoElement.attribute("size"));
                     QJsonObject payload;
                     payload.insert("name", updateName);
                     payload.insert("latest_version", updateVersion);
+                    payload.insert("update_size", updateSize);
                     if (componentMap.contains(updateName)) {
                         payload.insert("current_version", componentMap[updateName]);
                     } else {
@@ -139,7 +141,7 @@ QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument
                     updateInfo.push_back(payload);
                     qCInfo(logCategoryHcs) << "Inserted Update Info: " << payload;
                 } else {
-                    qCWarning(logCategoryHcs) << "Missing mandatory attributes (name / version) in update metadata";
+                    qCWarning(logCategoryHcs) << "Missing mandatory attributes (name / version / size) in update metadata";
                 }
             } else {
                 qCWarning(logCategoryHcs) << "Unknown element in update metadata: " << updateInfoElement.tagName();
@@ -148,6 +150,31 @@ QString ComponentUpdateInfo::parseUpdateMetadata(const QDomDocument &xmlDocument
         updateInfoNode = updateInfoNode.nextSibling();
     }
     return QString();
+}
+
+QString ComponentUpdateInfo::parseUpdateSize(QString updateSize)
+{
+    bool succesfullyParsed;
+    float num = updateSize.toFloat(&succesfullyParsed);
+    if(succesfullyParsed == false) {
+        return QString("N/A");
+    }
+
+    QStringList unitList = { "Bytes", "KB", "MB", "GB", "TB" };
+    QStringListIterator iter(unitList);
+    QString currentUnit(iter.next());
+    bool displayFraction = false;
+
+    while((num >= 1024.0) && iter.hasNext())
+    {
+        currentUnit = iter.next();
+        num /= 1024.0;
+        if(num > 10.0)
+            displayFraction = false;
+        else
+            displayFraction = true;
+    }
+    return QString().setNum(num, 'f', displayFraction ? 2 : 0) + " " + currentUnit;
 }
 
 QString ComponentUpdateInfo::acquireUpdateMetadata(QString &updateMetadata) {
