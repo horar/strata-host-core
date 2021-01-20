@@ -43,6 +43,12 @@ bool ClientConnector::disconnectClient()
 
 bool ClientConnector::connectClient()
 {
+
+    if(!connector_) {
+        qCCritical(logCategoryStrataClientConnector) << "Uninitialized connector.";
+        return false;
+    }
+
     if (true == connector_->isConnected()) {
         qCCritical(logCategoryStrataClientConnector) << "Client already connected.";
         return false;
