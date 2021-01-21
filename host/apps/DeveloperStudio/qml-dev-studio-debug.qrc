@@ -85,5 +85,6 @@
         <file>partial-views/control-view-creator/components/SGControlViewIconButton.qml</file>
         <file>partial-views/control-view-creator/components/SGControlSearchComboBox.qml</file>
         <file>partial-views/control-view-creator/DebugPanel.qml</file>
+        <file>partial-views/control-view-creator/qtQuick.js</file>
     </qresource>
 </RCC>
