@@ -83,6 +83,10 @@ var uuid_map = {
     "87054646-955d-42ed-aa82-8927b6a70286": "motorController",
     "b8a53467-4155-4104-905e-8d23bb5664a3": "Adj-LDO",
     "8da4158e-caa7-469d-8e4c-949d7a7e9858": "Adj-LDO",
+    "043683ef-537b-49e6-a090-30e314a73265": "fan6500xx", //4B
+    "101d15b0-3aa9-40b5-a1ae-b0e0b87f4f5b": "fan6500xx", //4C
+    "f81d23a7-3c93-40c6-ac5f-e836e936728b": "fan6500xx", //5A
+    "a3359627-3938-4a84-9a9c-fb57ff22deed": "fan6500xx", //8B
     "d0cc3eb2-f822-4955-afa4-b975957aed38": "Adj-LDO",
     "0570d932-6a3f-4a34-8442-cd9914518241": "current-sense",
     "76a518b4-37bc-4fee-ad5b-92c381dea0c2": "zigbee",

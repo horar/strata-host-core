@@ -124,7 +124,7 @@ Item {
         spacing: 0
 
         Rectangle {
-            color: mouse.containsMouse ? "#34993b" : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
+            color: mouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
             Layout.fillHeight: true
             Layout.fillWidth: true
 
@@ -156,7 +156,7 @@ Item {
         Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: height
-            color: mouseMenu.containsMouse ? "#34993b" : inView ? platformTabRoot.menuColor : mouse.containsMouse ? platformTabRoot.menuColor :"#444"
+            color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouse.containsMouse ? platformTabRoot.menuColor :"#444"
 
             MouseArea {
                 id: mouseMenu
@@ -198,7 +198,7 @@ Item {
 
         Rectangle {
             id: menu
-            color: "#34993b"
+            color: Qt.darker(Theme.palette.green, 1.15)
             width: platformTabRoot.width
             height: menuColumn.height + 1
 

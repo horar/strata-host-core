@@ -5,7 +5,7 @@ SciModel::SciModel(QObject *parent)
     : QObject(parent),
       platformModel_(&boardManager_)
 {
-    boardManager_.init();
+    boardManager_.init(true, true);
 
 //disabled until remote db is ready
 //    bool result = db_.open("sci_db");

@@ -15,6 +15,7 @@ import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
 import "qrc:/partial-views/profile-popup"
 import "qrc:/js/help_layout_manager.js" as Help
+import "partial-views/control-view-creator"
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
@@ -35,6 +36,8 @@ Rectangle {
     property color backgroundColor: "#3a3a3a"
     property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
+
+    property alias platformTabListView: platformTabListView
 
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
@@ -81,7 +84,7 @@ Rectangle {
             Layout.preferredHeight:40
             Layout.preferredWidth: 120
 
-            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.green : "#444"
+            color: platformSelectorMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : NavigationControl.stack_container_.currentIndex === 0 ? Theme.palette.green : "#444"
 
             property color menuColor: Theme.palette.green
 
@@ -108,7 +111,7 @@ Rectangle {
         }
 
         ListView {
-            id: platformTabRepeater
+            id: platformTabListView
             Layout.fillHeight: true
             Layout.fillWidth: true
             delegate: SGPlatformTab {}
@@ -116,7 +119,15 @@ Rectangle {
             spacing: 1
             clip: true
 
+            highlightMoveDuration: 200
+            highlightMoveVelocity: -1
+
             model: NavigationControl.platform_view_model_
+        }
+
+        CVCButton {
+            id: cvcButton
+            visible: false
         }
 
         SGPlatformTab {
@@ -174,7 +185,7 @@ Rectangle {
             height: profileIconHover.containsMouse ? profileIconContainer.height : profileIconContainer.height - 6
             width: height
             radius: height / 2
-            color: "#00b842"
+            color: Theme.palette.green
 
             Text {
                 id: profileInitial
@@ -203,7 +214,7 @@ Rectangle {
             height: 12
             width: height
             radius: height / 2
-            color: "#00b842"
+            color: Theme.palette.green
 
             SGIcon {
                 id: alertIcon
@@ -258,7 +269,7 @@ Rectangle {
                     context.lineTo(width, height);
                     context.lineTo(0, height);
                     context.closePath();
-                    context.fillStyle = "#00b842";
+                    context.fillStyle = Theme.palette.green;
                     context.fill();
                 }
             }
@@ -302,6 +313,16 @@ Rectangle {
                         settingsLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("CVC")
+                    visible: cvcButton.state === "debug"
+                    width: profileMenu.width
+
+                    onClicked: {
+                        cvcButton.toggleVisibility()
+                    }
                 }
 
                 Rectangle {

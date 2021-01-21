@@ -1,5 +1,4 @@
-#ifndef SCI_PLATFORM_MODEL_H
-#define SCI_PLATFORM_MODEL_H
+#pragma once
 
 #include <BoardManager.h>
 
@@ -85,7 +84,3 @@ private:
 
     void appendNewPlatform(int deviceId);
 };
-
-
-
-#endif //SCI_PLATFORM_MODEL_H

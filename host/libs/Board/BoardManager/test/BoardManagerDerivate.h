@@ -8,7 +8,7 @@ class BoardManagerDerivate : public strata::BoardManager
 
 public:
     BoardManagerDerivate();
-    virtual void init(bool requireFwInfoResponse = true) override;
+    virtual void init(bool requireFwInfoResponse, bool keepDevicesOpen) override;
 
     void mockAddNewDevice(const int deviceId,
                           const QString deviceName);  // pretend we've found a new serial port
