@@ -51,7 +51,7 @@ if not exist build-host md build-host
 echo "-----------------------------------------------------------------------------"
 echo "Actual/local branch list.."
 echo "-----------------------------------------------------------------------------"
-git branch
+git --no-pager branch
 
 echo "======================================================================="
 echo " Updating Git submodules.."
