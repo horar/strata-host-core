@@ -18,10 +18,6 @@ Item {
         id: platformInterface
     }
 
-    Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these three tabs, you can view basic controls, advanced controls or the SGUserSettings demo.", 0, "controlHelp")
-    }
-
     TabBar {
         id: navTabs
         anchors {
@@ -49,8 +45,6 @@ Item {
                 controlContainer.currentIndex = 1
             }
         }
-
-
     }
 
     StackLayout {
@@ -64,20 +58,22 @@ Item {
 
         BasicControl {
             id: basic
+            visible: true
         }
 
         AdvancedControl {
             id: advanced
+            visible: false
         }
-
     }
 
     SGIcon {
         id: helpIcon
         anchors {
             right: controlContainer.right
+            rightMargin: 15
             top: controlContainer.top
-            margins: 5
+            margins: 10
         }
         source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
@@ -91,20 +87,15 @@ Item {
             }
             onClicked: {
                 // Make sure view is set to Basic before starting tour
-                navTabs.currentIndex = 0
-                controlContainer.currentIndex = 0
-                basicButton.clicked()
-                Help.startHelpTour("controlHelp")
+                if(controlContainer.currentIndex === 0) {
+                    Help.startHelpTour("BasicControlHelp")
+                }
+                if(controlContainer.currentIndex === 1) {
+                    Help.startHelpTour("AdvanceControlHelp")
+                }
             }
             hoverEnabled: true
         }
     }
 
-    //    DebugMenu {
-    //        // See description in control-views/DebugMenu.qml
-    //        anchors {
-    //            right: controlContainer.right
-    //            bottom: controlContainer.bottom
-    //        }
-    //    }
 }

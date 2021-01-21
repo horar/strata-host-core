@@ -8,12 +8,10 @@ import QtQuick.Controls 2.12
 
 Item {
     id: root
-    //    Layout.fillHeight: true
-    //    Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
     property var intervalState : 2000
-    property alias gpio: gpio
+    property alias io: io
     property var xValue: 0
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
@@ -21,6 +19,15 @@ Item {
     property var curve2: timedGraphPoints.createCurve("movingCurve2")
     property var firstNotification: 1
     property bool showGraph: true
+
+    Component.onCompleted: {
+        Help.registerTarget(navTabs, "These tabs contain different user interface functionality of the Strata evaluation board. Take the idea of walking the user into evaluating the board by ensuring the board is instantly functional when powered on and then dive into more complex tabs and features. These tabs are not required but contains in the template for illustration.", 0, "BasicControlHelp")
+        Help.registerTarget(ioSwitchLabel, "Toggle the state of a single IO output pin on the microcontroller. The IO Input control will reflect the state of the IO Output when the next Periodic Notification" + " \"" + "my_cmd_simple_periodic" + "\" "  + "is sent from the firmware to Strata.", 1, "BasicControlHelp")
+        Help.registerTarget(dacSwitchLabel, "Sets the Digital to Analog Converter (DAC) pin of the microcontroller between 0 and full scale.", 2, "BasicControlHelp")
+        Help.registerTarget(grayBoxHelpContainer, "These boxes indicate the command or notification communication between Strata and the board's firmware. The communication direction is indicated by the image in the top right corner of these boxes. The Serial Console Interface (SCI) should be used during firmware development to debug notifications and commands before connecting to the user interface.", 3, "BasicControlHelp")
+        Help.registerTarget(perodicNotificationContainer, "This is a visualization of the data being sent as a notification to Strata using various user interface elements such as boolean indicators, live graphing, and gauges. The periodic notification is configured in the firmware to send the" + " \"" + "my_cmd_simple_periodic"+ "\" "  + "notification at a certain interval - indefinitely or with a certain run count configured in the Configure Periodic Notification section.", 4, "BasicControlHelp")
+        Help.registerTarget(configperiodicNotificationContainer, "Configures the periodic notification" + " \"" + "my_cmd_simple_periodic" + "\" "+ "with a certain interval - indefinitely or with a certain run count. The Run State will turn on/off the notification and will need to be toggled to enable the notification when the Run Count expires.", 5, "BasicControlHelp")
+    }
 
     MouseArea {
         id: containMouseArea
@@ -30,6 +37,19 @@ Item {
             forceActiveFocus()
         }
     }
+
+    Item {
+        id: grayBoxHelpContainer
+        width: grayBox1.width + 10
+        height: grayBox1.height * 3.8
+        anchors.right: parent.right
+        anchors.rightMargin: 20
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: 100
+
+    }
+
+
 
     property var obj: {
         "notification" : {
@@ -71,7 +91,7 @@ Item {
     property var my_cmd_simple_obj: {
         "cmd": "my_cmd_simple",
         "payload": {
-            "io": gpio.checked,
+            "io": io.checked,
             "dac": parseFloat(dac.value.toFixed(2))
         }
     }
@@ -82,7 +102,7 @@ Item {
         height: parent.height/1.1
         anchors.centerIn: parent
         anchors.top:parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: 250
         anchors.left: parent.left
         anchors.leftMargin: 20
         anchors.right: parent.right
@@ -129,19 +149,23 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGAlignedLabel {
-                                id: gpioSwitchLabel
-                                target: gpio
+                                id: ioSwitchLabel
+                                target: io
                                 text: "IO Output"
                                 font.bold: true
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideTopCenter
 
                                 SGSwitch {
-                                    id: gpio
+                                    id: io
                                     width: 50
                                     checked: false
-                                    onToggled:  {
-                                        platformInterface.commands.my_cmd_simple.update(dac.value,gpio.checked)
+//                                    onToggled:  {
+//                                        platformInterface.commands.my_cmd_simple.update(dac.value,io.checked)
+//                                        delegateText1.text =  JSON.stringify(my_cmd_simple_obj,null,4)
+//                                    }
+                                    onCheckedChanged: {
+                                        platformInterface.commands.my_cmd_simple.update(dac.value,io.checked)
                                         delegateText1.text =  JSON.stringify(my_cmd_simple_obj,null,4)
                                     }
                                 }
@@ -169,7 +193,7 @@ Item {
                                     onUserSet: {
                                         // var valueSet = parseFloat(dac.value)
                                         inputBox.text = parseFloat(value.toFixed(2))
-                                        platformInterface.commands.my_cmd_simple.update( parseFloat(value.toFixed(2)),gpio.checked)
+                                        platformInterface.commands.my_cmd_simple.update( parseFloat(value.toFixed(2)),io.checked)
                                         delegateText1.text = JSON.stringify(my_cmd_simple_obj,null,4)
 
                                     }
@@ -186,6 +210,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 15
+                    Layout.rightMargin: 15
                     color: "light gray"
                     Image {
                         id: name
@@ -199,6 +224,7 @@ Item {
                         fillMode: Image.PreserveAspectFit
                     }
                     Flickable {
+                        id: grayBox1
                         anchors.fill: parent
                         TextArea.flickable: TextArea {
                             id: delegateText1
@@ -246,6 +272,7 @@ Item {
                 height: parent.height - periodicNotification.height
 
                 Item {
+                    id: perodicNotificationContainer
                     Layout.fillHeight: true
                     Layout.preferredWidth: parent.width/1.6
 
@@ -253,6 +280,7 @@ Item {
                         width: parent.width - graphLabel.width
                         height:  parent.height
                         Item  {
+
                             Layout.preferredHeight: parent.height/5
                             Layout.fillWidth: true
 
@@ -459,6 +487,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
                     color: "light gray"
+                    Layout.rightMargin: 15
                     Image {
                         id: name2
                         source: "images/BoardToStrata.png"
@@ -471,7 +500,7 @@ Item {
                         fillMode: Image.PreserveAspectFit
                     }
                     Flickable {
-                        id: flickable
+                        id: graybox2
                         anchors.fill: parent
                         TextArea.flickable: TextArea {
                             id: delegateText
@@ -518,18 +547,6 @@ Item {
 
             }
 
-            //            Rectangle {
-            //                id: line3
-            //                height: 1.5
-            //                Layout.alignment: Qt.AlignCenter
-            //                width: parent.width
-            //                border.color: "lightgray"
-            //                radius: 2
-            //                anchors {
-            //                    top: configperiodicNotification.bottom
-            //                    topMargin: 7
-            //                }
-            //            }
 
             RowLayout {
                 anchors.top: configperiodicNotification.bottom
@@ -538,6 +555,7 @@ Item {
                 height: parent.height - configperiodicNotification.height
 
                 Item {
+                    id: configperiodicNotificationContainer
                     Layout.fillHeight: true
                     Layout.preferredWidth: parent.width/1.6
                     ColumnLayout{
@@ -701,11 +719,13 @@ Item {
                     } // end of column
                 }
                 Rectangle {
+
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "light gray"
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 25
+                    Layout.rightMargin: 15
                     Image {
                         id: name3
                         source: "images/StrataToBoard.png"
@@ -719,6 +739,7 @@ Item {
                     }
 
                     Flickable {
+                        id: graybox3
                         anchors.fill: parent
                         TextArea.flickable: TextArea {
                             id: delegateText2
