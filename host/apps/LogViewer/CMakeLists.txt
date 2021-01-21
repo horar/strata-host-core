@@ -6,7 +6,7 @@ project(LogViewer
 set(PROJECT_WIN32_ICO resources/icons/app/lv-logo.ico)
 set(PROJECT_MACOS_ICNS lv-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.logviewer)
-set(PROJECT_COPYRIGHT "Copyright (C) 2019-2020 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2019-2021 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
