@@ -106,7 +106,14 @@ function locateTour(device_id, tourName) {
 
 function startHelpTour(tourName, device_id) {
     if (device_id === undefined) {
-        device_id = NavigationControl.platform_view_model_.get(stackContainer.currentIndex-1).device_id
+        const platformView = NavigationControl.platform_view_model_.get(stackContainer.currentIndex-1)
+
+        // If the current stack view is not in the platform_view_model_, indicates debug control view
+        if (platformView) {
+            device_id = platformView.device_id
+        } else {
+            device_id = Constants.NULL_DEVICE_ID // Matches default in ControlViewCreator.qml and SGControlViewDevPopup.qml
+        }
     }
 
     let tourLocation = locateTour(device_id, tourName)

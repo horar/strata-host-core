@@ -8,8 +8,8 @@ SGJsonFormatter::SGJsonFormatter(QObject *parent)
 
 QString SGJsonFormatter::prettifyJson(
         const QString &jsonString,
-        int indentSize,
-        bool softWrap)
+        bool softWrap,
+        int indentSize)
 {
     QString prettifiedJson;
     QChar spaceChar = QChar::Space;
