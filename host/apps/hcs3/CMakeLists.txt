@@ -97,14 +97,6 @@ target_include_directories(${PROJECT_NAME}Lib
 )
 
 if(WIN32)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMENT "Deploying dependant 3rd party ZMQ library..."
-        VERBATIM
-    )
-
     get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
     get_filename_component(QT_SSL_LIBRARY_DIR "${QT_LIBRARY_DIR}/../../../Tools/OpenSSL/Win_x64//bin" ABSOLUTE)
