@@ -110,7 +110,7 @@ if(NOT INSTALLED)
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package
         INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}
         DOWNLOAD_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar
-        URL https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.20.0.tgz
+        URL https://registry.npmjs.org/monaco-editor/-/monaco-editor-${MONACO_TAG}.tgz
         URL_HASH SHA1=5d5009343a550124426cb4d965a4d27a348b4dea
         CONFIGURE_COMMAND ""
         COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/monaco.d.ts <INSTALL_DIR>/monaco.d.ts          
