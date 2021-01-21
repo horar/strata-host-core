@@ -115,18 +115,24 @@ Rectangle {
             Layout.preferredHeight: 40
             Layout.preferredWidth: 20
 
-            property bool leftArrowActive: platformTabListView.contentX > 0
+            enabled: platformTabListView.contentX > 0
 
             visible: platformTabListView.contentWidth > platformTabListView.width
 
-            color: leftArrowMouse.containsMouse && leftArrowActive ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+            color: enabled && leftArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            onEnabledChanged: {
+                if (enabled == false) {
+                    leftArrowTimer.stop()
+                }
+            }
 
             Timer {
                 id: leftArrowTimer
                 interval: 10
                 running: false
                 repeat: true
-                onTriggered:  {
+                onTriggered: {
                     platformTabListView.setPlatformTabContentX(-30)
                 }
             }
@@ -140,7 +146,7 @@ Rectangle {
                 }
                 source: "qrc:/sgimages/chevron-left.svg"
                 iconColor : "white"
-                opacity: parent.leftArrowActive ? 1 : 0.4
+                opacity: enabled ? 1 : 0.4
             }
 
             MouseArea {
@@ -157,7 +163,7 @@ Rectangle {
                 onReleased: {
                     leftArrowTimer.stop()
                 }
-                cursorShape: parent.leftArrowActive ? Qt.PointingHandCursor : Qt.ArrowCursor
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
             }
         }
 
@@ -252,18 +258,24 @@ Rectangle {
             Layout.preferredHeight: 40
             Layout.preferredWidth: 20
 
-            property bool rightArrowActive: platformTabListView.contentX < Math.max(platformTabListView.contentWidth - platformTabListView.width, 0)
+            enabled: platformTabListView.contentX < Math.max(platformTabListView.contentWidth - platformTabListView.width, 0)
 
             visible: platformTabListView.contentWidth > platformTabListView.width
 
-            color: rightArrowMouse.containsMouse && rightArrowActive ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+            color: enabled && rightArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            onEnabledChanged: {
+                if (enabled == false) {
+                    rightArrowTimer.stop()
+                }
+            }
 
             Timer {
                 id: rightArrowTimer
                 interval: 10
                 running: false
                 repeat: true
-                onTriggered:  {
+                onTriggered: {
                     platformTabListView.setPlatformTabContentX(30)
                 }
             }
@@ -277,7 +289,7 @@ Rectangle {
                 }
                 source: "qrc:/sgimages/chevron-right.svg"
                 iconColor : "white"
-                opacity: parent.rightArrowActive ? 1 : 0.4
+                opacity: enabled ? 1 : 0.4
             }
 
             MouseArea {
@@ -294,7 +306,7 @@ Rectangle {
                 onReleased: {
                     rightArrowTimer.stop()
                 }
-                cursorShape: parent.rightArrowActive ? Qt.PointingHandCursor : Qt.ArrowCursor
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
             }
         }
 
