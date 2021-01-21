@@ -106,21 +106,21 @@ set(MONACO_TAG 0.20.0)
 file(GLOB_RECURSE INSTALLED ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}/editor.html)
 if(NOT INSTALLED)
 
-    file(DOWNLOAD https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.20.0.tgz ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar/monaco-editor.tgz EXPECTED_HASH SHA1=5d5009343a550124426cb4d965a4d27a348b4dea)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar/monaco-editor.tgz WORKING_DIRECTORY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG})
-    execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package/min/vs ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}/min/vs)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package/min-maps/vs ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}/min-maps/vs)
-    file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package/monaco.d.ts DESTINATION ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG})
-    file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/editor.html DESTINATION ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG})
-
     ExternalProject_Add(monaco-editor-${MONACO_TAG}
-        SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}
+        SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package
         INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}
-        DOWNLOAD_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar/
+        DOWNLOAD_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar
+        URL https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.20.0.tgz
+        URL_HASH SHA1=5d5009343a550124426cb4d965a4d27a348b4dea
         CONFIGURE_COMMAND ""
+        COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/monaco.d.ts <INSTALL_DIR>/monaco.d.ts          
+        COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/../editor.html <INSTALL_DIR>/editor.html                    
+        COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/min/vs <INSTALL_DIR>/min/vs 
+        COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/min-maps/vs <INSTALL_DIR>/min-maps/vs 
         BUILD_COMMAND ""
-        INSTALL_COMMAND ""
+        INSTALL_COMMAND ""   
     )
+
 endif() 
 
 #
