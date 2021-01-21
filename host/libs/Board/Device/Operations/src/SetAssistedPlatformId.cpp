@@ -7,11 +7,13 @@
 namespace strata::device::operation {
 
 using command::CmdSetAssistedPlatformId;
+using command::CmdRequestPlatformId;
 
 SetAssistedPlatformId::SetAssistedPlatformId(const DevicePtr &device)
     : BaseDeviceOperation(device, Type::SetAssistedPlatformId)
 {
     commandList_.emplace_back(std::make_unique<CmdSetAssistedPlatformId>(device_));
+    commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
 
     currentCommand_ = commandList_.end();
 }

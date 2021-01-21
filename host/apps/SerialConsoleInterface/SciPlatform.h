@@ -25,7 +25,6 @@ class SciPlatform: public QObject {
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
     Q_PROPERTY(bool programInProgress READ programInProgress NOTIFY programInProgressChanged)
 
-
 public:
     SciPlatform(SciPlatformSettings *settings, QObject *parent = nullptr);
 
@@ -58,7 +57,7 @@ public:
     void setDeviceName(const QString &deviceName);
 
     void resetPropertiesFromDevice();
-    Q_INVOKABLE bool sendMessage(const QString &message, bool onlyValidJson);
+    Q_INVOKABLE QVariantMap sendMessage(const QString &message, bool onlyValidJson);
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
 
     //settings handlers
