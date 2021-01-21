@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QUrl>
 #include <QPointer>
+#include <QPair>
 
 namespace strata {
 class DownloadManager;
@@ -50,6 +51,21 @@ public:
      * @return base URL
      */
     QUrl getBaseUrl() const;
+
+    /**
+     * Gets string which represnets device controler class
+     * @param device class id
+     * @return device controler class (RSL10, ...) or null string
+     */
+    QString getControllerClassDevice(const QString &classId);
+
+    /**
+     * Gets URI of latest firmware
+     * @param class ID of device
+     * @param device controler class
+     * @return firmware URI and firmware MD5 as pair
+     */
+    QPair<QUrl,QString> getLatestFirmware(const QString &classId, const QString &controllerClassDevice);
 
 public slots:
     void requestPlatformList(const QByteArray &clientId);

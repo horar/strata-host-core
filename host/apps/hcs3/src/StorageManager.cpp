@@ -74,6 +74,47 @@ QUrl StorageManager::getBaseUrl() const
     return baseUrl_;
 }
 
+QString StorageManager::getControllerClassDevice(const QString &classId)
+{
+    qCDebug(logCategoryHcsStorage) << "Searching for controller class device of" << classId;
+
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc) {
+        QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+        if (firmwareList.isEmpty() == false) {
+            return firmwareList.first().controllerClassDevice;
+        }
+    }
+
+    return QString();
+}
+
+QPair<QUrl,QString> StorageManager::getLatestFirmware(const QString &classId, const QString &controllerClassDevice)
+{
+    qCDebug(logCategoryHcsStorage) << "Searching for latest firmware URI for" << classId << "and" << controllerClassDevice;
+
+    QUrl uri;
+    QString md5;
+
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc) {
+        QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+        QString timestamp;  // timestamp is empty
+        for (const auto &item : firmwareList) {
+            if (item.controllerClassDevice == controllerClassDevice) {
+                if (item.timestamp > timestamp) {  // empty string is "less" than non-empty
+                    timestamp = item.timestamp;
+                    uri = item.partialUri;
+                    md5 = item.md5;
+                }
+            }
+        }
+    }
+
+    return qMakePair(uri, md5);
+}
+
+
 QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix) const
 {
     QString tmpName = QDir(prefix).filePath( item );
@@ -362,12 +403,12 @@ void StorageManager::requestPlatformDocuments(
     QJsonArray controlViewList, firmwareList;
 
     //firmwares
-    QList<VersionedFileItem> firmwareItems = platDoc->getFirmwareList();
+    QList<FirmwareFileItem> firmwareItems = platDoc->getFirmwareList();
     for (const auto &item : firmwareItems) {
         QJsonObject object {
             {"uri", item.partialUri},
+            {"device", item.controllerClassDevice},
             {"md5", item.md5},
-            {"name", item.name},
             {"timestamp", item.timestamp},
             {"version", item.version}
         };
@@ -376,7 +417,7 @@ void StorageManager::requestPlatformDocuments(
     }
 
     //control views
-    QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
+    QList<ControlViewFileItem> controlViewItems = platDoc->getControlViewList();
     for (const auto &item : controlViewItems) {
         QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views" + (classId.isEmpty() ? "" : "/" + classId));
         if (downloadManager_->verifyFileHash(filePath, item.md5) == false) {

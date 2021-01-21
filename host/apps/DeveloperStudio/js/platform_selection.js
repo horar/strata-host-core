@@ -254,8 +254,8 @@ function addConnectedPlatform(platform) {
         } else {
             if ((platform.class_id !== "") && (platform.class_id !== platform.fw_class_id)) {
                 console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory,
-                            "Assisted Strata: Platform", platform.class_id, "is not compatibile with controller", platform.fw_class_id);
-                insertAssistedIncompatibileListing(platform)
+                            "Assisted Strata: Platform", platform.class_id, "is not compatible with controller", platform.fw_class_id);
+                insertAssistedIncompatibleListing(platform)
                 processed = true;
             }
         }
@@ -460,10 +460,10 @@ function insertAssistedNoPlatformListing (platform) {
 }
 
 /*
-    Insert listing for Strata assisted with platform incompatibile with controller
+    Insert listing for Strata assisted with platform incompatible with controller
 */
-function insertAssistedIncompatibileListing (platform) {
-    insertErrorListing(generateAssistedIncompatibileListing(platform))
+function insertAssistedIncompatibleListing (platform) {
+    insertErrorListing(generateAssistedIncompatibleListing(platform))
 }
 
 function generateUnknownListing (platform) {
@@ -487,15 +487,15 @@ function generateAssistedNoPlatformListing (platform) {
     return generateErrorListing(platform, "Strata Assisted (no platform)", "", "N/A", description)
 }
 
-function generateAssistedIncompatibileListing (platform) {
+function generateAssistedIncompatibleListing (platform) {
     let class_id = String(platform.class_id)
     let fw_class_id = String(platform.fw_class_id)
     if (fw_class_id === "") {
         fw_class_id = "no_firmware"
     }
     let opn = "Class id: " + class_id
-    let description = "Strata Assisted: Firmware (" + fw_class_id + ") not compatibile with platform (" + class_id + ")."
-    return generateErrorListing(platform, "Strata Assisted (incompatibile firmware)", class_id, opn, description)
+    let description = "Strata Assisted: Firmware (" + fw_class_id + ") not compatible with platform (" + class_id + ")."
+    return generateErrorListing(platform, "Strata Assisted (incompatible firmware)", class_id, opn, description)
 }
 
 function generateErrorListing (platform, verbose_name, class_id, opn, description) {

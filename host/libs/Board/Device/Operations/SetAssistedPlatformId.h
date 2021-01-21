@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Device/Operations/BaseDeviceOperation.h>
-#include <DeviceOperationsData.h>
+#include <Device/Operations/include/DeviceOperationsData.h>
 
 namespace strata::device::operation {
 
