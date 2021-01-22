@@ -29,8 +29,8 @@ Item {
 
         Help.registerTarget(filterHelp2Container, "These gauges show the input and output power to the evaluation board. They are calculated from the measured voltages and currents at input and output. The current readings max out at 2.2A so if more current is being drawn the numbers here will be inaccurate.",8, "100VcontrolHelp")
         Help.registerTarget(effGaugeLabel, "The buck converter efficiency is calculated by taking the calculated Output power divided by the calculated input power.",9, "100VcontrolHelp")
-        Help.registerTarget(ldoTempLabel, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. ",10, "100VcontrolHelp")
-        Help.registerTarget(boardTempLabel, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature.", 11, "100VcontrolHelp")
+        Help.registerTarget(ldoTempLabel, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. The alert limit is set at 100˚C.",10, "100VcontrolHelp")
+        Help.registerTarget(boardTempLabel, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature. The alert limit is set at 80˚C.", 11, "100VcontrolHelp")
         Help.registerTarget(sgstatusHelpContainer, "Green indicates that the parameter is within specification and operating normally. Red signals there is a problem. Check the Status list for more information on errors. ", 12, "100VcontrolHelp")
     }
 
