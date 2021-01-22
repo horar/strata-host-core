@@ -17,18 +17,20 @@ Item {
 
     Component.onCompleted: {
         platformInterface.get_status_command.update()
-        Help.registerTarget(enableSwitch, "This switch will enable the buck converter by setting the SS/SD# pin high.", 0, "100VcontrolHelp")
-        Help.registerTarget(setSwitchFreq, "This switch allows the user to switch between the standard 100kHz switching frequency or a manually set frequency using potentiometer R33.", 1, "100VcontrolHelp")
-        Help.registerTarget(softStart, "This dropdown selections contains the estimated soft start time for the buck converter. The exact time depends on the output voltage so this is just an estimate.", 2, "100VcontrolHelp")
-        Help.registerTarget(outputVolslider, "The slider and the text box both allow the user to set the output voltage between 5V and 24V.",3, "100VcontrolHelp")
-        Help.registerTarget(filterHelpContainer, "All measured voltages and currents on the board are shown here. Input/Output Voltage and Current are measured at the input and output to the evaluation board.",4, "100VcontrolHelp")
-        Help.registerTarget(logFault, "This status list contains all the error messages, and will store them in the order received with the most recent error messages displayed on top.",5, "100VcontrolHelp")
-        Help.registerTarget(outputVoltAdjustment, "This switch will turn on/off the ability for the user to adjust the output voltage. This fixed voltage if this is off is 17V.",6, "100VcontrolHelp")
-        Help.registerTarget(enableVCCLDO, "This switch turns on/off the LDO providing the power rail for VCC to the NCP1034 controller. When enabled, VCC is drawn from the input voltage. If this is disabled, the user would need to apply VCC power separately.",7, "100VcontrolHelp")
+        Help.registerTarget(enableSwitchLabel, "This switch will enable the buck converter by setting the SS/SD# pin high.", 0, "100VcontrolHelp")
+        Help.registerTarget(setSwitchFreqLabel, "This switch allows the user to switch between the standard 100kHz switching frequency or a manually set frequency using potentiometer R33.", 1, "100VcontrolHelp")
+        Help.registerTarget(softStartLabel, "This dropdown selections contains the estimated soft start time for the buck converter. The exact time depends on the output voltage so this is just an estimate.", 2, "100VcontrolHelp")
+        Help.registerTarget(outputVolLabel, "The slider and the text box both allow the user to set the output voltage between 5V and 24V.",3, "100VcontrolHelp")
+        Help.registerTarget(setoutputVoltAdjustmentLabel, "This switch will turn on/off the ability for the user to adjust the output voltage. This fixed voltage if this is off is 17V.",4, "100VcontrolHelp")
+        Help.registerTarget(enableVCCLDOLabel, "This switch turns on/off the LDO providing the power rail for VCC to the NCP1034 controller. When enabled, VCC is drawn from the input voltage. If this is disabled, the user would need to apply VCC power separately.",5, "100VcontrolHelp")
+
+        Help.registerTarget(filterHelpContainer, "All measured voltages and currents on the board are shown here. Input/Output Voltage and Current are measured at the input and output to the evaluation board.",6, "100VcontrolHelp")
+        Help.registerTarget(logFault, "This status list contains all the error messages, and will store them in the order received with the most recent error messages displayed on top.",7, "100VcontrolHelp")
+
         Help.registerTarget(filterHelp2Container, "These gauges show the input and output power to the evaluation board. They are calculated from the measured voltages and currents at input and output. The current readings max out at 2.2A so if more current is being drawn the numbers here will be inaccurate.",8, "100VcontrolHelp")
-        Help.registerTarget(effGauge, "The buck converter efficiency is calculated by taking the calculated Output power divided by the calculated input power.",9, "100VcontrolHelp")
-        Help.registerTarget(ldoTemp, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. ",10, "100VcontrolHelp")
-        Help.registerTarget(boardTemp, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature.", 11, "100VcontrolHelp")
+        Help.registerTarget(effGaugeLabel, "The buck converter efficiency is calculated by taking the calculated Output power divided by the calculated input power.",9, "100VcontrolHelp")
+        Help.registerTarget(ldoTempLabel, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. ",10, "100VcontrolHelp")
+        Help.registerTarget(boardTempLabel, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature.", 11, "100VcontrolHelp")
         Help.registerTarget(sgstatusHelpContainer, "Green indicates that the parameter is within specification and operating normally. Red signals there is a problem. Check the Status list for more information on errors. ", 12, "100VcontrolHelp")
     }
 
@@ -51,13 +53,13 @@ Item {
         id: filterHelp2Container
         property point topLeft
         property point bottomRight
-        width:  inputpowerGauge.width + inputpowerGauge.width
+        width:  inputpowerGaugeLabel.width + inputpowerGaugeLabel.width
         height: (bottomRight.y - topLeft.y)
         x: topLeft.x
         y: topLeft.y
         function update() {
-            topLeft = inputpowerGauge.mapToItem(root, 0,  0)
-            bottomRight = buckOutputPowerGauge.mapToItem(root, buckOutputPowerGauge.width, buckOutputPowerGauge.height)
+            topLeft = inputpowerGaugeLabel.mapToItem(root, 0,  0)
+            bottomRight = buckOutputPowerGaugeLabel.mapToItem(root, buckOutputPowerGaugeLabel.width, buckOutputPowerGaugeLabel.height)
         }
     }
 
@@ -183,7 +185,7 @@ Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGAlignedLabel {
-                                                id: eableSwitchLabel
+                                                id: enableSwitchLabel
                                                 target: enableSwitch
                                                 text: "Enable Buck"
                                                 alignment: SGAlignedLabel.SideLeftCenter
@@ -217,7 +219,7 @@ Item {
                                     SGAlignedLabel {
                                         id: setSwitchFreqLabel
                                         target: setSwitchFreq
-                                        text: "Set Switching \nFrequency"
+                                        text: "Switching Frequency \nControl"
                                         alignment: SGAlignedLabel.SideLeftCenter
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
@@ -247,7 +249,7 @@ Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     SGAlignedLabel {
-                                        id: softSTtartLabel
+                                        id: softStartLabel
                                         target: softStart
                                         text: "Soft Start (ms)"
                                         alignment: SGAlignedLabel.SideLeftCenter
@@ -308,32 +310,6 @@ Item {
                                         }
                                     }
                                 }
-                            }
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            ColumnLayout{
-                                anchors.fill: parent
-                                Text {
-                                    id: manualText
-                                    font.bold: true
-                                    text: "Advanced Settings"
-                                    font.pixelSize: ratioCalc * 20
-                                    Layout.topMargin: 10
-                                    color: "#696969"
-                                    Layout.leftMargin: 20
-                                }
-
-                                Rectangle {
-                                    id: line4
-                                    Layout.preferredHeight: 2
-                                    Layout.alignment: Qt.AlignCenter
-                                    Layout.preferredWidth: parent.width
-                                    border.color: "lightgray"
-                                    radius: 2
-                                }
                                 Item {
                                     id: outputVoltAdjustmentContainer
                                     Layout.fillWidth: true
@@ -363,61 +339,6 @@ Item {
                                         }
                                     }
                                 }
-
-                                /*Item {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    SGAlignedLabel {
-                                        id: setDefaultVINLabel
-                                        target: defaultVINLimits
-                                        text: "Default VIN \n Limits"
-                                        alignment: SGAlignedLabel.SideLeftCenter
-                                        anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
-
-                                        SGSwitch {
-                                            id: defaultVINLimits
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            labelsInside: true
-                                            checkedLabel: "On"
-                                            uncheckedLabel:   "Off"
-                                            textColor: "black"              // Default: "black"
-                                            handleColor: "white"            // Default: "white"
-                                            grooveColor: "#ccc"             // Default: "#ccc"
-                                            grooveFillColor: "#0cf"         // Default: "#0cf"
-                                        }
-                                    }
-                                }*/
-
-                                /*Item {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    SGAlignedLabel {
-                                        id: setDefaultVOUTLabel
-                                        target: defaultVOUT
-                                        text: "Default VOUT \n Limits"
-                                        alignment: SGAlignedLabel.SideLeftCenter
-                                        anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
-
-                                        SGSwitch {
-                                            id: defaultVOUT
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            labelsInside: true
-                                            checkedLabel: "On"
-                                            uncheckedLabel:   "Off"
-                                            textColor: "black"              // Default: "black"
-                                            handleColor: "white"            // Default: "white"
-                                            grooveColor: "#ccc"             // Default: "#ccc"
-                                            grooveFillColor: "#0cf"         // Default: "#0cf"
-
-
-                                        }
-                                    }
-                                }*/
-
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
@@ -446,8 +367,11 @@ Item {
                                         }
                                     }
                                 }
+
+
                             }
                         }
+
                     }
                 }
 
@@ -660,9 +584,9 @@ Item {
 
                                                                 SGInfoBox {
                                                                     id: vccCurrent
-                                                                    unit: "mA"
+                                                                    unit: " mA"
                                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                                    width: 100 * ratioCalc
+                                                                    width: 115 * ratioCalc
                                                                     boxColor: "lightgrey"
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
@@ -946,7 +870,7 @@ Item {
                                             SGAlignedLabel {
                                                 id: ldoTempLabel
                                                 target: ldoTemp
-                                                text: "VCC \n LDO Temperature"
+                                                text: "Approximate \n LDO Temperature"
                                                 margin: -15
                                                 anchors.top: parent.top
                                                 alignment: SGAlignedLabel.SideBottomCenter
@@ -983,7 +907,7 @@ Item {
                                             SGAlignedLabel {
                                                 id: boardTempLabel
                                                 target: boardTemp
-                                                text: "Board \n Temperature"
+                                                text: "Approximate Board \n Temperature"
                                                 margin: -15
                                                 anchors.top: parent.top
                                                 alignment: SGAlignedLabel.SideBottomCenter
