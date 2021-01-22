@@ -121,8 +121,7 @@ set SSL_DLL=libssl-1_1-x64.dll
 set SSL_DLL_DIR_SDS=%PKG_STRATA_DS%\%SSL_DLL%
 set SSL_DLL_DIR_HCS=%PKG_STRATA_HCS%\%SSL_DLL%
 set ZMQ_DLL=libzmq.dll
-set ZMQ_DLL_DIR_SDS=%PKG_STRATA_DS%\%ZMQ_DLL%
-set ZMQ_DLL_DIR_HCS=%PKG_STRATA_HCS%\%ZMQ_DLL%
+set ZMQ_DLL_DIR=bin\%ZMQ_DLL%
 set MSVCR_DLL=MSVCR100.dll
 set MSVCR_DLL_DIR=%windir%\system32\%MSVCR_DLL%
 set INSTALLERBASE_BINARY=installerbase.exe
@@ -442,19 +441,15 @@ if exist %SSL_DLL_DIR_HCS% (
     del "%SSL_DLL_DIR_HCS%"
 )
 
-if not exist "%ZMQ_DLL_DIR_SDS%" (
+if not exist "%ZMQ_DLL_DIR%" (
     echo =======================================================================
-    echo  Missing %ZMQ_DLL_DIR_SDS%, build probably failed
+    echo  Missing %ZMQ_DLL_DIR%, build probably failed
     echo =======================================================================
     Exit /B 2
 )
 
-echo Moving %ZMQ_DLL% to %PKG_STRATA_QT%
-move "%ZMQ_DLL_DIR_SDS%" "%PKG_STRATA_QT%\%ZMQ_DLL%"
-
-if exist %ZMQ_DLL_DIR_HCS% (
-    del "%ZMQ_DLL_DIR_HCS%"
-)
+echo Copying %ZMQ_DLL% to %PKG_STRATA_QT%
+copy "%ZMQ_DLL_DIR%" "%PKG_STRATA_QT%\%ZMQ_DLL%"
 
 if not exist %MQTT_DLL_DIR% (
     echo =======================================================================
