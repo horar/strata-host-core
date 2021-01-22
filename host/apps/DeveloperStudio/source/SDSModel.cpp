@@ -6,7 +6,6 @@
 #include "HcsNode.h"
 #include "ResourceLoader.h"
 #include "logging/LoggingQtCategories.h"
-#include "UrlConfiguration.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 
@@ -23,7 +22,6 @@ SDSModel::SDSModel(const QUrl &dealerAddress, QObject *parent)
       documentManager_(new DocumentManager(coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
-      urlConfiguration_(new UrlConfiguration(this)),
       remoteHcsNode_(new HcsNode(this))
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
@@ -36,7 +34,6 @@ SDSModel::~SDSModel()
     delete resourceLoader_;
     delete newControlView_;
     delete remoteHcsNode_;
-    delete urlConfiguration_;
 }
 
 bool SDSModel::startHcs()
@@ -166,11 +163,6 @@ ResourceLoader *SDSModel::resourceLoader() const
 SGNewControlView *SDSModel::newControlView() const
 {
     return newControlView_;
-}
-
-UrlConfiguration *SDSModel::urlConfiguration() const
-{
-    return urlConfiguration_;
 }
 
 void SDSModel::shutdownService()

@@ -20,7 +20,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
-import tech.strata.UrlConfiguration 1.0
+import tech.strata.UrlConfig 1.0
 
 import QtQml 2.12
 

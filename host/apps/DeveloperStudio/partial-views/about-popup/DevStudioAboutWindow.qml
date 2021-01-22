@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
-import tech.strata.UrlConfiguration 1.0
+import tech.strata.UrlConfig 1.0
 
 SGWidgets.SGAboutWindow {
     appLogoSource: "qrc:/sgimages/on-logo-green.svg"
@@ -10,7 +10,7 @@ SGWidgets.SGAboutWindow {
                 "<a href=\'" + urlConf.licenseUrl + "'>" + urlConf.licenseUrl + "</a><br>"
     }
 
-    UrlConfiguration {
+    UrlConfig {
         id: urlConf
     }
 
