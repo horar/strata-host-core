@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.theme 1.0
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+
 FocusScope {
     id: root
     clip: true
