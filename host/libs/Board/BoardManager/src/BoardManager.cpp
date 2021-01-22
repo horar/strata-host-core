@@ -29,8 +29,9 @@ BoardManager::BoardManager() {
 
 BoardManager::~BoardManager() { }
 
-void BoardManager::init(bool requireFwInfoResponse) {
+void BoardManager::init(bool requireFwInfoResponse, bool keepDevicesOpen) {
     reqFwInfoResp_ = requireFwInfoResponse;
+    keepDevicesOpen_ = keepDevicesOpen;
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
@@ -46,6 +47,7 @@ bool BoardManager::disconnectDevice(const int deviceId) {
         }
     }
     if (success) {
+        qCInfo(logCategoryBoardManager).nospace() << "Disconnected serial device 0x" << hex << static_cast<uint>(deviceId);
         emit boardDisconnected(deviceId);
     } else {
         logInvalidDeviceId(QStringLiteral("Cannot disconnect"), deviceId);
@@ -78,6 +80,7 @@ bool BoardManager::reconnectDevice(const int deviceId) {
         emit boardDisconnected(deviceId);
     }
     if (ok) {
+        qCInfo(logCategoryBoardManager).nospace() << "Reconnected serial device 0x" << hex << static_cast<uint>(deviceId);
         emit boardConnected(deviceId);
     } else {
         logInvalidDeviceId(QStringLiteral("Cannot reconnect"), deviceId);
@@ -95,7 +98,7 @@ DevicePtr BoardManager::device(const int deviceId) {
     }
 }
 
-QVector<int> BoardManager::readyDeviceIds() {
+QVector<int> BoardManager::activeDeviceIds() {
     QMutexLocker lock(&mutex_);
     return QVector<int>::fromList(openedDevices_.keys());
 }
@@ -169,14 +172,11 @@ void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial por
         serialPortsList_ = std::move(ports);
     }
 
-    if (deleted.empty() == false || opened.empty() == false) {
-        for (auto deviceId : deleted) {
-            emit boardDisconnected(deviceId);
-        }
-        for (auto deviceId : opened) {
-            emit boardConnected(deviceId);
-        }
-        emit readyDeviceIdsChanged();
+    for (auto deviceId : deleted) {
+        emit boardDisconnected(deviceId);
+    }
+    for (auto deviceId : opened) {
+        emit boardConnected(deviceId);
     }
 }
 
@@ -203,13 +203,12 @@ bool BoardManager::addSerialPort(const int deviceId) {
     DevicePtr device = std::make_shared<device::serial::SerialDevice>(deviceId, name);
 
     if (openDevice(device) == false) {
-        qCWarning(logCategoryBoardManager).nospace()
-            << "Cannot open device: ID: 0x" << hex << static_cast<uint>(deviceId)
-            << ", name: " << name;
+        qCWarning(logCategoryBoardManager).nospace() <<
+            "Cannot open device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
         return false;
     }
-    qCInfo(logCategoryBoardManager).nospace() << "Added new serial device: ID: 0x" << hex
-                                              << static_cast<uint>(deviceId) << ", name: " << name;
+    qCInfo(logCategoryBoardManager).nospace() <<
+        "Added new serial device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
     startDeviceOperations(device);
     return true;
 }
@@ -226,22 +225,27 @@ bool BoardManager::openDevice(const DevicePtr device) {
     return true;
 }
 
-// mutex_ must be locked before calling this function (due to modification deviceOperations_)
 void BoardManager::startDeviceOperations(const DevicePtr device) {
+    startIdentifyOperation(device);
+
+    connect(device.get(), &Device::msgFromDevice, this, &BoardManager::checkNotification);
+}
+
+void BoardManager::startIdentifyOperation(const DevicePtr device) {
     // shared_ptr because QHash::insert() calls copy constructor (unique_ptr has deleted copy constructor)
     // We need deleteLater() because DeviceOperations object is deleted
     // in slot connected to signal from it (BoardManager::handleOperationFinished).
     std::shared_ptr<operation::BaseDeviceOperation> operation (
-        new operation::Identify(device, reqFwInfoResp_),
+        new operation::Identify(device, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES),
         operationLaterDeleter
     );
 
     connect(operation.get(), &operation::BaseDeviceOperation::finished, this, &BoardManager::handleOperationFinished);
 
     operation::Identify *identify = dynamic_cast<operation::Identify*>(operation.get());
-    identify->runWithDelay(IDENTIFY_LAUNCH_DELAY);  // Some boards need time for booting
-
-    connect(device.get(), &Device::msgFromDevice, this, &BoardManager::checkNotification);
+    // Some boards need time for booting.
+    // If board is rebooted it also takes some time to start.
+    identify->runWithDelay(IDENTIFY_LAUNCH_DELAY);
 
     identifyOperations_.insert(device->deviceId(), operation);
 }
@@ -278,13 +282,26 @@ void BoardManager::handleOperationFinished(operation::Result result, int status,
         // operation has finished, we do not need BaseDeviceOperation object anymore
         identifyOperations_.remove(deviceId);
 
-        bool boardRecognized = (result == operation::Result::Success) ? true : false;
-
         if (result == operation::Result::Error) {
             emit boardError(deviceId, errStr);
         }
 
-        emit boardInfoChanged(deviceId, boardRecognized);
+        // If identify operation is cancelled, another identify operation will be started soon.
+        // So there is no need for emitting boardInfoChanged signal. (See handlePlatformIdChanged() function.)
+        if (result != operation::Result::Cancel) {
+            bool boardRecognized = (result == operation::Result::Success);
+            emit boardInfoChanged(deviceId, boardRecognized);
+            if (boardRecognized == false && keepDevicesOpen_ == false) {
+                qCInfo(logCategoryBoardManager).nospace() << "Device 0x" << hex << static_cast<uint>(deviceId)
+                                                          << " was not recognized, going to release communication channel.";
+                // Device cannot be removed in this slot (this slot is connected to signal emitted by device).
+                // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
+                // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
+                QTimer::singleShot(0, this, [this, deviceId](){
+                    disconnectDevice(deviceId);
+                });
+            }
+        }
     }
 }
 
@@ -303,14 +320,7 @@ void BoardManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) 
         // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
         // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
         QTimer::singleShot(0, this, [this, deviceId](){
-            bool removed = false;
-            {
-                QMutexLocker lock(&mutex_);
-                removed = closeDevice(deviceId);  // modifies openedDevices_ - call it while mutex_ is locked
-            }
-            if (removed) {
-                emit boardDisconnected(deviceId);
-            }
+            disconnectDevice(deviceId);
         });
     }
 }
@@ -356,7 +366,7 @@ void BoardManager::checkNotification(QByteArray message) {
     emit platformIdChanged(device->deviceId(), QPrivateSignal());
 }
 
-void BoardManager::handlePlatformIdChanged(const int deviceId, QPrivateSignal) {
+void BoardManager::handlePlatformIdChanged(const int deviceId) {
     // method device() uses mutex_
     DevicePtr device = this->device(deviceId);
     if (device == nullptr) {
@@ -366,20 +376,11 @@ void BoardManager::handlePlatformIdChanged(const int deviceId, QPrivateSignal) {
     auto it = identifyOperations_.find(deviceId);
     if (it != identifyOperations_.end()) {
         it.value()->cancelOperation();
-        identifyOperations_.erase(it);
+        // If operation is cancelled, finished is signal will be received (with Result::Cancel)
+        // and operation will be removed from identifyOperations_ in handleOperationFinished slot.
     }
 
-    std::shared_ptr<operation::BaseDeviceOperation> operation (
-        new operation::Identify(device, true),
-        operationLaterDeleter
-    );
-
-    connect(operation.get(), &operation::BaseDeviceOperation::finished, this, &BoardManager::handleOperationFinished);
-
-    operation::Identify *identify = dynamic_cast<operation::Identify*>(operation.get());
-    identify->run();
-
-    identifyOperations_.insert(device->deviceId(), operation);
+    startIdentifyOperation(device);
 }
 
 void BoardManager::operationLaterDeleter(operation::BaseDeviceOperation *operation) {

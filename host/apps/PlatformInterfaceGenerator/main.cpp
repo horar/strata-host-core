@@ -12,12 +12,14 @@
 #include "SGUtilsCpp.h"
 #include "Version.h"
 #include "PlatformInterfaceGenerator.h"
+#include "DebugMenuGenerator.h"
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
 
     const auto resources = {
-        QStringLiteral("component-sgwidgets.rcc")
+        QStringLiteral("component-sgwidgets.rcc"),
+        QStringLiteral("component-theme.rcc")
     };
 
 #ifdef Q_OS_MACOS
@@ -63,7 +65,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
     QGuiApplication app(argc, argv);
-    app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
+    app.setWindowIcon(QIcon(":/images/PIGIcon.svg"));
 
     loadResources();
 
@@ -72,9 +74,12 @@ int main(int argc, char *argv[])
     addImportPaths(&engine);
 
     PlatformInterfaceGenerator generator;
+    DebugMenuGenerator debugMenuGenerator;
     engine.rootContext()->setContextProperty("generator", &generator);
+    engine.rootContext()->setContextProperty("debugMenuGenerator", &debugMenuGenerator);
 
     qmlRegisterUncreatableType<PlatformInterfaceGenerator>("tech.strata.PlatformInterfaceGenerator", 1, 0, "PlatformInterfaceGenerator", "You can't instantiate PlatformInterfaceGenerator in QML");
+    qmlRegisterUncreatableType<DebugMenuGenerator>("tech.strata.DebugMenuGenerator", 1, 0, "DebugMenuGenerator", "You can't instantiate DebugMenuGenerator in QML");
 
     qmlRegisterSingletonType<SGUtilsCpp>("tech.strata.SGUtilsCpp", 1, 0,"SGUtilsCpp", [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject* {
         Q_UNUSED(engine)

@@ -72,6 +72,7 @@ public:
     Q_INVOKABLE QVariant get(int row) const;
     Q_INVOKABLE int mapIndexToSource(int i);
     Q_INVOKABLE int mapIndexFromSource(int i);
+    Q_INVOKABLE bool matches(const QString &text) const;
 
 signals:
     void countChanged();

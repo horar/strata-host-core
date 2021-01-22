@@ -5,6 +5,7 @@ import Qt.labs.settings 1.0
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/navigation_control.js" as NavigationControl
@@ -43,8 +44,8 @@ RowLayout {
     Rectangle {
         id: providerBackground
         color: !providerMouseArea.containsMouse && !providerPopup.opened
-               ? SGColorsJS.STRATA_GREEN : providerMouseArea.pressed && !providerPopup.opened
-                 ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+               ? Theme.palette.green : providerMouseArea.pressed && !providerPopup.opened
+                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
         radius: 10
         Layout.preferredWidth: textSize.width + textSize.height
         Layout.fillWidth: true
@@ -141,8 +142,8 @@ RowLayout {
         id: iconBackground
         radius: 10
         color: !iconMouse.containsMouse
-               ? SGColorsJS.STRATA_GREEN : iconMouse.pressed
-                 ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+               ? Theme.palette.green : iconMouse.pressed
+                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
         implicitWidth: height
         implicitHeight: parent.height
 
@@ -152,7 +153,6 @@ RowLayout {
             height: parent.height
             color: parent.color
         }
-
 
         SGIcon {
             id: urlIcon

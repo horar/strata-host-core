@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
 
@@ -40,7 +41,7 @@ Item {
                         minimumContentHeight: 100
                         minimumContentWidth: 200
                         fontSizeMultiplier: 1.6
-                        color: SGWidgets.SGColorsJS.STRATA_GREEN
+                        color: Theme.palette.green
                         text: model.name
                         onClicked: {
                             stackView.push(model.page)

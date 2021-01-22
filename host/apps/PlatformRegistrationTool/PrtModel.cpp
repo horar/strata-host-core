@@ -38,7 +38,7 @@ PrtModel::PrtModel(QObject *parent)
 
     restClient_.init(cloudServiceUrl_, &networkManager_, &authenticator_);
 
-    boardManager_.init();
+    boardManager_.init(true, true);
 
     connect(&boardManager_, &strata::BoardManager::boardInfoChanged, this, &PrtModel::boardReadyHandler);
     connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PrtModel::boardDisconnectedHandler);
