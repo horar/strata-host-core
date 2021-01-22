@@ -69,13 +69,14 @@ public:
     Q_INVOKABLE bool closeTabAt(const int index);
     Q_INVOKABLE void closeAll();
     Q_INVOKABLE void saveFileAt(const int index, bool close);
-    Q_INVOKABLE void saveAll();
+    Q_INVOKABLE void saveAll(bool close);
     Q_INVOKABLE bool hasTab(const QString &id) const;
     Q_INVOKABLE void clear(bool emitSignals = true);
     Q_INVOKABLE int getUnsavedCount() const;
     Q_INVOKABLE int getIndexById(const QString &id) const;
     Q_INVOKABLE void setExists(const QString &id, const bool &exists);
     Q_INVOKABLE int findTabByFilepath(const QUrl &filepath);
+    Q_INVOKABLE void revertAllChanges(bool close);
 
     /**
      * @brief updateTab Updates the filename, filepath, and filetype of the tab with id equal to `id`
@@ -99,7 +100,8 @@ signals:
     void tabOpened(const QUrl filepath);
     void countChanged();
     void saveRequested(const int index, bool close);
-    void saveAllRequested();
+    void saveAllRequested(bool close);
+    void revert(bool close);
 
 private:
     QList<SGFileTabItem*> data_;

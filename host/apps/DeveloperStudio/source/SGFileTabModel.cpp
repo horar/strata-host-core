@@ -312,9 +312,13 @@ void SGFileTabModel::saveFileAt(const int index, bool close)
     emit saveRequested(index, close);
 }
 
-void SGFileTabModel::saveAll()
+void SGFileTabModel::saveAll(bool close)
 {
-    emit saveAllRequested();
+    emit saveAllRequested(close);
+}
+
+void SGFileTabModel::revertAllChanges(bool close){
+    emit revert(close);
 }
 
 bool SGFileTabModel::hasTab(const QString &id) const

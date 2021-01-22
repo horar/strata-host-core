@@ -344,11 +344,11 @@ Rectangle {
 
             onPopupClosed: {
                 if(closeReason === acceptCloseReason){
-                    editor.openFilesModel.saveAll()
-                    recompileControlViewQrc()
+                    editor.openFilesModel.saveAll(false)
+                    sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
                 } else if(closeReason === closeFilesReason){
-                    editor.openFilesModel.closeTabAt(editor.openFilesModel.currentIndex)
-                    recompileControlViewQrc()
+                    editor.openFilesModel.revertAllChanges(false)
+                    sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
                 }
                 recompileRequested = false
                 toolBarListView.recompiling = false
@@ -356,12 +356,14 @@ Rectangle {
         }
     }
     function recompileControlViewQrc() {
-        if (editor.fileTreeModel.url.toString() !== '' && editor.openFilesModel.getUnsavedCount() === 0) {
+        if (editor.fileTreeModel.url.toString() !== '') {
             recompileRequested = true
-            sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
-        } else if(editor.openFilesModel.getUnsavedCount() > 0){
-            recompileRequested = false
-            confirmBuildClean.open();
+            if(editor.openFilesModel.getUnsavedCount() > 0){
+                recompileRequested = false
+                confirmBuildClean.open();
+            } else {
+                sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
+            }
         }
     }
 

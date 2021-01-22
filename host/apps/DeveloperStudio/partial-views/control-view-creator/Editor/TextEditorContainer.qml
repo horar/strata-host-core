@@ -148,7 +148,16 @@ Item {
                 if (!model.exists) {
                     model.exists = true
                 }
-                saveFile(true, true);
+                saveFile(close, true);
+            }
+        }
+
+        onRevert: {
+            if(!close){
+                model.unsavedChanges = false
+                channelObject.revertAllChanges()
+            } else {
+                openFilesModel.closeAll()
             }
         }
     }
@@ -230,6 +239,7 @@ Item {
         signal setContainerWidth(string width);
         signal undo();
         signal redo();
+        signal revertAllChanges();
 
         function setHtml(value) {
             setValue(value)

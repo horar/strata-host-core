@@ -49,6 +49,10 @@
                 editor.trigger('redoClicked', 'redo');
             });
 
+            link.revertAllChanges.connect(function() {
+                editor.restoreViewState();
+            });
+
             editor.getModel().onDidChangeContent((event) => {
                 link.fileText = editor.getValue();
                 link.setVersionId(editor.getModel().getAlternativeVersionId());
