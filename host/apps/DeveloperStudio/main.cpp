@@ -35,7 +35,7 @@
 #include "AppUi.h"
 
 #include "config/AppConfig.h"
-#include "config/UrlConfig.h"
+// #include "config/UrlConfig.h"
 
 
 void addImportPaths(QQmlApplicationEngine *engine)
@@ -139,14 +139,14 @@ int main(int argc, char *argv[])
     qmlRegisterType<SGQrcTreeModel>("tech.strata.SGQrcTreeModel", 1, 0, "SGQrcTreeModel");
     qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
-    qmlRegisterType<strata::sds::config::UrlConfig>("tech.strata.UrlConfig",1,0,"UrlConfig");
+    // qmlRegisterType<strata::sds::config::UrlConfig>("tech.strata.UrlConfig",1,0,"UrlConfig");
 
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss())};
 
-    strata::sds::config::UrlConfig urlCfg{configFilePath};
-    if (urlCfg.parse() == false) {
-        return EXIT_FAILURE;
-    }
+    // strata::sds::config::UrlConfig urlCfg{configFilePath};
+    // if (urlCfg.parse() == false) {
+    //     return EXIT_FAILURE;
+    // }
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,

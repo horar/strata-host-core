@@ -7,7 +7,6 @@
 
 namespace strata::sds::config {
 UrlConfig::UrlConfig(QObject *parent) : QObject(parent) {}
-
 UrlConfig::UrlConfig(const QString &fileName) : fileName_{fileName} {}
 
 bool UrlConfig::parse() {

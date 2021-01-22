@@ -18,3 +18,8 @@ const AVNET_URL = 'https://www.avnet.com/wps/portal/us/products/c/transform-your
 
 /* Production authorization server address */
 const PRODUCTION_AUTH_SERVER = "https://strata.onsemi.com/";
+
+/* External urls */
+const SALES_POPUP_URL = "https://www.onsemi.com/PowerSolutions/locateSalesSupport.do";
+const LICENSE_URL = "https://www.openssl.org/source/license.html";
+const PRIVACY_POLICY_URL = "https://www.onsemi.com/privacy-policy";
