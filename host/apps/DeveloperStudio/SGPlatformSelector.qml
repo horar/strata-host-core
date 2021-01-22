@@ -13,6 +13,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle{
     id: container
@@ -92,8 +93,8 @@ Rectangle{
                     Rectangle {
                         // Strata Onsemi.com landing page button
                         color: !mouse.containsMouse
-                               ? SGColorsJS.STRATA_GREEN : mouse.pressed
-                                 ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+                               ? Theme.palette.green : mouse.pressed
+                                 ? Qt.darker(Theme.palette.green, 1.25) : Theme.palette.green
                         radius: 10
                         Layout.preferredWidth: providerText.implicitWidth + providerText.height
                         Layout.maximumWidth: Layout.preferredWidth
