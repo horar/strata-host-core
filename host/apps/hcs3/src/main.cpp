@@ -45,8 +45,9 @@ int main(int argc, char *argv[])
     parser.addOption({
         {QStringLiteral("c")},
         QObject::tr("Clear cache data of Host Controller Service for <stage>."),
-        QObject::tr("stage")
     });
+    parser.addPositionalArgument(QStringLiteral("<stage>"),
+                                QObject::tr("Specifies folder to be cleared."));
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
@@ -59,18 +60,38 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
 
+        QStringList stageArgs = parser.positionalArguments();
+        if (stageArgs.count() == 0 ) {
+            qInfo() << "Folder with application cached data not entered. Listing all potential folders:" ;
+            QDir dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+            dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+
+            QStringList list = dir.entryList();
+            for (const auto& i : list) {
+                qInfo() << i;
+            }
+            return EXIT_FAILURE;
+        } 
+        else if (stageArgs.count() > 1) {
+            qWarning() << "Too many arguments were entered";
+            return EXIT_FAILURE;
+        }
+
         QString cacheDir{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
         if (cacheDir.isEmpty()) {
             qWarning() << "Folder with application cached data either not accessible or not found!!";
             return EXIT_FAILURE;
         }
-        cacheDir.append(QString("/%1").arg(parser.value(QStringLiteral("c"))).toUpper());
+        cacheDir.append(QString("/%1").arg(stageArgs.at(0)).toUpper());
         qDebug() << "Cache location:" << cacheDir;
 
-        for (const auto& folder : {QStringLiteral("db"), QStringLiteral("documents")}) {
-            QDir dir(QString("%1/%2").arg(cacheDir).arg(folder));
-            qInfo() << "Removing" << dir.path() << ":" << dir.removeRecursively();
+        QDir dir(cacheDir);
+        if (dir.exists() == false) {
+            qWarning() << "Choosen folder with application cached data does not exist!";
+            return EXIT_FAILURE;
         }
+
+        qInfo() << "Removing" << dir.path() << ":" << dir.removeRecursively();
 
         return EXIT_SUCCESS;
     }

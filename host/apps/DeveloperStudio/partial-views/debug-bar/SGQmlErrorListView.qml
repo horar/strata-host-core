@@ -12,7 +12,7 @@ ListView {
     ScrollBar.vertical: ScrollBar { policy: ScrollBar.AlwaysOn }
     
     highlight: Rectangle {
-        color: "lightgreen"
+        color: "#eee"
         radius: 5
     }
 }

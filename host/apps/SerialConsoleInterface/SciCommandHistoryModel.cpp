@@ -73,11 +73,15 @@ void SciCommandHistoryModel::setMaximumCount(int maximumCount)
 
 void SciCommandHistoryModel::add(const QString &message, bool isJsonValid)
 {
-    QString compactMessage = SGJsonFormatter::minifyJson(message);
+    QString messageToStore = message;
+
+    if (isJsonValid) {
+        messageToStore = SGJsonFormatter::minifyJson(message);
+    }
 
     int index = -1;
     for (int i = 0; i < commandList_.length(); ++i) {
-        if (commandList_.at(i).message == compactMessage) {
+        if (commandList_.at(i).message == messageToStore) {
             index = i;
             break;
         }
@@ -88,7 +92,7 @@ void SciCommandHistoryModel::add(const QString &message, bool isJsonValid)
         beginInsertRows(QModelIndex(), commandList_.length(), commandList_.length());
 
         SciCommandHistoryModelItem item;
-        item.message = compactMessage;
+        item.message = messageToStore;
         item.isJsonValid = isJsonValid;
         commandList_.append(item);
 
