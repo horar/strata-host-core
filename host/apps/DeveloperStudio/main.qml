@@ -8,6 +8,7 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "qrc:/js/core_update.js" as CoreUpdate
 import "qrc:/partial-views/platform-view"
 
 // imports below must be qrc:/ due to qrc aliases for debug/release differences
@@ -20,8 +21,6 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
-
-import QtQml 2.12
 
 SGWidgets.SGMainWindow {
     id: mainWindow
@@ -46,6 +45,9 @@ SGWidgets.SGMainWindow {
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
             PlatformSelection.initialize(sdsModel.coreInterface)
+        }
+        if (!CoreUpdate.isInitialized) {
+            CoreUpdate.initialize(sdsModel.coreInterface, updateContainer)
         }
         initialized()
     }
@@ -83,6 +85,15 @@ SGWidgets.SGMainWindow {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
             }
         }
+    }
+
+    Item {
+        id: updateContainer
+        anchors {
+            centerIn: parent
+        }
+        width: 500
+        height: 300
     }
 
     ColumnLayout {
@@ -162,6 +173,12 @@ SGWidgets.SGMainWindow {
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
+            }
+        }
+
+        onUpdateInfoReceived: {
+            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
+                CoreUpdate.parseUpdateInfo(payload)
             }
         }
     }

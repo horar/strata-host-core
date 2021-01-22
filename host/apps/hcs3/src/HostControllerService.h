@@ -19,9 +19,8 @@
 #include "BoardController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
-
-#include <DownloadManager.h>
-
+#include "DownloadManager.h"
+#include "ComponentUpdateInfo.h"
 
 struct PlatformMessage;
 
@@ -63,6 +62,7 @@ signals:
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5, bool adjustController);
     void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
+    void updateInfoRequested(QByteArray clientId);
 
 public slots:
     void onAboutToQuit();
@@ -124,6 +124,11 @@ public slots:
             const QJsonArray &firmwareList,
             const QString &error);
 
+    void sendUpdateInfoMessage(
+            const QByteArray &clientId,
+            const QJsonArray &componentList,
+            const QString &errorString);
+
 
 private:
     void handleMessage(const PlatformMessage& msg);
@@ -148,6 +153,7 @@ private:
     void onCmdUpdateFirmware(const rapidjson::Value* );
     void onCmdAdjustController(const rapidjson::Value* );
     void onCmdDownloadControlView(const rapidjson::Value* );
+    void onCmdGetUpdateInfo(const rapidjson::Value* );
 
     void platformConnected(const int deviceId);
     void platformDisconnected(const int deviceId);
@@ -165,6 +171,7 @@ private:
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
+    ComponentUpdateInfo componentUpdateInfo_;
 
     std::shared_ptr<HCS_Dispatcher> dispatcher_;
     std::thread dispatcherThread_;

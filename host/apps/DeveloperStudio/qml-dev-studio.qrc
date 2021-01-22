@@ -67,6 +67,8 @@
         <file>partial-views/platform-view/SGPlatformView.qml</file>
         <file>partial-views/status-bar/SGPlatformTab.qml</file>
         <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
+        <file>js/core_update.js</file>
+        <file>partial-views/core-update/SGCoreUpdate.qml</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/usb_type_c.svg</file>
         <file>partial-views/profile-popup/SGProfilePopup.qml</file>
         <file>partial-views/SGConfirmationPopup.qml</file>

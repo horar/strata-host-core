@@ -25,6 +25,7 @@
 #include "SDSModel.h"
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
+#include "CoreUpdate.h"
 #include "SGQrcTreeModel.h"
 #include "SGQrcTreeNode.h"
 #include "SGFileTabModel.h"
@@ -33,9 +34,7 @@
 #include "RunGuard.h"
 
 #include "AppUi.h"
-
 #include "config/AppConfig.h"
-
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {
@@ -138,11 +137,17 @@ int main(int argc, char *argv[])
     qmlRegisterType<SGQrcTreeModel>("tech.strata.SGQrcTreeModel", 1, 0, "SGQrcTreeModel");
     qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
+    qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
 
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss())};
 
+    std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
+
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,
+                     sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
+
+    QObject::connect(coreUpdate.get(), &CoreUpdate::applicationTerminationRequested,
                      sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
 
     QQmlApplicationEngine engine;
@@ -155,6 +160,8 @@ int main(int argc, char *argv[])
 
     /* deprecated context property, use sdsModel.coreInterface instead */
     engine.rootContext()->setContextProperty ("coreInterface", sdsModel->coreInterface());
+
+    engine.rootContext()->setContextProperty ("coreUpdate", coreUpdate.get());
 
     AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
     QObject::connect(

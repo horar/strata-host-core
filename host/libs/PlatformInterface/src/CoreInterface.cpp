@@ -214,6 +214,8 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadControlViewProgress(payload);
     } else if (type == "platform_meta_data") {
         emit platformMetaData(payload);
+    } else if (type == "updates_available") {
+        emit updateInfoReceived(payload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }

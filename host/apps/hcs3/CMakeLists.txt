@@ -9,7 +9,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-        COMPONENTS Core Concurrent RemoteObjects
+        COMPONENTS Core Concurrent RemoteObjects Xml
         REQUIRED
 )
 
@@ -53,6 +53,7 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/PlatformDocument.cpp
     src/FirmwareUpdateController.cpp
     src/FirmwareUpdater.cpp
+    src/ComponentUpdateInfo.cpp
 
     src/RunGuard.cpp
 
@@ -80,6 +81,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Core
     Qt5::Concurrent
     Qt5::RemoteObjects
+    Qt5::Xml
 
     strata::BoardManager
     strata::FlasherConnector
