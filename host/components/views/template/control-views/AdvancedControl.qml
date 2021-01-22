@@ -8,7 +8,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Widget09.SGResponsiveScrollView {
     id: root
-
     minimumHeight: 800
     minimumWidth: 1000
     scrollBarColor: "gray"
@@ -35,33 +34,6 @@ Widget09.SGResponsiveScrollView {
                 centerIn: parent
             }
         }
-
-//        SGAlignedLabel {
-//            id: motorSwitchLabel
-//            target: motorSwitch
-//            text: "Motor On/Off"
-//            anchors {
-//                top: name.bottom
-//                horizontalCenter: name.horizontalCenter
-//            }
-//            alignment: SGAlignedLabel.SideTopCenter
-
-//            SGSwitch {
-//                id: motorSwitch
-//                width: 50
-//                checked: basic.io.checked
-//                onCheckedChanged: {
-//                    basic.io.checked = checked
-
-//                    // basic.firstCommand.text = JSON.stringify(basic.my_cmd_simple_obj,null,4)
-//                }
-
-//                // 'checked' state is bound to and sets the
-//                // _motor_running_control property in PlatformInterface
-//                //checked: platformInterface._motor_running_control
-//                //onCheckedChanged: platformInterface._motor_running_control = checked
-//            }
-//        }
     }
 }
 

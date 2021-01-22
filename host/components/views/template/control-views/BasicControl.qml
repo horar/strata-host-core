@@ -11,14 +11,9 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
     property var intervalState : 2000
-    property alias io: io
-    property var xValue: 0
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-    property var curve: timedGraphPoints.createCurve("movingCurve")
-    property var curve2: timedGraphPoints.createCurve("movingCurve2")
-    property var firstNotification: 1
-    property bool showGraph: true
+
 
     Component.onCompleted: {
         Help.registerTarget(navTabs, "These tabs contain different user interface functionality of the Strata evaluation board. Take the idea of walking the user into evaluating the board by ensuring the board is instantly functional when powered on and then dive into more complex tabs and features. These tabs are not required but contains in the template for illustration.", 0, "BasicControlHelp")
@@ -46,10 +41,9 @@ Item {
         anchors.rightMargin: 20
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: 100
-
     }
 
-    property var obj: {
+    property var my_cmd_simple_periodic_text: {
         "notification" : {
             "value": "my_cmd_simple_periodic",
             "payload": {
@@ -64,19 +58,12 @@ Item {
         }
     }
 
-    function set_random_array(max,value){
-        let dataArray = []
-        for(let y = 0; y < max; y++) {
-            var idxName = `index_${y}`
-            var yValue = value[idxName]
-            dataArray.push(yValue)
-        }
-        return dataArray
-    }
-
-
+    /*
+      Holds valid values of run_count and run_count SGInfoBox
+    */
     property var run_count: -1
     property var run_countTextValue: 10
+
     property var my_cmd_simple_start_periodic_obj: {
         "cmd": "my_cmd_simple_periodic_update",
         "payload": {
@@ -94,6 +81,17 @@ Item {
         }
     }
 
+
+    function set_random_array(max,value){
+        let dataArray = []
+        for(let y = 0; y < max; y++) {
+            var idxName = `index_${y}`
+            var yValue = value[idxName]
+            dataArray.push(yValue)
+        }
+        return dataArray
+    }
+
     ColumnLayout {
         width: parent.width
         height: parent.height/1.1
@@ -106,7 +104,6 @@ Item {
         anchors.rightMargin: 20
         spacing: 20
 
-
         Item {
             Layout.preferredHeight: parent.height/4
             Layout.fillWidth: true
@@ -118,7 +115,7 @@ Item {
                 color: "lightgray"
 
                 Text {
-                    id: powerControlHeading
+                    id: simpleControlHeading
                     text: "Simple Command Handler"
                     font.bold: true
                     font.pixelSize: ratioCalc * 20
@@ -178,7 +175,7 @@ Item {
                                 SGSlider {
                                     id: dac
                                     width: 250
-                                    from: 0.00                         // Default: 0.0
+                                    from: 0.00
                                     to: 1.00
                                     stepSize: 0.01
                                     inputBox.validator: DoubleValidator { }
@@ -187,8 +184,8 @@ Item {
                                         inputBox.text = parseFloat(value.toFixed(2))
                                         platformInterface.commands.my_cmd_simple.update( parseFloat(value.toFixed(2)),io.checked)
                                         delegateText1.text = JSON.stringify(my_cmd_simple_obj,null,4)
-
                                     }
+
                                     onValueChanged: {
                                         inputBox.text = parseFloat(value.toFixed(2))
                                     }
@@ -252,10 +249,7 @@ Item {
                     }
                     z:2
                 }
-
-
             }
-
 
             RowLayout {
                 anchors.top: periodicNotification.bottom
@@ -272,10 +266,8 @@ Item {
                         width: parent.width - graphLabel.width
                         height:  parent.height
                         Item  {
-
                             Layout.preferredHeight: parent.height/5
                             Layout.fillWidth: true
-
                             Item{
                                 id: toggleSwitchContainer
                                 width:parent.width/3
@@ -301,10 +293,9 @@ Item {
 
                                     }
                                 }
-
                             }
                             SGButtonStrip {
-                                id: buttonStrip2
+                                id: graphGaugeButtonStrip
                                 model: ["Graph","Gauge"]
                                 anchors {
                                     centerIn: parent
@@ -312,11 +303,11 @@ Item {
                                 }
                                 onClicked: {
                                     if(index === 0) {
-                                        timedGraphPoints.visible = true
+                                        periodicNotificationGraph.visible = true
                                         lable1.visible = true
                                         lable2.visible = true
                                     }
-                                    else { timedGraphPoints.visible = false
+                                    else { periodicNotificationGraph.visible = false
                                         lable1.visible = false
                                         lable2.visible = false
 
@@ -337,9 +328,8 @@ Item {
                                 id: inputSwitchConter
                                 width:parent.width/3
                                 height: parent.height
-                                anchors {
-                                    left: buttonStrip2.right
-                                }
+                                anchors.left: graphGaugeButtonStrip.right
+
                                 SGAlignedLabel {
                                     id: inputLEDLabel
                                     target: inputLED
@@ -355,8 +345,6 @@ Item {
                                                 return SGStatusLight.Green
                                             else return SGStatusLight.Off
                                         }
-
-
                                     }
                                 }
                             }
@@ -365,7 +353,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGGraph{
-                                id: timedGraphPoints
+                                id: periodicNotificationGraph
                                 anchors.fill: parent
                                 title: "Periodic Notification Graph "
                                 yMin: 0
@@ -381,51 +369,61 @@ Item {
                                 xGrid: true
                                 yGrid: true
 
-                                property real lastTime
+                                /*
+                                  Create curves for the graph
+                                */
+                                property var random_float_array_curve: periodicNotificationGraph.createCurve("movingCurve1")
+                                property var adc_read_curve: periodicNotificationGraph.createCurve("movingCurve2")
 
+
+                                property var firstNotification: 1 //Count number of notification
+                                property bool showGraph: true
+                                property var xValue: 0
 
                                 Connections {
                                     target: platformInterface.notifications.my_cmd_simple_periodic
                                     onNotificationFinished: {
-                                        if(!showGraph) {
-                                            showGraph = true
-                                            timedGraphPoints.curve(0).clear()
-                                            timedGraphPoints.curve(1).clear()
-                                            firstNotification = 1
+                                        if(!periodicNotificationGraph.showGraph) {
+                                            periodicNotificationGraph.showGraph = true
+                                            periodicNotificationGraph.curve(0).clear()
+                                            periodicNotificationGraph.curve(1).clear()
+                                            periodicNotificationGraph.firstNotification = 1
                                         }
-                                        curve.color = "orange"
-                                        curve2.color = "blue"
+
+                                        periodicNotificationGraph.random_float_array_curve.color = "orange"
+                                        periodicNotificationGraph.adc_read_curve.color = "blue"
 
                                         let dataArray = []
                                         let dataArray2 = []
+
                                         let random_float_array = platformInterface.notifications.my_cmd_simple_periodic.random_float_array
                                         let adc_read = platformInterface.notifications.my_cmd_simple_periodic.adc_read
-                                        timedGraphPoints.xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
-                                        timedGraphPoints.xMax =  platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
-                                        xValue = timedGraphPoints.xMin
+
+                                        periodicNotificationGraph.xMin = platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_0
+                                        periodicNotificationGraph.xMax =  platformInterface.notifications.my_cmd_simple_periodic.random_increment.index_1
+                                        periodicNotificationGraph.xValue = periodicNotificationGraph.xMin
+
                                         for(let y = 0; y < random_float_array.length ; y++) {
                                             var yValue = platformInterface.notifications.my_cmd_simple_periodic.random_float_array[y]
-                                            dataArray.push({"x":xValue, "y":yValue})
-                                            dataArray2.push({"x":xValue, "y":adc_read})
-                                            xValue++
+                                            dataArray.push({"x":periodicNotificationGraph.xValue, "y":yValue})
+                                            dataArray2.push({"x":periodicNotificationGraph.xValue, "y":adc_read})
+                                            periodicNotificationGraph.xValue++
                                         }
-                                        //console.log(JSON.stringify(dataArray))
-                                        //console.log(dataArray.length, dataArray2.length, firstNotification)
+                                        // If the array contains more than one value at the first notification, append all the data points on the curves
+                                        if(periodicNotificationGraph.firstNotification === 1) {
+                                            periodicNotificationGraph.random_float_array_curve.appendList(dataArray)
+                                            periodicNotificationGraph.adc_read_curve.appendList(dataArray2)
+                                            periodicNotificationGraph.firstNotification++
+                                        }
 
-                                        if(dataArray.length > 0 && firstNotification !== 1) {
-                                            curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
-                                            firstNotification++
+                                        // Append the latest which is the last value from dataArray and dataArray2
+                                        if(dataArray.length > 0 && periodicNotificationGraph.firstNotification !== 1) {
+                                            periodicNotificationGraph.random_float_array_curve.append(JSON.stringify(dataArray[dataArray.length -1]["x"]),JSON.stringify(dataArray[dataArray.length -1]["y"]))
+                                            periodicNotificationGraph.firstNotification++
                                         }
-                                        if(dataArray2.length > 0 && firstNotification !== 1) {
-                                            curve2.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
-                                            firstNotification++
-                                        }
-                                        // If the array contains more than one value at the first notification, append all the data points on curve
-                                        else if(firstNotification === 1) {
-                                            console.log(JSON.stringify(dataArray))
-                                            curve.appendList(dataArray)
-                                            curve2.appendList(dataArray2)
-                                            firstNotification++
+                                        if(dataArray2.length > 0 && periodicNotificationGraph.firstNotification !== 1) {
+                                            periodicNotificationGraph.adc_read_curve.append(JSON.stringify(dataArray2[dataArray2.length -1]["x"]),JSON.stringify(dataArray2[dataArray2.length -1]["y"]))
+                                            periodicNotificationGraph.firstNotification++
                                         }
                                     }
                                 }
@@ -442,7 +440,7 @@ Item {
                                 maximumValue: 5               // Default: 100
                                 valueDecimalPlaces: 0
                                 tickmarkStepSize: 1           // Default: (maxVal-minVal)/10
-                                visible: buttonStrip2.index === 1 ? true : false
+                                visible: graphGaugeButtonStrip.index === 1 ? true : false
                             }
                         }
                     }
@@ -455,13 +453,12 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         ColumnLayout {
                             anchors.fill: parent
-
                             SGText {
                                 id: lable1
                                 text:" ADC \n Input"
                                 color: "blue"
                                 font.bold: true
-                                visible: buttonStrip2.index === 1 ? false : true
+                                visible: graphGaugeButtonStrip.index === 1 ? false : true
                                 Layout.topMargin: 10
                             }
                             SGText {
@@ -469,7 +466,7 @@ Item {
                                 text:" Random"
                                 color: "orange"
                                 font.bold: true
-                                visible: buttonStrip2.index === 1 ? false : true
+                                visible: graphGaugeButtonStrip.index === 1 ? false : true
                             }
                         }
                     }
@@ -499,18 +496,16 @@ Item {
                             anchors.fill: parent
                             readOnly: true
                             selectByMouse: true
-                            property var cmd_simple_periodicText: obj
+                            property var cmd_simple_periodicText: my_cmd_simple_periodic_text
                             onCmd_simple_periodicTextChanged: {
                                 var end =  selectionEnd
                                 var start = selectionStart
-                                // console.log(end, start)
-                                text = JSON.stringify(obj, null, 4)
+                                text = JSON.stringify(my_cmd_simple_periodic_text, null, 4)
                                 select(start,end)
                             }
                         }
                         ScrollBar.vertical: ScrollBar { }
                     }
-
                 }
             } //end of row
         }
@@ -534,11 +529,7 @@ Item {
                         leftMargin: 10
                     }
                 }
-
-
-
             }
-
 
             RowLayout {
                 anchors.top: configperiodicNotification.bottom
@@ -576,12 +567,8 @@ Item {
                                             checked: true
                                             onToggled: {
                                                 if(!checked) {
-                                                    showGraph = false
-                                                    //                                                    timedGraphPoints.curve(0).clear()
-                                                    //                                                    timedGraphPoints.curve(1).clear()
-                                                    //                                                    firstNotification = 1
+                                                    periodicNotificationGraph.showGraph = false
                                                 }
-
                                                 platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,checked)
                                             }
                                         }
@@ -619,7 +606,6 @@ Item {
                                             }
                                             onFocusChanged: {
                                                 if(!focus){
-                                                    console.log(focus)
                                                     interval.text = intervalState.toString()
                                                 }
                                             }
@@ -656,7 +642,6 @@ Item {
                                                     platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,-1,enableSwitch.checked)
                                                 }
                                                 else {
-                                                    console.info(run_countTextValue)
                                                     run_count = run_countTextValue
                                                     platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                                 }
@@ -670,7 +655,7 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: runcountLabel
-                                        target: runcount
+                                        target: runcountInfoBox
                                         text: "Run Count"
                                         font.bold: true
                                         anchors.horizontalCenter: parent.horizontalCenter
@@ -680,7 +665,7 @@ Item {
                                         opacity: (runStateSwitch.checked) ? 0.5 : 1.0
 
                                         SGInfoBox {
-                                            id: runcount
+                                            id: runcountInfoBox
                                             width: 90
                                             text: "10"
                                             validator: IntValidator {
@@ -691,18 +676,16 @@ Item {
                                             readOnly: false
                                             enabled: (runStateSwitch.checked) ? false : true
                                             opacity: (runStateSwitch.checked) ? 0.5 : 1.0
-
                                             onEditingFinished:{
-                                                if(runcount.text) {
-                                                    run_count = parseInt(runcount.text)
-                                                    run_countTextValue = run_count
+                                                if(runcountInfoBox.text) {
+                                                    run_count = parseInt(runcountInfoBox.text)
+                                                    run_countTextValue = run_count // holds the valid value of run count in case user enter a invalid or null value
                                                     platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                                 }
                                             }
                                             onFocusChanged: {
-                                                runcount.text = run_count.toString()
+                                                runcountInfoBox.text = run_count.toString()
                                             }
-
                                         }
                                     }
                                 }
@@ -711,7 +694,6 @@ Item {
                     } // end of column
                 }
                 Rectangle {
-
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "light gray"
@@ -742,7 +724,6 @@ Item {
                         }
                         ScrollBar.vertical: ScrollBar { }
                     }
-
                 }
             }
         }
