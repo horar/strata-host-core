@@ -9,7 +9,6 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
 import tech.strata.theme 1.0
-// import tech.strata.UrlConfig 1.0 
 
 import "qrc:/js/constants.js" as Constants
 
@@ -327,10 +326,6 @@ Item {
         visible: !fieldGrid.visible
         anchors.centerIn: parent
     }
-
-    // UrlConfig {
-    //     id: urlConf;
-    // }
 
     Connections {
         target: Signals

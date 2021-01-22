@@ -14,7 +14,6 @@ import "qrc:/js/constants.js" as Constants
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
-// import tech.strata.UrlConfig 1.0
 
 Rectangle{
     id: container
@@ -177,8 +176,4 @@ Rectangle{
             salesPopup.open()
         }
     }
-
-    // UrlConfig {
-    //    id: urlConf
-    // }
 }
