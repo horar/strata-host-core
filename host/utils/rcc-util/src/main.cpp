@@ -4,7 +4,7 @@
 #include <QResource>
 #include <QSettings>
 
-#include "rcc-utilTimestamp.h"
+#include "Timestamp.h"
 #include "Version.h"
 
 int main(int argc, char* argv[])

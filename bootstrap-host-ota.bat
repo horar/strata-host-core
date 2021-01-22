@@ -38,7 +38,7 @@ echo  Preparing environment..
 echo =======================================================================
 
 echo Setting up environment for Qt usage..
-set PATH=C:\dev\Qt\5.12.9\msvc2017_64\bin;%PATH%
+set PATH=C:\dev\Qt\5.12.10\msvc2017_64\bin;%PATH%
 
 echo Setting up environment for OpenSSL usage..
 set PATH=C:\dev\Qt\Tools\OpenSSL\Win_x64\bin;%PATH%
@@ -222,7 +222,7 @@ IF %ERRORLEVEL% NEQ 0 (
 echo -----------------------------------------------------------------------------
 echo  Actual/local branch list..
 echo -----------------------------------------------------------------------------
-git branch
+git --no-pager branch
 
 REM in case not called from where is the script located, change working directory
 cd %~dp0
