@@ -780,12 +780,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     payload.insert("status", status);
     payload.insert("complete", progress.complete);
     payload.insert("total", progress.total);
-    payload.insert("download_error", progress.downloadError);
-    payload.insert("set_fw_class_id_error", progress.setFwClassIdError);
-    payload.insert("prepare_error", progress.prepareError);
-    payload.insert("backup_error", progress.backupError);
-    payload.insert("flash_error", progress.flashError);
-    payload.insert("restore_error", progress.restoreError);
+    payload.insert("error", progress.error);
 
     QJsonDocument doc;
     QJsonObject message;

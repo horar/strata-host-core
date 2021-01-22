@@ -78,31 +78,7 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
     progress->status = status;
     progress->complete = complete;
     progress->total = total;
-
-    if (errorString.isEmpty() == false) {
-        switch (operation) {
-        case UpdateOperation::Download :
-            progress->downloadError = errorString;
-            break;
-        case UpdateOperation::SetFwClassId :
-            progress->setFwClassIdError = errorString;
-            break;
-        case UpdateOperation::Prepare :
-            progress->prepareError = errorString;
-            break;
-        case UpdateOperation::Backup :
-            progress->backupError = errorString;
-            break;
-        case UpdateOperation::Flash :
-            progress->flashError = errorString;
-            break;
-        case UpdateOperation::Restore :
-            progress->restoreError = errorString;
-            break;
-        case UpdateOperation::Finished :
-            break;
-        }
-    }
+    progress->error = errorString;
 
     emit progressOfUpdate(deviceId, updateData->clientId, *progress);
 

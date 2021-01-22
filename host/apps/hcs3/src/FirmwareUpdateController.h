@@ -70,12 +70,7 @@ public:
         UpdateStatus status;
         int complete;
         int total;
-        QString downloadError;
-        QString setFwClassIdError;
-        QString prepareError;
-        QString backupError;
-        QString flashError;
-        QString restoreError;
+        QString error;
     };
 
 signals:

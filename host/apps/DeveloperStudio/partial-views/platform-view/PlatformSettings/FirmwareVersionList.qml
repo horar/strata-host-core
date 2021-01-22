@@ -226,7 +226,7 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
-                                    statusText.text = "Download failed: " + payload.download_error
+                                    statusText.text = "Download failed: " + payload.error
                                     break;
                                 }
                                 break;
@@ -237,7 +237,7 @@ ColumnLayout {
                                     fillBar.width = barBackground.width * .25
                                     break;
                                 case "failure":
-                                    statusText.text = "Preparation failed: " + payload.prepare_error
+                                    statusText.text = "Preparation failed: " + payload.error
                                     break;
                                 }
                                 break;
@@ -259,7 +259,7 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
-                                    statusText.text = "Preparation failed: " + payload.backup_error
+                                    statusText.text = "Preparation failed: " + payload.error
                                     break;
                                 }
                                 break;
@@ -275,7 +275,7 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
-                                    statusText.text = "Flashing failed: " + payload.flash_error
+                                    statusText.text = "Flashing failed: " + payload.error
                                     break;
                                 }
                                 break;
@@ -291,7 +291,7 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
-                                    statusText.text = "Restoration failed: " + payload.restore_error
+                                    statusText.text = "Restoration failed: " + payload.error
                                     break;
                                 }
                                 break;
