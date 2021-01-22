@@ -371,13 +371,11 @@ function updateState(event, data)
                     stack_container_.currentIndex = data.index
                 }
 
-                if ((platform_tab_list_view_ !== undefined) && (platform_tab_list_view_ !== null)) {
-                    if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
-                        (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
-                        platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
-                    } else {
-                         platform_tab_list_view_.currentIndex =  -1
-                    }
+                if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
+                    (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
+                    platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
+                } else {
+                     platform_tab_list_view_.currentIndex =  -1
                 }
 
                 break;
