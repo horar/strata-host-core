@@ -222,7 +222,7 @@ IF %ERRORLEVEL% NEQ 0 (
 echo -----------------------------------------------------------------------------
 echo  Actual/local branch list..
 echo -----------------------------------------------------------------------------
-git branch
+git --no-pager branch
 
 REM in case not called from where is the script located, change working directory
 cd %~dp0
