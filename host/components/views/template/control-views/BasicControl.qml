@@ -49,8 +49,6 @@ Item {
 
     }
 
-
-
     property var obj: {
         "notification" : {
             "value": "my_cmd_simple_periodic",
@@ -95,7 +93,6 @@ Item {
             "dac": parseFloat(dac.value.toFixed(2))
         }
     }
-
 
     ColumnLayout {
         width: parent.width
@@ -160,11 +157,7 @@ Item {
                                     id: io
                                     width: 50
                                     checked: false
-//                                    onToggled:  {
-//                                        platformInterface.commands.my_cmd_simple.update(dac.value,io.checked)
-//                                        delegateText1.text =  JSON.stringify(my_cmd_simple_obj,null,4)
-//                                    }
-                                    onCheckedChanged: {
+                                    onToggled:  {
                                         platformInterface.commands.my_cmd_simple.update(dac.value,io.checked)
                                         delegateText1.text =  JSON.stringify(my_cmd_simple_obj,null,4)
                                     }
@@ -191,7 +184,6 @@ Item {
                                     inputBox.validator: DoubleValidator { }
                                     inputBox.text: dac.value.toFixed(2)
                                     onUserSet: {
-                                        // var valueSet = parseFloat(dac.value)
                                         inputBox.text = parseFloat(value.toFixed(2))
                                         platformInterface.commands.my_cmd_simple.update( parseFloat(value.toFixed(2)),io.checked)
                                         delegateText1.text = JSON.stringify(my_cmd_simple_obj,null,4)
