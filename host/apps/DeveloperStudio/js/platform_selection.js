@@ -300,6 +300,10 @@ function connectListing(class_id_string, device_id, firmware_version) {
     //    4) generate new listing
     for (let index of classMap[class_id_string].selector_listings) {
         selector_listing = platformSelectorModel.get(index)
+        if (selector_listing.error) {
+            continue // skip error listings created by assisted strata boards
+        }
+
         if (selector_listing.device_id === device_id) {
             selector_index = index
             break
@@ -528,10 +532,14 @@ function insertErrorListing (platform) {
     let index = platformSelectorModel.count - 1
     let class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
 
-    // create entry in classMap
-    classMap[class_id_string] = {
-        "original_listing": platform,
-        "selector_listings": [index]
+    if (classMap.hasOwnProperty(class_id_string)) {
+        classMap[class_id_string].selector_listings.push(index)
+    } else {
+        // create entry in classMap
+        classMap[class_id_string] = {
+            "original_listing": platform,
+            "selector_listings": [index]
+        }
     }
 
     return index
