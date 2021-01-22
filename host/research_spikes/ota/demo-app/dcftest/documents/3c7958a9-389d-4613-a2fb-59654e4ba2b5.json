@@ -1,0 +1,50 @@
+{
+    "channels": "72ddcc10-2d18-4316-8170-5223162e54cf",
+    "documents": {
+        "downloads": [],
+        "views": []
+           
+    },
+    "firmware": [
+        {
+            "file": "201/firmware/logic-gates-debug-1.0.0.bin",
+            "md5": "4faf37c0b328bcbba49bb918301e9cac",
+            "name": "firmware",
+            "timestamp": "2019-11-04 17:16:48",
+            "version": "1.0.0"
+        },
+        {
+            "file": "201/firmware/logic-gates-debug-1.0.1.bin",
+            "md5": "6bb9955c20d9fafaa1f80adb26852dc8",
+            "name": "firmware",
+            "timestamp": "2020-11-04 17:16:48",
+            "version": "1.0.1"
+        }
+    ],
+    "control_view": [
+        {
+            "file": "201/control-views/control-view-1.0.0.rcc",
+            "md5": "6acbb34d3de5006a164abf0fb334e10c",
+            "name": "control view",
+            "timestamp": "2019-11-04 17:16:48",
+            "version": "1.0.0"
+        },
+        {
+            "file": "201/control-views/control-view-2.0.0.rcc",
+            "md5": "e0be544518df803dc08c785396e06891",
+            "name": "control view",
+            "timestamp": "2019-11-07 17:00:00",
+            "version": "2.0.0"
+        }
+    ],
+    "name": "BUBU-mock-fw-flash",
+    "platform_selector": {
+        "file": "300/platform_selector/thumb.jpg",
+        "filename": "thumbnail",
+        "filesize": "8762",
+        "md5": "4f0b7868f08ad5ad98c2c862cde8f882",
+        "name": "platform_selector",
+        "prettyName": "thumbnail",
+        "timestamp": "2020-06-25T11:16:04.000Z"
+    }
+}

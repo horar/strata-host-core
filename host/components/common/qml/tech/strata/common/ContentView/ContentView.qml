@@ -59,6 +59,17 @@ Rectangle {
             margins: 40
         }
         z: 2
+
+        Rectangle {
+            // white icon backround fill
+            anchors {
+                centerIn: parent
+            }
+            width: parent.width + 2
+            height: width
+            radius: width/2
+            z:-1
+        }
     }
 
     Connections {

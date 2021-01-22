@@ -60,13 +60,6 @@ Rectangle{
                 }
             }
 
-            RecentlyReleased {
-                id: recentlyReleased
-                Layout.alignment: Qt.AlignHCenter
-                Layout.fillWidth: true
-                Layout.maximumWidth: implicitWidth
-            }
-
             Item {
                 id: rightContainer
                 Layout.fillHeight: true
@@ -98,24 +91,8 @@ Rectangle{
             }
         }
 
-        RowLayout {
-            spacing: container.width < 1100 ?0 : 30
-
-            FilterColumn {
-                id: leftFilters
-                model: Filters.categoryFilterModel
-                side: "left"
-            }
-
-            SGPlatformSelectorListView {
-                id: platformSelectorListView
-            }
-
-            FilterColumn {
-                id: rightFilters
-                model: Filters.categoryFilterModel
-                side: "right"
-            }
+        SGPlatformSelectorListView {
+            id: platformSelectorListView
         }
     }
 
@@ -144,7 +121,7 @@ Rectangle{
             anchors {
                 centerIn: parent
             }
-            width: parent.width - 4
+            width: parent.width + 2
             height: width
             radius: width/2
             z:-1
