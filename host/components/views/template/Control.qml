@@ -58,12 +58,10 @@ Item {
 
         BasicControl {
             id: basic
-            visible: true
         }
 
         AdvancedControl {
             id: advanced
-            visible: false
         }
     }
 

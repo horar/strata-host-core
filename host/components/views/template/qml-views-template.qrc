@@ -5,8 +5,6 @@
         <file>control-views/BasicControl.qml</file>
         <file>control-views/template.json</file>
         <file>control-views/PlatformInterface.qml</file>
-        <file>control-views/images/commandicon.png</file>
-        <file>control-views/images/notificationicon.png</file>
         <file>control-views/images/BoardToStrata.png</file>
         <file>control-views/images/StrataToBoard.png</file>
     </qresource>
