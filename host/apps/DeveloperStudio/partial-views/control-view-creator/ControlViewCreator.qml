@@ -336,31 +336,32 @@ Rectangle {
             id: confirmBuildClean
             parent: mainWindow.contentItem
 
-            titleText: "Stopping build due to unsaved changes in this file"
-            popupText: "Some Files have unsaved Changes Would you like to save the changes or revert the file changes?"
+            titleText: "Stopping build due to unsaved changes in the project"
+            popupText: "Some Files have unsaved Changes Would you like to save all the changes or buile without saving?"
 
-            acceptButtonText: "Save File"
-            closeButtonText: "Revert"
+            acceptButtonText: "Save All"
+            closeButtonText: "Build Without Saving"
 
             onPopupClosed: {
                 if(closeReason === acceptCloseReason){
-                    editor.openFilesModel.saveFileAt(editor.openFilesModel.currentIndex, false)
+                    editor.openFilesModel.saveAll()
+                    recompileControlViewQrc()
                 } else if(closeReason === closeFilesReason){
                     editor.openFilesModel.closeTabAt(editor.openFilesModel.currentIndex)
-
+                    recompileControlViewQrc()
                 }
-                isConfirmCloseOpen = false
+                recompileRequested = false
                 toolBarListView.recompiling = false
             }
         }
     }
-    function recompileControlViewQrc () {
+    function recompileControlViewQrc() {
         if (editor.fileTreeModel.url.toString() !== '' && editor.openFilesModel.getUnsavedCount() === 0) {
             recompileRequested = true
             sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
         } else if(editor.openFilesModel.getUnsavedCount() > 0){
-            confirmBuildClean.open();
             recompileRequested = false
+            confirmBuildClean.open();
         }
     }
 
