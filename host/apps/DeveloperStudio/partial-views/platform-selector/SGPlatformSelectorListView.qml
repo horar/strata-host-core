@@ -234,11 +234,11 @@ Item {
                                 text: {
                                     if (searchCategoryText.checked) {
                                         if (searchCategoryPartsList.checked) {
-                                            return "Search Titles, Descriptions, and Part Numbers..."
+                                            return "Filter by Titles, Descriptions, and Part Numbers..."
                                         }
-                                        return "Search Titles and Descriptions..."
+                                        return "Filter by Titles and Descriptions..."
                                     } else if (searchCategoryPartsList.checked) {
-                                        return "Search Part Numbers in Bill of Materials..."
+                                        return "Filter by Part Numbers in Bill of Materials..."
                                     } else {
                                         return "Please Select Search Options Below..."
                                     }
@@ -342,7 +342,7 @@ Item {
 
                                     SGText {
                                         id: titlesDescriptions
-                                        text: qsTr("Platform Titles and Descriptions")
+                                        text: qsTr("Hardware Titles and Descriptions")
                                     }
                                 }
 

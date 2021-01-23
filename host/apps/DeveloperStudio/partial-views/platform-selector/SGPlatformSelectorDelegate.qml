@@ -320,9 +320,9 @@ Item {
 
                 PlatformControlButton {
                     id: openControls
-                    text: model.view_open ? "Return to Controls" : "Open Platform Controls"
+                    text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
                     buttonEnabled: model.connected
-                    toolTipText: buttonEnabled ? "" : "Platform not connected"
+                    toolTipText: buttonEnabled ? "" : "Hardware not connected"
 
                     onClicked: {
                         buttonColumn.openView("control")

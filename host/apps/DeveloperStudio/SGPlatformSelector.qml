@@ -51,7 +51,25 @@ Rectangle{
                 Layout.preferredHeight: 150
 
                 Image {
-                    sourceSize.width: Math.min(parent.width, 275)
+                    sourceSize.width: Math.min(parent.width, 500)
+                    fillMode: Image.PreserveAspectFit
+                    source: "qrc:/images/on-semi-logo-horiz.svg"
+                    mipmap: true
+                    anchors {
+                        centerIn: parent
+                    }
+                }
+            }
+
+            Item {
+                id: middleContainer
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.preferredWidth: rightContainer.Layout.preferredWidth
+                Layout.preferredHeight: 150
+
+                Image {
+                    sourceSize.width: Math.min(parent.width, 250)
                     fillMode: Image.PreserveAspectFit
                     source: "qrc:/images/strata-logo.svg"
                     mipmap: true
@@ -75,19 +93,11 @@ Rectangle{
                     }
                     spacing: 7
 
-                    Image {
-                        sourceSize.width: Math.min(parent.width, 250)
-                        fillMode: Image.PreserveAspectFit
-                        source: "qrc:/images/on-semi-logo-horiz.svg"
-                        mipmap: true
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-
                     Rectangle {
                         // Strata Onsemi.com landing page button
                         color: !mouse.containsMouse
                                ? Theme.palette.green : mouse.pressed
-                                 ? Qt.darker(Theme.palette.green, 1.25) : Theme.palette.green
+                                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
                         radius: 10
                         Layout.preferredWidth: providerText.implicitWidth + providerText.height
                         Layout.maximumWidth: Layout.preferredWidth
@@ -97,7 +107,7 @@ Rectangle{
 
                         SGText {
                             id: providerText
-                            text: "Visit Strata at ONSemi.com"
+                            text: "Visit Strata webpage at ONSemi.com"
                             color: "white"
                             font.family: Fonts.franklinGothicBold
                             anchors {
