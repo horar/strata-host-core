@@ -345,10 +345,12 @@ Rectangle {
             onPopupClosed: {
                 if(closeReason === acceptCloseReason){
                     editor.openFilesModel.saveAll(false)
-                    sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
+                    toolBarListView.recompiling = true;
+                    recompileControlViewQrc();
                 } else if(closeReason === closeFilesReason){
                     editor.openFilesModel.revertAllChanges(false)
-                    sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
+                    toolBarListView.recompiling = true;
+                    recompileControlViewQrc();
                 }
                 recompileRequested = false
                 toolBarListView.recompiling = false
@@ -357,11 +359,11 @@ Rectangle {
     }
     function recompileControlViewQrc() {
         if (editor.fileTreeModel.url.toString() !== '') {
-            recompileRequested = true
             if(editor.openFilesModel.getUnsavedCount() > 0){
                 recompileRequested = false
                 confirmBuildClean.open();
             } else {
+                recompileRequested = true
                 sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
             }
         }

@@ -23,7 +23,7 @@ Item {
         id: treeModel
 
         onModelAboutToBeReset: {
-            // openFilesModel.clear()
+            openFilesModel.clear()
             parsingErrorRect.errorMessage = ""
             parsingErrorRect.visible = false
         }
