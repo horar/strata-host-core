@@ -151,12 +151,6 @@ Item {
                 saveFile(close, true);
             }
         }
-
-        onNoSave: {
-            if(close){
-                openFilesModel.closeTabAtIndex(model.index)
-            }
-        }
     }
 
     ConfirmClosePopup {

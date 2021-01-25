@@ -317,10 +317,6 @@ void SGFileTabModel::saveAll(bool close)
     emit saveAllRequested(close);
 }
 
-void SGFileTabModel::buildWithoutSave(bool close){
-    emit noSave(close);
-}
-
 bool SGFileTabModel::hasTab(const QString &id) const
 {
     return tabIds_.contains(id);

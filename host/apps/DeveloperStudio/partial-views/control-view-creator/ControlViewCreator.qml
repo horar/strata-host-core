@@ -349,7 +349,6 @@ Rectangle {
                     toolBarListView.recompiling = true;
                     sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
                 } else if(closeReason === closeFilesReason){
-                    editor.openFilesModel.buildWithoutSave(false)
                     buildWithoutSaving = true
                     toolBarListView.recompiling = true;
                     sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
