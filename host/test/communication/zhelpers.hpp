@@ -1,5 +1,5 @@
-#ifndef __ZHELPERS_HPP_INCLUDED__
-#define __ZHELPERS_HPP_INCLUDED__
+#ifndef __ZHELPERS_HPP_INCLUDED_TEST_COMMUNICATION__
+#define __ZHELPERS_HPP_INCLUDED_TEST_COMMUNICATION__
 
 //  Include a bunch of headers that we will need in the examples
 

@@ -140,6 +140,10 @@ namespace strata::connector {
 #else
 #define CONNECTOR_DEBUG_LOG(lvl, fmt, ...)
 #endif
+#define CONNECTOR_ERROR_LOG(fmt, ...)      \
+    do {                                   \
+        fprintf(stderr, fmt, __VA_ARGS__); \
+    } while (0)
 
 // ENUM for blocking and non blocking read
 enum class ReadMode {

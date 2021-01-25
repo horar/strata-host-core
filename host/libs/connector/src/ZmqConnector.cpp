@@ -19,7 +19,7 @@ ZmqConnector::ZmqConnector(int type)
 
 ZmqConnector::~ZmqConnector()
 {
-    close();
+    ZmqConnector::close();
 }
 
 bool ZmqConnector::open(const std::string&)
@@ -30,30 +30,28 @@ bool ZmqConnector::open(const std::string&)
 
 bool ZmqConnector::close()
 {
-    if (false == socket_->valid()) {
+    if (false == socket_->connected()) {
         return false;
     }
 
-    const bool closed = socket_->close();
-    if (closed) {
-        setConnectionState(false);
-    }
-
-    return closed;
+    socket_->close();
+    setConnectionState(false);
+    return true;
 }
 
 bool ZmqConnector::closeContext()
 {
-    if (false == context_->valid()) {
+    if (nullptr != context_->handle()) {
         return false;
     }
 
-    return context_->close();
+    context_->close();
+    return true;
 }
 
 connector_handle_t ZmqConnector::getFileDescriptor()
 {
-    if (false == socket_->valid()) {
+    if (false == socket_->connected()) {
 #if defined(_WIN32)
         return 0;
 #else
