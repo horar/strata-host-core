@@ -194,8 +194,8 @@ function closeTour() {
     if (tour_running) {
         current_tour_targets[internal_tour_index]["helpObject"].visible = false
         tour_running = false
+        utility.tour_runningChanged(tour_running)
     }
-    utility.tour_runningChanged(tour_running)
 }
 
 function registerWindow(windowTarget, stackContainerTarget) {
