@@ -96,4 +96,25 @@ Item {
         }
     }
 
+    SGButton {
+
+        text: "Debug \n (inject fake notifications)"
+        color: "lightgrey"
+        anchors {
+            left: controlContainer.left
+            bottom: controlContainer.bottom
+        }
+        onClicked: {
+            debugMenu.visible = true
+        }
+    }
+    DebugMenu {
+        id: debugMenu
+        // See description in control-views/DebugMenu.qml
+        anchors {
+            left: controlContainer.left
+            bottom: controlContainer.bottom
+        }
+    }
+
 }
