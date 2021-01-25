@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDebug>
+#include <QUuid>
 
 
 HostControllerService::HostControllerService(QObject* parent)
@@ -310,7 +311,8 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
     clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
-void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList, const QJsonArray &firmwareList, const QString &error)
+void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList,
+                                                 const QJsonArray &firmwareList, const QString &error)
 {
     QJsonDocument doc;
     QJsonObject message;
@@ -467,7 +469,7 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
     rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
     doc.Accept(writer);
 
-    clients_.sendMessage(client->getClientId(), strbuf.GetString() );
+    clients_.sendMessage(client->getClientId(), QByteArray(strbuf.GetString(), strbuf.GetSize()) );
 }
 
 void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
@@ -570,52 +572,89 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
         qCWarning(logCategoryHcs) << "md5 attribute is empty";
     }
 
-    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, false);
+    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, QString(), false);
 }
 
 void HostControllerService::onCmdAdjustController(const rapidjson::Value *payload)
 {
+    Q_ASSERT(payload != nullptr);
+
     QByteArray clientId = getSenderClient()->getClientId();
+    bool success = false;
+    QString errorString;
+    int deviceId;
+    bool hasDeviceId = false;
 
-    const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
-    if (deviceIdValue.IsInt() == false) {
-        qCWarning(logCategoryHcs) << "device_id attribute has bad format";
-        return;
+    do {
+        if (payload->HasMember("device_id") == false) {
+            errorString = "cmd adjust_controller - missing device_id attribute";
+            break;
+        }
+
+        const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
+        if (deviceIdValue.IsInt() == false) {
+            errorString = "cmd adjust_controller - bad format of device_id attribute";
+            break;
+        }
+        deviceId = deviceIdValue.GetInt();
+        hasDeviceId = true;
+
+        strata::device::DevicePtr device = boardsController_.getDevice(deviceId);
+        if (device == nullptr) {
+            errorString = "Device ID 0x" + QString::number(static_cast<uint>(deviceId), 16) + " doesn't exist";
+            break;
+        }
+
+        if (device->isControllerConnectedToPlatform() == false) {
+            errorString = "Controller (dongle) is not connected to platform (board)";
+            break;
+        }
+
+        QString classId = device->classId();
+        QString controllerClassId = device->controllerClassId();
+        if (classId.isEmpty() || controllerClassId.isEmpty()) {
+            errorString = "Platform has no classId or controllerClassId";
+            break;
+        }
+
+        QString architecture = storageManager_.getControllerClassDevice(controllerClassId);
+        if (architecture.isEmpty()) {
+            errorString = "Cannot get device architecture";
+            break;
+        }
+
+        QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(classId, architecture);
+        if (firmware.first.isEmpty()) {
+            errorString = "Cannot get latest firmware";
+            break;
+        }
+        QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
+
+        QString jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+
+        QJsonObject payloadBody {
+            { "job_id", jobUuid },
+            { "device_id", deviceId }
+        };
+        QByteArray notification = createHcsNotification(hcsNotificationType::adjustController, payloadBody, true);
+        clients_.sendMessage(clientId, notification);
+
+        emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmware.second, jobUuid, true);
+
+        success = true;
+    } while (false);
+
+    if (success == false) {
+        qCWarning(logCategoryHcs).noquote() << errorString;
+        if (hasDeviceId) {
+            QJsonObject payloadBody {
+                { "error_string", errorString },
+                { "device_id", deviceId }
+            };
+            QByteArray notification = createHcsNotification(hcsNotificationType::adjustController, payloadBody, true);
+            clients_.sendMessage(clientId, notification);
+        }
     }
-    int deviceId = deviceIdValue.GetInt();
-
-    strata::device::DevicePtr device = boardsController_.getDevice(deviceId);
-    if (device == nullptr) {
-        qCWarning(logCategoryHcs).nospace() << "device_id 0x" << hex << static_cast<uint>(deviceId) << " doesn't exist";
-        return;
-    }
-
-    if (device->isControllerConnectedToPlatform() == false) {
-        qCWarning(logCategoryHcs) << "controller (dongle) is not connected to platform (board)";
-        return;
-    }
-
-    QString classId = device->classId();
-    QString controllerClassId = device->controllerClassId();
-    if (classId.isEmpty() || controllerClassId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "classId or controllerClassId is not set";
-        return;
-    }
-
-    QString architecture = storageManager_.getControllerClassDevice(controllerClassId);
-    if (architecture.isEmpty()) {
-        qCWarning(logCategoryHcs) << "cannot get device architecture";
-        return;
-    }
-
-    QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(classId, architecture);
-    if (firmware.first.isEmpty()) {
-        qCWarning(logCategoryHcs) << "cannot get latest firmware";
-        return;
-    }
-    QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
-
-    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmware.second, true);
 }
 
 void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)
@@ -732,62 +771,85 @@ bool HostControllerService::broadcastMessage(const QString& message)
 
 void HostControllerService::handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress)
 {
-    QString operation;
+    QString jobType;
     switch (progress.operation) {
     case FirmwareUpdateController::UpdateOperation::Download :
-        operation = "download";
+        jobType = "download_progress";
         break;
     case FirmwareUpdateController::UpdateOperation::SetFwClassId :
-        operation = "set_fw_class_id";
+        jobType = "set_fw_class_id";
         break;
     case FirmwareUpdateController::UpdateOperation::Prepare :
-        operation = "prepare";
+        jobType = "prepare";
         break;
     case FirmwareUpdateController::UpdateOperation::Backup :
-        operation = "backup";
+        jobType = "backup_progress";
         break;
     case FirmwareUpdateController::UpdateOperation::Flash :
-        operation = "flash";
+        jobType = "flash_progress";
         break;
     case FirmwareUpdateController::UpdateOperation::Restore :
-        operation = "restore";
+        jobType = "restore_progress";
         break;
     case FirmwareUpdateController::UpdateOperation::Finished :
-        operation = "finished";
+        jobType = "finished";
         break;
     }
 
-    QString status;
-    switch (progress.status) {
-    case FirmwareUpdateController::UpdateStatus::Running :
-        status = "running";
-        break;
-    case FirmwareUpdateController::UpdateStatus::Success :
-        status = "success";
-        break;
-    case FirmwareUpdateController::UpdateStatus::Unsuccess :
-        status = "unsuccess";
-        break;
-    case FirmwareUpdateController::UpdateStatus::Failure :
-        status = "failure";
-        break;
+    QString jobStatus;
+    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished) {
+        switch (progress.status) {
+        case FirmwareUpdateController::UpdateStatus::Running :
+        case FirmwareUpdateController::UpdateStatus::Success :
+            jobStatus = "success";
+            break;
+        case FirmwareUpdateController::UpdateStatus::Unsuccess :
+            jobStatus = "unsuccess";
+            break;
+        case FirmwareUpdateController::UpdateStatus::Failure :
+            jobStatus = "failure";
+            break;
+        }
+    } else {
+        if (progress.status == FirmwareUpdateController::UpdateStatus::Running) {
+            jobStatus = "running";
+        } else {
+            jobStatus = "failure";
+        }
     }
 
-    QJsonObject payload;
-    payload.insert("type", "firmware_update");
-    payload.insert("device_id", deviceId);
-    payload.insert("operation", operation);
-    payload.insert("status", status);
-    payload.insert("complete", progress.complete);
-    payload.insert("total", progress.total);
-    payload.insert("error", progress.error);
+    QByteArray notification;
 
-    QJsonDocument doc;
-    QJsonObject message;
-    message.insert("hcs::notification", payload);
-    doc.setObject(message);
+    if (progress.adjustController) {
+        QJsonObject payload {
+            { "job_id", progress.jobUuid },
+            { "job_type", jobType },
+            { "job_status", jobStatus }
+        };
+        if (progress.status == FirmwareUpdateController::UpdateStatus::Running) {
+            if ((progress.complete > 0) && (progress.total > 0)) {
+                payload.insert("complete", progress.complete);
+                payload.insert("total", progress.total);
+            }
+        } else {
+            payload.insert("error_string", progress.error);
+        }
+        notification = createHcsNotification(hcsNotificationType::adjustControllerJob, payload, true);
+    } else {  // old flash firmware notification
+        QJsonObject payload {
+            { "device_id", deviceId },
+            { "operation", jobType },
+            { "status", jobStatus },
+            { "complete", progress.complete },
+            { "total", progress.total },
+            { "error", progress.error }
+        };
+        notification = createHcsNotification(hcsNotificationType::firmwareUpdate, payload, false);
+    }
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // This notification must be sent before broadcasting new platforms list.
+    // Message order is very important for Developer Studio.
+    clients_.sendMessage(clientId, notification);
 
     if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
             progress.status == FirmwareUpdateController::UpdateStatus::Success) {
@@ -795,6 +857,45 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
         // to indicate the firmware version has changed.
         broadcastMessage(boardsController_.createPlatformsList());
     }
+}
+
+QByteArray HostControllerService::createHcsNotification(hcsNotificationType notificationType, const QJsonObject &payload, bool standalonePayload)
+{
+    const char* type = "";
+
+    switch (notificationType) {
+    case hcsNotificationType::firmwareUpdate:
+        type = "firmware_update";
+        break;
+    case hcsNotificationType::adjustController:
+        type = "adjust_controller";
+        break;
+    case hcsNotificationType::adjustControllerJob:
+        type = "adjust_controller_job";
+        break;
+    }
+
+    QJsonObject notificationBody {
+        { "type", type }
+        //, { "payload", payload }  // TODO uncomment this when all notifications will have standalone payload
+    };
+
+    // workaround for support of old notification style (without standalone paylod object)
+    if (standalonePayload) {
+        notificationBody.insert("payload", payload);
+    } else {
+        for (auto it = payload.constBegin(); it != payload.constEnd(); ++it) {
+            notificationBody.insert(it.key(), it.value());
+        }
+    }
+
+    QJsonObject message {
+        { "hcs::notification", notificationBody }
+    };
+
+    QJsonDocument doc(message);
+
+    return doc.toJson(QJsonDocument::Compact);
 }
 
 void HostControllerService::onCmdGetUpdateInfo(const rapidjson::Value * )

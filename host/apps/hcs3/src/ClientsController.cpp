@@ -55,6 +55,15 @@ bool ClientsController::sendMessage(const QByteArray& clientId, const QString& m
     return client_connector_->send(message.toStdString());
 }
 
+bool ClientsController::sendMessage(const QByteArray& clientId, const QByteArray& message)
+{
+    assert(clientId.isEmpty() == false);
+    assert(message.isEmpty() == false);
+
+    client_connector_->setDealerID(clientId.toStdString());
+    return client_connector_->send(message.toStdString());
+}
+
 void ClientsController::stop()
 {
     if(events_manager_.isRunning()) {

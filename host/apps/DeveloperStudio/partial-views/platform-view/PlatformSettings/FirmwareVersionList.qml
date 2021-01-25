@@ -211,7 +211,7 @@ ColumnLayout {
 
                         function parseProgress (payload) {
                             switch (payload.operation) {
-                            case "download":
+                            case "download_progress":
                                 switch (payload.status) {
                                 case "running":
                                     switch (payload.total) {
@@ -241,7 +241,7 @@ ColumnLayout {
                                     break;
                                 }
                                 break;
-                            case "backup":
+                            case "backup_progress":
                                 switch (payload.status) {
                                 case "running":
                                     statusText.text = "Backing up firmware... "
@@ -263,7 +263,7 @@ ColumnLayout {
                                     break;
                                 }
                                 break;
-                            case "flash":
+                            case "flash_progress":
                                 switch (payload.status) {
                                 case "running":
                                     statusText.text = "Flashing firmware... "
@@ -279,7 +279,7 @@ ColumnLayout {
                                     break;
                                 }
                                 break;
-                            case "restore":
+                            case "restore_progress":
                                 switch (payload.status) {
                                 case "running":
                                     statusText.text = "Restoring firmware... "

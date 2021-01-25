@@ -30,7 +30,18 @@ void FirmwareUpdateController::initialize(BoardController *boardController, stra
     downloadManager_ = downloadManager;
 }
 
-void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5, bool adjustController)
+FirmwareUpdateController::UpdateProgress::UpdateProgress() :
+    jobUuid(QString()), adjustController(false)
+{
+}
+
+FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid, bool adjustController) :
+    jobUuid(jobUuid), adjustController(adjustController)
+{
+}
+
+void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
+                                              const QString& firmwareMD5, const QString& jobUuid, bool adjustController)
 {
     if (boardController_.isNull() || downloadManager_.isNull()) {
         QString errStr("FirmwareUpdateController is not properly initialized.");
@@ -56,7 +67,7 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
     }
 
     FirmwareUpdater *fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5, adjustController);
-    UpdateData *updateData = new UpdateData(clientId, fwUpdater);
+    UpdateData *updateData = new UpdateData(clientId, fwUpdater, jobUuid, adjustController);
     updates_.insert(deviceId, updateData);
 
     connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &FirmwareUpdateController::handleUpdateProgress);
@@ -89,7 +100,7 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
     }
 }
 
-FirmwareUpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater) :
-    clientId(client), fwUpdater(updater)
+FirmwareUpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool adjustController) :
+    clientId(client), fwUpdater(updater), updateProgress(jobUuid, adjustController)
 {
 }
