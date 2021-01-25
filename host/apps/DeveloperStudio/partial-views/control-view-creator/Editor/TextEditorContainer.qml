@@ -155,8 +155,6 @@ Item {
         onNoSave: {
             if(close){
                 openFilesModel.closeTabAtIndex(model.index)
-            } else {
-
             }
         }
     }
