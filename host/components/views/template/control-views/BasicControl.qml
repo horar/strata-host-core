@@ -1,11 +1,13 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-
 import tech.strata.sgwidgets 1.0
-import tech.strata.sgwidgets 0.9 as Widget09
-import "qrc:/js/help_layout_manager.js" as Help
 import QtQuick.Controls 2.12
 
+/********************************************************************************************************
+    This is a Template UI that works directly with the Template FW found
+    Under Embedded Strata Core (Refer: README):
+                https://code.onsemi.com/projects/SECSWST/repos/embedded-strata-core/browse/template
+*********************************************************************************************************/
 Item {
     id: root
     property real ratioCalc: root.width / 1200
@@ -23,16 +25,7 @@ Item {
         Help.registerTarget(perodicNotificationContainer, "This is a visualization of the data being sent as a notification to Strata using various user interface elements such as boolean indicators, live graphing, and gauges. The periodic notification is configured in the firmware to send the" + " \"" + "my_cmd_simple_periodic"+ "\" "  + "notification at a certain interval - indefinitely or with a certain run count configured in the Configure Periodic Notification section.", 4, "BasicControlHelp")
         Help.registerTarget(configperiodicNotificationContainer, "Configures the periodic notification" + " \"" + "my_cmd_simple_periodic" + "\" "+ "with a certain interval - indefinitely or with a certain run count. The Run State will turn on/off the notification and will need to be toggled to enable the notification when the Run Count expires.", 5, "BasicControlHelp")
     }
-
-    MouseArea {
-        id: containMouseArea
-        anchors.fill: root
-        z: 0
-        onClicked: {
-            forceActiveFocus()
-        }
-    }
-
+    //Help message container
     Item {
         id: grayBoxHelpContainer
         width: grayBox1.width + 10
@@ -41,6 +34,15 @@ Item {
         anchors.rightMargin: 20
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: 100
+    }
+
+    MouseArea {
+        id: containMouseArea
+        anchors.fill: root
+        z: 0
+        onClicked: {
+            forceActiveFocus()
+        }
     }
 
     property var my_cmd_simple_periodic_text: {
@@ -52,10 +54,20 @@ Item {
                 "io_read": platformInterface.notifications.my_cmd_simple_periodic.io_read,
                 "random_float": platformInterface.notifications.my_cmd_simple_periodic.random_float,
                 "random_float_array": platformInterface.notifications.my_cmd_simple_periodic.random_float_array,
-                "random_increment": set_random_array(2,platformInterface.notifications.my_cmd_simple_periodic.random_increment),
+                "random_increment": formating_random_increment(2,platformInterface.notifications.my_cmd_simple_periodic.random_increment),
                 "toggle_bool": platformInterface.notifications.my_cmd_simple_periodic.toggle_bool
             }
         }
+    }
+
+    function formating_random_increment(max,value){
+        let dataArray = []
+        for(let y = 0; y < max; y++) {
+            var idxName = `index_${y}`
+            var yValue = value[idxName]
+            dataArray.push(yValue)
+        }
+        return dataArray
     }
 
     property var run_count: -1 //Placeholder for valid value of run_count (-1 or the last value)
@@ -76,17 +88,6 @@ Item {
             "io": io.checked,
             "dac": parseFloat(dac.value.toFixed(2))
         }
-    }
-
-
-    function set_random_array(max,value){
-        let dataArray = []
-        for(let y = 0; y < max; y++) {
-            var idxName = `index_${y}`
-            var yValue = value[idxName]
-            dataArray.push(yValue)
-        }
-        return dataArray
     }
 
     ColumnLayout {
@@ -196,7 +197,6 @@ Item {
                     Layout.rightMargin: 15
                     color: "light gray"
                     Image {
-                        id: name
                         source: "images/StrataToBoard.png"
                         anchors {
                             right: parent.right
@@ -475,7 +475,6 @@ Item {
                     color: "light gray"
                     Layout.rightMargin: 15
                     Image {
-                        id: name2
                         source: "images/BoardToStrata.png"
                         anchors {
                             right: parent.right
@@ -637,7 +636,7 @@ Item {
                                             onToggled: {
                                                 if(checked) {
                                                     run_count = -1
-                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,-1,enableSwitch.checked)
+                                                    platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                                 }
                                                 else {
                                                     run_count = run_countInfo
@@ -700,7 +699,6 @@ Item {
                     Layout.topMargin: 25
                     Layout.rightMargin: 15
                     Image {
-                        id: name3
                         source: "images/StrataToBoard.png"
                         anchors {
                             right: parent.right

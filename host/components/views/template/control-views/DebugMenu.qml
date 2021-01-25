@@ -4,7 +4,8 @@ import QtGraphicalEffects 1.0
 
 // This is an example debug menu that shows how you can test your UI by injecting
 // spoofed notifications to simulate a connected platform board.
-//
+// injectDebugNotification(notification) // injects a fake JSON notification as though it came from a connected platform
+//                                             (for debugging; see line 35-49 below)
 // It is for development and should be removed from finalized UI's.
 
 
