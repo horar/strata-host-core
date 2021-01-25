@@ -17,4 +17,8 @@ Checkout Hello Strata page for more details: https://confluence.onsemi.com/pages
   
   * Alternatively using git commit:
 
-    ```git checkout aa75513cde13cee2c5fe5d6c7a53f86cd41c6cbc```
+    ```git checkout 280681185ad3b4e285097728b6cc8909ddaaca6e```
+  
+  * Another alternative is using `git worktree` on spyglass root directory:
+
+    ```git worktree add ./platform platform```
