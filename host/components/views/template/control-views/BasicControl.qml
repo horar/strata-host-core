@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import QtQuick.Controls 2.12
+import "qrc:/js/help_layout_manager.js" as Help
 
 /********************************************************************************************************
     This is a Template UI that works directly with the Template FW found
@@ -25,7 +26,7 @@ Item {
         Help.registerTarget(perodicNotificationContainer, "This is a visualization of the data being sent as a notification to Strata using various user interface elements such as boolean indicators, live graphing, and gauges. The periodic notification is configured in the firmware to send the" + " \"" + "my_cmd_simple_periodic"+ "\" "  + "notification at a certain interval - indefinitely or with a certain run count configured in the Configure Periodic Notification section.", 4, "BasicControlHelp")
         Help.registerTarget(configperiodicNotificationContainer, "Configures the periodic notification" + " \"" + "my_cmd_simple_periodic" + "\" "+ "with a certain interval - indefinitely or with a certain run count. The Run State will turn on/off the notification and will need to be toggled to enable the notification when the Run Count expires.", 5, "BasicControlHelp")
     }
-    //Help message container
+
     Item {
         id: grayBoxHelpContainer
         width: grayBox1.width + 10
