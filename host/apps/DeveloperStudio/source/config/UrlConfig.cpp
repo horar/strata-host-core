@@ -64,4 +64,32 @@ bool UrlConfig::setUrlValue(QJsonValue val, QString *url) {
     return true;
 }
 
+QString UrlConfig::getSalesPopupUrl() const {
+    return m_salesPopupUrl;
+}
+
+QString UrlConfig::getLicenseUrl() const {
+    return m_licenseUrl;
+}
+
+QString UrlConfig::getPrivacyPolicyUrl() const {
+    return m_privacyPolicyUrl;
+}
+
+QString UrlConfig::getProductionAuthServer() const {
+    return m_productionAuthServer;
+}
+
+QString UrlConfig::getMouserUrl() const {
+    return m_mouserUrl;
+}
+
+QString UrlConfig::getDigiKeyUrl() const {
+    return m_digiKeyUrl;
+}
+
+QString UrlConfig::getAvnetUrl() const {
+    return m_avnetUrl;
+}
+
 } // namespace strata::sds::config
