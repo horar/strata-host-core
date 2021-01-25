@@ -4,7 +4,7 @@ project(HostControllerService
 )
 
 set(PROJECT_BUNDLE_ID com.onsemi.strata.hcs)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -140,4 +140,9 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/hcs.config
     COMMENT "Deploying 'hcs.config'..."
     VERBATIM
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
 )

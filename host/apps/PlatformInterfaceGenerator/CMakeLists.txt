@@ -6,7 +6,7 @@ project(PlatformInterfaceGenerator
 set(PROJECT_WIN32_ICO resources/icons/app/on-logo.ico)
 set(PROJECT_MACOS_ICNS on-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.pig)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
