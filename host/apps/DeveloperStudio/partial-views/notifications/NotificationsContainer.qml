@@ -11,9 +11,8 @@ import tech.strata.notifications 1.0
 
 Item {
     width: 350
-
-    clip: true
     visible: !Notifications.inboxIsOpen
+
     property string currentUser: Constants.GUEST_USER_ID
 
     onCurrentUserChanged: {
@@ -40,7 +39,6 @@ Item {
         id: listView
         width: parent.width
         height: parent.height
-        anchors.bottom: parent.bottom
         visible: !notificationsInbox.isOpen
         model: filteredNotifications
         spacing: 10
@@ -48,9 +46,6 @@ Item {
         delegate: NotificationDelegate { modelIndex: index }
         verticalLayoutDirection: ListView.BottomToTop
         interactive: contentHeight > height
-        add: Transition {
-            NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 400 }
-        }
 
         removeDisplaced: Transition {
             NumberAnimation {

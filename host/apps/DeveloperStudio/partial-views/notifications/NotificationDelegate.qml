@@ -11,10 +11,21 @@ import tech.strata.notifications 1.0
 
 Item {
     id: root
-    width: parent.width
-    height: notificationContainer.height + (2 * notificationShadow.radius)
+    implicitWidth: parent.width
+    implicitHeight: notificationContainer.height + (2 * notificationShadow.radius)
+    opacity: 0
 
     property int modelIndex
+
+    Component.onCompleted: {
+        opacity = 1
+    }
+
+    Behavior on opacity {
+        NumberAnimation {
+            duration: 400
+        }
+    }
 
     MouseArea {
         // This is needed to prevent any cursor hover effects from items below this item
@@ -23,10 +34,10 @@ Item {
 
     Rectangle {
         id: notificationContainer
-        width: parent.width - (2 * notificationShadow.radius)
         y: notificationShadow.radius - notificationShadow.verticalOffset
         x: notificationShadow.radius - notificationShadow.horizontalOffset
-        height: columnLayout.implicitHeight + (row.anchors.margins * 2)
+        width: parent.width - (2 * notificationShadow.radius)
+        height: row.implicitHeight + (row.anchors.margins * 2)
         radius: 4
         clip: true
         border.color: {
@@ -59,8 +70,10 @@ Item {
         RowLayout {
             id: row
             anchors {
-                fill: parent
+                left: parent.left
+                right: parent.right
                 margins: 15
+                verticalCenter: parent.verticalCenter
             }
             spacing: 10
 
@@ -150,7 +163,7 @@ Item {
 
                 Rectangle {
                     color: Theme.palette.lightGray
-                    visible: model.description.length > 0
+                    visible: description.visible
                     Layout.fillWidth: true
                     Layout.rightMargin: 10
                     Layout.preferredHeight: 1
@@ -166,16 +179,16 @@ Item {
 
                 Rectangle {
                     color: Theme.palette.lightGray
-                    visible: model.actions.count > 0
+                    visible: buttonFlow.visible
                     Layout.fillWidth: true
                     Layout.rightMargin: 10
                     Layout.preferredHeight: 1
                 }
 
-                RowLayout {
+                Flow {
+                    id: buttonFlow
+                    Layout.fillWidth: true
                     visible: model.actions.count > 0
-                    Layout.preferredHeight: 35
-                    Layout.leftMargin: 5
                     spacing: 3
 
                     Repeater {
@@ -183,8 +196,8 @@ Item {
 
                         delegate: Rectangle {
                             id: button
-                            Layout.preferredWidth: metrics.tightBoundingRect.width + 20
-                            Layout.preferredHeight: metrics.tightBoundingRect.height + 20
+                            implicitWidth: metrics.tightBoundingRect.width + 20
+                            implicitHeight: metrics.tightBoundingRect.height + 20
                             color: "transparent"
                             border.color: actionMouseArea.containsMouse ? Qt.darker(Theme.palette.highlight) : Theme.palette.highlight
                             border.width: 1
