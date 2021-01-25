@@ -103,5 +103,6 @@
         <file>partial-views/notifications/NotificationsContainer.qml</file>
         <file>partial-views/notifications/NotificationsInbox.qml</file>
         <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
+        <file>partial-views/notifications/NotificationContent.qml</file>
     </qresource>
 </RCC>

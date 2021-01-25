@@ -18,6 +18,7 @@ Rectangle {
     property string currentUser: Constants.GUEST_USER_ID
     property int expandWidth: 300
     readonly property bool isOpen: width > 0
+    readonly property bool fullyOpen: width === expandWidth
 
     layer.enabled: true
     layer.effect: DropShadow {
@@ -111,9 +112,10 @@ Rectangle {
             }
 
             Text {
-                text: "NOTIFICATIONS"
+                text: "Notifications"
                 font.bold: true
                 font.pixelSize: 14
+                font.capitalization: Font.AllUppercase
                 anchors {
                     left: collapseExpandIcon.right
                     leftMargin: 10
@@ -184,6 +186,14 @@ Rectangle {
                     sortedModel.invalidate()
                 }
             }
+
+            SGButton {
+                text: "Clear all"
+                Layout.preferredHeight: parent.Layout.preferredHeight
+                onClicked: {
+                    Notifications.model.clear()
+                }
+            }
         }
 
         Rectangle {
@@ -191,21 +201,29 @@ Rectangle {
             Layout.preferredHeight: 1
             color: Theme.palette.darkGray
         }
-
     }
 
-    ListView {
-        visible: parent.visible && sortedModel.count > 0
+    Rectangle {
+        color: Theme.palette.lightGray
         anchors {
             top: headerContainer.bottom
             bottom: parent.bottom
             left: parent.left
             right: parent.right
         }
-        clip: true
-        model: sortedModel
-        delegate: NotificationsInboxDelegate {
-            modelIndex: index
+
+        ListView {
+            visible: parent.visible && sortedModel.count > 0
+            clip: true
+            model: sortedModel
+            spacing: 1
+            anchors {
+                fill: parent
+            }
+
+            delegate: NotificationsInboxDelegate {
+                modelIndex: index
+            }
         }
     }
 
@@ -218,7 +236,8 @@ Rectangle {
             right: parent.right
         }
         text: "No Notifications"
-        color: Theme.palette.lightGray
+        color: Theme.palette.darkGray
+        opacity: .5
         font.pixelSize: 24
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -236,7 +255,6 @@ Rectangle {
             root.visible = true
         }
     }
-
 
     NumberAnimation {
         id: hideAnimation
