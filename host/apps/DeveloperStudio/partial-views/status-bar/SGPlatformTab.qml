@@ -11,7 +11,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 Item {
     id: platformTabRoot
     height: 40
-    width: 200
+    width: 250 // will be set by the listview
 
     property color menuColor: Theme.palette.green
 

@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQml 2.12
 import QtQuick.Extras 1.4
 import QtQuick.Controls.Styles 1.4
 
@@ -20,16 +21,16 @@ Item {
     property real unitTextFontSizeMultiplier: 1.0
     property real outerTextFontSizeMultiplier: 1.0
     property int valueDecimalPlaces: tickmarkDecimalPlaces
-    property int tickmarkDecimalPlaces: ticksBackground.decimalPlacesFromStepSize
+    property int tickmarkDecimalPlaces: gauge.decimalPlacesFromStepSize
 
+    property alias minimumValue: gauge.minimumValue
+    property alias maximumValue: gauge.maximumValue
+    property alias tickmarkStepSize : gauge.tickmarkStepSize
     property alias unitText: unitLabel.text
-    property alias maximumValue: ticksBackground.maximumValue
-    property alias minimumValue: ticksBackground.minimumValue
-    property alias tickmarkStepSize : ticksBackground.tickmarkStepSize
 
     CircularGauge {
         id: gauge
-        value: (root.value-root.minimumValue)/(root.maximumValue-root.minimumValue)*200 // Normalize incoming values against 200 tickmarks
+        value: root.value
         width: root.width > root.height ? root.height *.7 : root.width *.7
         height: root.height > root.width ? root.width *.7 : root.height *.7
         anchors {
@@ -37,23 +38,128 @@ Item {
             verticalCenter: root.verticalCenter
             verticalCenterOffset: 0.05 * root.height
         }
-        maximumValue: 200
-        minimumValue: 0
+
+        property real tickMarkStepRange: 10
+        property real tickmarkStepSize: (maximumValue - minimumValue)/tickMarkStepRange
+        property int decimalPlacesFromStepSize: {
+                return (Math.floor(gauge.tickmarkStepSize) === gauge.tickmarkStepSize) ?  0 :
+                        gauge.tickmarkStepSize.toString().split(".")[1].length || 0
+                }
 
         style : CircularGaugeStyle {
             id: gaugeStyle
             needle: null
-            foreground: null
-            tickmarkLabel: null
-            tickmarkStepSize: 1
+            tickmarkInset: -gauge.width / 34
+            labelInset: -gauge.width / (12.8 - Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length))  // Base label distance from gauge center on max/minValue
+            minimumValueAngle: -145
+            maximumValueAngle: 145
+            tickmarkStepSize: gauge.tickmarkStepSize
             minorTickmark: null
 
+            readonly property int maxSlices: 40
+            property var center: { "x": outerRadius, "y": outerRadius}
+            property real lineWidth: outerRadius * 0.45
+            property real radius: outerRadius - lineWidth/2
+            property real ratio: Math.max(0, Math.min(root.value/root.maximumValue, 1)) // bound to 0, 1
+
+            tickmarkLabel:  SGText {
+                                text: styleData.value.toFixed(root.tickmarkDecimalPlaces)
+                                color: root.outerTextColor
+                                antialiasing: true
+                                fontSizeMultiplier: root.outerTextFontSizeMultiplier * (outerRadius * (1/100))
+                            }
+
             tickmark: Rectangle {
-                id: tickmarks
-                color: styleData.value >= gauge.value ? root.gaugeBackgroundColor : lerpColor(root.gaugeFillColor1, root.gaugeFillColor2, styleData.value/gauge.maximumValue)
-                width: gauge.width / 68.26
-                height: gauge.width / 4.26
-                antialiasing: true
+                        color: root.outerTextColor
+                        width: gauge.width / 100
+                        height: gauge.width / 30
+                        antialiasing: true
+                    }
+
+            background: Canvas {
+                id: background
+
+                onPaint: {
+                    var ctx = getContext("2d")
+                    ctx.reset()
+
+                    ctx.beginPath()
+                    ctx.strokeStyle = gaugeBackgroundColor
+                    ctx.lineWidth = lineWidth
+
+                    const angleStart = (Math.PI * .695)
+                    const angleEnd = (Math.PI * 1.614) + angleStart
+
+                    ctx.arc(center.x, center.y, radius, angleStart, angleEnd)
+                    ctx.stroke()
+                }
+            }
+
+            foreground: Canvas {
+                id: foreground
+
+                onPaint: {
+                    let ctx = getContext("2d")
+                    ctx.reset()
+                    ctx.lineWidth = lineWidth;
+
+                    const rawSlices = ratio * maxSlices
+                    const totalSlices = Math.ceil(rawSlices)
+                    const partialSlice = rawSlices - (totalSlices -1)
+
+                    let slices = [];
+
+                    // Build slice model.
+                    for (let k = 0; k < totalSlices; k++) {
+                        let buildSlice = {
+                                       // ((80.7% of circle to match min/maximumValueAngle) * (slice size)) + (offset to angle notch down)
+                            "angleStart": ((Math.PI * 1.614) * (k/maxSlices) -.01) + (Math.PI * .695), // -.01 for small overlap, otherwise can see seams
+                        }
+
+                        if (k === totalSlices-1) { // partial slice at end of arc
+                            buildSlice.angleEnd = ((Math.PI * 1.614) * ((k+partialSlice)/maxSlices)) + (Math.PI * .695)
+                            buildSlice.colorStops = [
+                                        { "stop": 0, "color": lerpColor(gaugeFillColor1, gaugeFillColor2, (k/maxSlices)) },
+                                        { "stop": 1, "color": lerpColor(gaugeFillColor1, gaugeFillColor2, ((k+partialSlice)/maxSlices)) }
+                                    ]
+                        } else {
+                            buildSlice.angleEnd = ((Math.PI * 1.614) * ((k+1)/maxSlices)) + (Math.PI * .695)
+                            buildSlice.colorStops = [
+                                        { "stop": 0, "color": lerpColor(gaugeFillColor1, gaugeFillColor2, (k/maxSlices)) },
+                                        { "stop": 1, "color": lerpColor(gaugeFillColor1, gaugeFillColor2, ((k+1)/maxSlices)) }
+                                    ]
+                        }
+
+                        buildSlice.x1 = center.x + radius * Math.cos(buildSlice.angleStart)
+                        buildSlice.y1 = center.y + radius * Math.sin(buildSlice.angleStart)
+                        buildSlice.x2 = center.x + radius * Math.cos(buildSlice.angleEnd)
+                        buildSlice.y2 = center.y + radius * Math.sin(buildSlice.angleEnd)
+
+                        slices.push(buildSlice)
+                    }
+
+                    // Draw arc slices.
+                    for (let i = 0; i < slices.length; ++i) {
+                        const slice = slices[i];
+                        let gradient = ctx.createLinearGradient(slice.x1, slice.y1, slice.x2, slice.y2);
+                        for (let j = 0; j < slice.colorStops.length; ++j) {
+                            let cs = slice.colorStops[j];
+                            gradient.addColorStop(cs.stop, cs.color);
+                        }
+                        ctx.beginPath();
+                        ctx.arc(center.x, center.y, radius, slice.angleStart, slice.angleEnd);
+                        ctx.strokeStyle = gradient;
+                        ctx.stroke();
+                    }
+                }
+
+                Connections {
+                    target: gauge
+
+                    onValueChanged: {
+                        foreground.requestPaint()
+                    }
+                }
             }
         }
 
@@ -92,50 +198,6 @@ Item {
             }
             fontSizeMultiplier: (gauge.width / 256) * unitTextFontSizeMultiplier
             font.italic: true
-        }
-
-        CircularGauge {
-            id: ticksBackground
-            z: -1
-            width: gauge.width
-            height: gauge.height
-            anchors {
-              centerIn: gauge
-            }
-            minimumValue: 0
-            maximumValue: 100
-            property real tickmarkStepSize: (maximumValue - minimumValue)/10
-
-            property int decimalPlacesFromStepSize: {
-                return (Math.floor(ticksBackground.tickmarkStepSize) === ticksBackground.tickmarkStepSize) ?  0 :
-                       ticksBackground.tickmarkStepSize.toString().split(".")[1].length || 0
-            }
-
-            style : CircularGaugeStyle {
-                id: gaugeStyle2
-                tickmarkStepSize: ticksBackground.tickmarkStepSize
-                needle: null
-                foreground: null
-                minorTickmark: null
-                tickmarkInset: -ticksBackground.width / 34
-                labelInset: -ticksBackground.width / (12.8 - Math.max((root.maximumValue+ "").length, (root.minimumValue + "").length))  // Base label distance from gauge center on max/minValue
-                minimumValueAngle: -145.25
-                maximumValueAngle: 145.25
-
-                tickmarkLabel:  SGText {
-                    text: styleData.value.toFixed(root.tickmarkDecimalPlaces)
-                    color: root.outerTextColor
-                    antialiasing: true
-                    fontSizeMultiplier: root.outerTextFontSizeMultiplier * (outerRadius * (1/100))
-                }
-
-                tickmark: Rectangle {
-                    color: root.outerTextColor
-                    width: gauge.width / 100
-                    height: gauge.width / 30
-                    antialiasing: true
-                }
-            }
         }
     }
 

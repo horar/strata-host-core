@@ -245,7 +245,7 @@ fi
 echo "-----------------------------------------------------------------------------"
 echo " Actual/local branch list.."
 echo "-----------------------------------------------------------------------------"
-git branch
+git --no-pager branch
 
 if [ $BUILD_CLEANUP != 0 ] ; then
     if [ -d $BUILD_DIR ] ; then

@@ -16,7 +16,7 @@
 #include <PlatformInterface/core/CoreInterface.h>
 
 #include "Version.h"
-#include "StrataDeveloperStudioTimestamp.h"
+#include "Timestamp.h"
 
 #include <QtLoggerSetup.h>
 #include <QtLogger.h>

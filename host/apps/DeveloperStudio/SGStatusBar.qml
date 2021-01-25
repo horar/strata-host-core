@@ -114,11 +114,78 @@ Rectangle {
             }
         }
 
+        Rectangle {
+            id: platformLeftArrow
+            Layout.preferredHeight: 40
+            Layout.preferredWidth: 20
+
+            enabled: platformTabListView.contentX > 0
+
+            visible: platformTabListView.contentWidth > platformTabListView.width
+
+            color: enabled && leftArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            onEnabledChanged: {
+                if (enabled == false) {
+                    leftArrowTimer.stop()
+                }
+            }
+
+            Timer {
+                id: leftArrowTimer
+                interval: 10
+                running: false
+                repeat: true
+                onTriggered: {
+                    platformTabListView.setPlatformTabContentX(-30)
+                }
+            }
+
+            SGIcon {
+                id: leftArrowIcon
+                height: width
+                width: parent.width - 4
+                anchors {
+                    centerIn: parent
+                }
+                source: "qrc:/sgimages/chevron-left.svg"
+                iconColor : "white"
+                opacity: enabled ? 1 : 0.4
+            }
+
+            MouseArea {
+                id: leftArrowMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                pressAndHoldInterval: 300
+                onClicked: {
+                    platformTabListView.setPlatformTabContentX(-100)
+                }
+                onPressAndHold: {
+                    leftArrowTimer.start()
+                }
+                onReleased: {
+                    leftArrowTimer.stop()
+                }
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
+        }
+
         ListView {
             id: platformTabListView
             Layout.fillHeight: true
             Layout.fillWidth: true
-            delegate: SGPlatformTab {}
+
+            property int platformTabWidth: ((count > 0) && (width > count)) ?
+                    Math.max(Math.min(Math.floor((width - count) / count), 250), 140) : 250
+
+            property int platformTabWidthRemainder : (platformTabWidth < 250) ?
+                    Math.max(width - ((platformTabWidth * count) + count), 0) : 0
+
+            delegate: SGPlatformTab {
+                width: platformTabListView.platformTabWidth +
+                       (index == (platformTabListView.count - 1) ? platformTabListView.platformTabWidthRemainder : 0)
+            }
             orientation: ListView.Horizontal
             spacing: 1
             clip: true
@@ -127,6 +194,124 @@ Rectangle {
             highlightMoveVelocity: -1
 
             model: NavigationControl.platform_view_model_
+
+            flickableDirection: Flickable.HorizontalFlick
+            boundsBehavior: Flickable.StopAtBounds
+
+            Behavior on contentX {
+                NumberAnimation {
+                    id: platformTabAnimation
+                    duration: 100
+                    easing.type: Easing.Linear
+
+                    property int animationContentX: 0   // to facilitate smooth mouse movements
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                propagateComposedEvents: true
+                onWheel: {
+                    let movementDelta = 0
+                    if (wheel.pixelDelta != null) {
+                        // as input we have pixelDelta which is how many pixels we have to move in this scroll step
+                        if (Math.abs(wheel.pixelDelta.x) > Math.abs(wheel.pixelDelta.y)) {
+                            movementDelta = wheel.pixelDelta.x
+                        } else {
+                            movementDelta = wheel.pixelDelta.y
+                        }
+                    }
+
+                    if (wheel.angleDelta != null && movementDelta === 0) {
+                        // as input we have angleDelta which is in multiples of 120, where 120 is one scroll step
+                        if (Math.abs(wheel.angleDelta.x) > Math.abs(wheel.angleDelta.y)) {
+                            movementDelta = wheel.angleDelta.x
+                        } else {
+                            movementDelta = wheel.angleDelta.y
+                        }
+                        // we make it so that 10 scrolls will move 1 page
+                        movementDelta = ((movementDelta / 120.0) * (platformTabListView.width / 10.0))
+                    }
+
+                    if (movementDelta !== 0) {
+                        platformTabListView.setPlatformTabContentX(-movementDelta)
+                    }
+                    wheel.accepted = true
+                }
+            }
+
+            function setPlatformTabContentX(val) {
+                if (platformTabAnimation.running == false) {
+                    platformTabAnimation.animationContentX = platformTabListView.contentX
+                }
+                platformTabAnimation.animationContentX += val
+                if (platformTabAnimation.animationContentX < 0) {
+                    platformTabAnimation.animationContentX = 0
+                } else {
+                    let maxContentX = Math.max(platformTabListView.contentWidth - platformTabListView.width, 0)
+                    if (platformTabAnimation.animationContentX > maxContentX) {
+                        platformTabAnimation.animationContentX = maxContentX
+                    }
+                }
+                platformTabListView.contentX = platformTabAnimation.animationContentX
+            }
+        }
+
+        Rectangle {
+            id: platformRightArrow
+            Layout.preferredHeight: 40
+            Layout.preferredWidth: 20
+
+            enabled: platformTabListView.contentX < Math.max(platformTabListView.contentWidth - platformTabListView.width, 0)
+
+            visible: platformTabListView.contentWidth > platformTabListView.width
+
+            color: enabled && rightArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            onEnabledChanged: {
+                if (enabled == false) {
+                    rightArrowTimer.stop()
+                }
+            }
+
+            Timer {
+                id: rightArrowTimer
+                interval: 10
+                running: false
+                repeat: true
+                onTriggered: {
+                    platformTabListView.setPlatformTabContentX(30)
+                }
+            }
+
+            SGIcon {
+                id: rightArrowIcon
+                height: width
+                width: parent.width - 4
+                anchors {
+                    centerIn: parent
+                }
+                source: "qrc:/sgimages/chevron-right.svg"
+                iconColor : "white"
+                opacity: enabled ? 1 : 0.4
+            }
+
+            MouseArea {
+                id: rightArrowMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                pressAndHoldInterval: 300
+                onClicked: {
+                    platformTabListView.setPlatformTabContentX(100)
+                }
+                onPressAndHold: {
+                    rightArrowTimer.start()
+                }
+                onReleased: {
+                    rightArrowTimer.stop()
+                }
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
         }
 
         CVCButton {

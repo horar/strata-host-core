@@ -25,6 +25,11 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC rapidjson::rapidjson
 )
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
+)
+
 if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
