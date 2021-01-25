@@ -9,15 +9,16 @@ macro(generate_app_build_timestamp)
     if (NOT TARGET ${PROJECT_NAME}_timestamp)
         message(STATUS "Creating timestamp target for '${PROJECT_NAME}'...")
 
-        if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Timestamp.h)
-            file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Timestamp.h
-                "// WARNING! All changes made in this file will be lost!!\n\n"
+        if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/Timestamp.h)
+            file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Timestamp.h
+                "// !! WARNING !!\n"
+                "// Generated file. All changes made in this file will be lost!!\n\n"
                 "#pragma once\n\n"
                 "#include <string_view>\n\n"
                 "struct Timestamp final {\n"
                 "    static const std::string_view buildTimestamp;\n"
                 "    static const std::string_view buildOnHost;\n"
-                "};\n\n"
+                "};\n"
             )
         endif()
         add_custom_target(${PROJECT_NAME}_timestamp ALL)
@@ -36,11 +37,14 @@ macro(generate_app_build_timestamp)
         add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_timestamp)
 
         target_sources(${PROJECT_NAME} PRIVATE
-            ${PROJECT_NAME}Timestamp.cpp
+            Timestamp.cpp
         )
-        set_source_files_properties(${PROJECT_NAME}Timestamp.cpp
+        set_source_files_properties(Timestamp.cpp
             PROPERTIES GENERATED ON
             SKIP_AUTOMOC ON
+        )
+        set_source_files_properties(Timestamp.h
+            PROPERTIES GENERATED ON
         )
     endif()
 endmacro()
