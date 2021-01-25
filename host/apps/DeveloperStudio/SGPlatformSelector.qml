@@ -10,7 +10,6 @@ import "partial-views/distribution-portal"
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/js/constants.js" as Constants
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -172,7 +171,7 @@ Rectangle{
             salesPopup.height = Qt.binding(()=> container.height - 100)
             salesPopup.x = Qt.binding(()=> container.width/2 - salesPopup.width/2)
             salesPopup.y =  Qt.binding(()=> container.height/2 - salesPopup.height/2)
-            salesPopup.url = Constants.SALES_POPUP_URL
+            salesPopup.url = urls.getSalesPopupUrl()
             salesPopup.open()
         }
     }

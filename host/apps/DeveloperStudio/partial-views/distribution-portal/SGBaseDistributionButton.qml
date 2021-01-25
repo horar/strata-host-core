@@ -7,7 +7,6 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 
-import "qrc:/js/constants.js" as Constants
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 RowLayout {
@@ -26,17 +25,17 @@ RowLayout {
         },
         {
             name: "Avnet",
-            url: Constants.AVNET_URL,
+            url: urls.getAvnetUrl(),
             visible: true
         },
         {
             name: "Digi-Key",
-            url: Constants.DIGIKEY_URL,
+            url: urls.getDigiKeyUrl(),
             visible: true
         },
         {
             name: "Mouser",
-            url: Constants.MOUSER_URL,
+            url: urls.getMouserUrl(),
             visible: true
         }
     ]

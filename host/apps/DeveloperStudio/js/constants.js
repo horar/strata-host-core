@@ -11,15 +11,5 @@ const GUEST_USER_ID = "Guest";
 const GUEST_FIRST_NAME = "First";
 const GUEST_LAST_NAME = "Last";
 
-/* Distributor urls */
-const MOUSER_URL = 'https://www.mouser.com/new/on-semiconductor/onsemi-strata-developer-studio/'
-const DIGIKEY_URL = 'https://www.digikey.com/en/product-highlight/o/on-semi/strata-developer-studio'
-const AVNET_URL = 'https://www.avnet.com/wps/portal/us/products/c/transform-your-thinking-with-on-semiconductor/strata-studio/'
-
 /* Production authorization server address */
 const PRODUCTION_AUTH_SERVER = "https://strata.onsemi.com/";
-
-/* External urls */
-const SALES_POPUP_URL = "https://www.onsemi.com/PowerSolutions/locateSalesSupport.do";
-const LICENSE_URL = "https://www.openssl.org/source/license.html";
-const PRIVACY_POLICY_URL = "https://www.onsemi.com/privacy-policy";

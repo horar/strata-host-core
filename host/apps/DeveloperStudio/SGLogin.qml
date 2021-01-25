@@ -7,7 +7,6 @@ import "qrc:/partial-views/"
 import "qrc:/js/utilities.js" as Utility
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
-import "qrc:/js/constants.js" as Constants
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
@@ -213,12 +212,12 @@ Item {
             margins: 30
         }
         height: testServerWarning.height + 30
-        visible: Rest.url !== Constants.PRODUCTION_AUTH_SERVER
+        visible: Rest.url !== urls.getProductionAuthServer()
 
         Connections {
             target: Signals
             onServerChanged: {
-                testServerWarningContainer.visible = ( Rest.url !== Constants.PRODUCTION_AUTH_SERVER )
+                testServerWarningContainer.visible = ( Rest.url !== urls.getProductionAuthServer() )
             }
         }
 
