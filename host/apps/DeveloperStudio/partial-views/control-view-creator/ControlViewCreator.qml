@@ -53,7 +53,7 @@ Rectangle {
                 controlViewCreator.openFilesModel.closeAll()
                 mainWindow.close()
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                controlViewCreator.openFilesModel.saveAll()
+                controlViewCreator.openFilesModel.saveAll(true)
                 mainWindow.close()
             }
             isConfirmCloseOpen = false
@@ -342,25 +342,28 @@ Rectangle {
             acceptButtonText: "Save All"
             closeButtonText: "Build Without Saving"
 
+            property bool buildWithoutSaving: false
             onPopupClosed: {
                 if(closeReason === acceptCloseReason){
                     editor.openFilesModel.saveAll(false)
                     toolBarListView.recompiling = true;
-                    recompileControlViewQrc();
+                    sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
                 } else if(closeReason === closeFilesReason){
-                    editor.openFilesModel.revertAllChanges(false)
+                    editor.openFilesModel.buildWithoutSave(false)
+                    buildWithoutSaving = true
                     toolBarListView.recompiling = true;
-                    recompileControlViewQrc();
+                    sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
                 }
                 recompileRequested = false
                 toolBarListView.recompiling = false
+                close();
             }
         }
     }
     function recompileControlViewQrc() {
         if (editor.fileTreeModel.url.toString() !== '') {
-            if(editor.openFilesModel.getUnsavedCount() > 0){
-                recompileRequested = false
+            if(editor.openFilesModel.getUnsavedCount() > 0 && !confirmBuildClean.buildWithoutSaving){
+                recompileRequested = true
                 confirmBuildClean.open();
             } else {
                 recompileRequested = true

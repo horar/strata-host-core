@@ -152,12 +152,11 @@ Item {
             }
         }
 
-        onRevert: {
-            if(!close){
-                model.unsavedChanges = false
-                channelObject.revertAllChanges()
+        onNoSave: {
+            if(close){
+                openFilesModel.closeTabAtIndex(model.index)
             } else {
-                openFilesModel.closeAll()
+
             }
         }
     }
@@ -239,7 +238,6 @@ Item {
         signal setContainerWidth(string width);
         signal undo();
         signal redo();
-        signal revertAllChanges();
 
         function setHtml(value) {
             setValue(value)

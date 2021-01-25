@@ -76,7 +76,7 @@ public:
     Q_INVOKABLE int getIndexById(const QString &id) const;
     Q_INVOKABLE void setExists(const QString &id, const bool &exists);
     Q_INVOKABLE int findTabByFilepath(const QUrl &filepath);
-    Q_INVOKABLE void revertAllChanges(bool close);
+    Q_INVOKABLE void buildWithoutSave(bool close);
 
     /**
      * @brief updateTab Updates the filename, filepath, and filetype of the tab with id equal to `id`
@@ -101,7 +101,7 @@ signals:
     void countChanged();
     void saveRequested(const int index, bool close);
     void saveAllRequested(bool close);
-    void revert(bool close);
+    void noSave(bool close);
 
 private:
     QList<SGFileTabItem*> data_;

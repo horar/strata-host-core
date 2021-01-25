@@ -129,6 +129,7 @@ Item {
                         controlViewLoader.setSource(NavigationControl.screens.LOAD_ERROR,
                                                     { "error_message": error_str });
                     }
+                    confirmBuildClean.buildWithoutSaving = false
                 }
             }
         }

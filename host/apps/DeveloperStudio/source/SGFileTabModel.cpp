@@ -317,8 +317,8 @@ void SGFileTabModel::saveAll(bool close)
     emit saveAllRequested(close);
 }
 
-void SGFileTabModel::revertAllChanges(bool close){
-    emit revert(close);
+void SGFileTabModel::buildWithoutSave(bool close){
+    emit noSave(close);
 }
 
 bool SGFileTabModel::hasTab(const QString &id) const
