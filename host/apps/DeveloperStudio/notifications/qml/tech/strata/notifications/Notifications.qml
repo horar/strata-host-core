@@ -10,6 +10,10 @@ import tech.strata.signals 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/constants.js" as Constants
 
+/*
+  Core notifications: see createNotification() below for use
+*/
+
 Item {
     property alias model: filteredNotifications
     property string currentUser: Constants.GUEST_USER_ID
@@ -100,15 +104,35 @@ Item {
      * Description: creates and appends a notification to the list of notifications
      * Parameters:
         - title (REQUIRED): The notification title
-        - level (REQUIRED): The notification importance level (0, 1, 2) (Info, Warning, Critical)
-        - to (REQUIRED): The user to send the notification to. Either an email, "all", "current"
+        - level (REQUIRED): The notification importance level (0, 1, 2) (Notifications.Info, Notifications.Warning, Notifications.Critical)
+        - to (REQUIRED): The user to show the notification to. Either "all", "current", or a specific user's email id
         - additionalParameters: The object can include the following properties
             - description: The notification description
             - actions: A list of Action objects that correspond to each button in the notification
-            - saveToDisk: Whether to save the notification to disk | DEFAULT: False
+            - saveToDisk: Whether to save the notification to disk/inbox or discard upon timeout | DEFAULT: False
+                * note, upon logout or app close, the actions associated with a notification are removed due to them being context specific.
             - singleton: Only allow one notification with this title to be exposed to the user | DEFAULT: False
-            - timeout: The timeout for the notification  (in milliseconds) | DEFAULT: 10000ms for non-critical notifications
+            - timeout: The timeout for the notification (in milliseconds), set 0 for no timeout | DEFAULT: 10000ms for non-critical notifications, critical default is 0
             - iconSource: The icon's source url | DEFAULT: level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
+
+        Example:
+            Action {
+                id: notificationAction
+                text: "Click me" // Text displayed on the button
+                onTriggered: { // Run this when the button is clicked
+                    console.log("I was clicked!")
+                }
+            }
+
+            Notifications.createNotification(
+                        "This is a title",
+                        Notifications.Info,
+                        "all",
+                        {
+                            "description": "This is the notification description",
+                            "actions": [testNotificationAction, ...]
+                        })
+
      **/
     function createNotification(title, level, to, additionalParameters = {}) {
         const description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";

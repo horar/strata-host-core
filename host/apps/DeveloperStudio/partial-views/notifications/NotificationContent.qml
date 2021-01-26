@@ -46,15 +46,14 @@ RowLayout {
         RowLayout {
             Layout.fillHeight: false
             Layout.fillWidth: true
-            spacing: 5
+            spacing: 10
             clip: true
 
-            Text {
+            SGText {
                 id: title
                 text: model.title
                 font {
                     bold: true
-                    pixelSize: 13
                 }
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -62,7 +61,7 @@ RowLayout {
                 elide: Text.ElideRight
             }
 
-            Text {
+            SGText {
                 text: {
                     if (!datesAreOnSameDay(new Date(), model.date)) {
                         return model.date.toLocaleString(Qt.locale(), "MM/dd")
@@ -70,12 +69,10 @@ RowLayout {
                         return model.date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
                     }
                 }
-                font {
-                    pixelSize: 11
-                }
+                fontSizeMultiplier: .9
                 Layout.preferredWidth: 50
-                Layout.fillHeight: true
                 Layout.rightMargin: 5
+                color: Theme.palette.gray
 
                 function datesAreOnSameDay(d1, d2) {
                     return d1.getFullYear() === d2.getFullYear() &&
@@ -108,28 +105,12 @@ RowLayout {
             }
         }
 
-        Rectangle {
-            color: Theme.palette.lightGray
-            visible: description.visible
-            Layout.fillWidth: true
-            Layout.rightMargin: 10
-            Layout.preferredHeight: 1
-        }
-
         Text {
             id: description
             text: model.description
             visible: model.description.length > 0
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
-        }
-
-        Rectangle {
-            color: Theme.palette.lightGray
-            visible: buttonFlow.visible
-            Layout.fillWidth: true
-            Layout.rightMargin: 10
-            Layout.preferredHeight: 1
         }
 
         Flow {

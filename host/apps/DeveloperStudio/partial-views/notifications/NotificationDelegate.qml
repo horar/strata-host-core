@@ -40,17 +40,8 @@ Item {
         height: content.implicitHeight + (content.anchors.margins * 2)
         radius: 4
         clip: true
-        border.color: {
-            if (model.level === Notifications.Level.Info) {
-                return Theme.palette.gray;
-            } else if (model.level === Notifications.Level.Warning) {
-                return Theme.palette.warning;
-            } else if (model.level === Notifications.Level.Critical) {
-                return Theme.palette.error;
-            }
-        }
+        border.color:  Theme.palette.lightGray
         border.width: 1
-        color: "white"
 
         Timer {
             id: closeTimer
