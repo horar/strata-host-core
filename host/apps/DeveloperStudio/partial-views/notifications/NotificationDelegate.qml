@@ -62,7 +62,7 @@ Item {
                 if (model.saveToDisk) {
                     model.hidden = true
                 } else {
-                    Notifications.model.remove(filteredNotifications.mapIndexToSource(modelIndex))
+                    Notifications.model.remove(visibleNotifications.mapIndex(modelIndex))
                 }
             }
         }
@@ -72,12 +72,12 @@ Item {
 
             onActionClicked: {
                 closeTimer.stop()
-                Notifications.model.remove(filteredNotifications.mapIndexToSource(modelIndex))
+                Notifications.model.remove(visibleNotifications.mapIndex(modelIndex))
             }
 
             onCloseClicked: {
                 closeTimer.stop()
-                Qt.callLater(Notifications.model.remove, filteredNotifications.mapIndexToSource(modelIndex))
+                Qt.callLater(Notifications.model.remove, visibleNotifications.mapIndex(modelIndex))
             }
         }
     }

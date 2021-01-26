@@ -21,8 +21,6 @@ import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
 
-import QtQml 2.12
-
 SGWidgets.SGMainWindow {
     id: mainWindow
     visible: true
@@ -90,7 +88,6 @@ SGWidgets.SGMainWindow {
     ColumnLayout {
         spacing: 0
         anchors.fill: parent
-        z: 1
 
         Item {
             id: statusBarContainer
@@ -138,18 +135,12 @@ SGWidgets.SGMainWindow {
 
     NotificationsInbox {
         id: notificationsInbox
-        z: 2
-        anchors {
-            right: parent.right
-            bottom: parent.bottom
-        }
-
         height: mainWindow.height - statusBarContainer.height
-        expandWidth: 400
+        width: 400
+        y: statusBarContainer.height
     }
 
     NotificationsContainer {
-        z: 3
         anchors {
             right: parent.right
             bottom: parent.bottom
@@ -182,7 +173,6 @@ SGWidgets.SGMainWindow {
 
     SGDebugBar {
         id: debugBar
-        z: 4
         anchors {
             fill: parent
         }

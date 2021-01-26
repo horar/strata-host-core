@@ -457,7 +457,7 @@ Rectangle {
             y: profileIconContainer.height
             padding: 0
             topPadding: 10
-            width: 115
+            width: 140
             background: Canvas {
                 width: profileMenu.width
                 height: profileMenu.contentItem.height + 10
@@ -479,8 +479,7 @@ Rectangle {
                 }
             }
 
-            contentItem:
-                Column {
+            contentItem: Column {
                 id: profileColumn
                 width: profileMenu.width
 
@@ -503,8 +502,9 @@ Rectangle {
                 }
 
                 SGMenuItem {
-                    text: qsTr("Notifications")
+                    text: qsTr("Notifications (" + Notifications.model.count + ")")
                     iconSource: hasNotifications ? "qrc:/sgimages/exclamation-circle.svg" : ""
+                    width: profileMenu.width
                     onClicked: {
                         profileMenu.close()
                         mainWindow.notificationsInbox.open()

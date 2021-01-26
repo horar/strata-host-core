@@ -24,8 +24,6 @@ RowLayout {
     SGIcon {
         Layout.preferredWidth: 15
         Layout.preferredHeight: 15
-        Layout.alignment: Qt.AlignVCenter
-        verticalAlignment: Image.AlignVCenter
         visible: model.iconSource !== ""
 
         iconColor: {
@@ -46,7 +44,7 @@ RowLayout {
         spacing: 5
 
         RowLayout {
-            Layout.fillHeight: model.description.length === 0
+            Layout.fillHeight: false
             Layout.fillWidth: true
             spacing: 5
             clip: true
@@ -58,8 +56,6 @@ RowLayout {
                     bold: true
                     pixelSize: 13
                 }
-                verticalAlignment: Text.AlignVCenter
-                Layout.alignment: Qt.AlignVCenter
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
@@ -77,12 +73,9 @@ RowLayout {
                 font {
                     pixelSize: 11
                 }
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                 Layout.preferredWidth: 50
                 Layout.fillHeight: true
                 Layout.rightMargin: 5
-                horizontalAlignment: Text.AlignRight
-                verticalAlignment: Text.AlignVCenter
 
                 function datesAreOnSameDay(d1, d2) {
                     return d1.getFullYear() === d2.getFullYear() &&
@@ -94,7 +87,6 @@ RowLayout {
             SGIcon {
                 Layout.preferredHeight: 17
                 Layout.preferredWidth: 17
-                Layout.alignment: Qt.AlignVCenter
                 source: "qrc:/sgimages/times-circle.svg"
                 iconColor: closeNotificationButton.containsMouse ? Theme.palette.darkGray : Theme.palette.lightGray
 
@@ -160,12 +152,9 @@ RowLayout {
 
                     Text {
                         id: actionText
-                        height: parent.height
                         anchors.centerIn: parent
                         text: model.action.text
                         color: Theme.palette.highlight
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
                     }
 
                     TextMetrics {

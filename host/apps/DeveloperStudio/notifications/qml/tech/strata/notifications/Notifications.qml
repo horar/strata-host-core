@@ -5,17 +5,23 @@ import QtQml 2.12
 import QtQml.Models 2.12
 
 import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/constants.js" as Constants
 
 Item {
-    property alias model: model_
-    property bool inboxIsOpen: false
+    property alias model: filteredNotifications
+    property string currentUser: Constants.GUEST_USER_ID
 
     enum Level {
         Info = 0,
         Warning = 1,
         Critical = 2
+    }
+
+    onCurrentUserChanged: {
+        filteredNotifications.invalidate()
     }
 
     SGUserSettings {
@@ -33,6 +39,59 @@ Item {
 
         Component.onDestruction: {
             saveNotifications()
+        }
+    }
+
+    SGSortFilterProxyModel {
+        id: filteredNotifications
+        sourceModel: model_
+        invokeCustomFilter: true
+        sortEnabled: false
+
+        function filterAcceptsRow(index) {
+            const notification = sourceModel.get(index);
+            if (notification.to !== "all" && notification.to !== currentUser) {
+                return false
+            } else {
+                return true
+            }
+        }
+
+        function remove(index) {
+            sourceModel.remove(index)
+        }
+
+        function clear() {
+            sourceModel.clear()
+        }
+    }
+
+    Connections {
+        target: Signals
+
+        onLoginResult: {
+            const resultObject = JSON.parse(result)
+            //console.log(Logger.devStudioCategory, "Login result received")
+            if (resultObject.response === "Connected") {
+                currentUser = resultObject.user_id
+            }
+        }
+
+        onLogout: {
+            for (let i = 0; i < Notifications.model.count; i++) {
+                // Clear any actions when the user logs out
+                Notifications.model.get(i).actions.clear()
+            }
+
+            currentUser = ""
+        }
+
+        onValidationResult: {
+            if (result === "Current token is valid") {
+                currentUser = Authenticator.settings.user
+            } else {
+                currentUser = ""
+            }
         }
     }
 
@@ -151,6 +210,7 @@ Item {
                 "singleton": false,
                 "actions": []
             };
+
             model_.append(notification)
         }
     }

@@ -11,15 +11,8 @@ Rectangle {
     id: root
     width: parent.width
     implicitHeight: content.implicitHeight + content.anchors.margins * 2
-    opacity: fullyOpen ? 1 : 0
 
     property int modelIndex
-
-    Behavior on opacity {
-        NumberAnimation {
-            duration: 100
-        }
-    }
 
     MouseArea {
         anchors.fill: parent
