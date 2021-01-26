@@ -8,13 +8,14 @@ Item {
     id: root
     anchors.fill: parent
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1400/900
 
     property string class_id: ""
     property string user_id: ""
     property string first_name: ""
     property string last_name: ""
     property string configFileName: "userSettingTest.json"
+    property string passedTestImage: "qrc:/sgimages/check-circle.svg"
+    property string failedTestImage: "qrc:/sgimages/times-circle.svg"
 
     function saveSettings() {
         let config = {
@@ -23,63 +24,63 @@ Item {
             }
         };
         return sgUserSettings.writeFile(configFileName, config)
-
     }
+
     Component.onCompleted: {
         testingCoreControlView()
     }
 
     function testingCoreControlView() {
         if(class_id) {
-            testIconClassId.source = "qrc:/sgimages/check-circle.svg"
+            testIconClassId.source = passedTestImage
             testIconClassId.iconColor = "green"
             classIDText.text += ": " + class_id + "\n PASSED"
         }
         else {
-            testIconClassId.source =  "qrc:/sgimages/times-circle.svg"
+            testIconClassId.source =  failedTestImage
             testIconClassId.iconColor = "red"
             classIDText.text += "\n FAILED"
         }
 
         if(saveSettings()) {
-            testIconUserSetting.source = "qrc:/sgimages/check-circle.svg"
+            testIconUserSetting.source = passedTestImage
             testIconUserSetting.iconColor = "green"
             userSetting.text += ":" + " True" + "\n PASSED"
         }
         else {
-            testIconUserSetting.source = "qrc:/sgimages/check-circle.svg"
+            testIconUserSetting.source = failedTestImage
             testIconUserSetting.iconColor = "red"
             userSetting.text += "\n FAILED"
         }
 
         if(user_id) {
-            testIconUserId.source = "qrc:/sgimages/check-circle.svg"
+            testIconUserId.source = passedTestImage
             testIconUserId.iconColor = "green"
             userIDText.text += ": " + user_id +  "\n PASSED"
         }
         else {
-            testIconUserId.source = "qrc:/sgimages/times-circle.svg"
+            testIconUserId.source = failedTestImage
             testIconUserId.iconColor = "red"
             userIDText.text += "\n FAILED"
         }
 
         if(first_name) {
-            testIconFirstName.source = "qrc:/sgimages/check-circle.svg"
+            testIconFirstName.source = passedTestImage
             testIconFirstName.iconColor = "green"
             firstNameText.text += ": " + first_name +  "\n PASSED"
         }
         else {
-            testIconFirstName.source = "qrc:/sgimages/times-circle.svg"
+            testIconFirstName.source = failedTestImage
             testIconFirstName.iconColor = "red"
             firstNameText.text +=  "\n FAILED"
         }
         if(last_name) {
-            testIconLastName.source = "qrc:/sgimages/check-circle.svg"
+            testIconLastName.source = passedTestImage
             testIconLastName.iconColor = "green"
             lastNameText.text += ": " + last_name +  "\n PASSED"
         }
         else {
-            testIconLastName.source = "qrc:/sgimages/times-circle.svg"
+            testIconLastName.source = failedTestImage
             testIconLastName.iconColor = "red"
             lastNameText.text +=  "\n FAILED"
         }
@@ -104,7 +105,7 @@ Item {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     Rectangle {
-                        id: line1
+                        id: line
                         height: 1.5
                         anchors.top:parent.bottom
                         width: titleContainer.width
