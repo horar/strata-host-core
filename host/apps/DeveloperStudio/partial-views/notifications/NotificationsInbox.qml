@@ -71,11 +71,28 @@ Drawer {
                 Layout.leftMargin: 5
                 Layout.rightMargin: 5
 
-                SGButton {
-                    text: "Clear all"
+                Rectangle {
+                    id: button
+                    implicitWidth: actionText.implicitWidth + 12
                     Layout.fillHeight: true
-                    onClicked: {
-                        Notifications.model.clear()
+                    color: actionMouseArea.containsMouse ? Theme.palette.darkGray : Theme.palette.gray
+                    radius: 4
+
+                    Text {
+                        id: actionText
+                        anchors.centerIn: parent
+                        text: "Clear all"
+                        color: "white"
+                    }
+
+                    MouseArea {
+                        id: actionMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Notifications.model.clear()
+                        }
                     }
                 }
 

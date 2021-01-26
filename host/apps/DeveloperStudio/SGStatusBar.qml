@@ -24,6 +24,7 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
+import tech.strata.signals 1.0
 
 Rectangle {
     id: container
@@ -555,6 +556,7 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
 
+                        Signals.logout()
                         PlatformFilters.clearActiveFilters()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()

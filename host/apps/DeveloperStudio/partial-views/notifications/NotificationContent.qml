@@ -41,7 +41,7 @@ RowLayout {
     ColumnLayout {
         id: columnLayout
         Layout.fillWidth: true
-        spacing: 5
+        spacing: 10
 
         RowLayout {
             Layout.fillHeight: false
@@ -71,7 +71,6 @@ RowLayout {
                 }
                 fontSizeMultiplier: .9
                 Layout.preferredWidth: 50
-                Layout.rightMargin: 5
                 color: Theme.palette.gray
 
                 function datesAreOnSameDay(d1, d2) {
@@ -124,24 +123,16 @@ RowLayout {
 
                 delegate: Rectangle {
                     id: button
-                    implicitWidth: metrics.tightBoundingRect.width + 20
-                    implicitHeight: metrics.tightBoundingRect.height + 20
-                    color: "transparent"
-                    border.color: actionMouseArea.containsMouse ? Qt.darker(Theme.palette.highlight) : Theme.palette.highlight
-                    border.width: 1
+                    implicitWidth: actionText.implicitWidth + 12
+                    implicitHeight: actionText.implicitHeight + 12
+                    color: actionMouseArea.containsMouse ? Theme.palette.darkGray : Theme.palette.gray
                     radius: 4
 
                     Text {
                         id: actionText
                         anchors.centerIn: parent
                         text: model.action.text
-                        color: Theme.palette.highlight
-                    }
-
-                    TextMetrics {
-                        id: metrics
-                        font: actionText.font
-                        text: actionText.text
+                        color: "white"
                     }
 
                     MouseArea {
