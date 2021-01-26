@@ -98,7 +98,7 @@ void CoreInterface::notificationsThread()
             continue;
         }
 
-        QString n(message.c_str());
+        QString n(QString::fromStdString(message));
 
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
