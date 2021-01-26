@@ -1,18 +1,27 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import QtQml 2.12
 
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
-import "qrc:/partial-views"
-import "qrc:/partial-views/debug-bar"
-import "qrc:/partial-views/platform-view"
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "qrc:/partial-views/platform-view"
+
+// imports below must be qrc:/ due to qrc aliases for debug/release differences
+import "qrc:/partial-views/control-view-creator"
+import "qrc:/partial-views/debug-bar"
+
+import "partial-views/notifications"
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
+import tech.strata.notifications 1.0
+
+import QtQml 2.12
 
 SGWidgets.SGMainWindow {
     id: mainWindow
@@ -42,6 +51,11 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
+        if (controlViewCreator.blockWindowClose()) {
+            close.accepted = false
+            return
+        }
+
         SessionUtils.close_session()
 
         // End session with HCS
@@ -74,6 +88,7 @@ SGWidgets.SGMainWindow {
     ColumnLayout {
         spacing: 0
         anchors.fill: parent
+        z: 1
 
         Item {
             id: statusBarContainer
@@ -107,20 +122,27 @@ SGWidgets.SGMainWindow {
                 delegate: SGPlatformView {}
             }
 
-            Loader {
-                id: controlViewDevContainer
-                objectName: "controlViewDevContainer"
+            ControlViewCreator {
+                id: controlViewCreator
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-
-                asynchronous: true
-
-                onStatusChanged: {
-                    if (status === Loader.Null || status === Loader.Error) {
-                        setSource(NavigationControl.screens.LOAD_ERROR, {"error_message": "Could not load control view"})
-                    }
-                }
             }
+            
+            ControlViewDevContainer {
+                id: controlViewDevContainer
+            }
+        }
+    }
+
+    NotificationsBox {
+        z: 2
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+            top: parent.top
+            topMargin: statusBarContainer.height
+            bottomMargin: 25
+            rightMargin: 20
         }
     }
 
@@ -145,6 +167,8 @@ SGWidgets.SGMainWindow {
     }
 
     SGDebugBar {
+        id: debugBar
+        z: 3
         anchors {
             fill: parent
         }

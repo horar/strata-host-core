@@ -4,6 +4,7 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 add_library(${PROJECT_NAME} STATIC
+    QtLogger.cpp
     QtLoggerSetup.cpp
     LoggingQtCategories.cpp
 )
@@ -20,4 +21,9 @@ target_link_libraries(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
 )

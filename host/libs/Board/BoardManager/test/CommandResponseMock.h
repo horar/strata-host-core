@@ -18,8 +18,11 @@ public:
 
     bool mockIsBootloader() { return isBootloader_; }
 
+    void mockSetLegacy(bool legacy) { isLegacy_ = legacy; }
+
 private:
     bool isBootloader_ = false;
+    bool isLegacy_ = false;  // very old board without 'get_firmware_info' command support
 };
 
 

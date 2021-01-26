@@ -17,7 +17,7 @@ BoardController::BoardController() {
 }
 
 void BoardController::initialize() {
-    boardManager_.init(false);
+    boardManager_.init(false, false);
 }
 
 bool BoardController::sendMessage(const int deviceId, const QByteArray& message) {
@@ -48,20 +48,22 @@ void BoardController::newConnection(int deviceId, bool recognized) {
         connect(device.get(), &Device::msgFromDevice, this, &BoardController::messageFromBoard);
         boards_.insert(deviceId, Board(device));
 
-        bool hasAnyClassId = (device->classId().isEmpty() == false) || (device->controllerClassId().isEmpty() == false);
-
         qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
 
-        emit boardConnected(deviceId, hasAnyClassId);
+        emit boardConnected(deviceId);
     } else {
         qCWarning(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logDeviceId(deviceId);
+        // Remove board if it was previously connected.
+        if (boards_.contains(deviceId)) {
+            boards_.remove(deviceId);
+            emit boardDisconnected(deviceId);
+        }
     }
 }
 
 void BoardController::closeConnection(int deviceId)
 {
-    auto it = boards_.constFind(deviceId);
-    if (it == boards_.constEnd()) {
+    if (boards_.contains(deviceId) == false) {
         // This situation can occur if unrecognized board is disconnected.
         qCInfo(logCategoryHcsBoard).noquote() << "Disconnected unknown board." << logDeviceId(deviceId);
         return;

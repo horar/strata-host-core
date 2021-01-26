@@ -27,7 +27,7 @@ SGWidgets.SGMainWindow {
 
         if (docCreator.currentFilePath.length > 0) {
             text += " \u2022 "
-            text += CommonCPP.SGUtilsCpp.fileAbsolutePath(docCreator.currentFilePath)
+            text += CommonCPP.SGUtilsCpp.parentDirectoryPath(docCreator.currentFilePath)
         }
 
         if (Qt.platform.os === "windows") {

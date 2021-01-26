@@ -26,8 +26,6 @@ namespace strata {
         Q_OBJECT
         Q_DISABLE_COPY(BoardManager)
 
-        Q_PROPERTY(QVector<int> readyDeviceIds READ readyDeviceIds NOTIFY readyDeviceIdsChanged)
-
     public:
         BoardManager();
         ~BoardManager();
@@ -35,8 +33,9 @@ namespace strata {
         /**
          * Initialize BoardManager (start managing connected devices).
          * @param requireFwInfoResponse if true require response to get_firmware_info command during device identification
+         * @param keepDevicesOpen if true communication channel is not released (closed) if device is not recognized
          */
-        virtual void init(bool requireFwInfoResponse = true);
+        virtual void init(bool requireFwInfoResponse, bool keepDevicesOpen);
 
         /**
          * Disconnect from the device.
@@ -59,10 +58,11 @@ namespace strata {
         device::DevicePtr device(const int deviceId);
 
         /**
-         * Get list of available device IDs.
-         * @return list of available device IDs (those, which have serial port opened)
+         * Get list of active device IDs.
+         * @return list of active device IDs (those, which have
+         *         communication channel (serial port) opened)
          */
-        QVector<int> readyDeviceIds();
+        QVector<int> activeDeviceIds();
 
     signals:
         /**
@@ -92,11 +92,6 @@ namespace strata {
         void boardError(int deviceId, QString message);
 
         /**
-         * Emitted when device IDs has changed (available device ID list has changed).
-         */
-        void readyDeviceIdsChanged();
-
-        /**
          * Emitted when platform_id_changed notification was received (signal only for internal use).
          * @param deviceId devide ID
          */
@@ -109,7 +104,7 @@ namespace strata {
 
     private slots:
         virtual void checkNotification(QByteArray message);
-        virtual void handlePlatformIdChanged(const int deviceId, QPrivateSignal);
+        virtual void handlePlatformIdChanged(const int deviceId);
 
     protected:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
@@ -135,8 +130,11 @@ namespace strata {
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;
+        // flag if communication channel should stay open if device is not recognized
+        bool keepDevicesOpen_;
 
     private:
+        void startIdentifyOperation(const device::DevicePtr device);
         static void operationLaterDeleter(device::operation::BaseDeviceOperation* operation);
 
     };

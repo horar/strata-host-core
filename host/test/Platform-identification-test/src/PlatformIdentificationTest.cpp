@@ -33,7 +33,7 @@ void PlatformIdentificationTest::enableBoardManagerSignals(bool enable) {
 }
 
 bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString& binariesPath) {
-    boardManager_.init(false);
+    boardManager_.init(false, true);
 
     if (parseBinaryFileList(binariesPath) == false) {
         return false;
@@ -95,7 +95,7 @@ bool PlatformIdentificationTest::parseBinaryFileList(const QString& binariesPath
 
 void PlatformIdentificationTest::newConnectionHandler(int deviceId, bool recognized) {
     testTimeout_.stop();
-    std::cout << "new board connected deviceId=" << deviceId << std::endl;
+    std::cout << "new board connected deviceId = 0x" << std::hex << static_cast<unsigned>(deviceId) << std::endl;
     std::cout << "board identified = " << recognized << std::endl;  // This flag is not enough!
     testDeviceId_ = deviceId;
     enableBoardManagerSignals(false);
@@ -103,7 +103,7 @@ void PlatformIdentificationTest::newConnectionHandler(int deviceId, bool recogni
 }
 
 void PlatformIdentificationTest::closeConnectionHandler(int deviceId) {
-    std::cout << "board disconnected deviceId=" << deviceId << std::endl;
+    std::cout << "board disconnected deviceId = 0x" << std::hex << static_cast<unsigned>(deviceId) << std::endl;
 }
 
 void PlatformIdentificationTest::flashCompletedHandler(bool exitedNormally) {
@@ -176,7 +176,7 @@ void PlatformIdentificationTest::connectToPlatform() {
     std::cout << "Connecting to platform" << std::endl;
     if (testDeviceId_ == 0) {
         // get the connected devices and set testDeviceId_
-        auto connectedDevicesList = boardManager_.readyDeviceIds();
+        auto connectedDevicesList = boardManager_.activeDeviceIds();
         if (connectedDevicesList.empty()) {
             std::cerr << "No connected devices. Aborting..." << std::endl;
             testFailed_ = true;

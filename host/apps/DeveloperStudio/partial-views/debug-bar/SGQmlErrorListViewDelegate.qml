@@ -7,31 +7,23 @@ Component {
     
     Row {
         id: wrapper
-        
         width: parent.width
-        
         spacing: 20
         
         Label {
             text: qsTr("%1:").arg(index + 1)
         }
         
-        Label {
+        TextInput {
             Layout.fillWidth: true
-            
             text: modelData
-            elide: Text.ElideRight
-            
-            ToolTip.text: text
-            ToolTip.visible: text ? errorLineTooltip.containsMouse : false
-            
-            MouseArea {
-                id: errorLineTooltip
-                
-                anchors.fill: parent
-                hoverEnabled: true
-                
-                onClicked: wrapper.ListView.view.currentIndex = index
+            selectByMouse: true
+            readOnly: true
+
+            onFocusChanged: {
+                if (focus) {
+                    wrapper.ListView.view.currentIndex = index
+                }
             }
         }
     }

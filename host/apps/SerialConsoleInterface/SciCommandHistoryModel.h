@@ -1,5 +1,4 @@
-#ifndef SCI_COMMAND_HISTORY_MODEL_H
-#define SCI_COMMAND_HISTORY_MODEL_H
+#pragma once
 
 #include <QAbstractListModel>
 
@@ -8,6 +7,7 @@ class SciPlatform;
 
 struct SciCommandHistoryModelItem {
     QString message;
+    bool isJsonValid;
 };
 
 class SciCommandHistoryModel: public QAbstractListModel
@@ -23,6 +23,7 @@ public:
 
     enum ModelRole {
         MessageRole = Qt::UserRole,
+        IsJsonValidRole,
     };
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -34,7 +35,7 @@ public:
     int maximumCount() const;
     void setMaximumCount(int maximumCount);
 
-    void add(const QString &message);
+    void add(const QString &message, bool isJsonValid);
     void populate(const QStringList &list);
     QStringList getCommandList() const;
     Q_INVOKABLE bool removeAt(int row);
@@ -52,5 +53,3 @@ private:
 
     void sanitize();
 };
-
-#endif //SCI_COMMAND_HISTORY_MODEL_H

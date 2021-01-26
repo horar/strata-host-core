@@ -431,6 +431,98 @@ Item {
         Row {
             spacing: 5
             SGWidgets.SGGraph {
+                id: styleGraph
+                width: 400
+                height: 300
+                title: "Graph with style on data points"
+                xMin: -1
+                xMax: 3
+                yMin: 0
+                yMax: 1
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
+
+                Component.onCompleted: {
+                    let curve = styleGraph.createCurve("graphCurve" + styleGraph.count)
+                    curve.color = sgGraphExample.randomColor()
+
+                    let dataArray = []
+                    for (let i = 0; i <= 5; i++) {
+                        dataArray.push({"x":i/5, "y":sgGraphExample.yourDataValueHere()})
+                    }
+                    curve.appendList(dataArray)
+                    /*
+                      To setSymbol() you need to pass in 4 arguments:
+                      SetSymbol (
+                                   Symbol Style (int),
+                                   brush to fill the interior (string),
+                                   outline pen(int),
+                                   size(int)
+                                )
+
+                        --------------------------------------------------
+                        Symbol Style: Assign a symbol.
+                        Enum
+                        ----------------------------------------------------
+                        NoSymbol = -1,  //No Style. The symbol cannot be drawn.
+                        Ellipse = 0,    //Ellipse or circle.
+                        Rect = 1,       //Rectangle.
+                        Diamond = 2,    // Diamond.
+                        Triangle = 3,   //Triangle pointing upwards.
+                        DTriangle = 4,  //Triangle pointing downwards.
+                        UTriangle = 5,  //Triangle pointing upwards.
+                        LTriangle = 6,  //Triangle pointing left.
+                        RTriangle = 7,  //Triangle pointing right.
+                        Cross = 8,      //Cross (+)
+                        XCross 9,       //Diagonal cross (X)
+                        HLine = 10,     //Horizontal line.
+                        VLine = 11,     //Vertical line.
+                        Star1 = 12,     //X combined with +.
+                        Star2 = 13,     //Six-pointed star.
+                        Hexagon = 14  //Hexagon.
+                        ----------------------------------------------
+
+                        ------------------------------------------------
+                        Outline Pen: Draw lines and outlines of shapes
+                        Enum
+                        ------------------------------------------------
+                        "NoPen"  = 0 ,
+                        "SolidLine" 1 ,
+                        "DashLine" =  2,
+                        "DotLine" = 3 ,
+                        "DashDotLine" = 4,
+                        "DashDotLine" = 5,
+                        "CustomDashLine" = 6
+                         ------------------------------------------------
+                    */
+                    curve.setSymbol(2,"gray", 0 , 7)
+                }
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+
+                Button {
+                    text: "Clear Symbol"
+                    onClicked: {
+                        styleGraph.curve(0).setSymbol(-1,"gray", 0 , 7)
+                    }
+                }
+                Button {
+                    text: "Random Symbol"
+                    onClicked: {
+                        styleGraph.curve(0).setSymbol(randomStyle(),"gray", 0 , 7)
+                    }
+                }
+            }
+        }
+
+        Row {
+            spacing: 5
+            SGWidgets.SGGraph {
                 id: coloredGraph
                 width: 400
                 height: 300
@@ -547,5 +639,8 @@ Item {
 
     function randomColor() {
         return Qt.rgba(Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, 1)
+    }
+    function randomStyle() {
+        return Math.random() * (14 - 0) + 0;
     }
 }

@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Popup {
     id: popup
@@ -16,8 +17,8 @@ Popup {
     property url succeedIcon: "qrc:/sgimages/check.svg"
     property url failedIcon: "qrc:/sgimages/times.svg"
     property alias color: dot.color
-    property color succeedColor: SGWidgets.SGColorsJS.STRATA_GREEN
-    property color failedColor: SGWidgets.SGColorsJS.ERROR_COLOR
+    property color succeedColor: Theme.palette.green
+    property color failedColor: TangoTheme.palette.error
 
     function showSuccess(text) {
         popup.text = text
@@ -83,7 +84,7 @@ Popup {
                 id: dot
                 anchors.fill: parent
                 radius: Math.round(width/2)
-                color: SGWidgets.SGColorsJS.STRATA_GREEN
+                color: Theme.palette.green
             }
             SGWidgets.SGIcon {
                 id: statusIcon
