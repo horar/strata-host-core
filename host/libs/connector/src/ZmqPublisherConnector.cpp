@@ -1,5 +1,4 @@
 #include "ZmqPublisherConnector.h"
-#include <zhelpers.hpp>
 
 namespace strata::connector
 {
@@ -15,13 +14,13 @@ ZmqPublisherConnector::~ZmqPublisherConnector()
 
 bool ZmqPublisherConnector::open(const std::string& ip_address)
 {
-    if (false == socket_->init()) {
+    if (false == socketConnected()) {
         return false;
     }
 
     int linger = 0;
-    if (0 == socket_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger)) &&
-        0 == socket_->bind(ip_address.c_str())) {
+    if (0 == socketSetOptInt(zmq::sockopt::linger, linger) &&
+        0 == socketBind(ip_address)) {
         setConnectionState(true);
         CONNECTOR_DEBUG_LOG("%s Open server socket %s(ID:%s)\n", "ZMQ_PUB", ip_address.c_str(),
                             getDealerID().c_str());
@@ -38,15 +37,14 @@ bool ZmqPublisherConnector::read(std::string&)
 
 bool ZmqPublisherConnector::send(const std::string& message)
 {
-    if (false == socket_->valid()) {
+    if (false == socketConnected()) {
         return false;
     }
 
     for (const std::string& dealerID : mSubscribers_) {
-        if (false == s_sendmore(*socket_, dealerID) || false == s_send(*socket_, message)) {
+        if ((false == socketSendMore(dealerID)) || (false == socketSend(message))) {
             return false;
         }
-
         CONNECTOR_DEBUG_LOG("%s [Socket] Tx'ed message (ID: %s): %s\n", "ZMQ_PUB", dealerID.c_str(),
                             message.c_str());
     }

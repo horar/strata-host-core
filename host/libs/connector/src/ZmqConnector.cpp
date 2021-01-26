@@ -2,7 +2,6 @@
 
 #include <iomanip>
 #include <sstream>
-#include <zhelpers.hpp>
 
 namespace strata::connector
 {
@@ -30,11 +29,11 @@ bool ZmqConnector::open(const std::string&)
 
 bool ZmqConnector::close()
 {
-    if (false == socket_->connected()) {
+    if (false == socketConnected()) {
         return false;
     }
 
-    socket_->close();
+    socketClose();
     setConnectionState(false);
     return true;
 }
@@ -51,18 +50,17 @@ bool ZmqConnector::closeContext()
 
 connector_handle_t ZmqConnector::getFileDescriptor()
 {
-    if (false == socket_->connected()) {
 #if defined(_WIN32)
-        return 0;
+        connector_handle_t defaultHandle = 0;
 #else
-        return -1;
+        connector_handle_t defaultHandle = -1;
 #endif
+
+    if (false == socketConnected()) {
+        return defaultHandle;
     }
 
-    connector_handle_t server_socket_file_descriptor;
-    size_t server_socket_file_descriptor_size = sizeof(server_socket_file_descriptor);
-    socket_->getsockopt(ZMQ_FD, &server_socket_file_descriptor,
-                        &server_socket_file_descriptor_size);
+    connector_handle_t server_socket_file_descriptor = socketGetOpt(zmq::sockopt::fd, defaultHandle);
     return server_socket_file_descriptor;
 }
 
@@ -89,31 +87,32 @@ bool ZmqConnector::read(std::string& message, ReadMode read_mode)
 
 bool ZmqConnector::blockingRead(std::string& message)
 {
-    if (false == socket_->valid()) {
+    if (false == socketConnected()) {
         return false;
     }
 
-    if (s_recv(*socket_, message)) {
-        CONNECTOR_DEBUG_LOG("[Socket] Rx'ed message : %s\n", message.c_str());
+    if (socketRecv(message)) {
+        CONNECTOR_DEBUG_LOG("%s [Socket] Rx'ed message : %s\n", "ZMQ", message.c_str());
         return true;
     }
+
     return false;
 }
 
 bool ZmqConnector::read(std::string& message)
 {
-    if (false == socket_->valid()) {
+    if (false == socketConnected()) {
         return false;
     }
 
     zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
-    if (-1 == zmq::poll(&items, 1, SOCKET_POLLING_TIMEOUT)) {
+    if (false == socketPoll(&items)) {
         return false;
     }
-    if (items.revents & ZMQ_POLLIN) {
-        if (s_recv(*socket_, message)) {
-            CONNECTOR_DEBUG_LOG("[Socket] Rx'ed message : %s\n", message.c_str());
 
+    if (items.revents & ZMQ_POLLIN) {
+        if (socketRecv(message)) {
+            CONNECTOR_DEBUG_LOG("%s [Socket] Rx'ed message : %s\n", "ZMQ", message.c_str());
             return true;
         }
     }
@@ -122,17 +121,168 @@ bool ZmqConnector::read(std::string& message)
 
 bool ZmqConnector::send(const std::string& message)
 {
-    if (false == socket_->valid()) {
+    if (false == socketConnected()) {
         return false;
     }
 
-    if (false == s_send(*socket_, message)) {
+    if (false == socketSend(message)) {
         return false;
     }
 
-    CONNECTOR_DEBUG_LOG("[Socket] Tx'ed message : %s\n", message.c_str());
+    CONNECTOR_DEBUG_LOG("%s [Socket] Tx'ed message : %s\n", "ZMQ", message.c_str());
 
     return true;
+}
+
+// Receive 0MQ string from socket and convert to std::string
+bool ZmqConnector::socketRecv(std::string & ostring, zmq::recv_flags flags)
+{
+    zmq::message_t message;
+    try {
+        const auto ret = socket_->recv(message, flags);
+        if (ret != 0) {
+            ostring = std::string(static_cast<char*>(message.data()), message.size());
+            return true;
+        }
+    } catch (zmq::error_t zErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to receive message (flags: %d), reason: %s\n",
+                            flags, zErr.what());
+    } catch (std::exception sErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to receive message (flags: %d), unexpected reason: %s\n",
+                            flags, sErr.what());
+    } catch (...) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to receive message (flags: %d), unhandled exception\n",
+                            flags);
+    }
+
+    return false;
+}
+
+// Convert std::string to 0MQ string and send to socket
+bool ZmqConnector::socketSend(const std::string & istring, zmq::send_flags flags)
+{
+    zmq::message_t message(istring.data(), istring.size());
+    try {
+        const auto ret = socket_->send (message, flags);
+        return (ret != 0);
+    } catch (zmq::error_t zErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to send message '%s' (flags: %d), reason: %s\n",
+                            istring.c_str(), flags, zErr.what());
+    } catch (std::exception sErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to send message '%s' (flags: %d), unexpected reason: %s\n",
+                            istring.c_str(), flags, sErr.what());
+    } catch (...) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to send message '%s' (flags: %d), unhandled exception\n",
+                            istring.c_str(), flags);
+    }
+    return false;
+}
+
+// Sends std::string as 0MQ string and send to socket as multipart non-terminal
+bool ZmqConnector::socketSendMore(const std::string & istring)
+{
+    zmq::message_t message(istring.data(), istring.size());
+    try {
+        const auto ret = socket_->send (message, zmq::send_flags::sndmore);
+        return (ret != 0);
+    } catch (zmq::error_t zErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to send multipart message '%s', reason: %s\n",
+                            istring.c_str(), zErr.what());
+    } catch (std::exception sErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to send multipart message '%s', unexpected reason: %s\n",
+                            istring.c_str(), sErr.what());
+    } catch (...) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to send multipart message '%s', unhandled exception\n",
+                            istring.c_str());
+    }
+    return false;
+}
+
+// Set a legacy socket option to given value
+bool ZmqConnector::socketSetOptLegacy(int opt, const void *val, size_t valLen)
+{
+    // Use this function only if there is not another way to avoid it due to the deprecated notice
+    try {
+        #pragma warning(suppress: warning-code) // suppress warning 4996
+        socket_->setsockopt(opt, val, valLen);
+        return true;
+    } catch (zmq::error_t zErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to set legacy socket option (len: %lu), reason: %s\n",
+                            valLen, zErr.what());
+    } catch (std::exception sErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to set legacy socket option (len: %lu), unexpected reason: %s\n",
+                            valLen, sErr.what());
+    } catch (...) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to set legacy socket option (len: %lu), unhandled exception\n",
+                            valLen);
+    }
+    return false;
+}
+
+bool ZmqConnector::socketConnect(const std::string & address)
+{
+    try {
+        socket_->connect(address);
+        return true;
+    } catch (zmq::error_t zErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to connect socket to address '%s', reason: %s\n",
+                            address.c_str(), zErr.what());
+    } catch (std::exception sErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to connect socket to address '%s', unexpected reason: %s\n",
+                            address.c_str(), sErr.what());
+    } catch (...) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to connect socket to address '%s', unhandled exception\n",
+                            address.c_str());
+    }
+    return false;
+}
+
+bool ZmqConnector::socketBind(const std::string & address)
+{
+    try {
+        socket_->bind(address);
+        return true;
+    } catch (zmq::error_t zErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to bind socket to address '%s', reason: %s\n",
+                            address.c_str(), zErr.what());
+    } catch (std::exception sErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to bind socket to address '%s', unexpected reason: %s\n",
+                            address.c_str(), sErr.what());
+    } catch (...) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to bind socket to address '%s', unhandled exception\n",
+                            address.c_str());
+    }
+    return false;
+}
+
+bool ZmqConnector::socketPoll(zmq::pollitem_t *items)
+{
+    try {
+        if (-1 != zmq::poll(items, 1, SOCKET_POLLING_TIMEOUT)) {
+            return true;
+        }
+    } catch (zmq::error_t zErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to pool items, reason: %s\n",
+                            zErr.what());
+    } catch (std::exception sErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to pool items, unexpected reason: %s\n",
+                            sErr.what());
+    } catch (...) {
+        CONNECTOR_ERROR_LOG("%s ERROR: Unable to pool items, unhandled exception\n", "ZMQ");
+    }
+
+    return false;
+}
+
+void ZmqConnector::socketClose()
+{
+    // will assert if it fails, no need to return anything
+    socket_->close();
+}
+
+bool ZmqConnector::socketConnected() const
+{
+    return socket_->connected();
 }
 
 }  // namespace strata::connector

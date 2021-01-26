@@ -15,13 +15,13 @@ ZmqRequestConnector::~ZmqRequestConnector()
 
 bool ZmqRequestConnector::open(const std::string& ip_address)
 {
-    if (false == socket_->init()) {
+    if (false == socketConnected()) {
         return false;
     }
 
     int linger = 0;
-    if (0 == socket_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger)) &&
-        0 == socket_->connect(ip_address.c_str())) {
+    if (0 == socketSetOptInt(zmq::sockopt::linger, linger) &&
+        0 == socketConnect(ip_address)) {
         setConnectionState(true);
         CONNECTOR_DEBUG_LOG("%s Connecting to the server socket %s(ID:%s)\n", "ZMQ_REQ",
                             ip_address.c_str(), getDealerID().c_str());

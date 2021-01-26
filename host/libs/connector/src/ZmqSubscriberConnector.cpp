@@ -1,5 +1,4 @@
 #include "ZmqSubscriberConnector.h"
-#include <zhelpers.hpp>
 
 namespace strata::connector
 {
@@ -15,14 +14,14 @@ ZmqSubscriberConnector::~ZmqSubscriberConnector()
 
 bool ZmqSubscriberConnector::open(const std::string& ip_address)
 {
-    if (false == socket_->init()) {
+    if (false == socketConnected()) {
         return false;
     }
 
     int linger = 0;
-    if (0 == socket_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger)) &&
-        0 == socket_->setsockopt(ZMQ_SUBSCRIBE, getDealerID().c_str(), getDealerID().size()) &&
-        0 == socket_->connect(ip_address.c_str())) {
+    if (0 == socketSetOptInt(zmq::sockopt::linger, linger) &&
+        0 == socketSetOptString(zmq::sockopt::subscribe, getDealerID()) &&
+        0 == socketConnect(ip_address)) {
         setConnectionState(true);
         CONNECTOR_DEBUG_LOG("%s Connecting to the server socket %s with filter '%s'\n", "ZMQ_SUB",
                             ip_address.c_str(), getDealerID().c_str());
@@ -40,18 +39,18 @@ bool ZmqSubscriberConnector::send(const std::string&)
 
 bool ZmqSubscriberConnector::read(std::string& message)
 {
-    if (false == socket_->valid()) {
+    if (false == socketConnected()) {
         return false;
     }
 
     zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
-    if (-1 == zmq::poll(&items, 1, SOCKET_POLLING_TIMEOUT)) {
+    if (false == socketPoll(&items)) {
         return false;
     }
     if (items.revents & ZMQ_POLLIN) {
         std::string identity;
 
-        if (s_recv(*socket_, identity) && s_recv(*socket_, message)) {
+        if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);
             CONNECTOR_DEBUG_LOG("%s [Socket] Rx'ed message : %s(ID: %s)\n", "ZMQ_SUB",
                                 message.c_str(), getDealerID().c_str());
@@ -64,13 +63,13 @@ bool ZmqSubscriberConnector::read(std::string& message)
 
 bool ZmqSubscriberConnector::blockingRead(std::string& message)
 {
-    if (false == socket_->valid()) {
+    if (false == socketConnected()) {
         return false;
     }
 
     std::string identity;
 
-    if (s_recv(*socket_, identity) && s_recv(*socket_, message)) {
+    if (socketRecv(identity) && socketRecv(message)) {
         setDealerID(identity);
         CONNECTOR_DEBUG_LOG("%s [Socket] Rx'ed message : %s(ID: %s)\n", "ZMQ_SUB",
                             message.c_str(), getDealerID().c_str());
