@@ -1,4 +1,4 @@
-project(test-ui
+project(core-test-ui
     LANGUAGES NONE
 )
 

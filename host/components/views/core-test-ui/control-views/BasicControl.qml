@@ -1,10 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-
 import tech.strata.sgwidgets 1.0
-import tech.strata.sgwidgets 0.9 as Widget09
-
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
@@ -29,61 +26,61 @@ Item {
 
     }
     Component.onCompleted: {
-        testingControlView()
+        testingCoreControlView()
     }
 
-    function testingControlView() {
+    function testingCoreControlView() {
         if(class_id) {
-            helpIcon1.source = "qrc:/sgimages/check-circle.svg"
-            helpIcon1.iconColor = "green"
-            firstTest.text += ": " + class_id + "\n PASSED"
+            testIconClassId.source = "qrc:/sgimages/check-circle.svg"
+            testIconClassId.iconColor = "green"
+            classIDText.text += ": " + class_id + "\n PASSED"
         }
         else {
-            helpIcon1.source =  "qrc:/sgimages/times-circle.svg"
-            helpIcon1.iconColor = "red"
-            firstTest.text += "\n FAILED"
+            testIconClassId.source =  "qrc:/sgimages/times-circle.svg"
+            testIconClassId.iconColor = "red"
+            classIDText.text += "\n FAILED"
         }
 
         if(saveSettings()) {
-            helpIcon2.source = "qrc:/sgimages/check-circle.svg"
-            helpIcon2.iconColor = "green"
+            testIconUserSetting.source = "qrc:/sgimages/check-circle.svg"
+            testIconUserSetting.iconColor = "green"
             userSetting.text += ":" + " True" + "\n PASSED"
         }
         else {
-            helpIcon2.source = "qrc:/sgimages/check-circle.svg"
-            helpIcon2.iconColor = "red"
+            testIconUserSetting.source = "qrc:/sgimages/check-circle.svg"
+            testIconUserSetting.iconColor = "red"
             userSetting.text += "\n FAILED"
         }
 
         if(user_id) {
-            helpIcon3.source = "qrc:/sgimages/check-circle.svg"
-            helpIcon3.iconColor = "green"
+            testIconUserId.source = "qrc:/sgimages/check-circle.svg"
+            testIconUserId.iconColor = "green"
             userIDText.text += ": " + user_id +  "\n PASSED"
         }
         else {
-            helpIcon3.source = "qrc:/sgimages/times-circle.svg"
-            helpIcon3.iconColor = "red"
+            testIconUserId.source = "qrc:/sgimages/times-circle.svg"
+            testIconUserId.iconColor = "red"
             userIDText.text += "\n FAILED"
         }
 
         if(first_name) {
-            helpIcon4.source = "qrc:/sgimages/check-circle.svg"
-            helpIcon4.iconColor = "green"
+            testIconFirstName.source = "qrc:/sgimages/check-circle.svg"
+            testIconFirstName.iconColor = "green"
             firstNameText.text += ": " + first_name +  "\n PASSED"
         }
         else {
-            helpIcon4.source = "qrc:/sgimages/times-circle.svg"
-            helpIcon4.iconColor = "red"
+            testIconFirstName.source = "qrc:/sgimages/times-circle.svg"
+            testIconFirstName.iconColor = "red"
             firstNameText.text +=  "\n FAILED"
         }
         if(last_name) {
-            helpIcon5.source = "qrc:/sgimages/check-circle.svg"
-            helpIcon5.iconColor = "green"
-           lastNameText.text += ": " + last_name +  "\n PASSED"
+            testIconLastName.source = "qrc:/sgimages/check-circle.svg"
+            testIconLastName.iconColor = "green"
+            lastNameText.text += ": " + last_name +  "\n PASSED"
         }
         else {
-            helpIcon5.source = "qrc:/sgimages/times-circle.svg"
-            helpIcon5.iconColor = "red"
+            testIconLastName.source = "qrc:/sgimages/times-circle.svg"
+            testIconLastName.iconColor = "red"
             lastNameText.text +=  "\n FAILED"
         }
     }
@@ -94,14 +91,12 @@ Item {
         height: parent.height/2
         anchors.centerIn: parent
         color: "dark gray"
-
         ColumnLayout{
             anchors.fill: parent
             Item {
                 id: titleContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-
                 SGText {
                     id: title
                     text: " Test Control View "
@@ -110,7 +105,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     Rectangle {
                         id: line1
-                        height: 2
+                        height: 1.5
                         anchors.top:parent.bottom
                         width: titleContainer.width
                         border.color: "black"
@@ -128,7 +123,7 @@ Item {
                 Layout.fillWidth: true
                 RowLayout {
                     SGIcon {
-                        id: helpIcon1
+                        id: testIconClassId
                         width: 20
                         height: 20
                         source:  "qrc:/sgimages/times-circle.svg"
@@ -136,7 +131,7 @@ Item {
                     }
 
                     SGText {
-                        id: firstTest
+                        id: classIDText
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
                         Accessible.name: "class_id: " + text
@@ -151,7 +146,7 @@ Item {
                 Layout.fillWidth: true
                 RowLayout {
                     SGIcon {
-                        id: helpIcon2
+                        id: testIconUserSetting
                         width: 20
                         height: 20
                         source:  "qrc:/sgimages/times-circle.svg"
@@ -171,7 +166,7 @@ Item {
                 Layout.fillWidth: true
                 RowLayout {
                     SGIcon {
-                        id: helpIcon3
+                        id: testIconUserId
                         width: 20
                         height: 20
                         source:  "qrc:/sgimages/times-circle.svg"
@@ -192,7 +187,7 @@ Item {
                 Layout.fillWidth: true
                 RowLayout {
                     SGIcon {
-                        id: helpIcon4
+                        id: testIconFirstName
                         width: 20
                         height: 20
                         source:  "qrc:/sgimages/times-circle.svg"
@@ -212,12 +207,11 @@ Item {
                 Layout.fillWidth: true
                 RowLayout {
                     SGIcon {
-                        id: helpIcon5
+                        id: testIconLastName
                         width: 20
                         height: 20
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
-
                     }
                     SGText {
                         id: lastNameText
