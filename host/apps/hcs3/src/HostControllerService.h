@@ -145,6 +145,15 @@ private:
     bool broadcastMessage(const QString& message);
 
     enum class hcsNotificationType {
+        downloadPlatformFilepathChanged,
+        downloadPlatformSingleFileProgress,
+        downloadPlatformSingleFileFinished,
+        downloadPlatformFilesFinished,
+        allPlatforms,
+        platformMetaData,
+        controlViewDownloadProgress,
+        downloadViewFinished,
+        updatesAvailable,
         firmwareUpdate,
         adjustController,
         adjustControllerJob

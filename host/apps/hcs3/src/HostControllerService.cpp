@@ -174,19 +174,14 @@ void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
         const QString &originalFilePath,
         const QString &effectiveFilePath)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "original_filepath", originalFilePath },
+        { "effective_filepath", effectiveFilePath }
+    };
 
-    payload.insert("type", "download_platform_filepath_changed");
-    payload.insert("original_filepath", originalFilePath);
-    payload.insert("effective_filepath", effectiveFilePath);
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadPlatformFilepathChanged, payload, false);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
@@ -195,20 +190,15 @@ void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
         qint64 bytesReceived,
         qint64 bytesTotal)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "filepath", filePath },
+        { "bytes_received", bytesReceived },
+        { "bytes_total", bytesTotal }
+    };
 
-    payload.insert("type", "download_platform_single_file_progress");
-    payload.insert("filepath", filePath);
-    payload.insert("bytes_received", bytesReceived);
-    payload.insert("bytes_total", bytesTotal);
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadPlatformSingleFileProgress, payload, false);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
@@ -216,54 +206,40 @@ void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
         const QString &filePath,
         const QString &errorString)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "filepath", filePath },
+        { "error_string", errorString }
+    };
 
-    payload.insert("type", "download_platform_single_file_finished");
-    payload.insert("filepath", filePath);
-    payload.insert("error_string", errorString);
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadPlatformSingleFileFinished, payload, false);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &clientId, const QString &errorString)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "download_platform_files_finished");
     if (errorString.isEmpty() == false) {
         payload.insert("error_string", errorString);
     }
 
-    message.insert("hcs::notification", payload);
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadPlatformSingleFileFinished, payload, false);
 
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendPlatformListMessage(
         const QByteArray &clientId,
         const QJsonArray &platformList)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "list", platformList }
+    };
 
-    payload.insert("type", "all_platforms");
-    payload.insert("list", platformList);
+    QByteArray notification = createHcsNotification(hcsNotificationType::allPlatforms, payload, false);
 
-    message.insert("hcs::notification", payload);
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendPlatformDocumentsProgressMessage(
@@ -294,31 +270,23 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
         qint64 bytesReceived,
         qint64 bytesTotal)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "url", partialUri },
+        { "filepath", filePath },
+        { "bytes_received", bytesReceived },
+        { "bytes_total", bytesTotal }
+    };
 
-    payload.insert("type", "control_view_download_progress");
-    payload.insert("url", partialUri);
-    payload.insert("filepath", filePath);
-    payload.insert("bytes_received", bytesReceived);
-    payload.insert("bytes_total", bytesTotal);
+    QByteArray notification = createHcsNotification(hcsNotificationType::controlViewDownloadProgress, payload, false);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList,
                                                  const QJsonArray &firmwareList, const QString &error)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "platform_meta_data");
     payload.insert("class_id", classId);
 
     if (error.isEmpty()) {
@@ -328,10 +296,9 @@ void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, con
         payload.insert("error", error);
     }
 
-    message.insert("hcs::notification", payload);
+    QByteArray notification = createHcsNotification(hcsNotificationType::platformMetaData, payload, false);
 
-    doc.setObject(message);
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendPlatformDocumentsMessage(
@@ -368,19 +335,14 @@ void HostControllerService::sendDownloadControlViewFinishedMessage(
         const QString &errorString)
 {
     QJsonObject payload {
-        {"type", "download_view_finished"},
-        {"url", partialUri},
-        {"filepath", filePath},
-        {"error_string", errorString}
+        { "url", partialUri },
+        { "filepath", filePath },
+        { "error_string", errorString }
     };
 
-    QJsonObject message {
-        {"hcs::notification", payload}
-    };
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadViewFinished, payload, false);
 
-    QJsonDocument doc(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 bool HostControllerService::parseConfig(const QString& config)
@@ -864,6 +826,33 @@ QByteArray HostControllerService::createHcsNotification(hcsNotificationType noti
     const char* type = "";
 
     switch (notificationType) {
+    case hcsNotificationType::downloadPlatformFilepathChanged:
+        type = "download_platform_filepath_changed";
+        break;
+    case hcsNotificationType::downloadPlatformSingleFileProgress:
+        type = "download_platform_single_file_progress";
+        break;
+    case hcsNotificationType::downloadPlatformSingleFileFinished:
+        type = "download_platform_single_file_finished";
+        break;
+    case hcsNotificationType::downloadPlatformFilesFinished:
+        type = "download_platform_files_finished";
+        break;
+    case hcsNotificationType::allPlatforms:
+        type = "all_platforms";
+        break;
+    case hcsNotificationType::platformMetaData:
+        type = "platform_meta_data";
+        break;
+    case hcsNotificationType::controlViewDownloadProgress:
+        type = "control_view_download_progress";
+        break;
+    case hcsNotificationType::downloadViewFinished:
+        type = "download_view_finished";
+        break;
+    case hcsNotificationType::updatesAvailable:
+        type = "updates_available";
+        break;
     case hcsNotificationType::firmwareUpdate:
         type = "firmware_update";
         break;
@@ -906,7 +895,6 @@ void HostControllerService::onCmdGetUpdateInfo(const rapidjson::Value * )
 void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, const QJsonArray &componentList, const QString &errorString)
 {
     QJsonObject payload;
-    payload.insert("type", "updates_available");
     if ((componentList.isEmpty() == false) || errorString.isEmpty()) {  // if list is empty, but no error is set, it means we have no updates available
         payload.insert("component_list", componentList);
     }
@@ -914,10 +902,7 @@ void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, co
         payload.insert("error_string", errorString);
     }
 
-    QJsonDocument doc;
-    QJsonObject message;
-    message.insert("hcs::notification", payload);
-    doc.setObject(message);
+    QByteArray notification = createHcsNotification(hcsNotificationType::updatesAvailable, payload, false);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
