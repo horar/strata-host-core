@@ -155,10 +155,10 @@ bool ZmqConnector::socketRecv(std::string & ostring, zmq::recv_flags flags)
             ostring = std::string(static_cast<char*>(message.data()), message.size());
             return true;
         }
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to receive message (flags: " << (int)flags << "), reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to receive message (flags: " << (int)flags << "), unexpected reason: " << sErr.what();
     } catch (...) {
@@ -176,11 +176,11 @@ bool ZmqConnector::socketSend(const std::string & istring, zmq::send_flags flags
     try {
         const auto ret = socket_->send (message, flags);
         return (ret != 0);
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to send message '" << istring.c_str()
                 << "' (flags: " << (int)flags << "), reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to send message '" << istring.c_str()
                 << "' (flags: " << (int)flags << "), unexpected reason: " << sErr.what();
@@ -200,10 +200,10 @@ bool ZmqConnector::socketSendMore(const std::string & istring)
     try {
         const auto ret = socket_->send (message, zmq::send_flags::sndmore);
         return (ret != 0);
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to send multipart message '" << istring.c_str() << "', reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to send multipart message '" << istring.c_str() << "', unexpected reason: " << sErr.what();
     } catch (...) {
@@ -222,10 +222,10 @@ bool ZmqConnector::socketSetOptLegacy(int opt, const void *val, size_t valLen)
         #pragma warning(suppress: warning-code) // suppress warning 4996
         socket_->setsockopt(opt, val, valLen);
         return true;
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to set legacy socket option (len: " << valLen << "), reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to set legacy socket option (len: " << valLen << "), unexpected reason: " << sErr.what();
     } catch (...) {
@@ -241,11 +241,11 @@ bool ZmqConnector::socketConnect(const std::string & address)
     try {
         socket_->connect(address);
         return true;
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to connect socket to address '" << address.c_str()
                 << "', reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to connect socket to address '" << address.c_str()
                 << "', unexpected reason: " << sErr.what();
@@ -263,11 +263,11 @@ bool ZmqConnector::socketBind(const std::string & address)
     try {
         socket_->bind(address);
         return true;
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to bind socket to address '" << address.c_str()
                 << "', reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to bind socket to address '" << address.c_str()
                 << "', unexpected reason: " << sErr.what();
@@ -286,9 +286,9 @@ bool ZmqConnector::socketPoll(zmq::pollitem_t *items)
         if (-1 != zmq::poll(items, 1, SOCKET_POLLING_TIMEOUT)) {
             return true;
         }
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace() << "Unable to poll items, reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace() << "Unable to poll items, unexpected reason: " << sErr.what();
     } catch (...) {
         qCCritical(logCategoryZmqConnector).nospace() << "Unable to poll items, unhandled exception";
@@ -307,9 +307,9 @@ bool ZmqConnector::socketOpen()
         context_.reset(new zmq::context_t());
         socket_.reset(new zmq::socket_t(*context_, socketType));
         return true;
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace() << "Unable to open socket, reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace() << "Unable to open socket, unexpected reason: " << sErr.what();
     } catch (...) {
         qCCritical(logCategoryZmqConnector).nospace() << "Unable to open socket, unhandled exception";

@@ -71,11 +71,11 @@ bool ZmqConnector::socketSetOptString(zmq::sockopt::array_option<Opt, NullTerm> 
     try {
         socket_->set(opt, val);
         return true;
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to set string socket option to value '" << val.c_str()
                 << "', reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to set string socket option to value '" << val.c_str()
                 << "', unexpected reason: " << sErr.what();
@@ -95,11 +95,11 @@ bool ZmqConnector::socketSetOptInt(zmq::sockopt::integral_option<Opt, T, BoolUni
     try {
         socket_->set(opt, val);
         return true;
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to set int socket option to value '" << val
                 << "', reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to set int socket option to value '" << val
                 << "', unexpected reason: " << sErr.what();
@@ -118,10 +118,10 @@ T ZmqConnector::socketGetOpt(zmq::sockopt::integral_option<Opt, T, BoolUnit> opt
 {
     try {
         return socket_->get(opt);
-    } catch (zmq::error_t zErr) {
+    } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to get integer socket option, reason: " << zErr.what();
-    } catch (std::exception sErr) {
+    } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to get integer socket option, unexpected reason: " << sErr.what();
     } catch (...) {
