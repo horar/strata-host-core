@@ -1,7 +1,10 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import tech.strata.sgwidgets 1.0
 import QtQuick.Controls 2.12
+import QtQml 2.12
+
+import tech.strata.sgwidgets 1.0
+
 import "qrc:/js/help_layout_manager.js" as Help
 
 /********************************************************************************************************
@@ -12,10 +15,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/820
     property var intervalState : 2000
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     property alias clearGraph: periodicNotificationGraph.clearGraph
 
     Component.onCompleted: {
@@ -41,6 +41,7 @@ Item {
         id: containMouseArea
         anchors.fill: root
         z: 0
+
         onClicked: {
             forceActiveFocus()
         }
@@ -106,6 +107,7 @@ Item {
         Item {
             Layout.preferredHeight: parent.height/4
             Layout.fillWidth: true
+
             Rectangle{
                 id: headingCommandHandler
                 width: parent.width
@@ -125,8 +127,8 @@ Item {
                         leftMargin: 10
                     }
                 }
-
             }
+
             RowLayout {
                 anchors.top: headingCommandHandler.bottom
                 anchors.topMargin: 5
@@ -136,11 +138,14 @@ Item {
                 Item {
                     Layout.fillHeight: true
                     Layout.preferredWidth: parent.width/1.6
+
                     ColumnLayout {
                         anchors.fill: parent
+
                         Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
                             SGAlignedLabel {
                                 id: ioSwitchLabel
                                 target: io
@@ -160,9 +165,11 @@ Item {
                                 }
                             }
                         }
+
                         Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
                             SGAlignedLabel {
                                 id: dacSwitchLabel
                                 target: dac
@@ -184,12 +191,12 @@ Item {
                                         platformInterface.commands.my_cmd_simple.update( parseFloat(value.toFixed(2)),io.checked)
                                         delegateText1.text = JSON.stringify(my_cmd_simple_obj,null,4)
                                     }
-
                                 }
                             }
                         }
                     }
                 }
+
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -197,6 +204,7 @@ Item {
                     Layout.topMargin: 15
                     Layout.rightMargin: 15
                     color: "light gray"
+
                     Image {
                         source: "images/StrataToBoard.png"
                         anchors {
@@ -207,6 +215,7 @@ Item {
                         height: 50
                         fillMode: Image.PreserveAspectFit
                     }
+
                     Flickable {
                         id: grayBox1
                         anchors.fill: parent
@@ -226,11 +235,13 @@ Item {
         Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
+
             Rectangle {
                 id: periodicNotification
                 width: parent.width
                 height: parent.height/9
                 color: "lightgray"
+
                 Text {
                     id: periodicNotificationHeading
                     text: "Periodic Notification"
@@ -260,13 +271,16 @@ Item {
                     ColumnLayout{
                         width: parent.width - graphLabel.width
                         height:  parent.height
+
                         Item  {
                             Layout.preferredHeight: parent.height/5
                             Layout.fillWidth: true
+
                             Item{
                                 id: toggleSwitchContainer
                                 width:parent.width/3
                                 height: parent.height
+
                                 SGAlignedLabel {
                                     id: toggleLEDLabel
                                     target: toggleLED
@@ -285,10 +299,10 @@ Item {
                                                 return SGStatusLight.Green
                                             else return SGStatusLight.Off
                                         }
-
                                     }
                                 }
                             }
+
                             SGButtonStrip {
                                 id: graphGaugeButtonStrip
                                 model: ["Graph","Gauge"]
@@ -296,6 +310,7 @@ Item {
                                     centerIn: parent
                                     left: toggleSwitchContainer.right
                                 }
+
                                 onClicked: {
                                     if(index === 0) {
                                         periodicNotificationGraph.visible = true
@@ -319,6 +334,7 @@ Item {
                                     }
                                 }
                             }
+
                             Item{
                                 id: inputSwitchConter
                                 width:parent.width/3
@@ -332,6 +348,7 @@ Item {
                                     anchors.centerIn: parent
                                     text: "IO Input"
                                     font.bold: true
+
                                     SGStatusLight {
                                         id: inputLED
                                         width : 30
@@ -344,9 +361,11 @@ Item {
                                 }
                             }
                         }
+
                         Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
                             SGGraph{
                                 id: periodicNotificationGraph
                                 anchors.fill: parent
@@ -370,10 +389,8 @@ Item {
                                 property var random_float_array_curve: periodicNotificationGraph.createCurve("movingCurve1")
                                 property var adc_read_curve: periodicNotificationGraph.createCurve("movingCurve2")
 
-
                                 property var firstNotification: 1 //Count number of notification
                                 property bool clearGraph: false
-
 
                                 Connections {
                                     target: platformInterface.notifications.my_cmd_simple_periodic
@@ -449,8 +466,10 @@ Item {
                         height: 110
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
+
                         ColumnLayout {
                             anchors.fill: parent
+
                             SGText {
                                 id: adcLegend
                                 text:" ADC \n Input"
@@ -459,6 +478,7 @@ Item {
                                 visible: graphGaugeButtonStrip.index === 1 ? false : true
                                 Layout.topMargin: 10
                             }
+
                             SGText {
                                 id:  randomLegend
                                 text:" Random"
@@ -469,12 +489,14 @@ Item {
                         }
                     }
                 }
+
                 Rectangle {
                     Layout.preferredHeight: parent.height/1.05
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignCenter
                     color: "light gray"
                     Layout.rightMargin: 15
+
                     Image {
                         source: "images/BoardToStrata.png"
                         anchors {
@@ -485,6 +507,7 @@ Item {
                         height: 50
                         fillMode: Image.PreserveAspectFit
                     }
+
                     Flickable {
                         id: graybox2
                         anchors.fill: parent
@@ -494,6 +517,7 @@ Item {
                             readOnly: true
                             selectByMouse: true
                             property var cmd_simple_periodicText: my_cmd_simple_periodic_text
+
                             onCmd_simple_periodicTextChanged: {
                                 //set a highlighted area from the start,end cursor position
                                 var end =  selectionEnd
@@ -507,14 +531,17 @@ Item {
                 }
             }
         }
+
         Item {
             Layout.preferredHeight: parent.height/4
             Layout.fillWidth: true
+
             Rectangle {
                 id: configperiodicNotification
                 width: parent.width
                 height: parent.height/5
                 color: "lightgray"
+
                 Text {
                     id: configperiodicNotificationHeading
                     text: "Configure Periodic Notification"
@@ -539,13 +566,17 @@ Item {
                     id: configperiodicNotificationContainer
                     Layout.fillHeight: true
                     Layout.preferredWidth: parent.width/1.6
+
                     ColumnLayout{
                         anchors.fill: parent
+
                         Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            RowLayout{
+
+                            RowLayout {
                                 anchors.fill: parent
+
                                 Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
@@ -556,13 +587,13 @@ Item {
                                         text: "Run State"
                                         font.bold: true
                                         anchors.centerIn: parent
-
                                         alignment: SGAlignedLabel.SideTopCenter
 
                                         SGSwitch {
                                             id: enableSwitch
                                             width: 50
                                             checked: true
+
                                             onToggled: {
                                                 if(!checked) {
                                                     periodicNotificationGraph.clearGraph = true
@@ -596,12 +627,14 @@ Item {
                                                 top: 10000
                                             }
                                             placeholderText: "250-10000"
+
                                             onEditingFinished:{
                                                 if(interval.text) {
                                                     intervalState = parseInt(text)
                                                     platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                                 }
                                             }
+
                                             onFocusChanged: {
                                                 if(!focus){
                                                     interval.text = intervalState.toString()
@@ -612,18 +645,22 @@ Item {
                                 }
                             }
                         }
+
                         Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
                             RowLayout{
                                 anchors.fill: parent
+
                                 Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
+
                                     SGAlignedLabel {
                                         id: runStateLabel
                                         target: runStateSwitch
-                                        text: "Run Indefinately"
+                                        text: "Run Indefinitely"
                                         anchors {
                                             horizontalCenter: parent.horizontalCenter
                                         }
@@ -634,6 +671,7 @@ Item {
                                             id: runStateSwitch
                                             width: 50
                                             checked: true
+
                                             onToggled: {
                                                 if(checked) {
                                                     run_count = -1
@@ -651,6 +689,7 @@ Item {
                                 Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
+
                                     SGAlignedLabel {
                                         id: runcountLabel
                                         target: runCountInfoBox
@@ -674,6 +713,7 @@ Item {
                                             readOnly: false
                                             enabled: (runStateSwitch.checked) ? false : true
                                             opacity: (runStateSwitch.checked) ? 0.5 : 1.0
+
                                             onEditingFinished:{
                                                 if(runCountInfoBox.text) {
                                                     run_count = parseInt(runCountInfoBox.text)
@@ -681,6 +721,7 @@ Item {
                                                     platformInterface.commands.my_cmd_simple_periodic_update.update(intervalState,run_count,enableSwitch.checked)
                                                 }
                                             }
+
                                             onFocusChanged: {
                                                 runCountInfoBox.text = run_count.toString()
                                             }
@@ -699,6 +740,7 @@ Item {
                     Layout.alignment: Qt.AlignCenter
                     Layout.topMargin: 25
                     Layout.rightMargin: 15
+
                     Image {
                         source: "images/StrataToBoard.png"
                         anchors {

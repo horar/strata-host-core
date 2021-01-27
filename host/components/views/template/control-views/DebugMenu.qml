@@ -22,6 +22,7 @@ Rectangle {
     function randomValue(min, max) {
         return (Math.random() * (max - min) + min).toFixed(2)
     }
+
     function randomValueArray() {
         let dataArray = []
         for (var i = 0; i < 6; ++i) {
@@ -85,7 +86,6 @@ Rectangle {
                     }
                 }
             }
-
 
             Button {
                 id: my_cmd_simple_periodic
