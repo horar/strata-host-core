@@ -111,7 +111,6 @@ Item {
         tooltipDescription: "Recompile your control view project."
 
         function onClicked() {
-            toolBarListView.recompiling = true;
             recompileControlViewQrc();
         }
 
@@ -129,7 +128,6 @@ Item {
                         controlViewLoader.setSource(NavigationControl.screens.LOAD_ERROR,
                                                     { "error_message": error_str });
                     }
-                    confirmBuildClean.buildWithoutSaving = false
                 }
             }
         }

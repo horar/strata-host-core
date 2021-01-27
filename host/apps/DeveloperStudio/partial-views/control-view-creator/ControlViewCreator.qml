@@ -149,7 +149,6 @@ Rectangle {
                         break;
                     case viewTab:
                         if (rccInitialized == false) {
-                            toolBarListView.recompiling = true
                             recompileControlViewQrc();
                         } else {
                             viewStack.currentIndex = 2
@@ -331,44 +330,45 @@ Rectangle {
                 id:consoleContainer
             }
         }
+    }
 
-        ConfirmClosePopup {
-            id: confirmBuildClean
-            parent: mainWindow.contentItem
+    ConfirmClosePopup {
+        id: confirmBuildClean
+        parent: mainWindow.contentItem
 
-            titleText: "Stopping build due to unsaved changes in the project"
-            popupText: "Some Files have unsaved Changes Would you like to save all the changes or buile without saving?"
+        titleText: "Stopping build due to unsaved changes in the project"
+        popupText: "Some files have unsaved changes, would you like to save all changes or build without saving?"
 
-            acceptButtonText: "Save All"
-            closeButtonText: "Build Without Saving"
+        acceptButtonText: "Save All"
+        closeButtonText: "Build Without Saving"
 
-            property bool buildWithoutSaving: false
-            onPopupClosed: {
-                if(closeReason === acceptCloseReason){
-                    editor.openFilesModel.saveAll(false)
-                    toolBarListView.recompiling = true;
-                    sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
-                } else if(closeReason === closeFilesReason){
-                    buildWithoutSaving = true
-                    toolBarListView.recompiling = true;
-                    sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
-                }
-                recompileRequested = false
-                toolBarListView.recompiling = false
-                close();
+        onPopupClosed: {
+            if (closeReason === cancelCloseReason) {
+                return
+            }
+
+            if (closeReason === acceptCloseReason) {
+                editor.openFilesModel.saveAll(false)
+            }
+
+            requestRecompile()
+        }
+    }
+
+    function recompileControlViewQrc() {
+        if (editor.fileTreeModel.url.toString() !== '') {
+            if (editor.openFilesModel.getUnsavedCount() > 0) {
+                confirmBuildClean.open();
+            } else {
+                requestRecompile()
             }
         }
     }
-    function recompileControlViewQrc() {
-        if (editor.fileTreeModel.url.toString() !== '') {
-            if(editor.openFilesModel.getUnsavedCount() > 0 && !confirmBuildClean.buildWithoutSaving){
-                recompileRequested = true
-                confirmBuildClean.open();
-            } else {
-                recompileRequested = true
-                sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
-            }
-        }
+
+    function requestRecompile() {
+        toolBarListView.recompiling = true;
+        recompileRequested = true
+        sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
     }
 
     function loadDebugView (compiledRccFile) {
