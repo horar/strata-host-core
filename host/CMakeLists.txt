@@ -37,6 +37,7 @@ include(SetupCompileOptions)
 
 include(GitVersionMacro)
 include(TimestampMacro)
+include(ReplicatorCredentialsMacro)
 include(AddQmlImportPathMacro)
 
 # common for 'apps' and 'components' that use resource files

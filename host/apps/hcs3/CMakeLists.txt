@@ -69,6 +69,7 @@ endif()
 
 generate_app_version(GITTAG_PREFIX "hcs_" MACBUNDLE OFF)
 generate_app_build_timestamp()
+generate_app_build_replicator_credentials(USERNAME "***REMOVED***" PASSWORD "***REMOVED***")
 
 set_target_properties(${PROJECT_NAME}Lib PROPERTIES
     AUTOMOC ON
