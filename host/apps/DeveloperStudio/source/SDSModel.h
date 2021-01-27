@@ -9,6 +9,7 @@ class CoreInterface;
 class HcsNode;
 class ResourceLoader;
 class SGNewControlView;
+class AdjustControllerManager;
 
 class SDSModel: public QObject
 {
@@ -20,6 +21,7 @@ class SDSModel: public QObject
     Q_PROPERTY(DocumentManager* documentManager READ documentManager CONSTANT)
     Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
     Q_PROPERTY(SGNewControlView* newControlView READ newControlView CONSTANT)
+    Q_PROPERTY(AdjustControllerManager* adjustControllerManager READ adjustControllerManager CONSTANT)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, QObject *parent = nullptr);
@@ -33,6 +35,7 @@ public:
     CoreInterface* coreInterface() const;
     ResourceLoader* resourceLoader() const;
     SGNewControlView* newControlView() const;
+    AdjustControllerManager* adjustControllerManager() const;
 
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
@@ -55,6 +58,7 @@ private:
     DocumentManager *documentManager_{nullptr};
     ResourceLoader *resourceLoader_{nullptr};
     SGNewControlView *newControlView_{nullptr};
+    AdjustControllerManager *adjustControllerManager_{nullptr};
     HcsNode *remoteHcsNode_{nullptr};
     QPointer<QProcess> hcsProcess_;
     bool externalHcsConnected_{false};

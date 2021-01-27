@@ -25,6 +25,7 @@ qt5_generate_repc(NODE_RO_SRCS ${CMAKE_SOURCE_DIR}/apps/hcs3/src/HostControllerS
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
     source/AppUi.cpp
+    source/AdjustControllerManager.cpp
     source/SDSModel.cpp
     source/DocumentManager.cpp
     source/ResourceLoader.cpp

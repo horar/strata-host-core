@@ -58,6 +58,9 @@ Item {
             left: root.left
             leftMargin: 25
         }
+
+        text: model.adjust_controller ? "ADJUSTING" : defaultText
+        textBgColor: model.adjust_controller ? Theme.palette.orange : defaultTextBg
     }
 
     ColumnLayout {
@@ -146,6 +149,28 @@ Item {
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
+                visible: model.adjust_controller === false
+            }
+
+            Text {
+                id: statusText
+                text: {
+                    if (model.adjust_controller_error_string) {
+                        return "Adjustment of controller failed.\n" + model.adjust_controller_error_string
+                    }
+
+                    "Controller is being adjusted. Do not unplug device."
+                }
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                visible: model.adjust_controller
+                font {
+                    pixelSize: 14
+                    family: Fonts.franklinGothicBook
+                }
+                wrapMode: Text.WordWrap
+                color: model.adjust_controller_error_string ? Theme.palette.error : "#333"
+                horizontalAlignment: Text.AlignHCenter
             }
 
             Text {
@@ -423,6 +448,17 @@ Item {
                 onPressed:  mouse.accepted = false
                 cursorShape: Qt.PointingHandCursor
             }
+        }
+
+        SGCircularProgress {
+            id: circularProgress
+            width: 100
+            height: 100
+            anchors.horizontalCenter: buttonColumn.horizontalCenter
+
+            visible: model.adjust_controller
+            value: model.adjust_controller_progress
+            highlightColor: Theme.palette.orange
         }
     }
 

@@ -32,6 +32,7 @@
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "RunGuard.h"
+#include "AdjustControllerManager.h"
 
 #include "AppUi.h"
 #include "config/AppConfig.h"
@@ -138,6 +139,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
+    qmlRegisterUncreatableType<AdjustControllerManager>("tech.strata.AdjustControllerManager", 1, 0, "AdjustControllerManager", "You can't instantiate AdjustControllerManager in QML");
 
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss())};
 

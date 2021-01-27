@@ -216,6 +216,10 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit platformMetaData(payload);
     } else if (type == "updates_available") {
         emit updateInfoReceived(payload);
+    } else if (type == "adjust_controller") {
+        emit adjustControllerReply(payload);
+    } else if (type == "adjust_controller_job") {
+        emit adjustControllerJobUpdate(payload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }
