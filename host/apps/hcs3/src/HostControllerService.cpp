@@ -542,7 +542,6 @@ void HostControllerService::onCmdAdjustController(const rapidjson::Value *payloa
     Q_ASSERT(payload != nullptr);
 
     QByteArray clientId = getSenderClient()->getClientId();
-    bool success = false;
     QString errorString;
     int deviceId;
     bool hasDeviceId = false;
@@ -603,19 +602,18 @@ void HostControllerService::onCmdAdjustController(const rapidjson::Value *payloa
 
         emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmware.second, jobUuid, true);
 
-        success = true;
+        return;
+
     } while (false);
 
-    if (success == false) {
-        qCWarning(logCategoryHcs).noquote() << errorString;
-        if (hasDeviceId) {
-            QJsonObject payloadBody {
-                { "error_string", errorString },
-                { "device_id", deviceId }
-            };
-            QByteArray notification = createHcsNotification(hcsNotificationType::adjustController, payloadBody, true);
-            clients_.sendMessage(clientId, notification);
-        }
+    qCWarning(logCategoryHcs).noquote() << errorString;
+    if (hasDeviceId) {
+        QJsonObject payloadBody {
+            { "error_string", errorString },
+            { "device_id", deviceId }
+        };
+        QByteArray notification = createHcsNotification(hcsNotificationType::adjustController, payloadBody, true);
+        clients_.sendMessage(clientId, notification);
     }
 }
 
@@ -827,7 +825,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     }
 }
 
-QByteArray HostControllerService::createHcsNotification(hcsNotificationType notificationType, const QJsonObject &payload, bool standalonePayload)
+const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationType notificationType)
 {
     const char* type = "";
 
@@ -870,6 +868,12 @@ QByteArray HostControllerService::createHcsNotification(hcsNotificationType noti
         break;
     }
 
+    return type;
+}
+
+QByteArray HostControllerService::createHcsNotification(hcsNotificationType notificationType, const QJsonObject &payload, bool standalonePayload)
+{
+    const char* type = hcsNotificationTypeToString(notificationType);
     QJsonObject notificationBody {
         { "type", type }
         //, { "payload", payload }  // TODO uncomment this when all notifications will have standalone payload

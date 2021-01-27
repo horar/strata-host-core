@@ -158,6 +158,7 @@ private:
         adjustController,
         adjustControllerJob
     };
+    const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
     QByteArray createHcsNotification(hcsNotificationType notificationType, const QJsonObject& payload, bool standalonePayload = true);
 
     ///////
