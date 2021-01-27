@@ -89,6 +89,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     strata::CouchbaseLiteCPP
     strata::QtLogger
     strata::CbLogger
+	rapidjson::rapidjson
 )
 
 target_include_directories(${PROJECT_NAME}Lib
