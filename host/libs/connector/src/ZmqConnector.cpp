@@ -92,7 +92,7 @@ bool ZmqConnector::blockingRead(std::string& message)
     }
 
     if (socketRecv(message)) {
-        CONNECTOR_DEBUG_LOG("%s [Socket] Rx'ed message : %s\n", "ZMQ", message.c_str());
+        CONNECTOR_DEBUG_LOG("ZMQ [Socket] Rx'ed message : %s\n", message.c_str());
         return true;
     }
 
@@ -112,7 +112,7 @@ bool ZmqConnector::read(std::string& message)
 
     if (items.revents & ZMQ_POLLIN) {
         if (socketRecv(message)) {
-            CONNECTOR_DEBUG_LOG("%s [Socket] Rx'ed message : %s\n", "ZMQ", message.c_str());
+            CONNECTOR_DEBUG_LOG("ZMQ [Socket] Rx'ed message : %s\n", message.c_str());
             return true;
         }
     }
@@ -129,7 +129,7 @@ bool ZmqConnector::send(const std::string& message)
         return false;
     }
 
-    CONNECTOR_DEBUG_LOG("%s [Socket] Tx'ed message : %s\n", "ZMQ", message.c_str());
+    CONNECTOR_DEBUG_LOG("ZMQ [Socket] Tx'ed message : %s\n", message.c_str());
 
     return true;
 }
@@ -308,7 +308,7 @@ void ZmqConnector::socketClose()
 
 bool ZmqConnector::socketConnected() const
 {
-    return ((nullptr != socket_) && socket_->connected());
+    return ((nullptr != socket_) && socket_->connected() && isConnected());
 }
 
 void ZmqConnector::contextClose()

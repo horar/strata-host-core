@@ -19,9 +19,9 @@ bool ZmqSubscriberConnector::open(const std::string& ip_address)
     }
 
     int linger = 0;
-    if (0 == socketSetOptInt(zmq::sockopt::linger, linger) &&
-        0 == socketSetOptString(zmq::sockopt::subscribe, getDealerID()) &&
-        0 == socketConnect(ip_address)) {
+    if (socketSetOptInt(zmq::sockopt::linger, linger) &&
+        socketSetOptString(zmq::sockopt::subscribe, getDealerID()) &&
+        socketConnect(ip_address)) {
         setConnectionState(true);
         CONNECTOR_DEBUG_LOG("%s Connecting to the server socket %s with filter '%s'\n", "ZMQ_SUB",
                             ip_address.c_str(), getDealerID().c_str());
