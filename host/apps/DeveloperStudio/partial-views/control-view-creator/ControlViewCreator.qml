@@ -137,7 +137,6 @@ Rectangle {
                 property int editTab: 1
                 property int viewTab: 2
                 property int debugTab: 3
-                property bool recompiling: false
 
                 onCurrentIndexChanged: {
                     switch (currentIndex) {
@@ -300,7 +299,7 @@ Rectangle {
                                 delete NavigationControl.context.class_id
                                 delete NavigationControl.context.device_id
 
-                                toolBarListView.recompiling = false
+                                recompileRequested = false
                                 if (toolBarListView.currentIndex === toolBarListView.viewTab
                                         || source === NavigationControl.screens.LOAD_ERROR) {
                                     viewStack.currentIndex = 2
@@ -310,7 +309,7 @@ Rectangle {
                                 delete NavigationControl.context.class_id
                                 delete NavigationControl.context.device_id
 
-                                toolBarListView.recompiling = false
+                                recompileRequested = false
                                 console.error("Error while loading control view")
                                 setSource(NavigationControl.screens.LOAD_ERROR,
                                           { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
@@ -366,7 +365,6 @@ Rectangle {
     }
 
     function requestRecompile() {
-        toolBarListView.recompiling = true;
         recompileRequested = true
         sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
     }

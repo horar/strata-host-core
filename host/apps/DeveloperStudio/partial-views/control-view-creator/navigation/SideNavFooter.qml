@@ -46,7 +46,7 @@ Item {
         anchors.verticalCenter: recompileNavButton.verticalCenter
         height: 30
         width: 30
-        visible: toolBarListView.recompiling
+        visible: recompileRequested
         running: visible
 
         contentItem: Item {
@@ -105,8 +105,8 @@ Item {
 
         iconText: "Build"
         iconSource: "qrc:/sgimages/bolt.svg"
-        enabled: editor.fileTreeModel.url.toString() !== "" && !toolBarListView.recompiling
-        visible: !toolBarListView.recompiling
+        enabled: editor.fileTreeModel.url.toString() !== "" && !recompileRequested
+        visible: !recompileRequested
         color: "transparent"
         tooltipDescription: "Recompile your control view project."
 
@@ -119,7 +119,6 @@ Item {
 
             onFinishedRecompiling: {
                 if (recompileRequested) { // enforce that CVC requested this recompile
-                    recompileRequested = false
                     rccInitialized = true
                     if (filepath !== '') {
                         loadDebugView(filepath)
@@ -127,6 +126,7 @@ Item {
                         let error_str = sdsModel.resourceLoader.getLastLoggedError()
                         controlViewLoader.setSource(NavigationControl.screens.LOAD_ERROR,
                                                     { "error_message": error_str });
+                        recompileRequested = false
                     }
                 }
             }
