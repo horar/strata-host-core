@@ -28,53 +28,33 @@ Item {
     }
 
     Component.onCompleted: {
-        testingCoreControlView()
+        testCoreControlView()
     }
 
-    function testingCoreControlView() {
+    function testCoreControlView() {
         if(class_id) {
-            testIconClassId.source = passedTestImage
-            testIconClassId.iconColor = "green"
             classIDText.text += ": " + class_id + "\n PASSED"
         } else {
-            testIconClassId.source =  failedTestImage
-            testIconClassId.iconColor = "red"
             classIDText.text += "\n FAILED"
         }
         if(saveSettings()) {
-            testIconUserSetting.source = passedTestImage
-            testIconUserSetting.iconColor = "green"
             userSetting.text += ":" + " True" + "\n PASSED"
         } else {
-            testIconUserSetting.source = failedTestImage
-            testIconUserSetting.iconColor = "red"
             userSetting.text += "\n FAILED"
         }
         if(user_id) {
-            testIconUserId.source = passedTestImage
-            testIconUserId.iconColor = "green"
             userIDText.text += ": " + user_id +  "\n PASSED"
         } else {
-            testIconUserId.source = failedTestImage
-            testIconUserId.iconColor = "red"
             userIDText.text += "\n FAILED"
         }
         if(first_name) {
-            testIconFirstName.source = passedTestImage
-            testIconFirstName.iconColor = "green"
             firstNameText.text += ": " + first_name +  "\n PASSED"
         } else {
-            testIconFirstName.source = failedTestImage
-            testIconFirstName.iconColor = "red"
             firstNameText.text +=  "\n FAILED"
         }
         if(last_name) {
-            testIconLastName.source = passedTestImage
-            testIconLastName.iconColor = "green"
             lastNameText.text += ": " + last_name +  "\n PASSED"
         } else {
-            testIconLastName.source = failedTestImage
-            testIconLastName.iconColor = "red"
             lastNameText.text +=  "\n FAILED"
         }
     }
@@ -124,16 +104,14 @@ Item {
                         id: testIconClassId
                         width: 20
                         height: 20
-                        source:  "qrc:/sgimages/times-circle.svg"
-                        iconColor: "red"
+                        source: class_id ? passedTestImage : failedTestImage
+                        iconColor: class_id ?  "green ": "red"
                     }
 
                     SGText {
                         id: classIDText
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
-                        Accessible.name: "class_id: " + text
-                        Accessible.role: Accessible.StaticText
                         text: "Check class_id"
                     }
                 }
@@ -150,8 +128,8 @@ Item {
                         id: testIconUserSetting
                         width: 20
                         height: 20
-                        source:  "qrc:/sgimages/times-circle.svg"
-                        iconColor: "red"
+                        source: saveSettings() ? passedTestImage : failedTestImage
+                        iconColor: saveSettings() ?  "green ": "red"
                     }
 
                     SGText {
@@ -174,8 +152,8 @@ Item {
                         id: testIconUserId
                         width: 20
                         height: 20
-                        source:  "qrc:/sgimages/times-circle.svg"
-                        iconColor: "red"
+                        source: user_id ? passedTestImage : failedTestImage
+                        iconColor: user_id ?  "green ": "red"
                     }
 
                     SGText {
@@ -198,8 +176,8 @@ Item {
                         id: testIconFirstName
                         width: 20
                         height: 20
-                        source:  "qrc:/sgimages/times-circle.svg"
-                        iconColor: "red"
+                        source: first_name ? passedTestImage : failedTestImage
+                        iconColor: first_name ?  "green ": "red"
                     }
 
                     SGText {
@@ -222,8 +200,8 @@ Item {
                         id: testIconLastName
                         width: 20
                         height: 20
-                        source:  "qrc:/sgimages/times-circle.svg"
-                        iconColor: "red"
+                        source: last_name ? passedTestImage : failedTestImage
+                        iconColor: last_name ?  "green ": "red"
                     }
 
                     SGText {
