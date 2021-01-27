@@ -36,6 +36,11 @@ target_link_libraries(${DEVICE}
     PUBLIC strata::QtLogger
 )
 
+target_compile_definitions(${DEVICE} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
+)
+
 set_target_properties(${DEVICE} PROPERTIES
     AUTOMOC ON
 )
@@ -86,6 +91,11 @@ target_link_libraries(${DEVICE_OPERATIONS}
     PRIVATE strata::crc16
 )
 
+target_compile_definitions(${DEVICE_OPERATIONS} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
+)
+
 set_target_properties(${DEVICE_OPERATIONS} PROPERTIES
     AUTOMOC ON
 )
@@ -112,6 +122,11 @@ target_link_libraries(${BOARD_MANAGER}
     PUBLIC strata::Device
     PRIVATE strata::DeviceOperations
     PRIVATE strata::CommandValidator
+)
+
+target_compile_definitions(${BOARD_MANAGER} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
 )
 
 set_target_properties(${BOARD_MANAGER} PROPERTIES

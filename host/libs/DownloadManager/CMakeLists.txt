@@ -30,6 +30,11 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC strata::QtLogger
 )
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=0x051200
+)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
 )
