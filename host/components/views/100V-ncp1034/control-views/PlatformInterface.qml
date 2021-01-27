@@ -59,7 +59,6 @@ Item {
         "pout": 12.00,      //Output power [W] (float 2 decimals)
         "eff": 90.0,        //Buck efficiency [%] (float 1 decimal)
         "pvcc": 0.00,      //LDO output power [mW] (float 3 decimals)
-        "ploss_vcc": 0.00, //LDO power loss [mW] (float 3 decimals)
         "board_temp": 23.0, //Board temperature [degC] (float 1 decimal)
         "ldo_temp": 23.0    //LDO temperature [degC] (float 1 decimals)
     }

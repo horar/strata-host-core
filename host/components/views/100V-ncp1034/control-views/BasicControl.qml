@@ -19,19 +19,17 @@ Item {
         platformInterface.get_status_command.update()
         Help.registerTarget(enableSwitchLabel, "This switch will enable the buck converter by setting the SS/SD# pin high.", 0, "100VcontrolHelp")
         Help.registerTarget(setSwitchFreqLabel, "This switch allows the user to switch between the standard 100kHz switching frequency or a manually set frequency using potentiometer R33.", 1, "100VcontrolHelp")
-        Help.registerTarget(softStartLabel, "This dropdown selections contains the estimated soft start time for the buck converter. The exact time depends on the output voltage so this is just an estimate.", 2, "100VcontrolHelp")
+        Help.registerTarget(softStartLabel, "This dropdown selection allows the user to change the approximate soft start time for the buck converter.", 2, "100VcontrolHelp")
         Help.registerTarget(outputVolLabel, "The slider and the text box both allow the user to set the output voltage between 5V and 24V.",3, "100VcontrolHelp")
-        Help.registerTarget(setoutputVoltAdjustmentLabel, "This switch will turn on/off the ability for the user to adjust the output voltage. This fixed voltage if this is off is 17V.",4, "100VcontrolHelp")
-        Help.registerTarget(enableVCCLDOLabel, "This switch turns on/off the LDO providing the power rail for VCC to the NCP1034 controller. When enabled, VCC is drawn from the input voltage. If this is disabled, the user would need to apply VCC power separately.",5, "100VcontrolHelp")
-
-        Help.registerTarget(filterHelpContainer, "All measured voltages and currents on the board are shown here. Input/Output Voltage and Current are measured at the input and output to the evaluation board.",6, "100VcontrolHelp")
+        Help.registerTarget(setoutputVoltAdjustmentLabel, "This switch will turn on/off the ability for the user to adjust the output voltage. The default fixed voltage if this feature is disabled is 17V. Disabling the output voltage adjustment feature allows for adjusting the output voltage of the board to voltages outside the recommended range by manually replacing the output voltage feedback divider resistors. See the User Guide for more details.",4, "100VcontrolHelp")
+        Help.registerTarget(enableVCCLDOLabel, "This switch turns on/off the LDO that provides power to the VCC rail of the NCP1034 controller by default. When enabled, VCC power is drawn from the input voltage supply. If this is disabled, the user would need to apply VCC power externally through the EXT_VCC 2-pin header provided on the board. See the User Guide for more details.",5, "100VcontrolHelp")
+        Help.registerTarget(filterHelpContainer, "All measured voltages and currents on the board are shown here. Input/output voltages and currents are measured at the input and output to the evaluation board.",6, "100VcontrolHelp")
         Help.registerTarget(logFault, "This status list contains all the error messages, and will store them in the order received with the most recent error messages displayed on top.",7, "100VcontrolHelp")
-
-        Help.registerTarget(filterHelp2Container, "These gauges show the input and output power to the evaluation board. They are calculated from the measured voltages and currents at input and output. The current readings max out at 2.2A so if more current is being drawn the numbers here will be inaccurate.",8, "100VcontrolHelp")
-        Help.registerTarget(effGaugeLabel, "The buck converter efficiency is calculated by taking the calculated Output power divided by the calculated input power.",9, "100VcontrolHelp")
-        Help.registerTarget(ldoTempLabel, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. The alert limit is set at 100˚C.",10, "100VcontrolHelp")
-        Help.registerTarget(boardTempLabel, "The temperature from the sensor closest to the inductor of the buck converter to estimate the overall board temperature. The alert limit is set at 80˚C.", 11, "100VcontrolHelp")
-        Help.registerTarget(sgstatusHelpContainer, "Green indicates that the parameter is within specification and operating normally. Red signals there is a problem. Check the Status list for more information on errors. ", 12, "100VcontrolHelp")
+        Help.registerTarget(filterHelp2Container, "These gauges show the input and output power to the evaluation board. They are calculated from the measured voltages and currents at input and output. The current readings max out at 1.1A and 2.2A for input and output current, respectively, so if more current than that is being drawn, the numbers here will be inaccurate as the input/output current sense amps will be saturated.",8, "100VcontrolHelp")
+        Help.registerTarget(effGaugeLabel, "The buck converter efficiency is calculated by taking the buck regulator's measured output power divided by the buck regulator's measured input power. This reading does not include the power loss in the VCC LDO when enabled.",9, "100VcontrolHelp")
+        Help.registerTarget(ldoTempLabel, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. The temperature alert limit is set to 100˚C. The LDO will automatically be disabled during a temperature alert event and cannot be enabled again until the temperature reading decreases below 95˚C.",10, "100VcontrolHelp")
+        Help.registerTarget(boardTempLabel, "The temperature from the sensor closest to the inductor of the buck converter is measured here to estimate the overall board temperature. The temperature alert limit is set to 80˚C. The buck regulator will automatically be disabled during a temperature alert event and cannot be enabled again until the temperature reading decreases below 75˚C.", 11, "100VcontrolHelp")
+        Help.registerTarget(sgstatusHelpContainer, "Green or black indicates that the parameter is within specification and operating normally. Red indicates there is a problem. Check the Status list for more information on errors. ", 12, "100VcontrolHelp")
     }
 
 
@@ -263,7 +261,7 @@ Item {
                                             id: softStart
                                             fontSizeMultiplier: ratioCalc
                                             model: ["1", "5.5", "11", "15.5"]
-                                            onCurrentIndexChanged: {
+                                            onActivated: {
                                                 platformInterface.set_ss.update(currentIndex)
                                             }
                                         }
@@ -856,7 +854,7 @@ Item {
                                                     valueDecimalPlaces: 1
                                                     property var periodic_telemetry_eff: platformInterface.periodic_telemetry.eff
                                                     onPeriodic_telemetry_effChanged: {
-                                                        effGauge.value = periodic_telemetry_eff
+                                                        effGauge.value = periodic_telemetry_eff.toFixed(1)
                                                     }
                                                 }
                                             }
@@ -893,7 +891,7 @@ Item {
                                                     valueDecimalPlaces: 1
                                                     property var periodic_telemetry_ldo_temp: platformInterface.periodic_telemetry.ldo_temp
                                                     onPeriodic_telemetry_ldo_tempChanged: {
-                                                        ldoTemp.value = periodic_telemetry_ldo_temp
+                                                        ldoTemp.value = periodic_telemetry_ldo_temp.toFixed(1)
                                                     }
                                                 }
                                             }
@@ -931,7 +929,7 @@ Item {
 
                                                     property var periodic_telemetry_board_temp: platformInterface.periodic_telemetry.board_temp
                                                     onPeriodic_telemetry_board_tempChanged: {
-                                                        boardTemp.value = periodic_telemetry_board_temp
+                                                        boardTemp.value = periodic_telemetry_board_temp.toFixed(1)
                                                     }
                                                 }
                                             }
@@ -1076,7 +1074,7 @@ Item {
                                                 alignment: SGAlignedLabel.SideLeftCenter
                                                 anchors.centerIn: parent
                                                 fontSizeMultiplier: ratioCalc * 1.2
-                                                text: "Temperature \n Alert "
+                                                text: "Temperature\nAlert "
                                                 font.bold: true
 
                                                 SGStatusLight {
