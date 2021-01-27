@@ -212,12 +212,12 @@ Item {
             margins: 30
         }
         height: testServerWarning.height + 30
-        visible: Rest.url !== urls.getProductionAuthServer()
+        visible:{ Rest.url !== urls.getAuthServer() }
 
         Connections {
             target: Signals
             onServerChanged: {
-                testServerWarningContainer.visible = ( Rest.url !== urls.getProductionAuthServer() )
+                testServerWarningContainer.visible = ( Rest.url !== urls.getAuthServer() )
             }
         }
 

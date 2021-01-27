@@ -32,24 +32,24 @@ bool UrlConfig::parseUrl(const QString &fileName) {
     QJsonValue value = loadDoc[QLatin1String("url_cloud_service")];
     qInfo() << value;
     if (value == QJsonValue::Undefined) {
-        qCCritical(logCategoryStrataDevStudioConfig) << "missing 'host_controller_service' key";
+        qCCritical(logCategoryStrataDevStudioConfig) << "missing 'url cloud service' key";
         return false;
     }
 
-    setUrlValue(value[QLatin1String("production_auth_server")], &m_productionAuthServer);
-    setUrlValue(value[QLatin1String("sales_popup_url")], &m_salesPopupUrl);
-    setUrlValue(value[QLatin1String("license_url")], &m_licenseUrl);
-    setUrlValue(value[QLatin1String("privacy_policy_url")], &m_privacyPolicyUrl);
-    setUrlValue(value[QLatin1String("mouser_url")], &m_mouserUrl);
-    setUrlValue(value[QLatin1String("digikey_url")], &m_digiKeyUrl);
-    setUrlValue(value[QLatin1String("avnet_url")], &m_avnetUrl);
+    setUrlValue(value[QLatin1String("auth_server")], &authServer_);
+    setUrlValue(value[QLatin1String("sales_popup_url")], &salesPopupUrl_);
+    setUrlValue(value[QLatin1String("license_url")], &licenseUrl_);
+    setUrlValue(value[QLatin1String("privacy_policy_url")], &privacyPolicyUrl_);
+    setUrlValue(value[QLatin1String("mouser_url")], &mouserUrl_);
+    setUrlValue(value[QLatin1String("digikey_url")], &digiKeyUrl_);
+    setUrlValue(value[QLatin1String("avnet_url")], &avnetUrl_);
         
     return true;
 }
 
 bool UrlConfig::setUrlValue(QJsonValue val, QString *url) {
     if (val == QJsonValue::Undefined) {
-        qCCritical(logCategoryStrataDevStudioConfig) << "missing key";
+        qCCritical(logCategoryStrataDevStudioConfig) << "missing " << val <<  " key";
         return false;
     }
 
@@ -59,37 +59,37 @@ bool UrlConfig::setUrlValue(QJsonValue val, QString *url) {
     }
 
     *url = val.toString();
-    qCDebug(logCategoryStrataDevStudioConfig) << "URL:" << &url;
+    qCDebug(logCategoryStrataDevStudioConfig) << "URL:" << url;
 
     return true;
 }
 
 QString UrlConfig::getSalesPopupUrl() const {
-    return m_salesPopupUrl;
+    return salesPopupUrl_;
 }
 
 QString UrlConfig::getLicenseUrl() const {
-    return m_licenseUrl;
+    return licenseUrl_;
 }
 
 QString UrlConfig::getPrivacyPolicyUrl() const {
-    return m_privacyPolicyUrl;
+    return privacyPolicyUrl_;
 }
 
-QString UrlConfig::getProductionAuthServer() const {
-    return m_productionAuthServer;
+QString UrlConfig::getAuthServer() const {
+    return authServer_;
 }
 
 QString UrlConfig::getMouserUrl() const {
-    return m_mouserUrl;
+    return mouserUrl_;
 }
 
 QString UrlConfig::getDigiKeyUrl() const {
-    return m_digiKeyUrl;
+    return digiKeyUrl_;
 }
 
 QString UrlConfig::getAvnetUrl() const {
-    return m_avnetUrl;
+    return avnetUrl_;
 }
 
 } // namespace strata::sds::config

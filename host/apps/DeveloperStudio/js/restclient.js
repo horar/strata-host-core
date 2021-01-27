@@ -2,9 +2,12 @@
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.signals 1.0 as SignalsModule
+.import tech.strata.UrlConfig 1.0 as UrlModule
 .import "constants.js" as Constants
 
-var url = Constants.PRODUCTION_AUTH_SERVER;
+
+var url = UrlModule.getAuthServer();
+console.log('~~~~~~~~~~~~~~~~~' + url + '~~~~~~~~~~~~~~~~~~~~~~');
 
 var jwt = '';
 var session = '';

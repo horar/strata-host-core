@@ -1,5 +1,4 @@
-#ifndef URLCONFIG_H
-#define URLCONFIG_H
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -16,7 +15,7 @@ public:
     Q_INVOKABLE QString getSalesPopupUrl() const;
     Q_INVOKABLE QString getLicenseUrl() const;
     Q_INVOKABLE QString getPrivacyPolicyUrl() const;
-    Q_INVOKABLE QString getProductionAuthServer() const;
+    Q_INVOKABLE QString getAuthServer() const;
     Q_INVOKABLE QString getMouserUrl() const;
     Q_INVOKABLE QString getDigiKeyUrl() const;
     Q_INVOKABLE QString getAvnetUrl() const;
@@ -25,17 +24,15 @@ public:
     bool parseUrl(const QString &fileName);
 
 private:
-    QString m_productionAuthServer;
-    QString m_salesPopupUrl;
-    QString m_licenseUrl;
-    QString m_privacyPolicyUrl;
-    QString m_mouserUrl;
-    QString m_digiKeyUrl;
-    QString m_avnetUrl;
+    QString authServer_;
+    QString salesPopupUrl_;
+    QString licenseUrl_;
+    QString privacyPolicyUrl_;
+    QString mouserUrl_;
+    QString digiKeyUrl_;
+    QString avnetUrl_;
 
     bool setUrlValue(QJsonValue val, QString *url);
 };
 
 }
-
-#endif // URLCONFIG_H
