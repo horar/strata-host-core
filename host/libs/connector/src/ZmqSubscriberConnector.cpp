@@ -14,7 +14,7 @@ ZmqSubscriberConnector::~ZmqSubscriberConnector()
 
 bool ZmqSubscriberConnector::open(const std::string& ip_address)
 {
-    if (false == socketConnected()) {
+    if (false == socketOpen()) {
         return false;
     }
 

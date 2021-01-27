@@ -31,7 +31,11 @@ public:
     connector_handle_t getFileDescriptor() override;
 
 private:
+    void contextClose();
+    bool contextValid() const;
+
     std::unique_ptr<zmq::context_t> context_;
+    const int socketType;
 
 protected:
     bool socketRecv(std::string & ostring, zmq::recv_flags flags = zmq::recv_flags::none);
@@ -47,6 +51,7 @@ protected:
     bool socketConnect(const std::string & address);
     bool socketBind(const std::string & address);
     bool socketPoll(zmq::pollitem_t *items);
+    bool socketOpen();
     void socketClose();
     bool socketConnected() const;
 

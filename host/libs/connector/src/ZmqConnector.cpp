@@ -7,7 +7,7 @@ namespace strata::connector
 {
 
 ZmqConnector::ZmqConnector(int type)
-    : Connector(), context_(new zmq::context_t()), socket_(new zmq::socket_t(*context_, type))
+    : Connector(), socketType(type)
 {
     int major{0};
     int minor{0};
@@ -40,11 +40,11 @@ bool ZmqConnector::close()
 
 bool ZmqConnector::closeContext()
 {
-    if (nullptr != context_->handle()) {
+    if (false == contextValid()) {
         return false;
     }
 
-    context_->close();
+    contextClose();
     return true;
 }
 
@@ -274,6 +274,32 @@ bool ZmqConnector::socketPoll(zmq::pollitem_t *items)
     return false;
 }
 
+bool ZmqConnector::socketOpen()
+{
+    if (socketConnected() || contextValid()) {
+        return false;
+    }
+
+    try {
+        context_.reset(new zmq::context_t());
+        socket_.reset(new zmq::socket_t(*context_, socketType));
+        return true;
+    } catch (zmq::error_t zErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to open socket, reason: %s\n",
+                            zErr.what());
+    } catch (std::exception sErr) {
+        CONNECTOR_ERROR_LOG("ZMQ ERROR: Unable to open socket, unexpected reason: %s\n",
+                            sErr.what());
+    } catch (...) {
+        CONNECTOR_ERROR_LOG("%s ERROR: Unable to open socket, unhandled exception\n", "ZMQ");
+    }
+
+    // release these objects in case it failed to allocate them
+    context_.release();
+    socket_.release();
+    return false;
+}
+
 void ZmqConnector::socketClose()
 {
     // will assert if it fails, no need to return anything
@@ -282,7 +308,17 @@ void ZmqConnector::socketClose()
 
 bool ZmqConnector::socketConnected() const
 {
-    return socket_->connected();
+    return ((nullptr != socket_) && socket_->connected());
+}
+
+void ZmqConnector::contextClose()
+{
+    context_->close();
+}
+
+bool ZmqConnector::contextValid() const
+{
+    return ((nullptr != context_) && (nullptr != context_->handle()));
 }
 
 }  // namespace strata::connector
