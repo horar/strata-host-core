@@ -95,7 +95,6 @@ Item {
     }
 
     SGButton {
-
         text: "Inject \n Fake Notification"
         color: "lightgrey"
         anchors {
@@ -106,6 +105,7 @@ Item {
             debugMenu.visible = true
         }
     }
+
     DebugMenu {
         id: debugMenu
         // See description in control-views/DebugMenu.qml
@@ -114,5 +114,4 @@ Item {
             bottom: controlContainer.bottom
         }
     }
-
 }
