@@ -35,41 +35,34 @@ Item {
             testIconClassId.source = passedTestImage
             testIconClassId.iconColor = "green"
             classIDText.text += ": " + class_id + "\n PASSED"
-        }
-        else {
+        } else {
             testIconClassId.source =  failedTestImage
             testIconClassId.iconColor = "red"
             classIDText.text += "\n FAILED"
         }
-
         if(saveSettings()) {
             testIconUserSetting.source = passedTestImage
             testIconUserSetting.iconColor = "green"
             userSetting.text += ":" + " True" + "\n PASSED"
-        }
-        else {
+        } else {
             testIconUserSetting.source = failedTestImage
             testIconUserSetting.iconColor = "red"
             userSetting.text += "\n FAILED"
         }
-
         if(user_id) {
             testIconUserId.source = passedTestImage
             testIconUserId.iconColor = "green"
             userIDText.text += ": " + user_id +  "\n PASSED"
-        }
-        else {
+        } else {
             testIconUserId.source = failedTestImage
             testIconUserId.iconColor = "red"
             userIDText.text += "\n FAILED"
         }
-
         if(first_name) {
             testIconFirstName.source = passedTestImage
             testIconFirstName.iconColor = "green"
             firstNameText.text += ": " + first_name +  "\n PASSED"
-        }
-        else {
+        } else {
             testIconFirstName.source = failedTestImage
             testIconFirstName.iconColor = "red"
             firstNameText.text +=  "\n FAILED"
@@ -78,8 +71,7 @@ Item {
             testIconLastName.source = passedTestImage
             testIconLastName.iconColor = "green"
             lastNameText.text += ": " + last_name +  "\n PASSED"
-        }
-        else {
+        } else {
             testIconLastName.source = failedTestImage
             testIconLastName.iconColor = "red"
             lastNameText.text +=  "\n FAILED"
@@ -100,7 +92,7 @@ Item {
                 Layout.fillWidth: true
                 SGText {
                     id: title
-                    text: " Test Control View "
+                    text: " Core Test Control View "
                     fontSizeMultiplier: ratioCalc * 2.5
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
@@ -123,6 +115,7 @@ Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 RowLayout {
+                    anchors.fill: parent
                     SGIcon {
                         id: testIconClassId
                         width: 20
@@ -130,7 +123,6 @@ Item {
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
                     }
-
                     SGText {
                         id: classIDText
                         Layout.fillWidth: true
@@ -146,13 +138,13 @@ Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 RowLayout {
+                    anchors.fill: parent
                     SGIcon {
                         id: testIconUserSetting
                         width: 20
                         height: 20
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
-
                     }
                     SGText {
                         id: userSetting
@@ -162,17 +154,18 @@ Item {
                     }
                 }
             }
+
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 RowLayout {
+                    anchors.fill: parent
                     SGIcon {
                         id: testIconUserId
                         width: 20
                         height: 20
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
-
                     }
                     SGText {
                         id: userIDText
@@ -187,6 +180,7 @@ Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 RowLayout {
+                    anchors.fill: parent
                     SGIcon {
                         id: testIconFirstName
                         width: 20
@@ -207,6 +201,7 @@ Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 RowLayout {
+                    anchors.fill: parent
                     SGIcon {
                         id: testIconLastName
                         width: 20
@@ -219,7 +214,6 @@ Item {
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
                         text: "Check last_name"
-
                     }
                 }
             }
