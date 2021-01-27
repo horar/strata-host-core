@@ -40,6 +40,11 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGCircularProgress"
+            page: "ExSGCircularProgress.qml"
+        }
+
+        ListElement {
             name: "SGDialogs"
             page: "ExDialogs.qml"
         }
