@@ -61,38 +61,149 @@
            monaco.languages.register({ id: 'qml' })
 
             monaco.languages.setMonarchTokensProvider('qml',{
-                tokenizer: {
-                    root: [
-                        [/(?:\r\n|\n|^)(?:[^'"])*?(?:'(?:[^\r\n\\']|\\'|[\\]{2})*'|"(?:[^\r\n\\"]|\\"|[\\]{2})*")*?(?:[^'"])*?(\/\*(?:[\s\S]*?)\*\/|\/\/.*)/ ,'comment'],
-                        [/\b(import)\s+/, 'import-statement'],
-                        [/([\w\d\.]+)\s+(\d+\.\d+)(?:\s+(as)\s+([A-Z][\w\d]*))?/, 'namespace'],
-                        [/(\"[^\"]+\")(?:\s+(as)\s+([A-Z][\w\d]*))?/, 'dirjs'],
-                        [/(((^|\{)\s*)|\b)on[A-Z]\w*\b/,'on-handler'],
-                        [/(?:^|\{)\s*(id)\s*\:\s*([^;\s]+)\b/,'meta-handler'],
-                        [/^\s*(?:(default|readonly)\s+)?(property)\s+(?:(alias)|([\w\&lt;\&gt;]+))\s+(\w+)/, 'property-def'],
-                        [/\b(signal)\s+(\w+)\s/,'signal-def'],
-                        [/;|(?=\/)|$/,'signal-handler'],
-                        [/(\w+)\s+(\w+)/,'signal-params'],
-                        [/(?:\b|\s+)(?:(true|false|null|undefined)|(var|void|const|let)|(as|enum|connect|break|case|catch|continue|debugger|default|delete|do|else|finally|for|if|in|instanceof|new|return|switch|this|throw|try|typeof|while|with))\b/, 'js-def'],
-                        [/\b(function)\s+([\w_]+)\s*(?=\()/, 'function-handler'],
-                        [/\b[\w_]+\s*(?=\()/,'func-call'],
-                        [/(?:^|\{|;)\s*[a-z][\w\.]*\s*(?=\:)/,'prop-def'],
-                        [/(?:\&lt;=\.)\b\w*/,'var-name'],
-                        [/\b([A-Za-z_]\w*)\b/,'assumed-variable']
-                    ]
-                }
+                    keywords: ['readonly','property','for','if','else','do','while','true','false','signal','const','switch','import','as','async'],
+                    typeKeywords: ['int','real','var','string','color','url','alias'],
+                    operators: [
+                        '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=','===','<==','>==','!==',
+                        '&&', '||', '++', '--', '+', '-', '*', '/', '&', '|', '^', '%',
+                        '<<', '>>', '>>>', '+=', '-=', '*=', '/=', '&=', '|=', '^=',
+                        '%=', '<<=', '>>=', '>>>='
+                      ],
+                      digits: /\d+(_+\d+)*/,
+                      symbols:  /[=><!~?:&|+\-*\/\^%]+/,
+                      escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+                      regexpctl: /[(){}\[\]\$\^|\-*+?\.]/,
+                      regexpesc: /\\(?:[bBdDfnrstvwWn0\\\/]|@regexpctl|c[A-Z]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})/,
+                      tokenizer: {
+                            root: [
+                                [/[{}]/, 'delimiter.bracket'],
+                                [/[a-z_$][\w$]*/,{ cases: { '@typeKeywords':'keyword',
+                                                            '@keywords':'keyword',
+
+                                                          }
+                                    }
+                                ],
+                                [/[A-Z][\w\$]*/, 'type.identifier'],
+                                [/(?:^|\{|;)\s*[a-z][\w\.]*\s*(?=\:|\{)/, "property.defs"],
+                                { include: '@whitespace' },
+                                [/\/(?=([^\\\/]|\\.)+\/([gimsuy]*)(\s*)(\.|;|\/|,|\)|\]|\}|$))/, { token: 'regexp', bracket: '@open', next: '@regexp' }],
+                                [/[()\[\]]/, '@brackets'],
+                                [/[<>](?!@symbols)/, '@brackets'],
+                                [/@symbols/, {
+                                        cases: {
+                                            '@operators': 'delimiter',
+                                            '@default': ''
+                                        }
+                                    }
+                                ],
+                                [/(@digits)[eE]([\-+]?(@digits))?/, 'number.float'],
+                                [/(@digits)\.(@digits)([eE][\-+]?(@digits))?/, 'number.float'],
+                                [/(@digits)/, 'number'],
+                                [/[;,.]/, 'delimiter'],
+                                [/"([^"\\]|\\.)*$/, 'string.invalid'],  // non-teminated string
+                                [/'([^'\\]|\\.)*$/, 'string.invalid'],  // non-teminated string
+                                [/"/, 'string', '@string_double'],
+                                [/'/, 'string', '@string_single'],
+                                [/`/, 'string', '@string_backtick'],
+
+                            ],
+                            whitespace: [
+                                    [/[ \t\r\n]+/, ''],
+                                    [/\/\*\*(?!\/)/, 'comment.doc', '@jsdoc'],
+                                    [/\/\*/, 'comment', '@comment'],
+                                    [/\/\/.*$/, 'comment'],
+                            ],
+
+                            comment: [
+                                    [/[^\/*]+/, 'comment'],
+                                    [/\*\//, 'comment', '@pop'],
+                                    [/[\/*]/, 'comment']
+                            ],
+
+                            jsdoc: [
+                                    [/[^\/*]+/, 'comment.doc'],
+                                    [/\*\//, 'comment.doc', '@pop'],
+                                    [/[\/*]/, 'comment.doc']
+                            ],
+
+                            // We match regular expression quite precisely
+                            regexp: [
+                                    [/(\{)(\d+(?:,\d*)?)(\})/, ['regexp.escape.control', 'regexp.escape.control', 'regexp.escape.control']],
+                                    [/(\[)(\^?)(?=(?:[^\]\\\/]|\\.)+)/, ['regexp.escape.control', { token: 'regexp.escape.control', next: '@regexrange' }]],
+                                    [/(\()(\?:|\?=|\?!)/, ['regexp.escape.control', 'regexp.escape.control']],
+                                    [/[()]/, 'regexp.escape.control'],
+                                    [/@regexpctl/, 'regexp.escape.control'],
+                                    [/[^\\\/]/, 'regexp'],
+                                    [/@regexpesc/, 'regexp.escape'],
+                                    [/\\\./, 'regexp.invalid'],
+                                    [/(\/)([gimsuy]*)/, [{ token: 'regexp', bracket: '@close', next: '@pop' }, 'keyword.other']],
+                            ],
+
+                            regexrange: [
+                                    [/-/, 'regexp.escape.control'],
+                                    [/\^/, 'regexp.invalid'],
+                                    [/@regexpesc/, 'regexp.escape'],
+                                    [/[^\]]/, 'regexp'],
+                                    [/\]/, { token: 'regexp.escape.control', next: '@pop', bracket: '@close' }],
+                            ],
+
+                            string_double: [
+                                    [/[^\\"]+/, 'string'],
+                                    [/@escapes/, 'string.escape'],
+                                    [/\\./, 'string.escape.invalid'],
+                                    [/"/, 'string', '@pop']
+                            ],
+
+                            string_single: [
+                                    [/[^\\']+/, 'string'],
+                                    [/@escapes/, 'string.escape'],
+                                    [/\\./, 'string.escape.invalid'],
+                                    [/'/, 'string', '@pop']
+                            ],
+
+                            string_backtick: [
+                                    [/\$\{/, { token: 'delimiter.bracket' }],
+                                    [/[^\\`$]+/, 'string'],
+                                    [/@escapes/, 'string.escape'],
+                                    [/\\./, 'string.escape.invalid'],
+                                    [/`/, 'string', '@pop']
+                            ],
+                     }
+
+            })
+
+            monaco.editor.defineTheme('qmlTheme',{
+                base: 'vs',
+                inherit: false,
+                rules:[
+                    {token: "comment", foreground: "#32C132"},
+                    {token: "delimiter.bracket", foreground: "#000000"},
+                    {token: "keyword", foreground: "#C6CC18"},
+                    {token: "type.identifier", foreground: "#DF00FF"},
+                    {token: "string", foreground: "#32C132"},
+                    {token: "property.defs", foreground: "#BA262B"},
+                ]
             })
 
             monaco.languages.registerCompletionItemProvider('qml',{
                 provideCompletionItems: () => {
                     var suggestions = []
+                    var textEdits = []
                     for( var i = 0; i < qtQuick.length; i++){
+                        textEdits = []
+                        for(var x = 0 ; x <qtQuick[i].properties.length; x++){
+                            textEdits.push({
+                                text: qtQuick[i].properties[x],
+                                range: 0,
+                            })
+                        }
                         suggestions.push({
                             label: qtQuick[i].prefix,
                             kind: monaco.languages.CompletionItemKind.Snippet,
                             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                             insertText: qtQuick[i].body,
-                            documentation: qtQuick[i].description
+                            documentation: qtQuick[i].description,
+                            additionalTextEdits: textEdits,
                         })
                     }
 
@@ -107,29 +218,6 @@
                     }
                     return {suggestions: suggestions}
                 }
-            })
-
-            monaco.editor.defineTheme('qmlTheme',{
-                base:'vs',
-                inherit: false,
-                rules:[
-                    {token: 'comment', foreground: '#32C132'},
-                    {token: 'import-statement', foreground: '#C6CC18'},
-                    {token: 'namespace', foreground: '#AB0033'},
-                    {token: 'dirjs', foreground: '#67CF0C'},
-                    {token: 'on-handler',foreground: '#D41142'},
-                    {token: 'meta-handler', foreground: '#D41142'},
-                    {token: 'property-def', foreground: '#C6CC18'},
-                    {token: 'signal-def', foreground: '#C6CC18'},
-                    {token: 'signal-handler', foreground: '#000000'},
-                    {token: 'signal-params', foreground: '#000000'},
-                    {token: 'js-def', foreground: '#C6CC18'},
-                    {token: 'function-handler', foreground: '#C6CC18'},
-                    {token: 'func-call', foreground: '#000000'},
-                    {token: 'prop-def', foreground: '#D41142'},
-                    {token: 'var-name', foreground: '#000000', fontStyle: 'italic'},
-                    {token: 'assumed-variable', foreground: "#000000", fontStyle: 'italic'},
-                ]
             })
 
             var editor = monaco.editor.create(document.getElementById('container'), {
