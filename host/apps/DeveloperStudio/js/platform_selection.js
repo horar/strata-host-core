@@ -346,7 +346,7 @@ function connectListing(class_id_string, device_id, firmware_version) {
 
 function openPlatformView(platform) {
     let selector_listing = null;
-    if (platform.index) {
+    if (platform.hasOwnProperty("index")) {
         selector_listing = platformSelectorModel.get(platform.index)
         selector_listing.view_open = true
     }
