@@ -88,15 +88,16 @@ SGStrataPopup {
             popupText: "Are you sure you want to close your account?"
 
             Connections {
-                target: confirmDeletePopup.acceptButton
-                onClicked: {
-                    var user = {
-                        username: NavigationControl.context.user_id
+                target: confirmDeletePopup
+                onPopupClosed: {
+                    if (closeReason === confirmDeletePopup.acceptCloseReason) {
+                        var user = {
+                            username: NavigationControl.context.user_id
+                        }
+                        connectionStatus.currentId = LoginUtil.getNextId()
+                        LoginUtil.close_account(user)
+                        spinnerDialog.open()
                     }
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.close_account(user)
-                    confirmDeletePopup.close()
-                    spinnerDialog.open()
                 }
             }
         }
