@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import "control-views"
 
-
 Item {
     id: controlNavigation
     anchors.fill: parent
@@ -16,5 +15,4 @@ Item {
     BasicControl {
         id: basic
     }
-
 }

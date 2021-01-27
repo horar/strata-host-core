@@ -13,7 +13,8 @@ Item {
     property string user_id: ""
     property string first_name: ""
     property string last_name: ""
-    property string configFileName: "userSettingTest.json"
+
+    property string configFileName: "TestUserSettings.json"
     property string passedTestImage: "qrc:/sgimages/check-circle.svg"
     property string failedTestImage: "qrc:/sgimages/times-circle.svg"
 
@@ -96,6 +97,7 @@ Item {
                     fontSizeMultiplier: ratioCalc * 2.5
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
+
                     Rectangle {
                         id: line
                         height: 1.5
@@ -114,8 +116,10 @@ Item {
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
                 RowLayout {
                     anchors.fill: parent
+
                     SGIcon {
                         id: testIconClassId
                         width: 20
@@ -123,6 +127,7 @@ Item {
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
                     }
+
                     SGText {
                         id: classIDText
                         Layout.fillWidth: true
@@ -137,8 +142,10 @@ Item {
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
                 RowLayout {
                     anchors.fill: parent
+
                     SGIcon {
                         id: testIconUserSetting
                         width: 20
@@ -146,6 +153,7 @@ Item {
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
                     }
+
                     SGText {
                         id: userSetting
                         Layout.fillWidth: true
@@ -158,8 +166,10 @@ Item {
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
                 RowLayout {
                     anchors.fill: parent
+
                     SGIcon {
                         id: testIconUserId
                         width: 20
@@ -167,6 +177,7 @@ Item {
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
                     }
+
                     SGText {
                         id: userIDText
                         Layout.fillWidth: true
@@ -179,8 +190,10 @@ Item {
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
                 RowLayout {
                     anchors.fill: parent
+
                     SGIcon {
                         id: testIconFirstName
                         width: 20
@@ -188,6 +201,7 @@ Item {
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
                     }
+
                     SGText {
                         id: firstNameText
                         Layout.fillWidth: true
@@ -200,8 +214,10 @@ Item {
             Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
                 RowLayout {
                     anchors.fill: parent
+
                     SGIcon {
                         id: testIconLastName
                         width: 20
@@ -209,6 +225,7 @@ Item {
                         source:  "qrc:/sgimages/times-circle.svg"
                         iconColor: "red"
                     }
+
                     SGText {
                         id: lastNameText
                         Layout.fillWidth: true
