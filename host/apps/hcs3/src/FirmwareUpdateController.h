@@ -42,6 +42,7 @@ public:
      */
     enum class UpdateOperation {
         Download,
+        ClearFwClassId,
         SetFwClassId,
         Prepare,
         Backup,

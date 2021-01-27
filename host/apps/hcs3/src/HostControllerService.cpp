@@ -579,13 +579,13 @@ void HostControllerService::onCmdAdjustController(const rapidjson::Value *payloa
             break;
         }
 
-        QString architecture = storageManager_.getControllerClassDevice(controllerClassId);
-        if (architecture.isEmpty()) {
-            errorString = "Cannot get device architecture";
+        QString controllerClassDevice = storageManager_.getControllerClassDevice(controllerClassId);
+        if (controllerClassDevice.isEmpty()) {
+            errorString = "Cannot find controller detais in database";
             break;
         }
 
-        QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(classId, architecture);
+        QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(classId, controllerClassDevice);
         if (firmware.first.isEmpty()) {
             errorString = "Cannot get latest firmware";
             break;
@@ -737,6 +737,9 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     switch (progress.operation) {
     case FirmwareUpdateController::UpdateOperation::Download :
         jobType = "download_progress";
+        break;
+    case FirmwareUpdateController::UpdateOperation::ClearFwClassId :
+        jobType = "clear_fw_class_id";
         break;
     case FirmwareUpdateController::UpdateOperation::SetFwClassId :
         jobType = "set_fw_class_id";
