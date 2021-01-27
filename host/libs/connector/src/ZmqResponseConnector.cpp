@@ -1,5 +1,4 @@
 #include "ZmqResponseConnector.h"
-#include <zmq.hpp>
 
 namespace strata::connector
 {

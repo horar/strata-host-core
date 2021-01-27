@@ -1,5 +1,4 @@
 #include "ZmqDealerConnector.h"
-#include <zmq.hpp>
 
 namespace strata::connector
 {

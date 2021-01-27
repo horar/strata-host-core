@@ -104,8 +104,7 @@
  *disconnect detection. Currently the work around for this specific issue is writing to the platform
  *after 10 consecutive '0' return from read(). This helps in detecting the ST-board disconnect. This
  *issue is not noticed in other boards (Orion USB-PD, STM-USB-PD, STM-USB_LOAD_BOARD) and only
- *specific to VORTEX_FOUNTAIN project that uses ST Eval board. This logic is enabled/disabled by
- *setting ST_EVAL_BOARD_SUPPORT_ENABLED to 1/0 respectively in SerialConnector.cc
+ *specific to VORTEX_FOUNTAIN project that uses ST Eval board.
  *
  * 5) Serial messaged overlap in windows (Known Bug/HACK)
  *		In windows serial read some times produces overlapping of two messages when platform writes

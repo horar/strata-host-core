@@ -1,6 +1,5 @@
 #include <assert.h>
 
-//#include "SerialConnector.h"
 #include "ZmqDealerConnector.h"
 #include "ZmqPublisherConnector.h"
 #include "ZmqRequestConnector.h"
@@ -66,8 +65,6 @@ std::unique_ptr<Connector> Connector::getConnector(const CONNECTOR_TYPE type)
 {
     CONNECTOR_DEBUG_LOG("ConnectorFactory::getConnector type: %d\n", type);
     switch (type) {
-            //        case CONNECTOR_TYPE::SERIAL:
-            //            return std::make_unique<SerialConnector>();
         case CONNECTOR_TYPE::ROUTER:
             return std::make_unique<ZmqRouterConnector>();
         case CONNECTOR_TYPE::DEALER:
