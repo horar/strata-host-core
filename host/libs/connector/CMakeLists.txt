@@ -3,8 +3,6 @@ project(connector
     LANGUAGES CXX
 )
 
-find_package(ZMQHelper REQUIRED)
-
 add_library(${PROJECT_NAME}
     src/Connector.cpp
     src/ZmqConnector.cpp
@@ -21,7 +19,7 @@ add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}
       PUBLIC strata::QtLogger
       zeromq::libzmq
-      ZMQHelper
+      zeromq::cppzmq
 )
 
 target_include_directories(${PROJECT_NAME}
