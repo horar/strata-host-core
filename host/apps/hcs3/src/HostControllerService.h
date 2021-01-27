@@ -60,7 +60,7 @@ signals:
     void platformDocumentsRequested(QByteArray clientId, QString classId);
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
-    void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5, bool adjustController);
+    void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5, QString jobUuid, bool adjustController);
     void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
     void updateInfoRequested(QByteArray clientId);
 
@@ -129,16 +129,37 @@ public slots:
             const QJsonArray &componentList,
             const QString &errorString);
 
+private slots:
+    void sendMessageToClients(const QString &platformId, const QString& message);
+
+    void handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress);
+
+    void platformConnected(const int deviceId);
+    void platformDisconnected(const int deviceId);
 
 private:
     void handleMessage(const PlatformMessage& msg);
 
     void handleClientMsg(const PlatformMessage& msg);
-    void sendMessageToClients(const QString &platformId, const QString& message);
 
     bool broadcastMessage(const QString& message);
 
-    void handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress);
+    enum class hcsNotificationType {
+        downloadPlatformFilepathChanged,
+        downloadPlatformSingleFileProgress,
+        downloadPlatformSingleFileFinished,
+        downloadPlatformFilesFinished,
+        allPlatforms,
+        platformMetaData,
+        controlViewDownloadProgress,
+        downloadViewFinished,
+        updatesAvailable,
+        firmwareUpdate,
+        adjustController,
+        adjustControllerJob
+    };
+    const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
+    QByteArray createHcsNotification(hcsNotificationType notificationType, const QJsonObject& payload, bool standalonePayload = true);
 
     ///////
     //handlers for client (UI)
@@ -154,9 +175,6 @@ private:
     void onCmdAdjustController(const rapidjson::Value* );
     void onCmdDownloadControlView(const rapidjson::Value* );
     void onCmdGetUpdateInfo(const rapidjson::Value* );
-
-    void platformConnected(const int deviceId);
-    void platformDisconnected(const int deviceId);
 
     Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 

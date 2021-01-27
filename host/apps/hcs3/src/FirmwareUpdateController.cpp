@@ -30,7 +30,18 @@ void FirmwareUpdateController::initialize(BoardController *boardController, stra
     downloadManager_ = downloadManager;
 }
 
-void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5, bool adjustController)
+FirmwareUpdateController::UpdateProgress::UpdateProgress() :
+    complete(-1), total(-1), jobUuid(QString()), adjustController(false)
+{
+}
+
+FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid, bool adjustController) :
+    complete(-1), total(-1), jobUuid(jobUuid), adjustController(adjustController)
+{
+}
+
+void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
+                                              const QString& firmwareMD5, const QString& jobUuid, bool adjustController)
 {
     if (boardController_.isNull() || downloadManager_.isNull()) {
         QString errStr("FirmwareUpdateController is not properly initialized.");
@@ -56,7 +67,7 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
     }
 
     FirmwareUpdater *fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5, adjustController);
-    UpdateData *updateData = new UpdateData(clientId, fwUpdater);
+    UpdateData *updateData = new UpdateData(clientId, fwUpdater, jobUuid, adjustController);
     updates_.insert(deviceId, updateData);
 
     connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &FirmwareUpdateController::handleUpdateProgress);
@@ -76,32 +87,17 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
 
     progress->operation = operation;
     progress->status = status;
-    progress->complete = complete;
-    progress->total = total;
-
-    if (errorString.isEmpty() == false) {
-        switch (operation) {
-        case UpdateOperation::Download :
-            progress->downloadError = errorString;
-            break;
-        case UpdateOperation::SetFwClassId :
-            progress->setFwClassIdError = errorString;
-            break;
-        case UpdateOperation::Prepare :
-            progress->prepareError = errorString;
-            break;
-        case UpdateOperation::Backup :
-            progress->backupError = errorString;
-            break;
-        case UpdateOperation::Flash :
-            progress->flashError = errorString;
-            break;
-        case UpdateOperation::Restore :
-            progress->restoreError = errorString;
-            break;
-        case UpdateOperation::Finished :
-            break;
-        }
+    // 'updateProgress' signal has 'camplete' and 'total' set to -1 when status is 'Failure'.
+    // Preserve previous progress value in this case.
+    if (status != UpdateStatus::Failure) {
+        progress->complete = complete;
+        progress->total = total;
+    }
+    // UpdateOperation::Finished is special case - it has always empty errorString because
+    // this operation is bind to FlasherConnector 'finished' signal which doesn't have any
+    // error string. So, in this case preserve previous error string.
+    if (operation != UpdateOperation::Finished) {
+        progress->error = errorString;
     }
 
     emit progressOfUpdate(deviceId, updateData->clientId, *progress);
@@ -113,7 +109,7 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
     }
 }
 
-FirmwareUpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater) :
-    clientId(client), fwUpdater(updater)
+FirmwareUpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool adjustController) :
+    clientId(client), fwUpdater(updater), updateProgress(jobUuid, adjustController)
 {
 }

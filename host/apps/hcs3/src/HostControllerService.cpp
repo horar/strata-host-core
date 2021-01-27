@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDebug>
+#include <QUuid>
 
 
 HostControllerService::HostControllerService(QObject* parent)
@@ -173,19 +174,14 @@ void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
         const QString &originalFilePath,
         const QString &effectiveFilePath)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "original_filepath", originalFilePath },
+        { "effective_filepath", effectiveFilePath }
+    };
 
-    payload.insert("type", "download_platform_filepath_changed");
-    payload.insert("original_filepath", originalFilePath);
-    payload.insert("effective_filepath", effectiveFilePath);
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadPlatformFilepathChanged, payload, false);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
@@ -194,20 +190,15 @@ void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
         qint64 bytesReceived,
         qint64 bytesTotal)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "filepath", filePath },
+        { "bytes_received", bytesReceived },
+        { "bytes_total", bytesTotal }
+    };
 
-    payload.insert("type", "download_platform_single_file_progress");
-    payload.insert("filepath", filePath);
-    payload.insert("bytes_received", bytesReceived);
-    payload.insert("bytes_total", bytesTotal);
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadPlatformSingleFileProgress, payload, false);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
@@ -215,54 +206,40 @@ void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
         const QString &filePath,
         const QString &errorString)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "filepath", filePath },
+        { "error_string", errorString }
+    };
 
-    payload.insert("type", "download_platform_single_file_finished");
-    payload.insert("filepath", filePath);
-    payload.insert("error_string", errorString);
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadPlatformSingleFileFinished, payload, false);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &clientId, const QString &errorString)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "download_platform_files_finished");
     if (errorString.isEmpty() == false) {
         payload.insert("error_string", errorString);
     }
 
-    message.insert("hcs::notification", payload);
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadPlatformSingleFileFinished, payload, false);
 
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendPlatformListMessage(
         const QByteArray &clientId,
         const QJsonArray &platformList)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "list", platformList }
+    };
 
-    payload.insert("type", "all_platforms");
-    payload.insert("list", platformList);
+    QByteArray notification = createHcsNotification(hcsNotificationType::allPlatforms, payload, false);
 
-    message.insert("hcs::notification", payload);
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendPlatformDocumentsProgressMessage(
@@ -293,30 +270,23 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
         qint64 bytesReceived,
         qint64 bytesTotal)
 {
-    QJsonDocument doc;
-    QJsonObject message;
-    QJsonObject payload;
+    QJsonObject payload {
+        { "url", partialUri },
+        { "filepath", filePath },
+        { "bytes_received", bytesReceived },
+        { "bytes_total", bytesTotal }
+    };
 
-    payload.insert("type", "control_view_download_progress");
-    payload.insert("url", partialUri);
-    payload.insert("filepath", filePath);
-    payload.insert("bytes_received", bytesReceived);
-    payload.insert("bytes_total", bytesTotal);
+    QByteArray notification = createHcsNotification(hcsNotificationType::controlViewDownloadProgress, payload, false);
 
-    message.insert("hcs::notification", payload);
-
-    doc.setObject(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
-void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList, const QJsonArray &firmwareList, const QString &error)
+void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList,
+                                                 const QJsonArray &firmwareList, const QString &error)
 {
-    QJsonDocument doc;
-    QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "platform_meta_data");
     payload.insert("class_id", classId);
 
     if (error.isEmpty()) {
@@ -326,10 +296,9 @@ void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, con
         payload.insert("error", error);
     }
 
-    message.insert("hcs::notification", payload);
+    QByteArray notification = createHcsNotification(hcsNotificationType::platformMetaData, payload, false);
 
-    doc.setObject(message);
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::sendPlatformDocumentsMessage(
@@ -366,19 +335,14 @@ void HostControllerService::sendDownloadControlViewFinishedMessage(
         const QString &errorString)
 {
     QJsonObject payload {
-        {"type", "download_view_finished"},
-        {"url", partialUri},
-        {"filepath", filePath},
-        {"error_string", errorString}
+        { "url", partialUri },
+        { "filepath", filePath },
+        { "error_string", errorString }
     };
 
-    QJsonObject message {
-        {"hcs::notification", payload}
-    };
+    QByteArray notification = createHcsNotification(hcsNotificationType::downloadViewFinished, payload, false);
 
-    QJsonDocument doc(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }
 
 bool HostControllerService::parseConfig(const QString& config)
@@ -467,7 +431,7 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
     rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
     doc.Accept(writer);
 
-    clients_.sendMessage(client->getClientId(), strbuf.GetString() );
+    clients_.sendMessage(client->getClientId(), QByteArray(strbuf.GetString(), strbuf.GetSize()) );
 }
 
 void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
@@ -570,52 +534,87 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
         qCWarning(logCategoryHcs) << "md5 attribute is empty";
     }
 
-    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, false);
+    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, QString(), false);
 }
 
 void HostControllerService::onCmdAdjustController(const rapidjson::Value *payload)
 {
+    Q_ASSERT(payload != nullptr);
+
     QByteArray clientId = getSenderClient()->getClientId();
+    QString errorString;
+    int deviceId;
+    bool hasDeviceId = false;
 
-    const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
-    if (deviceIdValue.IsInt() == false) {
-        qCWarning(logCategoryHcs) << "device_id attribute has bad format";
+    do {
+        if (payload->HasMember("device_id") == false) {
+            errorString = "cmd adjust_controller - missing device_id attribute";
+            break;
+        }
+
+        const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
+        if (deviceIdValue.IsInt() == false) {
+            errorString = "cmd adjust_controller - bad format of device_id attribute";
+            break;
+        }
+        deviceId = deviceIdValue.GetInt();
+        hasDeviceId = true;
+
+        strata::device::DevicePtr device = boardsController_.getDevice(deviceId);
+        if (device == nullptr) {
+            errorString = "Device ID 0x" + QString::number(static_cast<uint>(deviceId), 16) + " doesn't exist";
+            break;
+        }
+
+        if (device->isControllerConnectedToPlatform() == false) {
+            errorString = "Controller (dongle) is not connected to platform (board)";
+            break;
+        }
+
+        QString classId = device->classId();
+        QString controllerClassId = device->controllerClassId();
+        if (classId.isEmpty() || controllerClassId.isEmpty()) {
+            errorString = "Platform has no classId or controllerClassId";
+            break;
+        }
+
+        QString controllerClassDevice = storageManager_.getControllerClassDevice(controllerClassId);
+        if (controllerClassDevice.isEmpty()) {
+            errorString = "Cannot find controller detais in database";
+            break;
+        }
+
+        QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(classId, controllerClassDevice);
+        if (firmware.first.isEmpty()) {
+            errorString = "Cannot get latest firmware";
+            break;
+        }
+        QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
+
+        QString jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+
+        QJsonObject payloadBody {
+            { "job_id", jobUuid },
+            { "device_id", deviceId }
+        };
+        QByteArray notification = createHcsNotification(hcsNotificationType::adjustController, payloadBody, true);
+        clients_.sendMessage(clientId, notification);
+
+        emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmware.second, jobUuid, true);
+
         return;
-    }
-    int deviceId = deviceIdValue.GetInt();
 
-    strata::device::DevicePtr device = boardsController_.getDevice(deviceId);
-    if (device == nullptr) {
-        qCWarning(logCategoryHcs).nospace() << "device_id 0x" << hex << static_cast<uint>(deviceId) << " doesn't exist";
-        return;
-    }
+    } while (false);
 
-    if (device->isControllerConnectedToPlatform() == false) {
-        qCWarning(logCategoryHcs) << "controller (dongle) is not connected to platform (board)";
-        return;
+    qCWarning(logCategoryHcs).noquote() << errorString;
+    if (hasDeviceId) {
+        QJsonObject payloadBody {
+            { "error_string", errorString },
+            { "device_id", deviceId }
+        };
+        QByteArray notification = createHcsNotification(hcsNotificationType::adjustController, payloadBody, true);
+        clients_.sendMessage(clientId, notification);
     }
-
-    QString classId = device->classId();
-    QString controllerClassId = device->controllerClassId();
-    if (classId.isEmpty() || controllerClassId.isEmpty()) {
-        qCWarning(logCategoryHcs) << "classId or controllerClassId is not set";
-        return;
-    }
-
-    QString architecture = storageManager_.getControllerClassDevice(controllerClassId);
-    if (architecture.isEmpty()) {
-        qCWarning(logCategoryHcs) << "cannot get device architecture";
-        return;
-    }
-
-    QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(classId, architecture);
-    if (firmware.first.isEmpty()) {
-        qCWarning(logCategoryHcs) << "cannot get latest firmware";
-        return;
-    }
-    QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
-
-    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmware.second, true);
 }
 
 void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)
@@ -732,67 +731,91 @@ bool HostControllerService::broadcastMessage(const QString& message)
 
 void HostControllerService::handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress)
 {
-    QString operation;
+    QString jobType;
     switch (progress.operation) {
     case FirmwareUpdateController::UpdateOperation::Download :
-        operation = "download";
+        jobType = "download_progress";
+        break;
+    case FirmwareUpdateController::UpdateOperation::ClearFwClassId :
+        jobType = "clear_fw_class_id";
         break;
     case FirmwareUpdateController::UpdateOperation::SetFwClassId :
-        operation = "set_fw_class_id";
+        jobType = "set_fw_class_id";
         break;
     case FirmwareUpdateController::UpdateOperation::Prepare :
-        operation = "prepare";
+        jobType = "prepare";
         break;
     case FirmwareUpdateController::UpdateOperation::Backup :
-        operation = "backup";
+        jobType = "backup_progress";
         break;
     case FirmwareUpdateController::UpdateOperation::Flash :
-        operation = "flash";
+        jobType = "flash_progress";
         break;
     case FirmwareUpdateController::UpdateOperation::Restore :
-        operation = "restore";
+        jobType = "restore_progress";
         break;
     case FirmwareUpdateController::UpdateOperation::Finished :
-        operation = "finished";
+        jobType = "finished";
+        // Do not send progress information in this job type.
+        progress.complete = -1;
+        progress.total = -1;
         break;
     }
 
-    QString status;
-    switch (progress.status) {
-    case FirmwareUpdateController::UpdateStatus::Running :
-        status = "running";
-        break;
-    case FirmwareUpdateController::UpdateStatus::Success :
-        status = "success";
-        break;
-    case FirmwareUpdateController::UpdateStatus::Unsuccess :
-        status = "unsuccess";
-        break;
-    case FirmwareUpdateController::UpdateStatus::Failure :
-        status = "failure";
-        break;
+    QString jobStatus;
+    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished) {
+        switch (progress.status) {
+        case FirmwareUpdateController::UpdateStatus::Running :
+        case FirmwareUpdateController::UpdateStatus::Success :
+            jobStatus = "success";
+            break;
+        case FirmwareUpdateController::UpdateStatus::Unsuccess :
+            jobStatus = "unsuccess";
+            break;
+        case FirmwareUpdateController::UpdateStatus::Failure :
+            jobStatus = "failure";
+            break;
+        }
+    } else {
+        if (progress.status == FirmwareUpdateController::UpdateStatus::Running) {
+            jobStatus = "running";
+        } else {
+            jobStatus = "failure";
+        }
     }
 
-    QJsonObject payload;
-    payload.insert("type", "firmware_update");
-    payload.insert("device_id", deviceId);
-    payload.insert("operation", operation);
-    payload.insert("status", status);
-    payload.insert("complete", progress.complete);
-    payload.insert("total", progress.total);
-    payload.insert("download_error", progress.downloadError);
-    payload.insert("set_fw_class_id_error", progress.setFwClassIdError);
-    payload.insert("prepare_error", progress.prepareError);
-    payload.insert("backup_error", progress.backupError);
-    payload.insert("flash_error", progress.flashError);
-    payload.insert("restore_error", progress.restoreError);
+    QByteArray notification;
 
-    QJsonDocument doc;
-    QJsonObject message;
-    message.insert("hcs::notification", payload);
-    doc.setObject(message);
+    if (progress.adjustController) {
+        QJsonObject payload {
+            { "job_id", progress.jobUuid },
+            { "job_type", jobType },
+            { "job_status", jobStatus }
+        };
+        if ((progress.complete >= 0) && (progress.total > 0)) {
+            payload.insert("complete", progress.complete);
+            payload.insert("total", progress.total);
+        }
+        if (progress.status == FirmwareUpdateController::UpdateStatus::Failure ||
+                progress.status == FirmwareUpdateController::UpdateStatus::Unsuccess) {
+            payload.insert("error_string", progress.error);
+        }
+        notification = createHcsNotification(hcsNotificationType::adjustControllerJob, payload, true);
+    } else {  // old flash firmware notification
+        QJsonObject payload {
+            { "device_id", deviceId },
+            { "operation", jobType },
+            { "status", jobStatus },
+            { "complete", progress.complete },
+            { "total", progress.total },
+            { "error", progress.error }
+        };
+        notification = createHcsNotification(hcsNotificationType::firmwareUpdate, payload, false);
+    }
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    // This notification must be sent before broadcasting new platforms list.
+    // Message order is very important for Developer Studio.
+    clients_.sendMessage(clientId, notification);
 
     if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
             progress.status == FirmwareUpdateController::UpdateStatus::Success) {
@@ -800,6 +823,78 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
         // to indicate the firmware version has changed.
         broadcastMessage(boardsController_.createPlatformsList());
     }
+}
+
+const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationType notificationType)
+{
+    const char* type = "";
+
+    switch (notificationType) {
+    case hcsNotificationType::downloadPlatformFilepathChanged:
+        type = "download_platform_filepath_changed";
+        break;
+    case hcsNotificationType::downloadPlatformSingleFileProgress:
+        type = "download_platform_single_file_progress";
+        break;
+    case hcsNotificationType::downloadPlatformSingleFileFinished:
+        type = "download_platform_single_file_finished";
+        break;
+    case hcsNotificationType::downloadPlatformFilesFinished:
+        type = "download_platform_files_finished";
+        break;
+    case hcsNotificationType::allPlatforms:
+        type = "all_platforms";
+        break;
+    case hcsNotificationType::platformMetaData:
+        type = "platform_meta_data";
+        break;
+    case hcsNotificationType::controlViewDownloadProgress:
+        type = "control_view_download_progress";
+        break;
+    case hcsNotificationType::downloadViewFinished:
+        type = "download_view_finished";
+        break;
+    case hcsNotificationType::updatesAvailable:
+        type = "updates_available";
+        break;
+    case hcsNotificationType::firmwareUpdate:
+        type = "firmware_update";
+        break;
+    case hcsNotificationType::adjustController:
+        type = "adjust_controller";
+        break;
+    case hcsNotificationType::adjustControllerJob:
+        type = "adjust_controller_job";
+        break;
+    }
+
+    return type;
+}
+
+QByteArray HostControllerService::createHcsNotification(hcsNotificationType notificationType, const QJsonObject &payload, bool standalonePayload)
+{
+    const char* type = hcsNotificationTypeToString(notificationType);
+    QJsonObject notificationBody {
+        { "type", type }
+        //, { "payload", payload }  // TODO uncomment this when all notifications will have standalone payload
+    };
+
+    // workaround for support of old notification style (without standalone paylod object)
+    if (standalonePayload) {
+        notificationBody.insert("payload", payload);
+    } else {
+        for (auto it = payload.constBegin(); it != payload.constEnd(); ++it) {
+            notificationBody.insert(it.key(), it.value());
+        }
+    }
+
+    QJsonObject message {
+        { "hcs::notification", notificationBody }
+    };
+
+    QJsonDocument doc(message);
+
+    return doc.toJson(QJsonDocument::Compact);
 }
 
 void HostControllerService::onCmdGetUpdateInfo(const rapidjson::Value * )
@@ -810,7 +905,6 @@ void HostControllerService::onCmdGetUpdateInfo(const rapidjson::Value * )
 void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, const QJsonArray &componentList, const QString &errorString)
 {
     QJsonObject payload;
-    payload.insert("type", "updates_available");
     if ((componentList.isEmpty() == false) || errorString.isEmpty()) {  // if list is empty, but no error is set, it means we have no updates available
         payload.insert("component_list", componentList);
     }
@@ -818,10 +912,7 @@ void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, co
         payload.insert("error_string", errorString);
     }
 
-    QJsonDocument doc;
-    QJsonObject message;
-    message.insert("hcs::notification", payload);
-    doc.setObject(message);
+    QByteArray notification = createHcsNotification(hcsNotificationType::updatesAvailable, payload, false);
 
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+    clients_.sendMessage(clientId, notification);
 }

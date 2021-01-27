@@ -37,6 +37,7 @@ public:
      * @return returns true when succceeded otherwise false
      */
     bool sendMessage(const QByteArray& clientId, const QString& message);
+    bool sendMessage(const QByteArray& clientId, const QByteArray& message);
 
     /**
      * Stops the clients controller
