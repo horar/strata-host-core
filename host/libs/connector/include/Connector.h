@@ -127,23 +127,6 @@
 
 namespace strata::connector {
 
-// console prints
-// DEBUG is used for showing the debug print messages on console.
-// 0 - turn off debug and 1 - turn on debug
-#define CONNECTOR_DEBUG 0
-#if (CONNECTOR_DEBUG == 1)
-#define CONNECTOR_DEBUG_LOG(fmt, ...)      \
-    do {                                   \
-        fprintf(stderr, fmt, __VA_ARGS__); \
-    } while (0)
-#else
-#define CONNECTOR_DEBUG_LOG(lvl, fmt, ...)
-#endif
-#define CONNECTOR_ERROR_LOG(fmt, ...)      \
-    do {                                   \
-        fprintf(stderr, fmt, __VA_ARGS__); \
-    } while (0)
-
 // ENUM for blocking and non blocking read
 enum class ReadMode {
     BLOCKING = 0,

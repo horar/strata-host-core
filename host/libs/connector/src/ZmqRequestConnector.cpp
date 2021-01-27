@@ -5,7 +5,7 @@ namespace strata::connector
 
 ZmqRequestConnector::ZmqRequestConnector() : ZmqConnector(ZMQ_REQ)
 {
-    CONNECTOR_DEBUG_LOG("%s Creating connector object\n", "ZMQ_REQ");
+    qCInfo(logCategoryZmqRequestConnector) << "ZMQ_REQ Creating connector object";
 }
 
 ZmqRequestConnector::~ZmqRequestConnector()
@@ -15,6 +15,7 @@ ZmqRequestConnector::~ZmqRequestConnector()
 bool ZmqRequestConnector::open(const std::string& ip_address)
 {
     if (false == socketOpen()) {
+        qCCritical(logCategoryZmqRequestConnector) << "Unable to open socket";
         return false;
     }
 
@@ -22,10 +23,14 @@ bool ZmqRequestConnector::open(const std::string& ip_address)
     if (socketSetOptInt(zmq::sockopt::linger, linger) &&
         socketConnect(ip_address)) {
         setConnectionState(true);
-        CONNECTOR_DEBUG_LOG("%s Connecting to the server socket %s(ID:%s)\n", "ZMQ_REQ",
-                            ip_address.c_str(), getDealerID().c_str());
+        qCInfo(logCategoryZmqRequestConnector).nospace()
+                << "Connected to the server socket '" << ip_address.c_str()
+                << "' (ID: " << getDealerID().c_str() << ")";
         return true;
     }
+
+    qCCritical(logCategoryZmqRequestConnector).nospace()
+            << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
 
     return false;
 }

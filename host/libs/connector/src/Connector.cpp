@@ -6,6 +6,7 @@
 #include "ZmqResponseConnector.h"
 #include "ZmqRouterConnector.h"
 #include "ZmqSubscriberConnector.h"
+#include "logging/LoggingQtCategories.h"
 
 namespace strata::connector
 {
@@ -63,7 +64,7 @@ std::ostream& operator<<(std::ostream& stream, const Connector& c)
 
 std::unique_ptr<Connector> Connector::getConnector(const CONNECTOR_TYPE type)
 {
-    CONNECTOR_DEBUG_LOG("ConnectorFactory::getConnector type: %d\n", type);
+    qCDebug(logCategoryConnector) << "ConnectorFactory::getConnector type:" << (int)type;
     switch (type) {
         case CONNECTOR_TYPE::ROUTER:
             return std::make_unique<ZmqRouterConnector>();
@@ -78,8 +79,8 @@ std::unique_ptr<Connector> Connector::getConnector(const CONNECTOR_TYPE type)
         case CONNECTOR_TYPE::RESPONSE:  // not used yet
             return std::make_unique<ZmqResponseConnector>();
         default:
-            CONNECTOR_DEBUG_LOG("ERROR: ConnectorFactory::getConnector - %d (unknown interface).",
-                                type);
+            qCCritical(logCategoryConnector)
+                    << "ConnectorFactory::getConnector, unknown interface:" << (int)type;
             break;
     }
     return nullptr;
