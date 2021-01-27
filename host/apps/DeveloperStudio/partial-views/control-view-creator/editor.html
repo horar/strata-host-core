@@ -61,7 +61,7 @@
            monaco.languages.register({ id: 'qml' })
 
             monaco.languages.setMonarchTokensProvider('qml',{
-                    keywords: ['readonly','property','for','if','else','do','while','true','false','signal','const','switch','import','as','async'],
+                    keywords: ['readonly','property','for','if','else','do','while','true','false','signal','const','switch','import','as',"on",'async','console',"let","default"],
                     typeKeywords: ['int','real','var','string','color','url','alias'],
                     operators: [
                         '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=','===','<==','>==','!==',
@@ -192,10 +192,7 @@
                     for( var i = 0; i < qtQuick.length; i++){
                         textEdits = []
                         for(var x = 0 ; x <qtQuick[i].properties.length; x++){
-                            textEdits.push({
-                                text: qtQuick[i].properties[x],
-                                range: 0,
-                            })
+                           
                         }
                         suggestions.push({
                             label: qtQuick[i].prefix,
@@ -203,7 +200,6 @@
                             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                             insertText: qtQuick[i].body,
                             documentation: qtQuick[i].description,
-                            additionalTextEdits: textEdits,
                         })
                     }
 
