@@ -247,7 +247,7 @@ void FirmwareUpdater::handleRestoreProgress(int chunk, int total)
 
 void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation operation, FlasherConnector::State state, QString errorString)
 {
-    FirmwareUpdateController::UpdateStatus updStatus = FirmwareUpdateController::UpdateStatus::Running;
+    FirmwareUpdateController::UpdateStatus updStatus = FirmwareUpdateController::UpdateStatus::Failure;
 
     switch (state) {
     case FlasherConnector::State::Started :
@@ -256,6 +256,7 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
             // other operations will be covered by xyProgress() signals.
             return;
         }
+        updStatus = FirmwareUpdateController::UpdateStatus::Running;
         break;
     case FlasherConnector::State::Finished :
         return;  // We do not care about end of any operation.

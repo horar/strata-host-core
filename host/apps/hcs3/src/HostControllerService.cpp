@@ -758,6 +758,9 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
         break;
     case FirmwareUpdateController::UpdateOperation::Finished :
         jobType = "finished";
+        // Do not send progress information in this job type.
+        progress.complete = -1;
+        progress.total = -1;
         break;
     }
 
@@ -791,12 +794,12 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
             { "job_type", jobType },
             { "job_status", jobStatus }
         };
-        if (progress.status == FirmwareUpdateController::UpdateStatus::Running) {
-            if ((progress.complete > 0) && (progress.total > 0)) {
-                payload.insert("complete", progress.complete);
-                payload.insert("total", progress.total);
-            }
-        } else {
+        if ((progress.complete >= 0) && (progress.total > 0)) {
+            payload.insert("complete", progress.complete);
+            payload.insert("total", progress.total);
+        }
+        if (progress.status == FirmwareUpdateController::UpdateStatus::Failure ||
+                progress.status == FirmwareUpdateController::UpdateStatus::Unsuccess) {
             payload.insert("error_string", progress.error);
         }
         notification = createHcsNotification(hcsNotificationType::adjustControllerJob, payload, true);

@@ -31,12 +31,12 @@ void FirmwareUpdateController::initialize(BoardController *boardController, stra
 }
 
 FirmwareUpdateController::UpdateProgress::UpdateProgress() :
-    jobUuid(QString()), adjustController(false)
+    complete(-1), total(-1), jobUuid(QString()), adjustController(false)
 {
 }
 
 FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid, bool adjustController) :
-    jobUuid(jobUuid), adjustController(adjustController)
+    complete(-1), total(-1), jobUuid(jobUuid), adjustController(adjustController)
 {
 }
 
@@ -87,9 +87,18 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
 
     progress->operation = operation;
     progress->status = status;
-    progress->complete = complete;
-    progress->total = total;
-    progress->error = errorString;
+    // 'updateProgress' signal has 'camplete' and 'total' set to -1 when status is 'Failure'.
+    // Preserve previous progress value in this case.
+    if (status != UpdateStatus::Failure) {
+        progress->complete = complete;
+        progress->total = total;
+    }
+    // UpdateOperation::Finished is special case - it has always empty errorString because
+    // this operation is bind to FlasherConnector 'finished' signal which doesn't have any
+    // error string. So, in this case preserve previous error string.
+    if (operation != UpdateOperation::Finished) {
+        progress->error = errorString;
+    }
 
     emit progressOfUpdate(deviceId, updateData->clientId, *progress);
 
