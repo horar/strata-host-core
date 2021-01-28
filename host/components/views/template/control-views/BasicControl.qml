@@ -310,7 +310,7 @@ Item {
                                     centerIn: parent
                                     left: toggleSwitchContainer.right
                                 }
-
+                                checkedIndices: 1
                                 onClicked: {
                                     if(index === 0) {
                                         periodicNotificationGraph.visible = true
