@@ -15,15 +15,9 @@
     }
   ],
   "documents": {
-    "datasheets": [
-      
-    ],
-    "downloads": [
-      
-    ],
-    "views": [
-      
-    ]
+    "datasheets": [],
+    "downloads": [],
+    "views": []
   },
   "firmware": [
     {
@@ -32,7 +26,7 @@
   ],
   "name": "STR-WATER-HEATER-GEVB",
   "platform_selector": {
-    "file": "6057eb97-5e00-4adc-8bff-9c5e8205b353/8fd574a9a22c59d5348e1fe4b13336a5.jpeg",
+    "file": "6057eb97-5e00-4adc-8bff-9c5e8205b353/platform_selector/thumb.jpeg",
     "filename": "image.jpeg",
     "filesize": "38314",
     "md5": "8fd574a9a22c59d5348e1fe4b13336a5",

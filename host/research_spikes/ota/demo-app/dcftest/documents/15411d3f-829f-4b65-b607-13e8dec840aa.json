@@ -16,10 +16,10 @@
         "datasheet": "https://www.onsemi.com/pub/Collateral/NCV8664C-D.PDF",
         "name": "NCV8664CDT50RKG",
         "opn": "NCV8664CDT50RKG",
-        "subcategory": "LDO Regulators \u0026 Linear Voltage Regulators"
+        "subcategory": "LDO Regulators & Linear Voltage Regulators"
       },
       {
-        "category": "Amplifiers \u0026 Comparators",
+        "category": "Amplifiers & Comparators",
         "datasheet": "https://www.onsemi.com/pub/Collateral/NCS210R-D.PDF",
         "name": "NCS213RSQT2G",
         "opn": "NCS213RSQT2G",
@@ -33,49 +33,49 @@
         "subcategory": "EEPROM Memory"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/NTMFS4C302N-D.PDF",
         "name": "NTMFS4C302NT1G",
         "opn": "NTMFS4C302NT1G",
         "subcategory": "MOSFETs"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/ENA1604-D.PDF",
         "name": "ATP108-TL-H",
         "opn": "ATP108-TL-H",
         "subcategory": "MOSFETs"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/BC550-D.pdf",
         "name": "BC546BTF",
         "opn": "BC546BTF",
         "subcategory": "General Purpose and Low VCE(sat) Transistors"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/1SMB5913BT3-D.PDF",
         "name": "SZ1SMB5938BT3G",
         "opn": "SZ1SMB5938BT3G",
-        "subcategory": "Diodes \u0026 Rectifiers"
+        "subcategory": "Diodes & Rectifiers"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/MMSZ5221BT1-D.PDF",
         "name": "MMSZ5225BT1G",
         "opn": "MMSZ5225BT1G",
-        "subcategory": "Diodes \u0026 Rectifiers"
+        "subcategory": "Diodes & Rectifiers"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/SS13HE-D.PDF",
         "name": "NRVBSS14HE",
         "opn": "NRVBSS14HE",
-        "subcategory": "Diodes \u0026 Rectifiers"
+        "subcategory": "Diodes & Rectifiers"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/NVTFS5C460NL-D.PDF",
         "name": "NVTFS5C460NLWFTAG",
         "opn": "NVTFS5C460NLWFTAG",
@@ -86,7 +86,7 @@
         "datasheet": "https://www.onsemi.com/pub/Collateral/NCV81599-D.PDF",
         "name": "NCV81599MWTXG",
         "opn": "NCV81599MWTXG",
-        "subcategory": "DC-DC Controllers, Converters, \u0026 Regulators"
+        "subcategory": "DC-DC Controllers, Converters, & Regulators"
       },
       {
         "category": "Sensors",
@@ -208,37 +208,40 @@
         "prettyName": "datasheet.csv",
         "timestamp": "2020-10-29T18:00:37.997Z"
       }
-    ],
-    "firmware": [
-      {
-        "file": "str-pwrncv81599-r0-gevb-v100.bin",
-        "device": "water-heater",
-        "md5": "00000000000000000000000000000011",
-        "timestamp": "2021-01-18 12:41:26",
-        "version": "1.0.0"
-      },
-      {
-        "file": "str-pwrncv81599-r0-gevb-v101.bin",
-        "device": "water-heater",
-        "md5": "00000000000000000000000000000012",
-        "timestamp": "2020-06-25 12:41:31",
-        "version": "1.0.1"
-      },
-      {
-        "file": "str-pwrncv81599-r0-gevb-rsl10-v110.bin",
-        "device": "RSL10",
-        "md5": "00000000000000000000000000000013",
-        "timestamp": "2021-01-20 13:41:31",
-        "version": "1.1.0"
-      }
     ]
   },
+  "control_view": [
+    {}
+  ],
+  "firmware": [
+    {
+      "file": "str-pwrncv81599-r0-gevb-v100.bin",
+      "device": "water-heater",
+      "md5": "a1ebed2029517fe6090dc91943e10890",
+      "timestamp": "2021-01-18 12:41:26",
+      "version": "1.0.0"
+    },
+    {
+      "file": "str-pwrncv81599-r0-gevb-v101.bin",
+      "device": "water-heater",
+      "md5": "d528c11ad43c94dc4844f0e6f31ff1a2",
+      "timestamp": "2020-06-25 12:41:31",
+      "version": "1.0.1"
+    },
+    {
+      "file": "str-pwrncv81599-r0-gevb-rsl10-v110.bin",
+      "device": "RSL10",
+      "md5": "00000000000000000000000000000013",
+      "timestamp": "2021-01-20 13:41:31",
+      "version": "1.1.0"
+    }
+  ],
   "name": "STR-PWRNCV81599-R0-GEVK",
   "platform_selector": {
-    "file": "15411d3f-829f-4b65-b607-13e8dec840aa/platform_selector/85587e10737dff8c2274e2c91bc1c0c8.jpeg",
+    "file": "15411d3f-829f-4b65-b607-13e8dec840aa/platform_selector/thumb.jpeg",
     "filename": "thumbnail",
     "filesize": "7854",
-    "md5": "85587e10737dff8c2274e2c91bc1c0c8",
+    "md5": "975c9ef42e7aadb71351bfbc97d0e785",
     "name": "platform_selector",
     "prettyName": "thumbnail",
     "timestamp": "2020-10-29T18:00:37.997Z"

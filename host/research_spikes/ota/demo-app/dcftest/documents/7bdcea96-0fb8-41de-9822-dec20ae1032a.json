@@ -5,53 +5,53 @@
   "documents": {
     "datasheets": [
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/1SMB5913BT3-D.PDF",
         "name": "1SMB5937BT3G",
         "opn": "1SMB5937BT3G",
-        "subcategory": "Diodes \u0026 Rectifiers"
+        "subcategory": "Diodes & Rectifiers"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/MBRAF360-D.PDF",
         "name": "NRVBAF360T3G",
         "opn": "NRVBAF360T3G",
-        "subcategory": "Diodes \u0026 Rectifiers"
+        "subcategory": "Diodes & Rectifiers"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/NVMFS5C460NL-D.PDF",
         "name": "NVMFS5C460NLAFT1G",
         "opn": "NVMFS5C460NLAFT1G",
         "subcategory": "MOSFETs"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/NZ9F2V4S-D.PDF",
         "name": "NZ9F3V3ST5G",
         "opn": "NZ9F3V3ST5G",
-        "subcategory": "Diodes \u0026 Rectifiers"
+        "subcategory": "Diodes & Rectifiers"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/BZX84C2V4LT1-D.PDF",
         "name": "SZBZX84C15LT1G",
         "opn": "SZBZX84C15LT1G",
-        "subcategory": "Diodes \u0026 Rectifiers"
+        "subcategory": "Diodes & Rectifiers"
       },
       {
         "category": "Power Management",
         "datasheet": "https://www.onsemi.com/pub/Collateral/NCV6357-D.PDF",
         "name": "NCV6357MTWDTXG",
         "opn": "NCV6357MTWDTXG",
-        "subcategory": "DC-DC Controllers, Converters, \u0026 Regulators"
+        "subcategory": "DC-DC Controllers, Converters, & Regulators"
       },
       {
         "category": "Power Management",
         "datasheet": "https://www.onsemi.com/pub/Collateral/NCV881930-D.PDF",
         "name": "NCV881930MW00R2G",
         "opn": "NCV881930MW00R2G",
-        "subcategory": "DC-DC Controllers, Converters, \u0026 Regulators"
+        "subcategory": "DC-DC Controllers, Converters, & Regulators"
       },
       {
         "category": "Memory",
@@ -61,21 +61,21 @@
         "subcategory": "EEPROM Memory"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/2N7002W-D.PDF",
         "name": "2V7002W",
         "opn": "2V7002W",
         "subcategory": "MOSFETs"
       },
       {
-        "category": "Discretes \u0026 Drivers",
+        "category": "Discretes & Drivers",
         "datasheet": "https://www.onsemi.com/pub/Collateral/NVATS5A108PLZ-D.PDF",
         "name": "NVATS5A108PLZ",
         "opn": "NVATS5A108PLZ",
         "subcategory": "MOSFETs"
       },
       {
-        "category": "Amplifiers \u0026 Comparators",
+        "category": "Amplifiers & Comparators",
         "datasheet": "https://www.onsemi.com/pub/Collateral/NCS210R-D.PDF",
         "name": "NCS214RSQT2G",
         "opn": "NCS214RSQT2G",
@@ -231,37 +231,40 @@
         "prettyName": "datasheet.csv",
         "timestamp": "2020-04-11T02:11:44.802Z"
       }
-    ],
-    "firmware": [
-      {
-        "file": "str-level-shifters-gevb-v001.bin",
-        "device": "water-heater",
-        "md5": "00000000000000000000000000000001",
-        "timestamp": "2021-01-18 12:41:26",
-        "version": "0.0.1"
-      },
-      {
-        "file": "str-level-shifters-gevb-v102.bin",
-        "device": "water-heater",
-        "md5": "00000000000000000000000000000002",
-        "timestamp": "2020-06-25 12:41:31",
-        "version": "1.0.2"
-      },
-      {
-        "file": "str-level-shifters-gevb-rsl10-v110.bin",
-        "device": "RSL10",
-        "md5": "00000000000000000000000000000003",
-        "timestamp": "2021-01-20 13:41:31",
-        "version": "1.1.0"
-      }
     ]
   },
+  "control_view": [
+    {}
+  ],
+  "firmware": [
+    {
+      "file": "str-level-shifters-gevb-v002.bin",
+      "device": "water-heater",
+      "md5": "b2c8ad80cd23f2fc1df83538dda0ec7f",
+      "timestamp": "2021-01-18 12:41:26",
+      "version": "1.0.2"
+    },
+    {
+      "file": "str-level-shifters-gevb-v10100.bin",
+      "device": "water-heater",
+      "md5": "dd5710c6e007d0ef042f18d486d26e31",
+      "timestamp": "2020-06-25 12:41:31",
+      "version": "1.0.100"
+    },
+    {
+      "file": "str-level-shifters-gevb-rsl10-v110.bin",
+      "device": "RSL10",
+      "md5": "00000000000000000000000000000003",
+      "timestamp": "2021-01-20 13:41:31",
+      "version": "1.1.0"
+    }
+  ],
   "name": "STR-LEVEL-SHIFTERS-GEVB",
   "platform_selector": {
     "file": "7bdcea96-0fb8-41de-9822-dec20ae1032a/platform_selector/thumb.jpeg",
     "filename": "thumbnail",
     "filesize": "10112",
-    "md5": "ad6d3f9463b9e919bf8d04f7655ea761",
+    "md5": "592c9df526035bfba310596478c110ea",
     "name": "platform_selector",
     "prettyName": "thumbnail",
     "timestamp": "2020-04-11T02:11:44.802Z"
