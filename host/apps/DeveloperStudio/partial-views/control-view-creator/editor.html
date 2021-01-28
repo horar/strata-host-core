@@ -188,12 +188,7 @@
             monaco.languages.registerCompletionItemProvider('qml',{
                 provideCompletionItems: () => {
                     var suggestions = []
-                    var textEdits = []
                     for( var i = 0; i < qtQuick.length; i++){
-                        textEdits = []
-                        for(var x = 0 ; x <qtQuick[i].properties.length; x++){
-                           
-                        }
                         suggestions.push({
                             label: qtQuick[i].prefix,
                             kind: monaco.languages.CompletionItemKind.Snippet,
@@ -210,6 +205,13 @@
                             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                             insertText: qtQuickBody[j].body,
                             documentation: qtQuickBody[j].description
+                        })
+                    }
+                    for (var x = 0; x < BasicItemProperties.length; x++){
+                        suggestions.push({
+                            label: BasicItemProperties[x],
+                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                            insertText: BasicItemProperties[x]
                         })
                     }
                     return {suggestions: suggestions}
