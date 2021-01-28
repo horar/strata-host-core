@@ -165,383 +165,379 @@ Item {
             fill: parent
         }
 
-        RowLayout {
-            // filter/search bar
+        Rectangle {
+            id: filterContainer
+            Layout.fillWidth: true
+            implicitHeight: 30
+            border {
+                width: 1
+                color: "#DDD"
+            }
 
-            Rectangle {
-                id: filterContainer
-                Layout.fillWidth: true
-                implicitHeight: 30
-                border {
-                    width: 1
-                    color: "#DDD"
+            RowLayout {
+                id: filterRow
+                anchors {
+                    fill: filterContainer
                 }
+                spacing: 0
 
-                RowLayout {
-                    id: filterRow
-                    anchors {
-                        fill: filterContainer
+                Item {
+                    id: textFilterContainer
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    clip: true
+
+                    SGIcon {
+                        id: searchIcon
+                        source: "qrc:/sgimages/zoom.svg"
+                        height: filter.height * .75
+                        width: height
+                        iconColor: "#666"
+                        anchors {
+                            left: textFilterContainer.left
+                            leftMargin: 10
+                            verticalCenter: textFilterContainer.verticalCenter
+                        }
                     }
-                    spacing: 0
 
-                    Item {
-                        id: textFilterContainer
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
+                    TextInput {
+                        id: filter
+                        text: ""
+                        anchors {
+                            verticalCenter: textFilterContainer.verticalCenter
+                            left: searchIcon.right
+                            leftMargin: 5
+                            right: clearIcon.left
+                            rightMargin: 10
+                        }
+                        color: Theme.palette.green
+                        font.bold: true
+                        selectByMouse: true
                         clip: true
+                        enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
 
-                        SGIcon {
-                            id: searchIcon
-                            source: "qrc:/sgimages/zoom.svg"
-                            height: filter.height * .75
-                            width: height
-                            iconColor: "#666"
-                            anchors {
-                                left: textFilterContainer.left
-                                leftMargin: 10
-                                verticalCenter: textFilterContainer.verticalCenter
+                        property string lowerCaseText: text.toLowerCase()
+
+                        onLowerCaseTextChanged: {
+                            Filters.keywordFilter = lowerCaseText
+                            searchCategoriesDropdown.close()
+                            if (lowerCaseText === "") {
+                                filteredPlatformSelectorModel.filteringText = false
+                            } else {
+                                filteredPlatformSelectorModel.filteringText = true
                             }
+                            filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
                         }
 
-                        TextInput {
-                            id: filter
-                            text: ""
-                            anchors {
-                                verticalCenter: textFilterContainer.verticalCenter
-                                left: searchIcon.right
-                                leftMargin: 5
-                                right: clearIcon.left
-                                rightMargin: 10
-                            }
-                            color: Theme.palette.green
-                            font.bold: true
-                            selectByMouse: true
-                            clip: true
-                            enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
-
-                            property string lowerCaseText: text.toLowerCase()
-
-                            onLowerCaseTextChanged: {
-                                Filters.keywordFilter = lowerCaseText
-                                searchCategoriesDropdown.close()
-                                if (lowerCaseText === "") {
-                                    filteredPlatformSelectorModel.filteringText = false
-                                } else {
-                                    filteredPlatformSelectorModel.filteringText = true
-                                }
-                                filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
-                            }
-
-
-                            Text {
-                                id: placeholderText
-                                text: {
-                                    if (searchCategoryText.checked) {
-                                        if (searchCategoryPartsList.checked) {
-                                            return "Filter by Titles, Descriptions, and Part Numbers..."
-                                        }
-                                        return "Filter by Titles and Descriptions..."
-                                    } else if (searchCategoryPartsList.checked) {
-                                        return "Filter by Part Numbers in Bill of Materials..."
-                                    } else {
-                                        return "Please Select Search Options Below..."
-                                    }
-                                }
-                                color: filter.enabled? "#666" : "#ddd"
-                                visible: filter.text === ""
-                                anchors {
-                                    left: filter.left
-                                    verticalCenter: filter.verticalCenter
-                                }
-                            }
-
-                            MouseArea {
-                                id: mouseArea
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: Qt.IBeamCursor
-                            }
-                        }
-
-                        SGIcon {
-                            id: clearIcon
-                            source: "qrc:/sgimages/times-circle.svg"
-                            height: parent.height * .75
-                            width: height
-                            anchors {
-                                verticalCenter: textFilterContainer.verticalCenter
-                                right: settingsIcon.left
-                                rightMargin: (textFilterContainer.height - height) / 2
-                            }
-                            iconColor: textFilterClearMouse.containsMouse ?  "#bbb" : "#999"
-                            visible: !placeholderText.visible
-
-                            MouseArea {
-                                id: textFilterClearMouse
-                                anchors.fill: parent
-                                onClicked: {
-                                    filter.text = ""
-                                }
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                            }
-                        }
-
-                        SGIcon {
-                            id: settingsIcon
-                            source: "qrc:/sgimages/chevron-down.svg"
-                            height: 20
-                            width: height
-                            anchors {
-                                verticalCenter: textFilterContainer.verticalCenter
-                                right: textFilterContainer.right
-                                rightMargin: (textFilterContainer.height - height) / 2
-                            }
-                            iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ? "#444" : "#666"
-
-                            MouseArea {
-                                id: cogMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-
-                                onClicked: {
-                                    searchCategoriesDropdown.opened ? searchCategoriesDropdown.close() : searchCategoriesDropdown.open()
-                                }
-                            }
-                        }
-
-                        Popup {
-                            id: searchCategoriesDropdown
-
-                            y: textFilterContainer.height-1
-                            width: textFilterContainer.width+1
-                            topPadding: 0
-                            bottomPadding: 0
-                            leftPadding: 5
-
-                            closePolicy: Popup.CloseOnReleaseOutsideParent
-
-                            background: Rectangle {
-                                border {
-                                    width: 1
-                                    color: "#DDD"
-                                }
-                            }
-
-                            contentItem: Column {
-                                id: checkboxCol
-                                anchors.fill: parent
-
-                                RowLayout {
-                                    CheckBox {
-                                        id: searchCategoryText
-                                        checked: true
-                                        enabled: searchCategoryPartsList.checked
-
-                                        onCheckedChanged: {
-                                            filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
-                                        }
-                                    }
-
-                                    SGText {
-                                        id: titlesDescriptions
-                                        text: qsTr("Titles and Descriptions")
-                                    }
-                                }
-
-                                RowLayout {
-                                    CheckBox {
-                                        id: searchCategoryPartsList
-                                        checked: true
-                                        enabled: searchCategoryText.checked
-
-                                        onCheckedChanged: {
-                                            filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
-                                        }
-                                    }
-
-                                    SGText {
-                                        id: partNumbers
-                                        text: qsTr("Part Numbers in Bill of Materials")
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        id: segmentFilterContainer
-                        Layout.fillHeight: true
-                        Layout.preferredWidth: segmentCategoryWidth
-                        border {
-                            width: 1
-                            color: "#DDD"
-                        }
-                        color: (segmentFilterMouse.containsMouse || segmentFilters.visible) ? "#f2f2f2" : "white"
-
-                        SGIcon {
-                            id: filterIcon
-                            source: "qrc:/sgimages/funnel.svg"
-                            height: filter.height * .75
-                            width: height
-                            iconColor: "#666"
-                            anchors {
-                                left: segmentFilterContainer.left
-                                leftMargin: 10
-                                verticalCenter: parent.verticalCenter
-                            }
-                        }
 
                         Text {
-                            id: defaultSegmentFilterText
-                            text: "Filter by Segment or Category"
-                            color: segmentFilterMouse.enabled? "#666" : "#ddd"
-                            anchors {
-                                left: filterIcon.right
-                                leftMargin: 10
-                                verticalCenter: segmentFilterContainer.verticalCenter
+                            id: placeholderText
+                            text: {
+                                if (searchCategoryText.checked) {
+                                    if (searchCategoryPartsList.checked) {
+                                        return "Filter by Titles, Descriptions, and Part Numbers..."
+                                    }
+                                    return "Filter by Titles and Descriptions..."
+                                } else if (searchCategoryPartsList.checked) {
+                                    return "Filter by Part Numbers in Bill of Materials..."
+                                } else {
+                                    return "Please Select Search Options Below..."
+                                }
                             }
-                        }
-
-                        SGIcon {
-                            id: angleIcon
-                            source: "qrc:/sgimages/chevron-down.svg"
-                            iconColor: segmentFilterMouse.enabled? "#666" : "#ddd"
+                            color: filter.enabled? "#666" : "#ddd"
+                            visible: filter.text === ""
                             anchors {
-                                verticalCenter: segmentFilterContainer.verticalCenter
-                                right: segmentFilterContainer.right
-                                rightMargin: 10
+                                left: filter.left
+                                verticalCenter: filter.verticalCenter
                             }
-                            height: 20
-                            width: height
                         }
 
                         MouseArea {
-                            id: segmentFilterMouse
+                            id: mouseArea
+                            anchors.fill: parent
+                            acceptedButtons: Qt.NoButton
+                            cursorShape: Qt.IBeamCursor
+                        }
+                    }
+
+                    SGIcon {
+                        id: clearIcon
+                        source: "qrc:/sgimages/times-circle.svg"
+                        height: parent.height * .75
+                        width: height
+                        anchors {
+                            verticalCenter: textFilterContainer.verticalCenter
+                            right: settingsIcon.left
+                            rightMargin: (textFilterContainer.height - height) / 2
+                        }
+                        iconColor: textFilterClearMouse.containsMouse ?  "#bbb" : "#999"
+                        visible: !placeholderText.visible
+
+                        MouseArea {
+                            id: textFilterClearMouse
+                            anchors.fill: parent
+                            onClicked: {
+                                filter.text = ""
+                            }
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            anchors {
-                                fill: segmentFilterContainer
+                        }
+                    }
+
+                    SGIcon {
+                        id: settingsIcon
+                        source: "qrc:/sgimages/chevron-down.svg"
+                        height: 20
+                        width: height
+                        anchors {
+                            verticalCenter: textFilterContainer.verticalCenter
+                            right: textFilterContainer.right
+                            rightMargin: (textFilterContainer.height - height) / 2
+                        }
+                        iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ? "#444" : "#666"
+
+                        MouseArea {
+                            id: cogMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: {
+                                searchCategoriesDropdown.opened ? searchCategoriesDropdown.close() : searchCategoriesDropdown.open()
                             }
-                            onPressed: {
-                                segmentFilters.open()
+                        }
+                    }
+
+                    Popup {
+                        id: searchCategoriesDropdown
+
+                        y: textFilterContainer.height-1
+                        width: textFilterContainer.width+1
+                        topPadding: 0
+                        bottomPadding: 0
+                        leftPadding: 5
+
+                        closePolicy: Popup.CloseOnReleaseOutsideParent
+
+                        background: Rectangle {
+                            border {
+                                width: 1
+                                color: "#DDD"
                             }
-                            enabled: Filters.filterModel.count > 0
                         }
 
-                        Popup {
-                            id: segmentFilters
-                            y: segmentFilterContainer.height-1
-                            width: segmentFilterContainer.width
-                            height: Math.min(listview.height, filterColumn.height)
-                            visible: false
-                            padding: 0
+                        contentItem: Column {
+                            id: checkboxCol
+                            anchors.fill: parent
 
-                            Rectangle {
+                            RowLayout {
+                                CheckBox {
+                                    id: searchCategoryText
+                                    checked: true
+                                    enabled: searchCategoryPartsList.checked
+
+                                    onCheckedChanged: {
+                                        filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                    }
+                                }
+
+                                SGText {
+                                    id: titlesDescriptions
+                                    text: qsTr("Titles and Descriptions")
+                                }
+                            }
+
+                            RowLayout {
+                                CheckBox {
+                                    id: searchCategoryPartsList
+                                    checked: true
+                                    enabled: searchCategoryText.checked
+
+                                    onCheckedChanged: {
+                                        filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                    }
+                                }
+
+                                SGText {
+                                    id: partNumbers
+                                    text: qsTr("Part Numbers in Bill of Materials")
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: segmentFilterContainer
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 0 // set by setSegmentCategoryWidth()
+                    border {
+                        width: 1
+                        color: "#DDD"
+                    }
+                    color: (segmentFilterMouse.containsMouse || segmentFilters.visible) ? "#f2f2f2" : "white"
+
+                    SGIcon {
+                        id: filterIcon
+                        source: "qrc:/sgimages/funnel.svg"
+                        height: filter.height * .75
+                        width: height
+                        iconColor: "#666"
+                        anchors {
+                            left: segmentFilterContainer.left
+                            leftMargin: 10
+                            verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    Text {
+                        id: defaultSegmentFilterText
+                        text: "Filter by Segment or Category"
+                        color: segmentFilterMouse.enabled? "#666" : "#ddd"
+                        anchors {
+                            left: filterIcon.right
+                            leftMargin: 10
+                            verticalCenter: segmentFilterContainer.verticalCenter
+                        }
+                    }
+
+                    SGIcon {
+                        id: angleIcon
+                        source: "qrc:/sgimages/chevron-down.svg"
+                        iconColor: segmentFilterMouse.enabled? "#666" : "#ddd"
+                        anchors {
+                            verticalCenter: segmentFilterContainer.verticalCenter
+                            right: segmentFilterContainer.right
+                            rightMargin: 10
+                        }
+                        height: 20
+                        width: height
+                    }
+
+                    MouseArea {
+                        id: segmentFilterMouse
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        anchors {
+                            fill: segmentFilterContainer
+                        }
+                        onPressed: {
+                            segmentFilters.open()
+                        }
+                        enabled: Filters.filterModel.count > 0
+                    }
+
+                    Popup {
+                        id: segmentFilters
+                        y: segmentFilterContainer.height-1
+                        width: segmentFilterContainer.width
+                        height: Math.min(listview.height, filterColumn.height)
+                        visible: false
+                        padding: 0
+
+                        Rectangle {
+                            anchors {
+                                fill: parent
+                            }
+                            border {
+                                width: 1
+                                color: "#DDD"
+                            }
+
+                            ScrollView {
+                                id: filterScroll
                                 anchors {
                                     fill: parent
+                                    margins: 1
                                 }
-                                border {
-                                    width: 1
-                                    color: "#DDD"
-                                }
+                                clip: true
 
-                                ScrollView {
-                                    id: filterScroll
-                                    anchors {
-                                        fill: parent
-                                        margins: 1
+                                ColumnLayout {
+                                    id: filterColumn
+                                    width: filterScroll.width
+                                    spacing: 0
+
+                                    signal selected()
+
+                                    onSelected: {
+                                        segmentFilters.close()
                                     }
-                                    clip: true
 
-                                    ColumnLayout {
-                                        id: filterColumn
-                                        width: filterScroll.width
-                                        spacing: 0
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: segmentTitle.implicitHeight + 10
+                                        Layout.bottomMargin: 3
+                                        color: Theme.palette.gray
 
-                                        signal selected()
-
-                                        onSelected: {
-                                            segmentFilters.close()
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: segmentTitle.implicitHeight + 10
-                                            Layout.bottomMargin: 3
-                                            color: Theme.palette.gray
-
-                                            SGText {
-                                                id: segmentTitle
-                                                text: "Segments:"
-                                                color: "white"
-                                                anchors {
-                                                    verticalCenter: parent.verticalCenter
-                                                    left: parent.left
-                                                    leftMargin: 5
-                                                }
-                                                font.capitalization: Font.AllUppercase
-                                                fontSizeMultiplier: .8
+                                        SGText {
+                                            id: segmentTitle
+                                            text: "Segments:"
+                                            color: "white"
+                                            anchors {
+                                                verticalCenter: parent.verticalCenter
+                                                left: parent.left
+                                                leftMargin: 5
                                             }
+                                            font.capitalization: Font.AllUppercase
+                                            fontSizeMultiplier: .8
                                         }
+                                    }
 
-                                        Repeater {
-                                            id: segmentFilterRepeater
-                                            model: SGSortFilterProxyModel {
-                                                sourceModel: Filters.filterModel
-                                                invokeCustomFilter: true
+                                    Repeater {
+                                        id: segmentFilterRepeater
+                                        model: SGSortFilterProxyModel {
+                                            sourceModel: Filters.filterModel
+                                            invokeCustomFilter: true
 
-                                                function filterAcceptsRow(index) {
-                                                    let item = sourceModel.get(index)
-                                                    return item.type === "segment"
-                                                }
-                                            }
-
-                                            delegate: SegmentFilterDelegate {
-                                                Component.onCompleted: {
-                                                    selected.connect(filterColumn.selected)
-                                                }
+                                            function filterAcceptsRow(index) {
+                                                let item = sourceModel.get(index)
+                                                return item.type === "segment"
                                             }
                                         }
 
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.preferredHeight: categoryTitle.implicitHeight + 10
-                                            Layout.topMargin: 8
-                                            Layout.bottomMargin: 3
-                                            color: Theme.palette.gray
+                                        delegate: SegmentFilterDelegate {
+                                            Component.onCompleted: {
+                                                selected.connect(filterColumn.selected)
+                                            }
+                                        }
+                                    }
 
-                                            SGText {
-                                                id: categoryTitle
-                                                text: "Categories:"
-                                                color: "white"
-                                                anchors {
-                                                    verticalCenter: parent.verticalCenter
-                                                    left: parent.left
-                                                    leftMargin: 5
-                                                }
-                                                font.capitalization: Font.AllUppercase
-                                                fontSizeMultiplier: .8
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: categoryTitle.implicitHeight + 10
+                                        Layout.topMargin: 8
+                                        Layout.bottomMargin: 3
+                                        color: Theme.palette.gray
+
+                                        SGText {
+                                            id: categoryTitle
+                                            text: "Categories:"
+                                            color: "white"
+                                            anchors {
+                                                verticalCenter: parent.verticalCenter
+                                                left: parent.left
+                                                leftMargin: 5
+                                            }
+                                            font.capitalization: Font.AllUppercase
+                                            fontSizeMultiplier: .8
+                                        }
+                                    }
+
+                                    Repeater {
+                                        id: categoryFilterRepeater
+                                        model: SGSortFilterProxyModel {
+                                            sourceModel: Filters.filterModel
+                                            invokeCustomFilter: true
+
+                                            function filterAcceptsRow(index) {
+                                                let item = sourceModel.get(index)
+                                                return item.type === "category"
                                             }
                                         }
 
-                                        Repeater {
-                                            id: categoryFilterRepeater
-                                            model: SGSortFilterProxyModel {
-                                                sourceModel: Filters.filterModel
-                                                invokeCustomFilter: true
-
-                                                function filterAcceptsRow(index) {
-                                                    let item = sourceModel.get(index)
-                                                    return item.type === "category"
-                                                }
-                                            }
-
-                                            delegate: SegmentFilterDelegate {
-                                                Component.onCompleted: {
-                                                    selected.connect(filterColumn.selected)
-                                                }
+                                        delegate: SegmentFilterDelegate {
+                                            Component.onCompleted: {
+                                                selected.connect(filterColumn.selected)
                                             }
                                         }
                                     }
