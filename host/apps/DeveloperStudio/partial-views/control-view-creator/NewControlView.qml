@@ -40,7 +40,7 @@ Rectangle {
             if (closeReason === confirmClosePopup.closeFilesReason) {
                 editor.openFilesModel.closeAll()
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                editor.openFilesModel.saveAll()
+                editor.openFilesModel.saveAll(true)
             }
 
             controlViewCreatorRoot.isConfirmCloseOpen = false
