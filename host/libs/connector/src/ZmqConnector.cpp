@@ -250,7 +250,7 @@ bool ZmqConnector::socketSetOptLegacy(int opt, const void *val, size_t valLen)
 {
     // Use this function only if there is not another way to avoid it due to the deprecated notice
     try {
-        #pragma warning(suppress: warning-code) // suppress warning 4996
+        #pragma warning(suppress: 4996) // suppress warning 4996
         socket_->setsockopt(opt, val, valLen);
         return true;
     } catch (const zmq::error_t& zErr) {

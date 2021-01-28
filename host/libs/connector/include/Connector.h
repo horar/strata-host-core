@@ -83,7 +83,7 @@ enum class ReadMode {
     NONBLOCKING
 };
 #ifdef _WIN32
-    typedef intptr_t connector_handle_t;
+    typedef uintptr_t connector_handle_t;
 #else
     typedef int connector_handle_t;
 #endif
