@@ -7,14 +7,14 @@
 #include <QJsonObject>
 
 
-class AdjustControllerManager: public QObject
+class ProgramControllerManager: public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(AdjustControllerManager)
+    Q_DISABLE_COPY(ProgramControllerManager)
 
 public:
-    AdjustControllerManager(CoreInterface *coreInterface, QObject *parent = nullptr);
-    ~AdjustControllerManager();
+    ProgramControllerManager(CoreInterface *coreInterface, QObject *parent = nullptr);
+    ~ProgramControllerManager();
 
     enum ProgressState {
         DownloadState,
@@ -25,7 +25,7 @@ public:
         DoneState,
     };
 
-    Q_INVOKABLE void adjustController(int deviceId);
+    Q_INVOKABLE void program(int deviceId);
 
 signals:
     void jobProgressUpdate(int deviceId, float progress);

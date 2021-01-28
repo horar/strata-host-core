@@ -6,7 +6,7 @@
 #include "HcsNode.h"
 #include "ResourceLoader.h"
 #include "logging/LoggingQtCategories.h"
-#include "AdjustControllerManager.h"
+#include "ProgramControllerManager.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 
@@ -23,7 +23,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, QObject *parent)
       documentManager_(new DocumentManager(coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
       newControlView_(new SGNewControlView(this)),
-      adjustControllerManager_(new AdjustControllerManager(coreInterface_, this)),
+      programControllerManager_(new ProgramControllerManager(coreInterface_, this)),
       remoteHcsNode_(new HcsNode(this))
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
@@ -36,7 +36,7 @@ SDSModel::~SDSModel()
     delete resourceLoader_;
     delete newControlView_;
     delete remoteHcsNode_;
-    delete adjustControllerManager_;
+    delete programControllerManager_;
 }
 
 bool SDSModel::startHcs()
@@ -168,9 +168,9 @@ SGNewControlView *SDSModel::newControlView() const
     return newControlView_;
 }
 
-AdjustControllerManager *SDSModel::adjustControllerManager() const
+ProgramControllerManager *SDSModel::programControllerManager() const
 {
-    return adjustControllerManager_;
+    return programControllerManager_;
 }
 
 void SDSModel::shutdownService()

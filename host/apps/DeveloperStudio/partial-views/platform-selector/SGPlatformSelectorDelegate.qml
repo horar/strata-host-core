@@ -59,8 +59,8 @@ Item {
             leftMargin: 25
         }
 
-        text: model.adjust_controller ? "ADJUSTING" : defaultText
-        textBgColor: model.adjust_controller ? Theme.palette.orange : defaultTextBg
+        text: model.program_controller ? "PROGRAMMING" : defaultText
+        textBgColor: model.program_controller ? Theme.palette.orange : defaultTextBg
     }
 
     ColumnLayout {
@@ -149,27 +149,27 @@ Item {
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
-                visible: model.adjust_controller === false
+                visible: model.program_controller === false
             }
 
             Text {
                 id: statusText
                 text: {
-                    if (model.adjust_controller_error_string) {
-                        return "Adjustment of controller failed.\n" + model.adjust_controller_error_string
+                    if (model.program_controller_error_string) {
+                        return "Programming of controller failed.\n" + model.program_controller_error_string
                     }
 
-                    "Controller is being adjusted. Do not unplug device."
+                    return "Programming controller. Do not unplug device."
                 }
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                visible: model.adjust_controller
+                visible: model.program_controller
                 font {
                     pixelSize: 14
                     family: Fonts.franklinGothicBook
                 }
                 wrapMode: Text.WordWrap
-                color: model.adjust_controller_error_string ? Theme.palette.error : "#333"
+                color: model.program_controller_error_string ? Theme.palette.error : "#333"
                 horizontalAlignment: Text.AlignHCenter
             }
 
@@ -456,8 +456,8 @@ Item {
             height: 100
             anchors.horizontalCenter: buttonColumn.horizontalCenter
 
-            visible: model.adjust_controller
-            value: model.adjust_controller_progress
+            visible: model.program_controller
+            value: model.program_controller_progress
             highlightColor: Theme.palette.orange
         }
     }

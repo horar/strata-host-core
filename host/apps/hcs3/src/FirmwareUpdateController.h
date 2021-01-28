@@ -68,14 +68,14 @@ public:
      */
     struct UpdateProgress {
         UpdateProgress();  // Q_DECLARE_METATYPE needs default constructor
-        UpdateProgress(const QString& jobUuid, bool adjustController);
+        UpdateProgress(const QString& jobUuid, bool programController);
         UpdateOperation operation;
         UpdateStatus status;
         int complete;
         int total;
         QString error;
         const QString jobUuid;
-        const bool adjustController;
+        const bool programController;
     };
 
 signals:
@@ -90,10 +90,10 @@ public slots:
      * @param firmwareUrl
      * @param firmwareMD5
      * @param jobUuid
-     * @param adjustController
+     * @param programController
      */
     void updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
-                        const QString& firmwareMD5, const QString& jobUUid, bool adjustController);
+                        const QString& firmwareMD5, const QString& jobUUid, bool programController);
 
 private slots:
     void handleUpdateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation,
@@ -104,7 +104,7 @@ private:
     QPointer<strata::DownloadManager> downloadManager_;
 
     struct UpdateData {
-        UpdateData(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool adjustController);
+        UpdateData(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool programController);
         const QByteArray clientId;
         FirmwareUpdater* fwUpdater;
         UpdateProgress updateProgress;

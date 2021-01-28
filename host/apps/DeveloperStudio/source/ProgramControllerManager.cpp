@@ -1,29 +1,29 @@
-#include "AdjustControllerManager.h"
+#include "ProgramControllerManager.h"
 
 #include "logging/LoggingQtCategories.h"
 #include <QJsonDocument>
 
-AdjustControllerManager::AdjustControllerManager(
+ProgramControllerManager::ProgramControllerManager(
         CoreInterface *coreInterface,
         QObject *parent)
     : QObject(parent),
       coreInterface_(coreInterface)
 {
-    connect(coreInterface_, &CoreInterface::adjustControllerReply, this, &AdjustControllerManager::replyHandler);
-    connect(coreInterface_, &CoreInterface::adjustControllerJobUpdate, this, &AdjustControllerManager::jobUpdateHandler);
+    connect(coreInterface_, &CoreInterface::programControllerReply, this, &ProgramControllerManager::replyHandler);
+    connect(coreInterface_, &CoreInterface::programControllerJobUpdate, this, &ProgramControllerManager::jobUpdateHandler);
 }
 
-AdjustControllerManager::~AdjustControllerManager()
+ProgramControllerManager::~ProgramControllerManager()
 {
 }
 
-void AdjustControllerManager::adjustController(int deviceId)
+void ProgramControllerManager::program(int deviceId)
 {
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("device_id",deviceId);
 
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "adjust_controller");
+    cmdMessageObject.insert("hcs::cmd", "program_controller");
     cmdMessageObject.insert("payload", cmdPayloadObject);
 
     QJsonDocument doc(cmdMessageObject);
@@ -34,7 +34,7 @@ void AdjustControllerManager::adjustController(int deviceId)
     coreInterface_->sendCommand(strJson);
 }
 
-void AdjustControllerManager::replyHandler(QJsonObject message)
+void ProgramControllerManager::replyHandler(QJsonObject message)
 {
      QJsonObject payload = message.value("payload").toObject();
 
@@ -61,7 +61,7 @@ void AdjustControllerManager::replyHandler(QJsonObject message)
     emit jobStatusChanged(deviceId, "running", "");
 }
 
-void AdjustControllerManager::jobUpdateHandler(QJsonObject message)
+void ProgramControllerManager::jobUpdateHandler(QJsonObject message)
 {
     QJsonObject payload = message.value("payload").toObject();
 
@@ -144,19 +144,19 @@ void AdjustControllerManager::jobUpdateHandler(QJsonObject message)
     }
 }
 
-void AdjustControllerManager::notifyProgressChange(int deviceId, AdjustControllerManager::ProgressState state, float stateProgress)
+void ProgramControllerManager::notifyProgressChange(int deviceId, ProgramControllerManager::ProgressState state, float stateProgress)
 {
     float progress = resolveOverallProgress(state, stateProgress);
     emit jobProgressUpdate(deviceId, progress);
 }
 
-void AdjustControllerManager::notifyFailure(int deviceId, const QJsonObject &payload)
+void ProgramControllerManager::notifyFailure(int deviceId, const QJsonObject &payload)
 {
     QString errorString = payload.value("error_string").toString();
     emit jobStatusChanged(deviceId, "failure", errorString);
 }
 
-float AdjustControllerManager::resolveOverallProgress(AdjustControllerManager::ProgressState state, float stateProgress)
+float ProgramControllerManager::resolveOverallProgress(ProgramControllerManager::ProgressState state, float stateProgress)
 {
     float overallProgress = 0.0;
 

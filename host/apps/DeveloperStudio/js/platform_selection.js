@@ -143,9 +143,9 @@ function generatePlatform (platform) {
     platform.visible = true
     platform.view_open = false
     platform.firmware_version = ""
-    platform.adjust_controller = false
-    platform.adjust_controller_progress = 0.0
-    platform.adjust_controller_error_string = ""
+    platform.program_controller = false
+    platform.program_controller_progress = 0.0
+    platform.program_controller_error_string = ""
 
     // Create entry in classMap
     classMap[class_id_string] = {
@@ -285,9 +285,9 @@ function addConnectedPlatform(platform) {
             if (platform.class_id === platform.fw_class_id) {
                 connectListing(platform.class_id, platform.device_id, platform.firmware_version)
             } else {
-                //adjust controller
-                insertAdjustControllerListing(platform)
-                sdsModel.adjustControllerManager.adjustController(platform.device_id)
+                //program controller
+                insertProgramControllerListing(platform)
+                sdsModel.programControllerManager.program(platform.device_id)
             }
         }
     }
@@ -487,8 +487,8 @@ function insertAssistedIncompatibleListing (platform) {
     insertErrorListing(generateAssistedIncompatibleListing(platform))
 }
 
-function insertAdjustControllerListing(platform) {
-    insertErrorListing(generateAdjustControllerListing(platform))
+function insertProgramControllerListing(platform) {
+    insertErrorListing(generateProgramControllerListing(platform))
 }
 
 function generateUnknownListing (platform) {
@@ -523,7 +523,7 @@ function generateAssistedIncompatibleListing (platform) {
     return generateErrorListing(platform, "Strata Assisted (incompatible firmware)", class_id, opn, description)
 }
 
-function generateAdjustControllerListing(platform) {
+function generateProgramControllerListing(platform) {
     let class_id = String(platform.class_id)
 
     let opn = "N/A"
@@ -536,9 +536,9 @@ function generateAdjustControllerListing(platform) {
     return generateErrorListing(platform, verbose_name, class_id, opn, "", true)
 }
 
-function generateErrorListing (platform, verbose_name, class_id, opn, description, adjust_controller) {
-    if (adjust_controller === undefined) {
-        adjust_controller = false
+function generateErrorListing (platform, verbose_name, class_id, opn, description, program_controller) {
+    if (program_controller === undefined) {
+        program_controller = false
     }
 
     let error = {
@@ -560,9 +560,9 @@ function generateErrorListing (platform, verbose_name, class_id, opn, descriptio
         "visible": true,
         "view_open": false,
         "firmware_version": platform.firmware_version,
-        "adjust_controller": adjust_controller,
-        "adjust_controller_progress": 0.0,
-        "adjust_controller_error_string": ""
+        "program_controller": program_controller,
+        "program_controller_progress": 0.0,
+        "program_controller_error_string": ""
     }
     return error
 }

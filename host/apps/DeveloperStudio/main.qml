@@ -88,18 +88,18 @@ SGWidgets.SGMainWindow {
     }
 
     Connections {
-        target: sdsModel.adjustControllerManager
+        target: sdsModel.programControllerManager
 
         onJobStatusChanged: {
             if (status === "running") {
-                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "adjust_controller_progress", 0)
+                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0)
             } else if(status === "failure") {
-                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "adjust_controller_error_string", errorString)
+                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", errorString)
             }
         }
 
         onJobProgressUpdate: {
-            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "adjust_controller_progress", progress)
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", progress)
         }
     }
 
