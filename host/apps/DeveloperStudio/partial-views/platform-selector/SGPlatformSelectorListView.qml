@@ -13,7 +13,7 @@ import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
 
 Item {
-    id: root
+    id: platformSelectorListView
     Layout.fillWidth: true
     Layout.fillHeight: true
 
@@ -152,7 +152,7 @@ Item {
         }
 
         onKeywordFilterChanged: {
-            root.filterText = ""
+            platformSelectorListView.filterText = ""
         }
     }
 
@@ -342,7 +342,7 @@ Item {
 
                                     SGText {
                                         id: titlesDescriptions
-                                        text: qsTr("Hardware Titles and Descriptions")
+                                        text: qsTr("Titles and Descriptions")
                                     }
                                 }
 
@@ -685,7 +685,7 @@ Item {
 
     SGPlatformSelectorStatus {
         anchors {
-            fill: root
+            fill: platformSelectorListView
         }
         status: PlatformSelection.platformSelectorModel.platformListStatus
     }

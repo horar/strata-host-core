@@ -55,23 +55,6 @@ Item {
                 width: imageContainer.width + 2
             }
 
-//            DropShadow {
-//                id: dropShadow
-//                anchors {
-//                    centerIn: imageContainer
-//                }
-//                width: imageContainer.width
-//                height: imageContainer.height
-//                horizontalOffset: 1
-//                verticalOffset: 3
-//                radius: 15.0
-//                samples: radius*2
-//                color: "#cc000000"
-//                source: imageContainer
-//                cached: true
-//                opacity: .5
-//            }
-
             PlatformImage {
                 id: imageContainer
             }
