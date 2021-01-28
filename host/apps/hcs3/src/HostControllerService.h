@@ -60,7 +60,7 @@ signals:
     void platformDocumentsRequested(QByteArray clientId, QString classId);
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
-    void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5, QString jobUuid, bool adjustController);
+    void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5, QString jobUuid, bool programController);
     void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
     void updateInfoRequested(QByteArray clientId);
 
@@ -155,8 +155,8 @@ private:
         downloadViewFinished,
         updatesAvailable,
         firmwareUpdate,
-        adjustController,
-        adjustControllerJob
+        programController,
+        programControllerJob
     };
     const char* hcsNotificationTypeToString(hcsNotificationType notificationType);
     QByteArray createHcsNotification(hcsNotificationType notificationType, const QJsonObject& payload, bool standalonePayload = true);
@@ -172,7 +172,7 @@ private:
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
     void onCmdUpdateFirmware(const rapidjson::Value* );
-    void onCmdAdjustController(const rapidjson::Value* );
+    void onCmdProgramController(const rapidjson::Value* );
     void onCmdDownloadControlView(const rapidjson::Value* );
     void onCmdGetUpdateInfo(const rapidjson::Value* );
 

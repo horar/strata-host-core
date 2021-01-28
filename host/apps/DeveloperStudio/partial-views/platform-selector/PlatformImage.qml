@@ -21,6 +21,11 @@ Rectangle {
     property real sourceHeight: 120
     property real sourceWidth: 167
     property real aspectRatio: 120/167
+    property alias text: title.text
+    property alias textBgColor: textBg.color
+
+    readonly property string defaultText: "CONNECTED"
+    readonly property color defaultTextBg: Theme.palette.green
 
     Image {
         id: image
@@ -119,7 +124,8 @@ Rectangle {
     }
 
     Rectangle {
-        color: Theme.palette.green
+        id: textBg
+        color: defaultTextBg
         width: imageContainer.width
         anchors {
             bottom: imageContainer.bottom
@@ -129,11 +135,12 @@ Rectangle {
         clip: true
 
         SGText {
+            id: title
             color: "white"
             anchors {
                 centerIn: parent
             }
-            text: "CONNECTED"
+            text: defaultText
             font.bold: true
             fontSizeMultiplier: 1.4
         }

@@ -89,6 +89,9 @@ signals:
     void downloadViewFinished(QJsonObject payload);
     void downloadControlViewProgress(QJsonObject payload);
 
+    void programControllerReply(QJsonObject payload);
+    void programControllerJobUpdate(QJsonObject payload);
+
     // Platform Framework Signals
     void notification(QString payload);
 

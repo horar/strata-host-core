@@ -31,17 +31,17 @@ void FirmwareUpdateController::initialize(BoardController *boardController, stra
 }
 
 FirmwareUpdateController::UpdateProgress::UpdateProgress() :
-    complete(-1), total(-1), jobUuid(QString()), adjustController(false)
+    complete(-1), total(-1), jobUuid(QString()), programController(false)
 {
 }
 
-FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid, bool adjustController) :
-    complete(-1), total(-1), jobUuid(jobUuid), adjustController(adjustController)
+FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid, bool programController) :
+    complete(-1), total(-1), jobUuid(jobUuid), programController(programController)
 {
 }
 
 void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
-                                              const QString& firmwareMD5, const QString& jobUuid, bool adjustController)
+                                              const QString& firmwareMD5, const QString& jobUuid, bool programController)
 {
     if (boardController_.isNull() || downloadManager_.isNull()) {
         QString errStr("FirmwareUpdateController is not properly initialized.");
@@ -66,8 +66,8 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
         return;
     }
 
-    FirmwareUpdater *fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5, adjustController);
-    UpdateData *updateData = new UpdateData(clientId, fwUpdater, jobUuid, adjustController);
+    FirmwareUpdater *fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5, programController);
+    UpdateData *updateData = new UpdateData(clientId, fwUpdater, jobUuid, programController);
     updates_.insert(deviceId, updateData);
 
     connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &FirmwareUpdateController::handleUpdateProgress);
@@ -109,7 +109,7 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
     }
 }
 
-FirmwareUpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool adjustController) :
-    clientId(client), fwUpdater(updater), updateProgress(jobUuid, adjustController)
+FirmwareUpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool programController) :
+    clientId(client), fwUpdater(updater), updateProgress(jobUuid, programController)
 {
 }

@@ -58,6 +58,9 @@ Item {
             left: root.left
             leftMargin: 25
         }
+
+        text: model.program_controller ? "PROGRAMMING" : defaultText
+        textBgColor: model.program_controller ? Theme.palette.orange : defaultTextBg
     }
 
     ColumnLayout {
@@ -146,6 +149,28 @@ Item {
                 elide: Text.ElideRight
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
+                visible: model.program_controller === false
+            }
+
+            Text {
+                id: statusText
+                text: {
+                    if (model.program_controller_error_string) {
+                        return "Programming of controller failed.\n" + model.program_controller_error_string
+                    }
+
+                    return "Programming controller. Do not unplug device."
+                }
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                visible: model.program_controller
+                font {
+                    pixelSize: 14
+                    family: Fonts.franklinGothicBook
+                }
+                wrapMode: Text.WordWrap
+                color: model.program_controller_error_string ? Theme.palette.error : "#333"
+                horizontalAlignment: Text.AlignHCenter
             }
 
             Text {
@@ -423,6 +448,17 @@ Item {
                 onPressed:  mouse.accepted = false
                 cursorShape: Qt.PointingHandCursor
             }
+        }
+
+        SGCircularProgress {
+            id: circularProgress
+            width: 100
+            height: 100
+            anchors.horizontalCenter: buttonColumn.horizontalCenter
+
+            visible: model.program_controller
+            value: model.program_controller_progress
+            highlightColor: Theme.palette.orange
         }
     }
 

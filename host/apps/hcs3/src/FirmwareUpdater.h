@@ -33,10 +33,10 @@ public:
      * @param downloadManager pointer to DownloadManager
      * @param url URL where firmware is located
      * @param md5 MD5 of firmware
-     * @param adjustController flag if assisted controller (dongle) is being flashed
+     * @param programController flag if assisted controller (dongle) is being flashed
      */
     FirmwareUpdater(const strata::device::DevicePtr& devPtr, strata::DownloadManager *downloadManager,
-                    const QUrl& url, const QString& md5, bool adjustController);
+                    const QUrl& url, const QString& md5, bool programController);
 
     /**
      * FirmwareUpdater destructor
@@ -79,7 +79,7 @@ private:
     void downloadFirmware();
 
     bool running_;
-    bool adjustController_;
+    bool programController_;
 
     const strata::device::DevicePtr device_;
     const int deviceId_;

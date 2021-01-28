@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/DownloadDocumentListModel.cpp
     source/VersionedListModel.cpp
     source/ClassDocuments.cpp
+    source/ProgramControllerManager.cpp
     source/SGQrcTreeModel.cpp
     source/SGQrcTreeNode.cpp
     source/SGFileTabModel.cpp

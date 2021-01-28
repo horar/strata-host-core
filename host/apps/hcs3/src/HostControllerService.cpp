@@ -32,7 +32,7 @@ HostControllerService::HostControllerService(QObject* parent)
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
-    hostCmdHandler_.insert( { std::string("adjust_controller"), std::bind(&HostControllerService::onCmdAdjustController, this, std::placeholders::_1) } );
+    hostCmdHandler_.insert( { std::string("program_controller"), std::bind(&HostControllerService::onCmdProgramController, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("check_for_updates"), std::bind(&HostControllerService::onCmdGetUpdateInfo, this, std::placeholders::_1) });
@@ -537,7 +537,7 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
     emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, QString(), false);
 }
 
-void HostControllerService::onCmdAdjustController(const rapidjson::Value *payload)
+void HostControllerService::onCmdProgramController(const rapidjson::Value *payload)
 {
     Q_ASSERT(payload != nullptr);
 
@@ -548,13 +548,13 @@ void HostControllerService::onCmdAdjustController(const rapidjson::Value *payloa
 
     do {
         if (payload->HasMember("device_id") == false) {
-            errorString = "cmd adjust_controller - missing device_id attribute";
+            errorString = "cmd program_controller - missing device_id attribute";
             break;
         }
 
         const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
         if (deviceIdValue.IsInt() == false) {
-            errorString = "cmd adjust_controller - bad format of device_id attribute";
+            errorString = "cmd program_controller - bad format of device_id attribute";
             break;
         }
         deviceId = deviceIdValue.GetInt();
@@ -597,7 +597,7 @@ void HostControllerService::onCmdAdjustController(const rapidjson::Value *payloa
             { "job_id", jobUuid },
             { "device_id", deviceId }
         };
-        QByteArray notification = createHcsNotification(hcsNotificationType::adjustController, payloadBody, true);
+        QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
         clients_.sendMessage(clientId, notification);
 
         emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmware.second, jobUuid, true);
@@ -612,7 +612,7 @@ void HostControllerService::onCmdAdjustController(const rapidjson::Value *payloa
             { "error_string", errorString },
             { "device_id", deviceId }
         };
-        QByteArray notification = createHcsNotification(hcsNotificationType::adjustController, payloadBody, true);
+        QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
         clients_.sendMessage(clientId, notification);
     }
 }
@@ -786,7 +786,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
 
     QByteArray notification;
 
-    if (progress.adjustController) {
+    if (progress.programController) {
         QJsonObject payload {
             { "job_id", progress.jobUuid },
             { "job_type", jobType },
@@ -800,7 +800,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
                 progress.status == FirmwareUpdateController::UpdateStatus::Unsuccess) {
             payload.insert("error_string", progress.error);
         }
-        notification = createHcsNotification(hcsNotificationType::adjustControllerJob, payload, true);
+        notification = createHcsNotification(hcsNotificationType::programControllerJob, payload, true);
     } else {  // old flash firmware notification
         QJsonObject payload {
             { "device_id", deviceId },
@@ -860,11 +860,11 @@ const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationTy
     case hcsNotificationType::firmwareUpdate:
         type = "firmware_update";
         break;
-    case hcsNotificationType::adjustController:
-        type = "adjust_controller";
+    case hcsNotificationType::programController:
+        type = "program_controller";
         break;
-    case hcsNotificationType::adjustControllerJob:
-        type = "adjust_controller_job";
+    case hcsNotificationType::programControllerJob:
+        type = "program_controller_job";
         break;
     }
 

@@ -44,7 +44,7 @@ SGWidgets.SGMainWindow {
         NavigationControl.init(statusBarContainer, stackContainer, sdsModel.resourceLoader, mainWindow)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
-            PlatformSelection.initialize(sdsModel.coreInterface)
+            PlatformSelection.initialize(sdsModel)
         }
         if (!CoreUpdate.isInitialized) {
             CoreUpdate.initialize(sdsModel.coreInterface, updateContainer)
@@ -84,6 +84,22 @@ SGWidgets.SGMainWindow {
                 SessionUtils.initialized = false
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
             }
+        }
+    }
+
+    Connections {
+        target: sdsModel.programControllerManager
+
+        onJobStatusChanged: {
+            if (status === "running") {
+                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", 0)
+            } else if(status === "failure") {
+                PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_error_string", errorString)
+            }
+        }
+
+        onJobProgressUpdate: {
+            PlatformSelection.setPlatformSelectorModelPropertyRev(deviceId, "program_controller_progress", progress)
         }
     }
 

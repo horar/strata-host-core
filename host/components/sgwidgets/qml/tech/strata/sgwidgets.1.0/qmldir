@@ -10,6 +10,7 @@ SGCapacityBar 1.0 SGCapacityBar.qml
 SGCapacityBarElement 1.0 SGCapacityBarElement.qml
 SGCheckBox 1.0 SGCheckBox.qml
 SGCircularGauge 1.0 SGCircularGauge.qml
+SGCircularProgress 1.0 SGCircularProgress.qml
 SGComboBox 1.0 SGComboBox.qml
 SGFileSelector 1.0 SGFileSelector.qml
 SGGraph 1.0 SGGraph.qml

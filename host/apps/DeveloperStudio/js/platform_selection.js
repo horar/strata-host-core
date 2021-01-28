@@ -7,6 +7,7 @@
 .import tech.strata.commoncpp 1.0 as CommonCpp
 
 var isInitialized = false
+var sdsModel
 var coreInterface
 var listError = {
     "retry_count": 0,
@@ -18,9 +19,10 @@ var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
 var localPlatformList = []
 
-function initialize (newCoreInterface) {
+function initialize (newSdsModel) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
-    coreInterface = newCoreInterface
+    sdsModel = newSdsModel
+    coreInterface = newSdsModel.coreInterface;
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
 }
@@ -141,6 +143,9 @@ function generatePlatform (platform) {
     platform.visible = true
     platform.view_open = false
     platform.firmware_version = ""
+    platform.program_controller = false
+    platform.program_controller_progress = 0.0
+    platform.program_controller_error_string = ""
 
     // Create entry in classMap
     classMap[class_id_string] = {
@@ -244,35 +249,46 @@ function previousDeviceIndex(device_id) {
 */
 function addConnectedPlatform(platform) {
     let class_id_string = (platform.class_id !== undefined) ? String(platform.class_id) : ""
-    let processed = false
 
-    if (platform.controller_class_id !== undefined) {  // Assisted Strata
-        if (platform.class_id === undefined) {
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Assisted Strata without platform connected:", platform.controller_class_id);
-            insertAssistedNoPlatformListing(platform)
-            processed = true
+    if (platform.controller_class_id === undefined) {
+        // Embedded Strata
+
+        if (platform.class_id === "") {
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
+            insertUnregisteredListing(platform)
         } else {
-            if ((platform.class_id !== "") && (platform.class_id !== platform.fw_class_id)) {
-                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory,
-                            "Assisted Strata: Platform", platform.class_id, "is not compatible with controller", platform.fw_class_id);
-                insertAssistedIncompatibleListing(platform)
-                processed = true;
-            }
-        }
-    }
-
-    if (processed === false) {
-        if (class_id_string !== "") {
             if (classMap.hasOwnProperty(class_id_string)) {
                 connectListing(class_id_string, platform.device_id, platform.firmware_version)
             } else {
                 // connected platform class_id not listed in DP platform list
-                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
+                console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
                 insertUnknownListing(platform)
             }
-        } else {
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
+        }
+
+    } else {
+        // Assisted Strata
+
+        if (platform.controller_class_id === "") {
+            //unregistered assisted controller
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered assisted controller connected.");
             insertUnregisteredListing(platform)
+        } else if (platform.class_id === undefined) {
+            //controller without platform
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Assisted controller without platform connected:", platform.controller_class_id);
+            insertAssistedNoPlatformListing(platform)
+        } else if (platform.class_id === "") {
+            //unregistered assisted platform
+            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered assisted platform connected.");
+            insertUnregisteredListing(platform)
+        } else {
+            if (platform.class_id === platform.fw_class_id) {
+                connectListing(platform.class_id, platform.device_id, platform.firmware_version)
+            } else {
+                //program controller
+                insertProgramControllerListing(platform)
+                sdsModel.programControllerManager.program(platform.device_id)
+            }
         }
     }
 
@@ -281,6 +297,7 @@ function addConnectedPlatform(platform) {
         "device_id": platform.device_id,
         "firmware_version": platform.firmware_version
     }
+
     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
 }
 
@@ -346,7 +363,7 @@ function connectListing(class_id_string, device_id, firmware_version) {
 
 function openPlatformView(platform) {
     let selector_listing = null;
-    if (platform.index) {
+    if (platform.hasOwnProperty("index")) {
         selector_listing = platformSelectorModel.get(platform.index)
         selector_listing.view_open = true
     }
@@ -470,6 +487,10 @@ function insertAssistedIncompatibleListing (platform) {
     insertErrorListing(generateAssistedIncompatibleListing(platform))
 }
 
+function insertProgramControllerListing(platform) {
+    insertErrorListing(generateProgramControllerListing(platform))
+}
+
 function generateUnknownListing (platform) {
     let class_id = String(platform.class_id)
     let opn = "Class id: " + class_id
@@ -502,7 +523,24 @@ function generateAssistedIncompatibleListing (platform) {
     return generateErrorListing(platform, "Strata Assisted (incompatible firmware)", class_id, opn, description)
 }
 
-function generateErrorListing (platform, verbose_name, class_id, opn, description) {
+function generateProgramControllerListing(platform) {
+    let class_id = String(platform.class_id)
+
+    let opn = "N/A"
+    let verbose_name = "Strata Assisted Platform"
+
+    if (classMap.hasOwnProperty(class_id)) {
+        opn = classMap[platform.class_id].original_listing.opn
+    }
+
+    return generateErrorListing(platform, verbose_name, class_id, opn, "", true)
+}
+
+function generateErrorListing (platform, verbose_name, class_id, opn, description, program_controller) {
+    if (program_controller === undefined) {
+        program_controller = false
+    }
+
     let error = {
         "verbose_name" : verbose_name,
         "connected" : true,
@@ -521,7 +559,10 @@ function generateErrorListing (platform, verbose_name, class_id, opn, descriptio
         "error": true,
         "visible": true,
         "view_open": false,
-        "firmware_version": platform.firmware_version
+        "firmware_version": platform.firmware_version,
+        "program_controller": program_controller,
+        "program_controller_progress": 0.0,
+        "program_controller_error_string": ""
     }
     return error
 }
@@ -595,4 +636,16 @@ function logout() {
 
 function copyObject(object){
     return JSON.parse(JSON.stringify(object))
+}
+
+function setPlatformSelectorModelPropertyRev(deviceId, propertyName, value) {
+    //items are checked in reverse order
+
+    for(var i = platformSelectorModel.count - 1; i >= 0; --i) {
+        var item = platformSelectorModel.get(i)
+        if (item.device_id === deviceId) {
+            platformSelectorModel.setProperty(i, propertyName, value)
+            break;
+        }
+    }
 }

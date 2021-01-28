@@ -19,9 +19,9 @@ FirmwareUpdater::FirmwareUpdater(
         strata::DownloadManager *downloadManager,
         const QUrl& url,
         const QString& md5,
-        bool adjustController)
+        bool programController)
     : running_(false),
-      adjustController_(adjustController),
+      programController_(programController),
       device_(devPtr),
       deviceId_(devPtr->deviceId()),
       downloadManager_(downloadManager),
@@ -116,7 +116,7 @@ void FirmwareUpdater::handleDownloadFinished(QString downloadId, QString errorSt
         return;
     }
 
-    if (adjustController_) {
+    if (programController_) {
         // clear firmware Class ID - set it to null UUID v4
         emit setFirmwareClassId(QStringLiteral("00000000-0000-4000-0000-000000000000"), QPrivateSignal());
     } else {
@@ -146,7 +146,7 @@ void FirmwareUpdater::handleFlashFirmware()
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
 
     // if we are flashing new firmware to assisted controller (dongle) there is no need to backup old firmware
-    bool backupOldFirmware = (adjustController_ == false);
+    bool backupOldFirmware = (programController_ == false);
     flasherConnector_->flash(backupOldFirmware);
 }
 
@@ -191,7 +191,7 @@ void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
         break;
     }
 
-    if (adjustController_ && (result == FlasherConnector::Result::Success)) {
+    if (programController_ && (result == FlasherConnector::Result::Success)) {
         QString classId = device_->classId();
         if (classId.isEmpty() == false) {
             emit setFirmwareClassId(classId, QPrivateSignal());
