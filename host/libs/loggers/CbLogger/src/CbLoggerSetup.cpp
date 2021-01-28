@@ -14,6 +14,8 @@ namespace strata::loggers
 {
 QtMessageHandler g_qtLogCallback = nullptr;
 
+// this __attribute__ flag is used for removing "format string is not a string literal" warning
+__attribute__((__format__ (__printf__, 3, 0)))
 void c4LogCallback(C4LogDomain domain, C4LogLevel level, const char *fmt, va_list args)
 {
     if (g_qtLogCallback == nullptr) {
