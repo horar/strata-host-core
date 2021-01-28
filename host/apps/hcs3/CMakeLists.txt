@@ -91,6 +91,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     strata::CouchbaseLiteCPP
     strata::QtLogger
     strata::CbLogger
+    strata::SGVersionUtils
 )
 
 target_include_directories(${PROJECT_NAME}Lib
