@@ -190,7 +190,7 @@
                     var suggestions = []
                     for( var i = 0; i < qtQuick.length; i++){
                         suggestions.push({
-                            label: qtQuick[i].prefix,
+                            label: {name: qtQuick[i].prefix},
                             kind: monaco.languages.CompletionItemKind.Snippet,
                             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                             insertText: qtQuick[i].body,
@@ -210,6 +210,7 @@
                     for (var x = 0; x < BasicItemProperties.length; x++){
                         suggestions.push({
                             label: BasicItemProperties[x],
+                            kind:  monaco.languages.CompletionItemKind.Property,
                             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                             insertText: BasicItemProperties[x]
                         })
@@ -223,7 +224,10 @@
                 language: 'qml',
                 theme: "qmlTheme",
                 insertSpaces: true,
-                detectIndentation: false
+                detectIndentation: true,
+                tabCompletion: "on",
+                formatOnPaste: true,
+
             });
 
             function getValue() {
