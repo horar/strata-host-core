@@ -21,8 +21,6 @@ Drawer {
     width: 400
     modal: true
 
-    //// todo: loader that only loads below when visible
-
     background: Rectangle {
         color: Theme.palette.lightGray
     }
