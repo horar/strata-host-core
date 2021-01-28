@@ -1,5 +1,6 @@
 #pragma once
 
+#include <StrataRPC/Message.h>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
@@ -13,8 +14,13 @@ struct Request {
      * @param [in] payload QJsonObject of the request payload.
      * @param [in] messageId request id.
      */
-    Request(QString method, QJsonObject payload, int messageId)
-        : method(method), payload(payload), messageId(messageId)
+    Request(QString method, QJsonObject payload, int messageId,
+            StrataHandler errorCallback = nullptr, StrataHandler resultCallback = nullptr)
+        : method_(method),
+          payload_(payload),
+          messageId_(messageId),
+          errorCallback_(errorCallback),
+          resultCallback_(resultCallback)
     {
     }
 
@@ -26,13 +32,15 @@ struct Request {
     QByteArray toJson()
     {
         QJsonObject jsonObject{
-            {"jsonrpc", "2.0"}, {"method", method}, {"params", payload}, {"id", messageId}};
+            {"jsonrpc", "2.0"}, {"method", method_}, {"params", payload_}, {"id", messageId_}};
         return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);
     }
 
-    QString method;
-    QJsonObject payload;
-    int messageId;
+    QString method_;
+    QJsonObject payload_;
+    int messageId_;
+    StrataHandler errorCallback_;
+    StrataHandler resultCallback_;
 };
 
 }  // namespace strata::strataRPC

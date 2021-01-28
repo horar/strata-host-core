@@ -1,5 +1,7 @@
 #include "RequestsControllerTest.h"
 
+#include <StrataRPC/Message.h>
+
 void RequestsControllerTest::testAddRequest()
 {
     strata::strataRPC::RequestsController rc;
@@ -70,4 +72,105 @@ void RequestsControllerTest::testGetMethodName()
     QVERIFY_(rc.removePendingRequest(1));
     QVERIFY_(false == rc.isPendingRequest(1));
     QCOMPARE_(rc.getMethodName(1), "");
+}
+
+void RequestsControllerTest::testRequestCallbacks()
+{
+    strata::strataRPC::Request myRequest("test_handler", QJsonObject({{}}), 0);
+
+    if (myRequest.resultCallback_) {
+        qDebug() << "there is result callback";
+    } else {
+        qDebug() << "no result callback";
+    }
+
+    if (myRequest.errorCallback_) {
+        qDebug() << "there is error callback";
+    } else {
+        qDebug() << "no error callback";
+    }
+
+    myRequest.resultCallback_ = [this](const strata::strataRPC::Message &message) {
+        qDebug() << "in result callback";
+    };
+
+    myRequest.errorCallback_ = [this](const strata::strataRPC::Message &message) {
+        qDebug() << "in error callback";
+    };
+
+    if (myRequest.resultCallback_) {
+        qDebug() << "there is result callback";
+        myRequest.resultCallback_(strata::strataRPC::Message());
+    } else {
+        qDebug() << "no result callback";
+    }
+
+    if (myRequest.errorCallback_) {
+        qDebug() << "there is error callback";
+        myRequest.errorCallback_(strata::strataRPC::Message());
+    } else {
+        qDebug() << "no error callback";
+    }
+
+    ///////////////////////////////////////
+    
+    strata::strataRPC::Request request_2(
+        "test_1", QJsonObject({{}}), 1,
+        [this](const strata::strataRPC::Message &message) { qDebug() << "in error callback 2"; },
+        [this](const strata::strataRPC::Message &message) { qDebug() << "in res callback 2"; });
+
+    qDebug() << "request_2";
+    if (request_2.resultCallback_) {
+        qDebug() << "there is result callback";
+        request_2.resultCallback_(strata::strataRPC::Message());
+    } else {
+        qDebug() << "no result callback";
+    }
+
+    if (request_2.errorCallback_) {
+        qDebug() << "there is error callback";
+        request_2.errorCallback_(strata::strataRPC::Message());
+    } else {
+        qDebug() << "no error callback";
+    }
+
+    qDebug() << "request_3";
+    strata::strataRPC::Request request_3(
+        "test_1", QJsonObject({{}}), 1,
+        nullptr,
+        [this](const strata::strataRPC::Message &message) { qDebug() << "in res callback 3"; });
+
+    if (request_3.resultCallback_) {
+        qDebug() << "there is result callback";
+        request_3.resultCallback_(strata::strataRPC::Message());
+    } else {
+        qDebug() << "no result callback";
+    }
+
+    if (request_3.errorCallback_) {
+        qDebug() << "there is error callback";
+        request_3.errorCallback_(strata::strataRPC::Message());
+    } else {
+        qDebug() << "no error callback";
+    }
+
+    qDebug() << "request_4";
+    strata::strataRPC::Request request_4(
+        "test_1", QJsonObject({{}}), 1,
+        [this](const strata::strataRPC::Message &message) { qDebug() << "in error callback 4"; },
+        nullptr);
+
+    if (request_4.resultCallback_) {
+        qDebug() << "there is result callback";
+        request_4.resultCallback_(strata::strataRPC::Message());
+    } else {
+        qDebug() << "no result callback";
+    }
+
+    if (request_4.errorCallback_) {
+        qDebug() << "there is error callback";
+        request_4.errorCallback_(strata::strataRPC::Message());
+    } else {
+        qDebug() << "no error callback";
+    }
 }

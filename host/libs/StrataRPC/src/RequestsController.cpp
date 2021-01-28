@@ -13,7 +13,9 @@ RequestsController::~RequestsController()
 }
 
 std::pair<int, QByteArray> RequestsController::addNewRequest(const QString &method,
-                                                             const QJsonObject &payload)
+                                                             const QJsonObject &payload,
+                                                             StrataHandler errorCallback,
+                                                             StrataHandler resultCallback)
 {
     ++currentRequestId_;
 
@@ -26,8 +28,9 @@ std::pair<int, QByteArray> RequestsController::addNewRequest(const QString &meth
     qCDebug(logCategoryRequestsController)
         << "Building request. id:" << currentRequestId_ << "method:" << method;
 
-    const auto request =
-        requestsList_.insert(currentRequestId_, Request(method, payload, currentRequestId_));
+    const auto request = requestsList_.insert(
+        currentRequestId_,
+        Request(method, payload, currentRequestId_, errorCallback, resultCallback));
 
     return {currentRequestId_, request.value().toJson()};
 }
@@ -56,6 +59,6 @@ QString RequestsController::getMethodName(int id)
         return "";
     }
     qCDebug(logCategoryRequestsController)
-        << "request id" << it->messageId << "method" << it->method;
-    return it->method;
+        << "request id" << it->messageId_ << "method" << it->method_;
+    return it->method_;
 }

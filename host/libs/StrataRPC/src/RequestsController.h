@@ -24,13 +24,17 @@ public:
     ~RequestsController();
 
     /**
-     * Adds a new request.
+     * Adds a new request with callbacks to handle it's response.
      * @param [in] method request handler name.
      * @param [in] payload QJsonObject of the request payload.
+     * @param [in] errorCallback lambda to handle error response. defaults to nullptr.
+     * @param [in] resultCallback lambda to handle result response.  defaults to nullptr.
      * @return QByteArray of json formatted request.
      */
     [[nodiscard]] std::pair<int, QByteArray> addNewRequest(const QString &method,
-                                                           const QJsonObject &payload);
+                                                           const QJsonObject &payload,
+                                                           StrataHandler errorCallback = nullptr,
+                                                           StrataHandler resultCallback = nullptr);
 
     /**
      * Checks if there is a pending request with a specific id
