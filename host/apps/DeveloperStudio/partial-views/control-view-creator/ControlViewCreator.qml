@@ -336,9 +336,9 @@ Rectangle {
         parent: mainWindow.contentItem
 
         titleText: "Stopping build due to unsaved changes in the project"
-        popupText: "Some files have unsaved changes, would you like to save all changes or build without saving?"
+        popupText: "Some files have unsaved changes, would you like to save all changes before build or build without saving?"
 
-        acceptButtonText: "Save All"
+        acceptButtonText: "Save All and Build"
         closeButtonText: "Build Without Saving"
 
         onPopupClosed: {
