@@ -6,8 +6,8 @@
 #
 
 macro(generate_app_build_replicator_credentials)
-    set(options USERNAME PASSWORD)
-    cmake_parse_arguments(local "" "${options}" "" ${ARGN})
+    set(credentials USERNAME PASSWORD)
+    cmake_parse_arguments(local "" ${credentials} "" ${ARGN})
 
     if (NOT TARGET ${PROJECT_NAME}_replicator_credentials)
         message(STATUS "Creating replicator credentials target for '${PROJECT_NAME}'...")
@@ -35,6 +35,7 @@ macro(generate_app_build_replicator_credentials)
                 -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
                 -DUSERNAME=${local_USERNAME}
                 -DPASSWORD=${local_PASSWORD}
+        
                 -P ${CMAKE_SOURCE_DIR}/CMake/Modules/ReplicatorCredentials-builder.cmake
             COMMENT "Generating build replicator credentials for '${PROJECT_NAME}'..." VERBATIM
         )

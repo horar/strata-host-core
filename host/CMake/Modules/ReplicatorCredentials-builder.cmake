@@ -1,14 +1,8 @@
 # create a build replucator credentials
 
-if("${BUILD_TYPE}" STREQUAL "Release")
-    string(APPEND username ${USERNAME})
-    string(APPEND password ${PASSWORD})
-    message(STATUS "Replicator username: ${username} password: ${password} for ${PROJECT_NAME}")
-elseif("${BUILD_TYPE}" STREQUAL "Debug")
-    string(APPEND username "")
-    string(APPEND password "")
-    message(STATUS "Replicator username: ${username} password: ${password} for ${PROJECT_NAME}")
-endif()
+string(APPEND username ${USERNAME})
+string(APPEND password ${PASSWORD})
+message(STATUS "Replicator username: "${username}" password: "${password}" for ${PROJECT_NAME}")
 
 message(STATUS "Processing build replicator credentials info...")
 file(READ ${INPUT_DIR}/ReplicatorCredentials.cpp.in rcFile_temporary)
