@@ -6,6 +6,8 @@
 #include "Dispatcher.h"
 #include "Database.h"
 
+#include "SGVersionUtils.h"
+
 #include "logging/LoggingQtCategories.h"
 
 #include <QStandardPaths>
@@ -99,11 +101,11 @@ QPair<QUrl,QString> StorageManager::getLatestFirmware(const QString &classId, co
     PlatformDocument *platfDoc = fetchPlatformDoc(classId);
     if (platfDoc) {
         QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
-        QString timestamp;  // timestamp is empty
+        QString version;
         for (const auto &item : firmwareList) {
             if (item.controllerClassDevice == controllerClassDevice) {
-                if (item.timestamp > timestamp) {  // empty string is "less" than non-empty
-                    timestamp = item.timestamp;
+                if (version.isEmpty() || SGVersionUtils::lessThan(version, item.version)) {
+                    version = item.version;
                     uri = item.partialUri;
                     md5 = item.md5;
                 }
