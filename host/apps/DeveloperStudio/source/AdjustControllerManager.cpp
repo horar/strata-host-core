@@ -158,7 +158,7 @@ void AdjustControllerManager::notifyFailure(int deviceId, const QJsonObject &pay
 
 float AdjustControllerManager::resolveOverallProgress(AdjustControllerManager::ProgressState state, float stateProgress)
 {
-    int overallProgress = 0;
+    float overallProgress = 0.0;
 
     switch(state) {
     case ProgressState::DownloadState:
@@ -177,11 +177,11 @@ float AdjustControllerManager::resolveOverallProgress(AdjustControllerManager::P
         overallProgress = downloadStateRange_ + clearDataStateRange_ + prepareStateRange_ + programStateRange_ + setDataStateRange_ * stateProgress;
         break;
     case ProgressState::DoneState:
-        overallProgress = 100;
+        overallProgress = 1.0;
         break;
     default:
         qCWarning(logCategoryStrataDevStudio) << "unknown progress state";
     }
 
-    return overallProgress/(float)100;
+    return overallProgress;
 }

@@ -40,11 +40,12 @@ private:
     QList<int> requestedDeviceIds_;
     QHash<QString, int> jobIdHash_;
 
-    const int downloadStateRange_ = 10;
-    const int clearDataStateRange_ = 2;
-    const int prepareStateRange_ = 5;
-    const int programStateRange_ = 80;
-    const int setDataStateRange_ = 2;
+    /*0.99 together*/
+    const float downloadStateRange_ = 0.10;
+    const float clearDataStateRange_ = 0.02;
+    const float prepareStateRange_ = 0.05;
+    const float programStateRange_ = 0.80;
+    const float setDataStateRange_ = 0.02;
 
     void notifyProgressChange(int deviceId, ProgressState state, float stateProgress);
     void notifyFailure(int deviceId, const QJsonObject &payload);
