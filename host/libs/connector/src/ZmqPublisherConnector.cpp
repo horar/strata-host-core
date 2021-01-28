@@ -14,7 +14,7 @@ ZmqPublisherConnector::~ZmqPublisherConnector()
 
 bool ZmqPublisherConnector::open(const std::string& ip_address)
 {
-    if (false == socketOpen()) {
+    if (false == socketAndContextOpen()) {
         qCCritical(logCategoryZmqPublisherConnector) << "Unable to open socket";
         return false;
     }
@@ -31,7 +31,7 @@ bool ZmqPublisherConnector::open(const std::string& ip_address)
 
     qCCritical(logCategoryZmqPublisherConnector).nospace()
             << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
-
+    close();
     return false;
 }
 
@@ -43,7 +43,7 @@ bool ZmqPublisherConnector::read(std::string&)
 
 bool ZmqPublisherConnector::send(const std::string& message)
 {
-    if (false == socketConnected()) {
+    if (false == socketValid()) {
         qCCritical(logCategoryZmqPublisherConnector) << "Unable to send messages, socket not open";
         return false;
     }

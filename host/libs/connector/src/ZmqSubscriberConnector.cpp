@@ -14,7 +14,7 @@ ZmqSubscriberConnector::~ZmqSubscriberConnector()
 
 bool ZmqSubscriberConnector::open(const std::string& ip_address)
 {
-    if (false == socketOpen()) {
+    if (false == socketAndContextOpen()) {
         qCCritical(logCategoryZmqSubscriberConnector) << "Unable to open socket";
         return false;
     }
@@ -32,7 +32,7 @@ bool ZmqSubscriberConnector::open(const std::string& ip_address)
 
     qCCritical(logCategoryZmqSubscriberConnector).nospace()
             << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
-
+    close();
     return false;
 }
 
@@ -44,7 +44,7 @@ bool ZmqSubscriberConnector::send(const std::string&)
 
 bool ZmqSubscriberConnector::read(std::string& message)
 {
-    if (false == socketConnected()) {
+    if (false == socketValid()) {
         qCCritical(logCategoryZmqSubscriberConnector) << "Unable to read messages, socket not open";
         return false;
     }
@@ -72,7 +72,7 @@ bool ZmqSubscriberConnector::read(std::string& message)
 
 bool ZmqSubscriberConnector::blockingRead(std::string& message)
 {
-    if (false == socketConnected()) {
+    if (false == socketValid()) {
         qCCritical(logCategoryZmqSubscriberConnector) << "Unable to blocking read messages, socket not open";
         return false;
     }
@@ -84,7 +84,11 @@ bool ZmqSubscriberConnector::blockingRead(std::string& message)
                 << "Rx'ed blocking message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
         return true;
     } else {
-        qCWarning(logCategoryZmqSubscriberConnector) << "Failed to read blocking messages";
+        if(false == socketValid()) {
+            qCDebug(logCategoryZmqSubscriberConnector) << "Context was terminated, blocking read was interupted";
+        } else {
+            qCWarning(logCategoryZmqSubscriberConnector) << "Failed to blocking read messages";
+        }
     }
 
     return false;

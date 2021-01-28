@@ -25,21 +25,6 @@ std::string Connector::getDealerID() const
     return dealer_id_;
 }
 
-void Connector::setPlatformUUID(const std::string& id)
-{
-    platform_uuid_ = id;
-}
-
-std::string Connector::getPlatformUUID() const
-{
-    return platform_uuid_;
-}
-
-bool Connector::isStrataPlatform() const
-{
-    return strata_platform_connected_;
-}
-
 void Connector::setConnectionState(bool connection_state)
 {
     connection_state_ = connection_state;
@@ -48,11 +33,6 @@ void Connector::setConnectionState(bool connection_state)
 bool Connector::isConnected() const
 {
     return connection_state_;
-}
-
-void Connector::setPlatformConnected(bool state)
-{
-    strata_platform_connected_ = state;
 }
 
 std::ostream& operator<<(std::ostream& stream, const Connector& c)

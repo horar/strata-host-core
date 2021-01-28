@@ -14,7 +14,7 @@ ZmqRequestConnector::~ZmqRequestConnector()
 
 bool ZmqRequestConnector::open(const std::string& ip_address)
 {
-    if (false == socketOpen()) {
+    if (false == socketAndContextOpen()) {
         qCCritical(logCategoryZmqRequestConnector) << "Unable to open socket";
         return false;
     }
@@ -31,7 +31,7 @@ bool ZmqRequestConnector::open(const std::string& ip_address)
 
     qCCritical(logCategoryZmqRequestConnector).nospace()
             << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
-
+    close();
     return false;
 }
 

@@ -13,7 +13,7 @@ ZmqRouterConnector::~ZmqRouterConnector()
 
 bool ZmqRouterConnector::open(const std::string& ip_address)
 {
-    if (false == socketOpen()) {
+    if (false == socketAndContextOpen()) {
         qCCritical(logCategoryZmqRouterConnector) << "Unable to open socket";
         return false;
     }
@@ -30,13 +30,13 @@ bool ZmqRouterConnector::open(const std::string& ip_address)
 
     qCCritical(logCategoryZmqRouterConnector).nospace()
             << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
-
+    close();
     return false;
 }
 
 bool ZmqRouterConnector::read(std::string& message)
 {
-    if (false == socketConnected()) {
+    if (false == socketValid()) {
         qCCritical(logCategoryZmqRouterConnector) << "Unable to read messages, socket not open";
         return false;
     }
@@ -64,7 +64,7 @@ bool ZmqRouterConnector::read(std::string& message)
 
 bool ZmqRouterConnector::blockingRead(std::string& message)
 {
-    if (false == socketConnected()) {
+    if (false == socketValid()) {
         qCCritical(logCategoryZmqRouterConnector) << "Unable to blocking read messages, socket not open";
         return false;
     }
@@ -76,7 +76,11 @@ bool ZmqRouterConnector::blockingRead(std::string& message)
                 << "Rx'ed blocking message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
         return true;
     } else {
-        qCWarning(logCategoryZmqRouterConnector) << "Failed to read blocking messages";
+        if(false == socketValid()) {
+            qCDebug(logCategoryZmqRouterConnector) << "Context was terminated, blocking read was interupted";
+        } else {
+            qCWarning(logCategoryZmqRouterConnector) << "Failed to blocking read messages";
+        }
     }
 
     return false;
@@ -84,7 +88,7 @@ bool ZmqRouterConnector::blockingRead(std::string& message)
 
 bool ZmqRouterConnector::send(const std::string& message)
 {
-    if (false == socketConnected()) {
+    if (false == socketValid()) {
         qCCritical(logCategoryZmqRouterConnector) << "Unable to send messages, socket not open";
         return false;
     }

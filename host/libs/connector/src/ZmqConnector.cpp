@@ -29,42 +29,39 @@ bool ZmqConnector::open(const std::string&)
 
 bool ZmqConnector::close()
 {
-    if (false == socketConnected()) {
-        qCWarning(logCategoryZmqConnector) << "Unable to close socket, socket not open";
+    if (false == contextValid()) {
         return false;
     }
+
+    // this boolean MUST be set first, the close operations first emit the interrupt
+    // and THEN they invalidate themselves, which has issues in multithreaded operations
+    // because they still can be considered valid - for which we need this boolean
+    setConnectionState(false);
 
     socketClose();
-    setConnectionState(false);
+    contextClose();
+
+    // Note: this function can (and will) be called from other threads
+    // it will interrupt any ongoing sending or receiving of messages
+    // or any other related activity which will throw ETERM error
+
     return true;
 }
 
-bool ZmqConnector::closeContext()
+bool ZmqConnector::send(const std::string& message)
 {
-    if (false == contextValid()) {
-        qCWarning(logCategoryZmqConnector) << "Unable to close context, context not valid";
+    if (false == socketValid()) {
+        qCCritical(logCategoryZmqConnector) << "Unable to send messages, socket not open";
         return false;
     }
 
-    contextClose();
-    return true;
-}
-
-connector_handle_t ZmqConnector::getFileDescriptor()
-{
-#if defined(_WIN32)
-        connector_handle_t defaultHandle = 0;
-#else
-        connector_handle_t defaultHandle = -1;
-#endif
-
-    if (false == socketConnected()) {
-        qCCritical(logCategoryZmqConnector) << "Unable to acquire File Descriptor handle, socket not open";
-        return defaultHandle;
+    if (false == socketSend(message)) {
+        qCWarning(logCategoryZmqConnector) << "Failed to send message:" << message.c_str();
+        return false;
     }
 
-    connector_handle_t server_socket_file_descriptor = socketGetOpt(zmq::sockopt::fd, defaultHandle);
-    return server_socket_file_descriptor;
+    qCDebug(logCategoryZmqConnector) << "Tx'ed message:" << message.c_str();
+    return true;
 }
 
 bool ZmqConnector::read(std::string& message, ReadMode read_mode)
@@ -83,30 +80,14 @@ bool ZmqConnector::read(std::string& message, ReadMode read_mode)
             break;
         default:
             qCCritical(logCategoryZmqConnector) << "Invalid read mode, read failed";
-            break;           
+            break;
     }
-    return false;
-}
-
-bool ZmqConnector::blockingRead(std::string& message)
-{
-    if (false == socketConnected()) {
-        qCCritical(logCategoryZmqConnector) << "Unable to blocking read messages, socket not open";
-        return false;
-    }
-
-    if (socketRecv(message)) {
-        qCDebug(logCategoryZmqConnector) << "Rx'ed blocking message:" << message.c_str();
-        return true;
-    }
-
-    qCWarning(logCategoryZmqConnector) << "Failed to read blocking messages";
     return false;
 }
 
 bool ZmqConnector::read(std::string& message)
 {
-    if (false == socketConnected()) {
+    if (false == socketValid()) {
         qCCritical(logCategoryZmqConnector) << "Unable to read messages, socket not open";
         return false;
     }
@@ -129,20 +110,53 @@ bool ZmqConnector::read(std::string& message)
     return false;
 }
 
-bool ZmqConnector::send(const std::string& message)
+bool ZmqConnector::blockingRead(std::string& message)
 {
-    if (false == socketConnected()) {
-        qCCritical(logCategoryZmqConnector) << "Unable to send messages, socket not open";
+    if (false == socketValid()) {
+        qCCritical(logCategoryZmqConnector) << "Unable to blocking read messages, socket not open";
         return false;
     }
 
-    if (false == socketSend(message)) {
-        qCWarning(logCategoryZmqConnector) << "Failed to send message:" << message.c_str();
-        return false;
+    if (socketRecv(message)) {
+        qCDebug(logCategoryZmqConnector) << "Rx'ed blocking message:" << message.c_str();
+        return true;
     }
 
-    qCDebug(logCategoryZmqConnector) << "Tx'ed message:" << message.c_str();
-    return true;
+    if(false == socketValid()) {
+        qCDebug(logCategoryZmqConnector) << "Context was terminated, blocking read was interupted";
+    } else {
+        qCWarning(logCategoryZmqConnector) << "Failed to blocking read messages";
+    }
+
+    return false;
+}
+
+
+connector_handle_t ZmqConnector::getFileDescriptor()
+{
+#if defined(_WIN32)
+        connector_handle_t defaultHandle = 0;
+#else
+        connector_handle_t defaultHandle = -1;
+#endif
+
+    if (false == socketValid()) {
+        qCCritical(logCategoryZmqConnector) << "Unable to acquire File Descriptor handle, socket not open";
+        return defaultHandle;
+    }
+
+    connector_handle_t server_socket_file_descriptor = socketGetOpt(zmq::sockopt::fd, defaultHandle);
+    return server_socket_file_descriptor;
+}
+
+bool ZmqConnector::socketValid() const
+{
+    return (isConnected() && (nullptr != socket_) && socket_->connected());
+}
+
+bool ZmqConnector::contextValid() const
+{
+    return ((nullptr != context_) && (nullptr != context_->handle()));
 }
 
 // Receive 0MQ string from socket and convert to std::string
@@ -156,8 +170,13 @@ bool ZmqConnector::socketRecv(std::string & ostring, zmq::recv_flags flags)
             return true;
         }
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to receive message (flags: " << (int)flags << "), reason: " << zErr.what();
+        if (zErr.num() == ETERM) {
+            qCInfo(logCategoryZmqConnector).nospace()
+                    << "Receive of messages was interrupted (flags: " << (int)flags << "), reason: " << zErr.what();
+        } else {
+            qCCritical(logCategoryZmqConnector).nospace()
+                    << "Unable to receive message (flags: " << (int)flags << "), reason: " << zErr.what();
+        }
     } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to receive message (flags: " << (int)flags << "), unexpected reason: " << sErr.what();
@@ -177,9 +196,15 @@ bool ZmqConnector::socketSend(const std::string & istring, zmq::send_flags flags
         const auto ret = socket_->send (message, flags);
         return (ret != 0);
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to send message '" << istring.c_str()
-                << "' (flags: " << (int)flags << "), reason: " << zErr.what();
+        if (zErr.num() == ETERM) {
+            qCInfo(logCategoryZmqConnector).nospace()
+                    << "Sending of message was interrupted '" << istring.c_str()
+                    << "' (flags: " << (int)flags << "), reason: " << zErr.what();
+        } else {
+            qCCritical(logCategoryZmqConnector).nospace()
+                    << "Unable to send message '" << istring.c_str()
+                    << "' (flags: " << (int)flags << "), reason: " << zErr.what();
+        }
     } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to send message '" << istring.c_str()
@@ -201,8 +226,14 @@ bool ZmqConnector::socketSendMore(const std::string & istring)
         const auto ret = socket_->send (message, zmq::send_flags::sndmore);
         return (ret != 0);
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to send multipart message '" << istring.c_str() << "', reason: " << zErr.what();
+        if (zErr.num() == ETERM) {
+            qCInfo(logCategoryZmqConnector).nospace()
+                    << "Sending of multipart message was interrupted '" << istring.c_str() << "', reason: " << zErr.what();
+        } else {
+            qCCritical(logCategoryZmqConnector).nospace()
+                    << "Unable to send multipart message '" << istring.c_str() << "', reason: " << zErr.what();
+        }
+
     } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to send multipart message '" << istring.c_str() << "', unexpected reason: " << sErr.what();
@@ -297,15 +328,20 @@ bool ZmqConnector::socketPoll(zmq::pollitem_t *items)
     return false;
 }
 
-bool ZmqConnector::socketOpen()
+bool ZmqConnector::socketAndContextOpen()
 {
-    if (socketConnected() || contextValid()) {
+    if (isConnected()) {
         return false;
     }
 
     try {
+        // erase them in this order
+        socket_.release();
+        context_.release();
+        // will init socket and context
         context_.reset(new zmq::context_t());
         socket_.reset(new zmq::socket_t(*context_, socketType));
+        qCDebug(logCategoryZmqConnector) << "Socket and context was open";
         return true;
     } catch (const zmq::error_t& zErr) {
         qCCritical(logCategoryZmqConnector).nospace() << "Unable to open socket, reason: " << zErr.what();
@@ -316,30 +352,26 @@ bool ZmqConnector::socketOpen()
     }
 
     // release these objects in case it failed to allocate them
-    context_.release();
     socket_.release();
+    context_.release();
     return false;
 }
 
 void ZmqConnector::socketClose()
 {
-    // will assert if it fails, no need to return anything
-    socket_->close();
-}
-
-bool ZmqConnector::socketConnected() const
-{
-    return ((nullptr != socket_) && socket_->connected() && isConnected());
+    // will not close assigned context
+    if (nullptr != socket_) {
+        socket_->close();   // will assert if it fails
+    }
 }
 
 void ZmqConnector::contextClose()
 {
-    context_->close();
-}
-
-bool ZmqConnector::contextValid() const
-{
-    return ((nullptr != context_) && (nullptr != context_->handle()));
+    // will also close all sockets that use this context and if there was
+    // ongoing read/write operation, it will terminate with: 'Context was terminated'
+    if (nullptr != context_) {
+        context_->close();  // will assert if it fails
+    }
 }
 
 }  // namespace strata::connector

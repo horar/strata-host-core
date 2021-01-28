@@ -14,19 +14,15 @@ ZmqDealerConnector::~ZmqDealerConnector()
 
 bool ZmqDealerConnector::open(const std::string& ip_address)
 {
-    if (false == socketOpen()) {
+    if (false == socketAndContextOpen()) {
         qCCritical(logCategoryZmqDealerConnector) << "Unable to open socket";
         return false;
     }
 
-    const std::string& id = getDealerID();
-    if ((false == id.empty()) && socketSetOptLegacy(ZMQ_IDENTITY, id.c_str(), id.length())) {
-        qCCritical(logCategoryZmqDealerConnector) << "Unable to set ZMQ_IDENTITY: " << id.c_str();
-        return false;
-    }
-
     int linger = 0;
-    if (socketSetOptInt(zmq::sockopt::linger, linger) &&
+    const std::string& id = getDealerID();
+    if ((id.empty() || socketSetOptLegacy(ZMQ_IDENTITY, id.c_str(), id.length())) &&
+        socketSetOptInt(zmq::sockopt::linger, linger) &&
         socketConnect(ip_address)) {
         setConnectionState(true);
         qCInfo(logCategoryZmqDealerConnector).nospace()
@@ -37,7 +33,7 @@ bool ZmqDealerConnector::open(const std::string& ip_address)
 
     qCCritical(logCategoryZmqDealerConnector).nospace()
             << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
-
+    close();
     return false;
 }
 

@@ -19,23 +19,25 @@ public:
 
     bool open(const std::string& ip_address) override;
     bool close() override;
-    bool closeContext() override;
 
-    // non-blocking calls
+    // non-blocking send
     bool send(const std::string& message) override;
+
+    // choose blocking or non-blocking read mode
+    bool read(std::string& notification, ReadMode read_mode) override;
+
+    // non-blocking read
     bool read(std::string& notification) override;
 
-    //blocking read
-    bool read(std::string& notification, ReadMode read_mode) override;
+    // blocking read
     bool blockingRead(std::string& notification) override;
 
     connector_handle_t getFileDescriptor() override;
-
-private:
-    void contextClose();
+    bool socketValid() const;
     bool contextValid() const;
 
-    std::unique_ptr<zmq::context_t> context_;
+private:
+    std::unique_ptr<zmq::context_t> context_; // there is 1-N relationship between context-socket
     const int socketType;
 
 protected:
@@ -52,12 +54,10 @@ protected:
     bool socketConnect(const std::string & address);
     bool socketBind(const std::string & address);
     bool socketPoll(zmq::pollitem_t *items);
-    bool socketOpen();
+    bool socketAndContextOpen();
     void socketClose();
-    bool socketConnected() const;
+    void contextClose();
 
-    // timeout for request socket in milli seconds
-    const int32_t REQUEST_SOCKET_TIMEOUT{5000};
     // timeout for polling a socket in milliseconds
     const int32_t SOCKET_POLLING_TIMEOUT{10};
 

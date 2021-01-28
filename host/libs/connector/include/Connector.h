@@ -17,12 +17,10 @@
  * ============
  *
  * linconnectors is minimalistic library written in cpp. Libconnectors uses
- * "libserialport" and "zeroMQ" for serial and socket I/O operation and takes
- * care of the OS-specific details when writing software that uses sockets and
- * serial ports.
+ * "zeroMQ" for serial and socket I/O operation and takes OS-specific details
+ * when writing software that uses sockets and serial ports.
  *
- * The library was conceived by Ian Cain, designed and maintained by
- * Ian Cain and Prasanth Vivek.
+ * The library was conceived by Ian Cain and Prasanth Vivek.
  *
  * API information
  * ===============
@@ -47,7 +45,6 @@
  * - send() (writing data to serial port/sockets) (serial/socket)
  * - getFileDescriptor() (get file descriptor information of serial port/sockets) (serial/socket)
  * - getDealerID() (gets the dealer id of the dealer sockets) (socket)
- * - getPlatformUUID() (gets the platform uuid from the serial port) (serial)
  *
  * Debugging
  * ---------
@@ -71,58 +68,11 @@
  * Other operations like open(),close() and send() are stright forward and same like LINUX
  * and MAC OS. getFileDescriptor() returns the file descriptor of the ZMQ PULL socket.
  *
- * KNOWN BUGS/HACKS
- * ================
- *
- * This section mentions about the technical bugs and our work around in detail
- *
- * 1) PUSH PULL socket for windows (Techinal Hardship)
- *		In Windows, libconnectors uses PUSH-PULL socket for reading data from the serial device.
- * libconnectors runs a thread that reads from the serial port and writes to a ZMQ PUSH socket.
- * Libconnectors read() gets the platform data by reading from the corressponding PULL socket.
- * This method is used to support the eventing systems like libevent.
- *
- * 2) Serial open() returns true only on reading the platform uuid from platform (HACK)
- *		In order to automatically detect the serial platform board, libconnectors uses libserialport
- *to enumerate the ports. Then it asks for platform UUID from the list. i.e) after opening a port
- *from the list, libconnectors send the "platform id request message" to the platform. Then it reads
- *twice from the platform with 50m sec delay in a loop with 5 iterations(This iteration is used
- *because some platform may take some time to load the software stack after power (for example:
- *USB-PD-Load board)).
- *
- * 3) libserialport sp_wait not working in windows (Techinal Hardship/HACK)
- *		sp_wait() waits for completion of event (receive) and returns '0' or SP_OK on success.
- * It uses WaitForMultipleObjects() in windows. But in windows, sp_wait always returns '0' or
- * SP_OK instead of waiting for the read event. This increases the CPU usage in windows since we use
- *a thread to read from platform. Currently libserialport has a workaround by sleeping for 100ms
- *before trying to read from the serial port.
- *
- * 4) ST-Eval board disconnect not detected by libserialport read in windows (Techinal
- *Hardship/HACK) Currently the platform disconnect is detected by the return value of read(). If
- *read returns a negative number, then the serial device is no more connected. But ST-EVAL boards
- *(ST32L476VG in particular) on disconnecting returns '0'. This behaviour hinders our platform
- *disconnect detection. Currently the work around for this specific issue is writing to the platform
- *after 10 consecutive '0' return from read(). This helps in detecting the ST-board disconnect. This
- *issue is not noticed in other boards (Orion USB-PD, STM-USB-PD, STM-USB_LOAD_BOARD) and only
- *specific to VORTEX_FOUNTAIN project that uses ST Eval board.
- *
- * 5) Serial messaged overlap in windows (Known Bug/HACK)
- *		In windows serial read some times produces overlapping of two messages when platform writes
- *data at high rate (10HZ). One example of the overlapped message read in windows is,
- *
- * {"notification":{"value":"pi_stats","payload":{"speed_target":1500,"current_speed":1500{"notification":{"value":
- * "pi_stats","payload":{"speed_target":1500,"current_speed":1520,"error":-20,"sum":-4.00e-4,"duty_now":0.19,"mode":"manual"}}}
- *
- * The above example contains two messages overlapped over each other. This overlapping happens
- * at a sleep of 200ms. After reducing the sleep time to 50ms, there is no overlapping. The average
- *CPU usage in windows 7 four core operating at 2.3GHz is 3.
- *
  */
 
 #pragma once
 
 #include <iostream>
-#include <mutex>
 #include <string>
 
 namespace strata::connector {
@@ -145,16 +95,20 @@ public:
     virtual ~Connector() = default;
 
     virtual bool open(const std::string&) = 0;
-    virtual bool closeContext() = 0;
     virtual bool close() = 0;
 
-    // non-blocking calls
+    // non-blocking send
     virtual bool send(const std::string& message) = 0;
+
+    // choose blocking or non-blocking read mode
+    virtual bool read(std::string& notification, ReadMode read_mode) = 0;
+
+    // non-blocking read
     virtual bool read(std::string& notification) = 0;
 
     // blocking read
-    virtual bool read(std::string& notification, ReadMode read_mode) = 0;
     virtual bool blockingRead(std::string& notification) = 0;
+
     virtual connector_handle_t getFileDescriptor() = 0;
 
     /**
@@ -165,30 +119,20 @@ public:
 
     void setDealerID(const std::string& id);
     std::string getDealerID() const;
-    std::string getPlatformUUID() const;
-    bool isStrataPlatform() const;
+
     void setConnectionState(bool connection_state);
     bool isConnected() const;
-    void setPlatformUUID(const std::string& id);
 
     friend std::ostream& operator<<(std::ostream& stream, const Connector& c);
 
     enum class CONNECTOR_TYPE { SERIAL, ROUTER, DEALER, PUBLISHER, SUBSCRIBER, REQUEST, RESPONSE };
     static std::unique_ptr<Connector> getConnector(const CONNECTOR_TYPE type);
 
-protected:
-    void setPlatformConnected(bool state);
-
-protected:
-    std::mutex locker_;
-
 private:
     std::string dealer_id_;
-    std::string platform_uuid_;
     std::string server_;
 
     bool connection_state_ = false;
-    bool strata_platform_connected_ = false;  // used in HCS for checking if platform is available
 };
 
 }  // namespace strata::connector
