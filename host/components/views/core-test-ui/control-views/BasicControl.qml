@@ -24,7 +24,13 @@ Item {
                 result: "Passed!",
             }
         };
-        return sgUserSettings.writeFile(configFileName, config)
+        let result
+        try {
+            result = sgUserSettings.writeFile(configFileName, config)
+        } catch (e) {
+            return false
+        }
+        return result
     }
 
     Component.onCompleted: {
