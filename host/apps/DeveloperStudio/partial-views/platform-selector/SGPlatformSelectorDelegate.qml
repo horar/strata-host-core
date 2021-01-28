@@ -17,6 +17,12 @@ Item {
     id: root
 
     property bool isCurrentItem: false
+    property real filterAndControlWidth: segmentCategoryList.width + delegateRow.spacing + platformControlsColumn.width + delegateRow.anchors.margins + (listview.ScrollBar.vertical.width + 2)
+
+    onFilterAndControlWidthChanged: {
+        // align "Filter by Segment or Category" box to edge of segment/category column in delegates
+       Qt.callLater(platformSelectorListView.setSegmentCategoryWidth, filterAndControlWidth)
+    }
 
     Rectangle {
         width: 50
@@ -36,6 +42,7 @@ Item {
     }
 
     RowLayout {
+        id: delegateRow
         anchors {
             fill: parent
             margins: 20

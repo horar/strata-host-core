@@ -21,6 +21,10 @@ Item {
     property alias model: filteredPlatformSelectorModel
     property alias filterText: filter.text
 
+    function setSegmentCategoryWidth(width) {
+        segmentFilterContainer.Layout.preferredWidth = width
+    }
+
     Component.onCompleted: {
         // Restore previously set filters
         if (Filters.keywordFilter !== "") {
@@ -369,7 +373,7 @@ Item {
                     Rectangle {
                         id: segmentFilterContainer
                         Layout.fillHeight: true
-                        Layout.fillWidth: true
+                        Layout.preferredWidth: segmentCategoryWidth
                         border {
                             width: 1
                             color: "#DDD"
