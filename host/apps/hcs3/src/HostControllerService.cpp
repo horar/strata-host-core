@@ -512,29 +512,66 @@ void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* paylo
 
 void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
 {
+    Q_ASSERT(payload != nullptr);
+
     QByteArray clientId = getSenderClient()->getClientId();
+
+    if (payload->HasMember("device_id") == false) {
+        qCCritical(logCategoryHcs) << "cmd update_firmware - missing device_id attribute";
+        return;
+    }
 
     const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
     if (deviceIdValue.IsInt() == false) {
-        qCWarning(logCategoryHcs) << "device_id attribute has bad format";
+        qCCritical(logCategoryHcs) << "cmd update_firmware - bad format of device_id attribute";
         return;
     }
+
     int deviceId = deviceIdValue.GetInt();
 
-    QString path = QString::fromStdString((*payload)["path"].GetString());
+    QString path;
+    if (payload->HasMember("path")) {
+        const rapidjson::Value& pathValue = (*payload)["path"];
+        path = QString::fromUtf8(pathValue.GetString(), pathValue.GetStringLength());
+    }
+
     if (path.isEmpty()) {
-        qCWarning(logCategoryHcs) << "path attribute is empty";
+        QString errorString("Path attribute is missing or empty");
+        qCWarning(logCategoryHcs).noquote() << "cmd update_firmware -" << errorString;
+
+        QJsonObject payloadBody {
+            { "error_string", errorString },
+            { "device_id", deviceId }
+        };
+        QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
+        clients_.sendMessage(clientId, notification);
+
         return;
     }
+
     QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
 
-    QString firmwareMD5 = QString::fromStdString((*payload)["md5"].GetString());
-    if (firmwareMD5.isEmpty()) {
-        // If 'md5' attribute is empty firmware will be downloaded, but checksum will not be verified.
-        qCWarning(logCategoryHcs) << "md5 attribute is empty";
+    QString firmwareMD5;
+    if (payload->HasMember("md5")) {
+        const rapidjson::Value& md5Value = (*payload)["md5"];
+        firmwareMD5 = QString::fromUtf8(md5Value.GetString(), md5Value.GetStringLength());
     }
 
-    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, QString(), false);
+    if (firmwareMD5.isEmpty()) {
+        // If 'md5' attribute is empty firmware will be downloaded, but checksum will not be verified.
+        qCWarning(logCategoryHcs) << "cmd update_firmware - MD5 attribute is empty";
+    }
+
+    QString jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+
+    QJsonObject payloadBody {
+        { "job_id", jobUuid },
+        { "device_id", deviceId }
+    };
+    QByteArray notification = createHcsNotification(hcsNotificationType::updateFirmware, payloadBody, true);
+    clients_.sendMessage(clientId, notification);
+
+    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, jobUuid, false);
 }
 
 void HostControllerService::onCmdProgramController(const rapidjson::Value *payload)
@@ -542,24 +579,22 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
     Q_ASSERT(payload != nullptr);
 
     QByteArray clientId = getSenderClient()->getClientId();
+
+    if (payload->HasMember("device_id") == false) {
+        qCCritical(logCategoryHcs) << "cmd program_controller - missing device_id attribute";
+        return;
+    }
+
+    const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
+    if (deviceIdValue.IsInt() == false) {
+        qCCritical(logCategoryHcs) << "cmd program_controller - bad format of device_id attribute";
+        return;
+    }
+
+    int deviceId = deviceIdValue.GetInt();
     QString errorString;
-    int deviceId;
-    bool hasDeviceId = false;
 
     do {
-        if (payload->HasMember("device_id") == false) {
-            errorString = "cmd program_controller - missing device_id attribute";
-            break;
-        }
-
-        const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
-        if (deviceIdValue.IsInt() == false) {
-            errorString = "cmd program_controller - bad format of device_id attribute";
-            break;
-        }
-        deviceId = deviceIdValue.GetInt();
-        hasDeviceId = true;
-
         strata::device::DevicePtr device = boardsController_.getDevice(deviceId);
         if (device == nullptr) {
             errorString = "Device ID 0x" + QString::number(static_cast<uint>(deviceId), 16) + " doesn't exist";
@@ -607,14 +642,13 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
     } while (false);
 
     qCWarning(logCategoryHcs).noquote() << errorString;
-    if (hasDeviceId) {
-        QJsonObject payloadBody {
-            { "error_string", errorString },
-            { "device_id", deviceId }
-        };
-        QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
-        clients_.sendMessage(clientId, notification);
-    }
+
+    QJsonObject payloadBody {
+        { "error_string", errorString },
+        { "device_id", deviceId }
+    };
+    QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
+    clients_.sendMessage(clientId, notification);
 }
 
 void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)
@@ -731,6 +765,8 @@ bool HostControllerService::broadcastMessage(const QString& message)
 
 void HostControllerService::handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress)
 {
+    Q_UNUSED(deviceId)
+
     QString jobType;
     switch (progress.operation) {
     case FirmwareUpdateController::UpdateOperation::Download :
@@ -784,34 +820,23 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
         }
     }
 
-    QByteArray notification;
-
-    if (progress.programController) {
-        QJsonObject payload {
-            { "job_id", progress.jobUuid },
-            { "job_type", jobType },
-            { "job_status", jobStatus }
-        };
-        if ((progress.complete >= 0) && (progress.total > 0)) {
-            payload.insert("complete", progress.complete);
-            payload.insert("total", progress.total);
-        }
-        if (progress.status == FirmwareUpdateController::UpdateStatus::Failure ||
-                progress.status == FirmwareUpdateController::UpdateStatus::Unsuccess) {
-            payload.insert("error_string", progress.error);
-        }
-        notification = createHcsNotification(hcsNotificationType::programControllerJob, payload, true);
-    } else {  // old flash firmware notification
-        QJsonObject payload {
-            { "device_id", deviceId },
-            { "operation", jobType },
-            { "status", jobStatus },
-            { "complete", progress.complete },
-            { "total", progress.total },
-            { "error", progress.error }
-        };
-        notification = createHcsNotification(hcsNotificationType::firmwareUpdate, payload, false);
+    QJsonObject payload {
+        { "job_id", progress.jobUuid },
+        { "job_type", jobType },
+        { "job_status", jobStatus }
+    };
+    if ((progress.complete >= 0) && (progress.total > 0)) {
+        payload.insert("complete", progress.complete);
+        payload.insert("total", progress.total);
     }
+    if (progress.status == FirmwareUpdateController::UpdateStatus::Failure ||
+            progress.status == FirmwareUpdateController::UpdateStatus::Unsuccess) {
+        payload.insert("error_string", progress.error);
+    }
+    hcsNotificationType type = (progress.programController)
+            ? hcsNotificationType::programControllerJob
+            : hcsNotificationType::updateFirmwareJob;
+    QByteArray notification = createHcsNotification(type, payload, true);
 
     // This notification must be sent before broadcasting new platforms list.
     // Message order is very important for Developer Studio.
@@ -857,8 +882,11 @@ const char* HostControllerService::hcsNotificationTypeToString(hcsNotificationTy
     case hcsNotificationType::updatesAvailable:
         type = "updates_available";
         break;
-    case hcsNotificationType::firmwareUpdate:
-        type = "firmware_update";
+    case hcsNotificationType::updateFirmware:
+        type = "update_firmware";
+        break;
+   case hcsNotificationType::updateFirmwareJob:
+        type = "update_firmware_job";
         break;
     case hcsNotificationType::programController:
         type = "program_controller";

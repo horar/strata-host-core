@@ -154,7 +154,8 @@ private:
         controlViewDownloadProgress,
         downloadViewFinished,
         updatesAvailable,
-        firmwareUpdate,
+        updateFirmware,
+        updateFirmwareJob,
         programController,
         programControllerJob
     };
