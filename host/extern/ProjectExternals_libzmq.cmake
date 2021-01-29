@@ -54,7 +54,7 @@ if(WIN32)
 elseif(APPLE)
     # TODO: libzmq is shared between DevStudio and Strata. Therefore, this should be dynamic.
     # - During devolopment runtime the dynamic lib should be moved along with bin directory
-    # - Proper handling for RPATH with offline & onlioe MacOS installer.
+    # - Proper handling for RPATH with offline & online MacOS installer.
     # https://jira.onsemi.com/browse/CS-1460
     add_library(zeromq::libzmq STATIC IMPORTED GLOBAL)
 endif()
@@ -74,5 +74,3 @@ else()
     )
 endif()
 add_dependencies(zeromq::libzmq DEPENDS libzmq)
-# TODO: cppzmq (c++ headers only zmq wrapper) & zhelper.hpp are still referenced from our source code
-# https://jira.onsemi.com/browse/CS-1416
