@@ -2,7 +2,6 @@
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.signals 1.0 as SignalsModule
-.import tech.strata.UrlConfig 1.0 as UrlModule
 
 var urlObject = Qt.createQmlObject('import QtQuick 2.0; Text { text: urls.getAuthServer() }', Qt.application, 'urlObject');
 var url = urlObject.text;
