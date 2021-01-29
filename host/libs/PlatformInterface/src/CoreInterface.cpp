@@ -98,13 +98,13 @@ void CoreInterface::notificationsThread()
             continue;
         }
 
-        QString n(message.c_str());
+        QString n(QString::fromStdString(message));
 
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
-          qCDebug(logCategoryCoreInterface) <<"[recv]" << n;
+          qCDebug(logCategoryCoreInterface).noquote().nospace() << "[recv] '" << n << "'";
         } else {
-          qCDebug(logCategoryCoreInterface) <<"[recv]" << n.left(500) << "... (message over 500 chars truncated)";
+          qCDebug(logCategoryCoreInterface).noquote().nospace() << "[recv] '" << n.left(500) << " ...' (message over 500 chars truncated)";
         }
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());

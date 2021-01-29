@@ -41,7 +41,7 @@ bool CouchbaseDatabase::open() {
         return false;
     }
 
-    CBLDatabaseConfiguration db_config = {database_path_.c_str(), kCBLDatabase_Create};
+    CBLDatabaseConfiguration db_config = {database_path_.c_str(), kCBLDatabase_Create, nullptr};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     try {
@@ -130,7 +130,7 @@ QJsonObject CouchbaseDatabase::getDatabaseAsJsonObj() {
     }
     QJsonObject total_db_object;
     auto keys = getAllDocumentKeys();
-    for (const auto key : keys) {
+    for (const auto &key : keys) {
         total_db_object.insert(QString::fromStdString(key), getDocumentAsJsonObj(key));
     }
     return total_db_object;
