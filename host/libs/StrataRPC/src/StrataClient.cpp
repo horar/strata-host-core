@@ -158,34 +158,29 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
 
     if (true == jsonObject.contains("id") && true == jsonObject.value("id").isDouble()) {
         serverMessage->messageID = jsonObject.value("id").toDouble();
+        const auto [requestFound, request] =
+            requestController_->popPendingRequest(jsonObject.value("id").toDouble());
 
-        // Get the handler name from the request controller based on the message id
-        if (QString handlerName =
-                requestController_->getMethodName(jsonObject.value("id").toDouble());
-            false == handlerName.isEmpty()) {
-            serverMessage->handlerName = handlerName;
-        } else {
-            qCritical(logCategoryStrataClient) << "Failed to get handler name.";
+        if (false == requestFound || request.method_ == "") {
+            qCritical(logCategoryStrataClient) << "Failed pop pending request.";
             return false;
         }
 
-        if (false == requestController_->removePendingRequest(jsonObject.value("id").toDouble())) {
-            qCCritical(logCategoryStrataClient) << "Failed to remove pending request.";
-            return false;
-        }
+        serverMessage->handlerName = request.method_;
 
-        if (true == jsonObject.contains("result") &&
-            true == jsonObject.value("result").isObject()) {
-            serverMessage->payload = jsonObject.value("result").toObject();
-            serverMessage->messageType = Message::MessageType::Response;
-        } else if (true == jsonObject.contains("error") &&
-                   true == jsonObject.value("error").isObject()) {
+        if (true == jsonObject.contains("error") && true == jsonObject.value("error").isObject()) {
             serverMessage->payload = jsonObject.value("error").toObject();
             serverMessage->messageType = Message::MessageType::Error;
+            // TODO: set the callback to error callback
         } else {
-            qCDebug(logCategoryStrataClient) << "No payload.";
-            serverMessage->payload = QJsonObject{};
+            if (true == jsonObject.contains("result") &&
+                true == jsonObject.value("result").isObject()) {
+                serverMessage->payload = jsonObject.value("result").toObject();
+            } else {
+                serverMessage->payload = QJsonObject{};
+            }
             serverMessage->messageType = Message::MessageType::Response;
+            // TODO: set the callback to result callback
         }
 
     } else if (true == jsonObject.contains("method") &&
