@@ -59,7 +59,7 @@ bool UrlConfig::setUrlValue(QJsonValue val, QString *url) {
     }
 
     *url = val.toString();
-    qCDebug(logCategoryStrataDevStudioConfig) << "URL:" << url;
+    // qCDebug(logCategoryStrataDevStudioConfig) << "URL:" << *url;
 
     return true;
 }

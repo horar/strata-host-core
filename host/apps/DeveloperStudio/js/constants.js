@@ -10,6 +10,3 @@ const DEBUG_DEVICE_ID = 10000000001;
 const GUEST_USER_ID = "Guest";
 const GUEST_FIRST_NAME = "First";
 const GUEST_LAST_NAME = "Last";
-
-/* Production authorization server address */
-const PRODUCTION_AUTH_SERVER = "https://strata.onsemi.com/";
