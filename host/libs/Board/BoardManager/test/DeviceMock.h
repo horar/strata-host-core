@@ -32,7 +32,7 @@ public:
     void mockEmitResponses(const QByteArray msg);
     bool mockIsBootloader() {return commandResponseMock_.mockIsBootloader();}
     void mockSetLegacy(bool isLegacy) { commandResponseMock_.mockSetLegacy(isLegacy); }
-    void mockSetCommandForResponse(CommandResponseMock::Command command, CommandResponseMock::MockResponse response) { commandResponseMock_.mockSetCommandForResponse(command, response); }
+    void mockSetResponseForCommand(CommandResponseMock::MockResponse response, CommandResponseMock::Command command) { commandResponseMock_.mockSetResponseForCommand(response, command); }
     void mockSetResponse(CommandResponseMock::MockResponse response) { commandResponseMock_.mockSetResponse(response); }
 
 protected:
