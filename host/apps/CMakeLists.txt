@@ -1,5 +1,5 @@
 #
-# Strta applications
+# Strata applications
 #
 option(APPS_CORESW "Build Strata applications" ON)
 add_feature_info(APPS_CORESW APPS_CORESW "Build Strata applications")
@@ -18,7 +18,7 @@ endif()
 
 
 #
-# Strta toolbox/development utilities
+# Strata toolbox/development utilities
 #
 option(APPS_TOOLBOX "Build Strata Toolbox/utilities" ON)
 add_feature_info(APPS_TOOLBOX APPS_TOOLBOX "Build Strata Toolbox/utilities")

@@ -144,7 +144,7 @@ QJsonObject CouchbaseDatabase::getDatabaseAsJsonObj() {
     }
     QJsonObject total_db_object;
     auto keys = getAllDocumentKeys();
-    for (const auto key : keys) {
+    for (const auto &key : keys) {
         total_db_object.insert(QString::fromStdString(key), getDocumentAsJsonObj(key));
     }
     return total_db_object;

@@ -69,7 +69,7 @@ void DatabaseImpl::openDB(const QString &file_path)
 
     QByteArray db_path_ba = db_path_.toLocal8Bit();
     const char *db_path_c = db_path_ba.data();
-    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create, nullptr};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     try {
@@ -260,7 +260,7 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
 
     QByteArray db_path_ba = db_path_.toLocal8Bit();
     const char *db_path_c = db_path_ba.data();
-    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create, nullptr};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     try {
@@ -695,7 +695,7 @@ void DatabaseImpl::saveAs(QString path, const QString &db_name)
 
     QByteArray db_path_ba = db_path_.toLocal8Bit();
     const char *db_path_c = db_path_ba.data();
-    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create, nullptr};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     unique_ptr<Database> temp_db;
