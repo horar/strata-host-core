@@ -1,5 +1,7 @@
 #pragma once
-
+#ifdef EXTERN_INSTALL_DIR_PATH
+#   define EXTERN_DIR EXTERN_INSTALL_DIR_PATH
+#endif
 #include <QStringList>
 #include <QObject>
 #include <QString>
@@ -131,6 +133,8 @@ private:
     static const QStringList coreResources_;
 
     std::unique_ptr<QProcess> rccCompilerProcess_ = nullptr;
+
+    std::string extern_path = EXTERN_DIR;
 
     QString lastLoggedError = "";
 

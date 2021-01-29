@@ -344,12 +344,10 @@ QString ResourceLoader::getLastLoggedError() {
 
 QString ResourceLoader::fetchBuildFolder(const QString &module, const QString &subFolder, const QString &file)
 {
-    QDir dir(ResourcePath::coreResourcePath());
-    dir.cdUp();
-    dir.cd("3p-d");
+    QString str = QString::fromUtf8(extern_path.c_str());
+    QDir dir(str);
     dir.cd(module);
     dir.cd(subFolder);
-
     if(!file.isEmpty()){
         return dir.absoluteFilePath(file);
     } else {
