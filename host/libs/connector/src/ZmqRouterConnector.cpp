@@ -77,7 +77,7 @@ bool ZmqRouterConnector::blockingRead(std::string& message)
         return true;
     } else {
         if(false == socketValid()) {
-            qCDebug(logCategoryZmqRouterConnector) << "Context was terminated, blocking read was interupted";
+            qCDebug(logCategoryZmqRouterConnector) << "Context was terminated, blocking read was interrupted";
         } else {
             qCWarning(logCategoryZmqRouterConnector) << "Failed to blocking read messages";
         }

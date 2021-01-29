@@ -19,6 +19,7 @@ public:
 
     bool open(const std::string& ip_address) override;
     bool close() override;
+    bool shutdown() override;
 
     // non-blocking send
     bool send(const std::string& message) override;
@@ -57,6 +58,7 @@ protected:
     bool socketAndContextOpen();
     void socketClose();
     void contextClose();
+    void contextShutdown();
 
     // timeout for polling a socket in milliseconds
     const int32_t SOCKET_POLLING_TIMEOUT{10};

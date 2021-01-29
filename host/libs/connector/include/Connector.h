@@ -96,6 +96,7 @@ public:
 
     virtual bool open(const std::string&) = 0;
     virtual bool close() = 0;
+    virtual bool shutdown() = 0;
 
     // non-blocking send
     virtual bool send(const std::string& message) = 0;

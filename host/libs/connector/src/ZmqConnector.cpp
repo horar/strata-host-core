@@ -34,17 +34,27 @@ bool ZmqConnector::close()
     }
 
     // this boolean MUST be set first, the close operations first emit the interrupt
-    // and THEN they invalidate themselves, which has issues in multithreaded operations
-    // because they still can be considered valid - for which we need this boolean
+    // and THEN they invalidate the pointer, which has issues in multithreaded operations
+    // because they can still be considered valid - for which we need this boolean
     setConnectionState(false);
 
-    socketClose();
+    socketClose();  // must be called before contextClose
     contextClose();
 
-    // Note: this function can (and will) be called from other threads
-    // it will interrupt any ongoing sending or receiving of messages
-    // or any other related activity which will throw ETERM error
+    qCDebug(logCategoryZmqConnector) << "Context was closed";
+    return true;
+}
 
+bool ZmqConnector::shutdown()
+{
+    if (false == isConnected()) {
+        return false;
+    }
+
+    setConnectionState(false);
+    contextShutdown();          // will emit interrupt signal for all read/write operations
+
+    qCDebug(logCategoryZmqConnector) << "Context was terminated";
     return true;
 }
 
@@ -123,7 +133,7 @@ bool ZmqConnector::blockingRead(std::string& message)
     }
 
     if(false == socketValid()) {
-        qCDebug(logCategoryZmqConnector) << "Context was terminated, blocking read was interupted";
+        qCDebug(logCategoryZmqConnector) << "Context was terminated, blocking read was interrupted";
     } else {
         qCWarning(logCategoryZmqConnector) << "Failed to blocking read messages";
     }
@@ -330,25 +340,23 @@ bool ZmqConnector::socketPoll(zmq::pollitem_t *items)
 
 bool ZmqConnector::socketAndContextOpen()
 {
-    if (isConnected()) {
+    if ((nullptr != socket_) || (nullptr != context_)) {
+        qCCritical(logCategoryZmqConnector) << "Unable to open socket, it is already open";
         return false;
     }
 
     try {
-        // erase them in this order
-        socket_.release();
-        context_.release();
         // will init socket and context
         context_.reset(new zmq::context_t());
         socket_.reset(new zmq::socket_t(*context_, socketType));
         qCDebug(logCategoryZmqConnector) << "Socket and context was open";
         return true;
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace() << "Unable to open socket, reason: " << zErr.what();
+        qCCritical(logCategoryZmqConnector) << "Unable to open socket, reason:" << zErr.what();
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace() << "Unable to open socket, unexpected reason: " << sErr.what();
+        qCCritical(logCategoryZmqConnector) << "Unable to open socket, unexpected reason:" << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace() << "Unable to open socket, unhandled exception";
+        qCCritical(logCategoryZmqConnector) << "Unable to open socket, unhandled exception";
     }
 
     // release these objects in case it failed to allocate them
@@ -359,7 +367,8 @@ bool ZmqConnector::socketAndContextOpen()
 
 void ZmqConnector::socketClose()
 {
-    // will not close assigned context
+    // should be followed by context closing to properly terminate all active operations
+    // or preceded by terminating all read/write operations manually
     if (nullptr != socket_) {
         socket_->close();   // will assert if it fails
     }
@@ -367,10 +376,19 @@ void ZmqConnector::socketClose()
 
 void ZmqConnector::contextClose()
 {
-    // will also close all sockets that use this context and if there was
-    // ongoing read/write operation, it will terminate with: 'Context was terminated'
+    // will terminate all read/write operations with: 'Context was terminated'
+    // make sure to terminate all sockets that use this context BEFORE calling this
+    // because it will get stuck FOREVER waiting for them to terminate
     if (nullptr != context_) {
         context_->close();  // will assert if it fails
+    }
+}
+
+void ZmqConnector::contextShutdown()
+{
+    // will terminate all read/write operations with: 'Context was terminated'
+    if (nullptr != context_) {
+        context_->shutdown();  // will assert if it fails
     }
 }
 
