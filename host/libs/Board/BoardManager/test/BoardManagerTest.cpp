@@ -16,7 +16,7 @@ void BoardManagerTest::init()
     boardManager_ = std::make_shared<BoardManagerDerivate>();
     connect(boardManager_.get(), &strata::BoardManager::boardDisconnected, this,
             &BoardManagerTest::onBoardDisconnected);
-    boardManager_->init();
+    boardManager_->init(true, false);
 }
 
 void BoardManagerTest::cleanup()
@@ -34,10 +34,10 @@ void BoardManagerTest::onBoardDisconnected(int deviceId)
 std::shared_ptr<DeviceMock> BoardManagerTest::addMockDevice(const int deviceId,
                                                             const QString deviceName)
 {
-    auto devicesCount = boardManager_->readyDeviceIds().count();
+    auto devicesCount = boardManager_->activeDeviceIds().count();
     boardManager_->mockAddNewDevice(deviceId, deviceName);
-    QVERIFY_(boardManager_->readyDeviceIds().contains(deviceId));
-    QCOMPARE_(boardManager_->readyDeviceIds().count(), ++devicesCount);
+    QVERIFY_(boardManager_->activeDeviceIds().contains(deviceId));
+    QCOMPARE_(boardManager_->activeDeviceIds().count(), ++devicesCount);
     auto device = boardManager_->device(deviceId);
     auto mockDevice = std::dynamic_pointer_cast<DeviceMock>(boardManager_->device(deviceId));
     QVERIFY_(mockDevice.get() != nullptr);
@@ -47,13 +47,13 @@ std::shared_ptr<DeviceMock> BoardManagerTest::addMockDevice(const int deviceId,
 
 void BoardManagerTest::removeMockDevice(const int deviceId)
 {
-    auto devicesCount = boardManager_->readyDeviceIds().count();
+    auto devicesCount = boardManager_->activeDeviceIds().count();
     auto device = boardManager_->device(deviceId);
     auto mockDevice = std::dynamic_pointer_cast<DeviceMock>(boardManager_->device(deviceId));
     if (boardManager_->disconnectDevice(deviceId)) {
         boardManager_->mockRemoveDevice(deviceId);
         QVERIFY(mockDevice.get() != nullptr);
-        QCOMPARE_(boardManager_->readyDeviceIds().count(), --devicesCount);
+        QCOMPARE_(boardManager_->activeDeviceIds().count(), --devicesCount);
         QVERIFY(!mockDevice->mockIsOpened());
     } else {
         QVERIFY(device.get() == nullptr);

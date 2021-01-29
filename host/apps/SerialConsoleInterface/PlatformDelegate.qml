@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.sci 1.0 as Sci
+import tech.strata.theme 1.0
 
 FocusScope {
     id: platformDelegate
@@ -35,6 +36,13 @@ FocusScope {
         FocusScope {
             id: mainPage
 
+            property int maximumInputAreaHeight: Math.floor(height/2)
+            property int minimumInputAreaHeight: 100
+
+            onMaximumInputAreaHeightChanged: {
+                messageEditor.height = Math.min(maximumInputAreaHeight, messageEditor.height)
+            }
+
             Shortcut {
                 id: clearShortcut
                 sequence: "Ctrl+D"
@@ -53,88 +61,8 @@ FocusScope {
                 onActivated: mainPage.toggleExpand()
             }
 
-            CommonCpp.SGSortFilterProxyModel {
-                id: scrollbackFilterModel
-                sourceModel: scrollbackModel
-                filterRole: "message"
-                sortEnabled: false
-                invokeCustomFilter: true
-
-                onRowsInserted: {
-                    if (automaticScroll) {
-                        scrollbackViewAtEndTimer.restart()
-                    }
-                }
-
-                function filterAcceptsRow(row) {
-                    if (filterList.length === 0) {
-                        return true
-                    }
-
-                    if (disableAllFiltering) {
-                        return true
-                    }
-
-                    var type = sourceModel.data(row, "type")
-
-                    if (type === Sci.SciScrollbackModel.Request) {
-                        return true
-                    }
-
-                    var message = sourceModel.data(row, "message")
-
-                    try {
-                        var notificationItem = JSON.parse(message)["notification"]
-                    } catch(error) {
-                        return true
-                    }
-
-                    if (notificationItem === undefined) {
-                        return true
-                    }
-
-                    for (var i = 0; i < platformDelegate.filterList.length; ++i) {
-                        var filterItem = platformDelegate.filterList[i]
-                        if (notificationItem.hasOwnProperty(filterItem["property"])) {
-                            var value = notificationItem[filterItem["property"]]
-                            var valueType = typeof(value)
-
-                            if (valueType === "string"
-                                    || valueType === "boolean"
-                                    || valueType === "number"
-                                    || valueType === "bigint") {
-
-                                var filterValue = filterItem["value"].toString().toLowerCase()
-                                value = value.toString().toLowerCase()
-
-                                if (filterItem["condition"] === "contains" && value.includes(filterValue)) {
-                                    return false
-                                } else if(filterItem["condition"] === "equal" && value === filterValue) {
-                                    return false
-                                } else if(filterItem["condition"] === "startswith" && value.startsWith(filterValue)) {
-                                    return false
-                                } else if(filterItem["condition"] === "endswith" && value.endsWith(filterValue)) {
-                                    return false
-                                }
-                            }
-                        }
-                    }
-
-                    return true
-                }
-            }
-
-            Timer {
-                id: scrollbackViewAtEndTimer
-                interval: 1
-
-                onTriggered: {
-                    scrollbackView.positionViewAtEnd()
-                }
-            }
-
-            Item {
-                id: scrollBackWrapper
+            ScrollbackView {
+                id: scrollbackView
                 anchors {
                     top: parent.top
                     bottom: inputWrapper.top
@@ -143,212 +71,19 @@ FocusScope {
                     right: parent.right
                 }
 
-                Rectangle {
-                    anchors.fill: parent
-                    color: "white"
-                }
+                model: platformDelegate.scrollbackModel
+                automaticScroll: platformDelegate.automaticScroll
+                disableAllFiltering: platformDelegate.disableAllFiltering
+                filterList: platformDelegate.filterList
 
-                ListView {
-                    id: scrollbackView
-                    anchors {
-                        fill: parent
-                        leftMargin: 2
-                        rightMargin: 2
-                    }
-
-                    model: scrollbackFilterModel
-                    clip: true
-                    boundsBehavior: Flickable.StopAtBounds
-
-                    ScrollBar.vertical: ScrollBar {
-                        width: 12
-                        policy: ScrollBar.AlwaysOn
-                        minimumSize: 0.1
-                        visible: scrollbackView.height < scrollbackView.contentHeight
-                    }
-
-                    onContentYChanged: {
-                        automaticScroll = scrollbackView.atYEnd
-                    }
-
-                    delegate: Item {
-                        id: cmdDelegate
-                        width: ListView.view.width
-                        height: divider.y + divider.height
-
-                        property color helperTextColor: "#333333"
-
-                        Rectangle {
-                            id: messageTypeBg
-                            anchors {
-                                top: parent.top
-                                left: parent.left
-                                right: buttonRow.right
-                                bottom: divider.top
-                            }
-
-                            color: {
-                                if (model.type === Sci.SciScrollbackModel.Request) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.TANGO_CHOCOLATE1, 1.3)
-                                }
-
-                                return "transparent"
-                            }
-                        }
-
-                        Rectangle {
-                            id: messageValidityBg
-                            anchors {
-                                top: parent.top
-                                left: messageTypeBg.right
-                                right: parent.right
-                                bottom: divider.top
-                            }
-
-                            color: {
-                                if (model.isJsonValid === false) {
-                                    return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
-                                }
-
-                                return "transparent"
-                            }
-                        }
-
-                        SGWidgets.SGText {
-                            id: timeText
-                            anchors {
-                                top: parent.top
-                                topMargin: 1
-                                left: parent.left
-                                leftMargin: 1
-                            }
-
-                            text: {
-                                var date = new Date(model.timestamp)
-                                return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
-                            }
-
-                            font.family: "monospace"
-                            color: cmdDelegate.helperTextColor
-                        }
-
-                        Row {
-                            id: buttonRow
-                            anchors {
-                                left: timeText.right
-                                leftMargin: 2
-                                verticalCenter: timeText.verticalCenter
-                            }
-
-                            spacing: 2
-                            property int iconSize: timeText.font.pixelSize - 4
-
-                            Item {
-                                height: condenseButtonWrapper.height
-                                width: condenseButtonWrapper.width
-
-                                Loader {
-                                    sourceComponent: model.type === Sci.SciScrollbackModel.Request ? resendButtonComponent : undefined
-                                }
-
-                                Component {
-                                    id: resendButtonComponent
-                                    SGWidgets.SGIconButton {
-                                        iconColor: cmdDelegate.helperTextColor
-                                        hintText: qsTr("Resend")
-                                        icon.source: "qrc:/images/redo.svg"
-                                        iconSize: buttonRow.iconSize
-                                        onClicked: {
-                                            cmdInput.text = model.message
-                                        }
-                                    }
-                                }
-                            }
-
-                            Item {
-                                id: condenseButtonWrapper
-                                height: childrenRect.height
-                                width: childrenRect.width
-
-                                SGWidgets.SGIconButton {
-                                    id: condenseButton
-
-                                    iconColor: cmdDelegate.helperTextColor
-                                    hintText: qsTr("Condensed mode")
-                                    icon.source: model.isCondensed ? "qrc:/sgimages/chevron-right.svg" : "qrc:/sgimages/chevron-down.svg"
-                                    iconSize: buttonRow.iconSize
-
-                                    onClicked: {
-                                        var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
-                                        var item = scrollbackModel.setIsCondensed(sourceIndex, !model.isCondensed)
-                                    }
-                                }
-                            }
-                        }
-
-                        SGWidgets.SGTextEdit {
-                            id: cmdText
-                            anchors {
-                                top: timeText.top
-                                left: buttonRow.right
-                                leftMargin: 1
-                                right: parent.right
-                                rightMargin: 2
-                            }
-
-                            font.family: "monospace"
-                            wrapMode: Text.WrapAnywhere
-                            selectByKeyboard: true
-                            selectByMouse: true
-                            readOnly: true
-
-                            text: {
-                                if (model.isCondensed === false && model.isJsonValid) {
-                                    return CommonCpp.SGUtilsCpp.prettifyJson(model.message)
-                                }
-
-                                return model.message
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.IBeamCursor
-                                acceptedButtons: Qt.NoButton
-                            }
-                        }
-
-                        Loader {
-                            id: syntaxHighlighterLoader
-                            sourceComponent: model.isJsonValid ? syntaxHighlighterComponent : null
-                        }
-
-                        Component {
-                            id: syntaxHighlighterComponent
-                            CommonCpp.SGJsonSyntaxHighlighter {
-                                textDocument: cmdText.textDocument
-                            }
-                        }
-
-                        Rectangle {
-                            id: divider
-                            height: 1
-                            anchors {
-                                top: cmdText.bottom
-                                topMargin: 1
-                                left: parent.left
-                                right: parent.right
-                            }
-
-                            color: "black"
-                            opacity: 0.2
-                        }
-                    }
+                onResendMessageRequested: {
+                    messageEditor.text = message;
                 }
             }
 
             FocusScope {
                 id: inputWrapper
-                height: validateCheckBox.y + validateCheckBox.height + 6
+                height: rightButtonRow.y + rightButtonRow.height + 6
                 anchors {
                     bottom: parent.bottom
                     left: parent.left
@@ -362,7 +97,7 @@ FocusScope {
                     anchors {
                         top: parent.top
                         topMargin: 2
-                        left: cmdInput.left
+                        left: messageEditor.left
                     }
 
                     property int iconHeight: tabBar.statusLightHeight
@@ -393,6 +128,7 @@ FocusScope {
                     }
 
                     SGWidgets.SGIconButton {
+                        id: toggleExpandButton
                         text: scrollbackModel.condensedMode ? "Expand" : "Collapse"
                         minimumWidthText: "Collapse"
                         hintText: {
@@ -466,7 +202,7 @@ FocusScope {
                         font.bold: true
                         visible: filteredCount > 0
 
-                        property int filteredCount: scrollbackModel.count - scrollbackFilterModel.count
+                        property int filteredCount: scrollbackModel.count - scrollbackView.count
                     }
 
                     SGWidgets.SGTag {
@@ -485,10 +221,71 @@ FocusScope {
                         textColor: "white"
                         color: {
                             if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
-                                return SGWidgets.SGColorsJS.ERROR_COLOR
+                                return TangoTheme.palette.error
                             }
 
-                            return SGWidgets.SGColorsJS.TANGO_PLUM1
+                            return TangoTheme.palette.plum1
+                        }
+                    }
+                }
+
+                Item {
+                    id: handle
+                    width: handleColumn.width
+                    height: handleColumn.height
+                    anchors {
+                        top: inputWrapper.top
+                        topMargin: 2
+                        horizontalCenter: inputWrapper.horizontalCenter
+                    }
+
+                    Column {
+                        id: handleColumn
+
+                        spacing: 2
+                        anchors.centerIn: parent
+
+                        Rectangle {
+                            id: topLine
+                            width: 30
+                            height: 1
+                            color: handleMouseArea.pressed ? TangoTheme.palette.highlight : Qt.rgba(0,0,0,0.5)
+                        }
+
+                        Rectangle {
+                            width: topLine.width
+                            height: topLine.height
+                            color: topLine.color
+                        }
+                    }
+
+                    MouseArea {
+                        id: handleMouseArea
+                        anchors {
+                            fill: parent
+                            margins: -2
+                        }
+
+                        cursorShape: Qt.SplitVCursor
+                        acceptedButtons: Qt.LeftButton
+
+                        property int pressStartedY: 0
+
+                        onPressed: {
+                            pressStartedY = mouse.y
+                        }
+
+                        onMouseYChanged: {
+                            var newHeight = messageEditor.height + pressStartedY - mouse.y
+                            if (newHeight > maximumInputAreaHeight) {
+                                newHeight = maximumInputAreaHeight
+                            }
+
+                            if (newHeight < minimumInputAreaHeight) {
+                                newHeight = minimumInputAreaHeight
+                            }
+
+                            messageEditor.height = newHeight
                         }
                     }
                 }
@@ -504,13 +301,14 @@ FocusScope {
 
                     text: model.platform.errorString
                     verticalPadding: 1
-                    color: SGWidgets.SGColorsJS.TANGO_SCARLETRED1
+                    color: TangoTheme.palette.scarletRed1
                     textColor: "white"
                     font.bold: true
                 }
 
-                SGWidgets.SGTextField {
-                    id: cmdInput
+                MessageEditor {
+                    id: messageEditor
+                    height: 200
                     anchors {
                         top: inputStatusTag.bottom
                         left: parent.left
@@ -523,57 +321,57 @@ FocusScope {
                              || model.platform.status === Sci.SciPlatform.NotRecognized
 
                     focus: true
-                    font.family: "monospace"
-                    placeholderText: "Enter Message..."
-                    isValidAffectsBackground: true
+
                     suggestionListModel: commandHistoryModel
                     suggestionModelTextRole: "message"
-                    suggestionPosition: Item.Top
-                    suggestionEmptyModelText: qsTr("No commands.")
-                    suggestionHeaderText: qsTr("Message history")
-                    suggestionOpenWithAnyKey: false
-                    suggestionMaxHeight: 250
-                    suggestionCloseOnDown: true
-                    suggestionDelegateRemovable: true
-                    showCursorPosition: true
-                    showClearButton: true
-                    suggestionDelegateTextWrap: true
 
                     onTextChanged: {
                         model.platform.errorString = "";
                     }
+                }
 
-                    Keys.onPressed: {
-                        if (event.key === Qt.Key_Up) {
-                            if (!suggestionPopup.opened) {
-                                suggestionPopup.open()
-                            }
-                        } else if ((event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
-                                   && (event.modifiers === Qt.NoModifier || event.modifiers & Qt.KeypadModifier))
-                        {
-                            sendTextInputTextAsComand()
-                        }
+                SGWidgets.SGTag {
+                    anchors {
+                        top: messageEditor.bottom
+                        topMargin: 2
+                        right: messageEditor.right
                     }
 
-                    onSuggestionDelegateSelected: {
-                        if (index < 0) {
-                            return
-                        }
+                    text: "Line: " + (messageEditor.currentLine + 1) + ", Col: " + (messageEditor.currentColumn + 1)
+                    color: "#b2b2b2"
+                    textColor: "white"
+                    horizontalPadding: 2
+                    verticalPadding: 2
+                    font: messageEditor.font
+                }
 
-                        cmdInput.text = commandHistoryModel.get(index).message
+                Row {
+                    id: rightButtonRow
+                    anchors {
+                        top: messageEditor.bottom
+                        topMargin: 2
+                        left: messageEditor.left
                     }
 
-                    onSuggestionDelegateRemoveRequested: {
-                        model.platform.commandHistoryModel.removeAt(index)
+                    spacing: 6
+
+                    SGWidgets.SGIconButton {
+                        anchors.verticalCenter: parent.verticalCenter
+                        hintText: "Clear input"
+                        icon.source: "qrc:/sgimages/broom.svg"
+                        onClicked: {
+                            messageEditor.forceActiveFocus()
+                            messageEditor.clear()
+                        }
                     }
                 }
 
                 SGWidgets.SGCheckBox {
                     id: validateCheckBox
                     anchors {
-                        top: cmdInput.bottom
-                        topMargin: 2
-                        left: cmdInput.left
+                        left: rightButtonRow.right
+                        leftMargin: 2*rightButtonRow.spacing
+                        verticalCenter: rightButtonRow.verticalCenter
                     }
 
                     focusPolicy: Qt.NoFocus
@@ -585,25 +383,43 @@ FocusScope {
                 SGWidgets.SGButton {
                     id: btnSend
                     anchors {
-                        verticalCenter: cmdInput.verticalCenter
+                        top: messageEditor.top
                         right: parent.right
                         rightMargin: 6
                     }
 
+                    enabled: messageEditor.enabled
                     focusPolicy: Qt.NoFocus
                     text: qsTr("SEND")
                     onClicked: {
-                        sendTextInputTextAsComand()
+                        sendMessageInputTextAsComand()
                     }
-
-                    enabled: cmdInput.enabled
                 }
             }
 
-            function sendTextInputTextAsComand() {
-                var result = model.platform.sendMessage(cmdInput.text, validateCheckBox.checked)
-                if (result) {
-                    cmdInput.clear()
+            //to show proper cursor when dragging
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.SplitVCursor
+                acceptedButtons: Qt.NoButton
+                visible: handleMouseArea.pressed
+            }
+
+            function sendMessageInputTextAsComand() {
+                var result = model.platform.sendMessage(messageEditor.text, validateCheckBox.checked)
+
+                if (result.error === "no_error") {
+                    model.platform.errorString = ""
+                    messageEditor.clear()
+                } else if (result.error === "not_connected") {
+                    model.platform.errorString = "Platfrom not connected"
+                } else if (result.error === "json_error") {
+                    var pos = messageEditor.resolveCoordinates(result.offset, messageEditor.text)
+                    model.platform.errorString = "JSON error at " + (pos.line+1) + ":" + (pos.column+1) +  "- " + result.message;
+                } else if (result.error === "send_error") {
+                    model.platform.errorString = "Could not send message"
+                } else {
+                    model.platform.errorString = "Unknown error"
                 }
             }
 
@@ -619,8 +435,14 @@ FocusScope {
             }
 
             function toggleExpand() {
+                if (toggleExpandButton.enabled === false) {
+                    return
+                }
+
+                toggleExpandButton.enabled = false
                 scrollbackModel.condensedMode = ! scrollbackModel.condensedMode
-                scrollbackModel.setAllCondensed(scrollbackModel.condensedMode)
+                scrollbackModel.setIsCondensedAll(scrollbackModel.condensedMode)
+                toggleExpandButton.enabled = true
             }
 
             function openFilterDialog() {
@@ -642,7 +464,7 @@ FocusScope {
                     console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
                     console.log(Logger.sciCategory, "disableAllFiltering", disableAllFiltering)
 
-                    scrollbackFilterModel.invalidate()
+                    scrollbackView.invalidateFilter()
                 })
 
                 dialog.open()

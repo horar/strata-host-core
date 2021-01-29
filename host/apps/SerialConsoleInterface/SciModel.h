@@ -1,5 +1,4 @@
-#ifndef SCIMODEL_H
-#define SCIMODEL_H
+#pragma once
 
 #include <BoardManager.h>
 #include "SciDatabaseConnector.h"
@@ -29,5 +28,3 @@ private:
     SciDatabaseConnector db_;
     SciPlatformModel platformModel_;
 };
-
-#endif  // SCIMODEL_H

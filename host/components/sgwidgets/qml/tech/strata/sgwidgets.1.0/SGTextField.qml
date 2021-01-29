@@ -1,6 +1,7 @@
 import QtQuick.Controls 2.12
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 TextField {
     id: control
@@ -20,6 +21,7 @@ TextField {
 
     /* properties for suggestion list */
     property variant suggestionListModel
+    property Component suggestionListDelegate
     property string suggestionModelTextRole
     property int suggestionPosition: Item.Bottom
     property string suggestionEmptyModelText: "No Suggestion"
@@ -36,8 +38,8 @@ TextField {
     signal suggestionDelegateRemoveRequested(int index)
 
     /*private*/
-    property bool hasRightIcons: cursorInfoLoader.status === Loader.Ready
-                                 || revelPasswordLoader.status ===  Loader.Ready
+    property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
+                                 || (revelPasswordLoader !== null && revelPasswordLoader.status ===  Loader.Ready)
 
     property bool revealPassword: false
 
@@ -87,7 +89,7 @@ TextField {
         implicitHeight: 40
         color: {
             if (isValidAffectsBackground && !isValid) {
-                return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 1.9)
+                return Qt.lighter(Theme.palette.error, 1.9)
             }
 
             return darkMode ? "#5e5e5e" : control.palette.base
@@ -99,7 +101,7 @@ TextField {
             } else if (isValid) {
                 return darkMode ? "black" : control.palette.mid
             } else {
-                return SGWidgets.SGColorsJS.ERROR_COLOR
+                return Theme.palette.error
             }
         }
 
@@ -165,6 +167,7 @@ TextField {
         SGWidgets.SGSuggestionPopup {
             textEditor: control
             model: suggestionListModel
+            delegate: control.suggestionListDelegate ? control.suggestionListDelegate : implicitDelegate
             textRole: suggestionModelTextRole
             controlWithSpace: false
             position: suggestionPosition
@@ -181,7 +184,7 @@ TextField {
             }
 
             onRemoveRequested: {
-                suggestionDelegateRemoveRequested(index)
+                control.suggestionDelegateRemoveRequested(index)
             }
         }
     }

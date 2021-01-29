@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/assets">
+        <file alias="sds.config">sds/sds_prod.config</file>
+    </qresource>
+</RCC>
