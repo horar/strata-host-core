@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 12afdfb..9e77851 100644
+index f3e2368..da136b3 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -144,4 +144,4 @@ set_dylib_properties()
@@ -8,54 +8,3 @@ index 12afdfb..9e77851 100644
  
 -add_subdirectory(test)
 +# add_subdirectory(test)
-diff --git a/include/cbl++/Database.hh b/include/cbl++/Database.hh
-index 2d4f74d..04e69b3 100644
---- a/include/cbl++/Database.hh
-+++ b/include/cbl++/Database.hh
-@@ -232,10 +232,7 @@ namespace cbl {
-                     // If an exception is thrown while a Batch is in scope, its destructor will
-                     // call end(). If I'm in this situation I cannot throw another exception or
-                     // the C++ runtime will abort the process. Detect this and just warn instead.
--                    if (std::current_exception())
--                        CBL_Log(kCBLLogDomainDatabase, CBLLogWarning,
--                                "Batch::end failed, while handling an exception");
--                    else
-+                    if (!std::current_exception())
-                         RefCounted::check(false, error);
-                 }
-             }
-diff --git a/include/cbl/CBLBlob.h b/include/cbl/CBLBlob.h
-index 4035afa..34e0845 100644
---- a/include/cbl/CBLBlob.h
-+++ b/include/cbl/CBLBlob.h
-@@ -196,12 +196,12 @@ extern "C" {
-     /** Stores a blob in a mutable array. */
-     void FLMutableArray_SetBlob(FLMutableArray array _cbl_nonnull,
-                                 uint32_t index,
--                                CBLBlob* blob _cbl_nonnull) CBLAPI _cbl_deprecated;
-+                                CBLBlob* blob _cbl_nonnull) CBLAPI; // _cbl_deprecated;
- 
-     /** Stores a blob in a mutable dictionary. */
-     void FLMutableDict_SetBlob(FLMutableDict dict _cbl_nonnull,
-                                FLString key,
--                               CBLBlob* blob _cbl_nonnull) CBLAPI _cbl_deprecated;
-+                               CBLBlob* blob _cbl_nonnull) CBLAPI; // _cbl_deprecated;
- 
- 
- /** @} */
-diff --git a/cmake/platform_win.cmake b/cmake/platform_win.cmake
-index e135e75..21e77cf 100644
---- a/cmake/platform_win.cmake
-+++ b/cmake/platform_win.cmake
-@@ -49,8 +49,8 @@ function(set_dylib_properties)
-         set_target_properties(CouchbaseLiteC PROPERTIES COMPILE_FLAGS /ZW)
-         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /nodefaultlib:kernel32.lib /nodefaultlib:ole32.lib")
-     endif()
--    set_target_properties(CouchbaseLiteC PROPERTIES LINK_FLAGS
--        "/def:${PROJECT_SOURCE_DIR}/src/CBL.def")
-+    # set_target_properties(CouchbaseLiteC PROPERTIES LINK_FLAGS
-+    #     "/def:${PROJECT_SOURCE_DIR}/src/CBL.def")
-     target_link_libraries(CouchbaseLiteC PRIVATE zlibstatic Ws2_32)
-     target_compile_definitions(CouchbaseLiteCStatic PRIVATE LITECORE_EXPORTS)
- endfunction()
-\ No newline at end of file
