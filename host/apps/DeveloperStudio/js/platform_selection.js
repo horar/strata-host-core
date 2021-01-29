@@ -92,8 +92,8 @@ function generatePlatformSelectorModel(platform_list_json) {
             continue
         }
 
-        if (platform.available.order || platform.available.documents) {
-            platform.recently_released = recentlyReleased > 0 // set first 3 timestamp-sorted non-"coming soon" platforms to be "recently released"
+        if ((platform.available.order || platform.available.documents) && !platform.available.unlisted) {
+            platform.recently_released = recentlyReleased > 0 // set first 3 timestamp-sorted non-"coming soon"/"unlisted" platforms to be "recently released"
             recentlyReleased --
         }
 
@@ -157,6 +157,7 @@ function generatePlatform (platform) {
     platform.visible = true
     platform.view_open = false
     platform.firmware_version = ""
+    platform.coming_soon = !platform.available.documents && !platform.available.order
 
     // Create entry in classMap
     classMap[class_id_string] = {

@@ -168,6 +168,32 @@ var mapping = {
         inUse: false,
         activelyFiltering: false,
     },
+
+    // Statuses
+    "status-connected": {
+        iconSource: "",
+        text: "Connected",
+        type: "status",
+        inUse: false,
+        activelyFiltering: false,
+        filterName: "status-connected"
+    },
+    "status-coming-soon": {
+        iconSource: "",
+        text: "Coming Soon",
+        type: "status",
+        inUse: false,
+        activelyFiltering: false,
+        filterName: "status-coming-soon"
+    },
+    "status-recently-released": {
+        iconSource: "",
+        text: "Recently Released",
+        type: "status",
+        inUse: false,
+        activelyFiltering: false,
+        filterName: "status-recently-released"
+    },
 }
 
 
@@ -206,6 +232,10 @@ function initialize () {
         mapping[property].inUse = false
     }
     filterModel.clear()
+
+    filterModel.append(mapping["status-connected"])
+    filterModel.append(mapping["status-coming-soon"])
+    filterModel.append(mapping["status-recently-released"])
 }
 
 function clearActiveFilters () {

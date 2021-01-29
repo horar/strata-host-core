@@ -273,7 +273,7 @@ Item {
             Layout.fillWidth: false
             Layout.preferredWidth: 170
 
-            property bool comingSoon: !model.available.documents && !model.available.order && !model.error && (!model.connected || !model.available.control)//&& !model.available.control
+            property bool comingSoon: model.coming_soon
 
             Text {
                 id: comingSoonWarn
