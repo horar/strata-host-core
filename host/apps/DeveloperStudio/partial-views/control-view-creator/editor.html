@@ -215,6 +215,15 @@
                             insertText: BasicItemProperties[x]
                         })
                     }
+                    for (var y = 0; y < SGWidgets.length; y++){
+                        suggestions.push({
+                            label: SGWidgets[y].prefix,
+                            kind: monaco.languages.CompletionItemKind.Snippet,
+                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                            insertText: SGWidgets[y].body,
+                            documentation: SGWidgets[y].description
+                        })
+                    }
                     return {suggestions: suggestions}
                 }
             })

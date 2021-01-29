@@ -3446,41 +3446,182 @@ const qtQuick = [
     },
 ]
 
-const SGWidgets = []
+const SGWidgets = [
+    {
+        "body": "SGAccordion {\n //id: \n}",
+        "description": "SGAccordion",
+        "prefix": "SGAccordion",
+        "scope": "tech.strata.sgwidgets",
+        "properties": ["accordionItems: ","contentItem: ","openCloseTime: ","statusIcon: ","exclusive: ","contentsColor: ","textOpenColor: ","textClosedColor: ","headerOpenColor: ","headerClosedColor: ","dividerColor: "]
+    },
+    {
+        "body": "SGAlignedLabel {\n //id: \n}",
+        "description": "SGAlignedLabel",
+        "prefix": "SGAlignedLabel",
+        "scope": "tech.strata.sgwidgets",
+        "properties":["target: ","alignment: ","margin: ","overrideLabelWidth: ","text: ","alternativeColorEnabled: ","color: ","implicitColor: ","alternativeColor: ","fontSizeMultiplier: ","font: ","horizontalAlignment: ","contentHeight: ","contentWidth: ","clickable: ","clicked()"]
+    },
+    {
+        "body": "SGButton {\n //id:  \n}",
+        "description": "SGButton",
+        "prefix": "SGButton",
+        "scope": "source.qml",
+        "properties": ["alternativeColorEnabled: ","fontSizeMultiplier: ","minimumContentHeight: ","minimumContentWidth: ","preferredContentWidth: ","preferredContentHeight: ","contentHorizontalAlignment: ","contentVerticalAlignment: ","backgroundOnlyOnHovered: ","scaleToFit: ","hintText: ","iconSize: ","iconMirror: ","iconColor","implicitColor: ","color: ","pressedColor: ","checkedColor: ","roundedLeft: ","roundedBottom: ","roundedRight: ","roundedTop: "]
+    },
+    {
+        "body": "SGButtonStrip {\n //id:  \n}",
+        "description": "SGButtonStrip",
+        "prefix": "SGButtonStrip",
+        "scope": "source.qml",
+        "properties": ["model: ","count: ","exclusive: ","orientation: ","checkedIndices: ","clicked(index)"]
+    },
+    {
+        "body": "SGCircularGauge {\n //id:  \n}",
+        "description": "SGCircularGauge",
+        "prefix": "SGCircularGauge",
+        "scope": "source.qml",
+        "properties": ["real: ","gaugeFillColor1: ","gaugeFillColor2: ","gaugeBackgroundColor: ","centerTextColor: ","outerTextColor: ","unitTextFontSizeMultiplier: ","outerTextFontSizeMultiplier: ","valueDecimalPlaces: ","tickmarkDecimalPlaces: ","minimumValue: ","maximumValue: ","tickmarkStepSize: ","unitText: "]
+    },
+    {
+        "body": "SGComboBox {\n //id:  \n}",
+        "description": "SGComboBox",
+        "prefix": "SGComboBox",
+        "scope": "source.qml",
+        "properties": ["textColor: ","indicatorColor: ","borderColor: ","borderColorFocused: ","boxColor: ","dividers: ","popupHeight: ","fontSizeMultiplier: ","placeholderText: ","modelWidth: ","iconImage: ","textField: ","textFieldBackground: ","backgroundItem: ","popupItem: ","popupBackground: "]
+    },
+    {
+        "body": "SGGraph {\n //id:  \n}",
+        "description": "SGGraph",
+        "prefix": "SGGraph",
+        "scope": "source.qml",
+        "properties": ["panXEnabled: ","panYEnabled: ","zoomXEnabled: ","zoomYEnabled: ","fontSizeMultiplier: ","mouseArea: "]
+    },
+    {
+        "body": "SGHueSlider {\n //id:  \n}",
+        "description": "SGHueSlider",
+        "prefix": "SGHueSlider",
+        "scope": "source.qml",
+        "properties": ["color1: ","color2: ","color_value1: ","color_value2: ","rgbArray: ","powerSave: "]
+    },
+    {
+        "body": "SGInfoBox {\n //id:  \n}",
+        "description": "SGInfoBox",
+        "prefix": "SGInfoBox",
+        "scope": "source.qml",
+        "properties": ["textColor: ","invalidTextColor: ","fontSizeMultiplier: ","boxBorderColor: ","boxBorderWidth: ","text: ","horizontalAlignment: ","placeholderText: ","readOnly: ","boxColor: ","unit: ","textPadding: ","validator: ","acceptableInput: ","boxFont: ","unitFont: ","unitHorizontalAlignment: ","unitOverrideWidth: ","boxObject: ","infoTextObject: ","mouseAreaObject: ","placeholderObject: ","unitObject: ","accepted(text)","editingFinished(text)"]
+    },
+    {
+        "body": "SGRadioButton {\n //id:  \n}",
+        "description": "SGRadioButton",
+        "prefix": "SGRadioButton",
+        "scope": "source.qml",
+        "properties": ["buttonContainer: ","radioSize: ","radioColor: ","index: ","fontSizeMultiplier: ","color: ","alignment: "]
+    },
+    {
+        "body": "SGRGBSlider {\n //id:  \n}",
+        "description": "SGRGBSlide",
+        "prefix": "SGRGBSlide",
+        "scope": "source.qml",
+        "properties": ["rgbArray: ","color: ","color_value: "]
+    },
+    {
+        "body": "SGSlider {\n //id:  \n}",
+        "description": "SGSlider",
+        "prefix": "SGSlider",
+        "scope": "source.qml",
+        "properties": ["fontSizeMultiplier: ","textColor: ","mirror: ","handleSize: ","orientation: ","value: ","from: ","to: ","horizontal: ","vertical: ","showTickmarks: ","showLabels: ","showInputBox: ","showToolTip: "," stepSize: ","live: ","visualPosition: ","position: ","snapMode: ","pressed: ","grooveColor: ","fillColor: ","slider: ","inputBox: ","fromText: ","toText: ","tickmarkRepeater: ","inputBoxWidth: ","toolTip: ","toolTipText: ","toolTipBackground: ","validatorObject: ","userSet(value)","moved()"]
+    },
+    {
+        "body": "SGSpinBox {\n //id:  \n}",
+        "description": "SGSpinBox",
+        "prefix": "SGSpinBox",
+        "scope": "source.qml",
+        "properties": [""]
+    },
+    {
+        "body": "SGStatusLight {\n //id:  \n}",
+        "description": "SGStatusLight",
+        "prefix": "SGStatusLight",
+        "scope": "source.qml",
+        "properties": ["status: ","customColor: ","flatStyle: "]
+    },
+    {
+        "body": "SGStatusLogBox{\n //id:  \n}",
+        "description": "",
+        "prefix": "",
+        "scope": "source.qml",
+        "properties": ["title: ","titleTextColor: ","titleBoxColor: ","titleBoxBorderColor: ","statusTextColor: ","statusBoxColor: ","statusBoxBorderColor: ","showMessageIds: ","model: ","filterRole: ","copyRole: ","fontSizeMultiplier: ","scrollToEnd: ","listView: ","listViewMouse: ","delegate: ","filterEnabled: ","copyEnabled: ","filterModel: ","listElementTemplate: "]
+    },
+    {
+        "body": "SGSubmitInfoBox {\n //id:  \n}",
+        "description": "SGSubmitInfoBo",
+        "prefix": "SGSubmitInfoBo",
+        "scope": "source.qml",
+        "properties": ["accepted(text)","editingFinished(text)","text: ","infoBoxObject: ","textColor: ","textPadding: ","invalidTextColor: ","boxColor: ","boxBorderColor: ","boxBorderWidth: ","unit: ","readOnly: ","validator: ","placeholderText: ","horizontalAlignment: ","buttonText: ","buttonImplicitWidth: ","floatValue: ","intValue: ","fontSizeMultiplier: ","appliedString","infoBoxHeight: "]
+    },
+    {
+        "body": "SGSwitch {\n //id:  \n}",
+        "description": "SGSwitch",
+        "prefix": "SGSwitch",
+        "scope": "source.qml",
+        "properties": ["released()","canceled()","clicked()","toggled()","press()","pressAndHold()","fontSizeMultiplier: ","handleColor: ","textColor: ","labelsInside: ","labelsInside: ","pressed: ","down: ","checked: ","checkedLabel: ","uncheckedLabel: ","grooveFillColor: ","grooveColor: "]
+    },
+    {
+        "body": "SGTextField {\n //id:  \n}",
+        "description": "SGTextField",
+        "prefix": "SGTextField",
+        "scope": "source.qml",
+        "properties": ["isValid: ","activeEditing: ","validationReady: ","timerIsRunning: ","isValidAffectsBackground: ","leftIconColor: ","leftIconSource: ","darkMode: ","showCursorPosition: ","showClearButton: ","passwordMode: ","busyIndicatorRunning: ","suggestionListModel: ","suggestionListDelegate: ","suggestionModelTextRole: ","suggestionPosition: ","suggestionEmptyModelText: ","suggestionHeaderText: ","suggestionCloseOnDown: ","suggestionOpenWithAnyKey: ","suggestionMaxHeight: ","suggestionDelegateNumbering: ","suggestionDelegateRemovable: ","suggestionDelegateTextWrap: ","suggestionPopup: ","suggestionDelegateSelected(index)","suggestionDelegateRemoveRequested(index)","hasRightIcons: ","revealPassword: "]
+    },
+    {
+        "body": "SGText {\n //id:  \n}",
+        "description": "SGText",
+        "prefix": "SGText",
+        "scope": "source.qml",
+        "properties": ["alternativeEnabledColor: ","implicitColor: ","alternativeColor: ","fontSizeMultiplier: "]
+    },
+    {
+        "body": "SGTextArea {\n //id:  \n}",
+        "description": "SGTextArea",
+        "prefix": "SGTextArea",
+        "scope": "source.qml",
+        "properties": ["text: ","font: ","placeholderText: ","minimumLineCount: ","maximumLineCount: ","tabAllowed: ","readOnly: ","keepCursorAtEnd: ","isValid: "]
+    }
+]
 
 const BasicItemProperties = [
-    "activeFocus: ${1:name}",
-    "activeFocusOnTab: ${1:name}",
-    "antialiasing: ${1:name}",
-    "baselineOffset: ${1:name}",
-    "children: ${1:name}",
-    "childrenRect: ${1:name}",
-    "clip: ${1:bool}",
-    "containmentMask: ${1:name}",
-    "data: ${1:name}",
-    "enabled: ${1:name}",
-    "focus: ${1:name}",
-    "height: ${1:name}",
-    "implicitHeight: ${1:val}",
-    "implicitWidth: ${1:val}",
-    "opacity: ${1:val}",
+    "activeFocus: ${1: }",
+    "activeFocusOnTab: ${1: }",
+    "antialiasing: ${1: }",
+    "baselineOffset: ${1: }",
+    "children: ${1: }",
+    "childrenRect: ${1: }",
+    "clip: ${1: false}",
+    "containmentMask: ${1: }",
+    "data: ${1: }",
+    "enabled: ${1: true}",
+    "focus: ${1: }",
+    "height: ${1: parent.height}",
+    "implicitHeight: ${1: 100}",
+    "implicitWidth: ${1: 100}",
+    "opacity: ${1: 1.0}",
     "parent: ${1:parent}",
-    "resources: ${1:name}",
-    "rotation: ${1:val}",
-    "scale: ${1:val}",
-    "smooth: ${1:bool}",
-    "state: ${1:val}",
+    "resources: ${1: }",
+    "rotation: ${1: {\nx: 0,\ny:0\n}}",
+    "scale: ${1: 1.0}",
+    "smooth: ${1: false}",
+    "state: ${1: }",
     "states: [\n State: {\n \n} \n]",
-    "transform: ${1:val}",
-    "transformOrigin: ${1:name}",
-    "transitions: ${1:val}",
-    "visible: ${1:bool}",
-    "visibleChildren: ${1:val}",
-    "width: ${1:val}",
-    "x: ${1:val}",
-    "y: ${1:val}",
-    "z: ${1:val}",
-    "objectName: ${1:name}"
+    "transform: ${1: }",
+    "transformOrigin: ${1: }",
+    "transitions: ${1: }",
+    "visible: ${1: true}",
+    "visibleChildren: ${1: }",
+    "width: ${1: parent.width}",
+    "x: ${1: 0}",
+    "y: ${1: 0}",
+    "z: ${1: 0}",
+    "objectName: ${1: }"
 ]
 const qtQuickBody = [
 {
@@ -3490,18 +3631,11 @@ const qtQuickBody = [
         "scope": "source.qml"
     },
     {
-        "body": "\nanchors.${1}: ${2:parent}.${3}\n",
-        "description": "(simple)",
-        "prefix": "anchors",
-        "scope": "source.qml",
-        "properties":["margins: ","left: ","right: ","top: ","bottom: ","verticalCenter: ","horizontalCenter: ","fill: ","centerIn: "]
-    },
-    {
-        "body": "anchors: {\n \n}",
+        "body": "anchors {\n \n}",
         "description": "(all sides)",
         "prefix": "anchors",
         "scope": "source.qml",
-        "properties":["margins: ","left: ","right: ","top: ","bottom: ","verticalCenter: ","horizontalCenter: ","fill: ","centerIn: "]
+        "properties":["margins: ","left: ","right: ","top: ","bottom: ","verticalCenter: ","horizontalCenter: ","fill: ","centerIn: ","horizontalOffset: ","verticalOffset: "]
     },
     {
         "body": "bool",
