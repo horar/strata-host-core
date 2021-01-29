@@ -170,8 +170,8 @@ private:
 
     typedef std::function<void(const rapidjson::Value* )> NotificationHandler;
 
-    std::map<std::string, NotificationHandler> clientCmdHandler_;
-    std::map<std::string, NotificationHandler> hostCmdHandler_;
+    std::map<QByteArray, NotificationHandler> clientCmdHandler_;
+    std::map<QByteArray, NotificationHandler> hostCmdHandler_;
 
     std::list<Client*> clientList_;
     Client* current_client_;
