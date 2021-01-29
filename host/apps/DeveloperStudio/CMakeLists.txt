@@ -140,6 +140,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DISABLE_DEPRECATED_BEFORE=0x051200
     $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
+target_compile_definitions(${PROJECT_NAME} PRIVATE -DEXTERN_INSTALL_DIR_PATH="${EXTERN_INSTALL_DIR_PATH}")
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
@@ -154,5 +155,3 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_compile_definitions(${PROJECT_NAME} PRIVATE -DQT_RCC_EXECUTABLE="${QT_RCC_EXECUTABLE}")
     endif()
 endif()
-
-add_definitions(-DEXTERN_INSTALL_DIR_PATH="${EXTERN_INSTALL_DIR_PATH}")
