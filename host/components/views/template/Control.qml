@@ -102,13 +102,13 @@ Item {
             bottom: controlContainer.bottom
         }
         onClicked: {
-            debugMenu.visible = true
+            debugNotifMenu.visible = true
         }
     }
 
-    DebugMenu {
-        id: debugMenu
-        // See description in control-views/DebugMenu.qml
+    DebugNotifMenu {
+        id: debugNotifMenu
+        // See description in control-views/DebugNotifMenu.qml
         anchors {
             left: controlContainer.left
             bottom: controlContainer.bottom
