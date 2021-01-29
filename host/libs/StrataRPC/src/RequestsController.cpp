@@ -51,6 +51,18 @@ bool RequestsController::removePendingRequest(int id)
     return requestsList_.remove(id) > 0;
 }
 
+std::pair<bool, Request> RequestsController::popPendingRequest(int id)
+{
+    qCDebug(logCategoryRequestsController) << "Popping pending request id:" << id;
+    auto it = requestsList_.find(id);
+    if (it == requestsList_.end()) {
+        qDebug(logCategoryRequestsController) << "Request id not found.";
+        return {false, Request("", QJsonObject({{}}), 0)};
+    }
+    Request request(it.value());
+    return {requestsList_.remove(id) > 0, request};
+}
+
 QString RequestsController::getMethodName(int id)
 {
     auto it = requestsList_.find(id);

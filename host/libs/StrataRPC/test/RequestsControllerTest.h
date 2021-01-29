@@ -14,5 +14,5 @@ private slots:
     void testLargeNumberOfPendingRequests();
     void testNonExistanteRequestId();
     void testGetMethodName();
-    void testRequestCallbacks();
+    void testPopRequest();
 };
