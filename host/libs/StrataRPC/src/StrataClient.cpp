@@ -192,6 +192,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
                 true == jsonObject.value("result").isObject()) {
                 serverMessage->payload = jsonObject.value("result").toObject();
             } else {
+                qCDebug(logCategoryStrataClient) << "No payload.";
                 serverMessage->payload = QJsonObject{};
             }
             serverMessage->messageType = Message::MessageType::Response;
