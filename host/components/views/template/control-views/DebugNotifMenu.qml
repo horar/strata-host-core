@@ -4,16 +4,32 @@ import QtGraphicalEffects 1.0
 
 // This is an example debug menu that shows how you can test your UI by injecting
 // spoofed notifications to simulate a connected platform board.
-//
+// injectDebugNotification(notification) // injects a fake JSON notification as though it came from a connected platform
+//                                             (for debugging; see line 35-49 below)
 // It is for development and should be removed from finalized UI's.
+
 
 Rectangle {
     id: root
-    height: 290
+    height: 220
     width: 350
     border {
         width: 1
         color: "#fff"
+    }
+    visible: false
+
+    function randomValue(min, max) {
+        return (Math.random() * (max - min) + min).toFixed(2)
+    }
+
+    function randomValueArray() {
+        let dataArray = []
+        for (var i = 0; i < 6; ++i) {
+            dataArray.push((Math.random() * (1 - 0) + 0).toFixed(2))
+        }
+
+        return dataArray
     }
 
     // Re-usable notification template
@@ -72,53 +88,19 @@ Rectangle {
             }
 
             Button {
-                id: motorRunningTrue
-                text: "Send motor_running_notification, 'running': true"
+                id: my_cmd_simple_periodic
+                text: "Send my_cmd_simple_periodic notification, \n 'adc_read': 0.4 , \n 'gauge_ramp': random_integer, \n 'io_read': true, \n 'random_float': random_integer, \n 'random_float_array': random_integer_array,\n 'random_increment': [0,5], \n'toggle_bool' : true "
                 onClicked: {
-                    notification.value = "motor_running_notification"
-                    notification.payload.running = true
+                    basic.clearGraph = true //reset the graph.
+                    notification.value = "my_cmd_simple_periodic"
+                    notification.payload.adc_read = randomValue(0,1)
+                    notification.payload.gauge_ramp = randomValue(0,5)
+                    notification.payload.io_read = true
+                    notification.payload.random_float = randomValue(0,1)
+                    notification.payload.random_float_array = randomValueArray()
+                    notification.payload.random_increment = [0,5]
+                    notification.payload.toggle_bool = true
                     notification.sendAndReset()
-                }
-            }
-
-            Button {
-                id: motorRunningFalse
-                text: "Send motor_running_notification, 'running': false"
-                onClicked: {
-                    notification.value = "motor_running_notification"
-                    notification.payload.running = false
-                    notification.sendAndReset()
-                }
-            }
-
-            Button {
-                id: motorSpeed
-                text: "Send motor_speed_notification, 'speed': random"
-                onClicked: {
-                    notification.value = "motor_speed_notification"
-                    notification.payload.speed = (Math.random()*100).toFixed(2)
-                    notification.sendAndReset()
-                }
-            }
-            Button {
-                id: startPeriodic
-                text: "Send start_periodic_command"
-                onClicked: {
-                    platformInterface.start_periodic_command.update("template_periodic",10, 100)
-                }
-            }
-            Button {
-                id: updatePeriodic
-                text: "Send update_periodic_command"
-                onClicked: {
-                    platformInterface.update_periodic_command.update("template_periodic",1, 200)
-                }
-            }
-            Button {
-                id: stopPeriodic
-                text: "Send stop_periodic_command"
-                onClicked: {
-                    platformInterface.stop_periodic_command.update("template_periodic")
                 }
             }
         }
