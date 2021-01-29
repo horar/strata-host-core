@@ -13,6 +13,7 @@ project(host
 )
 
 set(VERSION_QT5 5.12)
+set(VERSION_QT5_DEPRECATE_BEFORE 0x050C00)
 
 # defaults; override in sub-projects if necessary
 set(PROJECT_COMPANY "ON Semiconductor")

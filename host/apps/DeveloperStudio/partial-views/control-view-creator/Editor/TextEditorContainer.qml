@@ -147,7 +147,7 @@ Item {
                 if (!model.exists) {
                     model.exists = true
                 }
-                saveFile(true, true);
+                saveFile(close, true);
             }
         }
     }
