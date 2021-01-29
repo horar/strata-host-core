@@ -1,16 +1,3 @@
-diff --git a/vendor/couchbase-lite-core/Networking/WebSockets/WebSocketImpl.cc b/vendor/couchbase-lite-core/Networking/WebSockets/WebSocketImpl.cc
-index 7f88f8d6..50140c18 100644
---- a/vendor/couchbase-lite-core/Networking/WebSockets/WebSocketImpl.cc
-+++ b/vendor/couchbase-lite-core/Networking/WebSockets/WebSocketImpl.cc
-@@ -37,7 +37,7 @@ namespace litecore { namespace websocket {
-     constexpr long WebSocketImpl::kConnectTimeoutSecs;
- 
-     // Default interval at which to send PING messages (configurable via options)
--    static constexpr auto kDefaultHeartbeatInterval = chrono::seconds(5 * 60);
-+    static constexpr auto kDefaultHeartbeatInterval = chrono::seconds(30);
- 
-     // Timeout for disconnecting if no PONG response received
-     static constexpr auto kPongTimeout  = chrono::seconds(10);
 diff --git a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh b/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
 index 05c4cf31..175eb5bd 100644
 --- a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
