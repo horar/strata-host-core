@@ -3,19 +3,58 @@
 #include "CouchbaseDatabase.h"
 
 class DatabaseAccess;
+
 class DatabaseManager
 {
 public:
-    DatabaseAccess* open(const QString &name, const QString &channel_access = "");
+    DatabaseManager(const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
 
-    DatabaseAccess* open(const QString &name, const QStringList &channel_access);
+    ~DatabaseManager();
+
+    DatabaseManager& operator=(const DatabaseManager&) = delete;
+
+    DatabaseManager(const DatabaseManager&) = delete;
+
+    DatabaseAccess* login(const QString &name, const QString &channelsRequested, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
+
+    DatabaseAccess* login(const QString &name, const QStringList &channelsRequested, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
+
+    bool joinChannel(const QString &strataLoginUsername, const QString &channel);
+
+    bool leaveChannel(const QString &strataLoginUsername, const QString &channel);
+
+    DatabaseAccess* getUserAccessMap();
+
+    QStringList readChannelsAccessGrantedOfUser(const QString &loginUsername);
+
+    QStringList readChannelsAccessDeniedOfUser(const QString &loginUsername);
 
     QString getDbDirName();
+
+    QString getReplicatorStatus();
+
+    int getReplicatorError();
 
 private:
     const QString dbDirName_ = "databases";
 
-    DatabaseAccess *dbAccess_ = nullptr;
+    QString endpointURL_ = "";
 
-    QString manageUserDir(const QString &name, const QStringList &channel_access);
+    QString loggedUsername_ = "";
+
+    QStringList channelsAccessGranted_;
+
+    QStringList channelsAccessDenied_;
+
+    DatabaseAccess* dbAccess_ = nullptr;
+
+    DatabaseAccess* userAccessDb_ = nullptr;
+
+    bool authenticate(const QString &name);
+
+    QStringList getChannelsAccessGranted();
+
+    QStringList getChannelsAccessDenied();
+
+    QString manageUserDir(const QString &name, const QStringList &channelAccess);
 };

@@ -33,10 +33,11 @@
             return
           }
 
-          if (doc.channels_available) {
-            channel(doc.channels_available)
+          if (typeof doc.channels_available === "undefined" || doc.channels_available === null) {
             return
           }
+
+          channel(doc.channels_available)
         }
       `
     }

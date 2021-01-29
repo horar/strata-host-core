@@ -25,14 +25,8 @@ Window {
     property var channels_access_granted: null
     property var channels_access_available: null
 
-    property var userAccessMap: null
-
     Row {
         spacing: 5
-
-        Component.onCompleted: {
-            userAccessBrowser.getUserAccessMap(endpointTextfield.text)
-        }
 
         Rectangle {
             id: inputContainer
@@ -140,7 +134,7 @@ Window {
                             if (!loggedIn) {
                                 root.username = strataLoginUsernameTextfield.text
                                 root.endpoint = endpointTextfield.text
-                                root.processLogin(root.username, root.endpoint)
+                                root.processLogin(root.username)
                             } else {
                                 root.processLogout()
                                 resultText.text = ""
@@ -317,7 +311,7 @@ Window {
 
                             background: Rectangle {
                                 anchors.fill: parent
-                                color: joinChannelButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
+                                color: leaveChannelButtonMouseArea.containsMouse ? Qt.darker("grey", 1.5) : "grey"
                             }
 
                             contentItem: Text {
@@ -373,12 +367,12 @@ Window {
                     resultScrollView.contentY = resultScrollView.contentHeight * ratio; // scroll chatbox text area to bottom
                 }
 
-                function parseDocs(docIDs) {
+                function parseDocs(channelsGranted, docIDs) {
                     resultText.text = ""
                     append("Successfully connected user.")
                     append("<br>Granted access to channels:")
-                    for (var i = 0; i < root.channels_access_granted.length; i++) {
-                        resultText.append(root.channels_access_granted[i])
+                    for (var i = 0; i < channelsGranted.length; i++) {
+                        resultText.append(channelsGranted[i])
                     }
 
                     append("<br>Number of database documents received: " + docIDs.length)
@@ -398,91 +392,25 @@ Window {
     }
 
     function processLogin(username, endpoint) {
-        let channels = root.authenticate(username)
-        if (!channels) {
-            console.error("Do not have a valid user access map!")
-            return
-        }
-
-        channels_access_granted = channels[0]
-        if (channels_access_granted) {
-            root.channels_access_granted = channels_access_granted
-            userAccessBrowser.loginAndStartReplication(username, channels_access_granted, endpoint)
-            root.loggedIn = true
-        }
+        userAccessBrowser.login(username)
+        root.loggedIn = true
     }
 
     function processLogout() {
-        userAccessBrowser.logoutAndStopReplication()
+        userAccessBrowser.logout()
         root.loggedIn = false
-    }
-
-    function authenticate(username) {
-        resultText.text = ""
-        if (!root.userAccessMap) {
-            console.error("Do not have a valid user access map!")
-            return
-        }
-
-        const all_channels = root.userAccessMap["user_access_map"]
-        if (!all_channels) {
-            console.error("Do not have a valid user access map!")
-            return
-        }
-
-        let channels_access_granted = []
-        let channels_access_available = []
-        Object.keys(all_channels).forEach(function(key) {
-            const this_channel = all_channels[key]
-            if (this_channel.includes(username)) {
-                channels_access_granted.push(key)
-            } else {
-                channels_access_available.push(key)
-            }
-        })
-
-        if (channels_access_granted.length == 0) {
-            userAccessBrowser.clearUserDir(username)
-            console.error("Username not found in access map!")
-            resultScrollView.append("Username not found in access map!")
-            return
-        }
-        return [channels_access_granted, channels_access_available]
     }
 
     Connections {
         target: userAccessBrowser
 
-        onUserAccessMapReceived: {
-            if (userAccessMap) {
-                root.userAccessMap = userAccessMap
-                if (root.loggedIn) {
-                    root.processLogin(root.username, root.endpoint)
-                }
+        onReceivedDbContents: {
+            if (allChannelsGranted && allChannelsDenied && allDocumentIDs) {
+                root.channels_access_granted = allChannelsGranted
+                root.channels_access_available = allChannelsDenied
+                resultScrollView.parseDocs(allChannelsGranted, allDocumentIDs)
             } else {
-                console.error("Received invalid user access map!")
-                resultScrollView.append("Received invalid user access map!")
-            }
-        }
-
-        onStatusUpdated: {
-            if (totalDocs != 0) {
-                let docIDs = userAccessBrowser.getAllDocumentIDs()
-                if (docIDs) {
-                    let channels = root.authenticate(username)
-                    channels_access_granted = channels[0]
-                    channels_access_available = channels[1]
-                    if (channels_access_granted) {
-                        root.channels_access_granted = channels_access_granted
-                    }
-                    if (channels_access_available) {
-                        root.channels_access_available = channels_access_available
-                    }
-                    resultScrollView.parseDocs(docIDs)
-                } else {
-                    console.info("Error: received no documents from getAllDocumentIDs().")
-                }
-            } else {
+                console.info("Error: received empty document list")
                 resultScrollView.parseDocs_Empty()
             }
         }

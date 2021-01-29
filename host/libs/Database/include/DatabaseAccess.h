@@ -9,6 +9,14 @@ class DatabaseAccess
     friend class DatabaseManager;
 
 public:
+    DatabaseAccess();
+
+    ~DatabaseAccess();
+
+    DatabaseAccess& operator=(const DatabaseAccess&) = delete;
+
+    DatabaseAccess(const DatabaseAccess&) = delete;
+
     bool close();
 
     bool write(CouchbaseDocument *doc, const QString &bucket = "");
@@ -31,9 +39,9 @@ public:
 
     void clearUserDir(const QString &userName, const QString &dbDirName);
 
-    void joinChannel(const QString &strataLoginUsername, const QString &channel);
+    bool joinChannel(const QString &loginUsername, const QString &channel);
 
-    void leaveChannel(const QString &strataLoginUsername, const QString &channel);
+    bool leaveChannel(const QString &loginUsername, const QString &channel);
 
     /********************************************
      * REPLICATOR API *
@@ -65,9 +73,11 @@ public:
     int getReplicatorError(const QString &bucket = "");
 
 private:
-    QString name_, user_directory_;
+    QString name_ = "";
 
-    QStringList channel_access_;
+    QString user_directory_ = "";
+
+    QStringList channelAccess_;
 
     std::vector<std::unique_ptr<CouchbaseDatabase>> database_map_;
 

@@ -28,38 +28,16 @@
       "sync":
       `
         function (doc, oldDoc) {
-          // Access safety: only accept documents with 'StrataExternalChannelID' field
-          if (!doc.StrataExternalChannelID) {
-            throw({forbidden: "Invalid document: missing 'StrataExternalChannelID' field."})
+          if (doc._id == "user_access_map") {
+            channel("user_access_map")
+            return
           }
 
-          // Access safety: only accept documents with 'StrataExternalDocID' field
-          if (!doc.StrataExternalDocID) {
-            throw({forbidden: "Invalid document: missing 'StrataExternalDocID' field."})
+          if (typeof doc.channels_available === "undefined" || doc.channels_available === null) {
+            return
           }
 
-          // Access safety: only allow access from list of valid channels
-          // Data routing: translate external channel name into internal channel name, and vice-versa
-          switch(doc.StrataExternalChannelID) {
-
-            // Chatroom 1
-            case "chatroom_1":
-            case "internal_ID_chatroom_1":
-              channel("chatroom_1");
-              channel("internal_ID_chatroom_1");
-              break;
-
-            // Chatroom 2
-            case "chatroom_2":
-            case "internal_ID_chatroom_2":
-              channel("chatroom_2");
-              channel("internal_ID_chatroom_2");
-              break;
-
-            // Invalid external channel ID
-            default:
-              throw({forbidden: "Invalid external channel ID: " + doc.StrataExternalChannelID})
-          }
+          channel(doc.channels_available)
         }
       `
     }

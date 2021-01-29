@@ -13,11 +13,9 @@ public:
 
     explicit UserAccessBrowser(QQmlApplicationEngine *engine = nullptr, QObject *parent = nullptr);
 
-    Q_INVOKABLE void getUserAccessMap(const QString &endpointURL);
+    Q_INVOKABLE void login(const QString &strataLoginUsername);
 
-    Q_INVOKABLE void loginAndStartReplication(const QString &strataLoginUsername, const QStringList &strataChannelList, const QString &endpointURL);
-
-    Q_INVOKABLE void logoutAndStopReplication();
+    Q_INVOKABLE void logout();
 
     Q_INVOKABLE void joinChannel(const QString &strataLoginUsername, const QString &channel);
 
@@ -28,20 +26,18 @@ public:
     Q_INVOKABLE QStringList getAllDocumentIDs();
 
 signals:
-    void userAccessMapReceived(QJsonObject userAccessMap);
-
-    void statusUpdated(int totalDocs);
+    void receivedDbContents(QStringList allChannelsGranted, QStringList allChannelsDenied, QStringList allDocumentIDs);
 
 private:
     std::unique_ptr<DatabaseManager> databaseManager_ = nullptr;
 
     DatabaseAccess* DB_ = nullptr;
 
-    DatabaseAccess* userAccessDB_ = nullptr;
-
-    QString strataLoginUsername_ = "";
-
-    QString endpointURL_ = "";
+    QString loginUsername_ = "";
 
     QString dbDirName_ = "";
+
+    QString endpointURL_ = "ws://localhost:4984/platform-list";
+
+    void changeListener(cbl::Replicator, const CBLReplicatorStatus &status);
 };

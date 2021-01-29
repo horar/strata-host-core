@@ -9,28 +9,47 @@
 #include <QStandardPaths>
 
 // Replicator URL endpoint
-const QString replicator_url = "ws://localhost:4984/platform-list";
-const QString replicator_username = "";
-const QString replicator_password = "";
+const QString endpointURL = "ws://localhost:4984/platform-list";
+const QString endpointUsername = "user_1";
 
 int main() {
     // Open database manager
-    DatabaseManager databaseManager;
+    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
+        qDebug() << "DatabaseManager-sampleapp changeListener -> replication status changed!";
+    };
+    auto databaseManager = std::make_unique<DatabaseManager>(endpointURL, changeListener);
+
+    // Wait until user_access_map replication is finished
+    unsigned int retries = 0;
+    const unsigned int REPLICATOR_RETRY_MAX = 50;
+    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
+    while (databaseManager->getReplicatorStatus() != "Stopped" && databaseManager->getReplicatorStatus() != "Idle") {
+        ++retries;
+        std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
+        if (databaseManager->getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
+            qDebug() << "Error with execution of replicator. Verify endpoint URL" << endpointURL << "is valid.";
+            return -1;
+        }
+    }
 
     // Open database, provide QStringList of channels for connection
-    QStringList channel_ls = {"channel_A", "channel_B"};
-    auto DB_all_channels = databaseManager.open("Sample_User", channel_ls);
+    QStringList channels = {"channel_A", "channel_B"};
+    auto DB = databaseManager->login(endpointUsername, channels, changeListener);
 
     // Object valid if database open successful
-    if (DB_all_channels) {
-        qDebug() << "Successfully opened database. Path: " << DB_all_channels->getDatabasePath();
+    if (DB) {
+        qDebug() << "Successfully opened database. Path: " << DB->getDatabasePath();
     } else {
         qDebug() << "Error: Failed to open database.";
         return -1;
     }
 
+    // Print channels granted to user
+    channels = databaseManager->readChannelsAccessGrantedOfUser(endpointUsername);
+    qDebug() << "Channels: " << channels;
+
     // Get database name
-    qDebug() << "Database name: " << DB_all_channels->getDatabaseName();
+    qDebug() << "Database name: " << DB->getDatabaseName();
 
     // Create document 1, write to all buckets
     CouchbaseDocument Doc1("My_Doc_All_Buckets");
@@ -42,7 +61,7 @@ int main() {
         qDebug() << "Failed to set document contents, body must be in JSON format.";
     }
 
-    if (DB_all_channels->write(&Doc1, "*")) {
+    if (DB->write(&Doc1, "*")) {
         qDebug() << "Successfully saved database.";
     } else {
         qDebug() << "Error saving database.";
@@ -59,14 +78,14 @@ int main() {
         qDebug() << "Failed to set document contents, body must be in JSON format.";
     }
 
-    if (DB_all_channels->write(&Doc2, "channel_A")) {
+    if (DB->write(&Doc2, "channel_A")) {
         qDebug() << "Successfully saved database.";
     } else {
         qDebug() << "Error saving database.";
         return -1;
     }
 
-    // Create document 3, write to buckets 'channel_A', 'channel_B'
+    // Create document 3, write to bucket 'channel_C'
     CouchbaseDocument Doc3("My_Doc_Two_Buckets");
     body_string = R"foo({"StrataTest": "Contents_3"})foo";
 
@@ -76,7 +95,8 @@ int main() {
         qDebug() << "Failed to set document contents, body must be in JSON format.";
     }
 
-    if (DB_all_channels->write(&Doc3, channel_ls)) {
+    auto DB_2 = databaseManager->login(endpointUsername, "channel_C", changeListener);
+    if (DB_2->write(&Doc3, "channel_C")) {
         qDebug() << "Successfully saved database.";
     } else {
         qDebug() << "Error saving database.";
@@ -84,33 +104,20 @@ int main() {
     }
 
     // Retrieve entire DB as a QJsonObject
-    auto db_obj = DB_all_channels->getDatabaseAsJsonObj();
+    auto db_obj = DB->getDatabaseAsJsonObj();
     qDebug() << "Entire DB as a Json Object:";
     foreach(const QString& key, db_obj.keys()) {
         QJsonValue value = db_obj.value(key);
         qDebug() << "Key =" << key << ", value =" << value;
     }
 
-    // // Start replicator
-    // if (DB_all_channels->startReplicator(replicator_url, replicator_username, replicator_password)) {
-    //     qDebug() << "Replicator successfully started.";
-    // } else {
-    //     qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";
-    // }
-
-    // // Wait until replication is finished
-    // unsigned int retries = 0;
-    // const unsigned int REPLICATOR_RETRY_MAX = 50;
-    // const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
-    // while (DB_all_channels->getReplicatorStatus() != "Stopped" && DB_all_channels->getReplicatorStatus() != "Idle") {
-    //     ++retries;
-    //     std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
-    //     if (DB_all_channels->getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
-    //         DB_all_channels->stopReplicator();
-    //         qDebug() << "Error with execution of replicator. Verify endpoint URL" << replicator_url << "is valid.";
-    //         break;
-    //     }
-    // }
+    // Retrieve entire DB as a QJsonObject
+    db_obj = DB_2->getDatabaseAsJsonObj();
+    qDebug() << "Entire DB as a Json Object:";
+    foreach(const QString& key, db_obj.keys()) {
+        QJsonValue value = db_obj.value(key);
+        qDebug() << "Key =" << key << ", value =" << value;
+    }
 
     return 0;
 }

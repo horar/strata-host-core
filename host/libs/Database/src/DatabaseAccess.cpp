@@ -6,6 +6,14 @@
 #include <QDebug>
 #include <QCoreApplication>
 
+DatabaseAccess::DatabaseAccess() {
+
+}
+
+DatabaseAccess::~DatabaseAccess() {
+    close();
+}
+
 bool DatabaseAccess::close() {
     for (const auto& bucket : database_map_) {
         if (!bucket) {
@@ -30,7 +38,7 @@ bool DatabaseAccess::write(CouchbaseDocument *doc, const QString &bucket) {
     if (bucket == "*" || bucket.toLower() == "all") {
         for (const auto& _bucket : database_map_) {
             std::vector<std::string> channels;
-            for (const auto& channel : channel_access_) {
+            for (const auto& channel : channelAccess_) {
                 channels.push_back(channel.toStdString());
             }
             doc->tagChannelField(channels);
@@ -44,7 +52,7 @@ bool DatabaseAccess::write(CouchbaseDocument *doc, const QString &bucket) {
     else {
         auto bucketObj = getBucket(bucket);
         if (!bucketObj) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- bucket not found in map";
+            qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- bucket" << bucket << "not found in map";
             return false;
         }
         return bucketObj->save(doc);
@@ -99,7 +107,7 @@ QString DatabaseAccess::getDocumentAsStr(const QString &id, const QString &bucke
 QJsonObject DatabaseAccess::getDocumentAsJsonObj(const QString &id, const QString &bucket) {
     QString bucketName;
     if (bucket.isEmpty()) {
-        bucketName = channel_access_.at(0);
+        bucketName = channelAccess_.at(0);
     } else {
         bucketName = bucket;
     }
@@ -164,7 +172,7 @@ bool DatabaseAccess::startReplicator(const QString &url, const QString &username
     auto _password = password.toStdString();
 
     std::vector<std::string> channels;
-    for (const auto& channel : channel_access_) {
+    for (const auto& channel : channelAccess_) {
         channels.push_back(channel.toStdString());
     }
 
@@ -242,48 +250,53 @@ void DatabaseAccess::clearUserDir(const QString &userName, const QString &dbDirN
     }
 }
 
-void DatabaseAccess::joinChannel(const QString &strataLoginUsername, const QString &channel) {
-    if (strataLoginUsername.isEmpty()) {
+bool DatabaseAccess::joinChannel(const QString &loginUsername, const QString &channel) {
+    if (loginUsername.isEmpty()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid username must be provided";
-        return;
+        return false;
     }
 
     if (channel.isEmpty()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid channel must be provided";
-        return;
+        return false;
     }
 
     auto bucketObj = getBucket(getDatabaseName());
     if (!bucketObj) {
+        qCCritical(logCategoryCouchbaseDatabase) << "DB name is " << getDatabaseName();
         qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
-        return;
+        return false;
     }
-    bucketObj->joinChannel(strataLoginUsername, channel);
+
+    bucketObj->joinChannel(loginUsername, channel);
+    return true;
 }
 
-void DatabaseAccess::leaveChannel(const QString &strataLoginUsername, const QString &channel) {
-    if (strataLoginUsername.isEmpty()) {
+bool DatabaseAccess::leaveChannel(const QString &loginUsername, const QString &channel) {
+    if (loginUsername.isEmpty()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid username must be provided";
-        return;
+        return false;
     }
 
     if (channel.isEmpty()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid channel must be provided";
-        return;
+        return false;
     }
 
     auto bucketObj = getBucket(getDatabaseName());
     if (!bucketObj) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
-        return;
+        return false;
     }
-    bucketObj->leaveChannel(strataLoginUsername, channel);
+
+    bucketObj->leaveChannel(loginUsername, channel);
+    return true;
 }
 
 QString DatabaseAccess::getReplicatorStatus(const QString &bucket) {
     QString bucketName;
     if (bucket.isEmpty()) {
-        bucketName = channel_access_.at(0);
+        bucketName = channelAccess_.at(0);
     } else {
         bucketName = bucket;
     }
@@ -300,7 +313,7 @@ QString DatabaseAccess::getReplicatorStatus(const QString &bucket) {
 int DatabaseAccess::getReplicatorError(const QString &bucket) {
     QString bucketName;
     if (bucket.isEmpty()) {
-        bucketName = channel_access_.at(0);
+        bucketName = channelAccess_.at(0);
     } else {
         bucketName = bucket;
     }

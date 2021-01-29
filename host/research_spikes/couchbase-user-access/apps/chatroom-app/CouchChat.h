@@ -1,5 +1,4 @@
-#ifndef COUCHCHAT_H
-#define COUCHCHAT_H
+#pragma once
 
 #include <QObject>
 #include <QQmlApplicationEngine>
@@ -8,40 +7,51 @@
 
 class CouchChat: public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString user_name READ getUsername NOTIFY usernameChanged)
-    Q_PROPERTY(QString channel_name READ getChannel NOTIFY channelChanged)
+
+    Q_PROPERTY(QString loginUsername READ getLoginUsername NOTIFY usernameChanged)
+
+    Q_PROPERTY(QString channelName READ getChannel NOTIFY channelChanged)
 
 public:
+    QQmlApplicationEngine* engine_;
+
     explicit CouchChat(QQmlApplicationEngine *engine = nullptr, QObject *parent = nullptr);
 
     Q_INVOKABLE void sendMessage(const QString &message);
-    Q_INVOKABLE void loginAndStartReplication(const QString &user_name, const QString &channel_name, const QString &endpoint_url);
-    Q_INVOKABLE void logoutAndStopReplication();
 
-    QQmlApplicationEngine* engine_;
+    Q_INVOKABLE void login(const QString &strataLoginUsername, const QString &desiredChatroom);
 
-    QString getUsername() const { return user_name_; }
-    QString getChannel() const { return channel_name_; }
+    Q_INVOKABLE void logout();
+
+    QString getLoginUsername() const;
+
+    QString getChannel() const;
+
+    Q_INVOKABLE QStringList getAllDocumentIDs();
+
+    Q_INVOKABLE QStringList readChannelsAccessGrantedOfUser(const QString &loginUsername);
 
 signals:
+    void receivedDbContents(QStringList allChannelsGranted, QStringList allChannelsDenied, QStringList allDocumentIDs);
+
     void receivedMessage(QString user, QString message);
+
     void usernameChanged();
+
     void channelChanged();
 
 private:
-    DatabaseAccess* DB_;
+    std::unique_ptr<DatabaseManager> databaseManager_ = nullptr;
+
+    DatabaseAccess* DB_ = nullptr;
 
     // Current user info
-    QString user_name_ = "";
-    QString channel_name_ = "";
+    QString loginUsername_ = "";
+
+    QString channelName_ = "";
 
     // Replicator URL endpoint
-    QString endpoint_url_ = "";
-    const QString replicator_username_ = "";
-    const QString replicator_password_ = "";
+    QString endpointURL_ = "ws://localhost:4984/chatroom-app";
 
-    const unsigned int REPLICATOR_RETRY_MAX = 50;
-    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
+    void documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 };
-
-#endif // COUCHCHAT_H

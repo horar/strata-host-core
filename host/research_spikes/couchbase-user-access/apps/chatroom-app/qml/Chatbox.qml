@@ -18,7 +18,7 @@ Item {
 
                     Text {
                         id: userNameText
-                        text: "User: " + couchChat.user_name
+                        text: "User: " + couchChat.loginUsername
                         topPadding: 8
                         leftPadding: 8
                         font.bold: true
@@ -33,7 +33,7 @@ Item {
 
                     Text {
                         id: chatroomNameText
-                        text: "Chatroom: " + couchChat.channel_name
+                        text: "Chatroom: " + couchChat.channelName
                         topPadding: 8
                         leftPadding: 8
                         font.bold: true
@@ -60,7 +60,7 @@ Item {
                 }
 
                 contentItem: Text {
-                    text: qsTr("Logout")
+                    text: qsTr("Leave chat room")
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -77,7 +77,7 @@ Item {
                         stackContainerRef.currentIndex = 0
                         chatBoxText.text = ""
                         inputField.text = ""
-                        couchChat.logoutAndStopReplication()
+                        couchChat.logout()
                     }
                 }
             }
@@ -106,7 +106,7 @@ Item {
             }
 
             function append(user, message) {
-                chatBoxText.text += user === couchChat.user_name ? "<b>You</b> say:<br><b>" + message + "</b><br><br>" : "User <b>" + user + "</b> says:<br><b>" + message + "</b><br><br>"
+                chatBoxText.text += user === couchChat.loginUsername ? "<b>You</b> say:<br><b>" + message + "</b><br><br>" : "User <b>" + user + "</b> says:<br><b>" + message + "</b><br><br>"
                 var ratio = 1.0 - chatScrollView.visibleArea.heightRatio;
                 chatScrollView.contentY = chatScrollView.contentHeight * ratio; // scroll chatbox text area to bottom
             }

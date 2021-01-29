@@ -78,15 +78,13 @@ if test "$res" != "0"; then
     exit 1
 fi
 
-if test "$COUCHBASE_BUCKET" == "platform-list"; then
-    # Couchbase add docs
-    echo "Adding documents to Couchbase server (platform-list)... "
-    ./scripts/cb_add_docs.sh $COUCHBASE_ENDPOINT $SYNC_GATEWAY_ENDPOINT $COUCHBASE_BUCKET
+# Couchbase add docs
+echo "Adding documents to Couchbase server... "
+./scripts/cb_add_docs.sh $COUCHBASE_ENDPOINT $SYNC_GATEWAY_ENDPOINT $COUCHBASE_BUCKET
 
-    if test "$?" != "0"; then
-        echo "Error: Couchbase did not successfully add docs."
-        exit 1
-    fi
+if test "$?" != "0"; then
+    echo "Error: Couchbase did not successfully add docs."
+    exit 1
 fi
 
 echo "Couchbase services successfully connected!"
