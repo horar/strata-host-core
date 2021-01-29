@@ -2,7 +2,7 @@
 
 string(APPEND username ${USERNAME})
 string(APPEND password ${PASSWORD})
-message(STATUS "Replicator username: "${username}" password: "${password}" for ${PROJECT_NAME}")
+message(STATUS "Replicator credentials 'username' and 'password' set for ${PROJECT_NAME}")
 
 message(STATUS "Processing build replicator credentials info...")
 file(READ ${INPUT_DIR}/ReplicatorCredentials.cpp.in rcFile_temporary)
