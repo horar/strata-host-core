@@ -53,7 +53,7 @@ Rectangle {
                 controlViewCreator.openFilesModel.closeAll()
                 mainWindow.close()
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                controlViewCreator.openFilesModel.saveAll()
+                controlViewCreator.openFilesModel.saveAll(true)
                 mainWindow.close()
             }
             isConfirmCloseOpen = false
@@ -137,7 +137,6 @@ Rectangle {
                 property int editTab: 1
                 property int viewTab: 2
                 property int debugTab: 3
-                property bool recompiling: false
 
                 onCurrentIndexChanged: {
                     switch (currentIndex) {
@@ -149,7 +148,6 @@ Rectangle {
                         break;
                     case viewTab:
                         if (rccInitialized == false) {
-                            toolBarListView.recompiling = true
                             recompileControlViewQrc();
                         } else {
                             viewStack.currentIndex = 2
@@ -301,7 +299,7 @@ Rectangle {
                                 delete NavigationControl.context.class_id
                                 delete NavigationControl.context.device_id
 
-                                toolBarListView.recompiling = false
+                                recompileRequested = false
                                 if (toolBarListView.currentIndex === toolBarListView.viewTab
                                         || source === NavigationControl.screens.LOAD_ERROR) {
                                     viewStack.currentIndex = 2
@@ -311,7 +309,7 @@ Rectangle {
                                 delete NavigationControl.context.class_id
                                 delete NavigationControl.context.device_id
 
-                                toolBarListView.recompiling = false
+                                recompileRequested = false
                                 console.error("Error while loading control view")
                                 setSource(NavigationControl.screens.LOAD_ERROR,
                                           { "error_message": "Failed to load control view: " + sourceComponent.errorString() }
@@ -332,11 +330,43 @@ Rectangle {
             }
         }
     }
-    function recompileControlViewQrc () {
-        if (editor.fileTreeModel.url.toString() !== '') {
-            recompileRequested = true
-            sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
+
+    ConfirmClosePopup {
+        id: confirmBuildClean
+        parent: mainWindow.contentItem
+
+        titleText: "Stopping build due to unsaved changes in the project"
+        popupText: "Some files have unsaved changes, would you like to save all changes before build or build without saving?"
+
+        acceptButtonText: "Save All and Build"
+        closeButtonText: "Build Without Saving"
+
+        onPopupClosed: {
+            if (closeReason === cancelCloseReason) {
+                return
+            }
+
+            if (closeReason === acceptCloseReason) {
+                editor.openFilesModel.saveAll(false)
+            }
+
+            requestRecompile()
         }
+    }
+
+    function recompileControlViewQrc() {
+        if (editor.fileTreeModel.url.toString() !== '') {
+            if (editor.openFilesModel.getUnsavedCount() > 0) {
+                confirmBuildClean.open();
+            } else {
+                requestRecompile()
+            }
+        }
+    }
+
+    function requestRecompile() {
+        recompileRequested = true
+        sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
     }
 
     function loadDebugView (compiledRccFile) {

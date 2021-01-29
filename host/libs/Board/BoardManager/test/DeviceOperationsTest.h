@@ -24,6 +24,11 @@ private slots:
     // tests
     void connectTest();
     void identifyTest();
+    void noResponseTest();
+    void notJSONTest();
+    void JSONWithoutPayloadTest();
+    void nackTest();
+    void invalidValueTest();
     void switchToBootloaderAndBackTest();
     void cancelOperationTest();
     void identifyLegacyTest();
@@ -41,4 +46,5 @@ private:
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;
+    int operationTimeoutCount_ = 0;
 };
