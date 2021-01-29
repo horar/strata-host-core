@@ -46,12 +46,11 @@ protected:
     bool socketSend(const std::string & istring, zmq::send_flags flags = zmq::send_flags::none);
     bool socketSendMore(const std::string & istring);
     bool socketSetOptLegacy(int opt, const void *val, size_t valLen);
+    bool socketGetOptLegacy(int opt, void *val, size_t* valLen);
     template<int Opt, int NullTerm>
     bool socketSetOptString(zmq::sockopt::array_option<Opt, NullTerm> opt, const std::string & val);
     template<int Opt, class T, bool BoolUnit>
     bool socketSetOptInt(zmq::sockopt::integral_option<Opt, T, BoolUnit> opt, int val);
-    template<int Opt, class T, bool BoolUnit>
-    T socketGetOpt(zmq::sockopt::integral_option<Opt, T, BoolUnit> opt, T defaultVal);
     bool socketConnect(const std::string & address);
     bool socketBind(const std::string & address);
     bool socketPoll(zmq::pollitem_t *items);
@@ -112,26 +111,6 @@ bool ZmqConnector::socketSetOptInt(zmq::sockopt::integral_option<Opt, T, BoolUni
     }
 
     return false;
-}
-
-// Get an integer-based socket option
-template<int Opt, class T, bool BoolUnit>
-T ZmqConnector::socketGetOpt(zmq::sockopt::integral_option<Opt, T, BoolUnit> opt, T defaultVal)
-{
-    try {
-        return socket_->get(opt);
-    } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to get integer socket option, reason: " << zErr.what();
-    } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to get integer socket option, unexpected reason: " << sErr.what();
-    } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to get integer socket option, unhandled exception";
-    }
-
-    return defaultVal;
 }
 
 }  // namespace strata::connector

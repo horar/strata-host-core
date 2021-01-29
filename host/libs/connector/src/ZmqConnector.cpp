@@ -155,7 +155,11 @@ connector_handle_t ZmqConnector::getFileDescriptor()
         return defaultHandle;
     }
 
-    connector_handle_t server_socket_file_descriptor = socketGetOpt(zmq::sockopt::fd, defaultHandle);
+    connector_handle_t server_socket_file_descriptor;
+    size_t server_socket_file_descriptor_size = sizeof(server_socket_file_descriptor);
+    if (false == socketGetOptLegacy(ZMQ_FD, &server_socket_file_descriptor, &server_socket_file_descriptor_size))
+        return defaultHandle;
+
     return server_socket_file_descriptor;
 }
 
@@ -272,6 +276,28 @@ bool ZmqConnector::socketSetOptLegacy(int opt, const void *val, size_t valLen)
     } catch (...) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to set legacy socket option (len: " << valLen << "), unhandled exception";
+    }
+
+    return false;
+}
+
+// Get a legacy socket option value
+bool ZmqConnector::socketGetOptLegacy(int opt, void *val, size_t* valLen)
+{
+    // Use this function only if there is not another way to avoid it due to the deprecated notice
+    try {
+        #pragma warning(suppress: 4996) // suppress warning 4996
+        socket_->getsockopt(opt, val, valLen);
+        return true;
+    } catch (const zmq::error_t& zErr) {
+        qCCritical(logCategoryZmqConnector).nospace()
+                << "Unable to get legacy socket option (len: " << valLen << "), reason: " << zErr.what();
+    } catch (const std::exception& sErr) {
+        qCCritical(logCategoryZmqConnector).nospace()
+                << "Unable to get legacy socket option (len: " << valLen << "), unexpected reason: " << sErr.what();
+    } catch (...) {
+        qCCritical(logCategoryZmqConnector).nospace()
+                << "Unable to get legacy socket option (len: " << valLen << "), unhandled exception";
     }
 
     return false;
