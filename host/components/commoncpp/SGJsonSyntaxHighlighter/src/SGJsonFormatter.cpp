@@ -104,9 +104,12 @@ void SGJsonFormatter::resolveNextToken(
         case ScannerState::Start:
             if (c.isSpace()) {
                 ;
-            } else if (c.isDigit() || c == '+' || c == '-') {
+            } else if (c.isDigit()) {
                 state = ScannerState::Integer;
                 nextToken.type = TokenType::Integer;
+                nextToken.startIndex = i;
+            } else if (c == '+' || c == '-') {
+                state = ScannerState::MaybeInteger;
                 nextToken.startIndex = i;
             } else if (c == '"') {
                 state = ScannerState::String;
@@ -147,6 +150,14 @@ void SGJsonFormatter::resolveNextToken(
             } else {
                 state = ScannerState::SyntaxError;
                 nextToken.type = TokenType::SyntaxError;
+            }
+            break;
+        case ScannerState::MaybeInteger:
+            if (c.isDigit()) {
+                state = ScannerState::Integer;
+                nextToken.type = TokenType::Integer;
+            } else {
+                state = ScannerState::SyntaxError;
             }
             break;
         case ScannerState::Integer:
@@ -261,7 +272,8 @@ void SGJsonFormatter::resolveNextToken(
 
     //text input for block is over, but token was not determined
 
-    if (state == ScannerState::MaybeReal
+    if (state == ScannerState::MaybeInteger
+            || state == ScannerState::MaybeReal
             || state == ScannerState::MaybeExpReal
             || state == ScannerState::MaybeExpRealSign
             || state == ScannerState::OnlyLettersType) {
