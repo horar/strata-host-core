@@ -40,7 +40,7 @@ QString Database::getDatabasePath() {
 QStringList Database::getAllDocumentKeys() {
     auto key_vector = database_->getAllDocumentKeys();
     QStringList list;
-    for (const auto key : key_vector) {
+    for (const auto &key : key_vector) {
         list << QString::fromStdString(key);
     }
     return list;
@@ -55,7 +55,7 @@ bool Database::startReplicator(const QString &url, const QString &username, cons
     auto _password = password.toStdString();
 
     std::vector<std::string> _channels;
-    for (const auto channel : channels) {
+    for (const auto &channel : channels) {
         _channels.push_back(channel.toStdString());
     }
 
