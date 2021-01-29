@@ -168,3 +168,181 @@ void StrataClientTest::testNonDefaultDealerId()
     QVERIFY_(defaultIdRecieved);
     QVERIFY_(customIdRecieved);
 }
+
+void StrataClientTest::testUsingCallbacks()
+{
+    using Message = strata::strataRPC::Message;
+    int zmqWaitTime = 50;
+
+    strata::strataRPC::ServerConnector server(address_);
+    server.initilizeConnector();
+
+    connect(
+        &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+        [&server](const QByteArray &clientId, const QByteArray &jsonMessage) {
+            QJsonObject jsonObject(QJsonDocument::fromJson(jsonMessage).object());
+            QString handlerName = jsonObject.value("method").toString();
+            double id = jsonObject.value("id").toDouble();
+            QByteArray response = "";
+            QString responseType =
+                jsonObject.value("params").toObject().value("response_type").toString();
+
+            if (responseType == "notification") {
+                response =
+                    QJsonDocument(
+                        QJsonObject({{"jsonrpc", "2.0"}, {"method", handlerName}, {"params", {}}}))
+                        .toJson(QJsonDocument::JsonFormat::Compact);
+            } else if (responseType == "error") {
+                response = QJsonDocument(QJsonObject({{"jsonrpc", "2.0"},
+                                                      {"method", handlerName},
+                                                      {"error", QJsonObject()},
+                                                      {"id", id}}))
+                               .toJson(QJsonDocument::JsonFormat::Compact);
+            } else if (responseType == "result") {
+                response = QJsonDocument(QJsonObject({{"jsonrpc", "2.0"},
+                                                      {"method", handlerName},
+                                                      {"result", QJsonObject()},
+                                                      {"id", id}}))
+                               .toJson(QJsonDocument::JsonFormat::Compact);
+            } else {
+                return;
+            }
+
+            server.sendMessage(clientId, response);
+        });
+
+    StrataClient client(address_);
+
+    bool noCallbackHandler = false;
+    client.registerHandler("test_no_callbacks",
+                           [&noCallbackHandler](const Message &) { noCallbackHandler = true; });
+
+    bool allCallbacksHandler = false;
+    client.registerHandler("test_all_callbacks",
+                           [&allCallbacksHandler](const Message &) { allCallbacksHandler = true; });
+
+    bool errorCallbackHander = false;
+    client.registerHandler("test_err_callback",
+                           [&errorCallbackHander](const Message &) { errorCallbackHander = true; });
+
+    bool resCallbackHandler = false;
+    client.registerHandler("test_res_callback",
+                           [&resCallbackHandler](const Message &) { resCallbackHandler = true; });
+
+    client.connectServer();
+
+    // No callbacks
+    noCallbackHandler = false;
+    client.sendRequest("test_no_callbacks", QJsonObject({{"response_type", "notification"}}),
+                       nullptr, nullptr);
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(noCallbackHandler);
+
+    noCallbackHandler = false;
+    client.sendRequest("test_no_callbacks", QJsonObject({{"response_type", "error"}}), nullptr,
+                       nullptr);
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(noCallbackHandler);
+
+    noCallbackHandler = false;
+    client.sendRequest("test_no_callbacks", QJsonObject({{"response_type", "result"}}), nullptr,
+                       nullptr);
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(noCallbackHandler);
+
+    // all callbacks are set
+    bool allCallbacksErrCallback = false;
+    bool allCallbacksResCallback = false;
+    allCallbacksHandler = false;
+    client.sendRequest(
+        "test_all_callbacks", QJsonObject({{"response_type", "error"}}),
+        [&allCallbacksErrCallback](const Message &) { allCallbacksErrCallback = true; },
+        [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
+
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(allCallbacksErrCallback);
+    QVERIFY_(false == allCallbacksResCallback);
+    QVERIFY_(false == allCallbacksHandler);
+
+    allCallbacksErrCallback = false;
+    allCallbacksResCallback = false;
+    allCallbacksHandler = false;
+    client.sendRequest(
+        "test_all_callbacks", QJsonObject({{"response_type", "result"}}),
+        [&allCallbacksErrCallback](const Message &) { allCallbacksErrCallback = true; },
+        [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
+
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(allCallbacksResCallback);
+    QVERIFY_(false == allCallbacksErrCallback);
+    QVERIFY_(false == allCallbacksHandler);
+
+    allCallbacksErrCallback = false;
+    allCallbacksResCallback = false;
+    allCallbacksHandler = false;
+    client.sendRequest(
+        "test_all_callbacks", QJsonObject({{"response_type", "notification"}}),
+        [&allCallbacksErrCallback](const Message &) { allCallbacksErrCallback = true; },
+        [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
+
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(false == allCallbacksResCallback);
+    QVERIFY_(false == allCallbacksErrCallback);
+    QVERIFY_(allCallbacksHandler);
+
+    // Only error callback
+    bool errorCallback = false;
+    errorCallbackHander = false;
+    client.sendRequest("test_err_callback", QJsonObject({{"response_type", "result"}}), nullptr,
+                       [&errorCallback](const Message &) { errorCallback = true; });
+
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(errorCallback);
+    QVERIFY_(false == errorCallbackHander);
+
+    errorCallback = false;
+    errorCallbackHander = false;
+    client.sendRequest("test_err_callback", QJsonObject({{"response_type", "error"}}), nullptr,
+                       [&errorCallback](const Message &) { errorCallback = true; });
+
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(false == errorCallback);
+    QVERIFY_(errorCallbackHander);
+
+    errorCallback = false;
+    errorCallbackHander = false;
+    client.sendRequest("test_err_callback", QJsonObject({{"response_type", "notification"}}),
+                       nullptr, [&errorCallback](const Message &) { errorCallback = true; });
+
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(false == errorCallback);
+    QVERIFY_(errorCallbackHander);
+
+    // Only result call back
+    bool resCallback = false;
+    resCallbackHandler = false;
+    client.sendRequest("test_res_callback", QJsonObject({{"response_type", "result"}}), nullptr,
+                       [&resCallback](const Message &) { resCallback = true; });
+
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(resCallback);
+    QVERIFY_(false == resCallbackHandler);
+
+    resCallback = false;
+    resCallbackHandler = false;
+    client.sendRequest("test_res_callback", QJsonObject({{"response_type", "error"}}), nullptr,
+                       [&resCallback](const Message &) { resCallback = true; });
+
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(false == resCallback);
+    QVERIFY_(resCallbackHandler);
+
+    resCallback = false;
+    resCallbackHandler = false;
+    client.sendRequest("test_res_callback", QJsonObject({{"response_type", "notification"}}),
+                       nullptr, [&resCallback](const Message &) { resCallback = true; });
+
+    waitForZmqMessages(zmqWaitTime);
+    QVERIFY_(false == resCallback);
+    QVERIFY_(resCallbackHandler);
+}

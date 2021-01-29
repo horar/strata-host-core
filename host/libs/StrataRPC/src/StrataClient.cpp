@@ -64,12 +64,20 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
     qCDebug(logCategoryStrataClient) << "New message from the server:" << jsonServerMessage;
 
     Message serverMessage;
-    if (false == buildServerMessage(jsonServerMessage, &serverMessage)) {
+    StrataHandler callbackHandler = nullptr;
+
+    if (false == buildServerMessage(jsonServerMessage, &serverMessage, callbackHandler)) {
         qCCritical(logCategoryStrataClient) << "Failed to build server message.";
         return;
     }
 
-    emit newServerMessageParsed(serverMessage);
+    if (callbackHandler) {
+        qCDebug(logCategoryStrataClient) << "Dispatching request callback.";
+        callbackHandler(serverMessage);
+    } else {
+        qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
+        emit newServerMessageParsed(serverMessage);
+    }
 }
 
 bool StrataClient::registerHandler(const QString &handlerName, StrataHandler handler)
@@ -92,9 +100,12 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
     return true;
 }
 
-std::pair<bool, int> StrataClient::sendRequest(const QString &method, const QJsonObject &payload)
+std::pair<bool, int> StrataClient::sendRequest(const QString &method, const QJsonObject &payload,
+                                               StrataHandler errorCallback,
+                                               StrataHandler resultCallback)
 {
-    const auto [requestId, message] = requestController_->addNewRequest(method, payload);
+    const auto [requestId, message] =
+        requestController_->addNewRequest(method, payload, errorCallback, resultCallback);
 
     if (true == message.isEmpty()) {
         qCCritical(logCategoryStrataClient) << "Failed to add request.";
@@ -104,7 +115,8 @@ std::pair<bool, int> StrataClient::sendRequest(const QString &method, const QJso
     return {connector_->sendMessage(message), requestId};
 }
 
-bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage)
+bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
+                                      StrataHandler &callbackHandler)
 {
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(jsonServerMessage, &jsonParseError);
@@ -162,7 +174,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
             requestController_->popPendingRequest(jsonObject.value("id").toDouble());
 
         if (false == requestFound || request.method_ == "") {
-            qCritical(logCategoryStrataClient) << "Failed pop pending request.";
+            qCritical(logCategoryStrataClient) << "Failed to pop pending request.";
             return false;
         }
 
@@ -171,7 +183,10 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
         if (true == jsonObject.contains("error") && true == jsonObject.value("error").isObject()) {
             serverMessage->payload = jsonObject.value("error").toObject();
             serverMessage->messageType = Message::MessageType::Error;
-            // TODO: set the callback to error callback
+            if (request.errorCallback_) {
+                qCDebug(logCategoryStrataClient) << "Error callback is set.";
+                callbackHandler = request.errorCallback_;
+            }
         } else {
             if (true == jsonObject.contains("result") &&
                 true == jsonObject.value("result").isObject()) {
@@ -180,7 +195,10 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
                 serverMessage->payload = QJsonObject{};
             }
             serverMessage->messageType = Message::MessageType::Response;
-            // TODO: set the callback to result callback
+            if (request.resultCallback_) {
+                qCDebug(logCategoryStrataClient) << "Response callback is set.";
+                callbackHandler = request.resultCallback_;
+            }
         }
 
     } else if (true == jsonObject.contains("method") &&

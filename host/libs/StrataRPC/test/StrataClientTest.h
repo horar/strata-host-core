@@ -16,6 +16,7 @@ private slots:
     void testConnectDisconnectToTheServer();
     void testBuildRequest();
     void testNonDefaultDealerId();
+    void testUsingCallbacks();
 
 private:
     void waitForZmqMessages(int delay = 100);
