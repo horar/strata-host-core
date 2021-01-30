@@ -40,7 +40,7 @@ bool StrataClient::connectServer()
     connect(this, &StrataClient::newServerMessageParsed, dispatcher_.get(),
             &Dispatcher::dispatchHandler);
 
-    sendRequest("register_client", {{"api_version", "1.0"}});
+    sendRequest("register_client", {{"api_version", "2.0"}});
 
     return true;
 }
