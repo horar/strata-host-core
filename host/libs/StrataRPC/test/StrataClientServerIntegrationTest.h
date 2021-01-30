@@ -16,6 +16,7 @@ class StrataClientServerIntegrationTest : public QObject
 private slots:
     void testSingleClient();
     void testMultipleClients();
+    void testCallbacks();
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";

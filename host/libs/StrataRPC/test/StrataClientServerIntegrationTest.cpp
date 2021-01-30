@@ -265,3 +265,36 @@ void StrataClientServerIntegrationTest::testMultipleClients()
     QVERIFY_(client1ReceivedServerBroadcast);
     QVERIFY_(client2ReceivedServerBroadcast);
 }
+
+void StrataClientServerIntegrationTest::testCallbacks()
+{
+    int waitZmqDelay = 50;
+    bool gotErrorCallback = false;
+    bool gotResultCallback = false;
+
+    StrataServer server(address_);
+    StrataClient client(address_);
+
+    server.registerHandler("test_error_callback", [&server](const Message &message) {
+        server.notifyClient(message, QJsonObject{}, strata::strataRPC::ResponseType::Error);
+    });
+
+    server.registerHandler("test_result_callback", [&server](const Message &message) {
+        server.notifyClient(message, QJsonObject{}, strata::strataRPC::ResponseType::Response);
+    });
+
+    QVERIFY_(server.initializeServer());
+    QVERIFY_(client.connectServer());
+
+    client.sendRequest("test_error_callback", QJsonObject{},
+                       [&gotErrorCallback](const Message &) { gotErrorCallback = true; });
+
+    waitForZmqMessages(waitZmqDelay);
+    QVERIFY_(gotErrorCallback);
+
+    client.sendRequest("test_result_callback", QJsonObject{}, nullptr,
+                       [&gotResultCallback](const Message &) { gotResultCallback = true; });
+
+    waitForZmqMessages(waitZmqDelay);
+    QVERIFY_(gotResultCallback);
+}
