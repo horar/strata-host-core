@@ -88,19 +88,19 @@ void RequestsControllerTest::testPopRequest()
         QVERIFY(requestJson != "");
     }
 
-    std::vector<strata::strataRPC::StrataHandler> callBacks[numOfTestCases];
+    std::vector<strata::strataRPC::StrataHandler> callBacks;
     for (int i = 1; i <= numOfTestCases; i++) {
         const auto [res, request] = rc.popPendingRequest(i);
         QVERIFY(res);
         QVERIFY(request.resultCallback_);
         QVERIFY(!request.errorCallback_);
-        callBacks->push_back(request.resultCallback_);
+        callBacks.push_back(request.resultCallback_);
     }
 
     for (int i = 0; i < numOfTestCases; i++) {
         strata::strataRPC::Message message;
         message.messageID = i;
-        callBacks->at(i)(message);
+        callBacks.at(i)(message);
     }
 
     const auto [res, request] = rc.popPendingRequest(numOfTestCases);
