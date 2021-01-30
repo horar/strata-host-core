@@ -172,7 +172,16 @@ void StrataClientTest::testNonDefaultDealerId()
 void StrataClientTest::testUsingCallbacks()
 {
     using Message = strata::strataRPC::Message;
+
     int zmqWaitTime = 50;
+    bool noCallbackHandler = false;
+    bool allCallbacksHandler = false;
+    bool errorCallbackHander = false;
+    bool resCallbackHandler = false;
+    bool allCallbacksErrCallback = false;
+    bool allCallbacksResCallback = false;
+    bool errorCallback = false;
+    bool resCallback = false;
 
     strata::strataRPC::ServerConnector server(address_);
     server.initilizeConnector();
@@ -213,19 +222,19 @@ void StrataClientTest::testUsingCallbacks()
 
     StrataClient client(address_);
 
-    bool noCallbackHandler = false;
+    noCallbackHandler = false;
     client.registerHandler("test_no_callbacks",
                            [&noCallbackHandler](const Message &) { noCallbackHandler = true; });
 
-    bool allCallbacksHandler = false;
+    allCallbacksHandler = false;
     client.registerHandler("test_all_callbacks",
                            [&allCallbacksHandler](const Message &) { allCallbacksHandler = true; });
 
-    bool errorCallbackHander = false;
+    errorCallbackHander = false;
     client.registerHandler("test_err_callback",
                            [&errorCallbackHander](const Message &) { errorCallbackHander = true; });
 
-    bool resCallbackHandler = false;
+    resCallbackHandler = false;
     client.registerHandler("test_res_callback",
                            [&resCallbackHandler](const Message &) { resCallbackHandler = true; });
 
@@ -251,8 +260,8 @@ void StrataClientTest::testUsingCallbacks()
     QVERIFY_(noCallbackHandler);
 
     // all callbacks are set
-    bool allCallbacksErrCallback = false;
-    bool allCallbacksResCallback = false;
+    allCallbacksErrCallback = false;
+    allCallbacksResCallback = false;
     allCallbacksHandler = false;
     client.sendRequest(
         "test_all_callbacks", QJsonObject({{"response_type", "error"}}),
@@ -291,7 +300,7 @@ void StrataClientTest::testUsingCallbacks()
     QVERIFY_(allCallbacksHandler);
 
     // Only error callback
-    bool errorCallback = false;
+    errorCallback = false;
     errorCallbackHander = false;
     client.sendRequest("test_err_callback", QJsonObject({{"response_type", "result"}}), nullptr,
                        [&errorCallback](const Message &) { errorCallback = true; });
@@ -319,7 +328,7 @@ void StrataClientTest::testUsingCallbacks()
     QVERIFY_(errorCallbackHander);
 
     // Only result call back
-    bool resCallback = false;
+    resCallback = false;
     resCallbackHandler = false;
     client.sendRequest("test_res_callback", QJsonObject({{"response_type", "result"}}), nullptr,
                        [&resCallback](const Message &) { resCallback = true; });
