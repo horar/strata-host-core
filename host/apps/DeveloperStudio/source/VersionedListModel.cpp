@@ -38,6 +38,8 @@ QVariant VersionedListModel::data(const QModelIndex &index, int role) const
         return item->uri;
     case NameRole:
         return item->name;
+    case DeviceRole:
+        return item->device;
     case Md5Role:
         return item->md5;
     case TimestampRole:
@@ -193,6 +195,7 @@ QHash<int, QByteArray> VersionedListModel::roleNames() const
     names[UriRole] = "uri";
     names[VersionRole] = "version";
     names[NameRole] = "name";
+    names[DeviceRole] = "device";
     names[TimestampRole] = "timestamp";
     names[Md5Role] = "md5";
     names[InstalledRole] = "installed";
