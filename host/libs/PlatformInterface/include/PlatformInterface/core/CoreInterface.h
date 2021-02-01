@@ -85,7 +85,9 @@ signals:
     void updateInfoReceived(QJsonObject payload);
     void updateApplicationReceived(QJsonObject payload);
 
-    void firmwareProgress(QJsonObject payload);
+    void updateFirmwareReply(QJsonObject payload);
+    void updateFirmwareJobUpdate(QJsonObject payload);
+
     void downloadViewFinished(QJsonObject payload);
     void downloadControlViewProgress(QJsonObject payload);
 
