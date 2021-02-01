@@ -9,7 +9,6 @@ import QtWebChannel 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
-import tech.strata.signals 1.0
 
 import "../../general"
 import "../"
