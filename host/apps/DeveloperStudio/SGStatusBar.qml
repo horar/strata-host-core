@@ -14,6 +14,7 @@ import "qrc:/partial-views/status-bar"
 import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
 import "qrc:/partial-views/profile-popup"
+import "qrc:/partial-views/general/"
 import "qrc:/js/help_layout_manager.js" as Help
 import "partial-views/control-view-creator"
 
@@ -22,6 +23,7 @@ import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.signals 1.0
 
 Rectangle {
     id: container
@@ -351,26 +353,6 @@ Rectangle {
         }
     }
 
-    Loader {
-        id: cvcLoader
-        active: false
-        signal toggleCVC()
-        anchors.right: profileIconContainer.left
-        sourceComponent: Component {
-            CVCButton {
-                id: cvcButton
-                visible: false
-                Connections {
-                    target: cvcLoader
-
-                    onToggleCVC: {
-                            cvcButton.toggleVisibility()
-                    }
-                }
-            }
-        }
-    }
-
     Item {
         id: profileIconContainer
         width: height
@@ -522,12 +504,12 @@ Rectangle {
 
                 SGMenuItem {
                     text: qsTr("CVC")
-                    visible: true
+                    visible: cvcButton.state === "debug"
                     width: profileMenu.width
 
                     onClicked: {
-                        cvcLoader.active = true
-                        cvcLoader.toggleCVC()
+                        Signals.executeCVCSignal(false)
+                        cvcButton.toggleVisibility()
                         profileMenu.close()
                     }
                 }

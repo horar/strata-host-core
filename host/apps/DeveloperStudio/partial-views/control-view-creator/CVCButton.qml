@@ -7,6 +7,7 @@ import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.signals 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
@@ -75,8 +76,7 @@ Rectangle {
                 anchors.fill: parent
 
                 onClicked: {
-                    let data = {"index": NavigationControl.stack_container_.count-3}
-                    NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+                    Signals.executeCVCSignal(true)
                     controlViewCreatorContainer.visible = false
                 }
             }

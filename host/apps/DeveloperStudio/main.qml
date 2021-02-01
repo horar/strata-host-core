@@ -8,8 +8,9 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/js/platform_filters.js" as PlatformFilters
-import "qrc:/partial-views/platform-view"
 
+import "qrc:/partial-views/platform-view"
+import "qrc:/partial-views/general/CVCLoader/"
 // imports below must be qrc:/ due to qrc aliases for debug/release differences
 import "qrc:/partial-views/control-view-creator"
 import "qrc:/partial-views/debug-bar"
@@ -20,8 +21,6 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
-
-import QtQml 2.12
 
 SGWidgets.SGMainWindow {
     id: mainWindow
@@ -122,8 +121,8 @@ SGWidgets.SGMainWindow {
                 delegate: SGPlatformView {}
             }
 
-            ControlViewCreator {
-                id: controlViewCreator
+            CVCLoader {
+                id: controlViewCreatorLoader
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }

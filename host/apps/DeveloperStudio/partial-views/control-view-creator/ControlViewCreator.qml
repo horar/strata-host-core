@@ -5,6 +5,7 @@ import QtQuick.Controls 2.12
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.signals 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
@@ -351,6 +352,41 @@ Rectangle {
             }
 
             requestRecompile()
+        }
+    }
+
+    ConfirmClosePopup {
+      id: confirmCloseCVC
+      parent: mainWindow.contentItem
+
+      titleText: "There are unsaved changes in the project"
+      popupText: "Would you like to save all changes or revert changes"
+
+      acceptButtonText: "Save all"
+      closeButtonText: "Revert changes"
+
+      onPopupClosed: {
+          if(closeReason === cancelCloseReason) {
+              return
+          }
+          if(closeReason === acceptCloseReason){
+              editor.openFilesModel.saveAll(false)
+          }
+          let data = {"index": NavigationControl.stack_container_.count-3}
+          NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+       }
+    }
+
+    Connections {
+        target: Signals
+
+        onExecuteCVCSignal: {
+            if(loaded && editor.openFilesModel.getUnsavedCount() > 0){
+                confirmCloseCVC.open()
+            } else {
+                let data = {"index": NavigationControl.stack_container_.count-3}
+                NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+            }
         }
     }
 

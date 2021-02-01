@@ -63,4 +63,11 @@ QtObject {
       Feedback result signals
     */
     signal feedbackResult(string result)
+
+    /*
+      Misc Signals for CVC
+    */
+
+    signal executeCVCSignal(bool loaded)
+    signal checkForUnsavedChanges(bool changes)
 }
