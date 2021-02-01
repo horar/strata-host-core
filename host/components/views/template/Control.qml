@@ -1,10 +1,8 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
-
 import "control-views"
 import "qrc:/js/help_layout_manager.js" as Help
-
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
@@ -16,10 +14,6 @@ Item {
 
     PlatformInterface {
         id: platformInterface
-    }
-
-    Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these three tabs, you can view basic controls, advanced controls or the SGUserSettings demo.", 0, "controlHelp")
     }
 
     TabBar {
@@ -34,7 +28,7 @@ Item {
             id: basicButton
             KeyNavigation.right: this
             KeyNavigation.left: this
-            text: qsTr("Basic")
+            text: qsTr("Commands and Notifications")
             onClicked: {
                 controlContainer.currentIndex = 0
             }
@@ -47,16 +41,6 @@ Item {
             text: qsTr("Advanced")
             onClicked: {
                 controlContainer.currentIndex = 1
-            }
-        }
-
-        TabButton {
-            id: userSettingsButton
-            KeyNavigation.right: this
-            KeyNavigation.left: this
-            text: qsTr("User Settings")
-            onClicked: {
-                controlContainer.currentIndex = 2
             }
         }
     }
@@ -77,23 +61,20 @@ Item {
         AdvancedControl {
             id: advanced
         }
-
-        UserSettingsControl {
-            id: userSettings
-        }
     }
 
     SGIcon {
         id: helpIcon
         anchors {
             right: controlContainer.right
+            rightMargin: 15
             top: controlContainer.top
-            margins: 20
+            margins: 10
         }
         source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        height: 40
-        width: 40
+        height: 25
+        width: 25
 
         MouseArea {
             id: helpMouse
@@ -102,19 +83,40 @@ Item {
             }
             onClicked: {
                 // Make sure view is set to Basic before starting tour
-                navTabs.currentIndex = 0
-                controlContainer.currentIndex = 0
-                basicButton.clicked()
-                Help.startHelpTour("controlHelp")
+                if(controlContainer.currentIndex === 0) {
+                    Help.startHelpTour("BasicControlHelp")
+                    if(debugNotifMenu.visible){
+                        debugNotifMenu.visible = false
+                    }
+                }
+                if(controlContainer.currentIndex === 1) {
+                    Help.startHelpTour("AdvanceControlHelp")
+                    if(debugNotifMenu.visible){
+                        debugNotifMenu.visible = false
+                    }
+                }
             }
             hoverEnabled: true
         }
     }
 
-    DebugMenu {
-        // See description in control-views/DebugMenu.qml
+    SGButton {
+        text: "Inject \n Fake Notification"
+        color: "lightgrey"
         anchors {
-            right: controlContainer.right
+            left: controlContainer.left
+            bottom: controlContainer.bottom
+        }
+        onClicked: {
+            debugNotifMenu.visible = true
+        }
+    }
+
+    DebugNotifMenu {
+        id: debugNotifMenu
+        // See description in control-views/DebugNotifMenu.qml
+        anchors {
+            left: controlContainer.left
             bottom: controlContainer.bottom
         }
     }

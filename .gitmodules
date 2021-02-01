@@ -20,7 +20,7 @@
 	ignore = all
 [submodule "extern/couchbase-lite-C"]
 	path = extern/couchbase-lite-C
-	url = https://github.com/couchbaselabs/couchbase-lite-C.git
+	url = https://github.com/stratadeveloperstudio/couchbase-lite-C.git
 	ignore = all
 [submodule "extern/libzmq"]
 	path = extern/libzmq
