@@ -367,8 +367,17 @@ bool ZmqConnector::socketPoll(zmq::pollitem_t *items)
 bool ZmqConnector::socketAndContextOpen()
 {
     if ((nullptr != socket_) || (nullptr != context_)) {
-        qCCritical(logCategoryZmqConnector) << "Unable to open socket, it is already open";
-        return false;
+        if ((nullptr != socket_) && (nullptr != context_) &&
+            (nullptr == context_->handle()) && (false == socket_->connected()) &&
+            (false == isConnected())) {
+            qCInfo(logCategoryZmqConnector) << "Reopening socket";
+            // must be released in this order
+            socket_.release();
+            context_.release();
+        } else {
+            qCCritical(logCategoryZmqConnector) << "Unable to open socket, it is already open";
+            return false;
+        }
     }
 
     try {
