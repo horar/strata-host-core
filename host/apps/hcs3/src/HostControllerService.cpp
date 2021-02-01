@@ -282,8 +282,12 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
     clients_.sendMessage(clientId, notification);
 }
 
-void HostControllerService::sendPlatformMetaData(const QByteArray &clientId, const QString &classId, const QJsonArray &controlViewList,
-                                                 const QJsonArray &firmwareList, const QString &error)
+void HostControllerService::sendPlatformMetaData(
+        const QByteArray &clientId,
+        const QString &classId,
+        const QJsonArray &controlViewList,
+        const QJsonArray &firmwareList,
+        const QString &error)
 {
     QJsonObject payload;
 
