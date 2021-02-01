@@ -188,6 +188,9 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
     QString strJson_payload(testdoc.toJson(QJsonDocument::Compact));
     QString type = payload["type"].toString();
 
+    //for messages with inner payload
+    QJsonObject innerPayload = payload.value("payload").toObject();
+
     if (type == "connected_platforms") {
         if( connected_platform_list_ != strJson_payload ) {
             connected_platform_list_ = strJson_payload;
@@ -217,9 +220,9 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
     } else if (type == "updates_available") {
         emit updateInfoReceived(payload);
     } else if (type == "program_controller") {
-        emit programControllerReply(payload);
+        emit programControllerReply(innerPayload);
     } else if (type == "program_controller_job") {
-        emit programControllerJobUpdate(payload);
+        emit programControllerJobUpdate(innerPayload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }
