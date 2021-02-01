@@ -32,7 +32,7 @@ if(NOT LIB_INSTALLED)
             EXCLUDE_FROM_ALL ON
             CMAKE_ARGS "${CMAKE_ARGS}"
                 -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-                -DCMAKE_MACOSX_RPATH=1
+                -DCMAKE_MACOSX_RPATH=0
                 -DWITH_PERF_TOOL=OFF
                 -DZMQ_BUILD_TESTS=OFF
                 -DENABLE_CPACK=OFF
@@ -49,28 +49,20 @@ else()
     endif()
 endif()
 
-if(WIN32)
-    add_library(zeromq::libzmq SHARED IMPORTED GLOBAL)
-elseif(APPLE)
-    # TODO: libzmq is shared between DevStudio and Strata. Therefore, this should be dynamic.
-    # - During devolopment runtime the dynamic lib should be moved along with bin directory
-    # - Proper handling for RPATH with offline & onlioe MacOS installer.
-    # https://jira.onsemi.com/browse/CS-1460
-    add_library(zeromq::libzmq STATIC IMPORTED GLOBAL)
-endif()
+add_library(zeromq::libzmq SHARED IMPORTED GLOBAL)
 
 if(WIN32)
     set_target_properties(zeromq::libzmq PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include"
             IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/bin/libzmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
             IMPORTED_LOCATION_DEBUG "${CMAKE_BINARY_DIR}/bin/libzmqd${CMAKE_SHARED_LIBRARY_SUFFIX}"
-            IMPORTED_IMPLIB "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmq${CMAKE_STATIC_LIBRARY_SUFFIX}"
-            IMPORTED_IMPLIB_DEBUG "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmqd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            IMPORTED_IMPLIB "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            IMPORTED_IMPLIB_DEBUG "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/libzmqd${CMAKE_SHARED_LIBRARY_SUFFIX}"
     )
 else()
     set_target_properties(zeromq::libzmq PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include"
-            IMPORTED_LOCATION "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zmq${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            IMPORTED_LOCATION "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
     )
 endif()
 add_dependencies(zeromq::libzmq DEPENDS libzmq)
