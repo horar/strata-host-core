@@ -351,6 +351,26 @@ Rectangle {
         }
     }
 
+    Loader {
+        id: cvcLoader
+        active: false
+        signal toggleCVC()
+        anchors.right: profileIconContainer.left
+        sourceComponent: Component {
+            CVCButton {
+                id: cvcButton
+                visible: false
+                Connections {
+                    target: cvcLoader
+
+                    onToggleCVC: {
+                            cvcButton.toggleVisibility()
+                    }
+                }
+            }
+        }
+    }
+
     Item {
         id: profileIconContainer
         width: height
@@ -502,11 +522,13 @@ Rectangle {
 
                 SGMenuItem {
                     text: qsTr("CVC")
-                    visible: cvcButton.state === "debug"
+                    visible: true
                     width: profileMenu.width
 
                     onClicked: {
-                        cvcButton.toggleVisibility()
+                        cvcLoader.active = true
+                        cvcLoader.toggleCVC()
+                        profileMenu.close()
                     }
                 }
 
