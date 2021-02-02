@@ -34,6 +34,8 @@ Item {
             onExecuteCVCSignal: {
                 if(!loaded){
                     cvcLoader.loadSignal()
+                } else if(loaded && !changes){
+                    cvcLoader.unloadSignal()
                 }
             }
         }

@@ -67,6 +67,6 @@ QtObject {
     /*
       Misc Signal for CVC
     */
-    signal executeCVCSignal(bool loaded)
+    signal executeCVCSignal(bool loaded, bool changes)
     signal unsavedCVCChanges(bool changes)
 }

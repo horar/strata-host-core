@@ -372,9 +372,7 @@ Rectangle {
           if(closeReason === acceptCloseReason){
               editor.openFilesModel.saveAll(true)
           }
-          let data = {"index": NavigationControl.stack_container_.count-3}
-          NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
-          Signals.unsavedCVCChanges(false)
+          Signals.executeCVCSignal(true, false)
        }
     }
 
@@ -383,12 +381,8 @@ Rectangle {
 
         onExecuteCVCSignal: {
             if(loaded){
-                if(editor.openFilesModel.getUnsavedCount() > 0){
-                    Signals.unsavedCVCChanges(true)
+                if(changes){
                     confirmCloseCVC.open()
-                } else {
-                    let data = {"index": NavigationControl.stack_container_.count-3}
-                    NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
                 }
             }
         }

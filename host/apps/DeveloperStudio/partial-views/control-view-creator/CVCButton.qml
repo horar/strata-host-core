@@ -21,6 +21,8 @@ Rectangle {
     color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? Theme.palette.green : "#444"
     state: "debug"
 
+    property bool hasUnsavedChanges: false
+
     MouseArea {
         id: controlViewCreatorMouse
         anchors {
@@ -76,7 +78,7 @@ Rectangle {
                 anchors.fill: parent
 
                 onClicked: {
-                    Signals.executeCVCSignal(true)
+                    Signals.executeCVCSignal(true,hasUnsavedChanges)
                 }
             }
         }
@@ -85,11 +87,19 @@ Rectangle {
     Connections {
         target: Signals
 
-        onUnsavedCVCChanges: {
-            if(!changes){
+        onExecuteCVCSignal: {
+            if(loaded && !changes){
                 controlViewCreatorContainer.visible = false
+                let data = {"index": NavigationControl.stack_container_.count-3}
+                NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
             }
         }
+
+        onUnsavedCVCChanges: {
+            hasUnsavedChanges = changes
+        }
+
+
     }
 
     function toggleVisibility(){

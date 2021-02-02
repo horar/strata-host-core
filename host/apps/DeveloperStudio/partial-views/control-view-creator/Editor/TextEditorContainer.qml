@@ -9,6 +9,7 @@ import QtWebChannel 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 
 import "../../general"
 import "../"
@@ -23,6 +24,11 @@ Item {
     property int savedVersionId
     property int currentVersionId
     property bool externalChanges: false
+    property bool unsavedChanges: model.unsavedChanges
+
+    onUnsavedChangesChanged: {
+        Signals.unsavedCVCChanges(unsavedChanges)
+    }
 
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
