@@ -6,13 +6,17 @@
 #
 set(MONACO_TAG 0.20.0)
 
-file(GLOB_RECURSE INSTALLED ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}/editor.html)
-if(NOT INSTALLED)
+file(GLOB_RECURSE INSTALLED ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}/monaco.d.ts)
+if(INSTALLED)
+    file(REMOVE_RECURSE ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}/)
+    file(REMOVE_RECURSE ${EXTERN_INSTALL_DIR_PATH}/../extern/monaco-editor-${MONACO_TAG}-prefix/)
+endif() 
 
     ExternalProject_Add(monaco-editor-${MONACO_TAG}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package
         INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}
         DOWNLOAD_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/tar
+        BUILD_ALWAYS ON
         URL https://registry.npmjs.org/monaco-editor/-/monaco-editor-${MONACO_TAG}.tgz
         URL_HASH SHA1=5d5009343a550124426cb4d965a4d27a348b4dea
         CONFIGURE_COMMAND ""
@@ -24,4 +28,4 @@ if(NOT INSTALLED)
         INSTALL_COMMAND ""   
     )
 
-endif() 
+
