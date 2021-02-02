@@ -14,7 +14,6 @@ import "qrc:/partial-views/status-bar"
 import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
 import "qrc:/partial-views/profile-popup"
-import "qrc:/partial-views/general/"
 import "qrc:/js/help_layout_manager.js" as Help
 import "partial-views/control-view-creator"
 

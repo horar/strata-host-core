@@ -14,8 +14,6 @@ Item {
         signal loadSignal()
         signal unloadSignal()
 
-        property bool unsavedChanges: false
-
         active: false
 
         onLoadSignal: {
@@ -37,10 +35,6 @@ Item {
                 if(!loaded){
                     cvcLoader.loadSignal()
                 }
-            }
-
-            onCheckForUnsavedChanges: {
-                cvcLoader.unsavedChanges = changes
             }
         }
     }
