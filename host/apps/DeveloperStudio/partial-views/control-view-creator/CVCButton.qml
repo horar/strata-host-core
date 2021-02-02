@@ -98,8 +98,6 @@ Rectangle {
         onUnsavedCVCChanges: {
             hasUnsavedChanges = changes
         }
-
-
     }
 
     function toggleVisibility(){
