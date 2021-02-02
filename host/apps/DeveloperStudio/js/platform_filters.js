@@ -10,6 +10,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-audio-video": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
@@ -17,6 +18,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-connectivity": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/connectivity.svg",
@@ -24,6 +26,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-sensor": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/sensors.svg",
@@ -31,6 +34,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-iso-protection": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/isolation_and_protection.svg",
@@ -38,6 +42,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     // Commented out per Will Abdeh request, to be uncommented in future release
     //            "category-power-management": {
@@ -46,6 +51,7 @@ var mapping = {
     //                type: "category",
     //                inUse: false,
     //    activelyFiltering: false,
+    //    row: -1
     //            },
     "subcategory-powerman-load-switch": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/load_switches.svg",
@@ -53,6 +59,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-power-module": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
@@ -60,6 +67,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-interface": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/interfaces.svg",
@@ -67,6 +75,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-clock-timing": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
@@ -74,6 +83,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-discrete-driver": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg",
@@ -81,6 +91,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-memory": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/memory.svg",
@@ -88,6 +99,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-optoelectronic": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
@@ -95,6 +107,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-microcontroller": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
@@ -102,6 +115,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "category-standard-logic": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/logic_gates.svg",
@@ -109,6 +123,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "subcategory-powerman-dcdc": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg",
@@ -116,6 +131,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "subcategory-powerman-acdc": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg",
@@ -123,6 +139,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "subcategory-powerman-led": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/led.svg",
@@ -130,6 +147,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "subcategory-powerman-motor-drive": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/motor_drivers.svg",
@@ -137,6 +155,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "subcategory-interface-usbc": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/usb_type_c.svg",
@@ -144,6 +163,7 @@ var mapping = {
         type: "category",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
 
     // Segments
@@ -153,6 +173,7 @@ var mapping = {
         type: "segment",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "segment-iot": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg",
@@ -160,6 +181,7 @@ var mapping = {
         type: "segment",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
     "segment-industrial-cloud-power": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/segment-icons/segment-industrial-cloud-power.svg",
@@ -167,6 +189,7 @@ var mapping = {
         type: "segment",
         inUse: false,
         activelyFiltering: false,
+        row: -1
     },
 
     // Statuses
@@ -176,7 +199,8 @@ var mapping = {
         type: "status",
         inUse: false,
         activelyFiltering: false,
-        filterName: "status-connected"
+        filterName: "status-connected",
+        row: -1
     },
     "status-coming-soon": {
         iconSource: "",
@@ -184,7 +208,8 @@ var mapping = {
         type: "status",
         inUse: false,
         activelyFiltering: false,
-        filterName: "status-coming-soon"
+        filterName: "status-coming-soon",
+        row: -1
     },
     "status-recently-released": {
         iconSource: "",
@@ -192,7 +217,8 @@ var mapping = {
         type: "status",
         inUse: false,
         activelyFiltering: false,
-        filterName: "status-recently-released"
+        filterName: "status-recently-released",
+        row: -1
     },
 }
 

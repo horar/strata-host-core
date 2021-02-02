@@ -189,6 +189,35 @@ Item {
             Layout.preferredWidth: 150
             Layout.minimumWidth: 100
 
+            property real delegateHeight: 35
+
+            Flow {
+                id: flow
+                Layout.fillWidth: true
+                spacing: 2
+
+                property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
+                property int maxRows: 2
+
+                onRowsChanged: {
+                    if (rows < maxRows) {
+                        reset()
+                    }
+                }
+
+                function reset () {
+                    for (let i = 0; i < filters.count; i++) {
+                        filters.get(i).row = -1
+                    }
+                }
+
+                Repeater {
+                    id: segmentCategoryRepeater
+                    model: visibleButtons
+                    delegate: iconDelegate
+                }
+            }
+
             SGSortFilterProxyModel {
                 id: segmentsCategories
                 sourceModel: filters
@@ -197,35 +226,31 @@ Item {
             }
 
             SGSortFilterProxyModel {
-                id: firstFour
+                id: visibleButtons
                 sourceModel: segmentsCategories
                 invokeCustomFilter: true
 
                 function filterAcceptsRow (index) {
-                    return index < 2
+                    var listing = sourceModel.get(index)
+                    return listing.row < flow.maxRows
                 }
             }
 
             SGSortFilterProxyModel {
-                id: remaining
+                id: remainingButtons
                 sourceModel: segmentsCategories
                 invokeCustomFilter: true
 
                 function filterAcceptsRow (index) {
-                    return index >= 2
+                    var listing = sourceModel.get(index)
+                    return listing.row >= flow.maxRows
                 }
-            }
-
-            Repeater {
-                id: segmentCategoryRepeater
-                model: firstFour
-                delegate: iconDelegate
             }
 
             SGText {
                 id: remainingText
-                visible: remaining.count > 0
-                text: "And " + remaining.count + " more..."
+                visible: remainingButtons.count > 0
+                text: "And " + remainingButtons.count + " more..."
                 Layout.leftMargin: 30 // width of icon + rowLayout's spacing in iconDelegate
                 font.underline: moreFiltersMouse.containsMouse
 
@@ -254,7 +279,7 @@ Item {
 
                         Repeater {
                             id: overflowRepeater
-                            model: remaining
+                            model: remainingButtons
                             delegate: iconDelegate
                         }
                     }
