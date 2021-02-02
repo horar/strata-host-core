@@ -152,14 +152,14 @@ Item {
 
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
+
     }
 
-
-    //    DebugMenu {
-    //        // See description in control-views/DebugMenu.qml
-    //        anchors {
-    //            right: controlContainer.right
-    //            bottom: controlContainer.bottom
-    //        }
-    //    }
+//    DebugMenu {
+//        // See description in control-views/DebugMenu.qml
+//        anchors {
+//            right: controlContainer.right
+//            bottom: controlContainer.bottom
+//        }
+//    }
 }
