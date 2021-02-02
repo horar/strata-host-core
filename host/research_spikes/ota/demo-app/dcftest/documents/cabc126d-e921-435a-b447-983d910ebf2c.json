@@ -1,7 +1,7 @@
 {
-  "_id": "6057eb97-5e00-4adc-8bff-9c5e8205b353",
+  "_id": "cabc126d-e921-435a-b447-983d910ebf2c",
   "_rev": "2-ab508f6626ea92a2c03774bb901e6b29",
-  "channels": "6057eb97-5e00-4adc-8bff-9c5e8205b353",
+  "channels": "cabc126d-e921-435a-b447-983d910ebf2c",
   "documents": {
     "datasheets": [],
     "downloads": [],
@@ -9,12 +9,12 @@
   },
   "firmware": [
     {
-      "device": "water-heater"
+      "device": "RSL10-rev1"
     }
   ],
-  "name": "STR-WATER-HEATER-GEVB",
+  "name": "ONSEC-19-029 REV1",
   "platform_selector": {
-    "file": "6057eb97-5e00-4adc-8bff-9c5e8205b353/platform_selector/thumb.jpeg",
+    "file": "cabc126d-e921-435a-b447-983d910ebf2c/platform_selector/thumb.jpeg",
     "filename": "image.jpeg",
     "filesize": "38314",
     "md5": "8fd574a9a22c59d5348e1fe4b13336a5",

@@ -236,6 +236,22 @@
       "version": "1.1.0"
     }
   ],
+  "firmware": [
+    {
+      "file": "strata_assisted_ecosystem_platform_100.bin",
+      "device": "RSL10-rev1",
+      "md5": "7f408274a80b624f78b0a983739b4239",
+      "timestamp": "2021-01-29 14:28:29",
+      "version": "1.0.0"
+    },
+    {
+      "file": "strata_assisted_ecosystem_platform_101.bin",
+      "device": "RSL10-rev1",
+      "md5": "36476eff13bc3675b7c4cfda43660e96",
+      "timestamp": "2021-02-02 15:06:03",
+      "version": "1.0.1"
+    }
+  ],
   "name": "STR-PWRNCV81599-R0-GEVK",
   "platform_selector": {
     "file": "15411d3f-829f-4b65-b607-13e8dec840aa/platform_selector/thumb.jpeg",
