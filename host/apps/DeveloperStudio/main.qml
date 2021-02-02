@@ -33,6 +33,7 @@ SGWidgets.SGMainWindow {
     title: Qt.application.displayName
 
     signal initialized()
+    property bool hcsReconnected: false
 
     function resetWindowSize()
     {
@@ -76,7 +77,13 @@ SGWidgets.SGMainWindow {
         onHcsConnectedChanged: {
             if (sdsModel.hcsConnected) {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
+                if(hcsReconnected) {
+                    Notifications.createNotification(`Connection re-established`,Notifications.info,"all")
+                    hcsReconnected = false
+                }
             } else {
+                Notifications.createNotification(`Connection to server lost:`,Notifications.critical,"all")
+                hcsReconnected = true
                 PlatformFilters.clearActiveFilters()
                 PlatformSelection.logout()
                 SessionUtils.initialized = false
