@@ -26,9 +26,16 @@ ColumnLayout {
 
     Connections {
         target: coreInterface
-        onFirmwareProgress: {
+
+        onUpdateFirmwareReply: {
             if (payload.device_id === platformStack.device_id) {
-                activeFirmware.parseProgress(payload)
+                firmwareColumn.activeFirmware.initUpdateFirmwareJob(payload)
+            }
+        }
+
+        onUpdateFirmwareJobUpdate: {
+            if (firmwareColumn.activeFirmware) {
+                firmwareColumn.activeFirmware.processUpdateFirmwareJobUpdate(payload)
             }
         }
     }

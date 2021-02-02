@@ -202,7 +202,7 @@ void ClassDocuments::populateMetaData(QJsonObject data)
 
         if (documentObject.contains("uri") == false
                 || documentObject.contains("md5")  == false
-                || documentObject.contains("name") == false
+                || documentObject.contains("device") == false
                 || documentObject.contains("timestamp")  == false
                 || documentObject.contains("version")  == false) {
 
@@ -211,12 +211,12 @@ void ClassDocuments::populateMetaData(QJsonObject data)
         }
 
         QString uri = documentObject["uri"].toString();
-        QString name = documentObject["name"].toString();
+        QString device = documentObject["device"].toString();
         QString md5 = documentObject["md5"].toString();
         QString version = documentObject["version"].toString();
         QString timestamp = documentObject["timestamp"].toString();
 
-        VersionedItem *firmwareItem = new VersionedItem(uri, md5, name, timestamp, version);
+        VersionedItem *firmwareItem = new VersionedItem(uri, md5, "", device, timestamp, version);
         firmwareList.append(firmwareItem);
     }
 
@@ -242,7 +242,7 @@ void ClassDocuments::populateMetaData(QJsonObject data)
         QString timestamp = documentObject["timestamp"].toString();
         QString filepath = documentObject["filepath"].toString();
 
-        VersionedItem *controlViewItem = new VersionedItem(uri, md5, name, timestamp, version, filepath);
+        VersionedItem *controlViewItem = new VersionedItem(uri, md5, name, "", timestamp, version, filepath);
         controlViewList.append(controlViewItem);
     }
 

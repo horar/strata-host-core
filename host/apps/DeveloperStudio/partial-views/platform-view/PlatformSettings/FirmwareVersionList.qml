@@ -62,6 +62,7 @@ ColumnLayout {
                 objectName: "firmwareRow"
 
                 property bool flashingInProgress: false
+                property string updateFirmwareJobId
                 property alias description: description.text
 
                 onFlashingInProgressChanged: {
@@ -209,10 +210,24 @@ ColumnLayout {
                             }
                         }
 
-                        function parseProgress (payload) {
-                            switch (payload.operation) {
+                        function initUpdateFirmwareJob(payload) {
+                            if (payload.hasOwnProperty("job_id")) {
+                                firmwareRow.updateFirmwareJobId = payload.job_id
+
+                            } else {
+                                statusText.text = "Download failed: " + payload.error_string
+                                flashingInProgress = false
+                            }
+                        }
+
+                        function processUpdateFirmwareJobUpdate(payload) {
+                            if (payload.job_id !== firmwareRow.updateFirmwareJobId) {
+                                return
+                            }
+
+                            switch (payload.job_type) {
                             case "download_progress":
-                                switch (payload.status) {
+                                switch (payload.job_status) {
                                 case "running":
                                     switch (payload.total) {
                                     case -1:
@@ -226,23 +241,23 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
-                                    statusText.text = "Download failed: " + payload.error
+                                    statusText.text = "Download failed: " + payload.error_string
                                     break;
                                 }
                                 break;
                             case "prepare":
-                                switch (payload.status) {
+                                switch (payload.job_status) {
                                 case "running":
                                     statusText.text = "Preparing..."
                                     fillBar.width = barBackground.width * .25
                                     break;
                                 case "failure":
-                                    statusText.text = "Preparation failed: " + payload.error
+                                    statusText.text = "Preparation failed: " + payload.error_string
                                     break;
                                 }
                                 break;
                             case "backup_progress":
-                                switch (payload.status) {
+                                switch (payload.job_status) {
                                 case "running":
                                     statusText.text = "Backing up firmware... "
                                     switch (payload.total) {
@@ -259,12 +274,12 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
-                                    statusText.text = "Preparation failed: " + payload.error
+                                    statusText.text = "Preparation failed: " + payload.error_string
                                     break;
                                 }
                                 break;
                             case "flash_progress":
-                                switch (payload.status) {
+                                switch (payload.job_status) {
                                 case "running":
                                     statusText.text = "Flashing firmware... "
                                     if (payload.total > -1) {
@@ -275,12 +290,12 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
-                                    statusText.text = "Flashing failed: " + payload.error
+                                    statusText.text = "Flashing failed: " + payload.error_string
                                     break;
                                 }
                                 break;
                             case "restore_progress":
-                                switch (payload.status) {
+                                switch (payload.job_status) {
                                 case "running":
                                     statusText.text = "Restoring firmware... "
                                     if (payload.total > -1) {
@@ -291,24 +306,16 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
-                                    statusText.text = "Restoration failed: " + payload.error
+                                    statusText.text = "Restoration failed: " + payload.error_string
                                     break;
                                 }
                                 break;
                             case "finished":
-                                switch (payload.status) {
+                                switch (payload.job_status) {
                                 case "unsuccess":
                                 case "failure":
                                     resetState()
-                                    description.text = "Firmware installation failed"
-
-                                    let keys = Object.keys(payload)
-                                    for (let j = 0; j < keys.length; j++) {
-                                        if (keys[j].endsWith("_error") && payload[keys[j]] !== "") {
-                                            description.text += ": " + payload[keys[j]]
-                                            break;
-                                        }
-                                    }
+                                    description.text = "Firmware installation failed: " + payload.error_string
                                     flashingInProgress = false
                                     break
                                 case "success":

@@ -34,10 +34,8 @@ void ProgramControllerManager::program(int deviceId)
     coreInterface_->sendCommand(strJson);
 }
 
-void ProgramControllerManager::replyHandler(QJsonObject message)
+void ProgramControllerManager::replyHandler(QJsonObject payload)
 {
-     QJsonObject payload = message.value("payload").toObject();
-
     if (payload.contains("device_id") == false) {
         qCCritical(logCategoryStrataDevStudio) << "badly formatter json, device_id is missing";
         return;
@@ -61,10 +59,8 @@ void ProgramControllerManager::replyHandler(QJsonObject message)
     emit jobStatusChanged(deviceId, "running", "");
 }
 
-void ProgramControllerManager::jobUpdateHandler(QJsonObject message)
+void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
 {
-    QJsonObject payload = message.value("payload").toObject();
-
     QString jobId = payload.value("job_id").toString();
     QString jobType = payload.value("job_type").toString();
     QString jobStatus = payload.value("job_status").toString();

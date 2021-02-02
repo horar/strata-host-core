@@ -32,8 +32,8 @@ signals:
     void jobStatusChanged(int deviceId, QString status, QString errorString);
 
 private slots:
-    void replyHandler(QJsonObject message);
-    void jobUpdateHandler(QJsonObject message);
+    void replyHandler(QJsonObject payload);
+    void jobUpdateHandler(QJsonObject payload);
 
 private:
     CoreInterface *coreInterface_;

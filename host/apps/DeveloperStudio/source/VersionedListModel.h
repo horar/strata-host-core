@@ -12,6 +12,7 @@ struct VersionedItem {
             const QString &uri,
             const QString &md5,
             const QString &name,
+            const QString &device,
             const QString &timestamp,
             const QString &version,
             const QString &filepath = "")
@@ -19,6 +20,7 @@ struct VersionedItem {
         this->uri = uri;
         this->md5 = md5;
         this->name = name;
+        this->device = device;
         this->timestamp = timestamp;
         this->version = version;
         this->filepath = filepath;
@@ -28,6 +30,7 @@ struct VersionedItem {
     QString uri;
     QString md5;
     QString name;
+    QString device;
     QString timestamp;
     QString version;
     QString filepath;
@@ -60,6 +63,7 @@ public:
         UriRole = Qt::UserRole,
         VersionRole,
         NameRole,
+        DeviceRole,
         TimestampRole,
         Md5Role,
         InstalledRole,
