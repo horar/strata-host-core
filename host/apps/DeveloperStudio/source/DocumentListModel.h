@@ -56,6 +56,7 @@ public:
     Q_INVOKABLE void setHistoryState(const QString &doc, const QString &state);
     Q_INVOKABLE void setAllHistoryStateToSeen();
     Q_INVOKABLE bool anyItemsUnseen();
+    Q_INVOKABLE QStringList getItemsUnseen();
 
 signals:
     void countChanged();

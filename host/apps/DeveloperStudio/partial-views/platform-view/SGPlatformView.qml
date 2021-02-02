@@ -36,12 +36,20 @@ StackLayout {
                                     userSettingsInitialized &&
                                     platformMetaDataInitialized
 
+    property bool documentsHistoryDisplayed: false
+
     onFullyInitializedChanged: {
         initialize()
     }
 
     onConnectedChanged: {
         initialize()
+    }
+
+    onCurrentIndexChanged: {
+        if (platformStack.currentIndex == 1) {
+            platformStack.documentsHistoryDisplayed = true
+        }
     }
 
     Component.onCompleted: {
@@ -78,16 +86,47 @@ StackLayout {
             class_id: model.class_id
         }
 
-        function launchDocumentsHistoryNotification() {
+        Action {
+            id: documentsHistoryShowDocumentsView
+            text: "Go to Documents View"
+            onTriggered: {
+                model.view = "collateral"
+            }
+        }
+
+        Action {
+            id: doNotNotifyOnCollateralDocumentUpdate
+            text: "Do not notify again when documents are updated"
+            onTriggered: {
+                NavigationControl.userSettings.notifyOnCollateralDocumentUpdate = false
+                NavigationControl.userSettings.saveSettings()
+            }
+        }
+
+        function launchDocumentsHistoryNotification(unseenPdfItems, unseenDownloadItems) {
+            if (NavigationControl.userSettings.notifyOnCollateralDocumentUpdate == false) {
+                return
+            }
+
+            if (Object.keys(unseenPdfItems).length == 1 && Object.keys(unseenDownloadItems).length == 0) {
+                var description = "A document has been updated:\n" + unseenPdfItems[0]
+            } else if (Object.keys(unseenPdfItems).length == 0 && Object.keys(unseenDownloadItems).length == 1) {
+                var description = "A document has been updated:\n" + unseenDownloadItems[0]
+            } else {
+                var numberDocumentsUpdated = Number(Object.keys(unseenPdfItems).length) + Number(Object.keys(unseenDownloadItems).length)
+                var description = "Multiple documents have been updated (" + numberDocumentsUpdated + " total)"
+            }
+
             if (platformStack.currentIndex == 0) { // check if control view is displayed
                 Notifications.createNotification(
                     "A document has been updated",
                     Notifications.info,
                     "current",
                     {
-                        "description": name + ": A document has been updated",
+                        "description": description,
                         "saveToDisk": true,
-                        "iconSource": "qrc:/sgimages/exclamation-circle.svg"
+                        "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                        "actions": [documentsHistoryShowDocumentsView, doNotNotifyOnCollateralDocumentUpdate]
                     }
                 )
             }

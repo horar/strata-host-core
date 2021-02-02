@@ -395,3 +395,14 @@ bool DownloadDocumentListModel::anyItemsUnseen()
     }
     return false;
 }
+
+QStringList DownloadDocumentListModel::getItemsUnseen()
+{
+    QStringList ls;
+    for (const auto &item : data_) {
+        if (item->historyState != "seen") {
+            ls << item->prettyName;
+        }
+    }
+    return ls;
+}

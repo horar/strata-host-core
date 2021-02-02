@@ -158,3 +158,14 @@ bool DocumentListModel::anyItemsUnseen()
     }
     return false;
 }
+
+QStringList DocumentListModel::getItemsUnseen()
+{
+    QStringList ls;
+    for (const auto &item : data_) {
+        if (item->historyState != "seen") {
+            ls << item->prettyName;
+        }
+    }
+    return ls;
+}

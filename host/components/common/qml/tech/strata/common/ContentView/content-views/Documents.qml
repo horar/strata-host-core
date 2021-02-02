@@ -9,6 +9,7 @@ Item {
 
     property alias model: repeater.model
     property var documentCurrentIndex: 0
+    property bool historySeen: false
 
     Column {
         id: wrapper
@@ -33,6 +34,7 @@ Item {
                         categoryOpened = "platform documents"
                     }
                     documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
+                    root.historySeen = true
                 }
 
                 property string effectiveUri: {
@@ -171,6 +173,8 @@ Item {
     }
 
     Component.onDestruction: {
-        documentsHistory.markAllDocumentsAsSeen()
+        if (platformStack.documentsHistoryDisplayed || root.historySeen) {
+            documentsHistory.markAllDocumentsAsSeen()
+        }
     }
 }

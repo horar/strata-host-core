@@ -21,6 +21,8 @@ Item {
                                          QtLabsPlatform.StandardPaths.writableLocation(
                                              QtLabsPlatform.StandardPaths.DocumentsLocation))
 
+    property bool historySeen: false
+
     QtLabsSettings.Settings {
         category: "Strata.Download"
 
@@ -81,6 +83,7 @@ Item {
                     onCheckedChanged: {
                         repeater.model.setSelected(index, checked)
                         documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
+                        downloadSection.historySeen = true
                     }
 
                     Binding {
@@ -476,6 +479,8 @@ Item {
     }
 
     Component.onDestruction: {
-        documentsHistory.markAllDocumentsAsSeen()
+        if (platformStack.documentsHistoryDisplayed || downloadSection.historySeen) {
+            documentsHistory.markAllDocumentsAsSeen()
+        }
     }
 }

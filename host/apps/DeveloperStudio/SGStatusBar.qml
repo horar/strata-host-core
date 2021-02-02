@@ -379,6 +379,7 @@ Rectangle {
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
+        property bool notifyOnCollateralDocumentUpdate: true
 
         property int selectedDistributionPortal: 0
 
@@ -389,6 +390,7 @@ Rectangle {
                 closeOnDisconnect = settings.closeOnDisconnect
                 notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
                 selectedDistributionPortal = settings.selectedDistributionPortal
+                notifyOnCollateralDocumentUpdate = settings.notifyOnCollateralDocumentUpdate
             }
             NavigationControl.userSettings = userSettings
         }
@@ -398,7 +400,8 @@ Rectangle {
                 autoOpenView: autoOpenView,
                 closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
-                selectedDistributionPortal: selectedDistributionPortal
+                selectedDistributionPortal: selectedDistributionPortal,
+                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate
             }
             userSettings.writeFile("general-settings.json", settings)
         }

@@ -96,9 +96,10 @@ Item {
 
         displayPdfUnseenAlert = classDocuments.pdfListModel.anyItemsUnseen()
         displayDownloadUnseenAlert = classDocuments.downloadDocumentListModel.anyItemsUnseen()
-
         if (displayPdfUnseenAlert || displayDownloadUnseenAlert) {
-            collateralContainer.launchDocumentsHistoryNotification()
+            var unseenPdfItems = classDocuments.pdfListModel.getItemsUnseen()
+            var unseenDownloadItems = classDocuments.downloadDocumentListModel.getItemsUnseen()
+            collateralContainer.launchDocumentsHistoryNotification(unseenPdfItems, unseenDownloadItems)
         }
     }
 
@@ -120,10 +121,6 @@ Item {
 
         displayPdfUnseenAlert = classDocuments.pdfListModel.anyItemsUnseen()
         displayDownloadUnseenAlert = classDocuments.downloadDocumentListModel.anyItemsUnseen()
-
-        if (displayPdfUnseenAlert || displayDownloadUnseenAlert) {
-            collateralContainer.launchDocumentsHistoryNotification()
-        }
     }
 
     function markAllDocumentsAsSeen() {
