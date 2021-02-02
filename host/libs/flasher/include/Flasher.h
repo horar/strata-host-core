@@ -34,6 +34,19 @@ class Flasher : public QObject
         Q_ENUM(Result)
 
         /*!
+         * The AuxiliaryState enum for auxiliaryState() signal.
+         */
+        enum class AuxiliaryState {
+            SwitchingToBootloader,
+            InBootloaderMode,
+            ClearFwClassId,
+            SetFwClassId,
+            StartApplication,
+            IdentifyBoard
+        };
+        Q_ENUM(AuxiliaryState)
+
+        /*!
          * Flasher constructor.
          * \param device device which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
@@ -48,6 +61,15 @@ class Flasher : public QObject
         Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5);
 
         /*!
+         * Flasher constructor.
+         * \param device device which will be used by Flasher
+         * \param fileName path to firmware (or bootloader) file
+         * \param fileMD5 MD5 checksum of file which will be flashed
+         * \param fwClassId device firmware class id (UUID v4)
+         */
+        Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5, const QString& fwClassId);
+
+        /*!
          * Flasher destructor.
          */
         ~Flasher();
@@ -59,15 +81,15 @@ class Flasher : public QObject
         void flashFirmware(bool startApplication = true);
 
         /*!
+         * Flash bootloader.
+         */
+        void flashBootloader();
+
+        /*!
          * Backup firmware.
          * \param startApplication if set to true start application after backup
          */
         void backupFirmware(bool startApplication = true);
-
-        /*!
-         * Flash bootloader.
-         */
-        void flashBootloader();
 
         /*!
          * Cancel flash firmware operation.
@@ -88,6 +110,12 @@ class Flasher : public QObject
          * \param done true when board was successfully switched to bootloader
          */
         void switchToBootloader(bool done);
+
+        /*!
+         * This signal is emitted when flasher is in auxiliary state.
+         * \param auxState value from AuxiliaryState enum (defining current auxiliary state)
+         */
+        void auxiliaryState(AuxiliaryState auxState);
 
         /*!
          * This signal is emitted during firmware flashing.
@@ -111,7 +139,7 @@ class Flasher : public QObject
         void flashBootloaderProgress(int chunk, int total);
 
         /*!
-         * This signal is emitted when device properties are changed (e.g. board switched to/from bootloader).
+         * This signal is emitted when device properties are changed (board switched to/from bootloader, fwClassId changed).
          */
         void devicePropertiesChanged();
 
@@ -119,18 +147,30 @@ class Flasher : public QObject
         void handleOperationFinished(device::operation::Result result, int status, QString errStr);
 
     private:
-        void flash(bool flashFirmware, bool startApplication);
-        void performNextOperation(device::operation::BaseDeviceOperation* baseOp, int status);
+        // flash firmware of bootloader
+        void flash(bool flashFirmware);
+        // do next operation in flash (backup) process
+        void doNextOperation(device::operation::BaseDeviceOperation* baseOp, int status);
+        // create operation to flash or back up firmware
+        std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> createFlasherOperation();
+        // manage flash process - handle flashed chunks
         void manageFlash(int lastFlashedChunk);
+        // manage backup process - handle becked up chunks
         void manageBackup(int chunkNumber);
+        // finish flasher
         void finish(Result result, QString errorString = QString());
+        // connect handlers for flasher operation
         void connectHandlers(device::operation::BaseDeviceOperation* operation);
+        // deleter for flasher operations
         static void operationDeleter(device::operation::BaseDeviceOperation* operation);
 
         device::DevicePtr device_;
 
         QFile binaryFile_;
         QString fileMD5_;
+        bool fileFlashed_;
+
+        QString fwClassId_;
 
         std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> operation_;
 
