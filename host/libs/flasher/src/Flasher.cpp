@@ -54,7 +54,6 @@ void Flasher::backupFirmware(bool startApplication) {
         chunkCount_ = 0;
 
         qCInfo(logCategoryFlasher) << device_ << "Preparing for firmware backup.";
-        emit switchToBootloader(false);
         emit auxiliaryState(AuxiliaryState::SwitchingToBootloader);
 
         operation_ = std::unique_ptr<operation::StartBootloader, void(*)(operation::BaseDeviceOperation*)>
@@ -94,7 +93,6 @@ void Flasher::flash(bool flashFirmware) {
             const char* binaryType = (flashFirmware) ? "firmware" : "bootloader";
             qCInfo(logCategoryFlasher) << device_ << "Preparing for flashing " << chunkCount_ << " chunks of " << binaryType << '.';
 
-            emit switchToBootloader(false);
             emit auxiliaryState(AuxiliaryState::SwitchingToBootloader);
 
             operation_ = std::unique_ptr<operation::StartBootloader, void(*)(operation::BaseDeviceOperation*)>
@@ -154,7 +152,6 @@ void Flasher::doNextOperation(device::operation::BaseDeviceOperation* baseOp, in
 
     switch (baseOp->type()) {
     case operation::Type::StartBootloader :
-        emit switchToBootloader(true);
         qCInfo(logCategoryFlasher) << device_ << "Switched to bootloader (version '"
                                    << device_->bootloaderVer() << "').";
         emit auxiliaryState(AuxiliaryState::InBootloaderMode);
@@ -177,6 +174,7 @@ void Flasher::doNextOperation(device::operation::BaseDeviceOperation* baseOp, in
         operation_->run();
         break;
     case operation::Type::SetAssistedPlatformId :
+        emit devicePropertiesChanged();
         if (fileFlashed_) {
             if (startApp_) {
                 operation_ = std::unique_ptr<operation::StartApplication, void(*)(operation::BaseDeviceOperation*)>

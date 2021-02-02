@@ -92,7 +92,7 @@ void FlasherConnector::flashFirmware(bool flashOld) {
     (flashOld)
         ? connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress)
         : connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::flashProgress);
-    connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
+    connect(flasher_.get(), &Flasher::auxiliaryState, this, &FlasherConnector::handleFlasherAuxiliaryState);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
     if (operation_ != Operation::Preparation) {
@@ -110,7 +110,7 @@ void FlasherConnector::backupFirmware(bool backupOld) {
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::backupFirmwareProgress, this, &FlasherConnector::backupProgress);
-    connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
+    connect(flasher_.get(), &Flasher::auxiliaryState, this, &FlasherConnector::handleFlasherAuxiliaryState);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
     if (operation_ != Operation::Preparation) {
@@ -237,8 +237,8 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
     return;
 }
 
-void FlasherConnector::handleSwitchToBootloader(bool done) {
-    if (done && (operation_ == Operation::Preparation)) {
+void FlasherConnector::handleFlasherAuxiliaryState(Flasher::AuxiliaryState auxState) {
+    if ((auxState == Flasher::AuxiliaryState::InBootloaderMode) && (operation_ == Operation::Preparation)) {
         emit operationStateChanged(operation_, State::Finished);
         startOperation();
     }

@@ -105,13 +105,6 @@ class Flasher : public QObject
         void finished(Result result, QString errorString);
 
         /*!
-         * This signal is emitted with request to switch the board to bootloader mode
-         * and when board is successfully switched to bootloader.
-         * \param done true when board was successfully switched to bootloader
-         */
-        void switchToBootloader(bool done);
-
-        /*!
          * This signal is emitted when flasher is in auxiliary state.
          * \param auxState value from AuxiliaryState enum (defining current auxiliary state)
          */

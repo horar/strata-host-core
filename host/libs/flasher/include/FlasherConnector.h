@@ -139,7 +139,7 @@ signals:
 
 private slots:
     void handleFlasherFinished(Flasher::Result flasherResult, QString errorString);
-    void handleSwitchToBootloader(bool done);
+    void handleFlasherAuxiliaryState(Flasher::AuxiliaryState auxState);
 
 private:
     void flashFirmware(bool flashOld);
