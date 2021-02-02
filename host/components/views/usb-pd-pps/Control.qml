@@ -65,13 +65,12 @@ Item {
                 id: warningText
                 anchors.centerIn: parent
                 text: "Schematic Changed. Look at FAQ for more info."
-                font.pixelSize: (parent.width + parent.height)/ 32
+                font.pixelSize: (parent.width + parent.height)/32
                 color: "white"
                 font.bold: true
             }
 
             Text {
-                id: warningIcon3
                 anchors {
                     right: warningText.left
                     verticalCenter: warningText.verticalCenter
@@ -79,12 +78,11 @@ Item {
                 }
                 text: "\ue80e"
                 font.family: Fonts.sgicons
-                font.pixelSize: (parent.width + parent.height)/ 15
+                font.pixelSize: (parent.width + parent.height)/15
                 color: "white"
             }
 
             Text {
-                id: warningIcon4
                 anchors {
                     left: warningText.right
                     verticalCenter: warningText.verticalCenter
@@ -92,7 +90,7 @@ Item {
                 }
                 text: "\ue80e"
                 font.family: Fonts.sgicons
-                font.pixelSize: (parent.width + parent.height)/ 15
+                font.pixelSize: (parent.width + parent.height)/15
                 color: "white"
             }
         }
