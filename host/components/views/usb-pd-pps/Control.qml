@@ -17,12 +17,6 @@ Item {
 
     property var maxBoardPower: 60  //in Watts
 
-    Component.onCompleted: {
-        advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
-        console.log("Requesting platform Refresh")
-        platformInterface.refresh.send() //ask the platform for all the current values
-    }
-
     Timer {
         interval: 100
         repeat: false
@@ -153,6 +147,12 @@ Item {
         }
     }
 
+    Component.onCompleted: {
+        advancedControl.initialAspectRatio = basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
+
+        console.log("Requesting platform Refresh")
+        platformInterface.refresh.send() //ask the platform for all the current values
+    }
 
 
     //    DebugMenu {
