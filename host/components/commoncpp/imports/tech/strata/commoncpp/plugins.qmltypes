@@ -535,6 +535,8 @@ Module {
         Property { name: "yMinorGrid"; type: "bool" }
         Property { name: "gridColor"; type: "QColor" }
         Property { name: "yRightVisible"; type: "bool" }
+        Property { name: "yRightAxisColor"; type: "QColor" }
+        Property { name: "yLeftAxisColor"; type: "QColor" }
         Method { name: "initialize" }
         Method { name: "update" }
         Method {

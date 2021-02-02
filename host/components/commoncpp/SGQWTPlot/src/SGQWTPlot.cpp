@@ -356,6 +356,8 @@ double SGQWTPlot::yRightMax()
 
 QString SGQWTPlot::xTitle()
 {
+
+
     return qwtPlot->axisTitle(qwtPlot->xBottom).text();
 }
 
@@ -589,6 +591,38 @@ void SGQWTPlot::setYLogarithmic(bool logarithmic)
             qwtPlot->setAxisMaxMajor(qwtPlot->yLeft,5);
         }
         emit yLogarithmicChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+void SGQWTPlot :: setYRightAxisColor(QColor newColor)
+{
+    if (yRightAxisColor_ != newColor) {
+        yRightAxisColor_ = newColor;
+        QwtScaleWidget *qwtsw = qwtPlot->axisWidget(QwtPlot::yRight);
+        QPalette palette = qwtsw->palette();
+        palette.setColor(QPalette::Text, newColor);
+        qwtsw->setPalette(palette);
+
+        emit yRightAxisColorChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+void SGQWTPlot :: setYLeftAxisColor(QColor newColor)
+{
+    if (yLeftAxisColor_ != newColor) {
+        yLeftAxisColor_ = newColor;
+        QwtScaleWidget *qwtsw = qwtPlot->axisWidget(QwtPlot::yLeft);
+        QPalette palette = qwtsw->palette();
+        palette.setColor(QPalette::Text, newColor);
+        qwtsw->setPalette(palette);
+
+        emit yLeftAxisColorChanged();
         if (autoUpdate_) {
             update();
         }

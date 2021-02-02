@@ -16,6 +16,7 @@
 #include <qwt/qwt_text_label.h>
 #include <qwt/qwt_plot_grid.h>
 #include <qwt/qwt_symbol.h>
+#include <qwt/qwt_scale_draw.h>
 
 #include <QDebug>
 
@@ -53,7 +54,8 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool yMinorGrid READ yMinorGrid WRITE setYMinorGrid NOTIFY yMinorGridChanged)
     Q_PROPERTY(QColor gridColor MEMBER gridColor_ WRITE setGridColor NOTIFY gridColorChanged)
     Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setYRightVisible NOTIFY yRightVisibleChanged)
-
+    Q_PROPERTY(QColor yRightAxisColor MEMBER yRightAxisColor_ WRITE setYRightAxisColor NOTIFY yRightAxisColorChanged)
+    Q_PROPERTY(QColor yLeftAxisColor MEMBER yLeftAxisColor_ WRITE setYLeftAxisColor NOTIFY yLeftAxisColorChanged)
 
 public:
     SGQWTPlot(QQuickItem* parent = nullptr);
@@ -120,6 +122,9 @@ public:
     void setGridColor(QColor newColor);
     void setYRightVisible(bool showYRightAxis);
     bool yRightVisible();
+    void setYRightAxisColor(QColor newColor);
+    void setYLeftAxisColor(QColor newColor);
+
 
 protected:
     QwtPlot* qwtPlot = nullptr;
@@ -152,6 +157,8 @@ signals:
     void yRightVisibleChanged();
     void yRightMinChanged();
     void yRightMaxChanged();
+    void yRightAxisColorChanged();
+    void yLeftAxisColorChanged();
 
 private:
     friend class SGQWTPlotCurve;
@@ -169,6 +176,8 @@ private:
     bool yMinorGrid_ = false;
     QColor gridColor_;
     bool yRightVisible_ = false;
+    QColor yRightAxisColor_;
+    QColor yLeftAxisColor_;
 
 
 private slots:
