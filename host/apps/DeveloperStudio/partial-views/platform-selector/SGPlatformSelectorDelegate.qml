@@ -11,11 +11,21 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.notifications 1.0
 
 Item {
     id: root
 
     property bool isCurrentItem: false
+    property bool connected: model.connected
+
+    onConnectedChanged: {
+        if(connected){
+            Notifications.createNotification(`Platform ${model.class_id} is connected`, Notifications.info,"all")
+        } else {
+            Notifications.createNotification(`Platform ${model.class_id} is disconnected`, Notifications.info,"all")
+        }
+    }
 
     Rectangle {
         width: 50
