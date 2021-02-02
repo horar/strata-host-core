@@ -19,7 +19,6 @@ public:
     Q_INVOKABLE QString getMouserUrl() const;
     Q_INVOKABLE QString getDigiKeyUrl() const;
     Q_INVOKABLE QString getAvnetUrl() const;
-    virtual ~UrlConfig(){}
 
     bool parseUrl(const QString &fileName);
 
