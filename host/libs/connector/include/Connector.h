@@ -2,23 +2,22 @@
 ******************************************************************************
 * @file Connector.h
 * @author Prasanth Vivek
-* $Rev: 1 $
-* $Date: 2018-03-14
+* $Rev: 2 $
+* $Date: 2021-02-02
 * @brief Abstract class for connector objects
 ******************************************************************************
 
-* @copyright Copyright 2018 ON Semiconductor
+* @copyright Copyright 2021 ON Semiconductor
 */
 
 /**
- * @mainpage libconnectors API
+ * @mainpage libconnector API
  *
  * Introduction
  * ============
  *
- * linconnectors is minimalistic library written in cpp. Libconnectors uses
- * "zeroMQ" for serial and socket I/O operation and takes OS-specific details
- * when writing software that uses sockets and serial ports.
+ * linconnector is minimalistic library written in cpp. Libconnector uses
+ * "zeroMQ" for socket I/O operation.
  *
  * The library was conceived by Ian Cain and Prasanth Vivek.
  *
@@ -30,7 +29,7 @@
  * Headers
  * -------
  *
- * To use libconnectors functions in your code, you should include the
+ * To use libconnector functions in your code, you should include the
  * Connector.h header, i.e. "#include <Connector.h>".
  *
  * Functions
@@ -39,34 +38,27 @@
  * The functions provided by the library are documented in detail in
  * the following sections:
  *
- * - open() (opens the serial port or opens the dealer/router socket) (serial/socket)
- * - close() (closing ports/sockets) (serial/socket)
- * - read() (reading data from serial port/sockets) (serial/socket)
- * - send() (writing data to serial port/sockets) (serial/socket)
- * - getFileDescriptor() (get file descriptor information of serial port/sockets) (serial/socket)
- * - getDealerID() (gets the dealer id of the dealer sockets) (socket)
+ * - getConnector() (creates Connector object with the specified CONNECTOR_TYPE)
+ * - open() (opens the socket, configuring and connecting it to the speciffied IP address)
+ * - close() (closes the open socket, to reuse the socket, open() must be called again)
+ * - shutdown() (sends terminate signal to all ongoing read/write operations on the open socket, should be later followed by close())
+ * - read() (reads data from open socket using either blocking or non-blocking approach)
+ * - send() (writes data into open socket)
+ * - getFileDescriptor() (get file descriptor information of open socket)
+ * - addSubscriber() (for publisher socket, adds a subscriber to the list of subscribers)
+ * - getDealerID() (gets the dealer id of the socket)
+ * - setDealerID() (sets the dealer id of the socket)
+ * - isConnected() (returns if the socket is currently connected)
  *
  * Debugging
  * ---------
  *
- * The library can output extensive tracing and debugging information. The
- * simplest way to use this is to set DEBUG variable to "1" in Connector.h
- * messages will then be output to the standard error stream.
+ * The library outputs extensive tracing and debugging information using Qt
+ * logging framework. Simply enable adequate log level in the Qt application
+ * using this library and it will log the messages.
  *
  * No guarantees are made about the content of the debug output; it is chosen
  * to suit the needs of the developers and may change between releases.
- *
- * Porting
- * -------
- * LINUX and MAC implementations are straight forward for open, close, read and
- * write operations. getFileDescriptor() returns the file descriptor of the serial handle.
- *
- * WINDOWS implementation has a layer of abstraction for Serial read operation.
- * Windows Serial read uses libserial port non blocking read to read from the platform
- * and writes to PUSH ZMQ socket in a seperate thread. Libconnectors read() reads the platform
- * data from ZMQ PULL socket. This approach is implemented to support the eventing systems.
- * Other operations like open(),close() and send() are stright forward and same like LINUX
- * and MAC OS. getFileDescriptor() returns the file descriptor of the ZMQ PULL socket.
  *
  */
 
@@ -121,13 +113,15 @@ public:
     void setDealerID(const std::string& id);
     std::string getDealerID() const;
 
-    void setConnectionState(bool connection_state);
     bool isConnected() const;
 
     friend std::ostream& operator<<(std::ostream& stream, const Connector& c);
 
     enum class CONNECTOR_TYPE { SERIAL, ROUTER, DEALER, PUBLISHER, SUBSCRIBER, REQUEST, RESPONSE };
     static std::unique_ptr<Connector> getConnector(const CONNECTOR_TYPE type);
+
+protected:
+    void setConnectionState(bool connection_state);
 
 private:
     std::string dealer_id_;
