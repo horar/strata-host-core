@@ -1,10 +1,9 @@
-# create a build replucator credentials
+# create a replicator credentials
 
 string(APPEND username ${USERNAME})
 string(APPEND password ${PASSWORD})
-message(STATUS "Replicator credentials 'username' and 'password' set for ${PROJECT_NAME}")
 
-message(STATUS "Processing build replicator credentials info...")
+message(STATUS "Processing replicator credentials info for ${PROJECT_NAME}...")
 file(READ ${INPUT_DIR}/ReplicatorCredentials.cpp.in rcFile_temporary)
 string(CONFIGURE "${rcFile_temporary}" rcFile_updated @ONLY)
 file(WRITE ${OUTPUT_DIR}/ReplicatorCredentials.cpp.tmp "${rcFile_updated}")

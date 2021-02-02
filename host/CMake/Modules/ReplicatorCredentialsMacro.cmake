@@ -2,12 +2,23 @@
 # ReplicatorCredentials CMMake macro
 #
 # Usage:
-#   - call 'generate_app_build_replicator_credentials()' after main target definition.
+#   - call 'generate_replicator_credentials()' after main target definition.
 #
 
-macro(generate_app_build_replicator_credentials)
-    set(credentials USERNAME PASSWORD)
+macro(generate_replicator_credentials)
+    set(credentials JSON_FILE)
     cmake_parse_arguments(local "" ${credentials} "" ${ARGN})
+
+    string(FIND ${local_JSON_FILE} "\"username\": \"" USERNAME_FIND_BEGIN)
+    string(FIND ${local_JSON_FILE} "\"," USERNAME_FIND_END)
+    math(EXPR USERNAME_LEN ${USERNAME_FIND_END}-${USERNAME_FIND_BEGIN})
+    string(SUBSTRING ${local_JSON_FILE} ${USERNAME_FIND_BEGIN} ${USERNAME_LEN} USERNAME_LINE)
+    string(REGEX REPLACE "\"username\":|\",|\"|\ |\r|\n|{|}" "" CREDENTIALS_USERNAME ${USERNAME_LINE})
+    string(FIND ${local_JSON_FILE} "\"password\": " PASSWORD_FIND_BEGIN)
+    string(FIND ${local_JSON_FILE} "\"" PASSWORD_FIND_END REVERSE)
+    math(EXPR PASSWORD_LEN ${PASSWORD_FIND_END}-${PASSWORD_FIND_BEGIN})
+    string(SUBSTRING ${local_JSON_FILE} ${PASSWORD_FIND_BEGIN} ${PASSWORD_LEN} PASSWORD_LINE)
+    string(REGEX REPLACE "\"password\":|\"|\ |\r|\n|\t|{|}" "" CREDENTIALS_PASSWORD ${PASSWORD_LINE})
 
     if (NOT TARGET ${PROJECT_NAME}_replicator_credentials)
         message(STATUS "Creating replicator credentials target for '${PROJECT_NAME}'...")
@@ -33,11 +44,11 @@ macro(generate_app_build_replicator_credentials)
                 -DBUILD_TYPE=${CMAKE_BUILD_TYPE}
                 -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
                 -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
-                -DUSERNAME=${local_USERNAME}
-                -DPASSWORD=${local_PASSWORD}
+                -DUSERNAME=${CREDENTIALS_USERNAME}
+                -DPASSWORD=${CREDENTIALS_PASSWORD}
         
                 -P ${CMAKE_SOURCE_DIR}/CMake/Modules/ReplicatorCredentials-builder.cmake
-            COMMENT "Generating build replicator credentials for '${PROJECT_NAME}'..." VERBATIM
+            COMMENT "Generating replicator credentials for '${PROJECT_NAME}'..." VERBATIM
         )
 
         add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_replicator_credentials)
