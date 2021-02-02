@@ -77,8 +77,17 @@ Rectangle {
 
                 onClicked: {
                     Signals.executeCVCSignal(true)
-                    controlViewCreatorContainer.visible = false
                 }
+            }
+        }
+    }
+
+    Connections {
+        target: Signals
+
+        onUnsavedCVCChanges: {
+            if(!changes){
+                controlViewCreatorContainer.visible = false
             }
         }
     }

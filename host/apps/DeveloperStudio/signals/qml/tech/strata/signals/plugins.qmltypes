@@ -25,6 +25,7 @@ Module {
         Signal { name: "serverChanged" }
         Signal { name: "feedbackResult"; Parameter {name: "result"; type: "string"}}
         Signal { name: "executeCVCSignal"; Parameter {name: "loaded"; type: "bool"}}
+        Signal { name: "unsavedCVCChanges"; Parameter {name: "changes"; type: "bool"}}
     }
 }
 

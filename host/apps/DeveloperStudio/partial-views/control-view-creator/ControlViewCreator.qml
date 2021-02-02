@@ -360,20 +360,21 @@ Rectangle {
       parent: mainWindow.contentItem
 
       titleText: "There are unsaved changes in the project"
-      popupText: "Would you like to save all changes or revert changes"
+      popupText: "Would you like to save all changes or exit without saving"
 
-      acceptButtonText: "Save all"
-      closeButtonText: "Revert changes"
+      acceptButtonText: "Save all and exit"
+      closeButtonText: "Exit without saving"
 
       onPopupClosed: {
           if(closeReason === cancelCloseReason) {
               return
           }
           if(closeReason === acceptCloseReason){
-              editor.openFilesModel.saveAll(false)
+              editor.openFilesModel.saveAll(true)
           }
           let data = {"index": NavigationControl.stack_container_.count-3}
           NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+          Signals.unsavedCVCChanges(false)
        }
     }
 
@@ -381,11 +382,14 @@ Rectangle {
         target: Signals
 
         onExecuteCVCSignal: {
-            if(loaded && editor.openFilesModel.getUnsavedCount() > 0){
-                confirmCloseCVC.open()
-            } else {
-                let data = {"index": NavigationControl.stack_container_.count-3}
-                NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+            if(loaded){
+                if(editor.openFilesModel.getUnsavedCount() > 0){
+                    Signals.unsavedCVCChanges(true)
+                    confirmCloseCVC.open()
+                } else {
+                    let data = {"index": NavigationControl.stack_container_.count-3}
+                    NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+                }
             }
         }
     }
