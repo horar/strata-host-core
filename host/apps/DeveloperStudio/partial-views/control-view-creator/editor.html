@@ -59,10 +59,29 @@
 
         <script>
            monaco.languages.register({ id: 'qml' })
+           var builtInTypes = []
+           var builtInVariables = []
+
+           for(var i = 0; i < qtQuick.length; i++){
+               builtInTypes.push(qtQuick[i].prefix)
+               for(var y = 0; y < qtQuick[i].properties.length; y++){
+                   builtInVariables.push(qtQuick[i].properties[y])
+               }
+           }
+
+           for(var j = 0; j < SGWidgets.length; j++){
+               builtInTypes.push(SGWidgets[j].prefix)
+               for(var y = 0; y < SGWidgets[j].properties.length; y++){
+                   builtInVariables.push(`${SGWidgets[j].properties[y]}`)
+               }
+           }
 
             monaco.languages.setMonarchTokensProvider('qml',{
                     keywords: ['readonly','property','for','if','else','do','while','true','false','signal','const','switch','import','as',"on",'async','console',"let","default"],
-                    typeKeywords: ['int','real','var','string','color','url','alias'],
+                    typeKeywords: ['int','real','var','string','color','url','alias','bool'],
+                    builtInFunctions: ['eval','parseInt','parseFloat','isNaN','isFinite','decodeURI','decodeURIComponent','encodeURI','encodeURIComponent','escape','unescape'],
+                    builtInTypes: builtInTypes,
+                    builtInVariables:builtInVariables,
                     operators: [
                         '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=','===','<==','>==','!==',
                         '&&', '||', '++', '--', '+', '-', '*', '/', '&', '|', '^', '%',
