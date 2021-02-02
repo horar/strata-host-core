@@ -33,7 +33,6 @@ Item {
         }
     }
 
-    //Only Red Banner
     Popup {
         id: warningPopup
         width: controlView.width/2.9
