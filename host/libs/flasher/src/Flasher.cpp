@@ -161,7 +161,7 @@ void Flasher::doNextOperation(device::operation::BaseDeviceOperation* baseOp, in
             emit devicePropertiesChanged();
         }
 
-        if (fwClassId_.isEmpty()) {
+        if (fwClassId_.isNull()) {
             operation_ = createFlasherOperation();
         } else {
             operation_ = std::unique_ptr<operation::SetAssistedPlatformId, void(*)(operation::BaseDeviceOperation*)>
@@ -274,7 +274,7 @@ void Flasher::manageFlash(int lastFlashedChunk) {
             ? emit flashFirmwareProgress(flashedChunk, chunkCount_)
             : emit flashBootloaderProgress(flashedChunk, chunkCount_);
         if (flashFw) {
-            if (fwClassId_.isEmpty()) {
+            if (fwClassId_.isNull()) {
                 if (startApp_) {
                     operation_ = std::unique_ptr<operation::StartApplication, void(*)(operation::BaseDeviceOperation*)>
                                   (new operation::StartApplication(device_), operationDeleter);

@@ -6,20 +6,34 @@
 
 namespace strata {
 
-FlasherConnector::FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent) :
-    FlasherConnector(device, firmwarePath, QString(), parent) { }
+FlasherConnector::FlasherConnector(const device::DevicePtr& device,
+                                   const QString& firmwarePath,
+                                   QObject* parent) :
+    FlasherConnector(device, firmwarePath, QString(), QString(), parent)
+{ }
 
 FlasherConnector::FlasherConnector(const device::DevicePtr& device,
                                    const QString& firmwarePath,
                                    const QString& firmwareMD5,
                                    QObject* parent) :
+    FlasherConnector(device, firmwarePath, firmwareMD5, QString(), parent)
+{ }
+
+FlasherConnector::FlasherConnector(const device::DevicePtr& device,
+                                   const QString& firmwarePath,
+                                   const QString& firmwareMD5,
+                                   const QString& fwClassId,
+                                   QObject* parent) :
     QObject(parent),
     device_(device),
     filePath_(firmwarePath),
     newFirmwareMD5_(firmwareMD5),
+    newFwClassId_(fwClassId),
     tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))),
     action_(Action::None)
-{ }
+{
+    oldFwClassId_ = (newFwClassId_.isNull()) ? QString() : device_->firmwareClassId();
+}
 
 FlasherConnector::~FlasherConnector() { }
 
@@ -77,23 +91,22 @@ void FlasherConnector::stop() {
     }
 }
 
-void FlasherConnector::setFirmwarePath(const QString& firmwarePath) {
-    filePath_ = firmwarePath;
-}
-
 void FlasherConnector::flashFirmware(bool flashOld) {
-    const QString& firmwarePath = (flashOld) ? tmpBackupFile_.fileName() : filePath_;
-    qCDebug(logCategoryFlasherConnector).noquote().nospace() << "Starting to flash firmware from file '" << firmwarePath <<"'.";
-    (flashOld)
-        ? flasher_ = std::make_unique<Flasher>(device_, firmwarePath)
-        : flasher_ = std::make_unique<Flasher>(device_, firmwarePath, newFirmwareMD5_);
-
+    QString firmwarePath;
+    if (flashOld) {
+        firmwarePath = tmpBackupFile_.fileName();
+        flasher_ = std::make_unique<Flasher>(device_, firmwarePath, QString(), oldFwClassId_);
+        connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress);
+    } else {
+        firmwarePath = filePath_;
+        flasher_ = std::make_unique<Flasher>(device_, firmwarePath, newFirmwareMD5_, newFwClassId_);
+        connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::flashProgress);
+    }
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
-    (flashOld)
-        ? connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress)
-        : connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::flashProgress);
     connect(flasher_.get(), &Flasher::auxiliaryState, this, &FlasherConnector::handleFlasherAuxiliaryState);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
+
+    qCDebug(logCategoryFlasherConnector).noquote().nospace() << "Starting to flash firmware from file '" << firmwarePath <<"'.";
 
     if (operation_ != Operation::Preparation) {
         startOperation();

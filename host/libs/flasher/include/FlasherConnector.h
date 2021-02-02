@@ -34,6 +34,19 @@ public:
     FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, const QString& firmwareMD5, QObject* parent = nullptr);
 
     /*!
+     * FlasherConnector constructor.
+     * \param device device which will be used by FlasherConnector
+     * \param firmwarePath path to firmware file
+     * \param firmwareMD5 MD5 checksum of firmware
+     * \param fwClassId firmware class id which will be set to device
+     */
+    FlasherConnector(const device::DevicePtr& device,
+                     const QString& firmwarePath,
+                     const QString& firmwareMD5,
+                     const QString& fwClassId,
+                     QObject* parent = nullptr);
+
+    /*!
      * FlasherConnector destructor.
      */
     ~FlasherConnector();
@@ -55,12 +68,6 @@ public:
      * Stop flash/backup firmware operation.
      */
     void stop();
-
-    /*!
-     * Set path to firmware file.
-     * \param firmwarePath path to firmware file
-     */
-    void setFirmwarePath(const QString& firmwarePath);
 
     /*!
      * The Result enum for finished() signal.
@@ -149,8 +156,10 @@ private:
 
     device::DevicePtr device_;
     std::unique_ptr<Flasher> flasher_;
-    QString filePath_;
+    const QString filePath_;
     const QString newFirmwareMD5_;
+    const QString newFwClassId_;
+    QString oldFwClassId_;
     QTemporaryFile tmpBackupFile_;
 
     enum class Action {
