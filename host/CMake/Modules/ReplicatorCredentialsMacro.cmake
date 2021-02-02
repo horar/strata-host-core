@@ -9,16 +9,12 @@ macro(generate_replicator_credentials)
     set(credentials JSON_FILE)
     cmake_parse_arguments(local "" ${credentials} "" ${ARGN})
 
-    string(FIND ${local_JSON_FILE} "\"username\": \"" USERNAME_FIND_BEGIN)
-    string(FIND ${local_JSON_FILE} "\"," USERNAME_FIND_END)
-    math(EXPR USERNAME_LEN ${USERNAME_FIND_END}-${USERNAME_FIND_BEGIN})
-    string(SUBSTRING ${local_JSON_FILE} ${USERNAME_FIND_BEGIN} ${USERNAME_LEN} USERNAME_LINE)
-    string(REGEX REPLACE "\"username\":|\",|\"|\ |\r|\n|{|}" "" CREDENTIALS_USERNAME ${USERNAME_LINE})
-    string(FIND ${local_JSON_FILE} "\"password\": " PASSWORD_FIND_BEGIN)
-    string(FIND ${local_JSON_FILE} "\"" PASSWORD_FIND_END REVERSE)
-    math(EXPR PASSWORD_LEN ${PASSWORD_FIND_END}-${PASSWORD_FIND_BEGIN})
-    string(SUBSTRING ${local_JSON_FILE} ${PASSWORD_FIND_BEGIN} ${PASSWORD_LEN} PASSWORD_LINE)
-    string(REGEX REPLACE "\"password\":|\"|\ |\r|\n|\t|{|}" "" CREDENTIALS_PASSWORD ${PASSWORD_LINE})
+    string(JSON USERNAME ERROR_VARIABLE ERROR_PASSWORD GET ${local_JSON_FILE} username)
+    string(JSON PASSWORD ERROR_VARIABLE ERROR_USERNAME GET ${local_JSON_FILE} password)
+
+    if(ERROR_PASSWORD OR ERROR_USERNAME)
+        message(WARNING "Username or passwrd were not loaded for '${PROJECT_NAME}'")
+    endif()
 
     if (NOT TARGET ${PROJECT_NAME}_replicator_credentials)
         message(STATUS "Creating replicator credentials target for '${PROJECT_NAME}'...")
@@ -44,8 +40,8 @@ macro(generate_replicator_credentials)
                 -DBUILD_TYPE=${CMAKE_BUILD_TYPE}
                 -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
                 -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
-                -DUSERNAME=${CREDENTIALS_USERNAME}
-                -DPASSWORD=${CREDENTIALS_PASSWORD}
+                -DUSERNAME=${USERNAME}
+                -DPASSWORD=${PASSWORD}
         
                 -P ${CMAKE_SOURCE_DIR}/CMake/Modules/ReplicatorCredentials-builder.cmake
             COMMENT "Generating replicator credentials for '${PROJECT_NAME}'..." VERBATIM
