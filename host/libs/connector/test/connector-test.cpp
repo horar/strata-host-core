@@ -1,7 +1,5 @@
 #include "connector-test.h"
 
-#include <zhelpers.hpp>
-
 #include <chrono>
 #include <memory>
 #include <thread>
