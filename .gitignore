@@ -43,7 +43,7 @@ extern/qwt-*.zip
 extern/couchbase-lite-C
 extern/monaco-editor-0.20.0/package/*
 extern/monaco-editor-0.20.0/tar/*
-host/components/monaco/qml/tech/strata/monaco/*
+host/components/monaco/qml/tech/strata/monaco/minified/*
 *.rcc
 .venv*/
 3p/
