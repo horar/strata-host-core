@@ -83,9 +83,11 @@ add_library(${CLIENT}
     src/StrataClient.cpp
     src/ClientConnector.cpp
     src/RequestsController.cpp
+    src/PendingRequest.cpp
     src/logging/LoggingQtCategories.cpp
 
     include/StrataRPC/StrataClient.h
+    include/StrataRPC/PendingRequest.h
 )
 
 add_library(strata::${CLIENT} ALIAS ${CLIENT})

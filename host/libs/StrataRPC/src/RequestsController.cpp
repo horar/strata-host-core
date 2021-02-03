@@ -29,8 +29,9 @@ std::pair<int, QByteArray> RequestsController::addNewRequest(const QString &meth
         << "Building request. id:" << currentRequestId_ << "method:" << method;
 
     const auto request = requestsList_.insert(
-        currentRequestId_,
-        Request(method, payload, currentRequestId_, errorCallback, resultCallback));
+        currentRequestId_, Request(method, payload, currentRequestId_, 
+                                   std::make_shared<PendingRequest>(currentRequestId_),
+                                   errorCallback, resultCallback));
 
     return {currentRequestId_, request.value().toJson()};
 }
@@ -57,7 +58,7 @@ std::pair<bool, Request> RequestsController::popPendingRequest(int id)
     auto it = requestsList_.find(id);
     if (it == requestsList_.end()) {
         qDebug(logCategoryRequestsController) << "Request id not found.";
-        return {false, Request("", QJsonObject({{}}), 0)};
+        return {false, Request("", QJsonObject({{}}), 0, nullptr)};
     }
     Request request(it.value());
     return {requestsList_.remove(id) > 0, request};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <StrataRPC/Message.h>
+#include <StrataRPC/PendingRequest.h>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
@@ -15,10 +16,12 @@ struct Request {
      * @param [in] messageId request id.
      */
     Request(QString method, QJsonObject payload, int messageId,
-            StrataHandler errorCallback = nullptr, StrataHandler resultCallback = nullptr)
+            std::shared_ptr<PendingRequest> pendingRequest, StrataHandler errorCallback = nullptr,
+            StrataHandler resultCallback = nullptr)
         : method_(method),
           payload_(payload),
           messageId_(messageId),
+          pendingRequest_(pendingRequest),
           errorCallback_(errorCallback),
           resultCallback_(resultCallback)
     {
@@ -41,6 +44,7 @@ struct Request {
     int messageId_;
     StrataHandler errorCallback_;
     StrataHandler resultCallback_;
+    std::shared_ptr<PendingRequest> pendingRequest_;
 };
 
 }  // namespace strata::strataRPC
