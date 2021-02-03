@@ -92,6 +92,9 @@ Rectangle {
                 controlViewCreatorContainer.visible = false
                 let data = {"index": NavigationControl.stack_container_.count-3}
                 NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+                hasUnsavedChanges = false
+            } else if(!loaded){
+                toggleVisibility()
             }
         }
 
