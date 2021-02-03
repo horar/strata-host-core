@@ -29,6 +29,7 @@ bool ZmqDealerConnector::open(const std::string& ip_address)
         0 == socket_->connect(ip_address.c_str())) {
         CONNECTOR_DEBUG_LOG("%s Connecting to the server socket %s(ID:%s)\n", "ZMQ_DEALER",
                             ip_address.c_str(), getDealerID().c_str());
+        setConnectionState(true);
         return true;
     }
 

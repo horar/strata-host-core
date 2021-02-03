@@ -31,6 +31,11 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE strata::DeviceOperations
 )
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
+)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
 )
@@ -51,6 +56,11 @@ target_include_directories(${PROJECT_NAME}${CONNECTOR_SUFFIX}
 target_link_libraries(${PROJECT_NAME}${CONNECTOR_SUFFIX}
     PUBLIC Qt5::Core
     PUBLIC strata::${PROJECT_NAME}
+)
+
+target_compile_definitions(${PROJECT_NAME}${CONNECTOR_SUFFIX} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
 
 set_target_properties(${PROJECT_NAME}${CONNECTOR_SUFFIX} PROPERTIES

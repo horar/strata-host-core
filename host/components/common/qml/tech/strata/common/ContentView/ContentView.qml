@@ -21,9 +21,9 @@ Rectangle {
     property string help_tour_id: ""
     property var classDocuments: null
     property var fakeHelpDocuments: null
-    property var pdfAccordionState
-    property var datasheetAccordionState
-    property var downloadAccordionState
+    property bool pdfAccordionState: false
+    property bool datasheetAccordionState: false
+    property bool downloadAccordionState: false
     property var currentDocumentCategory : false
     property string categoryOpened: "platform documents"
     signal finished()

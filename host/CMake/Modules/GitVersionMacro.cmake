@@ -52,7 +52,7 @@ macro(generate_app_version)
             "    static const std::string_view buildId;\n"
             "    static const std::string_view gitRevision;\n"
             "    static const std::string_view stageOfDevelopment;\n"
-            "};\n\n"
+            "};\n"
         )
     endif()
 
@@ -119,6 +119,9 @@ macro(generate_app_version)
     set_source_files_properties(Version.cpp
         PROPERTIES GENERATED ON
         SKIP_AUTOMOC ON
+    )
+    set_source_files_properties(Version.h
+        PROPERTIES GENERATED ON
     )
 endmacro()
 
