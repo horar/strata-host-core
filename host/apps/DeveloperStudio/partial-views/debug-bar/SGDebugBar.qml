@@ -194,8 +194,8 @@ Item {
             Button {
                 id: serverChange
                 onClicked: {
-                    if (Rest.url !== urls.getAuthServer()) {
-                        Rest.url = urls.getAuthServer()
+                    if (Rest.url !== urls.getAuthServer) {
+                        Rest.url = urls.getAuthServer
                     } else {
                         Rest.url = root.testAuthServer
                     }
@@ -207,7 +207,7 @@ Item {
                 }
 
                 function setButtonText () {
-                    if (Rest.url !== urls.getAuthServer() ) {
+                    if (Rest.url !== urls.getAuthServer ) {
                         text = "Switch to Prod Auth Server"
                     } else {
                         text = "Switch to Test Auth Server"

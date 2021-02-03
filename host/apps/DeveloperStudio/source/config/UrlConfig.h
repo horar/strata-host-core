@@ -10,15 +10,26 @@ class UrlConfig : public QObject{
 
     Q_OBJECT
 
+    Q_PROPERTY(QString getAvnetUrl READ getAvnetUrl);
+    Q_PROPERTY(QString getMouserUrl READ getMouserUrl);
+    Q_PROPERTY(QString getDigiKeyUrl READ getDigiKeyUrl);
+    Q_PROPERTY(QString getSalesPopupUrl READ getSalesPopupUrl);
+    Q_PROPERTY(QString getPrivacyPolicyUrl READ getPrivacyPolicyUrl);
+    Q_PROPERTY(QString getLicenseUrl READ getLicenseUrl);
+    Q_PROPERTY(QString getAuthServer READ getAuthServer);
+
 public:
     explicit UrlConfig(QObject *parent = nullptr);
-    Q_INVOKABLE QString getSalesPopupUrl() const;
-    Q_INVOKABLE QString getLicenseUrl() const;
-    Q_INVOKABLE QString getPrivacyPolicyUrl() const;
-    Q_INVOKABLE QString getAuthServer() const;
-    Q_INVOKABLE QString getMouserUrl() const;
-    Q_INVOKABLE QString getDigiKeyUrl() const;
-    Q_INVOKABLE QString getAvnetUrl() const;
+
+    QString getSalesPopupUrl() const;
+    QString getLicenseUrl() const;
+    QString getPrivacyPolicyUrl() const;
+    QString getAuthServer() const;
+    QString getMouserUrl() const;
+    QString getDigiKeyUrl() const;
+    QString getAvnetUrl() const;
+    virtual ~UrlConfig();
+
 
     bool parseUrl(const QString &fileName);
 

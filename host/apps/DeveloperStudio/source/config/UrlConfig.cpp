@@ -12,7 +12,6 @@ UrlConfig::UrlConfig(QObject *parent)
 }
 
 UrlConfig::~UrlConfig() {
-
 }
 
 bool UrlConfig::parseUrl(const QString &fileName) {
