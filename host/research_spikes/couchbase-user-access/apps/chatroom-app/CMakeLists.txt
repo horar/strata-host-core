@@ -28,5 +28,5 @@ target_link_libraries(chatroom-app
     Qt5::Gui
     Qt5::Widgets
 
-    Database
+    strata::Database
 )

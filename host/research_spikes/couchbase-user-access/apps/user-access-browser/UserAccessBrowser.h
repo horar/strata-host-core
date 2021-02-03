@@ -13,15 +13,15 @@ public:
 
     explicit UserAccessBrowser(QQmlApplicationEngine *engine = nullptr, QObject *parent = nullptr);
 
-    Q_INVOKABLE void login(const QString &strataLoginUsername);
+    Q_INVOKABLE void login(const QString &loginUsername);
 
     Q_INVOKABLE void logout();
 
-    Q_INVOKABLE void joinChannel(const QString &strataLoginUsername, const QString &channel);
+    Q_INVOKABLE void joinChannel(const QString &loginUsername, const QString &channel);
 
-    Q_INVOKABLE void leaveChannel(const QString &strataLoginUsername, const QString &channel);
+    Q_INVOKABLE void leaveChannel(const QString &loginUsername, const QString &channel);
 
-    Q_INVOKABLE void clearUserDir(const QString &strataLoginUsername);
+    Q_INVOKABLE void clearUserDir(const QString &loginUsername);
 
     Q_INVOKABLE QStringList getAllDocumentIDs();
 

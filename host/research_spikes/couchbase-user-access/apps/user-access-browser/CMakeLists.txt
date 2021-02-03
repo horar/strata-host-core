@@ -28,5 +28,5 @@ target_link_libraries(user-access-browser
     Qt5::Gui
     Qt5::Widgets
 
-    Database
+    strata::Database
 )
