@@ -16,8 +16,8 @@ public:
     double getId() const;
 
     // these should go private
-    void callSuccessCallback(const Message &message);
-    void callErrorCallback(const Message &message);
+    bool callSuccessCallback(const Message &message);
+    bool callErrorCallback(const Message &message);
 
 signals:
     void finishedSuccessfully(const Message &message);

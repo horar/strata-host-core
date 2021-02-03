@@ -104,7 +104,7 @@ std::pair<bool, int> StrataClient::sendRequest(const QString &method, const QJso
                                                StrataHandler errorCallback,
                                                StrataHandler resultCallback)
 {
-    const auto [requestId, message] =
+    const auto [pendingRequest, message] =
         requestController_->addNewRequest(method, payload, errorCallback, resultCallback);
 
     if (true == message.isEmpty()) {
@@ -112,7 +112,7 @@ std::pair<bool, int> StrataClient::sendRequest(const QString &method, const QJso
         return {false, 0};
     }
 
-    return {connector_->sendMessage(message), requestId};
+    return {connector_->sendMessage(message), pendingRequest->getId()};
 }
 
 bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,

@@ -12,10 +12,9 @@ RequestsController::~RequestsController()
 {
 }
 
-std::pair<int, QByteArray> RequestsController::addNewRequest(const QString &method,
-                                                             const QJsonObject &payload,
-                                                             StrataHandler errorCallback,
-                                                             StrataHandler resultCallback)
+std::pair<std::shared_ptr<PendingRequest>, QByteArray> RequestsController::addNewRequest(
+    const QString &method, const QJsonObject &payload, StrataHandler errorCallback,
+    StrataHandler resultCallback)
 {
     ++currentRequestId_;
 
@@ -28,12 +27,13 @@ std::pair<int, QByteArray> RequestsController::addNewRequest(const QString &meth
     qCDebug(logCategoryRequestsController)
         << "Building request. id:" << currentRequestId_ << "method:" << method;
 
+    std::shared_ptr<PendingRequest> pendingRequest =
+        std::make_shared<PendingRequest>(currentRequestId_);
     const auto request = requestsList_.insert(
-        currentRequestId_, Request(method, payload, currentRequestId_, 
-                                   std::make_shared<PendingRequest>(currentRequestId_),
-                                   errorCallback, resultCallback));
+        currentRequestId_,
+        Request(method, payload, currentRequestId_, pendingRequest, errorCallback, resultCallback));
 
-    return {currentRequestId_, request.value().toJson()};
+    return {pendingRequest, request.value().toJson()};
 }
 
 bool RequestsController::isPendingRequest(int id)

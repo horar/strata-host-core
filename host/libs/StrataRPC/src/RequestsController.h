@@ -31,10 +31,9 @@ public:
      * @param [in] resultCallback lambda to handle result response.  defaults to nullptr.
      * @return std::pair of the new request id and QByteArray of json formatted request.
      */
-    [[nodiscard]] std::pair<int, QByteArray> addNewRequest(const QString &method,
-                                                           const QJsonObject &payload,
-                                                           StrataHandler errorCallback = nullptr,
-                                                           StrataHandler resultCallback = nullptr);
+    [[nodiscard]] std::pair<std::shared_ptr<PendingRequest>, QByteArray> addNewRequest(
+        const QString &method, const QJsonObject &payload, StrataHandler errorCallback = nullptr,
+        StrataHandler resultCallback = nullptr);
 
     /**
      * Checks if there is a pending request with a specific id
