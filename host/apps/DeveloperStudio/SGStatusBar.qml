@@ -596,18 +596,27 @@ Rectangle {
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
         property bool notifyOnCollateralDocumentUpdate: true
-
         property int selectedDistributionPortal: 0
 
         function loadSettings() {
             const settings = readFile("general-settings.json")
+
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
+            }
+            if (settings.hasOwnProperty("closeOnDisconnect")) {
                 closeOnDisconnect = settings.closeOnDisconnect
+            }
+            if (settings.hasOwnProperty("autoOpenView")) {
                 notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+            }
+            if (settings.hasOwnProperty("selectedDistributionPortal")) {
                 selectedDistributionPortal = settings.selectedDistributionPortal
+            }
+            if (settings.hasOwnProperty("notifyOnCollateralDocumentUpdate")) {
                 notifyOnCollateralDocumentUpdate = settings.notifyOnCollateralDocumentUpdate
             }
+
             NavigationControl.userSettings = userSettings
         }
 

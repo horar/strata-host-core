@@ -88,7 +88,7 @@ StackLayout {
 
         Action {
             id: documentsHistoryShowDocumentsView
-            text: "Go to Documents View"
+            text: "Go to documents view"
             onTriggered: {
                 model.view = "collateral"
             }
@@ -96,11 +96,17 @@ StackLayout {
 
         Action {
             id: doNotNotifyOnCollateralDocumentUpdate
-            text: "Do not notify again when documents are updated"
+            text: "Do not notify me of document updates again"
             onTriggered: {
                 NavigationControl.userSettings.notifyOnCollateralDocumentUpdate = false
                 NavigationControl.userSettings.saveSettings()
             }
+        }
+
+        Action {
+            id: ok
+            text: "Ok"
+            onTriggered: {}
         }
 
         function launchDocumentsHistoryNotification(unseenPdfItems, unseenDownloadItems) {
@@ -119,14 +125,14 @@ StackLayout {
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed
                 Notifications.createNotification(
-                    "A document has been updated",
-                    Notifications.info,
+                    "Document updates for this platform",
+                    Notifications.Info,
                     "current",
                     {
                         "description": description,
-                        "saveToDisk": true,
                         "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                        "actions": [documentsHistoryShowDocumentsView, doNotNotifyOnCollateralDocumentUpdate]
+                        "actions": [documentsHistoryShowDocumentsView, ok, doNotNotifyOnCollateralDocumentUpdate],
+                        "timeout": 0
                     }
                 )
             }
