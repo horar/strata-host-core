@@ -26,8 +26,8 @@ Item {
         }
     }
 
-    property var fw_verison: platformInterface.get_firmware_info.application.version
-    onFw_verisonChanged: {
+    property var fw_version: platformInterface.get_firmware_info.application.version
+    onFw_versionChanged: {
         if(fw_verison === "1.0.0") {
             warningPopup.open()
         }
