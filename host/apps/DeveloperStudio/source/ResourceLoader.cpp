@@ -16,7 +16,7 @@
 const QStringList ResourceLoader::coreResources_{
     QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
     QStringLiteral("component-pdfjs.rcc"), QStringLiteral("component-common.rcc"),
-    QStringLiteral("component-sgwidgets.rcc")
+    QStringLiteral("component-sgwidgets.rcc"), QStringLiteral("component-monaco.rcc")
 };
 
 ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
@@ -340,17 +340,4 @@ void ResourceLoader::setLastLoggedError(QString &error_str) {
 
 QString ResourceLoader::getLastLoggedError() {
     return lastLoggedError;
-}
-
-QString ResourceLoader::fetchBuildFolder(const QString &module, const QString &subFolder, const QString &file)
-{
-    QString str = QString::fromUtf8(extern_path.c_str());
-    QDir dir(str);
-    dir.cd(module);
-    dir.cd(subFolder);
-    if(!file.isEmpty()){
-        return dir.absoluteFilePath(file);
-    } else {
-        return dir.absolutePath();
-    }
 }

@@ -21,6 +21,7 @@ if(APPS_CORECOMPONENTS)
     add_subdirectory(theme)
     add_subdirectory(fonts)
     add_subdirectory(pdfjs)
+    add_subdirectory(monaco)
 
     add_subdirectory(sgwidgets)
     add_subdirectory(common)

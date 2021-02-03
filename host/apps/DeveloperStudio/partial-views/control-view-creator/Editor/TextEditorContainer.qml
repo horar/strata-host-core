@@ -9,6 +9,7 @@ import QtWebChannel 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
+
 import "../../general"
 import "../"
 
@@ -129,7 +130,7 @@ Item {
             }
         }
     }
-    
+
     Connections {
         target: openFilesModel
 
@@ -294,7 +295,7 @@ Item {
 
         }
 
-        url: SGUtilsCpp.pathToUrl(sdsModel.resourceLoader.fetchBuildFolder("monaco-editor-0.20.0",".","editor.html"))
+        url: "qrc:///tech/strata/monaco/minified/editor.html"
 
         Rectangle {
             id: barContainer
@@ -328,4 +329,3 @@ Item {
         }
     }
 }
-

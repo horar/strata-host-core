@@ -140,7 +140,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
     $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
-target_compile_definitions(${PROJECT_NAME} PRIVATE -DEXTERN_INSTALL_DIR_PATH="${EXTERN_INSTALL_DIR_PATH}")
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
