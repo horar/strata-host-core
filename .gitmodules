@@ -26,3 +26,7 @@
 	path = extern/libzmq
 	url = https://github.com/zeromq/libzmq.git
 	ignore = dirty
+[submodule "extern/cppzmq"]
+	path = extern/cppzmq
+	url = https://github.com/zeromq/cppzmq.git
+	ignore = all
