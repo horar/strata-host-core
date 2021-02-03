@@ -10,19 +10,7 @@ Item {
     Loader {
         id: cvcLoader
         anchors.fill: parent
-
-        signal loadSignal()
-        signal unloadSignal()
-
         active: false
-
-        onLoadSignal: {
-            active = true
-        }
-
-        onUnloadSignal: {
-            active = false
-        }
 
         sourceComponent: ControlViewCreator {
             id: controlViewCreator
@@ -33,9 +21,9 @@ Item {
 
             onExecuteCVCSignal: {
                 if(!loaded){
-                    cvcLoader.loadSignal()
+                    cvcLoader.active = true
                 } else if(loaded && !changes){
-                    cvcLoader.unloadSignal()
+                    cvcLoader.active = false
                 }
             }
         }
