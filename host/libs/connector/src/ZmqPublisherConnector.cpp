@@ -1,12 +1,11 @@
 #include "ZmqPublisherConnector.h"
-#include <zhelpers.hpp>
 
 namespace strata::connector
 {
 
 ZmqPublisherConnector::ZmqPublisherConnector() : ZmqConnector(ZMQ_PUB), mSubscribers_()
 {
-    CONNECTOR_DEBUG_LOG("%s Creating connector object\n", "ZMQ_PUB");
+    qCInfo(logCategoryZmqPublisherConnector) << "ZMQ_PUB Creating connector object";
 }
 
 ZmqPublisherConnector::~ZmqPublisherConnector()
@@ -15,18 +14,24 @@ ZmqPublisherConnector::~ZmqPublisherConnector()
 
 bool ZmqPublisherConnector::open(const std::string& ip_address)
 {
-    if (false == socket_->init()) {
+    if (false == socketAndContextOpen()) {
+        qCCritical(logCategoryZmqPublisherConnector) << "Unable to open socket";
         return false;
     }
 
     int linger = 0;
-    if (0 == socket_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger)) &&
-        0 == socket_->bind(ip_address.c_str())) {
+    if (socketSetOptInt(zmq::sockopt::linger, linger) &&
+        socketBind(ip_address)) {
         setConnectionState(true);
-        CONNECTOR_DEBUG_LOG("%s Open server socket %s(ID:%s)\n", "ZMQ_PUB", ip_address.c_str(),
-                            getDealerID().c_str());
+        qCInfo(logCategoryZmqPublisherConnector).nospace()
+                << "Connected to the server socket '" << ip_address.c_str()
+                << "' (ID: " << getDealerID().c_str() << ")";
         return true;
     }
+
+    qCCritical(logCategoryZmqPublisherConnector).nospace()
+            << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
+    close();
     return false;
 }
 
@@ -38,17 +43,19 @@ bool ZmqPublisherConnector::read(std::string&)
 
 bool ZmqPublisherConnector::send(const std::string& message)
 {
-    if (false == socket_->valid()) {
+    if (false == socketValid()) {
+        qCCritical(logCategoryZmqPublisherConnector) << "Unable to send messages, socket not open";
         return false;
     }
 
     for (const std::string& dealerID : mSubscribers_) {
-        if (false == s_sendmore(*socket_, dealerID) || false == s_send(*socket_, message)) {
+        if ((false == socketSendMore(dealerID)) || (false == socketSend(message))) {
+            qCWarning(logCategoryZmqPublisherConnector).nospace()
+                    << "Failed to send message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
             return false;
         }
-
-        CONNECTOR_DEBUG_LOG("%s [Socket] Tx'ed message (ID: %s): %s\n", "ZMQ_PUB", dealerID.c_str(),
-                            message.c_str());
+        qCDebug(logCategoryZmqPublisherConnector).nospace()
+                << "Tx'ed message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
     }
 
     return true;
@@ -57,6 +64,7 @@ bool ZmqPublisherConnector::send(const std::string& message)
 void ZmqPublisherConnector::addSubscriber(const std::string& dealerID)
 {
     mSubscribers_.insert(dealerID);
+    qCDebug(logCategoryZmqPublisherConnector) << "Added subscriber:" << dealerID.c_str();
 }
 
 }

@@ -34,6 +34,21 @@ class Flasher : public QObject
         Q_ENUM(Result)
 
         /*!
+         * The State enum for flasherState() signal.
+         */
+        enum class State {
+            SwitchToBootloader,
+            ClearFwClassId,
+            SetFwClassId,
+            FlashFirmware,
+            FlashBootloader,
+            BackupFirmware,
+            StartApplication,
+            IdentifyBoard
+        };
+        Q_ENUM(State)
+
+        /*!
          * Flasher constructor.
          * \param device device which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
@@ -48,6 +63,15 @@ class Flasher : public QObject
         Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5);
 
         /*!
+         * Flasher constructor.
+         * \param device device which will be used by Flasher
+         * \param fileName path to firmware (or bootloader) file
+         * \param fileMD5 MD5 checksum of file which will be flashed
+         * \param fwClassId device firmware class id (UUID v4)
+         */
+        Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5, const QString& fwClassId);
+
+        /*!
          * Flasher destructor.
          */
         ~Flasher();
@@ -59,15 +83,15 @@ class Flasher : public QObject
         void flashFirmware(bool startApplication = true);
 
         /*!
+         * Flash bootloader.
+         */
+        void flashBootloader();
+
+        /*!
          * Backup firmware.
          * \param startApplication if set to true start application after backup
          */
         void backupFirmware(bool startApplication = true);
-
-        /*!
-         * Flash bootloader.
-         */
-        void flashBootloader();
 
         /*!
          * Cancel flash firmware operation.
@@ -83,11 +107,11 @@ class Flasher : public QObject
         void finished(Result result, QString errorString);
 
         /*!
-         * This signal is emitted with request to switch the board to bootloader mode
-         * and when board is successfully switched to bootloader.
-         * \param done true when board was successfully switched to bootloader
+         * This signal is emitted when flasher state is changed.
+         * \param flasherState value from FlasherState enum (defining current flasher state)
+         * \param done false if flasher just reached this state, true if flasher finished this state
          */
-        void switchToBootloader(bool done);
+        void flasherState(State flasherState, bool done);
 
         /*!
          * This signal is emitted during firmware flashing.
@@ -111,7 +135,7 @@ class Flasher : public QObject
         void flashBootloaderProgress(int chunk, int total);
 
         /*!
-         * This signal is emitted when device properties are changed (e.g. board switched to/from bootloader).
+         * This signal is emitted when device properties are changed (board switched to/from bootloader, fwClassId changed).
          */
         void devicePropertiesChanged();
 
@@ -119,20 +143,34 @@ class Flasher : public QObject
         void handleOperationFinished(device::operation::Result result, int status, QString errStr);
 
     private:
-        void flash(bool flashFirmware, bool startApplication);
-        void performNextOperation(device::operation::BaseDeviceOperation* baseOp, int status);
+        typedef std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> FlasherOperation;
+
+        // flash firmware of bootloader
+        void flash(bool flashFirmware);
+        // do next operation in flash (backup) process
+        void doNextOperation(device::operation::BaseDeviceOperation* baseOp, int status);
+        // create operation to flash or back up firmware
+        void createFlasherOperation(FlasherOperation& operation, State& state);
+        // manage flash process - handle flashed chunks
         void manageFlash(int lastFlashedChunk);
+        // manage backup process - handle becked up chunks
         void manageBackup(int chunkNumber);
+        // finish flasher
         void finish(Result result, QString errorString = QString());
+        // connect handlers for flasher operation
         void connectHandlers(device::operation::BaseDeviceOperation* operation);
+        // deleter for flasher operations
         static void operationDeleter(device::operation::BaseDeviceOperation* operation);
 
         device::DevicePtr device_;
 
         QFile binaryFile_;
         QString fileMD5_;
+        bool fileFlashed_;
 
-        std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> operation_;
+        QString fwClassId_;
+
+        FlasherOperation operation_;
 
         int chunkNumber_;
         int chunkCount_;
@@ -144,6 +182,8 @@ class Flasher : public QObject
             BackupFirmware
         };
         Action action_;
+
+        State state_;
 
         bool startApp_;
 };

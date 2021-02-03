@@ -16,12 +16,8 @@ HostControllerClient::~HostControllerClient()
 
 bool HostControllerClient::close()
 {
-    return connector_->close();
-}
-
-bool HostControllerClient::closeContext()
-{
-    return connector_->closeContext();
+    // interupts the blocking read on messages in the notification_thread_
+    return connector_->shutdown();
 }
 
 bool HostControllerClient::sendCmd(const std::string& cmd)

@@ -3,9 +3,6 @@ project(connector
     LANGUAGES CXX
 )
 
-find_package(ZMQHelper REQUIRED)
-find_package(Threads REQUIRED)
-
 add_library(${PROJECT_NAME}
     src/Connector.cpp
     src/ZmqConnector.cpp
@@ -15,21 +12,18 @@ add_library(${PROJECT_NAME}
     src/ZmqSubscriberConnector.cpp
     src/ZmqRequestConnector.cpp
     src/ZmqResponseConnector.cpp
+    src/logging/LoggingQtCategories.cpp
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
-      PUBLIC ${SERIALPORT_LIBRARIES}
-      rapidjson::rapidjson
-      Threads::Threads
+      PUBLIC strata::QtLogger
       zeromq::libzmq
-      ZMQHelper
+      zeromq::cppzmq
 )
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC include
-    PUBLIC ${SERIALPORT_INCLUDE_DIR}
-    PUBLIC ${RAPIDJSON_INCLUDE_DIR}
 )
 
 if(BUILD_TESTING)
