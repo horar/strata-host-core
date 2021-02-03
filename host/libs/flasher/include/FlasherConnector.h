@@ -84,6 +84,8 @@ public:
      */
     enum class Operation {
         Preparation,
+        ClearFwClassId,
+        SetFwClassId,
         Flash,
         Backup,
         BackupBeforeFlash,
@@ -146,12 +148,11 @@ signals:
 
 private slots:
     void handleFlasherFinished(Flasher::Result flasherResult, QString errorString);
-    void handleFlasherAuxiliaryState(Flasher::AuxiliaryState auxState);
+    void handleFlasherState(Flasher::State flasherState, bool done);
 
 private:
     void flashFirmware(bool flashOld);
     void backupFirmware(bool backupOld);
-    void startOperation();
     void processStartupError(const QString& errorString);
 
     device::DevicePtr device_;

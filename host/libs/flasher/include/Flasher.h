@@ -34,17 +34,19 @@ class Flasher : public QObject
         Q_ENUM(Result)
 
         /*!
-         * The AuxiliaryState enum for auxiliaryState() signal.
+         * The State enum for flasherState() signal.
          */
-        enum class AuxiliaryState {
-            SwitchingToBootloader,
-            InBootloaderMode,
+        enum class State {
+            SwitchToBootloader,
             ClearFwClassId,
             SetFwClassId,
+            FlashFirmware,
+            FlashBootloader,
+            BackupFirmware,
             StartApplication,
             IdentifyBoard
         };
-        Q_ENUM(AuxiliaryState)
+        Q_ENUM(State)
 
         /*!
          * Flasher constructor.
@@ -105,10 +107,11 @@ class Flasher : public QObject
         void finished(Result result, QString errorString);
 
         /*!
-         * This signal is emitted when flasher is in auxiliary state.
-         * \param auxState value from AuxiliaryState enum (defining current auxiliary state)
+         * This signal is emitted when flasher state is changed.
+         * \param flasherState value from FlasherState enum (defining current flasher state)
+         * \param done false if flasher just reached this state, true if flasher finished this state
          */
-        void auxiliaryState(AuxiliaryState auxState);
+        void flasherState(State flasherState, bool done);
 
         /*!
          * This signal is emitted during firmware flashing.
@@ -140,12 +143,14 @@ class Flasher : public QObject
         void handleOperationFinished(device::operation::Result result, int status, QString errStr);
 
     private:
+        typedef std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> FlasherOperation;
+
         // flash firmware of bootloader
         void flash(bool flashFirmware);
         // do next operation in flash (backup) process
         void doNextOperation(device::operation::BaseDeviceOperation* baseOp, int status);
         // create operation to flash or back up firmware
-        std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> createFlasherOperation();
+        void createFlasherOperation(FlasherOperation& operation, State& state);
         // manage flash process - handle flashed chunks
         void manageFlash(int lastFlashedChunk);
         // manage backup process - handle becked up chunks
@@ -165,7 +170,7 @@ class Flasher : public QObject
 
         QString fwClassId_;
 
-        std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> operation_;
+        FlasherOperation operation_;
 
         int chunkNumber_;
         int chunkCount_;
@@ -177,6 +182,8 @@ class Flasher : public QObject
             BackupFirmware
         };
         Action action_;
+
+        State state_;
 
         bool startApp_;
 };
