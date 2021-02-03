@@ -60,6 +60,7 @@ private:
     enum class ScannerState {
         Start,
         String,
+        MaybeInteger,      // maybe integer (+ or -), digit has to follow
         Integer,
         MaybeReal,         // maybe real number (12.), digit has to follow
         Real,              // real number (12.3)

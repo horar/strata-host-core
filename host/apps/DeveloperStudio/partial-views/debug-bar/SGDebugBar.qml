@@ -15,7 +15,7 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 Item {
     id: root
 
-    property string testAuthServer: "http://18.191.108.5/"
+    property string testAuthServer: "http://10.238.54.227/"
 
     Rectangle {
         id: commandBar

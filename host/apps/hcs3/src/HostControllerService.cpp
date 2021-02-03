@@ -25,17 +25,17 @@ HostControllerService::HostControllerService(QObject* parent)
       dispatcher_{std::make_shared<HCS_Dispatcher>()}
 {
     //handlers for 'cmd'
-    clientCmdHandler_.insert( { std::string("request_hcs_status"), std::bind(&HostControllerService::onCmdHCSStatus, this, std::placeholders::_1) });
-    clientCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdUnregisterClient, this, std::placeholders::_1) } );
-    clientCmdHandler_.insert( { std::string("load_documents"), std::bind(&HostControllerService::onCmdLoadDocuments, this, std::placeholders::_1) } );
+    clientCmdHandler_.insert( { QByteArray("request_hcs_status"), std::bind(&HostControllerService::onCmdHCSStatus, this, std::placeholders::_1) });
+    clientCmdHandler_.insert( { QByteArray("unregister"), std::bind(&HostControllerService::onCmdUnregisterClient, this, std::placeholders::_1) } );
+    clientCmdHandler_.insert( { QByteArray("load_documents"), std::bind(&HostControllerService::onCmdLoadDocuments, this, std::placeholders::_1) } );
 
-    hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
-    hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
-    hostCmdHandler_.insert( { std::string("program_controller"), std::bind(&HostControllerService::onCmdProgramController, this, std::placeholders::_1) } );
-    hostCmdHandler_.insert( { std::string("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("check_for_updates"), std::bind(&HostControllerService::onCmdGetUpdateInfo, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { QByteArray("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { QByteArray("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
+    hostCmdHandler_.insert( { QByteArray("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
+    hostCmdHandler_.insert( { QByteArray("program_controller"), std::bind(&HostControllerService::onCmdProgramController, this, std::placeholders::_1) } );
+    hostCmdHandler_.insert( { QByteArray("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { QByteArray("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { QByteArray("check_for_updates"), std::bind(&HostControllerService::onCmdGetUpdateInfo, this, std::placeholders::_1) });
 }
 
 HostControllerService::~HostControllerService()
@@ -55,7 +55,7 @@ bool HostControllerService::initialize(const QString& config)
     if (config_.HasMember("stage")) {
         rapidjson::Value &devStage = config_["stage"];
         if (devStage.IsString()) {
-            std::string stage{devStage.GetString()};
+            std::string stage(devStage.GetString(), devStage.GetStringLength());
             std::transform(stage.begin(), stage.end(), stage.begin(), ::toupper);
             qCInfo(logCategoryHcs, "Running in %s setup", qUtf8Printable(stage.data()));
             baseFolder += QString("/%1").arg(qUtf8Printable(stage.data()));
@@ -703,13 +703,13 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     current_client_ = client;
 
     rapidjson::Document service_command;
-    if (service_command.Parse(msg.message.c_str()).HasParseError()) {
+    if (service_command.Parse(msg.message.constData(), msg.message.size()).HasParseError()) {
         qCWarning(logCategoryHcs) << "Client:" << clientId.toHex() << "parse error!";
         return;
     }
 
     auto firstIt = service_command.MemberBegin();
-    std::string msg_type = firstIt->name.GetString();
+    QByteArray msg_type(firstIt->name.GetString(), firstIt->name.GetStringLength());
 
     rapidjson::Value* payload = nullptr;
     if (service_command.HasMember("payload")) {
@@ -722,19 +722,19 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
             return;
         }
 
-        boardsController_.sendMessage(service_command["device_id"].GetInt(), QByteArray::fromStdString(msg.message));
+        boardsController_.sendMessage(service_command["device_id"].GetInt(), msg.message);
         return;
     }
 
-    std::string cmd_name = firstIt->value.GetString();
-    qCInfo(logCategoryHcs) << "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+    QByteArray cmd_name(firstIt->value.GetString(), firstIt->value.GetStringLength());
+    qCInfo(logCategoryHcs) << "Client:" << clientId.toHex() << "Type:" << msg_type << "cmd:" << cmd_name;
 
     if (msg_type == "hcs::cmd") {
 
         auto findIt = hostCmdHandler_.find(cmd_name);
         if (findIt == hostCmdHandler_.end()) {
             //TODO: error handling...
-            qCWarning(logCategoryHcs) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+            qCWarning(logCategoryHcs) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << msg_type << "cmd:" << cmd_name;
             return;
         }
 
@@ -744,14 +744,14 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 
         auto findIt = clientCmdHandler_.find(cmd_name);
         if (findIt == clientCmdHandler_.end()) {
-            qCWarning(logCategoryHcs) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+            qCWarning(logCategoryHcs) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << msg_type << "cmd:" << cmd_name;
             return;
         }
 
         findIt->second(payload);
     }
     else {
-        qCWarning(logCategoryHcs) << "Unhandled command type" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+        qCWarning(logCategoryHcs) << "Unhandled command type" <<  "Client:" << clientId.toHex() << "Type:" << msg_type << "cmd:" << cmd_name;
         return;
     }
 }

@@ -22,7 +22,7 @@ struct PlatformMessage
 
     MessageType msg_type;
     QByteArray from_client;
-    std::string message;
+    QByteArray message;
     rapidjson::Document* msg_document;
 
     // constructor

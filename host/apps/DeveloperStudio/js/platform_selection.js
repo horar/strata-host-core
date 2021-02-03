@@ -559,6 +559,7 @@ function generateErrorListing (platform, verbose_name, class_id, opn, descriptio
         "error": true,
         "visible": true,
         "view_open": false,
+        "parts_list": [],
         "firmware_version": platform.firmware_version,
         "program_controller": program_controller,
         "program_controller_progress": 0.0,
