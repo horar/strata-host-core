@@ -27,6 +27,7 @@ PrtModel::PrtModel(QObject *parent)
     QSettings settings(configFilePath, QSettings::IniFormat);
 
     cloudServiceUrl_ = settings.value("cloud-service/url").toUrl();
+    serverType_ = settings.value("server-type/server").toString();
 
     if (cloudServiceUrl_.isValid() == false) {
         qCCritical(logCategoryPrt) << "cloud service url is not valid:" << cloudServiceUrl_.toString();
@@ -502,8 +503,6 @@ bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString 
     return true;
 }
 
-
-
 QString PrtModel::resolveConfigFilePath()
 {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -515,4 +514,8 @@ QString PrtModel::resolveConfigFilePath()
 #endif
 
     return applicationDir.filePath("prt-config.ini");
+}
+
+QString PrtModel::serverType() const {
+    return serverType_;
 }

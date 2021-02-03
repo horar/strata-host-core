@@ -11,8 +11,12 @@ SGWidgets.SGMainWindow {
     minimumWidth: 800
     minimumHeight: 600
 
+    PrtCommon.PrtModel {
+        id: prtModel
+    }
+
     visible: true
-    title: qsTr("Platform Registration Tool")
+    title: qsTr("Platform Registration Tool [%1 server]").arg(prtModel.serverType)
 
     QtLabsPlatform.MenuBar {
         QtLabsPlatform.Menu {
