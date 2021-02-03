@@ -78,11 +78,11 @@ SGWidgets.SGMainWindow {
             if (sdsModel.hcsConnected) {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
                 if(hcsReconnected) {
-                    Notifications.createNotification(`Connection re-established`,Notifications.info,"all")
+                    Notifications.createNotification(`Connection re-established`,Notifications.Info,"all")
                     hcsReconnected = false
                 }
             } else {
-                Notifications.createNotification(`Connection to server lost:`,Notifications.critical,"all")
+                Notifications.createNotification(`Connection to server lost:`,Notifications.Critical,"all")
                 hcsReconnected = true
                 PlatformFilters.clearActiveFilters()
                 PlatformSelection.logout()

@@ -21,9 +21,9 @@ Item {
 
     onConnectedChanged: {
         if(connected){
-            Notifications.createNotification(`Platform ${model.class_id} is connected`, Notifications.info,"all")
+            Notifications.createNotification(`Platform ${model.class_id} is connected`, Notifications.Info,"all")
         } else {
-            Notifications.createNotification(`Platform ${model.class_id} is disconnected`, Notifications.info,"all")
+            Notifications.createNotification(`Platform ${model.class_id} is disconnected`, Notifications.Info,"all")
         }
     }
 
