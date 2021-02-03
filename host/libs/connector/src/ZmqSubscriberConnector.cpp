@@ -1,12 +1,11 @@
 #include "ZmqSubscriberConnector.h"
-#include <zhelpers.hpp>
 
 namespace strata::connector
 {
 
 ZmqSubscriberConnector::ZmqSubscriberConnector() : ZmqConnector(ZMQ_SUB)
 {
-    CONNECTOR_DEBUG_LOG("Creating ZMQ %s connector object\n", "ZMQ_SUB");
+    qCInfo(logCategoryZmqSubscriberConnector) << "ZMQ_SUB Creating connector object";
 }
 
 ZmqSubscriberConnector::~ZmqSubscriberConnector()
@@ -15,20 +14,25 @@ ZmqSubscriberConnector::~ZmqSubscriberConnector()
 
 bool ZmqSubscriberConnector::open(const std::string& ip_address)
 {
-    if (false == socket_->init()) {
+    if (false == socketAndContextOpen()) {
+        qCCritical(logCategoryZmqSubscriberConnector) << "Unable to open socket";
         return false;
     }
 
     int linger = 0;
-    if (0 == socket_->setsockopt(ZMQ_LINGER, &linger, sizeof(linger)) &&
-        0 == socket_->setsockopt(ZMQ_SUBSCRIBE, getDealerID().c_str(), getDealerID().size()) &&
-        0 == socket_->connect(ip_address.c_str())) {
+    if (socketSetOptInt(zmq::sockopt::linger, linger) &&
+        socketSetOptString(zmq::sockopt::subscribe, getDealerID()) &&
+        socketConnect(ip_address)) {
         setConnectionState(true);
-        CONNECTOR_DEBUG_LOG("%s Connecting to the server socket %s with filter '%s'\n", "ZMQ_SUB",
-                            ip_address.c_str(), getDealerID().c_str());
+        qCInfo(logCategoryZmqSubscriberConnector).nospace()
+                << "Connected to the server socket '" << ip_address.c_str()
+                << "' with filter '" << getDealerID().c_str() << "'";
         return true;
     }
 
+    qCCritical(logCategoryZmqSubscriberConnector).nospace()
+            << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
+    close();
     return false;
 }
 
@@ -40,22 +44,26 @@ bool ZmqSubscriberConnector::send(const std::string&)
 
 bool ZmqSubscriberConnector::read(std::string& message)
 {
-    if (false == socket_->valid()) {
+    if (false == socketValid()) {
+        qCCritical(logCategoryZmqSubscriberConnector) << "Unable to read messages, socket not open";
         return false;
     }
 
     zmq::pollitem_t items = {*socket_, 0, ZMQ_POLLIN, 0};
-    if (-1 == zmq::poll(&items, 1, SOCKET_POLLING_TIMEOUT)) {
+    if (false == socketPoll(&items)) {
+        qCWarning(logCategoryZmqSubscriberConnector) << "Failed to poll items";
         return false;
     }
+
     if (items.revents & ZMQ_POLLIN) {
         std::string identity;
-
-        if (s_recv(*socket_, identity) && s_recv(*socket_, message)) {
+        if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);
-            CONNECTOR_DEBUG_LOG("%s [Socket] Rx'ed message : %s(ID: %s)\n", "ZMQ_SUB",
-                                message.c_str(), getDealerID().c_str());
+            qCDebug(logCategoryZmqSubscriberConnector).nospace()
+                    << "Rx'ed message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
             return true;
+        } else {
+            qCWarning(logCategoryZmqSubscriberConnector) << "Failed to read messages";
         }
     }
 
@@ -64,18 +72,25 @@ bool ZmqSubscriberConnector::read(std::string& message)
 
 bool ZmqSubscriberConnector::blockingRead(std::string& message)
 {
-    if (false == socket_->valid()) {
+    if (false == socketValid()) {
+        qCCritical(logCategoryZmqSubscriberConnector) << "Unable to blocking read messages, socket not open";
         return false;
     }
 
     std::string identity;
-
-    if (s_recv(*socket_, identity) && s_recv(*socket_, message)) {
+    if (socketRecv(identity) && socketRecv(message)) {
         setDealerID(identity);
-        CONNECTOR_DEBUG_LOG("%s [Socket] Rx'ed message : %s(ID: %s)\n", "ZMQ_SUB",
-                            message.c_str(), getDealerID().c_str());
+        qCDebug(logCategoryZmqSubscriberConnector).nospace()
+                << "Rx'ed blocking message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
         return true;
+    } else {
+        if(false == socketValid()) {
+            qCDebug(logCategoryZmqSubscriberConnector) << "Context was terminated, blocking read was interrupted";
+        } else {
+            qCWarning(logCategoryZmqSubscriberConnector) << "Failed to blocking read messages";
+        }
     }
+
     return false;
 }
 
