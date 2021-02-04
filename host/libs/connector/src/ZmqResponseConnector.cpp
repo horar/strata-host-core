@@ -23,14 +23,14 @@ bool ZmqResponseConnector::open(const std::string& ip_address)
     if (socketSetOptInt(zmq::sockopt::linger, linger) &&
         socketBind(ip_address)) {
         setConnectionState(true);
-        qCInfo(logCategoryZmqResponseConnector).nospace()
-                << "Connected to the server socket '" << ip_address.c_str()
-                << "' (ID: " << getDealerID().c_str() << ")";
+        qCInfo(logCategoryZmqResponseConnector).nospace().noquote()
+                << "Connected to the server socket '" << QString::fromStdString(ip_address)
+                << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
         return true;
     }
 
-    qCCritical(logCategoryZmqResponseConnector).nospace()
-            << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
+    qCCritical(logCategoryZmqResponseConnector).nospace().noquote()
+            << "Unable to configure and/or connect to server socket '" << QString::fromStdString(ip_address) << "'";
     close();
     return false;
 }
