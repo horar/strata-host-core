@@ -28,6 +28,7 @@ StackLayout {
     property bool connected: model.connected
     property string name: model.name
     property alias controlViewContainer: controlViewContainer
+    property string view: model.view
 
     property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
     property bool platformStackInitialized: false
@@ -46,8 +47,8 @@ StackLayout {
         initialize()
     }
 
-    onCurrentIndexChanged: {
-        if (platformStack.currentIndex == 1) {
+    onViewChanged: {
+        if (view == "collateral") {
             platformStack.documentsHistoryDisplayed = true
         }
     }

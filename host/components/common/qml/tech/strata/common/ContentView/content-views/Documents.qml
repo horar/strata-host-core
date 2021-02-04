@@ -124,9 +124,9 @@ Item {
 
                     Rectangle {
                         id: historyUpdate
-                        width: model.historyState == "new_document" ? 40 : 60
+                        width: historyText.implicitWidth + height
                         height: 14
-                        radius: width/2
+                        radius: height/2
                         color: "green"
                         visible: model.historyState != "seen"
                         anchors {
@@ -136,6 +136,7 @@ Item {
                         }
 
                         Label {
+                            id: historyText
                             anchors.centerIn: parent
                             text: {
                                 if (model.historyState == "new_document") {
