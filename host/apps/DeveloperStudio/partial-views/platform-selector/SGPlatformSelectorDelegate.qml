@@ -20,10 +20,20 @@ Item {
     property bool connected: model.connected
 
     onConnectedChanged: {
-        if(connected){
-            Notifications.createNotification(`Platform ${model.class_id} is connected`, Notifications.Info,"all")
+        if (connected){
+            Notifications.createNotification(`Platform ${model.class_id} is connected`,
+                                             Notifications.Info,
+                                             "all",
+                                             {
+                                                 "timeout": 4000
+                                             })
         } else {
-            Notifications.createNotification(`Platform ${model.class_id} is disconnected`, Notifications.Info,"all")
+            Notifications.createNotification(`Platform ${model.class_id} is disconnected`,
+                                             Notifications.Info,
+                                             "all",
+                                             {
+                                                 "timeout": 4000
+                                             })
         }
     }
 
