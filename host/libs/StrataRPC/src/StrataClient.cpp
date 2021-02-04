@@ -110,17 +110,22 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
     return true;
 }
 
-std::pair<bool, std::shared_ptr<DeferredRequest>> StrataClient::sendRequest(
-    const QString &method, const QJsonObject &payload)
+std::shared_ptr<DeferredRequest> StrataClient::sendRequest(const QString &method,
+                                                           const QJsonObject &payload)
 {
     const auto [deferredRequest, message] = requestController_->addNewRequest(method, payload);
 
     if (true == message.isEmpty()) {
         qCCritical(logCategoryStrataClient) << "Failed to add request.";
-        return {false, 0};
+        return nullptr;
     }
 
-    return {connector_->sendMessage(message), deferredRequest};
+    if (false == connector_->sendMessage(message)) {
+        qCCritical(logCategoryStrataClient) << "Failed to send request.";
+        return nullptr;
+    }
+
+    return deferredRequest;
 }
 
 bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,

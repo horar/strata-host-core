@@ -71,11 +71,10 @@ public:
      * the registered handlers in the dispatcher.
      * @param [in] method The handler name in StrataServer.
      * @param [in] payload QJsonObject of the request payload.
-     * @return std::pair<bool, std::shared_ptr<DeferredRequest>>, Boolean to indicate if the request
-     * was sent successfully or not, and a shared pointer to DeferredRequest to connect callbacks
+     * @return shared pointer to DeferredRequest to connect callbacks, on failure, this will return
+     * nullptr
      */
-    std::pair<bool, std::shared_ptr<DeferredRequest>> sendRequest(const QString &method,
-                                                                  const QJsonObject &payload);
+    std::shared_ptr<DeferredRequest> sendRequest(const QString &method, const QJsonObject &payload);
 
 signals:
     /**

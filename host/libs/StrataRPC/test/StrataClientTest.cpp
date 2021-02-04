@@ -124,20 +124,22 @@ void StrataClientTest::testBuildRequest()
     expectedMethod = "method_1";
     expectedId = 2;
     serverRevicedMessage = false;
-    auto requestInfo_1 = client.sendRequest("method_1", {{"param_1", 0}});
-    QVERIFY_(true == requestInfo_1.first);
-    QVERIFY_(requestInfo_1.second != 0);
-    waitForZmqMessages();
-    QVERIFY_(serverRevicedMessage);
+    {
+        auto deferredRequest = client.sendRequest("method_1", {{"param_1", 0}});
+        QVERIFY_(deferredRequest);
+        waitForZmqMessages();
+        QVERIFY_(serverRevicedMessage);
+    }
 
     expectedMethod = "method_2";
     expectedId = 3;
     serverRevicedMessage = false;
-    auto requestInfo_2 = client.sendRequest("method_2", {});
-    QVERIFY_(true == requestInfo_2.first);
-    QVERIFY_(requestInfo_2.second != 0);
-    waitForZmqMessages();
-    QVERIFY_(serverRevicedMessage);
+    {
+        auto deferredRequest = client.sendRequest("method_2", {});
+        QVERIFY_(deferredRequest);
+        waitForZmqMessages();
+        QVERIFY_(serverRevicedMessage);
+    }
 }
 
 void StrataClientTest::testNonDefaultDealerId()
@@ -294,8 +296,10 @@ void StrataClientTest::testWithAllCallbacks()
         allCallbacksErrCallback = false;
         allCallbacksResCallback = false;
         allCallbacksHandler = false;
-        const auto [res, deferredRequest] =
+        auto deferredRequest =
             client.sendRequest("test_all_callbacks", QJsonObject({{"response_type", "error"}}));
+
+        QVERIFY_(deferredRequest);
 
         connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
@@ -312,8 +316,10 @@ void StrataClientTest::testWithAllCallbacks()
         allCallbacksErrCallback = false;
         allCallbacksResCallback = false;
         allCallbacksHandler = false;
-        const auto [res, deferredRequest] =
+        auto deferredRequest =
             client.sendRequest("test_all_callbacks", QJsonObject({{"response_type", "result"}}));
+
+        QVERIFY_(deferredRequest);
 
         connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
@@ -331,8 +337,10 @@ void StrataClientTest::testWithAllCallbacks()
         allCallbacksResCallback = false;
         allCallbacksHandler = false;
 
-        const auto [res, deferredRequest] = client.sendRequest(
-            "test_all_callbacks", QJsonObject({{"response_type", "notification"}}));
+        auto deferredRequest = client.sendRequest("test_all_callbacks",
+                                                  QJsonObject({{"response_type", "notification"}}));
+
+        QVERIFY_(deferredRequest);
 
         connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
@@ -402,8 +410,10 @@ void StrataClientTest::testWithOnlyResultCallbacks()
     {
         resCallback = false;
         resCallbackHandler = false;
-        const auto [res, deferredRequest] =
+        auto deferredRequest =
             client.sendRequest("test_res_callback", QJsonObject({{"response_type", "result"}}));
+
+        QVERIFY_(deferredRequest);
 
         connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const Message &) { resCallback = true; });
@@ -416,8 +426,10 @@ void StrataClientTest::testWithOnlyResultCallbacks()
     {
         resCallback = false;
         resCallbackHandler = false;
-        const auto [res, deferredRequest] =
+        auto deferredRequest =
             client.sendRequest("test_res_callback", QJsonObject({{"response_type", "error"}}));
+
+        QVERIFY_(deferredRequest);
 
         connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const Message &) { resCallback = true; });
@@ -430,8 +442,10 @@ void StrataClientTest::testWithOnlyResultCallbacks()
     {
         resCallback = false;
         resCallbackHandler = false;
-        const auto [res, deferredRequest] = client.sendRequest(
-            "test_res_callback", QJsonObject({{"response_type", "notification"}}));
+        auto deferredRequest = client.sendRequest("test_res_callback",
+                                                  QJsonObject({{"response_type", "notification"}}));
+
+        QVERIFY_(deferredRequest);
 
         connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const Message &) { resCallback = true; });
@@ -498,8 +512,10 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
     {
         errorCallback = false;
         errorCallbackHander = false;
-        const auto [res, deferredRequest] =
+        auto deferredRequest =
             client.sendRequest("test_err_callback", QJsonObject({{"response_type", "result"}}));
+
+        QVERIFY_(deferredRequest);
 
         connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const Message &) { errorCallback = true; });
@@ -512,8 +528,10 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
     {
         errorCallback = false;
         errorCallbackHander = false;
-        const auto [res, deferredRequest] =
+        auto deferredRequest =
             client.sendRequest("test_err_callback", QJsonObject({{"response_type", "error"}}));
+
+        QVERIFY_(deferredRequest);
 
         connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const Message &) { errorCallback = true; });
@@ -526,8 +544,10 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
     {
         errorCallback = false;
         errorCallbackHander = false;
-        const auto [res, deferredRequest] = client.sendRequest(
-            "test_err_callback", QJsonObject({{"response_type", "notification"}}));
+        auto deferredRequest = client.sendRequest("test_err_callback",
+                                                  QJsonObject({{"response_type", "notification"}}));
+
+        QVERIFY_(deferredRequest);
 
         connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const Message &) { errorCallback = true; });
