@@ -43,11 +43,13 @@ public:
 signals:
     /**
      * Signal Emitted when the server respond with a successful message.
+     * @param [in] message parsed server message.
      */
     void finishedSuccessfully(const Message &message);
 
     /**
      * Signal Emitted when the server respond with a Error message.
+     * @param [in] message parsed server message.
      */
     void finishedWithError(const Message &message);
 
@@ -56,11 +58,13 @@ private:
 
     /**
      * Emits finishedSuccessfully signal.
+     * @param [in] message parsed server message.
      */
     void callSuccessCallback(const Message &message);
 
     /**
      * Emits finishedWithError signal.
+     * @param [in] message parsed server message.
      */
     void callErrorCallback(const Message &message);
 
