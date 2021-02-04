@@ -16,14 +16,8 @@ struct Request {
      * @param [in] messageId request id.
      */
     Request(QString method, QJsonObject payload, int messageId,
-            std::shared_ptr<PendingRequest> pendingRequest, StrataHandler errorCallback = nullptr,
-            StrataHandler resultCallback = nullptr)
-        : method_(method),
-          payload_(payload),
-          messageId_(messageId),
-          pendingRequest_(pendingRequest),
-          errorCallback_(errorCallback),
-          resultCallback_(resultCallback)
+            std::shared_ptr<PendingRequest> pendingRequest)
+        : method_(method), payload_(payload), messageId_(messageId), pendingRequest_(pendingRequest)
     {
     }
 
@@ -42,8 +36,6 @@ struct Request {
     QString method_;
     QJsonObject payload_;
     int messageId_;
-    StrataHandler errorCallback_;
-    StrataHandler resultCallback_;
     std::shared_ptr<PendingRequest> pendingRequest_;
 };
 

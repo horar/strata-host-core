@@ -3,13 +3,12 @@
 #include <QMetaMethod>
 using namespace strata::strataRPC;
 
-PendingRequest::PendingRequest(double id, QObject *parent) : id_(id), QObject(parent)
+PendingRequest::PendingRequest(double id, QObject *parent) : QObject(parent), id_(id)
 {
 }
 
 PendingRequest::~PendingRequest()
 {
-    qDebug() << "deleted!";
 }
 
 double PendingRequest::getId() const
@@ -17,20 +16,22 @@ double PendingRequest::getId() const
     return id_;
 }
 
-bool PendingRequest::callSuccessCallback(const Message &message)
+bool PendingRequest::hasSuccessCallback()
 {
-    if (isSignalConnected(QMetaMethod::fromSignal(&PendingRequest::finishedSuccessfully))) {
-        emit finishedSuccessfully(message);
-        return true;
-    }
-    return false;
+    return isSignalConnected(QMetaMethod::fromSignal(&PendingRequest::finishedSuccessfully));
 }
 
-bool PendingRequest::callErrorCallback(const Message &message)
+bool PendingRequest::hasErrorCallback()
 {
-    if (isSignalConnected(QMetaMethod::fromSignal(&PendingRequest::finishedWithError))) {
-        emit finishedWithError(message);
-        return true;
-    }
-    return false;
+    return isSignalConnected(QMetaMethod::fromSignal(&PendingRequest::finishedWithError));
+}
+
+void PendingRequest::callSuccessCallback(const Message &message)
+{
+    emit finishedSuccessfully(message);
+}
+
+void PendingRequest::callErrorCallback(const Message &message)
+{
+    emit finishedWithError(message);
 }

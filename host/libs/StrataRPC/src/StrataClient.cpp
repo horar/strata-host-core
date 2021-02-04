@@ -64,20 +64,30 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
     qCDebug(logCategoryStrataClient) << "New message from the server:" << jsonServerMessage;
 
     Message serverMessage;
-    StrataHandler callbackHandler = nullptr;
+    std::shared_ptr<PendingRequest> pendingRequest;
 
-    if (false == buildServerMessage(jsonServerMessage, &serverMessage, callbackHandler)) {
+    if (false == buildServerMessage(jsonServerMessage, &serverMessage, pendingRequest)) {
         qCCritical(logCategoryStrataClient) << "Failed to build server message.";
         return;
     }
 
-    if (callbackHandler) {
-        qCDebug(logCategoryStrataClient) << "Dispatching request callback.";
-        callbackHandler(serverMessage);
-    } else {
-        qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
-        emit newServerMessageParsed(serverMessage);
+    if (pendingRequest) {
+        if (serverMessage.messageType == Message::MessageType::Error &&
+            pendingRequest->hasErrorCallback()) {
+            qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
+            pendingRequest->callErrorCallback(serverMessage);
+            return;
+
+        } else if (serverMessage.messageType == Message::MessageType::Response &&
+                   pendingRequest->hasSuccessCallback()) {
+            qCDebug(logCategoryStrataClient) << "Dispatching success callback.";
+            pendingRequest->callSuccessCallback(serverMessage);
+            return;
+        }
     }
+
+    qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
+    emit newServerMessageParsed(serverMessage);
 }
 
 bool StrataClient::registerHandler(const QString &handlerName, StrataHandler handler)
@@ -100,23 +110,21 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
     return true;
 }
 
-std::pair<bool, int> StrataClient::sendRequest(const QString &method, const QJsonObject &payload,
-                                               StrataHandler errorCallback,
-                                               StrataHandler resultCallback)
+std::pair<bool, std::shared_ptr<PendingRequest>> StrataClient::sendRequest(
+    const QString &method, const QJsonObject &payload)
 {
-    const auto [pendingRequest, message] =
-        requestController_->addNewRequest(method, payload, errorCallback, resultCallback);
+    const auto [pendingRequest, message] = requestController_->addNewRequest(method, payload);
 
     if (true == message.isEmpty()) {
         qCCritical(logCategoryStrataClient) << "Failed to add request.";
         return {false, 0};
     }
 
-    return {connector_->sendMessage(message), pendingRequest->getId()};
+    return {connector_->sendMessage(message), pendingRequest};
 }
 
 bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
-                                      StrataHandler &callbackHandler)
+                                      std::shared_ptr<PendingRequest> &pendingRequest)
 {
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(jsonServerMessage, &jsonParseError);
@@ -179,14 +187,11 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
         }
 
         serverMessage->handlerName = request.method_;
+        pendingRequest = request.pendingRequest_;
 
         if (true == jsonObject.contains("error") && true == jsonObject.value("error").isObject()) {
             serverMessage->payload = jsonObject.value("error").toObject();
             serverMessage->messageType = Message::MessageType::Error;
-            if (request.errorCallback_) {
-                qCDebug(logCategoryStrataClient) << "Error callback is set.";
-                callbackHandler = request.errorCallback_;
-            }
         } else {
             if (true == jsonObject.contains("result") &&
                 true == jsonObject.value("result").isObject()) {
@@ -196,10 +201,6 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
                 serverMessage->payload = QJsonObject{};
             }
             serverMessage->messageType = Message::MessageType::Response;
-            if (request.resultCallback_) {
-                qCDebug(logCategoryStrataClient) << "Response callback is set.";
-                callbackHandler = request.resultCallback_;
-            }
         }
 
     } else if (true == jsonObject.contains("method") &&
