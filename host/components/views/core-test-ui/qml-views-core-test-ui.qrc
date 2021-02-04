@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Control.qml</file>
+        <file>control-views/BasicControl.qml</file>
+    </qresource>
+</RCC>

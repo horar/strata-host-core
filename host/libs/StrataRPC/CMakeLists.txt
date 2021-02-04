@@ -33,7 +33,15 @@ set_target_properties(${COMMON_LIB} PROPERTIES
     AUTOMOC ON
 )
 
+target_compile_definitions(${COMMON_LIB} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
+)
+
+
+#
 # StrataRPC-Server
+#
 add_library(${SERVER}
     src/StrataServer.cpp
     src/Client.cpp
@@ -62,7 +70,15 @@ set_target_properties(${SERVER} PROPERTIES
     AUTOMOC ON
 )
 
+target_compile_definitions(${SERVER} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
+)
+
+
+#
 # StrataRPC-Client
+#
 add_library(${CLIENT}
     src/StrataClient.cpp
     src/ClientConnector.cpp
@@ -88,6 +104,11 @@ target_link_libraries(${CLIENT}
 
 set_target_properties(${CLIENT} PROPERTIES
     AUTOMOC ON
+)
+
+target_compile_definitions(${CLIENT} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
 
 # StrataRPC tests
