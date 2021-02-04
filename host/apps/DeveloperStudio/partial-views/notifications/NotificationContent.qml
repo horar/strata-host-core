@@ -57,8 +57,8 @@ RowLayout {
                 }
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                wrapMode: Text.WordWrap
-                elide: Text.ElideRight
+                wrapMode: Text.Wrap
+                clip: true
             }
 
             SGText {
@@ -109,7 +109,8 @@ RowLayout {
             text: model.description
             visible: model.description.length > 0
             Layout.fillWidth: true
-            wrapMode: Text.WordWrap
+            clip: true
+            wrapMode: Text.Wrap
         }
 
         Flow {

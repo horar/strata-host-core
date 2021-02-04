@@ -33,7 +33,7 @@ SGWidgets.SGMainWindow {
     property alias notificationsInbox: notificationsInbox
 
     signal initialized()
-    property bool hcsReconnected: false
+    property bool hcsReconnecting: false
 
     function resetWindowSize()
     {
@@ -77,13 +77,25 @@ SGWidgets.SGMainWindow {
         onHcsConnectedChanged: {
             if (sdsModel.hcsConnected) {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
-                if(hcsReconnected) {
-                    Notifications.createNotification(`Connection re-established`,Notifications.Info,"all")
-                    hcsReconnected = false
+                if (hcsReconnecting) {
+                    Notifications.createNotification(`Host Controller Service reconnected`,
+                                                     Notifications.Info,
+                                                     "all",
+                                                     {
+                                                         "singleton": true,
+                                                         "timeout":0
+                                                     })
+                    hcsReconnecting = false
                 }
             } else {
-                Notifications.createNotification(`Connection to server lost:`,Notifications.Critical,"all")
-                hcsReconnected = true
+                Notifications.createNotification(`Host Controller Service disconnected`,
+                                                 Notifications.Critical,
+                                                 "all",
+                                                 {
+                                                     "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
+                                                     "singleton": true
+                                                 })
+                hcsReconnecting = true
                 PlatformFilters.clearActiveFilters()
                 PlatformSelection.logout()
                 SessionUtils.initialized = false
