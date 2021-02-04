@@ -29,11 +29,13 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 if(ANDROID)
     add_library(strataClient SHARED
       main.cpp
+      client.cpp
       qml.qrc
     )
 else()
     add_executable(strataClient
       main.cpp
+      client.cpp
       qml.qrc
     )
 endif()

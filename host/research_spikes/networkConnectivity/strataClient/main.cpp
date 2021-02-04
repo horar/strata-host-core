@@ -1,5 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include "client.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,6 +17,9 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+    client client_;
+    engine.rootContext()->setContextProperty("client", &client_);
 
     return app.exec();
 }
