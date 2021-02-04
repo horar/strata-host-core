@@ -1,7 +1,7 @@
 #pragma once
 
 #include <StrataRPC/Message.h>
-#include <StrataRPC/PendingRequest.h>
+#include <StrataRPC/DeferredRequest.h>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
@@ -16,8 +16,8 @@ struct Request {
      * @param [in] messageId request id.
      */
     Request(QString method, QJsonObject payload, int messageId,
-            std::shared_ptr<PendingRequest> pendingRequest)
-        : method_(method), payload_(payload), messageId_(messageId), pendingRequest_(pendingRequest)
+            std::shared_ptr<DeferredRequest> deferredRequest)
+        : method_(method), payload_(payload), messageId_(messageId), pendingRequest_(deferredRequest)
     {
     }
 
@@ -36,7 +36,7 @@ struct Request {
     QString method_;
     QJsonObject payload_;
     int messageId_;
-    std::shared_ptr<PendingRequest> pendingRequest_;
+    std::shared_ptr<DeferredRequest> pendingRequest_;
 };
 
 }  // namespace strata::strataRPC

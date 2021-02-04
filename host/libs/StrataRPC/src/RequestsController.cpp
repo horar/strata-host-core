@@ -12,7 +12,7 @@ RequestsController::~RequestsController()
 {
 }
 
-std::pair<std::shared_ptr<PendingRequest>, QByteArray> RequestsController::addNewRequest(
+std::pair<std::shared_ptr<DeferredRequest>, QByteArray> RequestsController::addNewRequest(
     const QString &method, const QJsonObject &payload)
 {
     ++currentRequestId_;
@@ -26,13 +26,13 @@ std::pair<std::shared_ptr<PendingRequest>, QByteArray> RequestsController::addNe
     qCDebug(logCategoryRequestsController)
         << "Building request. id:" << currentRequestId_ << "method:" << method;
 
-    std::shared_ptr<PendingRequest> pendingRequest =
-        std::make_shared<PendingRequest>(currentRequestId_, this);
+    std::shared_ptr<DeferredRequest> deferredRequest =
+        std::make_shared<DeferredRequest>(currentRequestId_, this);
     const auto request = requestsList_.insert(
         currentRequestId_,
-        Request(method, payload, currentRequestId_, pendingRequest));
+        Request(method, payload, currentRequestId_, deferredRequest));
 
-    return {pendingRequest, request.value().toJson()};
+    return {deferredRequest, request.value().toJson()};
 }
 
 bool RequestsController::isPendingRequest(int id)

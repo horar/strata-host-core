@@ -239,7 +239,7 @@ void StrataClientTest::testWithNoCallbacks()
 void StrataClientTest::testWithAllCallbacks()
 {
     using Message = strata::strataRPC::Message;
-    using PendingRequest = strata::strataRPC::PendingRequest;
+    using DeferredRequest = strata::strataRPC::DeferredRequest;
 
     int zmqWaitTime = 50;
     bool allCallbacksHandler = false;
@@ -294,12 +294,12 @@ void StrataClientTest::testWithAllCallbacks()
         allCallbacksErrCallback = false;
         allCallbacksResCallback = false;
         allCallbacksHandler = false;
-        const auto [res, pendingRequest] =
+        const auto [res, deferredRequest] =
             client.sendRequest("test_all_callbacks", QJsonObject({{"response_type", "error"}}));
 
-        connect(pendingRequest.get(), &PendingRequest::finishedSuccessfully, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
-        connect(pendingRequest.get(), &PendingRequest::finishedWithError, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
                 [&allCallbacksErrCallback](const Message &) { allCallbacksErrCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -312,12 +312,12 @@ void StrataClientTest::testWithAllCallbacks()
         allCallbacksErrCallback = false;
         allCallbacksResCallback = false;
         allCallbacksHandler = false;
-        const auto [res, pendingRequest] =
+        const auto [res, deferredRequest] =
             client.sendRequest("test_all_callbacks", QJsonObject({{"response_type", "result"}}));
 
-        connect(pendingRequest.get(), &PendingRequest::finishedSuccessfully, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
-        connect(pendingRequest.get(), &PendingRequest::finishedWithError, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
                 [&allCallbacksErrCallback](const Message &) { allCallbacksErrCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -331,12 +331,12 @@ void StrataClientTest::testWithAllCallbacks()
         allCallbacksResCallback = false;
         allCallbacksHandler = false;
 
-        const auto [res, pendingRequest] = client.sendRequest(
+        const auto [res, deferredRequest] = client.sendRequest(
             "test_all_callbacks", QJsonObject({{"response_type", "notification"}}));
 
-        connect(pendingRequest.get(), &PendingRequest::finishedSuccessfully, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
-        connect(pendingRequest.get(), &PendingRequest::finishedWithError, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
                 [&allCallbacksErrCallback](const Message &) { allCallbacksErrCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -349,7 +349,7 @@ void StrataClientTest::testWithAllCallbacks()
 void StrataClientTest::testWithOnlyResultCallbacks()
 {
     using Message = strata::strataRPC::Message;
-    using PendingRequest = strata::strataRPC::PendingRequest;
+    using DeferredRequest = strata::strataRPC::DeferredRequest;
 
     int zmqWaitTime = 50;
     bool resCallbackHandler = false;
@@ -402,10 +402,10 @@ void StrataClientTest::testWithOnlyResultCallbacks()
     {
         resCallback = false;
         resCallbackHandler = false;
-        const auto [res, pendingRequest] =
+        const auto [res, deferredRequest] =
             client.sendRequest("test_res_callback", QJsonObject({{"response_type", "result"}}));
 
-        connect(pendingRequest.get(), &PendingRequest::finishedSuccessfully, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const Message &) { resCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -416,10 +416,10 @@ void StrataClientTest::testWithOnlyResultCallbacks()
     {
         resCallback = false;
         resCallbackHandler = false;
-        const auto [res, pendingRequest] =
+        const auto [res, deferredRequest] =
             client.sendRequest("test_res_callback", QJsonObject({{"response_type", "error"}}));
 
-        connect(pendingRequest.get(), &PendingRequest::finishedSuccessfully, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const Message &) { resCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -430,10 +430,10 @@ void StrataClientTest::testWithOnlyResultCallbacks()
     {
         resCallback = false;
         resCallbackHandler = false;
-        const auto [res, pendingRequest] = client.sendRequest(
+        const auto [res, deferredRequest] = client.sendRequest(
             "test_res_callback", QJsonObject({{"response_type", "notification"}}));
 
-        connect(pendingRequest.get(), &PendingRequest::finishedSuccessfully, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const Message &) { resCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -445,7 +445,7 @@ void StrataClientTest::testWithOnlyResultCallbacks()
 void StrataClientTest::testWithOnlyErrorCallbacks()
 {
     using Message = strata::strataRPC::Message;
-    using PendingRequest = strata::strataRPC::PendingRequest;
+    using DeferredRequest = strata::strataRPC::DeferredRequest;
 
     int zmqWaitTime = 50;
     bool errorCallbackHander = false;
@@ -498,10 +498,10 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
     {
         errorCallback = false;
         errorCallbackHander = false;
-        const auto [res, pendingRequest] =
+        const auto [res, deferredRequest] =
             client.sendRequest("test_err_callback", QJsonObject({{"response_type", "result"}}));
 
-        connect(pendingRequest.get(), &PendingRequest::finishedWithError, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const Message &) { errorCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -512,10 +512,10 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
     {
         errorCallback = false;
         errorCallbackHander = false;
-        const auto [res, pendingRequest] =
+        const auto [res, deferredRequest] =
             client.sendRequest("test_err_callback", QJsonObject({{"response_type", "error"}}));
 
-        connect(pendingRequest.get(), &PendingRequest::finishedWithError, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const Message &) { errorCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -526,10 +526,10 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
     {
         errorCallback = false;
         errorCallbackHander = false;
-        const auto [res, pendingRequest] = client.sendRequest(
+        const auto [res, deferredRequest] = client.sendRequest(
             "test_err_callback", QJsonObject({{"response_type", "notification"}}));
 
-        connect(pendingRequest.get(), &PendingRequest::finishedWithError, this,
+        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const Message &) { errorCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);

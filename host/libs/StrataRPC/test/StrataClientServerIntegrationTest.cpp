@@ -287,9 +287,9 @@ void StrataClientServerIntegrationTest::testCallbacks()
     QVERIFY_(client.connectServer());
 
     {
-        const auto [res, pendingRequest] = client.sendRequest("test_error_callback", QJsonObject{});
+        const auto [res, deferredRequest] = client.sendRequest("test_error_callback", QJsonObject{});
 
-        connect(pendingRequest.get(), &strata::strataRPC::PendingRequest::finishedWithError, this,
+        connect(deferredRequest.get(), &strata::strataRPC::DeferredRequest::finishedWithError, this,
                 [&gotErrorCallback](const Message &) { gotErrorCallback = true; });
 
         waitForZmqMessages(waitZmqDelay);
@@ -297,10 +297,10 @@ void StrataClientServerIntegrationTest::testCallbacks()
     }
 
     {
-        const auto [res, pendingRequest] =
+        const auto [res, deferredRequest] =
             client.sendRequest("test_result_callback", QJsonObject{});
 
-        connect(pendingRequest.get(), &strata::strataRPC::PendingRequest::finishedSuccessfully,
+        connect(deferredRequest.get(), &strata::strataRPC::DeferredRequest::finishedSuccessfully,
                 this, [&gotResultCallback](const Message &) { gotResultCallback = true; });
 
         waitForZmqMessages(waitZmqDelay);

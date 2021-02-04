@@ -2,8 +2,8 @@
 
 #include <QObject>
 
+#include "DeferredRequest.h"
 #include "Message.h"
-#include "PendingRequest.h"
 
 namespace strata::strataRPC
 {
@@ -76,8 +76,8 @@ public:
      * @return std::pair<bool, int>, Boolean to indicate if the request was sent successfully or
      * not, and an int of the request id.
      */
-    std::pair<bool, std::shared_ptr<PendingRequest>> sendRequest(const QString &method,
-                                                                 const QJsonObject &payload);
+    std::pair<bool, std::shared_ptr<DeferredRequest>> sendRequest(const QString &method,
+                                                                  const QJsonObject &payload);
 
 signals:
     /**
@@ -102,7 +102,7 @@ private:
      * @return True if the json message was parsed successfully. False otherwise.
      */
     bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
-                            std::shared_ptr<PendingRequest> &pendingRequest);
+                            std::shared_ptr<DeferredRequest> &deferredRequest);
 
     std::unique_ptr<Dispatcher> dispatcher_;
     std::unique_ptr<ClientConnector> connector_;

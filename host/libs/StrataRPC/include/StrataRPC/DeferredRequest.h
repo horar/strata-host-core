@@ -5,14 +5,14 @@
 
 namespace strata::strataRPC
 {
-class PendingRequest : public QObject
+class DeferredRequest : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(PendingRequest);
+    Q_DISABLE_COPY(DeferredRequest);
 
 public:
-    PendingRequest(double id, QObject *parent = nullptr);
-    ~PendingRequest();
+    DeferredRequest(double id, QObject *parent = nullptr);
+    ~DeferredRequest();
 
     double getId() const;
     bool hasSuccessCallback();

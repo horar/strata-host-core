@@ -64,24 +64,24 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
     qCDebug(logCategoryStrataClient) << "New message from the server:" << jsonServerMessage;
 
     Message serverMessage;
-    std::shared_ptr<PendingRequest> pendingRequest;
+    std::shared_ptr<DeferredRequest> deferredRequest;
 
-    if (false == buildServerMessage(jsonServerMessage, &serverMessage, pendingRequest)) {
+    if (false == buildServerMessage(jsonServerMessage, &serverMessage, deferredRequest)) {
         qCCritical(logCategoryStrataClient) << "Failed to build server message.";
         return;
     }
 
-    if (pendingRequest) {
+    if (deferredRequest) {
         if (serverMessage.messageType == Message::MessageType::Error &&
-            pendingRequest->hasErrorCallback()) {
+            deferredRequest->hasErrorCallback()) {
             qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
-            pendingRequest->callErrorCallback(serverMessage);
+            deferredRequest->callErrorCallback(serverMessage);
             return;
 
         } else if (serverMessage.messageType == Message::MessageType::Response &&
-                   pendingRequest->hasSuccessCallback()) {
+                   deferredRequest->hasSuccessCallback()) {
             qCDebug(logCategoryStrataClient) << "Dispatching success callback.";
-            pendingRequest->callSuccessCallback(serverMessage);
+            deferredRequest->callSuccessCallback(serverMessage);
             return;
         }
     }
@@ -110,21 +110,21 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
     return true;
 }
 
-std::pair<bool, std::shared_ptr<PendingRequest>> StrataClient::sendRequest(
+std::pair<bool, std::shared_ptr<DeferredRequest>> StrataClient::sendRequest(
     const QString &method, const QJsonObject &payload)
 {
-    const auto [pendingRequest, message] = requestController_->addNewRequest(method, payload);
+    const auto [deferredRequest, message] = requestController_->addNewRequest(method, payload);
 
     if (true == message.isEmpty()) {
         qCCritical(logCategoryStrataClient) << "Failed to add request.";
         return {false, 0};
     }
 
-    return {connector_->sendMessage(message), pendingRequest};
+    return {connector_->sendMessage(message), deferredRequest};
 }
 
 bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
-                                      std::shared_ptr<PendingRequest> &pendingRequest)
+                                      std::shared_ptr<DeferredRequest> &deferredRequest)
 {
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocument = QJsonDocument::fromJson(jsonServerMessage, &jsonParseError);
@@ -187,7 +187,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
         }
 
         serverMessage->handlerName = request.method_;
-        pendingRequest = request.pendingRequest_;
+        deferredRequest = request.pendingRequest_;
 
         if (true == jsonObject.contains("error") && true == jsonObject.value("error").isObject()) {
             serverMessage->payload = jsonObject.value("error").toObject();

@@ -29,7 +29,7 @@ public:
      * @param [in] payload QJsonObject of the request payload.
      * @return std::pair of the new request id and QByteArray of json formatted request.
      */
-    [[nodiscard]] std::pair<std::shared_ptr<PendingRequest>, QByteArray> addNewRequest(
+    [[nodiscard]] std::pair<std::shared_ptr<DeferredRequest>, QByteArray> addNewRequest(
         const QString &method, const QJsonObject &payload);
 
     /**
