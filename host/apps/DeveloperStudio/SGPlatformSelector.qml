@@ -171,7 +171,7 @@ Rectangle{
             salesPopup.height = Qt.binding(()=> container.height - 100)
             salesPopup.x = Qt.binding(()=> container.width/2 - salesPopup.width/2)
             salesPopup.y =  Qt.binding(()=> container.height/2 - salesPopup.height/2)
-            salesPopup.url = urls.getSalesPopupUrl
+            salesPopup.url = urls.salesPopupUrl
             salesPopup.open()
         }
     }

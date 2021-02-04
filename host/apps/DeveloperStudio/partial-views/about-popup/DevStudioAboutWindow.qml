@@ -6,6 +6,6 @@ SGWidgets.SGAboutWindow {
 
     additionalAttributionText: {
         return "OpenSSL 1.1.1<br>" +
-                "<a href=\'" + urls.getLicenseUrl + "'>" + urls.getLicenseUrl + "</a><br>"
+                "<a href=\'" + urls.licenseUrl + "'>" + urls.licenseUrl + "</a><br>"
     }
 }

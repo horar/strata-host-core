@@ -25,17 +25,17 @@ RowLayout {
         },
         {
             name: "Avnet",
-            url: urls.getAvnetUrl,
+            url: urls.avnetUrl,
             visible: true
         },
         {
             name: "Digi-Key",
-            url: urls.getDigiKeyUrl,
+            url: urls.digiKeyUrl,
             visible: true
         },
         {
             name: "Mouser",
-            url: urls.getMouserUrl,
+            url: urls.mouserUrl,
             visible: true
         }
     ]

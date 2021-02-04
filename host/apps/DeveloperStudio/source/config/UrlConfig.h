@@ -10,13 +10,13 @@ class UrlConfig : public QObject{
 
     Q_OBJECT
 
-    Q_PROPERTY(QString getAvnetUrl READ getAvnetUrl);
-    Q_PROPERTY(QString getMouserUrl READ getMouserUrl);
-    Q_PROPERTY(QString getDigiKeyUrl READ getDigiKeyUrl);
-    Q_PROPERTY(QString getSalesPopupUrl READ getSalesPopupUrl);
-    Q_PROPERTY(QString getPrivacyPolicyUrl READ getPrivacyPolicyUrl);
-    Q_PROPERTY(QString getLicenseUrl READ getLicenseUrl);
-    Q_PROPERTY(QString getAuthServer READ getAuthServer);
+    Q_PROPERTY(QString avnetUrl READ getAvnetUrl CONSTANT);
+    Q_PROPERTY(QString mouserUrl READ getMouserUrl CONSTANT);
+    Q_PROPERTY(QString digiKeyUrl READ getDigiKeyUrl CONSTANT);
+    Q_PROPERTY(QString salesPopupUrl READ getSalesPopupUrl CONSTANT);
+    Q_PROPERTY(QString privacyPolicyUrl READ getPrivacyPolicyUrl CONSTANT);
+    Q_PROPERTY(QString licenseUrl READ getLicenseUrl CONSTANT);
+    Q_PROPERTY(QString authServer READ getAuthServer CONSTANT);
 
 public:
     explicit UrlConfig(QObject *parent = nullptr);
