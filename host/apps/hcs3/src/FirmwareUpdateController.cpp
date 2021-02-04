@@ -40,16 +40,24 @@ FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid,
 {
 }
 
-void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
-                                              const QString& firmwareMD5, const QString& jobUuid)
+void FirmwareUpdateController::updateFirmware(UpdateFirmwareData updateData)
 {
-    runUpdate(clientId, deviceId, firmwareUrl, firmwareMD5, QString(), jobUuid);
+    runUpdate(updateData.clientId,
+              updateData.deviceId,
+              updateData.firmwareUrl,
+              updateData.firmwareMD5,
+              QString(),
+              updateData.jobUuid);
 }
 
-void FirmwareUpdateController::programController(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
-                       const QString& firmwareMD5, const QString& firmwareClassId, const QString& jobUuid)
+void FirmwareUpdateController::programController(ProgramControllerData programData)
 {
-    runUpdate(clientId, deviceId, firmwareUrl, firmwareMD5, firmwareClassId, jobUuid);
+    runUpdate(programData.clientId,
+              programData.deviceId,
+              programData.firmwareUrl,
+              programData.firmwareMD5,
+              programData.firmwareClassId,
+              programData.jobUuid);
 }
 
 void FirmwareUpdateController::runUpdate(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,

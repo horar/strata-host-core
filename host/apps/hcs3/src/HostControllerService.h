@@ -60,8 +60,8 @@ signals:
     void platformDocumentsRequested(QByteArray clientId, QString classId);
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
-    void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5, QString jobUuid);
-    void programControllerRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5, QString firmwareClassId, QString jobUuid);
+    void firmwareUpdateRequested(FirmwareUpdateController::UpdateFirmwareData updateData);
+    void programControllerRequested(FirmwareUpdateController::ProgramControllerData programData);
     void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
     void updateInfoRequested(QByteArray clientId);
 

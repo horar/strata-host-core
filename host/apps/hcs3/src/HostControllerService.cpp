@@ -519,7 +519,9 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
 {
     Q_ASSERT(payload != nullptr);
 
-    QByteArray clientId = getSenderClient()->getClientId();
+    FirmwareUpdateController::UpdateFirmwareData updateData;
+
+    updateData.clientId = getSenderClient()->getClientId();
 
     if (payload->HasMember("device_id") == false) {
         qCCritical(logCategoryHcs) << "cmd update_firmware - missing device_id attribute";
@@ -532,7 +534,7 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
         return;
     }
 
-    int deviceId = deviceIdValue.GetInt();
+    updateData.deviceId = deviceIdValue.GetInt();
 
     QString path;
     if (payload->HasMember("path")) {
@@ -546,44 +548,45 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
 
         QJsonObject payloadBody {
             { "error_string", errorString },
-            { "device_id", deviceId }
+            { "device_id", updateData.deviceId }
         };
         QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
-        clients_.sendMessage(clientId, notification);
+        clients_.sendMessage(updateData.clientId, notification);
 
         return;
     }
 
-    QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
+    updateData.firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
 
-    QString firmwareMD5;
     if (payload->HasMember("md5")) {
         const rapidjson::Value& md5Value = (*payload)["md5"];
-        firmwareMD5 = QString::fromUtf8(md5Value.GetString(), md5Value.GetStringLength());
+        updateData.firmwareMD5 = QString::fromUtf8(md5Value.GetString(), md5Value.GetStringLength());
     }
 
-    if (firmwareMD5.isEmpty()) {
+    if (updateData.firmwareMD5.isEmpty()) {
         // If 'md5' attribute is empty firmware will be downloaded, but checksum will not be verified.
         qCWarning(logCategoryHcs) << "cmd update_firmware - MD5 attribute is empty";
     }
 
-    QString jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    updateData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
     QJsonObject payloadBody {
-        { "job_id", jobUuid },
-        { "device_id", deviceId }
+        { "job_id", updateData.jobUuid },
+        { "device_id", updateData.deviceId }
     };
     QByteArray notification = createHcsNotification(hcsNotificationType::updateFirmware, payloadBody, true);
-    clients_.sendMessage(clientId, notification);
+    clients_.sendMessage(updateData.clientId, notification);
 
-    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, jobUuid);
+    emit firmwareUpdateRequested(updateData);
 }
 
 void HostControllerService::onCmdProgramController(const rapidjson::Value *payload)
 {
     Q_ASSERT(payload != nullptr);
 
-    QByteArray clientId = getSenderClient()->getClientId();
+    FirmwareUpdateController::ProgramControllerData programData;
+
+    programData.clientId = getSenderClient()->getClientId();
 
     if (payload->HasMember("device_id") == false) {
         qCCritical(logCategoryHcs) << "cmd program_controller - missing device_id attribute";
@@ -596,13 +599,14 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
         return;
     }
 
-    int deviceId = deviceIdValue.GetInt();
+    programData.deviceId = deviceIdValue.GetInt();
+
     QString errorString;
 
     do {
-        strata::device::DevicePtr device = boardsController_.getDevice(deviceId);
+        strata::device::DevicePtr device = boardsController_.getDevice(programData.deviceId);
         if (device == nullptr) {
-            errorString = "Device ID 0x" + QString::number(static_cast<uint>(deviceId), 16) + " doesn't exist";
+            errorString = "Device ID 0x" + QString::number(static_cast<uint>(programData.deviceId), 16) + " doesn't exist";
             break;
         }
 
@@ -611,9 +615,9 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
             break;
         }
 
-        QString classId = device->classId();
+        programData.firmwareClassId = device->classId();
         QString controllerClassId = device->controllerClassId();
-        if (classId.isEmpty() || controllerClassId.isEmpty()) {
+        if (programData.firmwareClassId.isEmpty() || controllerClassId.isEmpty()) {
             errorString = "Platform has no classId or controllerClassId";
             break;
         }
@@ -624,23 +628,24 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
             break;
         }
 
-        QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(classId, controllerClassDevice);
+        QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(programData.firmwareClassId, controllerClassDevice);
         if (firmware.first.isEmpty()) {
             errorString = "Cannot get latest firmware";
             break;
         }
-        QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
+        programData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
+        programData.firmwareMD5 = firmware.second;
 
-        QString jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        programData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
         QJsonObject payloadBody {
-            { "job_id", jobUuid },
-            { "device_id", deviceId }
+            { "job_id", programData.jobUuid },
+            { "device_id", programData.deviceId }
         };
         QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
-        clients_.sendMessage(clientId, notification);
+        clients_.sendMessage(programData.clientId, notification);
 
-        emit programControllerRequested(clientId, deviceId, firmwareUrl, firmware.second, classId, jobUuid);
+        emit programControllerRequested(programData);
 
         return;
 
@@ -650,10 +655,10 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
 
     QJsonObject payloadBody {
         { "error_string", errorString },
-        { "device_id", deviceId }
+        { "device_id", programData.deviceId }
     };
     QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
-    clients_.sendMessage(clientId, notification);
+    clients_.sendMessage(programData.clientId, notification);
 }
 
 void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)
