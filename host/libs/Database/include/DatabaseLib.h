@@ -7,7 +7,7 @@
 class CouchbaseDocument;
 class CouchbaseDatabase;
 
-class Database : public QObject
+class DatabaseLib : public QObject
 {
     Q_OBJECT
 
@@ -20,7 +20,7 @@ public:
      * @param db_path DB absolute path (default is empty: path is set to QDir::currentPath)
      * @param parent
      */
-    Database(const QString &db_name, const QString &db_path = "", QObject *parent = nullptr);
+    DatabaseLib(const QString &db_name, const QString &db_path = "", QObject *parent = nullptr);
 
     /********************************************
      * MAIN CRUD OPERATIONS *

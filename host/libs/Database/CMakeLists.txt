@@ -12,13 +12,13 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME}
     # Database
-    include/Database.h
+    include/DatabaseLib.h
     include/CouchbaseDatabase.h
     include/CouchbaseDocument.h
     include/DatabaseManager.h
     include/DatabaseAccess.h
 
-    src/Database.cpp
+    src/DatabaseLib.cpp
     src/CouchbaseDatabase.cpp
     src/CouchbaseDocument.cpp
     src/DatabaseManager.cpp

@@ -10,9 +10,9 @@
 
 #include <couchbase-lite-C/CouchbaseLite.hh>
 #include "CouchbaseDocument.h"
-#include "Database.h"
+#include "DatabaseLib.h"
 
-class Database;
+class DatabaseLib;
 
 class CouchbaseDocument;
 

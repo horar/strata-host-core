@@ -1,6 +1,6 @@
 #include "couchbase-database-test.h"
 
-#include "Database.h"
+#include "DatabaseLib.h"
 
 #include <QDir>
 #include <QObject>
@@ -21,10 +21,10 @@
 #endif
 
 TEST_F(CouchbaseDatabaseTest, OPEN_DB) {
-    Database *db_1 = new Database("Test Database 1");
-    Database *db_2 = new Database("Test Database 2", "Invalid path");
-    Database *db_3 = new Database("Test Database 3", QDir::currentPath());
-    Database *db_4 = new Database("");
+    DatabaseLib *db_1 = new DatabaseLib("Test Database 1");
+    DatabaseLib *db_2 = new DatabaseLib("Test Database 2", "Invalid path");
+    DatabaseLib *db_3 = new DatabaseLib("Test Database 3", QDir::currentPath());
+    DatabaseLib *db_4 = new DatabaseLib("");
 
     // DB must have valid pointer
     EXPECT_NE(db_1, nullptr);
@@ -63,7 +63,7 @@ TEST_F(CouchbaseDatabaseTest, OPEN_DB) {
 }
 
 TEST_F(CouchbaseDatabaseTest, DOCS) {
-    Database *db = new Database("Test Database 4");
+    DatabaseLib *db = new DatabaseLib("Test Database 4");
     EXPECT_TRUE(db->open());
     CouchbaseDocument *doc_1 = new CouchbaseDocument("Test Doc 1");
     CouchbaseDocument *doc_2 = new CouchbaseDocument("Test Doc 2");
@@ -141,8 +141,8 @@ TEST_F(CouchbaseDatabaseTest, DOCS) {
 #if Test_Replication
 // This test is disabled by default, requires valid replicator information
 TEST_F(CouchbaseDatabaseTest, REPLICATOR) {
-    Database *db_1 = new Database("Test Database 5");
-    Database *db_2 = new Database("Test Database 6");
+    DatabaseLib *db_1 = new DatabaseLib("Test Database 5");
+    DatabaseLib *db_2 = new DatabaseLib("Test Database 6");
 
     // Attempt to start replication (DB not open)
     EXPECT_FALSE(db_1->startReplicator(replicator_url));
