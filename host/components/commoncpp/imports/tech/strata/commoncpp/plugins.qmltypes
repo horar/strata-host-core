@@ -898,6 +898,10 @@ Module {
             type: "string"
             Parameter { name: "number"; type: "qlonglong" }
         }
+        Method {
+            name: "copyToClipboard"
+            Parameter { name: "text"; type: "string" }
+        }
     }
     Component {
         name: "SGVersionUtils"
