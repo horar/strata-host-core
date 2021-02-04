@@ -13,12 +13,8 @@ class PendingRequest : public QObject
 public:
     PendingRequest(double id, QObject *parent = nullptr);
     ~PendingRequest();
+
     double getId() const;
-
-    // these should go private
-    void callSuccessCallback(const Message &message);
-    void callErrorCallback(const Message &message);
-
     bool hasSuccessCallback();
     bool hasErrorCallback();
 
@@ -27,6 +23,9 @@ signals:
     void finishedWithError(const Message &message);
 
 private:
+    friend class StrataClient;
+    void callSuccessCallback(const Message &message);
+    void callErrorCallback(const Message &message);
     double id_;
 };
 

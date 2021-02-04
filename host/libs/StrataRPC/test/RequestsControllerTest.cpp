@@ -83,14 +83,14 @@ void RequestsControllerTest::testGetMethodName()
 void RequestsControllerTest::testPopRequest()
 {
     RequestsController rc;
-    int numOfTestCases = 100;
+    int numOfTestCases = 1000;
 
     for (int i = 0; i < numOfTestCases; i++) {
         const auto [pendingRequest, requestJson] =
             rc.addNewRequest("test_handler", QJsonObject({{}}));
 
         connect(pendingRequest.get(), &PendingRequest::finishedSuccessfully, this,
-                [i](const Message &message) { QCOMPARE_(i, message.messageID); });
+                [](const Message &) {});
 
         QVERIFY(pendingRequest->getId() > 0);
         QVERIFY(requestJson != "");
@@ -104,7 +104,6 @@ void RequestsControllerTest::testPopRequest()
 
         Message message;
         message.messageID = i;
-        request.pendingRequest_->callSuccessCallback(message);
     }
 
     const auto [res, request] = rc.popPendingRequest(numOfTestCases);
