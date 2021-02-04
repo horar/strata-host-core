@@ -150,8 +150,6 @@ Item {
                             color: "white"
                             font.bold: true
                             font.pointSize: 10
-                            verticalAlignment: Text.AlignVCenter
-                            horizontalAlignment: Text.AlignHCenter
                         }
                     }
 

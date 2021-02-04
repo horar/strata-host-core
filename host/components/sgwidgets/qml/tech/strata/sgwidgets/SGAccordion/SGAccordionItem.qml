@@ -29,7 +29,6 @@ Rectangle {
     property alias dividerColor: divider.color
     property alias closeContent: closeContent
     property alias openContent: openContent
-    property bool displayAlert: false
 
     signal animationCompleted
 
@@ -60,30 +59,6 @@ Rectangle {
                 left: titleBar.left
                 leftMargin: 10
                 right: minMaxContainer.left
-            }
-        }
-
-        Rectangle {
-            id: alertIcon
-            width: 60
-            height: 14
-            radius: width/2
-            color: "green"
-            visible: displayAlert && !root.open
-            anchors {
-                right: titleText.right
-                rightMargin: 2
-                verticalCenter: parent.verticalCenter
-            }
-
-            Label {
-                anchors.centerIn: parent
-                text: displayAlert ? "UPDATED" : ""
-                color: "white"
-                font.bold: true
-                font.pointSize: 10
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
             }
         }
 
