@@ -84,22 +84,39 @@ signals:
 
 public slots:
     /**
-     * Update Firmware.
+     * Update firmware.
      * @param clientId
      * @param deviceId
      * @param firmwareUrl
      * @param firmwareMD5
      * @param jobUuid
-     * @param programController
      */
     void updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
-                        const QString& firmwareMD5, const QString& jobUUid, bool programController);
+                        const QString& firmwareMD5, const QString& jobUuid);
+
+
+    /**
+     * Program controller.
+     * @param clientId
+     * @param deviceId
+     * @param firmwareUrl
+     * @param firmwareMD5
+     * @param firmwareClassId
+     * @param jobUuid
+     */
+    void programController(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
+                           const QString& firmwareMD5, const QString& firmwareClassId, const QString& jobUuid);
+
+
 
 private slots:
     void handleUpdateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation,
                               FirmwareUpdateController::UpdateStatus status, int complete, int total, QString errorString);
 
 private:
+    void runUpdate(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
+                   const QString& firmwareMD5, const QString& firmwareClassId, const QString& jobUuid);
+
     QPointer<BoardController> boardController_;
     QPointer<strata::DownloadManager> downloadManager_;
 

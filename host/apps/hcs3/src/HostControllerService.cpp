@@ -98,6 +98,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::downloadControlViewRequested, &storageManager_, &StorageManager::requestDownloadControlView, Qt::QueuedConnection);
 
     connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
+    connect(this, &HostControllerService::programControllerRequested, &updateController_, &FirmwareUpdateController::programController, Qt::QueuedConnection);
 
     connect(this, &HostControllerService::updateInfoRequested, &componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfo, Qt::QueuedConnection);
     connect(&componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfoFinished, this, &HostControllerService::sendUpdateInfoMessage);
@@ -575,7 +576,7 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
     QByteArray notification = createHcsNotification(hcsNotificationType::updateFirmware, payloadBody, true);
     clients_.sendMessage(clientId, notification);
 
-    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, jobUuid, false);
+    emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5, jobUuid);
 }
 
 void HostControllerService::onCmdProgramController(const rapidjson::Value *payload)
@@ -639,7 +640,7 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
         QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
         clients_.sendMessage(clientId, notification);
 
-        emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmware.second, jobUuid, true);
+        emit programControllerRequested(clientId, deviceId, firmwareUrl, firmware.second, classId, jobUuid);
 
         return;
 
