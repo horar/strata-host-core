@@ -11,10 +11,6 @@ SGWidgets.SGMainWindow {
     minimumWidth: 800
     minimumHeight: 600
 
-    PrtCommon.PrtModel {
-        id: prtModel
-    }
-
     visible: true
     title: qsTr("Platform Registration Tool")
 
@@ -50,39 +46,6 @@ SGWidgets.SGMainWindow {
         anchors {
             fill: parent
             margins: 4
-        }
-    }
-
-    Rectangle {
-        id: testServerWarningContainer
-        color: "red"
-        anchors {
-            left: parent.left 
-            right: undefined
-            top: parent.top
-            margins: 10
-        }
-        height: testServerWarning.height + 10
-        width: parent.width/3.4
-        radius: 5
-        visible: prtModel.serverType.length > 0
-
-        Row {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.centerIn: parent
-            SGWidgets.SGIcon {
-                source: "qrc:/sgimages/exclamation-circle.svg"
-                height: 15
-                width: height
-                iconColor: "white"
-            }
-
-            Text {
-                id: testServerWarning
-                color: "white"
-                font.bold: true
-                text: " Non-production server in use. "
-            }            
         }
     }
 

@@ -75,4 +75,41 @@ Item {
             prtModel: prtMain.prtModel
         }
     }
+
+ Rectangle {
+        id: testServerWarningContainer
+        anchors {
+            left: parent.left 
+            top: parent.top
+            margins: 10
+        }
+        height: testServerWarning.height + 10
+        width: testServerWarning.width + testServerWarningIcon.width + 15
+
+        color: "red"
+        radius: 5
+        visible: prtModel.serverType != "production"
+
+        Row {
+            anchors.centerIn: parent
+
+            spacing: 5
+            SGWidgets.SGIcon {
+                id: testServerWarningIcon
+                height: testServerWarning.height
+                width: height
+
+                iconColor: "white"
+                source: "qrc:/sgimages/exclamation-circle.svg"
+            }
+
+            SGWidgets.SGText {
+                id: testServerWarning
+                
+                color: "white"
+                font.bold: true
+                text: "Non-production server in use."
+            }            
+        }
+    }
 }
