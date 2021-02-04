@@ -985,9 +985,9 @@ void SGQrcTreeModel::directoryStructureChanged(const QString &path)
             }
 
             QString uid = node->uid();
-            QUrl path = node->filepath();
+            QUrl filePath = node->filepath();
             handleExternalFileDeleted(uid);
-            emit fileDeleted(uid, path);
+            emit fileDeleted(uid, filePath);
         }
     }
 

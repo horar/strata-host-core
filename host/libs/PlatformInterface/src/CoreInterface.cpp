@@ -50,7 +50,7 @@ CoreInterface::CoreInterface(QObject* parent, const std::string& hcsInAddress)
 CoreInterface::~CoreInterface()
 {
     setNotificationThreadRunning(false);
-    bool closed = hcc->closeContext();
+    bool closed = hcc->close();
 
     if (closed && notification_thread_.joinable()) {
         notification_thread_.join();
@@ -98,13 +98,13 @@ void CoreInterface::notificationsThread()
             continue;
         }
 
-        QString n(message.c_str());
+        QString n(QString::fromStdString(message));
 
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
-          qCDebug(logCategoryCoreInterface) <<"[recv]" << n;
+          qCDebug(logCategoryCoreInterface).noquote().nospace() << "[recv] '" << n << "'";
         } else {
-          qCDebug(logCategoryCoreInterface) <<"[recv]" << n.left(500) << "... (message over 500 chars truncated)";
+          qCDebug(logCategoryCoreInterface).noquote().nospace() << "[recv] '" << n.left(500) << " ...' (message over 500 chars truncated)";
         }
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());
@@ -142,8 +142,6 @@ void CoreInterface::notificationsThread()
         // dispatch handler for notification
         handler->second(notification_json[notification].toObject());
     }
-
-    hcc->close();
 }
 
 // ---

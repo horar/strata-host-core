@@ -89,6 +89,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     strata::CouchbaseLiteCPP
     strata::QtLogger
     strata::CbLogger
+    rapidjson::rapidjson
 )
 
 target_include_directories(${PROJECT_NAME}Lib
@@ -144,5 +145,5 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     QT_DEPRECATED_WARNINGS
-    QT_DISABLE_DEPRECATED_BEFORE=0x051200
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
