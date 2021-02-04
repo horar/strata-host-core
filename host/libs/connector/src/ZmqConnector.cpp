@@ -185,17 +185,17 @@ bool ZmqConnector::socketRecv(std::string & ostring, zmq::recv_flags flags)
     } catch (const zmq::error_t& zErr) {
         if (zErr.num() == ETERM) {
             qCInfo(logCategoryZmqConnector).nospace()
-                    << "Receive of messages was interrupted (flags: " << (int)flags << "), reason: " << zErr.what();
+                    << "Receive of messages was interrupted (flags: " << static_cast<int>(flags) << "), reason: " << zErr.what();
         } else {
             qCCritical(logCategoryZmqConnector).nospace()
-                    << "Unable to receive message (flags: " << (int)flags << "), reason: " << zErr.what();
+                    << "Unable to receive message (flags: " << static_cast<int>(flags) << "), reason: " << zErr.what();
         }
     } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to receive message (flags: " << (int)flags << "), unexpected reason: " << sErr.what();
+                << "Unable to receive message (flags: " << static_cast<int>(flags) << "), unexpected reason: " << sErr.what();
     } catch (...) {
         qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to receive message (flags: " << (int)flags << "), unhandled exception";
+                << "Unable to receive message (flags: " << static_cast<int>(flags) << "), unhandled exception";
     }
 
     return false;
@@ -212,20 +212,20 @@ bool ZmqConnector::socketSend(const std::string & istring, zmq::send_flags flags
         if (zErr.num() == ETERM) {
             qCInfo(logCategoryZmqConnector).nospace()
                     << "Sending of message was interrupted '" << istring.c_str()
-                    << "' (flags: " << (int)flags << "), reason: " << zErr.what();
+                    << "' (flags: " << static_cast<int>(flags) << "), reason: " << zErr.what();
         } else {
             qCCritical(logCategoryZmqConnector).nospace()
                     << "Unable to send message '" << istring.c_str()
-                    << "' (flags: " << (int)flags << "), reason: " << zErr.what();
+                    << "' (flags: " << static_cast<int>(flags) << "), reason: " << zErr.what();
         }
     } catch (const std::exception& sErr) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to send message '" << istring.c_str()
-                << "' (flags: " << (int)flags << "), unexpected reason: " << sErr.what();
+                << "' (flags: " << static_cast<int>(flags) << "), unexpected reason: " << sErr.what();
     } catch (...) {
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to send message '" << istring.c_str()
-                << "' (flags: " << (int)flags << "), unhandled exception";
+                << "' (flags: " << static_cast<int>(flags) << "), unhandled exception";
     }
 
     return false;
