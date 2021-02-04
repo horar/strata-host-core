@@ -1,47 +1,47 @@
 #include "logging/LoggingQtCategories.h"
-#include "Database.h"
+#include "DatabaseLib.h"
 
-Database::Database(const QString &db_name, const QString &db_path, QObject *parent) {
+DatabaseLib::DatabaseLib(const QString &db_name, const QString &db_path, QObject *parent) {
     database_ = std::make_unique<CouchbaseDatabase>(db_name.toStdString(), db_path.toStdString(), parent);
 }
 
-bool Database::open() {
+bool DatabaseLib::open() {
     return database_->open();
 }
 
-bool Database::close() {
+bool DatabaseLib::close() {
     return database_->close();
 }
 
-bool Database::save(CouchbaseDocument *doc) {
+bool DatabaseLib::save(CouchbaseDocument *doc) {
     return database_->save(doc);
 }
 
-bool Database::deleteDoc(const QString &id) {
+bool DatabaseLib::deleteDoc(const QString &id) {
     return database_->deleteDoc(id.toStdString());
 }
 
-QString Database::getDocumentAsStr(const QString &id) {
+QString DatabaseLib::getDocumentAsStr(const QString &id) {
     return QString::fromStdString(database_->getDocumentAsStr(id.toStdString()));
 }
 
-QJsonObject Database::getDocumentAsJsonObj(const QString &id) {
+QJsonObject DatabaseLib::getDocumentAsJsonObj(const QString &id) {
     return database_->getDocumentAsJsonObj(id.toStdString());
 }
 
-QJsonObject Database::getDatabaseAsJsonObj() {
+QJsonObject DatabaseLib::getDatabaseAsJsonObj() {
     return database_->getDatabaseAsJsonObj();
 }
 
-QString Database::getDatabaseName() {
+QString DatabaseLib::getDatabaseName() {
     return QString::fromStdString(database_->getDatabaseName());
 }
 
-QString Database::getDatabasePath() {
+QString DatabaseLib::getDatabasePath() {
     return QString::fromStdString(database_->getDatabasePath());
 }
 
-QStringList Database::getAllDocumentKeys() {
+QStringList DatabaseLib::getAllDocumentKeys() {
     auto key_vector = database_->getAllDocumentKeys();
     QStringList list;
     for (const auto &key : key_vector) {
@@ -50,7 +50,7 @@ QStringList Database::getAllDocumentKeys() {
     return list;
 }
 
-bool Database::startReplicator(const QString &url, const QString &username, const QString &password, const QStringList &channels,
+bool DatabaseLib::startReplicator(const QString &url, const QString &username, const QString &password, const QStringList &channels,
                                const QString &replicator_type, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener,
                                std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener,
                                bool continuous) {
@@ -78,13 +78,13 @@ bool Database::startReplicator(const QString &url, const QString &username, cons
     if (changeListener) {
         change_listener_callback = changeListener;
     } else {
-        change_listener_callback = std::bind(&Database::default_changeListener, this, std::placeholders::_1, std::placeholders::_2);
+        change_listener_callback = std::bind(&DatabaseLib::default_changeListener, this, std::placeholders::_1, std::placeholders::_2);
     }
 
     if (documentListener) {
         document_listener_callback = documentListener;
     } else {
-        document_listener_callback = std::bind(&Database::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+        document_listener_callback = std::bind(&DatabaseLib::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     }
 
     if (database_->startReplicator(_url, _username, _password, _channels, _replicator_type, change_listener_callback, document_listener_callback, continuous)) {
@@ -94,23 +94,23 @@ bool Database::startReplicator(const QString &url, const QString &username, cons
     return false;
 }
 
-void Database::stopReplicator() {
+void DatabaseLib::stopReplicator() {
     database_->stopReplicator();
 }
 
-QString Database::getReplicatorStatus() {
+QString DatabaseLib::getReplicatorStatus() {
     return QString::fromStdString(database_->getReplicatorStatus());
 }
 
-int Database::getReplicatorError() {
+int DatabaseLib::getReplicatorError() {
     return database_->getReplicatorError();
 }
 
-void Database::default_changeListener(cbl::Replicator, const CBLReplicatorStatus &status) {
+void DatabaseLib::default_changeListener(cbl::Replicator, const CBLReplicatorStatus &status) {
     qCInfo(logCategoryCouchbaseDatabase) << "--- PROGRESS: status=" << status.activity << ", fraction=" << status.progress.fractionComplete << ", err=" << status.error.domain << "/" << status.error.code;
 }
 
-void Database::default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
+void DatabaseLib::default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
     qCInfo(logCategoryCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed" : "pulled") << ":";
     for (unsigned i = 0; i < documents.size(); ++i) {
         qCInfo(logCategoryCouchbaseDatabase) << " " << documents[i].ID;
