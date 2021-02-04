@@ -286,15 +286,24 @@ void StrataClientServerIntegrationTest::testCallbacks()
     QVERIFY_(server.initializeServer());
     QVERIFY_(client.connectServer());
 
-    client.sendRequest("test_error_callback", QJsonObject{},
-                       [&gotErrorCallback](const Message &) { gotErrorCallback = true; });
+    {
+        const auto [res, pendingRequest] = client.sendRequest("test_error_callback", QJsonObject{});
 
-    waitForZmqMessages(waitZmqDelay);
-    QVERIFY_(gotErrorCallback);
+        connect(pendingRequest.get(), &strata::strataRPC::PendingRequest::finishedWithError, this,
+                [&gotErrorCallback](const Message &) { gotErrorCallback = true; });
 
-    client.sendRequest("test_result_callback", QJsonObject{}, nullptr,
-                       [&gotResultCallback](const Message &) { gotResultCallback = true; });
+        waitForZmqMessages(waitZmqDelay);
+        QVERIFY_(gotErrorCallback);
+    }
 
-    waitForZmqMessages(waitZmqDelay);
-    QVERIFY_(gotResultCallback);
+    {
+        const auto [res, pendingRequest] =
+            client.sendRequest("test_result_callback", QJsonObject{});
+
+        connect(pendingRequest.get(), &strata::strataRPC::PendingRequest::finishedSuccessfully,
+                this, [&gotResultCallback](const Message &) { gotResultCallback = true; });
+
+        waitForZmqMessages(waitZmqDelay);
+        QVERIFY_(gotResultCallback);
+    }
 }
