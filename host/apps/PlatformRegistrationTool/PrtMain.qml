@@ -18,30 +18,6 @@ Item {
         id: prtModel
     }
 
-    Rectangle {
-        id: testServerWarningContainer
-        color: "red"
-        anchors {
-            left: parent.left
-            right: undefined
-            top: parent.top
-            margins: 30
-        }
-        height: testServerWarning.height + 30
-        width: parent.width/3.5
-        visible: prtModel.serverType !== "prod"
-
-        Text {
-            id: testServerWarning
-            color: "white"
-            font.bold: true
-            anchors {
-                centerIn: parent
-            }
-            text: "Non-production server in use."
-        }
-    }
-
     Connections {
         target: prtModel.authenticator
 
