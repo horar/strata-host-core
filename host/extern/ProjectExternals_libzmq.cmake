@@ -2,6 +2,7 @@
 # libzmq
 #
 
+set(LIBZMQ_VERSION 5.1.2) # TODO: find a way to extract the SOVERSION target_property of libzmq
 get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/libzmq" "${EXTERN_INSTALL_DIR_PATH}/libzmq")
 if(NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include)
@@ -38,19 +39,22 @@ if(NOT LIB_INSTALLED)
                 -DENABLE_CPACK=OFF
 
             INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
+            COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq.${LIBZMQ_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
         )
     endif()
 else()
+    # TODO: RS: File output build dependency for ExternalProject_Add in CMake
+    # https://jira.onsemi.com/browse/CS-1442
     if(WIN32)
-        # TODO: RS: File output build dependency for ExternalProject_Add in CMake
-        # https://jira.onsemi.com/browse/CS-1442
-        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-            file(COPY "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmqd${CMAKE_SHARED_LIBRARY_SUFFIX}"
-                DESTINATION "${CMAKE_BINARY_DIR}/bin")
-        else()
-            file(COPY "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
-                DESTINATION "${CMAKE_BINARY_DIR}/bin")
-        endif()
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq$<$<CONFIG:DEBUG>:d>${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
+        )
+    else()
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
+            COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq.${LIBZMQ_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+        )
     endif()
 endif()
 
@@ -67,7 +71,7 @@ if(WIN32)
 else()
     set_target_properties(zeromq::libzmq PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include"
-            IMPORTED_LOCATION "${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX}"
     )
 endif()
 add_dependencies(zeromq::libzmq DEPENDS libzmq)
