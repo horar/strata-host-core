@@ -3,7 +3,7 @@
 #include <QMetaMethod>
 using namespace strata::strataRPC;
 
-DeferredRequest::DeferredRequest(double id, QObject *parent) : QObject(parent), id_(id)
+DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_(id)
 {
 }
 
@@ -11,7 +11,7 @@ DeferredRequest::~DeferredRequest()
 {
 }
 
-double DeferredRequest::getId() const
+int DeferredRequest::getId() const
 {
     return id_;
 }

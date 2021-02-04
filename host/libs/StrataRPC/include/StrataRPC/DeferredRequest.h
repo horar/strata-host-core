@@ -15,7 +15,7 @@ public:
      * DeferredRequest constructor
      * @param [in] id request ID
      */
-    DeferredRequest(double id, QObject *parent = nullptr);
+    DeferredRequest(int id, QObject *parent = nullptr);
 
     /**
      * DeferredRequest Destructor
@@ -26,7 +26,7 @@ public:
      * Accessor to the request ID
      * @return request ID
      */
-    double getId() const;
+    int getId() const;
 
     /**
      * Check if the request has a connected slot/lambda to finishedSuccessfully signal.
@@ -64,6 +64,6 @@ private:
      */
     void callErrorCallback(const Message &message);
 
-    double id_;
+    int id_;
 };
 }  // namespace strata::strataRPC
