@@ -71,10 +71,8 @@ public:
      * the registered handlers in the dispatcher.
      * @param [in] method The handler name in StrataServer.
      * @param [in] payload QJsonObject of the request payload.
-     * @param [in] errorCallback lambda to handle error response. defaults to nullptr.
-     * @param [in] resultCallback lambda to handle result response.  defaults to nullptr.
-     * @return std::pair<bool, int>, Boolean to indicate if the request was sent successfully or
-     * not, and an int of the request id.
+     * @return std::pair<bool, std::shared_ptr<DeferredRequest>>, Boolean to indicate if the request
+     * was sent successfully or not, and a shared pointer to DeferredRequest to connect callbacks
      */
     std::pair<bool, std::shared_ptr<DeferredRequest>> sendRequest(const QString &method,
                                                                   const QJsonObject &payload);
@@ -98,7 +96,7 @@ private:
      * Parse the incoming json message from StrataServer into a Message object.
      * @param [in] jsonServerMessage QByteArray json of StrataServer's message.
      * @param [out] serverMessage populated Message object with the notification meta data.
-     * @param [out] callbackHandler function pointer to the request callback if it exist.
+     * @param [out] deferredRequest Shared pointer to the request's callbacks.
      * @return True if the json message was parsed successfully. False otherwise.
      */
     bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,

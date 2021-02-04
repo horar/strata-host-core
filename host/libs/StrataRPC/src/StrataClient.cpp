@@ -187,7 +187,7 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
         }
 
         serverMessage->handlerName = request.method_;
-        deferredRequest = request.pendingRequest_;
+        deferredRequest = request.deferredRequest_;
 
         if (true == jsonObject.contains("error") && true == jsonObject.value("error").isObject()) {
             serverMessage->payload = jsonObject.value("error").toObject();

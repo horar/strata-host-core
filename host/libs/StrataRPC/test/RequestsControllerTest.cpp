@@ -99,8 +99,8 @@ void RequestsControllerTest::testPopRequest()
     for (int i = 0; i < numOfTestCases; i++) {
         const auto [res, request] = rc.popPendingRequest(i + 1);
         QVERIFY(res);
-        QVERIFY(request.pendingRequest_->hasSuccessCallback());
-        QVERIFY(false == request.pendingRequest_->hasErrorCallback());
+        QVERIFY(request.deferredRequest_->hasSuccessCallback());
+        QVERIFY(false == request.deferredRequest_->hasErrorCallback());
 
         Message message;
         message.messageID = i;
