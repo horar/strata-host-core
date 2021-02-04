@@ -148,9 +148,25 @@ Item {
         "reason":"<reason string>"           // over-temperature, input voltage
     }
 
+    property var get_firmware_info: {
+            "boatload": { },
+            "application" : {
+                "version" : "0.0.0",
+                "data" : ""
+            }
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
+
+    property var requestfirmwareVersion:({
+                     "cmd":"get_firmware_info",
+                      "payload":{},
+                       send: function(){
+                             CorePlatformInterface.send(this)
+                        }
+     })
 
     property var requestPlatformId:({
                  "cmd":"request_platform_id",
