@@ -7,8 +7,8 @@
 
 namespace strata::connector {
 
-#define ZMQ_DEFINE_CUSTOM_ARRAY_OPT(OPT, NAME)                                             \
-    using NAME##_t = zmq::sockopt::array_option<OPT>;                                             \
+#define ZMQ_DEFINE_CUSTOM_ARRAY_OPT(OPT, NAME)          \
+    using NAME##_t = zmq::sockopt::array_option<OPT>;   \
     ZMQ_INLINE_VAR ZMQ_CONSTEXPR_VAR NAME##_t NAME {}
 
 // cppzmq is missing the ZMQ IDENTITY
@@ -128,13 +128,13 @@ bool ZmqConnector::socketGetOptInt(zmq::sockopt::integral_option<Opt, T, BoolUni
         val = socket_->get(opt);
         return true;
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to get int socket option, reason: " << zErr.what();
+        qCCritical(logCategoryZmqConnector)
+                << "Unable to get int socket option, reason:" << zErr.what();
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to get int socket option, unexpected reason: " << sErr.what();
+        qCCritical(logCategoryZmqConnector)
+                << "Unable to get int socket option, unexpected reason:" << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace()
+        qCCritical(logCategoryZmqConnector)
                 << "Unable to get int socket option, unhandled exception";
     }
 
