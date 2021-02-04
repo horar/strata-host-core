@@ -247,7 +247,9 @@ Item {
                     padding: 0
                     x: -remainingText.Layout.leftMargin
                     width: segmentCategoryList.width
-                    background: Rectangle {}
+                    background: Rectangle {
+                        color: isCurrentItem ? "#eee" : "white"
+                    }
 
                     ColumnLayout {
                         width: parent.width
