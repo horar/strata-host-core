@@ -51,11 +51,11 @@ bool ZmqPublisherConnector::send(const std::string& message)
     for (const std::string& dealerID : mSubscribers_) {
         if ((false == socketSendMore(dealerID)) || (false == socketSend(message))) {
             qCWarning(logCategoryZmqPublisherConnector).nospace()
-                    << "Failed to send message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+                    << "Failed to send message: '" << message.c_str() << "' (ID: " << getDealerID().c_str() << ")";
             return false;
         }
         qCDebug(logCategoryZmqPublisherConnector).nospace()
-                << "Tx'ed message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+                << "Tx'ed message: '" << message.c_str() << "' (ID: " << getDealerID().c_str() << ")";
     }
 
     return true;

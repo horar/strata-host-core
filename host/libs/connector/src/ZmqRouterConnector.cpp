@@ -52,7 +52,7 @@ bool ZmqRouterConnector::read(std::string& message)
         if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);
             qCDebug(logCategoryZmqRouterConnector).nospace()
-                    << "Rx'ed message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+                    << "Rx'ed message: '" << message.c_str() << "' (ID: " << getDealerID().c_str() << ")";
             return true;
         } else {
             qCWarning(logCategoryZmqRouterConnector) << "Failed to read messages";
@@ -73,7 +73,7 @@ bool ZmqRouterConnector::blockingRead(std::string& message)
     if (socketRecv(identity) && socketRecv(message)) {
         setDealerID(identity);
         qCDebug(logCategoryZmqRouterConnector).nospace()
-                << "Rx'ed blocking message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+                << "Rx'ed blocking message: '" << message.c_str() << "' (ID: " << getDealerID().c_str() << ")";
         return true;
     } else {
         if(false == socketValid()) {
@@ -95,12 +95,12 @@ bool ZmqRouterConnector::send(const std::string& message)
 
     if ((false == socketSendMore(getDealerID())) || (false == socketSend(message))) {
         qCWarning(logCategoryZmqRouterConnector).nospace()
-                << "Failed to send message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+                << "Failed to send message: '" << message.c_str() << "' (ID: " << getDealerID().c_str() << ")";
         return false;
     }
 
     qCDebug(logCategoryZmqRouterConnector).nospace()
-            << "Tx'ed message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+            << "Tx'ed message: '" << message.c_str() << "' (ID: " << getDealerID().c_str() << ")";
 
     return true;
 }

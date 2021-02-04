@@ -66,11 +66,11 @@ bool ZmqConnector::send(const std::string& message)
     }
 
     if (false == socketSend(message)) {
-        qCWarning(logCategoryZmqConnector) << "Failed to send message:" << message.c_str();
+        qCWarning(logCategoryZmqConnector).nospace() << "Failed to send message: '" << message.c_str() << "'";
         return false;
     }
 
-    qCDebug(logCategoryZmqConnector) << "Tx'ed message:" << message.c_str();
+    qCDebug(logCategoryZmqConnector).nospace() << "Tx'ed message: '" << message.c_str() << "'";
     return true;
 }
 
@@ -110,7 +110,7 @@ bool ZmqConnector::read(std::string& message)
 
     if (items.revents & ZMQ_POLLIN) {
         if (socketRecv(message)) {
-            qCDebug(logCategoryZmqConnector) << "Rx'ed message:" << message.c_str();
+            qCDebug(logCategoryZmqConnector).nospace() << "Rx'ed message: '" << message.c_str() << "'";
             return true;
         } else {
             qCWarning(logCategoryZmqConnector) << "Failed to read messages";
@@ -128,7 +128,7 @@ bool ZmqConnector::blockingRead(std::string& message)
     }
 
     if (socketRecv(message)) {
-        qCDebug(logCategoryZmqConnector) << "Rx'ed blocking message:" << message.c_str();
+        qCDebug(logCategoryZmqConnector).nospace() << "Rx'ed blocking message: '" << message.c_str() << "'";
         return true;
     }
 

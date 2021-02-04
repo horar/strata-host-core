@@ -60,7 +60,7 @@ bool ZmqSubscriberConnector::read(std::string& message)
         if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);
             qCDebug(logCategoryZmqSubscriberConnector).nospace()
-                    << "Rx'ed message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+                    << "Rx'ed message: '" << message.c_str() << "' (ID: " << getDealerID().c_str() << ")";
             return true;
         } else {
             qCWarning(logCategoryZmqSubscriberConnector) << "Failed to read messages";
@@ -81,7 +81,7 @@ bool ZmqSubscriberConnector::blockingRead(std::string& message)
     if (socketRecv(identity) && socketRecv(message)) {
         setDealerID(identity);
         qCDebug(logCategoryZmqSubscriberConnector).nospace()
-                << "Rx'ed blocking message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+                << "Rx'ed blocking message: '" << message.c_str() << "' (ID: " << getDealerID().c_str() << ")";
         return true;
     } else {
         if(false == socketValid()) {
