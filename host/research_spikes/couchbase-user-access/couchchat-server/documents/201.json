@@ -1,0 +1,28 @@
+{
+    "class_id": "201",
+    "documents": {
+        "downloads": [
+            {
+                "file": "201/bom/a866fb4edcaaf78acfc23a6fe4e4c043.xlsx",
+                "filename": "STR-LOGIC-GATES-EVK_bom.xlsx",
+                "filesize": "11365",
+                "md5": "a866fb4edcaaf78acfc23a6fe4e4c043",
+                "name": "bom",
+                "order": 1,
+                "prettyName": "STR-LOGIC-GATES-EVK_bom.xlsx",
+                "timestamp": "2020-04-14T00:30:46.274Z"
+            }
+        ]
+    },
+    "name": "STR-LOGIC-GATES-EVK",
+    "platform_selector": {
+        "file": "201/platform_selector/7a1c7a45b7f46761452abab05b4bf848.jpeg",
+        "filename": "thumbnail",
+        "filesize": "4717",
+        "md5": "7a1c7a45b7f46761452abab05b4bf848",
+        "name": "platform_selector",
+        "prettyName": "thumbnail",
+        "timestamp": "2020-04-14T00:30:46.281Z"
+    },
+    "channels_available": [ "channel_A", "channel_B"]
+}

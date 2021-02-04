@@ -1,8 +1,12 @@
 #include "CouchbaseDocument.h"
 #include "logging/LoggingQtCategories.h"
-#include <iostream>
+
+#include <QUuid>
+
 CouchbaseDocument::CouchbaseDocument(const std::string id) {
-    mutable_doc_ = std::make_unique<cbl::MutableDocument>(id);
+    doc_ID_ = id;
+    auto uuid = QUuid::createUuid();
+    mutable_doc_ = std::make_unique<cbl::MutableDocument>("StrataDocID_" + uuid.toString(QUuid::WithoutBraces).toStdString());
 }
 
 bool CouchbaseDocument::setBody(const std::string &body) {
@@ -12,6 +16,7 @@ bool CouchbaseDocument::setBody(const std::string &body) {
         return false;
     }
     mutable_doc_->setProperties(fleece_doc);
+    (*mutable_doc_.get())["StrataExternalDocID"] = doc_ID_;
     return true;
 }
 
@@ -23,4 +28,13 @@ fleece::keyref<fleece::MutableDict, fleece::slice> CouchbaseDocument::operator[]
     auto doc_ref = mutable_doc_.get();
     auto fleece_ref = (*doc_ref)[key.c_str()];
     return fleece_ref;
+}
+
+void CouchbaseDocument::tagChannelField(const std::vector<std::string> &channels) {
+    auto doc_ref = mutable_doc_.get();
+    if (channels.size() != 1) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: size of 'channels' field must be exactly 1.";
+        return;
+    }
+    (*doc_ref)["StrataExternalChannelID"] = channels.at(0);
 }

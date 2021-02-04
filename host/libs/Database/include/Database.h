@@ -32,6 +32,8 @@ public:
      */
     bool open();
 
+    bool close();
+
     bool save(CouchbaseDocument *doc);
 
     bool deleteDoc(const QString &id);
@@ -79,8 +81,8 @@ public:
                          const QStringList &channels = QStringList(),
                          const QString &replicator_type = "",
                          std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr,
-                         std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr
-                         );
+                         std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr,
+                         bool continuous = false);
 
     void stopReplicator();
 

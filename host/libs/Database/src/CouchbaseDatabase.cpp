@@ -58,6 +58,20 @@ bool CouchbaseDatabase::open() {
     return true;
 }
 
+bool CouchbaseDatabase::close() {
+    if (!database_) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Cannot close database (database not initialized).";
+        return false;
+    }
+    try {
+        database_->close();
+    } catch (CBLError err) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem closing database. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        return false;
+    }
+    return true;
+}
+
 bool CouchbaseDatabase::save(CouchbaseDocument *doc) {
     if (!database_) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database, verify database is valid and open.";
@@ -155,7 +169,8 @@ std::vector<std::string> CouchbaseDatabase::getAllDocumentKeys() {
 bool CouchbaseDatabase::startReplicator(const std::string &url, const std::string &username, const std::string &password,
                                 const std::vector<std::string> &channels, const ReplicatorType &replicator_type,
                                 std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback,
-                                std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback) {
+                                std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback,
+                                bool continuous) {
     if (!database_) {
         qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, verify DB is valid and open.";
         return false;
@@ -198,6 +213,8 @@ bool CouchbaseDatabase::startReplicator(const std::string &url, const std::strin
         replicator_configuration_->channels = channels_temp;
     }
 
+    replicator_configuration_->continuous = continuous;
+
     // Official CBL API: Replicator CTOR can throw so this is wrapped in try/catch
     try {
         replicator_ = std::make_unique<cbl::Replicator>(*replicator_configuration_.get());
@@ -205,8 +222,6 @@ bool CouchbaseDatabase::startReplicator(const std::string &url, const std::strin
         qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of replicator. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
         return false;
     }
-
-    replicator_configuration_->continuous = false;
 
     latest_replication_.url = url;
     latest_replication_.username = username;
@@ -235,6 +250,53 @@ void CouchbaseDatabase::stopReplicator() {
         replicator_->stop();
     }
     latest_replication_.reset();
+}
+
+void CouchbaseDatabase::joinChannel(const QString &strataLoginUsername, const QString &channel) {
+    auto temp_doc = database_->getMutableDocument(database_name_);
+    auto read_dict = temp_doc.properties();
+
+    QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+    QJsonArray channels_arr = json_doc[channel].toArray();
+    channels_arr.append(strataLoginUsername);
+
+    QJsonObject json_obj = json_doc.object();
+    json_obj.insert(channel, channels_arr);
+    QJsonDocument final_Doc(json_obj);
+
+    temp_doc.setPropertiesAsJSON(final_Doc.toJson(QJsonDocument::Compact));
+    database_->saveDocument(temp_doc);
+}
+
+void CouchbaseDatabase::leaveChannel(const QString &strataLoginUsername, const QString &channel) {
+    auto temp_doc = database_->getMutableDocument(database_name_);
+    auto read_dict = temp_doc.properties();
+
+    QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+    QJsonArray channels_arr = json_doc[channel].toArray();
+
+    // find matching value
+    int ctr = 0;
+    for(auto it = channels_arr.begin(); it != channels_arr.end(); ++it) {
+        QJsonValue this_value = *it;
+        if (!this_value.isString()) {
+            qCCritical(logCategoryCouchbaseDatabase) << "Error: channel is not in string format";
+            continue;
+        }
+        if (this_value.toString() == strataLoginUsername) {
+            qCCritical(logCategoryCouchbaseDatabase) << "Found channel, removing: " << this_value.toString();
+            channels_arr.removeAt(ctr);
+            break;
+        }
+        ++ctr;
+    }
+
+    QJsonObject json_obj = json_doc.object();
+    json_obj.insert(channel, channels_arr);
+    QJsonDocument final_Doc(json_obj);
+
+    temp_doc.setPropertiesAsJSON(final_Doc.toJson(QJsonDocument::Compact));
+    database_->saveDocument(temp_doc);
 }
 
 void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLReplicatorStatus &status) {

@@ -15,9 +15,15 @@ add_library(${PROJECT_NAME}
     include/Database.h
     include/CouchbaseDatabase.h
     include/CouchbaseDocument.h
+    include/DatabaseManager.h
+    include/DatabaseAccess.h
+
     src/Database.cpp
     src/CouchbaseDatabase.cpp
     src/CouchbaseDocument.cpp
+    src/DatabaseManager.cpp
+    src/DatabaseAccess.cpp
+
     # Logging Categories
     logging/LoggingQtCategories.h
     logging/LoggingQtCategories.cpp

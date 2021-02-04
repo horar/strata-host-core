@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonArray>
 
 #include <couchbase-lite-C/CouchbaseLite.hh>
 #include "CouchbaseDocument.h"
@@ -41,9 +42,15 @@ public:
      */
     bool open();
 
+    bool close();
+
     bool save(CouchbaseDocument *doc);
 
     bool deleteDoc(const std::string &id);
+
+    void joinChannel(const QString &strataLoginUsername, const QString &channel);
+
+    void leaveChannel(const QString &strataLoginUsername, const QString &channel);
 
     /**
      * Returns a document by given ID
@@ -104,7 +111,8 @@ public:
                          const std::vector<std::string> &channels = std::vector<std::string>(),
                          const ReplicatorType &replicator_type = ReplicatorType::kPull,
                          std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr,
-                         std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr
+                         std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr,
+                         bool continuous = false
                         );
 
     void stopReplicator();
@@ -122,6 +130,7 @@ private:
         ReplicatorType replicator_type;
         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback;
         std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback;
+        bool continuous;
 
         void reset () {
             url = "";
@@ -131,6 +140,7 @@ private:
             replicator_type = ReplicatorType::kPull;
             change_listener_callback = nullptr;
             document_listener_callback = nullptr;
+            continuous = false;
         }
     };
 

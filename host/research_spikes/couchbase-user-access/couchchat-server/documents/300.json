@@ -1,0 +1,46 @@
+{
+    "class_id": "300",
+    "documents": {
+        "downloads": [
+            {
+                "file": "201/bom/a866fb4edcaaf78acfc23a6fe4e4c043.xlsx",
+                "filename": "STR-LOGIC-GATES-EVK_bom.xlsx",
+                "filesize": "11365",
+                "md5": "a866fb4edcaaf78acfc23a6fe4e4c043",
+                "name": "bom",
+                "order": 1,
+                "prettyName": "STR-LOGIC-GATES-EVK_bom.xlsx",
+                "timestamp": "2020-04-14T00:30:46.274Z"
+            }
+        ]
+    },
+    "firmware": [
+        {
+            "file": "201/firmware/logic-gates-debug-1.0.0.bin",
+            "md5": "4faf37c0b328bcbba49bb918301e9cac",
+            "name": "firmware",
+            "timestamp": "2019-11-04 17:16:48",
+            "version": "1.0.0"
+        }
+    ],
+    "control_view": [
+        {
+            "file": "201/control-views/logic-gates-1.1.0.rcc",
+            "md5": "e65808a46a9dd5576fe93c024d48bcf2",
+            "name": "control view",
+            "timestamp": "2019-11-04 17:16:48",
+            "version": "1.1.0"
+        }
+    ],
+    "name": "BUBU-mock-fw-flash",
+    "platform_selector": {
+        "file": "300/platform_selector/thumb.jpg",
+        "filename": "thumbnail",
+        "filesize": "8762",
+        "md5": "4f0b7868f08ad5ad98c2c862cde8f882",
+        "name": "platform_selector",
+        "prettyName": "thumbnail",
+        "timestamp": "2020-06-25T11:16:04.000Z"
+    },
+    "channels_available": [ "channel_C"]
+}

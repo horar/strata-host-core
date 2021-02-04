@@ -1,0 +1,28 @@
+{
+    "class_id": "202",
+    "documents": {
+        "downloads": [
+            {
+                "file": "202/cad/fbe1312fc516d4e9c02a1bd63bbc60e5.brd",
+                "filename": "STR-USBC-2PORT-100W-EVK_cad.brd",
+                "filesize": "4848844",
+                "md5": "fbe1312fc516d4e9c02a1bd63bbc60e5",
+                "name": "cad",
+                "order": 1,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_cad.brd",
+                "timestamp": "2020-05-05T21:44:53.667Z"
+            }
+        ]
+    },
+    "name": "STR-USBC-2PORT-100W-EVK",
+    "platform_selector": {
+        "file": "202/platform_selector/thumb.jpeg",
+        "filename": "thumbnail",
+        "filesize": "14737",
+        "md5": "39a1bf3fc30d5fe18fad4d77b8724a0b",
+        "name": "platform_selector",
+        "prettyName": "thumbnail",
+        "timestamp": "2020-05-05T21:44:53.675Z"
+    },
+    "channels_available": ["channel_A", "channel_B", "channel_C"]
+}

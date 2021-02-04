@@ -5,7 +5,6 @@
 #include "Database.h"
 #include "CouchbaseDatabase.h"
 
-class Database;
 class CouchbaseDatabase;
 
 class CouchbaseDocument
@@ -21,6 +20,10 @@ public:
 
     fleece::keyref<fleece::MutableDict, fleece::slice> operator[] (const std::string &key);
 
+    void tagChannelField(const std::vector<std::string> &channels);
+
 private:
     std::unique_ptr<cbl::MutableDocument> mutable_doc_;
+
+    std::string doc_ID_;
 };

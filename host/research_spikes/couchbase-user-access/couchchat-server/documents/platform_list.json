@@ -1,0 +1,61 @@
+{
+    "channels": "platform_list",
+    "id": "platform_list",
+    "platform_list": [
+        {
+            "available": {
+                "control": false,
+                "documents": true,
+                "order": false,
+                "unlisted": false
+            },
+            "class_id": "202",
+            "description": "The 2-Port USB-PD Source showcases ON Semiconductor's broad portfolio of USB-PD power solutions.",
+            "filters": [
+                "segment-automotive",
+                "segment-iot",
+                "category-interface",
+                "subcategory-interface-usbc"
+            ],
+            "opn": "STR-USBC-2PORT-100W-EVK",
+            "verbose_name": "USB Automotive 2-Port 100W Source",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": false,
+                "documents": true,
+                "order": false,
+                "unlisted": false
+            },
+            "class_id": "201",
+            "description": "Two individual 7-in-1 logic gates with simple GUI input and output state control/indication.",
+            "filters": [
+                "segment-iot",
+                "category-standard-logic",
+                "subcategory-logic-gates"
+            ],
+            "opn": "STR-LOGIC-GATES-EVK",
+            "verbose_name": "Multi-function Logic Gate with GUI Control",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": false,
+                "documents": true,
+                "order": false,
+                "unlisted": false
+            },
+            "class_id": "300",
+            "description": "BUBU-mock-fw-flash",
+            "filters": [
+                "segment-iot",
+                "category-standard-logic",
+                "subcategory-logic-gates"
+            ],
+            "opn": "BUBU-MOCK-FW-FLASH",
+            "verbose_name": "BUBU, special version to test FW flashing.",
+            "version": "0"
+        }
+    ]
+}
