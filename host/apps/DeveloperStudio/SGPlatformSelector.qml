@@ -15,6 +15,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle{
     id: container
@@ -53,9 +54,9 @@ Rectangle{
                 Layout.preferredHeight: 150
 
                 Image {
-                    sourceSize.width: Math.min(parent.width, 275)
+                    sourceSize.width: Math.min(parent.width, 500)
                     fillMode: Image.PreserveAspectFit
-                    source: "qrc:/images/strata-logo.svg"
+                    source: "qrc:/images/on-semi-logo-horiz.svg"
                     mipmap: true
                     anchors {
                         centerIn: parent
@@ -63,11 +64,22 @@ Rectangle{
                 }
             }
 
-            RecentlyReleased {
-                id: recentlyReleased
-                Layout.alignment: Qt.AlignHCenter
+            Item {
+                id: middleContainer
+                Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.maximumWidth: implicitWidth
+                Layout.preferredWidth: rightContainer.Layout.preferredWidth
+                Layout.preferredHeight: 150
+
+                Image {
+                    sourceSize.width: Math.min(parent.width, 250)
+                    fillMode: Image.PreserveAspectFit
+                    source: "qrc:/images/strata-logo.svg"
+                    mipmap: true
+                    anchors {
+                        centerIn: parent
+                    }
+                }
             }
 
             Item {
@@ -82,13 +94,44 @@ Rectangle{
                     anchors {
                         centerIn: parent
                     }
+                    spacing: 7
 
-                    Image {
-                        sourceSize.width: Math.min(parent.width, 250)
-                        fillMode: Image.PreserveAspectFit
-                        source: "qrc:/images/on-semi-logo-horiz.svg"
-                        mipmap: true
+                    Rectangle {
+                        // Strata Onsemi.com landing page button
+                        color: !mouse.containsMouse
+                               ? Theme.palette.green : mouse.pressed
+                                 ? Qt.darker(Theme.palette.green, 1.25) : Qt.darker(Theme.palette.green, 1.15)
+                        radius: 10
+                        Layout.preferredWidth: providerText.implicitWidth + providerText.height
+                        Layout.maximumWidth: Layout.preferredWidth
+                        Layout.preferredHeight: providerText.height * 2
+                        Layout.fillWidth: true
                         Layout.alignment: Qt.AlignHCenter
+
+                        SGText {
+                            id: providerText
+                            text: "Visit Strata webpage at ONSemi.com"
+                            color: "white"
+                            font.family: Fonts.franklinGothicBold
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                            }
+                            width: parent.width
+                            horizontalAlignment: Text.AlignHCenter
+                            elide: Text.ElideRight
+                            fontSizeMultiplier: 1
+                        }
+
+                        MouseArea {
+                            id: mouse
+                            anchors {
+                                fill: parent
+                            }
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: Qt.openUrlExternally("http://www.onsemi.com/strata")
+                        }
                     }
 
                     SGBaseDistributionButton {
@@ -101,24 +144,8 @@ Rectangle{
             }
         }
 
-        RowLayout {
-            spacing: container.width < 1100 ?0 : 30
-
-            FilterColumn {
-                id: leftFilters
-                model: Filters.categoryFilterModel
-                side: "left"
-            }
-
-            SGPlatformSelectorListView {
-                id: platformSelectorListView
-            }
-
-            FilterColumn {
-                id: rightFilters
-                model: Filters.categoryFilterModel
-                side: "right"
-            }
+        SGPlatformSelectorListView {
+            id: platformSelectorListView
         }
     }
 
@@ -148,7 +175,7 @@ Rectangle{
             anchors {
                 centerIn: parent
             }
-            width: parent.width - 4
+            width: parent.width + 2
             height: width
             radius: width/2
             z:-1

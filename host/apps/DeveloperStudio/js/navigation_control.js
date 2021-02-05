@@ -289,6 +289,7 @@ function updateState(event, data)
                     let open_view = platform_view_model_.get(i)
                     if (open_view.class_id === data.class_id && open_view.device_id === data.device_id) {
                         updateState(events.SWITCH_VIEW_EVENT, {"index": i+1})
+                        open_view.view = data.view
                         return
                     }
                 }
