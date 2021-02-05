@@ -10,7 +10,7 @@
 
 #include <QtLoggerSetup.h>
 
-#include <CbLoggerSetup.h>
+// #include <CbLoggerSetup.h>
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     }
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    strata::loggers::cbLoggerSetup(loggerInitialization.getQtLogCallback());
+    // strata::loggers::cbLoggerSetup(loggerInitialization.getQtLogCallback());
 
     qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
     qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());

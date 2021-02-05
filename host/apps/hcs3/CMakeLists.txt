@@ -88,7 +88,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     strata::DownloadManager
     strata::Database
     strata::QtLogger
-    strata::CbLogger
+    # strata::CbLogger
 )
 
 target_include_directories(${PROJECT_NAME}Lib
