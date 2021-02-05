@@ -63,6 +63,10 @@ function generatePlatformSelectorModel(platform_list_json) {
 
     console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Processing platform list");
 
+    platform_list.sort(function(a,b){ // Sort by timestamp
+        return new Date(b.timestamp) - new Date(a.timestamp);
+    });
+
     // Check to see if the user has a local platform list that they want to add
     if (localPlatformListSettings.value("path", "") !== "") {
         const localPlatforms = getLocalPlatformList(localPlatformListSettings.value("path"));
@@ -82,10 +86,16 @@ function generatePlatformSelectorModel(platform_list_json) {
         }
     }
 
+    let recentlyReleased = 3
     for (let platform of platform_list){
         if (platform.class_id === undefined || platform.hasOwnProperty("available") === false) {
             console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform has undefined or missing fields, skipping");
             continue
+        }
+
+        if (platform.available.order || platform.available.documents) {
+            platform.recently_released = recentlyReleased > 0 // set first 3 timestamp-sorted non-"coming soon" platforms to be "recently released"
+            recentlyReleased --
         }
 
         generatePlatform(platform)
@@ -349,15 +359,19 @@ function connectListing(class_id_string, device_id, firmware_version) {
     selector_listing.available = available
 
     if (NavigationControl.userSettings.autoOpenView){
-        let data = {
-            "name": selector_listing.verbose_name,
-            "available": selector_listing.available,
-            "class_id": selector_listing.class_id,
-            "device_id": selector_listing.device_id,
-            "firmware_version": selector_listing.firmware_version,
-            "index": selector_index
+        if (selector_listing.available.control) {
+            let data = {
+                "name": selector_listing.verbose_name,
+                "available": selector_listing.available,
+                "class_id": selector_listing.class_id,
+                "device_id": selector_listing.device_id,
+                "firmware_version": selector_listing.firmware_version,
+                "index": selector_index,
+                "view": "control",
+                "connected": true
+            }
+            openPlatformView(data)
         }
-        openPlatformView(data)
     }
 }
 
@@ -372,15 +386,10 @@ function openPlatformView(platform) {
         "class_id": platform.class_id,
         "device_id": platform.device_id,
         "name": selector_listing ? selector_listing.verbose_name : platform.name,
-        "view": "control",
-        "connected": true,
+        "view": platform.view,
+        "connected": platform.connected,
         "available": platform.available,
         "firmware_version": platform.firmware_version
-    }
-
-    if (selector_listing && selector_listing.connected === false || platform.device_id === Constants.NULL_DEVICE_ID || platform.available.control === false) {
-        data.view = "collateral"
-        data.connected = false
     }
 
     NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)

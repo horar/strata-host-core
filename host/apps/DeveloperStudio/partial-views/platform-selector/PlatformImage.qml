@@ -91,8 +91,17 @@ Rectangle {
             sourceSize.height: image.sourceSize.height
             height: parent.paintedHeight
             fillMode: Image.PreserveAspectFit
-            source: "images/platform-images/comingsoon.png"
+            source: visible ? "images/platform-images/comingsoon.png" : ""
             visible: !model.available.documents && !model.available.order && !model.error
+        }
+
+        Image {
+            id: recentlyReleased
+            sourceSize.height: image.sourceSize.height
+            height: parent.paintedHeight
+            fillMode: Image.PreserveAspectFit
+            source: visible ? "images/platform-images/recentlyReleased.png" : ""
+            visible: model.recently_released
         }
     }
 
