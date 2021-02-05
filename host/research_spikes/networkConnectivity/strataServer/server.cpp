@@ -41,4 +41,16 @@ void Server::preccessPendingDatagrams()
         udpSocket_->readDatagram(datagram.data(), datagram.size());
         qDebug() << datagram;
     }
+    setBuffer(datagram);
+}
+
+QString Server::getBuffer()
+{
+    return buffer_;
+}
+
+void Server::setBuffer(const QByteArray &newDatagram)
+{
+    buffer_ += newDatagram + '\n';
+    emit bufferUpdated();
 }
