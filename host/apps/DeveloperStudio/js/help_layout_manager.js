@@ -14,7 +14,7 @@ var internal_tour_index
 var views = [ ]
 var stackContainer
 
-var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index); signal tour_runningChanged(bool tour_running)}', Qt.application, 'HelpUtility');
+var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index); signal tour_runningChanged(bool tour_running); signal tour_indexChanged(int index)}', Qt.application, 'HelpUtility');
 
 
 /*******
@@ -152,6 +152,7 @@ function startHelpTour(tourName, device_id) {
 }
 
 function next(currentIndex) {
+    utility.tour_indexChanged(currentIndex)
     for (let i = 0; i < current_tour_targets.length; i++){
         if (current_tour_targets[i]["index"] === currentIndex) {
             current_tour_targets[i]["helpObject"].visible = false
@@ -176,6 +177,7 @@ function next(currentIndex) {
 }
 
 function prev(currentIndex) {
+    utility.tour_indexChanged(currentIndex)
     if (currentIndex > 0) {
         for (let i = 0; i < current_tour_targets.length; i++){
             if (current_tour_targets[i]["index"] === currentIndex) {

@@ -7,6 +7,7 @@ import tech.strata.theme 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: platformTabRoot
@@ -25,14 +26,38 @@ Item {
     property bool inView: NavigationControl.stack_container_.currentIndex === index + 1
     property string selectedButtonIcon: ""
 
+    property alias currIcon: currIcon
+    property alias platformName: platformName
+
     Component.onCompleted: {
         populateButtons()
         setControlIcon()
         setSelectedButton()
+        Help.registerTarget(menu, "Use these menu items to either open hardware controls, documentation, or close the platform", 5, "selectorHelp")
     }
 
     onConnectedChanged: {
         setControlIcon()
+    }
+
+    Connections {
+        target: Help.utility
+
+        onTour_indexChanged:{
+            if(index === 4){
+                menu.state = "help_tour"
+                dropDownPopup.open()
+            } else {
+                dropDownPopup.close()
+            }
+        }
+
+        onTour_runningChanged: {
+            if(!tour_running){
+                menu.state = "normal"
+                dropDownPopup.close()
+            }
+        }
     }
 
     function menuClicked(index) {
@@ -124,6 +149,7 @@ Item {
         spacing: 0
 
         Rectangle {
+            id: platformName
             color: mouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -154,6 +180,7 @@ Item {
         }
 
         Rectangle {
+            id: currIcon
             Layout.fillHeight: true
             Layout.preferredWidth: height
             color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouse.containsMouse ? platformTabRoot.menuColor :"#444"
@@ -194,13 +221,14 @@ Item {
         width: menu.width
         height: menu.height
         padding: 0
-        closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside
+        closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
 
         Rectangle {
             id: menu
             color: Qt.darker(Theme.palette.green, 1.15)
             width: platformTabRoot.width
             height: menuColumn.height + 1
+            state: "normal"
 
             signal clicked(int index)
 
