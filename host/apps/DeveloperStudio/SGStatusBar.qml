@@ -536,7 +536,8 @@ Rectangle {
                     width: profileMenu.width
 
                     onClicked: {
-                        Signals.executeCVCSignal(false, false)
+                        Signals.loadCVC()
+                        cvcButton.toggleVisibility()
                         profileMenu.close()
                     }
                 }

@@ -20,6 +20,7 @@ Rectangle {
     property bool isConfirmCloseOpen: false
     property bool rccInitialized: false
     property bool recompileRequested: false
+    property bool cvcCloseRequested: false
     property var debugPlatform: ({
                                      deviceId: Constants.NULL_DEVICE_ID,
                                      classId: ""
@@ -52,10 +53,18 @@ Rectangle {
         onPopupClosed: {
             if (closeReason === confirmClosePopup.closeFilesReason) {
                 controlViewCreator.openFilesModel.closeAll()
-                mainWindow.close()
+                if(cvcCloseRequested){
+                    Signals.closeCVC()
+                } else {
+                    mainWindow.close()
+                }
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
                 controlViewCreator.openFilesModel.saveAll(true)
-                mainWindow.close()
+                if(cvcCloseRequested){
+                    Signals.closeCVC()
+                } else {
+                    mainWindow.close()
+                }
             }
             isConfirmCloseOpen = false
         }
@@ -352,39 +361,6 @@ Rectangle {
             }
 
             requestRecompile()
-        }
-    }
-
-    ConfirmClosePopup {
-      id: confirmCloseCVC
-      parent: mainWindow.contentItem
-
-      titleText: "There are unsaved changes in the project"
-      popupText: "Would you like to save all changes or exit without saving"
-
-      acceptButtonText: "Save all and exit"
-      closeButtonText: "Exit without saving"
-
-      onPopupClosed: {
-          if(closeReason === cancelCloseReason) {
-              return
-          }
-          if(closeReason === acceptCloseReason){
-              editor.openFilesModel.saveAll(true)
-          }
-          Signals.executeCVCSignal(true, false)
-       }
-    }
-
-    Connections {
-        target: Signals
-
-        onExecuteCVCSignal: {
-            if(loaded){
-                if(changes){
-                    confirmCloseCVC.open()
-                }
-            }
         }
     }
 

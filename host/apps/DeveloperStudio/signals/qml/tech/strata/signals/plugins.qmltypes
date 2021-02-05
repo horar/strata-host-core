@@ -24,8 +24,9 @@ Module {
         Signal { name: "getProfileResult"; Parameter {name: "result"; type: "string"} Parameter {name: "user"; type: "var"}}
         Signal { name: "serverChanged" }
         Signal { name: "feedbackResult"; Parameter {name: "result"; type: "string"}}
-        Signal { name: "executeCVCSignal"; Parameter {name: "loaded"; type: "bool"} Parameter{name: "changes"; type: "bool"}}
-        Signal { name: "unsavedCVCChanges"; Parameter {name: "changes"; type: "bool"}}
+        Signal { name: "loadCVC"}
+        Signal { name: "requestCVCClose"}
+        Signal { name: "cvcClose"}
     }
 }
 

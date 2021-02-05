@@ -24,11 +24,6 @@ Item {
     property int savedVersionId
     property int currentVersionId
     property bool externalChanges: false
-    property bool unsavedChanges: model.unsavedChanges
-
-    onUnsavedChangesChanged: {
-        Signals.unsavedCVCChanges(unsavedChanges)
-    }
 
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
