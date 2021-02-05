@@ -595,16 +595,25 @@ Rectangle {
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
-
+        property bool disablePlatformNotifications: false
         property int selectedDistributionPortal: 0
-
+        // updated this so we can mitigate undefined variables
         function loadSettings() {
             const settings = readFile("general-settings.json")
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
+            }
+            if(settings.hasOwnProperty("closeOnDisconnect")){
                 closeOnDisconnect = settings.closeOnDisconnect
+            }
+            if(settings.hasOwnProperty("notifyOnFirmwareUpdate")){
                 notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+            }
+            if(settings.hasOwnProperty("selectedDistributionPortal")){
                 selectedDistributionPortal = settings.selectedDistributionPortal
+            }
+            if(settings.hasOwnProperty("disablePlatformNotifications")){
+                disablePlatformNotifications = settings.disablePlatformNotifications
             }
             NavigationControl.userSettings = userSettings
         }
@@ -614,7 +623,8 @@ Rectangle {
                 autoOpenView: autoOpenView,
                 closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
-                selectedDistributionPortal: selectedDistributionPortal
+                selectedDistributionPortal: selectedDistributionPortal,
+                disablePlatformNotifications: disablePlatformNotifications
             }
             userSettings.writeFile("general-settings.json", settings)
         }

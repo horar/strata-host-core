@@ -617,19 +617,21 @@ function copyObject(object){
 }
 
 function notifyConnectedState(connected, platformOPN){
-    if (connected){
-        PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is connected`,
-                                         PlatformNotifications.Notifications.Info,
-                                         "all",
-                                         {
-                                             "timeout": 4000
-                                         })
-    } else {
-        PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is disconnected`,
-                                         PlatformNotifications.Notifications.Info,
-                                         "all",
-                                         {
-                                             "timeout": 4000
-                                         })
+    if(!NavigationControl.userSettings.disablePlatformNotifications){
+        if (connected){
+            PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is connected`,
+                                                                   PlatformNotifications.Notifications.Info,
+                                                                   "all",
+                                                                   {
+                                                                       "timeout": 4000
+                                                                   })
+        } else {
+            PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is disconnected`,
+                                                                   PlatformNotifications.Notifications.Info,
+                                                                   "all",
+                                                                   {
+                                                                       "timeout": 4000
+                                                                   })
+        }
     }
 }
