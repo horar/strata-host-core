@@ -80,16 +80,16 @@ bool ZmqConnector::socketSetOptString(zmq::sockopt::array_option<Opt, NullTerm> 
         socket_->set(opt, val);
         return true;
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to set string socket option to value '" << val.c_str()
+        qCCritical(logCategoryZmqConnector).nospace().noquote()
+                << "Unable to set string socket option to value '" << QString::fromStdString(val)
                 << "', reason: " << zErr.what();
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to set string socket option to value '" << val.c_str()
+        qCCritical(logCategoryZmqConnector).nospace().noquote()
+                << "Unable to set string socket option to value '" << QString::fromStdString(val)
                 << "', unexpected reason: " << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to set string socket option to value '" << val.c_str()
+        qCCritical(logCategoryZmqConnector).nospace().noquote()
+                << "Unable to set string socket option to value '" << QString::fromStdString(val)
                 << "', unhandled exception";
     }
 
