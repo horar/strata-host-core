@@ -75,7 +75,7 @@ enum class ReadMode {
     NONBLOCKING
 };
 #ifdef _WIN32
-    typedef intptr_t connector_handle_t;
+    typedef uintptr_t connector_handle_t;
 #else
     typedef int connector_handle_t;
 #endif
@@ -124,7 +124,7 @@ protected:
     void setConnectionState(bool connection_state);
 
 private:
-    std::string dealer_id_;
+    std::string dealer_id_; // byte array
     std::string server_;
 
     bool connection_state_ = false;

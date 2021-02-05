@@ -24,14 +24,15 @@ bool ZmqSubscriberConnector::open(const std::string& ip_address)
         socketSetOptString(zmq::sockopt::subscribe, getDealerID()) &&
         socketConnect(ip_address)) {
         setConnectionState(true);
-        qCInfo(logCategoryZmqSubscriberConnector).nospace()
-                << "Connected to the server socket '" << ip_address.c_str()
-                << "' with filter '" << getDealerID().c_str() << "'";
+        qCInfo(logCategoryZmqSubscriberConnector).nospace().noquote()
+                << "Connected to the server socket '" << QString::fromStdString(ip_address)
+                << "' with filter '0x" << QByteArray::fromStdString(getDealerID()).toHex() << "'";
         return true;
     }
 
-    qCCritical(logCategoryZmqSubscriberConnector).nospace()
-            << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
+    qCCritical(logCategoryZmqSubscriberConnector).nospace().noquote()
+            << "Unable to configure and/or connect to server socket '"
+            << QString::fromStdString(ip_address) << "'";
     close();
     return false;
 }
@@ -59,8 +60,9 @@ bool ZmqSubscriberConnector::read(std::string& message)
         std::string identity;
         if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);
-            qCDebug(logCategoryZmqSubscriberConnector).nospace()
-                    << "Rx'ed message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+            qCDebug(logCategoryZmqSubscriberConnector).nospace().noquote()
+                    << "Rx'ed message: '" << QString::fromStdString(message)
+                    << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
             return true;
         } else {
             qCWarning(logCategoryZmqSubscriberConnector) << "Failed to read messages";
@@ -80,8 +82,9 @@ bool ZmqSubscriberConnector::blockingRead(std::string& message)
     std::string identity;
     if (socketRecv(identity) && socketRecv(message)) {
         setDealerID(identity);
-        qCDebug(logCategoryZmqSubscriberConnector).nospace()
-                << "Rx'ed blocking message: " << message.c_str() << " (ID: " << getDealerID().c_str() << ")";
+        qCDebug(logCategoryZmqSubscriberConnector).nospace().noquote()
+                << "Rx'ed blocking message: '" << QString::fromStdString(message)
+                << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return true;
     } else {
         if(false == socketValid()) {
