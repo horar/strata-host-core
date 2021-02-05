@@ -137,9 +137,12 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 font {
-                    pixelSize: 12
+                    pixelSize: name.font.pixelSize
                     family: Fonts.franklinGothicBook
                 }
+                fontSizeMode: Text.Fit
+                minimumPixelSize: 12
+                lineHeight: 1.2
                 color: "#666"
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
