@@ -8,7 +8,7 @@ set(MONACO_TAG 0.20.0)
     file(GLOB_RECURSE INSTALLED ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/editor.html)
     if(INSTALLED)
         file(REMOVE_RECURSE ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/)
-        file(REMOVE_RECURSE ${EXTERN_INSTALL_DIR}/../extern/monaco-edior-0.20.0-prefix/)
+        file(REMOVE_RECURSE ${EXTERN_INSTALL_DIR}/../extern/monaco-editor-0.20.0-prefix/)
     endif()
     ExternalProject_Add(monaco-editor-${MONACO_TAG}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package
