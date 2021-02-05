@@ -21,7 +21,7 @@ bool ZmqDealerConnector::open(const std::string& ip_address)
 
     int linger = 0;
     const std::string& id = getDealerID();
-    if ((id.empty() || socketSetOptLegacy(ZMQ_IDENTITY, id.c_str(), id.length())) &&
+    if ((id.empty() || socketSetOptString(zmq_identity, id)) &&
         socketSetOptInt(zmq::sockopt::linger, linger) &&
         socketConnect(ip_address)) {
         setConnectionState(true);

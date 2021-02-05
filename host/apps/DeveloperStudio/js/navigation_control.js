@@ -259,6 +259,7 @@ function updateState(event, data)
 
                 // Update StatusBar
                 status_bar_container_.visible = true
+                context.mainWindow = main_qml_object_
                 let statusBar = createView(screens.STATUS_BAR, status_bar_container_)
                 platform_tab_list_view_ = statusBar.platformTabListView
 
@@ -288,6 +289,7 @@ function updateState(event, data)
                     let open_view = platform_view_model_.get(i)
                     if (open_view.class_id === data.class_id && open_view.device_id === data.device_id) {
                         updateState(events.SWITCH_VIEW_EVENT, {"index": i+1})
+                        open_view.view = data.view
                         return
                     }
                 }

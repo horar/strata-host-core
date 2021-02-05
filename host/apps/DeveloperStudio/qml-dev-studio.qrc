@@ -97,11 +97,16 @@
         <file>partial-views/status-bar/SGSettingsPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsCheckbox.qml</file>
         <file>partial-views/platform-view/SGUpdateNotificationPopup.qml</file>
-        <file>partial-views/platform-selector/RecentlyReleased.qml</file>
         <file>partial-views/platform-selector/PlatformImage.qml</file>
         <file>partial-views/general/WebPopup/SGWebControls.qml</file>
         <file>partial-views/general/WebPopup/SGWebView.qml</file>
         <file>partial-views/notifications/NotificationDelegate.qml</file>
-        <file>partial-views/notifications/NotificationsBox.qml</file>
+        <file>partial-views/platform-selector/images/platform-images/recentlyReleased.png</file>
+        <file>partial-views/platform-selector/PlatformControlButton.qml</file>
+        <file>partial-views/platform-selector/PlatformFilterButton.qml</file>
+        <file>partial-views/notifications/NotificationsContainer.qml</file>
+        <file>partial-views/notifications/NotificationsInbox.qml</file>
+        <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
+        <file>partial-views/notifications/NotificationContent.qml</file>
     </qresource>
 </RCC>

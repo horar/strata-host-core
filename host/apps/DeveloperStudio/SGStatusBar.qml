@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
+import QtQml 2.12
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -23,6 +24,8 @@ import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.notifications 1.0
+import tech.strata.signals 1.0
 
 Rectangle {
     id: container
@@ -37,14 +40,21 @@ Rectangle {
     property color backgroundColor: "#3a3a3a"
     property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
+    property bool hasNotifications: criticalNotifications.count > 0
+
+    onHasNotificationsChanged: {
+        alertIconContainer.visible = hasNotifications
+    }
 
     property alias platformTabListView: platformTabListView
+    property var mainWindow
 
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
         userSettings.loadSettings()
+        alertIconContainer.visible = hasNotifications
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -57,6 +67,17 @@ Rectangle {
 
     Component.onDestruction: {
         Help.destroyHelp()
+    }
+
+    SGSortFilterProxyModel {
+        id: criticalNotifications
+        sourceModel: Notifications.model
+        sortEnabled: false
+        invokeCustomFilter: true
+
+        function filterAcceptsRow(index) {
+            return sourceModel.get(index).level === Notifications.Level.Critical
+        }
     }
 
     RowLayout {
@@ -403,7 +424,7 @@ Rectangle {
             height: 12
             width: height
             radius: height / 2
-            color: Theme.palette.green
+            color: "white"
 
             SGIcon {
                 id: alertIcon
@@ -413,7 +434,7 @@ Rectangle {
                     centerIn: parent
                 }
                 source: "qrc:/sgimages/exclamation-circle.svg"
-                iconColor : "white"
+                iconColor : Theme.palette.error
             }
 
             Component.onCompleted: {
@@ -445,7 +466,7 @@ Rectangle {
             y: profileIconContainer.height
             padding: 0
             topPadding: 10
-            width: 100
+            width: 140
             background: Canvas {
                 width: profileMenu.width
                 height: profileMenu.contentItem.height + 10
@@ -467,8 +488,7 @@ Rectangle {
                 }
             }
 
-            contentItem:
-                Column {
+            contentItem: Column {
                 id: profileColumn
                 width: profileMenu.width
 
@@ -488,6 +508,16 @@ Rectangle {
                         feedLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Notifications (" + Notifications.model.count + ")")
+                    iconSource: hasNotifications ? "qrc:/sgimages/exclamation-circle.svg" : ""
+                    width: profileMenu.width
+                    onClicked: {
+                        profileMenu.close()
+                        mainWindow.notificationsInbox.open()
+                    }
                 }
 
                 SGMenuItem {
@@ -550,6 +580,7 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
 
+                        Signals.logout()
                         PlatformFilters.clearActiveFilters()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()
