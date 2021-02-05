@@ -1,16 +1,5 @@
 {
-  "channel_A": [
-    "user_1"
-  ],
-
-  "channel_B": [
-    "user_1",
-    "user_3"
-  ],
-
-  "channel_C": [
-    "user_1",
-    "user_2",
-    "user_3"
+  "channel_public": [
+    "user_public"
   ]
 }

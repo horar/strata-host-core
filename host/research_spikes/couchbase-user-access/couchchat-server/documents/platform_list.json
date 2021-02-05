@@ -1,6 +1,7 @@
 {
     "channels": "platform_list",
     "id": "platform_list",
+    "channels_available": ["channel_public"],
     "platform_list": [
         {
             "available": {
