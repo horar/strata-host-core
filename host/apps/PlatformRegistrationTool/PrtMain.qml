@@ -101,14 +101,14 @@ Item {
                 height: testServerWarning.height
                 width: height
 
-                iconColor: TangoTheme.palette.white
+                iconColor: "white"
                 source: "qrc:/sgimages/exclamation-circle.svg"
             }
 
             SGWidgets.SGText {
                 id: testServerWarning
                 
-                color: TangoTheme.palette.white
+                alternativeColorEnabled: true
                 font.bold: true
                 text: "Non-production server in use."
             }            
