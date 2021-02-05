@@ -26,7 +26,7 @@ Module {
         Signal { name: "feedbackResult"; Parameter {name: "result"; type: "string"}}
         Signal { name: "loadCVC"}
         Signal { name: "requestCVCClose"}
-        Signal { name: "cvcClose"}
+        Signal { name: "closeCVC"}
     }
 }
 
