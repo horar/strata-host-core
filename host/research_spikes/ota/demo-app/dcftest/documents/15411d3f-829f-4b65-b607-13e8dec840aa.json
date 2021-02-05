@@ -215,29 +215,6 @@
     ],
     "firmware": [
         {
-            "file": "str-pwrncv81599-r0-gevb-v100.bin",
-            "device": "water-heater",
-            "md5": "a1ebed2029517fe6090dc91943e10890",
-            "timestamp": "2021-01-18 12:41:26",
-            "version": "1.0.0"
-        },
-        {
-            "file": "str-pwrncv81599-r0-gevb-v101.bin",
-            "device": "water-heater",
-            "md5": "d528c11ad43c94dc4844f0e6f31ff1a2",
-            "timestamp": "2020-06-25 12:41:31",
-            "version": "1.0.1"
-        },
-        {
-            "file": "str-pwrncv81599-r0-gevb-rsl10-v110.bin",
-            "device": "RSL10",
-            "md5": "00000000000000000000000000000013",
-            "timestamp": "2021-01-20 13:41:31",
-            "version": "1.1.0"
-        }
-    ],
-    "firmware": [
-        {
             "file": "strata_assisted_ecosystem_platform_100.bin",
             "device": "RSL10-rev1",
             "md5": "7f408274a80b624f78b0a983739b4239",
