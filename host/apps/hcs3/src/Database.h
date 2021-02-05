@@ -6,15 +6,8 @@
 #include <set>
 #include <QObject>
 
-namespace Strata {
-    class SGDatabase;
-    class SGURLEndpoint;
-    class SGReplicatorConfiguration;
-    class SGReplicator;
-    class SGBasicAuthenticator;
-
-    class SGMutableDocument;
-};
+#include <DatabaseManager.h>
+#include <DatabaseAccess.h>
 
 class HCS_Dispatcher;
 
@@ -34,14 +27,7 @@ public:
      * @return returns true when succeeded, otherwise false
      * NOTE: add a path to the DB.
      */
-    bool open(std::string_view db_path, const std::string &db_name);
-
-    /**
-     * Initializes and starts the DB replicator
-     * @param replUrl replicator URL to connect to
-     * @return returns true when succeeded otherwise false
-     */
-    bool initReplicator(const std::string& replUrl, const std::string& username, const std::string& password);
+    bool open(std::string_view db_path, const std::string& db_name, const std::string& replUrl, const std::string& username, const std::string& password);
 
     /**
      * Adds a channel to the replication
@@ -82,17 +68,12 @@ private:
 
 private:
     std::string sgDatabasePath_;
-    Strata::SGDatabase *sg_database_{nullptr};
 
-    Strata::SGURLEndpoint *url_endpoint_{nullptr};
-    Strata::SGReplicatorConfiguration *sg_replicator_configuration_{nullptr};
-    Strata::SGReplicator *sg_replicator_{nullptr};
-    bool isRunning_{false};
+    std::unique_ptr<DatabaseManager> databaseManager_ = nullptr;
 
-    // Set replicator reconnection timer to 15 seconds
-    const unsigned int REPLICATOR_RECONNECTION_INTERVAL = 15;
+    DatabaseAccess* DB_ = nullptr;
 
-    Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
+    void documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 
     std::set<std::string> channels_;
 };

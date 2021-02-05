@@ -9,8 +9,8 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-        COMPONENTS Core Concurrent RemoteObjects
-        REQUIRED
+    COMPONENTS Core Concurrent RemoteObjects
+    REQUIRED
 )
 
 add_executable(${PROJECT_NAME} WIN32
@@ -86,7 +86,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     strata::connector
     strata::EventsMgr
     strata::DownloadManager
-    strata::CouchbaseLiteCPP
+    strata::Database
     strata::QtLogger
     strata::CbLogger
 )

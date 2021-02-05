@@ -67,7 +67,7 @@ bool HostControllerService::initialize(const QString& config)
 
     rapidjson::Value& db_cfg = config_["database"];
 
-    if (db_.open(baseFolder.toStdString(), "strata_db") == false) {
+    if (db_.open(baseFolder.toStdString(), "strata_db", db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password) == false) {
         qCCritical(logCategoryHcs) << "Failed to open database.";
         return false;
     }
@@ -118,8 +118,6 @@ bool HostControllerService::initialize(const QString& config)
 
     storageManager_.setBaseUrl(baseUrl);
     storageManager_.setDatabase(&db_);
-
-    db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
 
     boardsController_.initialize();
 
