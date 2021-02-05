@@ -7,6 +7,13 @@
 
 namespace strata::connector {
 
+#define ZMQ_DEFINE_CUSTOM_ARRAY_OPT(OPT, NAME)          \
+    using NAME##_t = zmq::sockopt::array_option<OPT>;   \
+    ZMQ_INLINE_VAR ZMQ_CONSTEXPR_VAR NAME##_t NAME {}
+
+// cppzmq is missing the ZMQ IDENTITY
+ZMQ_DEFINE_CUSTOM_ARRAY_OPT(ZMQ_IDENTITY, zmq_identity);
+
 class ZmqConnector : public Connector
 {
 public:
@@ -45,12 +52,12 @@ protected:
     bool socketRecv(std::string & ostring, zmq::recv_flags flags = zmq::recv_flags::none);
     bool socketSend(const std::string & istring, zmq::send_flags flags = zmq::send_flags::none);
     bool socketSendMore(const std::string & istring);
-    bool socketSetOptLegacy(int opt, const void *val, size_t valLen);
-    bool socketGetOptLegacy(int opt, void *val, size_t* valLen);
     template<int Opt, int NullTerm>
     bool socketSetOptString(zmq::sockopt::array_option<Opt, NullTerm> opt, const std::string & val);
     template<int Opt, class T, bool BoolUnit>
     bool socketSetOptInt(zmq::sockopt::integral_option<Opt, T, BoolUnit> opt, int val);
+    template<int Opt, class T, bool BoolUnit>
+    bool socketGetOptInt(zmq::sockopt::integral_option<Opt, T, BoolUnit> opt, T & val);
     bool socketConnect(const std::string & address);
     bool socketBind(const std::string & address);
     bool socketPoll(zmq::pollitem_t *items);
@@ -73,16 +80,16 @@ bool ZmqConnector::socketSetOptString(zmq::sockopt::array_option<Opt, NullTerm> 
         socket_->set(opt, val);
         return true;
     } catch (const zmq::error_t& zErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to set string socket option to value '" << val.c_str()
+        qCCritical(logCategoryZmqConnector).nospace().noquote()
+                << "Unable to set string socket option to value '" << QString::fromStdString(val)
                 << "', reason: " << zErr.what();
     } catch (const std::exception& sErr) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to set string socket option to value '" << val.c_str()
+        qCCritical(logCategoryZmqConnector).nospace().noquote()
+                << "Unable to set string socket option to value '" << QString::fromStdString(val)
                 << "', unexpected reason: " << sErr.what();
     } catch (...) {
-        qCCritical(logCategoryZmqConnector).nospace()
-                << "Unable to set string socket option to value '" << val.c_str()
+        qCCritical(logCategoryZmqConnector).nospace().noquote()
+                << "Unable to set string socket option to value '" << QString::fromStdString(val)
                 << "', unhandled exception";
     }
 
@@ -108,6 +115,27 @@ bool ZmqConnector::socketSetOptInt(zmq::sockopt::integral_option<Opt, T, BoolUni
         qCCritical(logCategoryZmqConnector).nospace()
                 << "Unable to set int socket option to value '" << val
                 << "', unhandled exception";
+    }
+
+    return false;
+}
+
+// Get an integer-based socket option
+template<int Opt, class T, bool BoolUnit>
+bool ZmqConnector::socketGetOptInt(zmq::sockopt::integral_option<Opt, T, BoolUnit> opt, T & val)
+{
+    try {
+        val = socket_->get(opt);
+        return true;
+    } catch (const zmq::error_t& zErr) {
+        qCCritical(logCategoryZmqConnector)
+                << "Unable to get int socket option, reason:" << zErr.what();
+    } catch (const std::exception& sErr) {
+        qCCritical(logCategoryZmqConnector)
+                << "Unable to get int socket option, unexpected reason:" << sErr.what();
+    } catch (...) {
+        qCCritical(logCategoryZmqConnector)
+                << "Unable to get int socket option, unhandled exception";
     }
 
     return false;

@@ -23,16 +23,17 @@ bool ZmqRequestConnector::open(const std::string& ip_address)
     if (socketSetOptInt(zmq::sockopt::linger, linger) &&
         socketConnect(ip_address)) {
         setConnectionState(true);
-        qCInfo(logCategoryZmqRequestConnector).nospace()
-                << "Connected to the server socket '" << ip_address.c_str()
-                << "' (ID: " << getDealerID().c_str() << ")";
+        qCInfo(logCategoryZmqRequestConnector).nospace().noquote()
+                << "Connected to the server socket '" << QString::fromStdString(ip_address)
+                << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return true;
     }
 
-    qCCritical(logCategoryZmqRequestConnector).nospace()
-            << "Unable to configure and/or connect to server socket '" << ip_address.c_str() << "'";
+    qCCritical(logCategoryZmqRequestConnector).nospace().noquote()
+            << "Unable to configure and/or connect to server socket '"
+            << QString::fromStdString(ip_address) << "'";
     close();
     return false;
 }
 
-}  // namespace strata::connector
+} // namespace strata::connector
