@@ -7,7 +7,7 @@ class DatabaseAccess;
 class DatabaseManager
 {
 public:
-    DatabaseManager(const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
+    DatabaseManager(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
 
     ~DatabaseManager();
 
@@ -38,6 +38,8 @@ public:
 private:
     const QString dbDirName_ = "databases";
 
+    QString path_ = "";
+
     QString endpointURL_ = "";
 
     QString loggedUsername_ = "";
@@ -56,5 +58,5 @@ private:
 
     QStringList getChannelsAccessDenied();
 
-    QString manageUserDir(const QString &name, const QStringList &channelAccess);
+    QString manageUserDir(const QString &path, const QString &name, const QStringList &channelAccess);
 };
