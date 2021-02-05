@@ -65,11 +65,22 @@ Window {
         }
     }
 
+    Label {
+        id: statusLabel
+        x: 515
+        y: 417
+        width: 119
+        height: 54
+        text: client.connectionStatus
+    }
+
+    Button {
+        id: disconnectBtn
+        x: 35
+        y: 220
+        text: qsTr("Disconnect")
+        enabled: client.connectionStatus == "connected"
+    }
+
 }
 
-/*##^##
-Designer {
-    D{i:0;annotation:"1 //;;// MainAppWindow //;;//  //;;//  //;;// 1612428635";customId:"";formeditorZoom:0.75}
-D{i:1;annotation:"1 //;;// btnBroadcast //;;//  //;;//  //;;// 1612428784";customId:""}
-}
-##^##*/
