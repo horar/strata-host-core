@@ -1,206 +1,206 @@
 {
-  "channels": "platform_list",
-  "id": "platform_list",
-  "platform_list": [
-    {
-      "available": {
-        "control": false,
-        "documents": true,
-        "order": false,
-        "unlisted": false
-      },
-      "class_id": "7bdcea96-0fb8-41de-9822-dec20ae1032a",
-      "description": "Mock for assisted Strata testing. Level shifters.",
-      "filters": [
-        "segment-automotive",
-        "segment-iot",
-        "category-interface",
-        "subcategory-interface-usbc"
-      ],
-      "opn": "STR-LEVEL-SHIFTERS-GEVB",
-      "verbose_name": "Level Shifters",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": false,
-        "documents": true,
-        "order": true,
-        "unlisted": false
-      },
-      "class_id": "15411d3f-829f-4b65-b607-13e8dec840aa",
-      "description": "Mock for assisted Strata testing. The Strata low voltage DC-DC evaluation boards series is an evaluation environment for NCV81599 Automotive Buck Boost Controller",
-      "filters": [
-        "segment-automotive",
-        "category-power-management",
-        "subcategory-powerman-dcdc"
-      ],
-      "opn": "STR-PWRNCV81599-R0-GEVK",
-      "verbose_name": "NCV81599 Automotive Buck Boost Controller",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": false,
-        "documents": true,
-        "order": false,
-        "unlisted": false
-      },
-      "class_id": "202",
-      "description": "The 2-Port USB-PD Source showcases ON Semiconductor's broad portfolio of USB-PD power solutions.",
-      "filters": [
-        "segment-automotive",
-        "segment-iot",
-        "category-interface",
-        "subcategory-interface-usbc"
-      ],
-      "opn": "STR-USBC-2PORT-100W-EVK",
-      "verbose_name": "USB Automotive 2-Port 100W Source",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": false,
-        "documents": true,
-        "order": false,
-        "unlisted": false
-      },
-      "class_id": "201",
-      "description": "Two individual 7-in-1 logic gates with simple GUI input and output state control/indication.",
-      "filters": [
-        "segment-iot",
-        "category-standard-logic",
-        "subcategory-logic-gates"
-      ],
-      "opn": "STR-LOGIC-GATES-EVK",
-      "verbose_name": "Multi-function Logic Gate with GUI Control",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": false,
-        "documents": true,
-        "order": false,
-        "unlisted": false
-      },
-      "class_id": "300",
-      "description": "BUBU-mock-fw-flash",
-      "filters": [
-        "segment-iot",
-        "category-standard-logic",
-        "subcategory-logic-gates"
-      ],
-      "opn": "BUBU-MOCK-FW-FLASH",
-      "verbose_name": "BUBU, special version to test FW flashing.",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": true,
-        "documents": true,
-        "order": true,
-        "unlisted": false
-      },
-      "class_id": "2286e1e0-4035-46b9-b197-4d729653c101",
-      "description": "The Strata low voltage DC-DC evaluation boards series  is an evaluation environment for NCV896530 Automotive Dual Output Buck Converter.",
-      "filters": [
-        "segment-automotive",
-        "category-power-management",
-        "subcategory-powerman-dcdc"
-      ],
-      "opn": "STR-PWRNCV896530-R0-GEVK",
-      "verbose_name": "NCV896530  Dual Output Buck Converter",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": true,
-        "documents": true,
-        "order": true,
-        "unlisted": false
-      },
-      "class_id": "3ea08e05-0bcd-4a4a-86ec-79a1ca9750cd",
-      "description": "The Strata low voltage DC-DC evaluation boards series  is an evaluation environment for NCV91300  Automotive PWM Buck Converter.",
-      "filters": [
-        "segment-automotive",
-        "category-power-management",
-        "subcategory-powerman-dcdc"
-      ],
-      "opn": "STR-PWRNCV91300-R0-GEVK",
-      "verbose_name": "NCV91300 Automotive PWM Buck Converter",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": true,
-        "documents": true,
-        "order": true,
-        "unlisted": false
-      },
-      "class_id": "abd65a0b-3229-44a4-a97c-38ea3c24f990",
-      "description": "The Strata low voltage DC-DC evaluation boards series  is an evaluation environment for NCV890430 Automotive Buck Regulator.",
-      "filters": [
-        "segment-automotive",
-        "category-power-management",
-        "subcategory-powerman-dcdc"
-      ],
-      "opn": "STR-PWRNCV890430-R0-GEVK",
-      "verbose_name": "NCV890430 Automotive Step-Down Synch. Regulator",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": true,
-        "documents": true,
-        "order": true,
-        "unlisted": false
-      },
-      "class_id": "3ef8bbc6-92ff-4c98-b9ae-ca7e7c47d180",
-      "description": "The Strata low voltage DC-DC evaluation boards series is an evaluation environment for NCV6357 Automotive AOT Buck Converter.",
-      "filters": [
-        "segment-automotive",
-        "category-power-management",
-        "subcategory-powerman-dcdc"
-      ],
-      "opn": "STR-PWRNCV6357-R0-GEVK",
-      "verbose_name": "NCV6357 Automotive AOT Buck Converter",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": true,
-        "documents": true,
-        "order": true,
-        "unlisted": false
-      },
-      "class_id": "1ae9e1e7-a268-4302-8c3a-280f0aa095a5",
-      "description": "The Strata low voltage DC-DC evaluation boards series is an evaluation environment for NCV330 Automotive Low Noise and High PSSR Linear Regulator.",
-      "filters": [
-        "segment-automotive",
-        "category-power-management",
-        "subcategory-powerman-dcdc"
-      ],
-      "opn": "STR-PWRNCV330-R0-GEVK",
-      "verbose_name": "NCV330 Automot. Low Noise and High PSSR Linear Reg",
-      "version": "0"
-    },
-    {
-      "available": {
-        "control": true,
-        "documents": true,
-        "order": true,
-        "unlisted": false
-      },
-      "class_id": "b519cdcb-5068-4483-b88e-155813fae915",
-      "description": "The Strata low voltage DC-DC evaluation boards series  is an evaluation environment for NCV8163 Automotive Linear Regulator.",
-      "filters": [
-        "segment-automotive",
-        "category-power-management",
-        "subcategory-powerman-dcdc"
-      ],
-      "opn": "STR-PWRNCV8163-R0-GEVK",
-      "verbose_name": "NCV8163 Automotive Linear Regulator",
-      "version": "0"
-    }
-  ]
+    "channels": "platform_list",
+    "id": "platform_list",
+    "platform_list": [
+        {
+            "available": {
+                "control": false,
+                "documents": true,
+                "order": false,
+                "unlisted": false
+            },
+            "class_id": "7bdcea96-0fb8-41de-9822-dec20ae1032a",
+            "description": "Mock for assisted Strata testing. Level shifters.",
+            "filters": [
+                "segment-automotive",
+                "segment-iot",
+                "category-interface",
+                "subcategory-interface-usbc"
+            ],
+            "opn": "STR-LEVEL-SHIFTERS-GEVB",
+            "verbose_name": "Level Shifters",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": false,
+                "documents": true,
+                "order": true,
+                "unlisted": false
+            },
+            "class_id": "15411d3f-829f-4b65-b607-13e8dec840aa",
+            "description": "Mock for assisted Strata testing. The Strata low voltage DC-DC evaluation boards series is an evaluation environment for NCV81599 Automotive Buck Boost Controller",
+            "filters": [
+                "segment-automotive",
+                "category-power-management",
+                "subcategory-powerman-dcdc"
+            ],
+            "opn": "STR-PWRNCV81599-R0-GEVK",
+            "verbose_name": "NCV81599 Automotive Buck Boost Controller",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": false,
+                "documents": true,
+                "order": false,
+                "unlisted": false
+            },
+            "class_id": "202",
+            "description": "The 2-Port USB-PD Source showcases ON Semiconductor's broad portfolio of USB-PD power solutions.",
+            "filters": [
+                "segment-automotive",
+                "segment-iot",
+                "category-interface",
+                "subcategory-interface-usbc"
+            ],
+            "opn": "STR-USBC-2PORT-100W-EVK",
+            "verbose_name": "USB Automotive 2-Port 100W Source",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": false,
+                "documents": true,
+                "order": false,
+                "unlisted": false
+            },
+            "class_id": "201",
+            "description": "Two individual 7-in-1 logic gates with simple GUI input and output state control/indication.",
+            "filters": [
+                "segment-iot",
+                "category-standard-logic",
+                "subcategory-logic-gates"
+            ],
+            "opn": "STR-LOGIC-GATES-EVK",
+            "verbose_name": "Multi-function Logic Gate with GUI Control",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": false,
+                "documents": true,
+                "order": false,
+                "unlisted": false
+            },
+            "class_id": "300",
+            "description": "BUBU-mock-fw-flash",
+            "filters": [
+                "segment-iot",
+                "category-standard-logic",
+                "subcategory-logic-gates"
+            ],
+            "opn": "BUBU-MOCK-FW-FLASH",
+            "verbose_name": "BUBU, special version to test FW flashing.",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": true,
+                "documents": true,
+                "order": true,
+                "unlisted": false
+            },
+            "class_id": "2286e1e0-4035-46b9-b197-4d729653c101",
+            "description": "The Strata low voltage DC-DC evaluation boards series  is an evaluation environment for NCV896530 Automotive Dual Output Buck Converter.",
+            "filters": [
+                "segment-automotive",
+                "category-power-management",
+                "subcategory-powerman-dcdc"
+            ],
+            "opn": "STR-PWRNCV896530-R0-GEVK",
+            "verbose_name": "NCV896530  Dual Output Buck Converter",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": true,
+                "documents": true,
+                "order": true,
+                "unlisted": false
+            },
+            "class_id": "3ea08e05-0bcd-4a4a-86ec-79a1ca9750cd",
+            "description": "The Strata low voltage DC-DC evaluation boards series  is an evaluation environment for NCV91300  Automotive PWM Buck Converter.",
+            "filters": [
+                "segment-automotive",
+                "category-power-management",
+                "subcategory-powerman-dcdc"
+            ],
+            "opn": "STR-PWRNCV91300-R0-GEVK",
+            "verbose_name": "NCV91300 Automotive PWM Buck Converter",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": true,
+                "documents": true,
+                "order": true,
+                "unlisted": false
+            },
+            "class_id": "abd65a0b-3229-44a4-a97c-38ea3c24f990",
+            "description": "The Strata low voltage DC-DC evaluation boards series  is an evaluation environment for NCV890430 Automotive Buck Regulator.",
+            "filters": [
+                "segment-automotive",
+                "category-power-management",
+                "subcategory-powerman-dcdc"
+            ],
+            "opn": "STR-PWRNCV890430-R0-GEVK",
+            "verbose_name": "NCV890430 Automotive Step-Down Synch. Regulator",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": true,
+                "documents": true,
+                "order": true,
+                "unlisted": false
+            },
+            "class_id": "3ef8bbc6-92ff-4c98-b9ae-ca7e7c47d180",
+            "description": "The Strata low voltage DC-DC evaluation boards series is an evaluation environment for NCV6357 Automotive AOT Buck Converter.",
+            "filters": [
+                "segment-automotive",
+                "category-power-management",
+                "subcategory-powerman-dcdc"
+            ],
+            "opn": "STR-PWRNCV6357-R0-GEVK",
+            "verbose_name": "NCV6357 Automotive AOT Buck Converter",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": true,
+                "documents": true,
+                "order": true,
+                "unlisted": false
+            },
+            "class_id": "1ae9e1e7-a268-4302-8c3a-280f0aa095a5",
+            "description": "The Strata low voltage DC-DC evaluation boards series is an evaluation environment for NCV330 Automotive Low Noise and High PSSR Linear Regulator.",
+            "filters": [
+                "segment-automotive",
+                "category-power-management",
+                "subcategory-powerman-dcdc"
+            ],
+            "opn": "STR-PWRNCV330-R0-GEVK",
+            "verbose_name": "NCV330 Automot. Low Noise and High PSSR Linear Reg",
+            "version": "0"
+        },
+        {
+            "available": {
+                "control": true,
+                "documents": true,
+                "order": true,
+                "unlisted": false
+            },
+            "class_id": "b519cdcb-5068-4483-b88e-155813fae915",
+            "description": "The Strata low voltage DC-DC evaluation boards series  is an evaluation environment for NCV8163 Automotive Linear Regulator.",
+            "filters": [
+                "segment-automotive",
+                "category-power-management",
+                "subcategory-powerman-dcdc"
+            ],
+            "opn": "STR-PWRNCV8163-R0-GEVK",
+            "verbose_name": "NCV8163 Automotive Linear Regulator",
+            "version": "0"
+        }
+    ]
 }
