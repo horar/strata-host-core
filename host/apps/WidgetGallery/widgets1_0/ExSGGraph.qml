@@ -25,11 +25,11 @@ Item {
                 yMax: 1
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
-                xGrid: false
+                xGrid: true
                 yGrid: true
                 gridColor: "red"
                 yRightAxisColor: "red"
-
+                legendVisible : true
             }
 
             Column {
@@ -48,6 +48,7 @@ Item {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
                         curve.appendList(dataArray)
+
                     }
                 }
 
@@ -156,6 +157,7 @@ Item {
                 yGrid: true
                 gridColor: "green"
                 yRightVisible: true
+                legendVisible : true
             }
 
             Column {

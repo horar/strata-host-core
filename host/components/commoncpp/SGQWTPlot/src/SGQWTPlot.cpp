@@ -1,6 +1,7 @@
 #include "SGQWTPlot.h"
 #include "logging/LoggingQtCategories.h"
 
+
 SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
 {
     setFlag(QQuickItem::ItemHasContents, true);
@@ -21,7 +22,11 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     qwtGrid_->enableY(yGrid_);
     qwtGrid_->enableXMin(xMinorGrid_);
     qwtGrid_->enableYMin(yMinorGrid_);
+
     setGridColor("lightgrey");
+
+
+
 }
 
 SGQWTPlot::~SGQWTPlot()
@@ -629,6 +634,29 @@ void SGQWTPlot :: setYLeftAxisColor(QColor newColor)
     }
 }
 
+void SGQWTPlot :: setlegendVisible(bool legend)
+{
+    if(legendVisible_ != legend) {
+        legendVisible_ = legend;
+        if(legend) {
+            QwtLegend *customLegend = new QwtLegend();
+            qwtPlot->insertLegend(customLegend,QwtPlot::BottomLegend);
+            qwtPlot->legend()->setStyleSheet("color: black");
+            qwtPlot->legend()->setVisible(legend);
+        }
+        else  qwtPlot->legend()->setVisible(legend);
+        emit legendVisibleChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+bool SGQWTPlot :: legendVisible()
+{
+    return legendVisible_;
+}
+
 void SGQWTPlot::updatePlotSize()
 {
     if (qwtPlot != nullptr) {
@@ -699,6 +727,7 @@ SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
     curve_->setData(new SGQWTPlotCurveData(&curveData_));
     curve_->setPaintAttribute( QwtPlotCurve::FilterPoints , true );
     curve_->setItemAttribute(QwtPlotItem::AutoScale, true);
+
 }
 
 SGQWTPlotCurve::~SGQWTPlotCurve()
@@ -718,8 +747,8 @@ void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
 
         graph_ = graph;
         plot_ = graph_->qwtPlot;
-        curve_->attach(plot_);
 
+        curve_->attach(plot_);
         if (autoUpdate_) {
             update();
         }
@@ -746,7 +775,10 @@ SGQWTPlot* SGQWTPlotCurve::graph()
 void SGQWTPlotCurve::setName(QString name)
 {
     if (name != this->name()){
+        QwtText title = curve_->title().text();
+        title.setColor("Qt::black");
         curve_->setTitle(name);
+
         if (autoUpdate_) {
             update();
         }

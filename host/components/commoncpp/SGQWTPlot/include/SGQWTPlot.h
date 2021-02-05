@@ -4,6 +4,7 @@
 #include <QtQuick>
 #include <QPointF>
 #include <QVector>
+#include <QDebug>
 
 #include <qwt/qwt_plot.h>
 #include <qwt/qwt_plot_curve.h>
@@ -17,6 +18,8 @@
 #include <qwt/qwt_plot_grid.h>
 #include <qwt/qwt_symbol.h>
 #include <qwt/qwt_scale_draw.h>
+#include <qwt/qwt_legend.h>
+#include <qwt/qwt_legend_label.h>
 
 #include <QDebug>
 
@@ -56,6 +59,8 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setYRightVisible NOTIFY yRightVisibleChanged)
     Q_PROPERTY(QColor yRightAxisColor MEMBER yRightAxisColor_ WRITE setYRightAxisColor NOTIFY yRightAxisColorChanged)
     Q_PROPERTY(QColor yLeftAxisColor MEMBER yLeftAxisColor_ WRITE setYLeftAxisColor NOTIFY yLeftAxisColorChanged)
+    Q_PROPERTY(bool legendVisible READ legendVisible WRITE setlegendVisible NOTIFY legendVisibleChanged)
+
 
 public:
     SGQWTPlot(QQuickItem* parent = nullptr);
@@ -124,6 +129,8 @@ public:
     bool yRightVisible();
     void setYRightAxisColor(QColor newColor);
     void setYLeftAxisColor(QColor newColor);
+    void setlegendVisible(bool showLegend);
+    bool legendVisible();
 
 
 protected:
@@ -159,6 +166,7 @@ signals:
     void yRightMaxChanged();
     void yRightAxisColorChanged();
     void yLeftAxisColorChanged();
+    void legendVisibleChanged();
 
 private:
     friend class SGQWTPlotCurve;
@@ -178,6 +186,7 @@ private:
     bool yRightVisible_ = false;
     QColor yRightAxisColor_;
     QColor yLeftAxisColor_;
+    bool legendVisible_ = false;
 
 
 private slots:
