@@ -516,6 +516,7 @@ QString PrtModel::resolveConfigFilePath()
     return applicationDir.filePath("prt-config.ini");
 }
 
-QString PrtModel::serverType() const {
+QString PrtModel::serverType() const
+{
     return serverType_;
 }

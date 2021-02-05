@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.prt 1.0 as PrtCommon
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
     id: prtMain
@@ -83,14 +84,15 @@ Item {
             top: parent.top
             margins: 10
         }
-        height: testServerWarning.height + 10
-        width: testServerWarning.width + testServerWarningIcon.width + 15
+        height: testServerWarningRow.height + 10
+        width: testServerWarningRow.width + 16
 
-        color: "red"
+        color: TangoTheme.palette.error
         radius: 5
-        visible: prtModel.serverType != "production"
+        visible: prtModel.serverType !== "production"
 
         Row {
+            id: testServerWarningRow
             anchors.centerIn: parent
 
             spacing: 5
@@ -99,14 +101,14 @@ Item {
                 height: testServerWarning.height
                 width: height
 
-                iconColor: "white"
+                iconColor: TangoTheme.palette.white
                 source: "qrc:/sgimages/exclamation-circle.svg"
             }
 
             SGWidgets.SGText {
                 id: testServerWarning
                 
-                color: "white"
+                color: TangoTheme.palette.white
                 font.bold: true
                 text: "Non-production server in use."
             }            
