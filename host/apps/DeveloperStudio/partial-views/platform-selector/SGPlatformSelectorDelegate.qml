@@ -3,6 +3,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.12
 import QtQuick.Shapes 1.0
+
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
 
@@ -21,20 +22,25 @@ Item {
 
     onConnectedChanged: {
         if (connected){
-            Notifications.createNotification(`Platform ${model.class_id} is connected`,
+            Notifications.createNotification(`Platform ${model.opn} is connected`,
                                              Notifications.Info,
                                              "all",
                                              {
                                                  "timeout": 4000
                                              })
         } else {
-            Notifications.createNotification(`Platform ${model.class_id} is disconnected`,
+            Notifications.createNotification(`Platform ${model.opn} is disconnected`,
                                              Notifications.Info,
                                              "all",
                                              {
                                                  "timeout": 4000
                                              })
         }
+    property real filterAndControlWidth: segmentCategoryList.width + delegateRow.spacing + platformControlsColumn.width + delegateRow.anchors.margins + (listview.ScrollBar.vertical.width + 2)
+
+    onFilterAndControlWidthChanged: {
+        // align "Filter by Segment or Category" box to edge of segment/category column in delegates
+       Qt.callLater(platformSelectorListView.setSegmentCategoryWidth, filterAndControlWidth)
     }
 
     Rectangle {
@@ -45,8 +51,8 @@ Item {
         visible: model.connected
     }
 
-    MouseArea{
-        anchors{
+    MouseArea {
+        anchors {
             fill: parent
         }
         onClicked: {
@@ -54,46 +60,38 @@ Item {
         }
     }
 
-    DropShadow {
-        id: dropShadow
+    RowLayout {
+        id: delegateRow
         anchors {
-            centerIn: imageContainer
+            fill: parent
+            margins: 20
         }
-        width: imageContainer.width
-        height: imageContainer.height
-        horizontalOffset: 1
-        verticalOffset: 3
-        radius: 15.0
-        samples: radius*2
-        color: "#cc000000"
-        source: imageContainer
-//        z: -1
-        cached: true
-    }
+        spacing: 20
 
-    PlatformImage {
-        id: imageContainer
-        anchors {
-            verticalCenter: root.verticalCenter
-            left: root.left
-            leftMargin: 25
-        }
-    }
+        Item {
+            implicitHeight: imageContainer.implicitHeight
+            implicitWidth: imageContainer.implicitWidth
 
-    ColumnLayout {
-        id: infoColumn
-        anchors {
-            left: imageContainer.right
-            leftMargin: 20
-            verticalCenter: parent.verticalCenter
+            Rectangle {
+                color: model.connected ? Theme.palette.darkGray : Theme.palette.gray
+                anchors {
+                    centerIn: imageContainer
+                }
+                height: imageContainer.height + 2
+                width: imageContainer.width + 2
+            }
+
+            PlatformImage {
+                id: imageContainer
+            }
         }
-        height: parent.height - 40 // 20 each top/bottom margin
-        width: 350
 
         ColumnLayout {
+            id: infoColumn
             spacing: 12
             Layout.maximumHeight: parent.height
             Layout.fillHeight: false
+            Layout.preferredWidth: 300
 
             Text {
                 id: name
@@ -204,249 +202,176 @@ Item {
                 elide: Text.ElideRight
             }
         }
-    }
 
-    Item {
-        id: iconContainer
-        anchors {
-            verticalCenter: root.verticalCenter
-            left: infoColumn.right
-            leftMargin: 30
-            right: buttonColumn.left
-            rightMargin: 30
-        }
-        height: root.height
-        width: 240
+        ColumnLayout {
+            id: segmentCategoryList
+            Layout.preferredWidth: 150
+            Layout.minimumWidth: 100
 
-        PathView  {
-            id: iconPathview
-            anchors {
-                fill: iconContainer
-            }
-            clip: true
-            model: SGSortFilterProxyModel {
-                id: filterProxyListModel
+            SGSortFilterProxyModel {
+                id: segmentsCategories
                 sourceModel: filters
+                sortEnabled: true
+                sortRole: "type"
+            }
+
+            SGSortFilterProxyModel {
+                id: firstFour
+                sourceModel: segmentsCategories
                 invokeCustomFilter: true
 
-                function filterAcceptsRow(row) {
-                    var item = sourceModel.get(row)
-                    return is_segment_filter(item)
-                }
-
-                function is_segment_filter (item){
-                    return item.filterName.startsWith("segment-")
+                function filterAcceptsRow (index) {
+                    return index < 2
                 }
             }
-            pathItemCount: 3
-            interactive: false
-            preferredHighlightBegin: .5
-            preferredHighlightEnd: .5
-            property real delegateHeight: 75
-            property real delegateWidth: 75
-            delegate: Item {
-                id: delegate
-                z: PathView.delZ ? PathView.delZ : 0 // if/then due to random bug that assigns undefined occassionally
-                height: icon.height + iconText.height + iconText.anchors.topMargin
-                width: icon.width
-                scale: PathView.delScale ? PathView.delScale : 0.5 // if/then due to random bug that assigns undefined occassionally
 
-                Rectangle {
-                    height: icon.height
-                    width: icon.width
+            SGSortFilterProxyModel {
+                id: remaining
+                sourceModel: segmentsCategories
+                invokeCustomFilter: true
+
+                function filterAcceptsRow (index) {
+                    return index >= 2
+                }
+            }
+
+            Repeater {
+                id: segmentCategoryRepeater
+                model: firstFour
+                delegate: iconDelegate
+            }
+
+            SGText {
+                id: remainingText
+                visible: remaining.count > 0
+                text: "And " + remaining.count + " more..."
+                Layout.leftMargin: 30 // width of icon + rowLayout's spacing in iconDelegate
+                font.underline: moreFiltersMouse.containsMouse
+
+                MouseArea {
+                    id: moreFiltersMouse
                     anchors {
-                        centerIn: icon
+                        fill: parent
                     }
-                    radius: height/2
-                    color: Theme.palette.green
-                    opacity: delegate.PathView.delOpacity ? delegate.PathView.delOpacity : 0.7 // if/then due to random bug that assigns undefined occassionally
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked:  {
+                        filterOverFlow.open()
+                    }
                 }
 
-                Image {
-                    id: icon
-                    height: iconPathview.delegateHeight
-                    width: iconPathview.delegateWidth
-                    mipmap: true
-                    source: model.iconSource ? model.iconSource : ""
-                }
+                Popup {
+                    id: filterOverFlow
+                    padding: 0
+                    x: -remainingText.Layout.leftMargin
+                    width: segmentCategoryList.width
+                    background: Rectangle {
+                        color: isCurrentItem ? "#eee" : "white"
+                    }
 
-                SGText {
-                    id: iconText
-                    text: model.text ? model.text : ""
-                    anchors {
-                        top: icon.bottom
-                        topMargin: 5
-                        horizontalCenter: delegate.horizontalCenter
+                    ColumnLayout {
+                        width: parent.width
+
+                        Repeater {
+                            id: overflowRepeater
+                            model: remaining
+                            delegate: iconDelegate
+                        }
                     }
-                    horizontalAlignment: Text.AlignHCenter
-                    font {
-                        pixelSize: 12
-                        family: Fonts.franklinGothicBook
-                    }
-                    color: "#333"
                 }
             }
 
-            path: model.count > 1 ? pathIcon : pathIconSingle
+            Component {
+                id: iconDelegate
 
-            Path {
-                id: pathIcon
-
-                startX: iconPathview.width/2;
-                startY: 45
-
-                PathAttribute { name: "delScale"; value: 0.6 }
-                PathAttribute { name: "delOpacity"; value: 0.75 }
-                PathAttribute { name: "delZ"; value: 0 }
-                PathQuad { x: iconPathview.width/2; y: 95; controlX: -20; controlY: 70 }
-                PathAttribute { name: "delScale"; value: 1.0 }
-                PathAttribute { name: "delOpacity"; value: 1.0 }
-                PathAttribute { name: "delZ"; value: 1 }
-                PathQuad { x: pathIcon.startX; y: pathIcon.startY; controlX: iconPathview.width+20; controlY: 70 }
-            }
-
-            Path {
-                id: pathIconSingle
-
-                startX: iconPathview.width/2;
-                startY: 80
-
-                PathAttribute { name: "delScale"; value: 1.1 }
-                PathAttribute { name: "delOpacity"; value: 1.0 }
-                PathAttribute { name: "delZ"; value: 1 }
-                PathLine { x: pathIconSingle.startX; y: pathIconSingle.startY+1 }
-            }
-
-            highlightMoveDuration: 200
-
-            Timer {
-                running: root.isCurrentItem
-                interval: 1500
-                onTriggered: {
-                    iconPathview.decrementCurrentIndex()
-                }
-                repeat: true
+                PlatformFilterButton { }
             }
         }
-    }
 
-    Column {
-        id: buttonColumn
-        spacing: 20
-        anchors {
-            verticalCenter: root.verticalCenter
-            right: root.right
-            rightMargin: 25
-        }
-        width: 170
+        ColumnLayout {
+            id: platformControlsColumn
+            Layout.fillWidth: false
+            Layout.preferredWidth: 170
 
-        Text {
-            id: comingSoonWarn
-            text: "This platform is coming soon!"
-            visible: !model.available.documents && !model.available.order && !model.error && (!model.connected || !model.available.control)//&& !model.available.control
-            width: buttonColumn.width
-            font.pixelSize: 16
-            font.family: Fonts.franklinGothicBold
-            opacity: enabled ? 1.0 : 0.3
-            color: "#333"
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.Wrap
-        }
+            property bool comingSoon: !model.available.documents && !model.available.order && !model.error && (!model.connected || !model.available.control)//&& !model.available.control
 
-        Button {
-            id: select
-            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
-            anchors {
-                horizontalCenter: buttonColumn.horizontalCenter
-            }
-            visible: model.connected && model.available.control ? model.available.control : model.available.documents
-
-            contentItem: Text {
-                text: select.text
-                font.pixelSize: 12
-                font.family: Fonts.franklinGothicBook
-                opacity: enabled ? 1.0 : 0.3
-                color: "white"
+            Text {
+                id: comingSoonWarn
+                text: "This platform is coming soon!"
+                visible: platformControlsColumn.comingSoon
+                width: platformControlsColumn.width
+                Layout.fillWidth: true
+                font.pixelSize: 15
+                font.family: Fonts.franklinGothicBold
+                color: "#333"
                 horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
+                wrapMode: Text.Wrap
             }
 
-            background: Rectangle {
-                implicitWidth: 100
-                implicitHeight: 40
-                opacity: enabled ? 1 : 0.3
-                color: select.down ? "#666" : "#999"
-            }
+            ColumnLayout {
+                id: buttonColumn
+                Layout.fillHeight: false
+                visible: platformControlsColumn.comingSoon === false
 
-            onClicked: {
-                let data = {
-                    "device_id": model.device_id,
-                    "class_id": model.class_id,
-                    "name": model.verbose_name,
-                    "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
-                    "available": model.available,
-                    "firmware_version": model.firmware_version
+                function openView(view) {
+                    let data = {
+                        "device_id": model.device_id,
+                        "class_id": model.class_id,
+                        "name": model.verbose_name,
+                        "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
+                        "available": model.available,
+                        "firmware_version": model.firmware_version,
+                        "view": view,
+                        "connected": model.connected
+                    }
+
+                    PlatformSelection.openPlatformView(data)
                 }
 
-                PlatformSelection.openPlatformView(data)
-            }
+                PlatformControlButton {
+                    id: openControls
+                    text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
+                    buttonEnabled: model.connected
+                    toolTipText: buttonEnabled ? "" : "Hardware not connected"
 
-            MouseArea {
-                id: buttonCursor
-                anchors.fill: parent
-                onPressed:  mouse.accepted = false
-                cursorShape: Qt.PointingHandCursor
-            }
-        }
+                    onClicked: {
+                        buttonColumn.openView("control")
+                    }
+                }
 
-        Button {
-            id: order
-            text: "Contact Sales"
-            anchors {
-                horizontalCenter: buttonColumn.horizontalCenter
-            }
-            visible: model.available.order
+                PlatformControlButton {
+                    id: select
+                    text: model.view_open ? "Return to Documentation" : "Browse Documentation"
+                    buttonEnabled: model.available.documents
+                    toolTipText: buttonEnabled ? "" : "No documentation found"
 
-            contentItem: Text {
-                text: order.text
-                font.pixelSize: 12
-                font.family: Fonts.franklinGothicBook
-                opacity: enabled ? 1.0 : 0.3
-                color: "white"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
+                    onClicked: {
+                        buttonColumn.openView("collateral")
+                    }
+                }
 
-            background: Rectangle {
-                implicitWidth: 100
-                implicitHeight: 40
-                opacity: enabled ? 1 : 0.3
-                color: order.down ? "#666" : "#999"
-            }
+                PlatformControlButton {
+                    id: order
+                    text: "Contact Sales"
+                    buttonEnabled: model.available.order
 
-            onClicked: {
-                orderPopup.open()
-            }
-
-            MouseArea {
-                id: buttonCursor1
-                anchors.fill: parent
-                onPressed:  mouse.accepted = false
-                cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        orderPopup.open()
+                    }
+                }
             }
         }
     }
 
     Rectangle {
         id: bottomDivider
-        color: "#ddd"
+        color: Theme.palette.lightGray
         height: 1
         anchors {
             bottom: root.bottom
             horizontalCenter: root.horizontalCenter
         }
-        width: parent.width - 20
+        width: parent.width
     }
 }
