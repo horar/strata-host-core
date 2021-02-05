@@ -17,6 +17,8 @@ void Connector::addSubscriber(const std::string&)
 
 void Connector::setDealerID(const std::string& id)
 {
+    // As a historical note, ZeroMQ v2.2 and earlier use UUIDs as identities.
+    // ZeroMQ v3.0 and later generate a 5 byte identity by default (0 + a random 32bit integer).
     dealer_id_ = id;
 }
 
@@ -66,4 +68,4 @@ std::unique_ptr<Connector> Connector::getConnector(const CONNECTOR_TYPE type)
     return nullptr;
 }
 
-}  // namespace strata::connector
+} // namespace strata::connector

@@ -25,7 +25,7 @@ bool ZmqPublisherConnector::open(const std::string& ip_address)
         setConnectionState(true);
         qCInfo(logCategoryZmqPublisherConnector).nospace().noquote()
                 << "Connected to the server socket '" << QString::fromStdString(ip_address)
-                << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+                << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return true;
     }
 
@@ -51,11 +51,13 @@ bool ZmqPublisherConnector::send(const std::string& message)
     for (const std::string& dealerID : mSubscribers_) {
         if ((false == socketSendMore(dealerID)) || (false == socketSend(message))) {
             qCWarning(logCategoryZmqPublisherConnector).nospace().noquote()
-                    << "Failed to send message: '" << QString::fromStdString(message) << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+                    << "Failed to send message: '" << QString::fromStdString(message)
+                    << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
             return false;
         }
         qCDebug(logCategoryZmqPublisherConnector).nospace().noquote()
-                << "Tx'ed message: '" << QString::fromStdString(message) << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+                << "Tx'ed message: '" << QString::fromStdString(message)
+                << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
     }
 
     return true;
@@ -64,7 +66,8 @@ bool ZmqPublisherConnector::send(const std::string& message)
 void ZmqPublisherConnector::addSubscriber(const std::string& dealerID)
 {
     mSubscribers_.insert(dealerID);
-    qCDebug(logCategoryZmqPublisherConnector).noquote() << "Added subscriber:" << QString::fromStdString(getDealerID());
+    qCDebug(logCategoryZmqPublisherConnector).nospace().noquote()
+            << "Added subscriber: 0x" << QByteArray::fromStdString(getDealerID()).toHex();
 }
 
-}
+} // namespace strata::connector

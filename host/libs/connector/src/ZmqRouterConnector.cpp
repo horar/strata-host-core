@@ -24,12 +24,13 @@ bool ZmqRouterConnector::open(const std::string& ip_address)
         setConnectionState(true);
         qCInfo(logCategoryZmqRouterConnector).nospace().noquote()
                 << "Connected to the server socket '" << QString::fromStdString(ip_address)
-                << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+                << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return true;
     }
 
     qCCritical(logCategoryZmqRouterConnector).nospace()
-            << "Unable to configure and/or connect to server socket '" << QString::fromStdString(ip_address) << "'";
+            << "Unable to configure and/or connect to server socket '"
+            << QString::fromStdString(ip_address) << "'";
     close();
     return false;
 }
@@ -52,7 +53,8 @@ bool ZmqRouterConnector::read(std::string& message)
         if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);
             qCDebug(logCategoryZmqRouterConnector).nospace().noquote()
-                    << "Rx'ed message: '" << QString::fromStdString(message) << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+                    << "Rx'ed message: '" << QString::fromStdString(message)
+                    << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
             return true;
         } else {
             qCWarning(logCategoryZmqRouterConnector) << "Failed to read messages";
@@ -73,7 +75,8 @@ bool ZmqRouterConnector::blockingRead(std::string& message)
     if (socketRecv(identity) && socketRecv(message)) {
         setDealerID(identity);
         qCDebug(logCategoryZmqRouterConnector).nospace().noquote()
-                << "Rx'ed blocking message: '" << QString::fromStdString(message) << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+                << "Rx'ed blocking message: '" << QString::fromStdString(message)
+                << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return true;
     } else {
         if(false == socketValid()) {
@@ -95,14 +98,16 @@ bool ZmqRouterConnector::send(const std::string& message)
 
     if ((false == socketSendMore(getDealerID())) || (false == socketSend(message))) {
         qCWarning(logCategoryZmqRouterConnector).nospace().noquote()
-                << "Failed to send message: '" << QString::fromStdString(message) << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+                << "Failed to send message: '" << QString::fromStdString(message)
+                << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return false;
     }
 
     qCDebug(logCategoryZmqRouterConnector).nospace().noquote()
-            << "Tx'ed message: '" << QString::fromStdString(message) << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+            << "Tx'ed message: '" << QString::fromStdString(message)
+            << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
 
     return true;
 }
 
-}  // namespace strata::connector
+} // namespace strata::connector

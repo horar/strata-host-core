@@ -26,12 +26,13 @@ bool ZmqSubscriberConnector::open(const std::string& ip_address)
         setConnectionState(true);
         qCInfo(logCategoryZmqSubscriberConnector).nospace().noquote()
                 << "Connected to the server socket '" << QString::fromStdString(ip_address)
-                << "' with filter '" << QString::fromStdString(getDealerID()) << "'";
+                << "' with filter '0x" << QByteArray::fromStdString(getDealerID()).toHex() << "'";
         return true;
     }
 
     qCCritical(logCategoryZmqSubscriberConnector).nospace().noquote()
-            << "Unable to configure and/or connect to server socket '" << QString::fromStdString(ip_address) << "'";
+            << "Unable to configure and/or connect to server socket '"
+            << QString::fromStdString(ip_address) << "'";
     close();
     return false;
 }
@@ -60,7 +61,8 @@ bool ZmqSubscriberConnector::read(std::string& message)
         if (socketRecv(identity) && socketRecv(message)) {
             setDealerID(identity);
             qCDebug(logCategoryZmqSubscriberConnector).nospace().noquote()
-                    << "Rx'ed message: '" << QString::fromStdString(message) << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+                    << "Rx'ed message: '" << QString::fromStdString(message)
+                    << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
             return true;
         } else {
             qCWarning(logCategoryZmqSubscriberConnector) << "Failed to read messages";
@@ -81,7 +83,8 @@ bool ZmqSubscriberConnector::blockingRead(std::string& message)
     if (socketRecv(identity) && socketRecv(message)) {
         setDealerID(identity);
         qCDebug(logCategoryZmqSubscriberConnector).nospace().noquote()
-                << "Rx'ed blocking message: '" << QString::fromStdString(message) << "' (ID: " << QString::fromStdString(getDealerID()) << ")";
+                << "Rx'ed blocking message: '" << QString::fromStdString(message)
+                << "' (ID: 0x" << QByteArray::fromStdString(getDealerID()).toHex() << ")";
         return true;
     } else {
         if(false == socketValid()) {

@@ -124,7 +124,7 @@ protected:
     void setConnectionState(bool connection_state);
 
 private:
-    std::string dealer_id_;
+    std::string dealer_id_; // byte array
     std::string server_;
 
     bool connection_state_ = false;
