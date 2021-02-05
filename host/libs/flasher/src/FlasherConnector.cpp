@@ -6,20 +6,34 @@
 
 namespace strata {
 
-FlasherConnector::FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent) :
-    FlasherConnector(device, firmwarePath, QString(), parent) { }
+FlasherConnector::FlasherConnector(const device::DevicePtr& device,
+                                   const QString& firmwarePath,
+                                   QObject* parent) :
+    FlasherConnector(device, firmwarePath, QString(), QString(), parent)
+{ }
 
 FlasherConnector::FlasherConnector(const device::DevicePtr& device,
                                    const QString& firmwarePath,
                                    const QString& firmwareMD5,
                                    QObject* parent) :
+    FlasherConnector(device, firmwarePath, firmwareMD5, QString(), parent)
+{ }
+
+FlasherConnector::FlasherConnector(const device::DevicePtr& device,
+                                   const QString& firmwarePath,
+                                   const QString& firmwareMD5,
+                                   const QString& fwClassId,
+                                   QObject* parent) :
     QObject(parent),
     device_(device),
     filePath_(firmwarePath),
     newFirmwareMD5_(firmwareMD5),
+    newFwClassId_(fwClassId),
     tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))),
     action_(Action::None)
-{ }
+{
+    oldFwClassId_ = (newFwClassId_.isNull()) ? QString() : device_->firmwareClassId();
+}
 
 FlasherConnector::~FlasherConnector() { }
 
@@ -77,27 +91,22 @@ void FlasherConnector::stop() {
     }
 }
 
-void FlasherConnector::setFirmwarePath(const QString& firmwarePath) {
-    filePath_ = firmwarePath;
-}
-
 void FlasherConnector::flashFirmware(bool flashOld) {
-    const QString& firmwarePath = (flashOld) ? tmpBackupFile_.fileName() : filePath_;
-    qCDebug(logCategoryFlasherConnector).noquote().nospace() << "Starting to flash firmware from file '" << firmwarePath <<"'.";
-    (flashOld)
-        ? flasher_ = std::make_unique<Flasher>(device_, firmwarePath)
-        : flasher_ = std::make_unique<Flasher>(device_, firmwarePath, newFirmwareMD5_);
-
+    QString firmwarePath;
+    if (flashOld) {
+        firmwarePath = tmpBackupFile_.fileName();
+        flasher_ = std::make_unique<Flasher>(device_, firmwarePath, QString(), oldFwClassId_);
+        connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress);
+    } else {
+        firmwarePath = filePath_;
+        flasher_ = std::make_unique<Flasher>(device_, firmwarePath, newFirmwareMD5_, newFwClassId_);
+        connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::flashProgress);
+    }
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
-    (flashOld)
-        ? connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress)
-        : connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::flashProgress);
-    connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
+    connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
-    if (operation_ != Operation::Preparation) {
-        startOperation();
-    }
+    qCDebug(logCategoryFlasherConnector).noquote().nospace() << "Starting to flash firmware from file '" << firmwarePath <<"'.";
 
     flasher_->flashFirmware();
 }
@@ -110,35 +119,10 @@ void FlasherConnector::backupFirmware(bool backupOld) {
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::backupFirmwareProgress, this, &FlasherConnector::backupProgress);
-    connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
+    connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
-    if (operation_ != Operation::Preparation) {
-        startOperation();
-    }
-
     flasher_->backupFirmware(startApp);
-}
-
-void FlasherConnector::startOperation() {
-    switch (action_) {
-    case Action::Flash :
-    case Action::FlashNew :
-        operation_ = Operation::Flash;
-        break;
-    case Action::Backup :
-        operation_ = Operation::Backup;
-        break;
-    case Action::BackupOld :
-        operation_ = Operation::BackupBeforeFlash;
-        break;
-    case Action::FlashOld :
-        operation_ = Operation::RestoreFromBackup;
-        break;
-    case Action::None :
-        return;
-    }
-    emit operationStateChanged(operation_, State::Started);
 }
 
 void FlasherConnector::processStartupError(const QString& errorString) {
@@ -152,6 +136,7 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
 
     QString errorMessage;
     State result = State::Failed;
+
     switch (flasherResult) {
     case Flasher::Result::Ok :
         result = State::Finished;
@@ -162,7 +147,6 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         } else {
             result = State::Failed;
         }
-
         errorMessage = QStringLiteral("The board has no valid firmware.");
         break;
     case Flasher::Result::Error :
@@ -184,7 +168,9 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         break;
     }
 
-    emit operationStateChanged(operation_, result, errorMessage);
+    if (result != State::Finished) {
+        emit operationStateChanged(operation_, result, errorMessage);
+    }
 
     switch (action_) {
     case Action::None :
@@ -234,13 +220,41 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         emit finished((flasherResult == Flasher::Result::Ok) ? Result::Unsuccess : Result::Failure);
         break;
     }
+
     return;
 }
 
-void FlasherConnector::handleSwitchToBootloader(bool done) {
-    if (done && (operation_ == Operation::Preparation)) {
+void FlasherConnector::handleFlasherState(Flasher::State flasherState, bool done) {
+    Operation newOperation;
+
+    switch (flasherState) {
+    case Flasher::State::SwitchToBootloader :
+        if ((operation_ != Operation::Preparation) || (done == false)) {
+            return;
+        }
+        break;
+    case Flasher::State::ClearFwClassId :
+        newOperation = Operation::ClearFwClassId;
+        break;
+    case Flasher::State::SetFwClassId :
+        newOperation = Operation::SetFwClassId;
+        break;
+    case Flasher::State::FlashFirmware :
+        newOperation = (action_ == Action::FlashOld) ? Operation::RestoreFromBackup : Operation::Flash;
+        break;
+    case Flasher::State::BackupFirmware :
+        newOperation = (action_ == Action::BackupOld) ? Operation::BackupBeforeFlash : Operation::Backup;
+        break;
+    default :
+        // we do not care about other flasher states (StartApplication, IdentifyBoard, FlashBootloader)
+        return;
+    }
+
+    if (done) {
         emit operationStateChanged(operation_, State::Finished);
-        startOperation();
+    } else {
+        operation_ = newOperation;
+        emit operationStateChanged(operation_, State::Started);
     }
 }
 
