@@ -6,9 +6,13 @@
 #include <QDebug>
 #include <QCoreApplication>
 
-DatabaseManager::DatabaseManager(const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {
-    userAccessDb_ = getUserAccessMap();
+#include <thread>
+
+DatabaseManager::DatabaseManager(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {
+    path_ = path;
     endpointURL_ = endpointURL;
+
+    userAccessDb_ = getUserAccessMap();
 
     // Object valid if database open successful
     if (userAccessDb_ == nullptr) {
@@ -40,7 +44,18 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
         return nullptr;
     }
 
-    authenticate(name);
+    // Wait until 'user_access_map' replication is finished
+    unsigned int retries = 0;
+    const unsigned int REPLICATOR_RETRY_MAX = 10;
+    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
+    while (authenticate(name) == false) {
+        ++retries;
+        std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
+        if (retries >= REPLICATOR_RETRY_MAX) {
+            qCCritical(logCategoryCouchbaseDatabase) << "Error with user access map replicator. Verify endpoint URL";
+            break;
+        }
+    }
 
     QStringList channelAccess;
     const QStringList channelsGranted = getChannelsAccessGranted();
@@ -61,7 +76,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
     dbAccess_->name_ = name;
     dbAccess_->channelAccess_ = channelAccess;
 
-    auto userDir = manageUserDir(name, dbAccess_->channelAccess_);
+    auto userDir = manageUserDir(path_, name, dbAccess_->channelAccess_);
     if (userDir.isEmpty()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to create database directory.";
         return nullptr;
@@ -99,6 +114,11 @@ bool DatabaseManager::authenticate(const QString &name) {
     auto userAccessMap = userAccessDb["user_access_map"];
     auto userAccessObj = userAccessMap.toObject();
 
+    if (userAccessObj.isEmpty()) {
+        qCWarning(logCategoryCouchbaseDatabase) << "Warning: Received empty user access map";
+        return false;
+    }
+
     bool ok = true;
     foreach (const QString& key, userAccessObj.keys()) {
         auto value = userAccessObj.value(key);
@@ -126,7 +146,7 @@ DatabaseAccess* DatabaseManager::getUserAccessMap() {
     userAccessDb_->name_ = "user_access_map";
     userAccessDb_->channelAccess_ << "user_access_map";
 
-    auto userDir = manageUserDir(userAccessDb_->name_, userAccessDb_->channelAccess_);
+    auto userDir = manageUserDir(path_, userAccessDb_->name_, userAccessDb_->channelAccess_);
     if (userDir.isEmpty()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to create database directory.";
         return nullptr;
@@ -142,25 +162,31 @@ DatabaseAccess* DatabaseManager::getUserAccessMap() {
     return userAccessDb_;
 }
 
-QString DatabaseManager::manageUserDir(const QString &name, const QStringList &channelAccess) {
-    QDir applicationDir(QCoreApplication::applicationDirPath());
-    #ifdef Q_OS_MACOS
-        applicationDir.cdUp();
-    #endif
-    const QString dbDir = applicationDir.filePath(dbDirName_);
-    QDir().mkdir(dbDir);
+QString DatabaseManager::manageUserDir(const QString &path, const QString &name, const QStringList &channelAccess) {
+    QDir databaseDir;
+    if (path == "") {
+        databaseDir.setPath(QCoreApplication::applicationDirPath());
+        #ifdef Q_OS_MACOS
+            databaseDir.cdUp();
+        #endif
+    } else {
+        databaseDir.setPath(path);
+    }
+
+    const QString databaseDirStr = databaseDir.filePath(dbDirName_);
+    QDir().mkdir(databaseDirStr);
 
     QString userDir;
-    if (applicationDir.cd(dbDirName_)) {
-        userDir = applicationDir.filePath(name);
+    if (databaseDir.cd(dbDirName_)) {
+        userDir = databaseDir.filePath(name);
         QDir().mkdir(userDir);
         userAccessDb_->user_directory_ = userDir;
     } else {
         return QString();
     }
 
-    applicationDir.cd(userDir);
-    auto subDirectories = applicationDir.entryList();
+    databaseDir.cd(userDir);
+    auto subDirectories = databaseDir.entryList();
     for (auto& subDir : subDirectories) {
         if (subDir.startsWith(".")) {
             continue;

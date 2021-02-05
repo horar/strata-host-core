@@ -8,7 +8,7 @@
 CouchChat::CouchChat(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
     auto documentListenerCallback = std::bind(&CouchChat::documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    databaseManager_ = std::make_unique<DatabaseManager>(endpointURL_, nullptr, documentListenerCallback);
+    databaseManager_ = std::make_unique<DatabaseManager>("", endpointURL_, nullptr, documentListenerCallback);
 }
 
 void CouchChat::login(const QString &loginUsername, const QString &desiredChatroom) {
