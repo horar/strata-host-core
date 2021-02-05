@@ -5,8 +5,6 @@
 
 #include <DownloadManager.h>
 
-#include <Device/Operations/SetAssistedPlatformId.h>
-
 #include "logging/LoggingQtCategories.h"
 
 using strata::DownloadManager;
@@ -18,20 +16,26 @@ FirmwareUpdater::FirmwareUpdater(
         const strata::device::DevicePtr& devPtr,
         strata::DownloadManager *downloadManager,
         const QUrl& url,
+        const QString& md5)
+    : FirmwareUpdater(devPtr, downloadManager, url, md5, QString())
+{ }
+
+FirmwareUpdater::FirmwareUpdater(
+        const strata::device::DevicePtr& devPtr,
+        strata::DownloadManager *downloadManager,
+        const QUrl& url,
         const QString& md5,
-        bool programController)
+        const QString& fwClassId)
     : running_(false),
-      programController_(programController),
       device_(devPtr),
       deviceId_(devPtr->deviceId()),
       downloadManager_(downloadManager),
       firmwareUrl_(url),
       firmwareMD5_(md5),
       firmwareFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("hcs_new_firmware"))),
-      flasherFinished_(false)
+      fwClassId_(fwClassId)
 {
     connect(this, &FirmwareUpdater::flashFirmware, this, &FirmwareUpdater::handleFlashFirmware, Qt::QueuedConnection);
-    connect(this, &FirmwareUpdater::setFirmwareClassId, this, &FirmwareUpdater::handleSetFirmwareClassId, Qt::QueuedConnection);
 }
 
 FirmwareUpdater::~FirmwareUpdater()
@@ -40,11 +44,6 @@ FirmwareUpdater::~FirmwareUpdater()
         flasherConnector_->disconnect();
         flasherConnector_->stop();
         flasherConnector_->deleteLater();
-    }
-
-    if (setAssistPlatfIdOper_.isNull() == false) {
-        setAssistPlatfIdOper_->disconnect();
-        setAssistPlatfIdOper_->deleteLater();
     }
 }
 
@@ -116,12 +115,7 @@ void FirmwareUpdater::handleDownloadFinished(QString downloadId, QString errorSt
         return;
     }
 
-    if (programController_) {
-        // clear firmware Class ID - set it to null UUID v4
-        emit setFirmwareClassId(QStringLiteral("00000000-0000-4000-0000-000000000000"), QPrivateSignal());
-    } else {
-        emit flashFirmware(QPrivateSignal());
-    }
+    emit flashFirmware(QPrivateSignal());
 }
 
 void FirmwareUpdater::handleSingleDownloadProgress(QString downloadId, QString filePath, qint64 bytesReceived, qint64 bytesTotal)
@@ -137,7 +131,14 @@ void FirmwareUpdater::handleFlashFirmware()
 {
     Q_ASSERT(flasherConnector_.isNull());
 
-    flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName(), firmwareMD5_, this);
+    bool backupOldFirmware = true;
+
+    if (fwClassId_.isNull()) {
+        flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName(), firmwareMD5_, this);
+    } else {  // program assisted controller (dongle)
+        flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName(), firmwareMD5_, fwClassId_, this);
+        backupOldFirmware = false;  // there is no need to backup old firmware if dongle is programmed
+    }
 
     connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
     connect(flasherConnector_, &FlasherConnector::flashProgress, this, &FirmwareUpdater::handleFlashProgress);
@@ -145,29 +146,7 @@ void FirmwareUpdater::handleFlashFirmware()
     connect(flasherConnector_, &FlasherConnector::restoreProgress, this, &FirmwareUpdater::handleRestoreProgress);
     connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
 
-    // if we are flashing new firmware to assisted controller (dongle) there is no need to backup old firmware
-    bool backupOldFirmware = (programController_ == false);
     flasherConnector_->flash(backupOldFirmware);
-}
-
-void FirmwareUpdater::handleSetFirmwareClassId(QString fwClassId)
-{
-    Q_ASSERT(setAssistPlatfIdOper_.isNull());
-
-    qCDebug(logCategoryHcsFwUpdater) << device_ << "Going to set '" << fwClassId << "' as firmware class ID.";
-
-    FirmwareUpdateController::UpdateOperation updateOperation = (flasherFinished_)
-        ? FirmwareUpdateController::UpdateOperation::SetFwClassId
-        : FirmwareUpdateController::UpdateOperation::ClearFwClassId;
-
-    setAssistPlatfIdOper_ = new deviceOperation::SetAssistedPlatformId(device_);
-    setAssistPlatfIdOper_->setFwClassId(fwClassId);
-
-    connect(setAssistPlatfIdOper_, &deviceOperation::SetAssistedPlatformId::finished, this, &FirmwareUpdater::handleSetFirmwareClassIdFinished);
-
-    emit updateProgress(deviceId_, updateOperation, FirmwareUpdateController::UpdateStatus::Running);
-
-    setAssistPlatfIdOper_->run();
 }
 
 void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
@@ -175,8 +154,6 @@ void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
     flasherConnector_->deleteLater();
 
     firmwareFile_.remove();
-
-    flasherFinished_ = true;
 
     FirmwareUpdateController::UpdateStatus status = FirmwareUpdateController::UpdateStatus::Failure;
     switch (result) {
@@ -191,43 +168,7 @@ void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
         break;
     }
 
-    if (programController_ && (result == FlasherConnector::Result::Success)) {
-        QString classId = device_->classId();
-        if (classId.isEmpty() == false) {
-            emit setFirmwareClassId(classId, QPrivateSignal());
-        } else {
-            QString errStr("Device has no class ID, cannot set firmware class ID.");
-            qCWarning(logCategoryHcsFwUpdater) << device_ << errStr;
-            emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::SetFwClassId, FirmwareUpdateController::UpdateStatus::Failure, -1, -1, errStr);
-            updateFinished(FirmwareUpdateController::UpdateStatus::Unsuccess);
-        }
-    } else {
-        updateFinished(status);
-    }
-}
-
-void FirmwareUpdater::handleSetFirmwareClassIdFinished(deviceOperation::Result result, int status, QString errorString)
-{
-    Q_UNUSED(status)
-
-    setAssistPlatfIdOper_->deleteLater();
-
-    FirmwareUpdateController::UpdateOperation updateOperation = (flasherFinished_)
-        ? FirmwareUpdateController::UpdateOperation::SetFwClassId
-        : FirmwareUpdateController::UpdateOperation::ClearFwClassId;
-
-    if (result == deviceOperation::Result::Success) {
-        if (flasherFinished_) {
-            updateFinished(FirmwareUpdateController::UpdateStatus::Success);
-        } else {
-            emit flashFirmware(QPrivateSignal());
-        }
-    } else {
-        QString errorMessage = QStringLiteral("Cannot set firmware class ID. ") + errorString;
-        qCWarning(logCategoryHcsFwUpdater) << device_ << errorMessage;
-        emit updateProgress(deviceId_, updateOperation, FirmwareUpdateController::UpdateStatus::Failure, -1, -1, errorMessage);
-        updateFinished(FirmwareUpdateController::UpdateStatus::Unsuccess);
-    }
+    updateFinished(status);
 }
 
 void FirmwareUpdater::handleFlashProgress(int chunk, int total)
@@ -251,18 +192,12 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
 
     switch (state) {
     case FlasherConnector::State::Started :
-        if (operation != FlasherConnector::Operation::Preparation) {
-            // We do not care about start of any operation except 'Preparation',
-            // other operations will be covered by xyProgress() signals.
-            return;
-        }
         updStatus = FirmwareUpdateController::UpdateStatus::Running;
         break;
     case FlasherConnector::State::Finished :
-        return;  // We do not care about end of any operation.
+        // We do not care about end of any operation.
+        return;
     case FlasherConnector::State::Cancelled :
-        updStatus = FirmwareUpdateController::UpdateStatus::Unsuccess;
-        break;
     case FlasherConnector::State::Failed :
     case FlasherConnector::State::NoFirmware :
         updStatus = FirmwareUpdateController::UpdateStatus::Failure;
@@ -270,10 +205,20 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
     }
 
     FirmwareUpdateController::UpdateOperation updOperation;
+    bool withoutProgress = false;
 
     switch (operation) {
     case FlasherConnector::Operation::Preparation :
         updOperation = FirmwareUpdateController::UpdateOperation::Prepare;
+        withoutProgress = true;
+        break;
+    case FlasherConnector::Operation::ClearFwClassId :
+        updOperation = FirmwareUpdateController::UpdateOperation::ClearFwClassId;
+        withoutProgress = true;
+        break;
+    case FlasherConnector::Operation::SetFwClassId :
+        updOperation = FirmwareUpdateController::UpdateOperation::SetFwClassId;
+        withoutProgress = true;
         break;
     case FlasherConnector::Operation::Flash :
         updOperation = FirmwareUpdateController::UpdateOperation::Flash;
@@ -285,10 +230,11 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
     case FlasherConnector::Operation::RestoreFromBackup :
         updOperation = FirmwareUpdateController::UpdateOperation::Restore;
         break;
-    default :
-        // other cases are related to OTA and they are handled in develop-ota branch
-        return;
     }
 
-    emit updateProgress(deviceId_, updOperation, updStatus, -1, -1, errorString);
+    // Operations with progress indication (flash, backup) are covered by handleXyProgress() slots,
+    // so in this case do not emit updateProgress() signal with 'Running' status here.
+    if (withoutProgress || (updStatus != FirmwareUpdateController::UpdateStatus::Running)) {
+        emit updateProgress(deviceId_, updOperation, updStatus, -1, -1, errorString);
+    }
 }

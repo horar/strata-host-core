@@ -160,17 +160,17 @@ float ProgramControllerManager::resolveOverallProgress(ProgramControllerManager:
     case ProgressState::DownloadState:
         overallProgress = downloadStateRange_ * stateProgress;
         break;
-    case ProgressState::ClearDataState:
-        overallProgress = downloadStateRange_ + clearDataStateRange_ * stateProgress;
-        break;
     case ProgressState::PrepareState:
-        overallProgress = downloadStateRange_ + clearDataStateRange_ + prepareStateRange_ * stateProgress;
+        overallProgress = downloadStateRange_ + prepareStateRange_ * stateProgress;
+        break;
+    case ProgressState::ClearDataState:
+        overallProgress = downloadStateRange_ + prepareStateRange_ + clearDataStateRange_ * stateProgress;
         break;
     case ProgressState::ProgramState:
-        overallProgress = downloadStateRange_ + clearDataStateRange_ + prepareStateRange_ + programStateRange_ * stateProgress;
+        overallProgress = downloadStateRange_ + prepareStateRange_ + clearDataStateRange_ + programStateRange_ * stateProgress;
         break;
     case ProgressState::SetDataState:
-        overallProgress = downloadStateRange_ + clearDataStateRange_ + prepareStateRange_ + programStateRange_ + setDataStateRange_ * stateProgress;
+        overallProgress = downloadStateRange_ + prepareStateRange_ + clearDataStateRange_ + programStateRange_ + setDataStateRange_ * stateProgress;
         break;
     case ProgressState::DoneState:
         overallProgress = 1.0;

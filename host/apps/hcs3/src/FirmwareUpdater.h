@@ -28,15 +28,25 @@ class FirmwareUpdater final : public QObject
     Q_DISABLE_COPY(FirmwareUpdater)
 public:
     /**
-     * FirmwareUpdater constructor
+     * FirmwareUpdater constructor for updating firmware in device
      * @param devPtr device
      * @param downloadManager pointer to DownloadManager
      * @param url URL where firmware is located
      * @param md5 MD5 of firmware
-     * @param programController flag if assisted controller (dongle) is being flashed
      */
     FirmwareUpdater(const strata::device::DevicePtr& devPtr, strata::DownloadManager *downloadManager,
-                    const QUrl& url, const QString& md5, bool programController);
+                    const QUrl& url, const QString& md5);
+
+    /**
+     * FirmwareUpdater constructor for programming new firmware to assisted controller (dongle)
+     * @param devPtr device
+     * @param downloadManager pointer to DownloadManager
+     * @param url URL where firmware is located
+     * @param md5 MD5 of firmware
+     * @param fwClassId firmware class id
+     */
+    FirmwareUpdater(const strata::device::DevicePtr& devPtr, strata::DownloadManager *downloadManager,
+                    const QUrl& url, const QString& md5, const QString& fwClassId);
 
     /**
      * FirmwareUpdater destructor
@@ -52,9 +62,8 @@ signals:
     void updateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation, FirmwareUpdateController::UpdateStatus status,
                         qint64 complete = -1, qint64 total = -1, QString errorString = QString());
     void updaterError(int deviceId, QString errorString);
-    // internal signals:
+    // internal signal:
     void flashFirmware(QPrivateSignal);
-    void setFirmwareClassId(QString fwClassId, QPrivateSignal);
 
 private slots:
     // slots for DownloadManager signals:
@@ -69,17 +78,12 @@ private slots:
                                      strata::FlasherConnector::State state, QString errorString);
     // slot for flashFirmware() signal:
     void handleFlashFirmware();
-    // slot for setFirmwareClassId() signal:
-    void handleSetFirmwareClassId(QString fwClassId);
-    // slot for device operation (setAssistedPlatformId) signal:
-    void handleSetFirmwareClassIdFinished(strata::device::operation::Result result, int status, QString errorString);
 
 private:
     void updateFinished(FirmwareUpdateController::UpdateStatus status);
     void downloadFirmware();
 
     bool running_;
-    bool programController_;
 
     const strata::device::DevicePtr device_;
     const int deviceId_;
@@ -91,8 +95,7 @@ private:
     const QString firmwareMD5_;
     QTemporaryFile firmwareFile_;
 
-    QPointer<strata::FlasherConnector> flasherConnector_;
-    bool flasherFinished_;
+    const QString fwClassId_;
 
-    QPointer<strata::device::operation::SetAssistedPlatformId> setAssistPlatfIdOper_;
+    QPointer<strata::FlasherConnector> flasherConnector_;
 };

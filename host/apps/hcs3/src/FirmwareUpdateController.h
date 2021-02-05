@@ -78,28 +78,55 @@ public:
         const bool programController;
     };
 
+    /**
+     * The UpdateFirmwareData struct for updateFirmware() slot.
+     */
+    struct UpdateFirmwareData {
+        QByteArray clientId;
+        int deviceId;
+        QUrl firmwareUrl;
+        QString firmwareMD5;
+        QString jobUuid;
+    };
+
+    /**
+     * The ProgramControllerData struct for programController() slot.
+     */
+    struct ProgramControllerData {
+        QByteArray clientId;
+        int deviceId;
+        QUrl firmwareUrl;
+        QString firmwareMD5;
+        QString firmwareClassId;
+        QString jobUuid;
+    };
+
 signals:
     void progressOfUpdate(int deviceId, QByteArray clientId, UpdateProgress progress);
     void updaterError(int deviceId, QString errorString);
 
 public slots:
     /**
-     * Update Firmware.
-     * @param clientId
-     * @param deviceId
-     * @param firmwareUrl
-     * @param firmwareMD5
-     * @param jobUuid
-     * @param programController
+     * Update firmware.
+     * @param updateData struct containing data for updating firmware
      */
-    void updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
-                        const QString& firmwareMD5, const QString& jobUUid, bool programController);
+    void updateFirmware(UpdateFirmwareData updateData);
+
+    /**
+     * Program controller.
+     * @param programData struct containing data for programing controller
+     */
+    void programController(ProgramControllerData programData);
+
 
 private slots:
     void handleUpdateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation,
                               FirmwareUpdateController::UpdateStatus status, int complete, int total, QString errorString);
 
 private:
+    void runUpdate(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
+                   const QString& firmwareMD5, const QString& firmwareClassId, const QString& jobUuid);
+
     QPointer<BoardController> boardController_;
     QPointer<strata::DownloadManager> downloadManager_;
 
@@ -116,3 +143,5 @@ private:
 Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateOperation)
 Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateStatus)
 Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateProgress)
+Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateFirmwareData)
+Q_DECLARE_METATYPE(FirmwareUpdateController::ProgramControllerData)

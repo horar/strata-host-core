@@ -18,8 +18,8 @@ public:
 
     enum ProgressState {
         DownloadState,
-        ClearDataState,
         PrepareState,
+        ClearDataState,
         ProgramState,
         SetDataState,
         DoneState,
@@ -42,8 +42,8 @@ private:
 
     /*0.99 together*/
     const float downloadStateRange_ = 0.10;
-    const float clearDataStateRange_ = 0.02;
     const float prepareStateRange_ = 0.05;
+    const float clearDataStateRange_ = 0.02;
     const float programStateRange_ = 0.80;
     const float setDataStateRange_ = 0.02;
 
