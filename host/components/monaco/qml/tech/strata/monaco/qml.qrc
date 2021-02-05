@@ -44,5 +44,6 @@
         <file>minified/min-maps/vs/editor/editor.main.nls.zh-tw.js.map</file>
         <file>minified/min-maps/vs/loader.js.map</file>
         <file>minified/monaco.d.ts</file>
+        <file>minified/qtQuick.js</file>
     </qresource>
 </RCC>
