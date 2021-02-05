@@ -6,6 +6,7 @@
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
+.import tech.strata.notifications 1.0 as PlatformNotifications
 
 var isInitialized = false
 var coreInterface
@@ -200,17 +201,33 @@ function parseConnectedPlatforms (connected_platform_list_json) {
                 // properties (class_id, ...) could be changed (e.g. controller (dongle) removed from platform (board))
                 disconnectPlatform(previouslyConnected[previousIndex])
                 addConnectedPlatform(platform)
+                if(UuidMap.uuid_map.hasOwnProperty(platform.class_id)){
+                    notifyConnectedState(true,UuidMap.uuid_map[platform.class_id])
+                } else {
+                    notifyConnectedState(true,"Custom Platform/Unknown Platform")
+                }
             }
             // device previously connected: keep status, remove from previouslyConnected list
             previouslyConnected.splice(previousIndex, 1);
             continue
         } else {
+            if(UuidMap.uuid_map.hasOwnProperty(platform.class_id)){
+                notifyConnectedState(true,UuidMap.uuid_map[platform.class_id])
+            } else {
+                notifyConnectedState(true,"Custom Platform/Unknown Platform")
+            }
             addConnectedPlatform(platform)
         }
     }
 
     // Clean up disconnected platforms remaining in previouslyConnected, restore model state
     for (let disconnected_platform of previouslyConnected) {
+        if(UuidMap.uuid_map.hasOwnProperty(disconnected_platform.class_id)){
+            notifyConnectedState(false,UuidMap.uuid_map[disconnected_platform.class_id])
+        } else {
+            notifyConnectedState(false,"Custom Platform/Unknown Platform")
+        }
+
         disconnectPlatform(disconnected_platform)
     }
 
@@ -597,4 +614,22 @@ function logout() {
 
 function copyObject(object){
     return JSON.parse(JSON.stringify(object))
+}
+
+function notifyConnectedState(connected, platformOPN){
+    if (connected){
+        PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is connected`,
+                                         PlatformNotifications.Notifications.Info,
+                                         "all",
+                                         {
+                                             "timeout": 4000
+                                         })
+    } else {
+        PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is disconnected`,
+                                         PlatformNotifications.Notifications.Info,
+                                         "all",
+                                         {
+                                             "timeout": 4000
+                                         })
+    }
 }

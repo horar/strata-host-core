@@ -19,23 +19,6 @@ Item {
 
     property bool isCurrentItem: false
     property bool connected: model.connected
-
-    onConnectedChanged: {
-        if (connected){
-            Notifications.createNotification(`Platform ${model.opn} is connected`,
-                                             Notifications.Info,
-                                             "all",
-                                             {
-                                                 "timeout": 4000
-                                             })
-        } else {
-            Notifications.createNotification(`Platform ${model.opn} is disconnected`,
-                                             Notifications.Info,
-                                             "all",
-                                             {
-                                                 "timeout": 4000
-                                             })
-        }
     property real filterAndControlWidth: segmentCategoryList.width + delegateRow.spacing + platformControlsColumn.width + delegateRow.anchors.margins + (listview.ScrollBar.vertical.width + 2)
 
     onFilterAndControlWidthChanged: {
@@ -73,7 +56,7 @@ Item {
             implicitWidth: imageContainer.implicitWidth
 
             Rectangle {
-                color: model.connected ? Theme.palette.darkGray : Theme.palette.gray
+                color: connected ? Theme.palette.darkGray : Theme.palette.gray
                 anchors {
                     centerIn: imageContainer
                 }
