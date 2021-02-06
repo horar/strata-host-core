@@ -4,7 +4,7 @@ client::client(QObject *parent) : QObject(parent)
 {
     udpSocket_ = new QUdpSocket(this);
     tcpSever_ = new QTcpServer(this);
-    tcpSever_->listen(QHostAddress::LocalHost, 1100);
+    tcpSever_->listen(QHostAddress::Any, port_);
 
     connect(tcpSever_, &QTcpServer::newConnection, this, &client::gotTcpConnection);
 }
@@ -29,7 +29,7 @@ void client::setConnectionStatus(QString &status)
 
 void client::broadcastDatagram()
 {
-    qDebug() << "Port:" << port_;
+    qDebug() << "broadcasting at port:" << port_;
     QByteArray datageam = "strata Client";
     udpSocket_->writeDatagram(datageam, QHostAddress::Broadcast, port_);
 }
@@ -49,17 +49,17 @@ quint16 client::getPort() const
 void client::gotTcpConnection()
 {
     qDebug() << "TCP connection has been established";
-    QString status = "connected";
-    setConnectionStatus(status);
+    setConnectionStatus(status_[1]);
 
+    // get tcp socket from server
     clientConnection_ = tcpSever_->nextPendingConnection();
     // issue here
- //   connect(clientConnection_, &QAbstractSocket::disconnected,
+//    connect(clientConnection_, &QAbstractSocket::disconnected),
 //            clientConnection_, &QObject::deleteLater);
 }
 
-void client::Disconnect()
+void client::disconnect()
 {
-    // issue here
-   // clientConnection_->disconnectFromHost();
+    clientConnection_->disconnectFromHost();
+    setConnectionStatus(status_[0]);
 }
