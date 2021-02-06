@@ -130,14 +130,6 @@ Window {
         width: 49
         height: 42
         color: "#65c903"
-        active: client.connectionStatus == "Connected" ? true : flase
+        active: client.connectionStatus == "Connected" ? true : false
     }
-
-
 }
-
-/*##^##
-Designer {
-    D{i:10;customId:""}
-}
-##^##*/
