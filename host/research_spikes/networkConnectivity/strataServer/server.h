@@ -2,8 +2,10 @@
 #define SERVER_H
 
 #include <QObject>
-#include <QUdpSocket>
 #include <QTcpSocket>
+#include <QUdpSocket>
+
+constexpr qint16 TCP_PORT(24125);
 
 class Server : public QObject
 {

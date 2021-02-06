@@ -64,7 +64,7 @@ void Server::preccessPendingDatagrams()
     setBuffer(datagram);
 
     if (datagram == "strata Client") {
-        connectToStrataClient(hostAddress, 1100);
+        connectToStrataClient(hostAddress, TCP_PORT);
     }
 }
 

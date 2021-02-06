@@ -4,7 +4,7 @@ client::client(QObject *parent) : QObject(parent)
 {
     udpSocket_ = new QUdpSocket(this);
     tcpSever_ = new QTcpServer(this);
-    tcpSever_->listen(QHostAddress::Any, port_);
+    tcpSever_->listen(QHostAddress::Any, TCP_PORT);
 
     connect(tcpSever_, &QTcpServer::newConnection, this, &client::gotTcpConnection);
 }

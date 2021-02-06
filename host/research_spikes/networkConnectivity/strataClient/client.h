@@ -7,6 +7,8 @@
 #include <QAbstractSocket>
 #include <QTcpSocket>
 
+constexpr qint16 TCP_PORT(24125);
+
 class client : public QObject
 {
     Q_OBJECT
