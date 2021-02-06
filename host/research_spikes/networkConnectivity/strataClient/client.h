@@ -30,7 +30,7 @@ signals:
     void connectionStatusChanged();
 
 private:
-    QString status_[2] = {"disconnected", "connected"};
+    QString status_[2] = {"Disconnected", "Connected"};
     QUdpSocket *udpSocket_ = nullptr;
     QTcpServer *tcpSever_ = nullptr;
     quint16 port_ = 5146;

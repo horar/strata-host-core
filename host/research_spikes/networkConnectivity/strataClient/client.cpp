@@ -53,9 +53,9 @@ void client::gotTcpConnection()
 
     // get tcp socket from server
     clientConnection_ = tcpSever_->nextPendingConnection();
-    // issue here
-//    connect(clientConnection_, &QAbstractSocket::disconnected),
-//            clientConnection_, &QObject::deleteLater);
+    // ensure that the socket will be deleted after disconnecting
+    connect(clientConnection_, &QAbstractSocket::disconnected,
+            clientConnection_, &QObject::deleteLater);
 }
 
 void client::disconnect()
