@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QUdpSocket>
+#include <QTcpSocket>
 
 class Server : public QObject
 {
@@ -19,6 +20,9 @@ public slots:
     quint16 getPort() const;
     void preccessPendingDatagrams();
     QString getBuffer();
+    void connectToStrataClient(QHostAddress hostAddress, qint16 port);
+    void newTcpMessage();
+    void sendTcpMessge();
 
 signals:
     void bufferUpdated();
@@ -26,6 +30,7 @@ signals:
 private:
     void setBuffer(const QByteArray &newDatagram);
 
+    QTcpSocket *tcpSocket_ = nullptr;
     QUdpSocket *udpSocket_ = nullptr;
     quint16 port_ = 5146;
     QString buffer_;
