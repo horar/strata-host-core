@@ -80,6 +80,11 @@ Window {
         y: 220
         text: qsTr("Disconnect")
         enabled: client.connectionStatus == "connected"
+
+        Connections {
+            target: disconnectBtn
+            onClicked: client.disconnect()
+        }
     }
 
 }

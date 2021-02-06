@@ -5,6 +5,7 @@
 #include <QUdpSocket>
 #include <QTcpServer>
 #include <QAbstractSocket>
+#include <QTcpSocket>
 
 class client : public QObject
 {
@@ -23,16 +24,17 @@ public slots:
    void setPort(quint16 port);
    quint16 getPort() const;
    void gotTcpConnection();
-   void Disconnect();
+   void disconnect();
 
 signals:
     void connectionStatusChanged();
 
 private:
+    QString status_[2] = {"disconnected", "connected"};
     QUdpSocket *udpSocket_ = nullptr;
     QTcpServer *tcpSever_ = nullptr;
     quint16 port_ = 5146;
-    QString tcpConnectionStatus_ = "disconnected";
+    QString tcpConnectionStatus_ = status_[0];
     QTcpSocket *clientConnection_ = nullptr;
 };
 
