@@ -33,7 +33,9 @@ Item {
         populateButtons()
         setControlIcon()
         setSelectedButton()
-        Help.registerTarget(menu, "Use these menu items to either open hardware controls, documentation, or close the platform", 5, "selectorHelp")
+        Help.registerTarget(repeater.itemAt(0), "Use this menu item to open the platform and control the board, documentation, or close the platform", 5, "selectorHelp")
+        Help.registerTarget(repeater.itemAt(1), "Use this menu item to open the documentation of the board", 6, "selectorHelp")
+        Help.registerTarget(repeater.itemAt(2), "Use this menu item to close the platform", 7, "selectorHelp")
     }
 
     onConnectedChanged: {
@@ -43,9 +45,9 @@ Item {
     Connections {
         target: Help.utility
 
-        onTour_indexChanged:{
-            if(index === 4){
-                menu.state = "help_tour"
+        onInternal_tour_indexChanged: {
+            if(Help.current_tour_targets[index]["target"] === repeater.itemAt(0) || Help.current_tour_targets[index]["target"] === repeater.itemAt(1) ||
+                    Help.current_tour_targets[index]["target"] === repeater.itemAt(2) || Help.current_tour_targets[index]["target"] === currIcon) {
                 dropDownPopup.open()
             } else {
                 dropDownPopup.close()
@@ -56,6 +58,8 @@ Item {
             if(!tour_running){
                 menu.state = "normal"
                 dropDownPopup.close()
+            } else {
+                menu.state = "help_tour"
             }
         }
     }
@@ -242,7 +246,13 @@ Item {
                 width: parent.width
                 y: 1
 
+                Item {
+                    id: first_item
+                    anchors.fill: repeater.itemAt(0)
+                }
+
                 Repeater {
+                    id: repeater
                     model: ListModel {
                         id: buttonModel
                     }

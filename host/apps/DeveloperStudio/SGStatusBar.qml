@@ -201,6 +201,8 @@ Rectangle {
                 "control": true
             }
             view: "control"
+            Layout.preferredWidth: 250
+            Layout.fillHeight: true
 
            Component.onCompleted: {
                Help.registerTarget(help_tour.currIcon, "Use this button to toggle the platform options", 4, "selectorHelp")
@@ -213,8 +215,16 @@ Rectangle {
                onTour_runningChanged: {
                    if(!tour_running){
                        help_tour.visible = false
-                   } else {
-                       help_tour.visible = true
+                   }
+               }
+
+               onInternal_tour_indexChanged: {
+                   if(Help.current_tour_targets[index]["target"] === help_tour){
+                       if(!help_tour.visible){
+                           help_tour.visible = true
+                       } else {
+                           help_tour.visible = false
+                       }
                    }
                }
            }
