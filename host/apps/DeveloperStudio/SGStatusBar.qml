@@ -596,21 +596,23 @@ Rectangle {
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
         property bool disablePlatformNotifications: false
+        property bool notifyOnCollateralDocumentUpdate: true
         property int selectedDistributionPortal: 0
         // updated this so we can mitigate undefined variables
         function loadSettings() {
             const settings = readFile("general-settings.json")
+
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
             }
-            if(settings.hasOwnProperty("closeOnDisconnect")){
+            if (settings.hasOwnProperty("closeOnDisconnect")) {
                 closeOnDisconnect = settings.closeOnDisconnect
             }
-            if(settings.hasOwnProperty("notifyOnFirmwareUpdate")){
-                notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
-            }
-            if(settings.hasOwnProperty("selectedDistributionPortal")){
+            if (settings.hasOwnProperty("selectedDistributionPortal")) {
                 selectedDistributionPortal = settings.selectedDistributionPortal
+            }
+            if (settings.hasOwnProperty("notifyOnCollateralDocumentUpdate")) {
+                notifyOnCollateralDocumentUpdate = settings.notifyOnCollateralDocumentUpdate
             }
             if(settings.hasOwnProperty("disablePlatformNotifications")){
                 disablePlatformNotifications = settings.disablePlatformNotifications
@@ -624,7 +626,8 @@ Rectangle {
                 closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
                 selectedDistributionPortal: selectedDistributionPortal,
-                disablePlatformNotifications: disablePlatformNotifications
+                disablePlatformNotifications: disablePlatformNotifications,
+                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate
             }
             userSettings.writeFile("general-settings.json", settings)
         }

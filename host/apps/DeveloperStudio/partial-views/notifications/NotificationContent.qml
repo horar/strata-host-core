@@ -124,7 +124,7 @@ RowLayout {
 
                 delegate: Rectangle {
                     id: button
-                    implicitWidth: actionText.implicitWidth + 12
+                    implicitWidth: Math.min(buttonFlow.width, actionText.implicitWidth + 12)
                     implicitHeight: actionText.implicitHeight + 12
                     color: actionMouseArea.containsMouse ? Theme.palette.darkGray : Theme.palette.gray
                     radius: 4
@@ -134,6 +134,9 @@ RowLayout {
                         anchors.centerIn: parent
                         text: model.action.text
                         color: "white"
+                        width: parent.width - 12
+                        wrapMode: Text.Wrap
+                        horizontalAlignment: Text.AlignHCenter
                     }
 
                     MouseArea {
