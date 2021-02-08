@@ -141,7 +141,7 @@ Item {
                 id: yAxisGraph
                 width: 400
                 height: 300
-                title: "Basic Graph - Multiple Y Axis Enabled, with ability to color axis and legend"
+                title: "Basic Graph - Multiple Y Axis Enabled, with ability to change color of y axis and add legend"
                 xMin: 0
                 xMax: 1
                 yMin: 0
@@ -169,6 +169,7 @@ Item {
                     onClicked: {
                         let curve = yAxisGraph.createCurve("graphCurve" + yAxisGraph.count)
                         curve.color = sgGraphExample.randomColor()
+                        //Set the color of yLeft Axis.
                         yAxisGraph.yLeftAxisColor = curve.color
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
