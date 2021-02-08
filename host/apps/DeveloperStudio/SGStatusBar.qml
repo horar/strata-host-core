@@ -537,7 +537,6 @@ Rectangle {
 
                     onClicked: {
                         Signals.loadCVC()
-                        cvcButton.toggleVisibility()
                         profileMenu.close()
                     }
                 }

@@ -85,12 +85,12 @@ Rectangle {
     Connections {
         target: Signals
 
+        onLoadCVC: {
+            controlViewCreatorContainer.visible = true
+        }
+
         onCloseCVC: {
             controlViewCreatorContainer.visible = false
         }
-    }
-
-    function toggleVisibility(){
-        visible = true
     }
 }

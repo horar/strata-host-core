@@ -20,7 +20,6 @@ Rectangle {
     property bool isConfirmCloseOpen: false
     property bool rccInitialized: false
     property bool recompileRequested: false
-    property bool cvcCloseRequested: false
     property var debugPlatform: ({
                                      deviceId: Constants.NULL_DEVICE_ID,
                                      classId: ""
@@ -53,14 +52,14 @@ Rectangle {
         onPopupClosed: {
             if (closeReason === confirmClosePopup.closeFilesReason) {
                 controlViewCreator.openFilesModel.closeAll()
-                if(cvcCloseRequested){
+                if (cvcCloseRequested){
                     Signals.closeCVC()
                 } else {
                     mainWindow.close()
                 }
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
                 controlViewCreator.openFilesModel.saveAll(true)
-                if(cvcCloseRequested){
+                if (cvcCloseRequested){
                     Signals.closeCVC()
                 } else {
                     mainWindow.close()

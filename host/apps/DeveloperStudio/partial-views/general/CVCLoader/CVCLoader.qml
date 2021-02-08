@@ -14,7 +14,6 @@ Loader {
 
     sourceComponent: ControlViewCreator {
         id: controlViewCreator
-        cvcCloseRequested: cvcLoader.cvcCloseRequested
     }
 
     Connections {
@@ -28,16 +27,13 @@ Loader {
 
         onRequestCVCClose:{
             cvcLoader.cvcCloseRequested = true
-            cvcLoader.item.confirmClosePopup.unsavedFileCount = cvcLoader.item.openFilesModel.getUnsavedCount()
-            if(cvcLoader.item.confirmClosePopup.unsavedFileCount > 0){
-                cvcLoader.item.confirmClosePopup.open()
-            } else {
-                cvcLoader.cvcCloseRequested = false
+            if (cvcLoader.item.blockWindowClose() === false){
                 Signals.closeCVC()
             }
         }
 
         onCloseCVC:{
+            cvcLoader.cvcCloseRequested = false
             cvcLoader.active = false
             let data = {"index": NavigationControl.stack_container_.count-3}
             NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)

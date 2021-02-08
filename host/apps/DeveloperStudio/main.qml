@@ -52,7 +52,7 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
-        if (controlViewCreatorLoader.item.blockWindowClose()) {
+        if (controlViewCreatorLoader.active && controlViewCreatorLoader.item.blockWindowClose()) {
             close.accepted = false
             return
         }
