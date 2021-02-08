@@ -4,7 +4,6 @@
 #include <QtQuick>
 #include <QPointF>
 #include <QVector>
-#include <QDebug>
 
 #include <qwt/qwt_plot.h>
 #include <qwt/qwt_plot_curve.h>
@@ -19,7 +18,6 @@
 #include <qwt/qwt_symbol.h>
 #include <qwt/qwt_scale_draw.h>
 #include <qwt/qwt_legend.h>
-#include <qwt/qwt_legend_label.h>
 
 #include <QDebug>
 
@@ -132,7 +130,6 @@ public:
     void setlegendVisible(bool showLegend);
     bool legendVisible();
 
-
 protected:
     QwtPlot* qwtPlot = nullptr;
     void updateCurveList();
@@ -187,7 +184,6 @@ private:
     QColor yRightAxisColor_;
     QColor yLeftAxisColor_;
     bool legendVisible_ = false;
-
 
 private slots:
     void updatePlotSize();

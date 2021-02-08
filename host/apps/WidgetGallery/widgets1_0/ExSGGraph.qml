@@ -25,11 +25,9 @@ Item {
                 yMax: 1
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
-                xGrid: true
+                xGrid: false
                 yGrid: true
                 gridColor: "red"
-                yRightAxisColor: "red"
-                legendVisible : true
             }
 
             Column {
@@ -48,7 +46,6 @@ Item {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
                         curve.appendList(dataArray)
-
                     }
                 }
 
@@ -143,7 +140,7 @@ Item {
                 id: yAxisGraph
                 width: 400
                 height: 300
-                title: "Basic Graph - Multiple Y Axis Enabled"
+                title: "Basic Graph - Multiple Y Axis Enabled, with ability to color axis and legend"
                 xMin: 0
                 xMax: 1
                 yMin: 0
@@ -172,7 +169,6 @@ Item {
                         let curve = yAxisGraph.createCurve("graphCurve" + yAxisGraph.count)
                         curve.color = sgGraphExample.randomColor()
                         yAxisGraph.yLeftAxisColor = curve.color
-
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})

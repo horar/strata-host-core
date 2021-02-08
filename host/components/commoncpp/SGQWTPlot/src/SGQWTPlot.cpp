@@ -1,7 +1,6 @@
 #include "SGQWTPlot.h"
 #include "logging/LoggingQtCategories.h"
 
-
 SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
 {
     setFlag(QQuickItem::ItemHasContents, true);
@@ -24,9 +23,6 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     qwtGrid_->enableYMin(yMinorGrid_);
 
     setGridColor("lightgrey");
-
-
-
 }
 
 SGQWTPlot::~SGQWTPlot()
@@ -361,8 +357,6 @@ double SGQWTPlot::yRightMax()
 
 QString SGQWTPlot::xTitle()
 {
-
-
     return qwtPlot->axisTitle(qwtPlot->xBottom).text();
 }
 
@@ -644,7 +638,9 @@ void SGQWTPlot :: setlegendVisible(bool legend)
             qwtPlot->legend()->setStyleSheet("color: black");
             qwtPlot->legend()->setVisible(legend);
         }
-        else  qwtPlot->legend()->setVisible(legend);
+        else {
+            qwtPlot->legend()->setVisible(legend);
+        }
         emit legendVisibleChanged();
         if (autoUpdate_) {
             update();
@@ -727,7 +723,6 @@ SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
     curve_->setData(new SGQWTPlotCurveData(&curveData_));
     curve_->setPaintAttribute( QwtPlotCurve::FilterPoints , true );
     curve_->setItemAttribute(QwtPlotItem::AutoScale, true);
-
 }
 
 SGQWTPlotCurve::~SGQWTPlotCurve()
@@ -747,8 +742,8 @@ void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
 
         graph_ = graph;
         plot_ = graph_->qwtPlot;
-
         curve_->attach(plot_);
+
         if (autoUpdate_) {
             update();
         }
