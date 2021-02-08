@@ -16,7 +16,6 @@
 #include <qwt/qwt_text_label.h>
 #include <qwt/qwt_plot_grid.h>
 #include <qwt/qwt_symbol.h>
-#include <qwt/qwt_scale_draw.h>
 #include <qwt/qwt_legend.h>
 
 #include <QDebug>
