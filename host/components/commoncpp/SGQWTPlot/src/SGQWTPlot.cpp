@@ -21,7 +21,6 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     qwtGrid_->enableY(yGrid_);
     qwtGrid_->enableXMin(xMinorGrid_);
     qwtGrid_->enableYMin(yMinorGrid_);
-
     setGridColor("lightgrey");
 }
 
@@ -636,11 +635,8 @@ void SGQWTPlot :: setlegendVisible(bool legend)
             QwtLegend *customLegend = new QwtLegend();
             qwtPlot->insertLegend(customLegend,QwtPlot::BottomLegend);
             qwtPlot->legend()->setStyleSheet("color: black");
-            qwtPlot->legend()->setVisible(legend);
         }
-        else {
-            qwtPlot->legend()->setVisible(legend);
-        }
+
         emit legendVisibleChanged();
         if (autoUpdate_) {
             update();
