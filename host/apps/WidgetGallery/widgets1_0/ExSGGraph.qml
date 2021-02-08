@@ -28,6 +28,7 @@ Item {
                 xGrid: false
                 yGrid: true
                 gridColor: "red"
+                legendVisible: false
             }
 
             Column {
@@ -195,6 +196,13 @@ Item {
                 Button {
                     text: "Remove first curve from graph"
                     enabled: yAxisGraph.count > 0
+                    onEnabledChanged: {
+                        if(!enabled) {
+                            yAxisGraph.yRightAxisColor = "black"
+                            yAxisGraph.yLeftAxisColor = "black"
+                        }
+                    }
+
                     onClicked: {
                         yAxisGraph.removeCurve(0);
                     }
