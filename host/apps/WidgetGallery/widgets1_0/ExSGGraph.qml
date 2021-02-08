@@ -28,7 +28,6 @@ Item {
                 xGrid: false
                 yGrid: true
                 gridColor: "red"
-                legendVisible: false
             }
 
             Column {
