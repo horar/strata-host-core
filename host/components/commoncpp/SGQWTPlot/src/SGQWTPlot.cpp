@@ -599,10 +599,10 @@ void SGQWTPlot :: setYRightAxisColor(QColor newColor)
 {
     if (yRightAxisColor_ != newColor) {
         yRightAxisColor_ = newColor;
-        QwtScaleWidget *qwtsw = qwtPlot->axisWidget(QwtPlot::yRight);
-        QPalette palette = qwtsw->palette();
+        QwtScaleWidget * qwtsw_ = qwtPlot->axisWidget(QwtPlot::yRight);
+        QPalette palette = qwtsw_->palette();
         palette.setColor(QPalette::Text, newColor);
-        qwtsw->setPalette(palette);
+        qwtsw_->setPalette(palette);
 
         emit yRightAxisColorChanged();
         if (autoUpdate_) {
@@ -615,10 +615,10 @@ void SGQWTPlot :: setYLeftAxisColor(QColor newColor)
 {
     if (yLeftAxisColor_ != newColor) {
         yLeftAxisColor_ = newColor;
-        QwtScaleWidget *qwtsw = qwtPlot->axisWidget(QwtPlot::yLeft);
-        QPalette palette = qwtsw->palette();
+        QwtScaleWidget * qwtsw_ = qwtPlot->axisWidget(QwtPlot::yLeft);
+        QPalette palette = qwtsw_->palette();
         palette.setColor(QPalette::Text, newColor);
-        qwtsw->setPalette(palette);
+        qwtsw_->setPalette(palette);
 
         emit yLeftAxisColorChanged();
         if (autoUpdate_) {
