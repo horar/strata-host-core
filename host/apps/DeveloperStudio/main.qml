@@ -9,7 +9,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/partial-views/platform-view"
-import "qrc:/partial-views/general/CVCLoader/"
 
 // imports below must be qrc:/ due to qrc aliases for debug/release differences
 import "qrc:/partial-views/control-view-creator"
