@@ -632,8 +632,8 @@ void SGQWTPlot :: setlegendVisible(bool legend)
     if(legendVisible_ != legend) {
         legendVisible_ = legend;
         if(legend) {
-            QwtLegend *customLegend = new QwtLegend();
-            qwtPlot->insertLegend(customLegend,QwtPlot::BottomLegend);
+            QwtLegend * qwtLegend_ = new QwtLegend();
+            qwtPlot->insertLegend(qwtLegend_,QwtPlot::BottomLegend);
             qwtPlot->legend()->setStyleSheet("color: black");
         }
 
