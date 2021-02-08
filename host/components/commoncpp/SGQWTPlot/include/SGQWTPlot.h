@@ -56,7 +56,7 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setYRightVisible NOTIFY yRightVisibleChanged)
     Q_PROPERTY(QColor yRightAxisColor MEMBER yRightAxisColor_ WRITE setYRightAxisColor NOTIFY yRightAxisColorChanged)
     Q_PROPERTY(QColor yLeftAxisColor MEMBER yLeftAxisColor_ WRITE setYLeftAxisColor NOTIFY yLeftAxisColorChanged)
-    Q_PROPERTY(bool legendVisible READ legendVisible WRITE setlegendVisible NOTIFY legendVisibleChanged)
+    Q_PROPERTY(bool legendVisible READ legendVisible WRITE setLegendVisible NOTIFY legendVisibleChanged)
 
 
 public:
@@ -126,7 +126,7 @@ public:
     bool yRightVisible();
     void setYRightAxisColor(QColor newColor);
     void setYLeftAxisColor(QColor newColor);
-    void setlegendVisible(bool showLegend);
+    void setLegendVisible(bool showLegend);
     bool legendVisible();
 
 protected:

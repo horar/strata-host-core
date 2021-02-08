@@ -627,7 +627,7 @@ void SGQWTPlot :: setYLeftAxisColor(QColor newColor)
     }
 }
 
-void SGQWTPlot :: setlegendVisible(bool legend)
+void SGQWTPlot :: setLegendVisible(bool legend)
 {
     if(legendVisible_ != legend) {
         legendVisible_ = legend;
