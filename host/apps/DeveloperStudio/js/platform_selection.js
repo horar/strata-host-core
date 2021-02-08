@@ -3,6 +3,7 @@
 .import "qrc:/js/platform_filters.js" as PlatformFilters
 .import "constants.js" as Constants
 .import "uuid_map.js" as UuidMap
+.import "utilities.js" as Utils
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
@@ -18,13 +19,24 @@ var platformSelectorModel
 var classMap = {} // contains metadata for platformSelectorModel for faster lookups
 var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
+var notificationAction = Qt.createQmlObject("import QtQuick.Controls 2.12; Action {}",Qt.application, "PlatformNotifications")
 var localPlatformList = []
+
+function createPlatformActions() {
+    notificationAction.text = "Disable Platform Notifications"
+    notificationAction.triggered.connect(function () { disablePlatformNotifications() });
+}
 
 function initialize (newCoreInterface) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     coreInterface = newCoreInterface
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
+    createPlatformActions()
+}
+
+function disablePlatformNotifications(){
+    NavigationControl.userSettings.disablePlatformNotifications = true
 }
 
 function getPlatformList () {
@@ -623,14 +635,16 @@ function notifyConnectedState(connected, platformOPN){
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
                                                                    {
-                                                                       "timeout": 4000
+                                                                       "timeout": 4000,
+                                                                       "actions": [notificationAction]
                                                                    })
         } else {
             PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is disconnected`,
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
                                                                    {
-                                                                       "timeout": 4000
+                                                                       "timeout": 4000,
+                                                                       "actions": [notificationAction]
                                                                    })
         }
     }
