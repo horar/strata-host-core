@@ -12,6 +12,8 @@
 #include <cmath>
 #include <QUuid>
 #include <cctype>
+#include <QGuiApplication>
+#include <QClipboard>
 
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
@@ -269,4 +271,10 @@ bool SGUtilsCpp::validateJson(const QByteArray &json, const QByteArray &schema)
 QString SGUtilsCpp::toHex(qint64 number, int width)
 {
     return QStringLiteral("0x") + QString::number(number, 16).rightJustified(width, '0');
+}
+
+void SGUtilsCpp::copyToClipboard(const QString &text)
+{
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(text, QClipboard::Clipboard);
 }
