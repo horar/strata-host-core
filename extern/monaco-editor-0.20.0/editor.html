@@ -212,26 +212,30 @@
             })
 
             monaco.languages.registerCompletionItemProvider('qml',{
-                provideCompletionItems: () => {
+                provideCompletionItems: (model, position) => {
+                    var textUntilPosition = model.getValueInRange({startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column});
+                    var word = model.getWordUntilPosition(position);
+                    var range = {
+                        startLineNumber: position.lineNumber,
+                        endLineNumber: position.lineNumber,
+                        startColumn: word.startColumn,
+                        endColumn: word.endColumn
+                    };
                     var suggestions = []
                     for( var i = 0; i < qtQuick.length; i++){
-                        suggestions.push({
-                            label: {name: qtQuick[i].prefix},
-                            kind: monaco.languages.CompletionItemKind.Snippet,
-                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                            insertText: qtQuick[i].body,
-                            documentation: qtQuick[i].description,
-                        })
+                        var regex = new RegExp(qtQuick[i].prefix)
+                        var match = textUntilPosition.match(regex);
+                        if (match) {
+                            convertStrArrayToObjArray(suggestions, qtQuick[i].properties, range)
+                        }
                     }
 
                     for (var j = 0; j < qtQuickBody.length; j++){
-                        suggestions.push({
-                            label: qtQuickBody[j].prefix,
-                            kind: monaco.languages.CompletionItemKind.Keyword,
-                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                            insertText: qtQuickBody[j].body,
-                            documentation: qtQuickBody[j].description
-                        })
+                        var regex = new RegExp(qtQuickBody[j].prefix)
+                        var match = textUntilPosition.match(regex);
+                        if (match) {
+                            convertStrArrayToObjArray(suggestions, qtQuickBody[j].properties, range)
+                        }
                     }
                     for (var x = 0; x < BasicItemProperties.length; x++){
                         suggestions.push({
@@ -242,13 +246,10 @@
                         })
                     }
                     for (var y = 0; y < SGWidgets.length; y++){
-                        suggestions.push({
-                            label: SGWidgets[y].prefix,
-                            kind: monaco.languages.CompletionItemKind.Snippet,
-                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                            insertText: SGWidgets[y].body,
-                            documentation: SGWidgets[y].description
-                        })
+                        var regex = new RegExp(SGWidgets[y].prefix)
+                        if (match) {
+                            convertStrArrayToObjArray(suggestions, SGWidgets[y].properties, range)
+                        }
                     }
                     return {suggestions: suggestions}
                 }
