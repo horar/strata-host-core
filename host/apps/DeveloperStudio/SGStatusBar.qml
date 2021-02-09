@@ -203,6 +203,11 @@ Rectangle {
             view: "control"
             Layout.preferredWidth: 250
             Layout.fillHeight: true
+            onXChanged: {
+                if (visible) {
+                    Help.refreshView(Help.internal_tour_index)
+                }
+            }
 
            Component.onCompleted: {
                Help.registerTarget(help_tour.currIcon, "Use this button to toggle the platform options", 4, "selectorHelp")

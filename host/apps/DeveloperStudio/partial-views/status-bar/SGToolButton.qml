@@ -21,6 +21,7 @@ Rectangle {
         }
     }
     clip: true
+    property alias toolRow: row
 
     Rectangle {
         id: selectedSideHighlight
@@ -35,6 +36,7 @@ Rectangle {
     }
 
     RowLayout {
+        id: row
         anchors {
             verticalCenter: parent.verticalCenter
             left: parent.left

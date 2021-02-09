@@ -33,9 +33,9 @@ Item {
         populateButtons()
         setControlIcon()
         setSelectedButton()
-        Help.registerTarget(repeater.itemAt(0), "Use this menu item to open the platform and control the board, documentation, or close the platform", 5, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(1), "Use this menu item to open the documentation of the board", 6, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(2), "Use this menu item to close the platform", 7, "selectorHelp")
+        Help.registerTarget(repeater.itemAt(0).toolRow, "Use this menu item to open the platform and control the board, documentation, or close the platform", 5, "selectorHelp")
+        Help.registerTarget(repeater.itemAt(1).toolRow, "Use this menu item to open the documentation of the board", 6, "selectorHelp")
+        Help.registerTarget(repeater.itemAt(2).toolRow, "Use this menu item to close the platform", 7, "selectorHelp")
     }
 
     onConnectedChanged: {
@@ -46,8 +46,8 @@ Item {
         target: Help.utility
 
         onInternal_tour_indexChanged: {
-            if(Help.current_tour_targets[index]["target"] === repeater.itemAt(0) || Help.current_tour_targets[index]["target"] === repeater.itemAt(1) ||
-                    Help.current_tour_targets[index]["target"] === repeater.itemAt(2) || Help.current_tour_targets[index]["target"] === currIcon) {
+            if(Help.current_tour_targets[index]["target"] === repeater.itemAt(0).toolRow || Help.current_tour_targets[index]["target"] === repeater.itemAt(1).toolRow ||
+                    Help.current_tour_targets[index]["target"] === repeater.itemAt(2).toolRow) {
                 dropDownPopup.open()
             } else {
                 dropDownPopup.close()
@@ -227,6 +227,12 @@ Item {
         padding: 0
         closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
 
+        onOpened: {
+            if(menu.state === "help_tour"){
+                Help.refreshView(Help.internal_tour_index)
+            }
+        }
+
         Rectangle {
             id: menu
             color: Qt.darker(Theme.palette.green, 1.15)
@@ -245,11 +251,6 @@ Item {
                 spacing: 1
                 width: parent.width
                 y: 1
-
-                Item {
-                    id: first_item
-                    anchors.fill: repeater.itemAt(0)
-                }
 
                 Repeater {
                     id: repeater
