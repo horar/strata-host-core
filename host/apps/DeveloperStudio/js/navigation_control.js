@@ -393,20 +393,3 @@ function updateState(event, data)
             break;
     }
 }
-
-function helpTabPlatformGenerate(platform) {
-    if(platform_view_model_.count > 1){
-        platform_view_model_.append(platform)
-        platform_view_model_.move(0,platform_view_model_.count - 2,platform_view_model_.count - 2)
-        platform_view_model_.move(platform_view_model_.count - 1, 0, 1)
-    } else if(platform_view_model_.count === 1){
-        platform_view_model_.set(1, platform_view_model_.get(0))
-        platform_view_model_.set(0, platform)
-    } else {
-        platform_view_model_.append(platform)
-    }
-}
-
-function helpTabPlatformDestroy(platform){
-  platform_view_model_.remove(0)
-}
