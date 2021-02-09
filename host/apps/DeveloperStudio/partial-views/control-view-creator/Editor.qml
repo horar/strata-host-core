@@ -53,19 +53,11 @@ Item {
 
     SGSortFilterProxyModel {
         id: connectedPlatforms
-        sourceModel: []
+        sourceModel: PlatformSelection.platformSelectorModel
         invokeCustomFilter: true
 
         function filterAcceptsRow(index) {
             return sourceModel.get(index).connected;
-        }
-    }
-
-    Connections {
-        target: mainWindow
-
-        onInitialized: {
-            connectedPlatforms.sourceModel = PlatformSelection.platformSelectorModel
         }
     }
 

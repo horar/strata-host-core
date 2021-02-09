@@ -119,7 +119,9 @@ bool HostControllerService::initialize(const QString& config)
     storageManager_.setBaseUrl(baseUrl);
     storageManager_.setDatabase(&db_);
 
-    db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
+    db_.initReplicator(db_cfg["gateway_sync"].GetString(), 
+        std::string(ReplicatorCredentials::replicator_username).c_str(),
+        std::string(ReplicatorCredentials::replicator_password).c_str());
 
     boardsController_.initialize();
 
