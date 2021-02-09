@@ -1,14 +1,13 @@
 #include "server.h"
-#include <QtNetwork>
 
 Server::Server(QObject *parent)
-    : QObject(parent), udpSocket_(new QUdpSocket(this)), tcpSocket_(new QTcpSocket(this))
+    : QObject(parent), tcpSocket_(new QTcpSocket(this)), udpSocket_(new QUdpSocket(this))
 {
     // UDP Socket set up.
-    if (false == udpSocket_->bind(port_, QUdpSocket::ShareAddress)) {
-        qDebug() << "failed to bind to port" << port_;
+    if (false == udpSocket_->bind(port_, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint)) {
+        qDebug() << "udp: failed to bind to port" << port_;
     }
-    qDebug() << "successful bind to port" << port_;
+    qDebug() << "udp: successful bind to port" << port_;
 
     connect(udpSocket_, &QUdpSocket::readyRead, this, &Server::preccessPendingDatagrams);
 
@@ -18,11 +17,11 @@ Server::Server(QObject *parent)
     connect(tcpSocket_, &QTcpSocket::disconnected, this,
             []() { qDebug() << "tcp socket disconnected"; });
 
-    // connect(tcpSocket_, &QAbstractSocket::error, this, [](QAbstractSocket::SocketError
-    // socketError) {
-    //     qDebug() << "tcp socket error!";
-    //     qDebug() << socketError;
-    // });
+//     connect(tcpSocket_, &QAbstractSocket::error, this, [](QAbstractSocket::SocketError
+//     socketError) {
+//         qDebug() << "tcp socket error!";
+//         qDebug() << socketError;
+//     });
 
     connect(tcpSocket_, &QTcpSocket::bytesWritten, this,
             [](qint64 bytesWritten) { qDebug() << "tcp bytes written" << bytesWritten; });
@@ -40,9 +39,9 @@ void Server::setPort(quint16 port)
         port_ = port;
         udpSocket_->close();
         if (false == udpSocket_->bind(port_, QUdpSocket::ShareAddress)) {
-            qDebug() << "failed to bind to port" << port_;
+            qDebug() << "udp: failed to bind to port" << port_;
         }
-        qDebug() << "successful bind to port" << port_;
+        qDebug() << "udp: successful bind to port" << port_;
     }
 }
 
@@ -63,7 +62,7 @@ void Server::preccessPendingDatagrams()
     }
     setBuffer(datagram);
 
-    if (datagram == "strata Client") {
+    if (datagram == "strata client") {
         connectToStrataClient(hostAddress, TCP_PORT);
     }
 }

@@ -27,10 +27,20 @@ void client::setConnectionStatus(QString &status)
     }
 }
 
+QString client::gotTcpMessage()
+{
+    recivedBuffer_.clear();
+    qDebug() << "recived buffer:" << QString(clientConnection_->readAll());
+    recivedBuffer_.append(QString(clientConnection_->readAll()));
+    emit gotTcpMessageUpdated();
+    return recivedBuffer_;
+
+}
+
 void client::broadcastDatagram()
 {
     qDebug() << "broadcasting at port:" << port_;
-    QByteArray datageam = "strata Client";
+    QByteArray datageam = "strata client";
     udpSocket_->writeDatagram(datageam, QHostAddress::Broadcast, port_);
 }
 
@@ -53,13 +63,22 @@ void client::gotTcpConnection()
 
     // get tcp socket from server
     clientConnection_ = tcpSever_->nextPendingConnection();
+
     // ensure that the socket will be deleted after disconnecting
     connect(clientConnection_, &QAbstractSocket::disconnected,
             clientConnection_, &QObject::deleteLater);
+
+    connect(clientConnection_, &QTcpSocket::readyRead, this, &client::gotTcpMessage);
+
 }
 
 void client::disconnect()
 {
     clientConnection_->disconnectFromHost();
     setConnectionStatus(status_[0]);
+}
+
+void client::tcpWrite(QByteArray block)
+{
+    clientConnection_->write(block);
 }
