@@ -116,6 +116,23 @@ QPair<QUrl,QString> StorageManager::getLatestFirmware(const QString &classId, co
     return qMakePair(uri, md5);
 }
 
+QString StorageManager::getFirmwareMD5(const QString &classId, const QString &controllerClassDevice, const QString &version)
+{
+    qCDebug(logCategoryHcsStorage) << "Searching for firmware MD5 for" << classId
+                                   << "and" << controllerClassDevice << "and" << version;
+
+    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
+    if (platfDoc) {
+        QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
+        for (const auto &item : firmwareList) {
+            if (item.controllerClassDevice == controllerClassDevice && item.version == version) {
+                return item.md5;
+            }
+        }
+    }
+
+    return QString();
+}
 
 QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix) const
 {

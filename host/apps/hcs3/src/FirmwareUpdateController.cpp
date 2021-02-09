@@ -31,77 +31,117 @@ void FirmwareUpdateController::initialize(BoardController *boardController, stra
 }
 
 FirmwareUpdateController::UpdateProgress::UpdateProgress() :
-    complete(-1), total(-1), jobUuid(QString()), programController(false)
+    complete(-1), total(-1), jobUuid(QString()), workWithController(false)
 {
 }
 
-FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid, bool programController) :
-    complete(-1), total(-1), jobUuid(jobUuid), programController(programController)
+FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid, bool workWithController) :
+    complete(-1), total(-1), jobUuid(jobUuid), workWithController(workWithController)
 {
 }
 
 void FirmwareUpdateController::updateFirmware(UpdateFirmwareData updateData)
 {
-    runUpdate(updateData.clientId,
-              updateData.deviceId,
-              updateData.firmwareUrl,
-              updateData.firmwareMD5,
-              QString(),
-              updateData.jobUuid);
+    FlashData data;
+    data.action = Action::UpdateFirmware;
+    data.clientId = updateData.clientId;
+    data.deviceId = updateData.deviceId;
+    data.firmwareUrl = updateData.firmwareUrl;
+    data.firmwareMD5 = updateData.firmwareMD5;
+    data.jobUuid = updateData.jobUuid;
+
+    runUpdate(data);
 }
 
 void FirmwareUpdateController::programController(ProgramControllerData programData)
 {
-    runUpdate(programData.clientId,
-              programData.deviceId,
-              programData.firmwareUrl,
-              programData.firmwareMD5,
-              programData.firmwareClassId,
-              programData.jobUuid);
+    if (programData.firmwareClassId.isNull()) {
+        logAndEmitError(programData.deviceId,
+                        QStringLiteral("Cannot program controller - firmware class ID was not provided."));
+        return;
+    }
+
+    FlashData data;
+    data.action = Action::ProgramController;
+    data.clientId = programData.clientId;
+    data.deviceId = programData.deviceId;
+    data.firmwareUrl = programData.firmwareUrl;
+    data.firmwareMD5 = programData.firmwareMD5;
+    data.firmwareClassId = programData.firmwareClassId;
+    data.jobUuid = programData.jobUuid;
+
+    runUpdate(data);
 }
 
-void FirmwareUpdateController::runUpdate(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
-                                         const QString& firmwareMD5, const QString& firmwareClassId, const QString& jobUuid)
+void FirmwareUpdateController::setControllerFwClassId(ProgramControllerData programData)
+{
+    if (programData.firmwareClassId.isNull()) {
+        logAndEmitError(programData.deviceId,
+                        QStringLiteral("Cannot set controller firmware class ID - it is not provided."));
+        return;
+    }
+
+    FlashData data;
+    data.action = Action::SetControllerFwClassId;
+    data.clientId = programData.clientId;
+    data.deviceId = programData.deviceId;
+    data.firmwareClassId = programData.firmwareClassId;
+    data.jobUuid = programData.jobUuid;
+
+    runUpdate(data);
+}
+
+void FirmwareUpdateController::runUpdate(const FlashData& data)
 {
     if (boardController_.isNull() || downloadManager_.isNull()) {
-        QString errStr("FirmwareUpdateController is not properly initialized.");
-        qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
-        emit updaterError(deviceId, errStr);
+        logAndEmitError(data.deviceId, QStringLiteral("FirmwareUpdateController is not properly initialized."));
         return;
     }
 
-    auto it = updates_.constFind(deviceId);
+    auto it = updates_.constFind(data.deviceId);
     if (it != updates_.constEnd()) {
-        QString errStr("Cannot update, another update is running on this device.");
-        qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
-        emit updaterError(deviceId, errStr);
+        logAndEmitError(data.deviceId, QStringLiteral("Cannot update, another update is running on this device."));
         return;
     }
 
-    strata::device::DevicePtr device = boardController_->getDevice(deviceId);
+    strata::device::DevicePtr device = boardController_->getDevice(data.deviceId);
     if (device == nullptr) {
-        QString errStr("Incorrect device ID for update.");
-        qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
-        emit updaterError(deviceId, errStr);
+        logAndEmitError(data.deviceId, QStringLiteral("Incorrect device ID for update."));
         return;
     }
 
     FirmwareUpdater *fwUpdater;
+    bool workWithController = false;
 
-    bool programController = false;
-    if (firmwareClassId.isNull()) {  // update firmware
-        fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5);
-    } else {  // program controller
-        fwUpdater = new FirmwareUpdater(device, downloadManager_, firmwareUrl, firmwareMD5, firmwareClassId);
-        programController = true;
+    switch(data.action) {
+    case Action::UpdateFirmware :
+        fwUpdater = new FirmwareUpdater(device, downloadManager_, data.firmwareUrl, data.firmwareMD5);
+        break;
+    case Action::ProgramController :
+        fwUpdater = new FirmwareUpdater(device, downloadManager_, data.firmwareUrl, data.firmwareMD5, data.firmwareClassId);
+        workWithController = true;
+        break;
+    case Action::SetControllerFwClassId :
+        fwUpdater = new FirmwareUpdater(device, data.firmwareClassId);
+        workWithController = true;
+        break;
     }
-    UpdateData *updateData = new UpdateData(clientId, fwUpdater, jobUuid, programController);
-    updates_.insert(deviceId, updateData);
+
+    UpdateInfo *updateData = new UpdateInfo(data.clientId, fwUpdater, data.jobUuid, workWithController);
+    updates_.insert(data.deviceId, updateData);
 
     connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &FirmwareUpdateController::handleUpdateProgress);
     connect(fwUpdater, &FirmwareUpdater::updaterError, this, &FirmwareUpdateController::updaterError);
 
-    fwUpdater->updateFirmware();
+    switch(data.action) {
+    case Action::UpdateFirmware :
+    case Action::ProgramController :
+        fwUpdater->updateFirmware();
+        break;
+    case Action::SetControllerFwClassId :
+        fwUpdater->setFwClassId();
+        break;
+    }
 }
 
 void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperation operation, UpdateStatus status, int complete, int total, QString errorString)
@@ -110,7 +150,7 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
         return;
     }
 
-    UpdateData *updateData = updates_.value(deviceId);
+    UpdateInfo *updateData = updates_.value(deviceId);
     UpdateProgress *progress = &(updateData->updateProgress);
 
     progress->operation = operation;
@@ -137,7 +177,13 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
     }
 }
 
-FirmwareUpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool programController) :
-    clientId(client), fwUpdater(updater), updateProgress(jobUuid, programController)
+void FirmwareUpdateController::logAndEmitError(int deviceId, const QString& errorString)
+{
+    qCCritical(logCategoryHcsFwUpdater).noquote() << errorString;
+    emit updaterError(deviceId, errorString);
+}
+
+FirmwareUpdateController::UpdateInfo::UpdateInfo(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool workWithController) :
+    clientId(client), fwUpdater(updater), updateProgress(jobUuid, workWithController)
 {
 }

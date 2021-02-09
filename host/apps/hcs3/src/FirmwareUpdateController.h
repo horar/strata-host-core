@@ -68,14 +68,14 @@ public:
      */
     struct UpdateProgress {
         UpdateProgress();  // Q_DECLARE_METATYPE needs default constructor
-        UpdateProgress(const QString& jobUuid, bool programController);
+        UpdateProgress(const QString& jobUuid, bool workWithController);
         UpdateOperation operation;
         UpdateStatus status;
         int complete;
         int total;
         QString error;
         const QString jobUuid;
-        const bool programController;
+        const bool workWithController;
     };
 
     /**
@@ -118,26 +118,49 @@ public slots:
      */
     void programController(ProgramControllerData programData);
 
+    /**
+     * Set controller firmware class ID.
+     * @param programData struct containing data for setting controller fw_class_id (URL and MD5 are unused)
+     */
+    void setControllerFwClassId(ProgramControllerData programData);
+
 
 private slots:
     void handleUpdateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation,
                               FirmwareUpdateController::UpdateStatus status, int complete, int total, QString errorString);
 
 private:
-    void runUpdate(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
-                   const QString& firmwareMD5, const QString& firmwareClassId, const QString& jobUuid);
+    void logAndEmitError(int deviceId, const QString& errorString);
+
+    enum class Action {
+        UpdateFirmware,
+        ProgramController,
+        SetControllerFwClassId
+    };
+
+    struct FlashData {
+        Action action;
+        QByteArray clientId;
+        int deviceId;
+        QUrl firmwareUrl;
+        QString firmwareMD5;
+        QString firmwareClassId;
+        QString jobUuid;
+    };
+
+    void runUpdate(const FlashData& data);
 
     QPointer<BoardController> boardController_;
     QPointer<strata::DownloadManager> downloadManager_;
 
-    struct UpdateData {
-        UpdateData(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool programController);
+    struct UpdateInfo {
+        UpdateInfo(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool workWithController);
         const QByteArray clientId;
         FirmwareUpdater* fwUpdater;
         UpdateProgress updateProgress;
     };
 
-    QHash<int, struct UpdateData*> updates_;
+    QHash<int, struct UpdateInfo*> updates_;
 };
 
 Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateOperation)

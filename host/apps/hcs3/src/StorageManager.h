@@ -67,6 +67,15 @@ public:
      */
     QPair<QUrl,QString> getLatestFirmware(const QString &classId, const QString &controllerClassDevice);
 
+    /**
+     * Gets MD5 of firmware
+     * @param class ID of device
+     * @param device controler class
+     * @param version of firmware
+     * @return firmware MD5
+     */
+    QString getFirmwareMD5(const QString &classId, const QString &controllerClassDevice, const QString &version);
+
 public slots:
     void requestPlatformList(const QByteArray &clientId);
 

@@ -38,6 +38,12 @@ FirmwareUpdater::FirmwareUpdater(
     connect(this, &FirmwareUpdater::flashFirmware, this, &FirmwareUpdater::handleFlashFirmware, Qt::QueuedConnection);
 }
 
+FirmwareUpdater::FirmwareUpdater(
+        const strata::device::DevicePtr& devPtr,
+        const QString& fwClassId)
+    : FirmwareUpdater(devPtr, nullptr, QString(), QString(), fwClassId)
+{ }
+
 FirmwareUpdater::~FirmwareUpdater()
 {
     if (flasherConnector_.isNull() == false) {
@@ -50,16 +56,22 @@ FirmwareUpdater::~FirmwareUpdater()
 void FirmwareUpdater::updateFirmware()
 {
     if (running_) {
-        QString errStr("Cannot update firmware, update is already running.");
-        qCCritical(logCategoryHcsFwUpdater) << device_ << errStr;
-        emit updaterError(deviceId_, errStr);
+        logAndEmitError(QStringLiteral("Cannot update firmware, update is already running."));
+        return;
+    }
+
+    if (downloadManager_.isNull()) {
+        logAndEmitError(QStringLiteral("Download manager is not set."));
+        return;
+    }
+
+    if (firmwareUrl_.isEmpty()) {
+        logAndEmitError(QStringLiteral("Firmware URL was not provided."));
         return;
     }
 
     if (firmwareFile_.open() == false) {
-        QString errStr("Cannot create temporary file for firmware download.");
-        qCCritical(logCategoryHcsFwUpdater) << device_ << errStr;
-        emit updaterError(deviceId_, errStr);
+        logAndEmitError(QStringLiteral("Cannot create temporary file for firmware download."));
         return;
     }
     // file is created on disk, no need to keep descriptor open
@@ -68,6 +80,23 @@ void FirmwareUpdater::updateFirmware()
     running_ = true;
 
     downloadFirmware();
+}
+
+void FirmwareUpdater::setFwClassId()
+{
+    if (fwClassId_.isNull()) {
+        logAndEmitError(QStringLiteral("Firmware clas ID was not provided."));
+        return;
+    }
+
+    running_ = true;
+
+    flasherConnector_ = new FlasherConnector(fwClassId_, device_, this);
+
+    connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
+    connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
+
+    flasherConnector_->setFwClassId();
 }
 
 void FirmwareUpdater::updateFinished(FirmwareUpdateController::UpdateStatus status)
@@ -237,4 +266,10 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
     if (withoutProgress || (updStatus != FirmwareUpdateController::UpdateStatus::Running)) {
         emit updateProgress(deviceId_, updOperation, updStatus, -1, -1, errorString);
     }
+}
+
+void FirmwareUpdater::logAndEmitError(const QString& errorString)
+{
+    qCCritical(logCategoryHcsFwUpdater) << device_ << errorString;
+    emit updaterError(deviceId_, errorString);
 }
