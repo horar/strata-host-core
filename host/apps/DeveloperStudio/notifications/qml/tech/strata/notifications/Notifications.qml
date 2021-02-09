@@ -83,9 +83,9 @@ Item {
         }
 
         onLogout: {
-            for (let i = 0; i < Notifications.model.count; i++) {
+            for (let i = 0; i < model_.count; i++) {
                 // Clear any actions when the user logs out
-                Notifications.model.get(i).actions.clear()
+                model_.get(i).actions.clear()
             }
 
             currentUser = ""
