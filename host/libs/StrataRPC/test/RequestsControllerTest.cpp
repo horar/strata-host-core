@@ -10,7 +10,7 @@ void RequestsControllerTest::testAddRequest()
     RequestsController rc;
 
     for (int i = 1; i < 30; i++) {
-        std::pair<std::shared_ptr<DeferredRequest>, QByteArray> requestInfo =
+        std::pair<DeferredRequest *, QByteArray> requestInfo =
             rc.addNewRequest("method_1", {{"api", "v1"}});
 
         QVERIFY_(requestInfo.first->getId() != 0);
@@ -33,7 +33,7 @@ void RequestsControllerTest::testLargeNumberOfPendingRequests()
     RequestsController rc;
 
     for (int i = 0; i < 300; i++) {
-        std::pair<std::shared_ptr<DeferredRequest>, QByteArray> requestInfo =
+        std::pair<DeferredRequest *, QByteArray> requestInfo =
             rc.addNewRequest(QString::number(i), {{"message_id", i}});
         QVERIFY_(requestInfo.first->getId() != 0);
         QVERIFY_(false == requestInfo.second.isEmpty());
@@ -56,12 +56,12 @@ void RequestsControllerTest::testNonExistanteRequestId()
 void RequestsControllerTest::testGetMethodName()
 {
     RequestsController rc;
-    std::pair<std::shared_ptr<DeferredRequest>, QByteArray> requestInfo_1 =
+    std::pair<DeferredRequest *, QByteArray> requestInfo_1 =
         rc.addNewRequest("method_handler_1", {});
     QVERIFY_(requestInfo_1.first->getId() != 0);
     QVERIFY_(false == requestInfo_1.second.isEmpty());
 
-    std::pair<std::shared_ptr<DeferredRequest>, QByteArray> requestInfo_2 =
+    std::pair<DeferredRequest *, QByteArray> requestInfo_2 =
         rc.addNewRequest("method_handler_2", {});
     QVERIFY_(requestInfo_2.first->getId() != 0);
     QVERIFY_(false == requestInfo_2.second.isEmpty());
@@ -89,7 +89,7 @@ void RequestsControllerTest::testPopRequest()
         const auto [deferredRequest, requestJson] =
             rc.addNewRequest("test_handler", QJsonObject({{}}));
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
+        connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [](const Message &) {});
 
         QVERIFY(deferredRequest->getId() > 0);

@@ -27,10 +27,10 @@ public:
      * Adds a new request with callbacks to handle it's response.
      * @param [in] method request handler name.
      * @param [in] payload QJsonObject of the request payload.
-     * @return std::pair of shared pointer to deferredRequest and QByteArray of json formatted
+     * @return std::pair of pointer to deferredRequest and QByteArray of json formatted
      * request.
      */
-    [[nodiscard]] std::pair<std::shared_ptr<DeferredRequest>, QByteArray> addNewRequest(
+    [[nodiscard]] std::pair<DeferredRequest *, QByteArray> addNewRequest(
         const QString &method, const QJsonObject &payload);
 
     /**

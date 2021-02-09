@@ -126,7 +126,7 @@ void StrataClientTest::testBuildRequest()
     serverRevicedMessage = false;
     {
         auto deferredRequest = client.sendRequest("method_1", {{"param_1", 0}});
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
         waitForZmqMessages();
         QVERIFY_(serverRevicedMessage);
     }
@@ -136,7 +136,7 @@ void StrataClientTest::testBuildRequest()
     serverRevicedMessage = false;
     {
         auto deferredRequest = client.sendRequest("method_2", {});
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
         waitForZmqMessages();
         QVERIFY_(serverRevicedMessage);
     }
@@ -299,11 +299,11 @@ void StrataClientTest::testWithAllCallbacks()
         auto deferredRequest =
             client.sendRequest("test_all_callbacks", QJsonObject({{"response_type", "error"}}));
 
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
+        connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
-        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
+        connect(deferredRequest, &DeferredRequest::finishedWithError, this,
                 [&allCallbacksErrCallback](const Message &) { allCallbacksErrCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -319,11 +319,11 @@ void StrataClientTest::testWithAllCallbacks()
         auto deferredRequest =
             client.sendRequest("test_all_callbacks", QJsonObject({{"response_type", "result"}}));
 
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
+        connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
-        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
+        connect(deferredRequest, &DeferredRequest::finishedWithError, this,
                 [&allCallbacksErrCallback](const Message &) { allCallbacksErrCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -340,11 +340,11 @@ void StrataClientTest::testWithAllCallbacks()
         auto deferredRequest = client.sendRequest("test_all_callbacks",
                                                   QJsonObject({{"response_type", "notification"}}));
 
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
+        connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&allCallbacksResCallback](const Message &) { allCallbacksResCallback = true; });
-        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
+        connect(deferredRequest, &DeferredRequest::finishedWithError, this,
                 [&allCallbacksErrCallback](const Message &) { allCallbacksErrCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -413,9 +413,9 @@ void StrataClientTest::testWithOnlyResultCallbacks()
         auto deferredRequest =
             client.sendRequest("test_res_callback", QJsonObject({{"response_type", "result"}}));
 
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
+        connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const Message &) { resCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -429,9 +429,9 @@ void StrataClientTest::testWithOnlyResultCallbacks()
         auto deferredRequest =
             client.sendRequest("test_res_callback", QJsonObject({{"response_type", "error"}}));
 
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
+        connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const Message &) { resCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -445,9 +445,9 @@ void StrataClientTest::testWithOnlyResultCallbacks()
         auto deferredRequest = client.sendRequest("test_res_callback",
                                                   QJsonObject({{"response_type", "notification"}}));
 
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedSuccessfully, this,
+        connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
                 [&resCallback](const Message &) { resCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -515,9 +515,9 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
         auto deferredRequest =
             client.sendRequest("test_err_callback", QJsonObject({{"response_type", "result"}}));
 
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
+        connect(deferredRequest, &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const Message &) { errorCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -531,9 +531,9 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
         auto deferredRequest =
             client.sendRequest("test_err_callback", QJsonObject({{"response_type", "error"}}));
 
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
+        connect(deferredRequest, &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const Message &) { errorCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);
@@ -547,9 +547,9 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
         auto deferredRequest = client.sendRequest("test_err_callback",
                                                   QJsonObject({{"response_type", "notification"}}));
 
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
 
-        connect(deferredRequest.get(), &DeferredRequest::finishedWithError, this,
+        connect(deferredRequest, &DeferredRequest::finishedWithError, this,
                 [&errorCallback](const Message &) { errorCallback = true; });
 
         waitForZmqMessages(zmqWaitTime);

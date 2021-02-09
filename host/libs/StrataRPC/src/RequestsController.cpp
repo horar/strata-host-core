@@ -12,7 +12,7 @@ RequestsController::~RequestsController()
 {
 }
 
-std::pair<std::shared_ptr<DeferredRequest>, QByteArray> RequestsController::addNewRequest(
+std::pair<DeferredRequest *, QByteArray> RequestsController::addNewRequest(
     const QString &method, const QJsonObject &payload)
 {
     ++currentRequestId_;
@@ -26,11 +26,9 @@ std::pair<std::shared_ptr<DeferredRequest>, QByteArray> RequestsController::addN
     qCDebug(logCategoryRequestsController)
         << "Building request. id:" << currentRequestId_ << "method:" << method;
 
-    std::shared_ptr<DeferredRequest> deferredRequest =
-        std::make_shared<DeferredRequest>(currentRequestId_, this);
+    DeferredRequest *deferredRequest = new DeferredRequest(currentRequestId_, this);
     const auto request = requestsList_.insert(
-        currentRequestId_,
-        Request(method, payload, currentRequestId_, deferredRequest));
+        currentRequestId_, Request(method, payload, currentRequestId_, deferredRequest));
 
     return {deferredRequest, request.value().toJson()};
 }

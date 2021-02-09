@@ -149,25 +149,25 @@ void StrataClientServerIntegrationTest::testSingleClient()
     {
         auto deferredRequest =
             client.sendRequest("example_command_sends_response", {{"key", "value"}});
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
         waitForZmqMessages();
     }
     {
         auto deferredRequest = client.sendRequest("example_command_sends_response_and_notification",
                                                   {{"key", "value"}});
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
         waitForZmqMessages();
     }
     {
         auto deferredRequest =
             client.sendRequest("example_command_sends_error", {{"key", "value"}});
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
         waitForZmqMessages();
     }
     {
         auto deferredRequest = client.sendRequest(
             "platform_message", {{"device_id", 2020}, {"message", "json string!"}});
-        QVERIFY_(deferredRequest);
+        QVERIFY_(deferredRequest != nullptr);
         waitForZmqMessages();
     }
 
@@ -292,7 +292,7 @@ void StrataClientServerIntegrationTest::testCallbacks()
     {
         auto deferredRequest = client.sendRequest("test_error_callback", QJsonObject{});
 
-        connect(deferredRequest.get(), &strata::strataRPC::DeferredRequest::finishedWithError, this,
+        connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this,
                 [&gotErrorCallback](const Message &) { gotErrorCallback = true; });
 
         waitForZmqMessages(waitZmqDelay);
@@ -302,8 +302,8 @@ void StrataClientServerIntegrationTest::testCallbacks()
     {
         auto deferredRequest = client.sendRequest("test_result_callback", QJsonObject{});
 
-        connect(deferredRequest.get(), &strata::strataRPC::DeferredRequest::finishedSuccessfully,
-                this, [&gotResultCallback](const Message &) { gotResultCallback = true; });
+        connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this,
+                [&gotResultCallback](const Message &) { gotResultCallback = true; });
 
         waitForZmqMessages(waitZmqDelay);
         QVERIFY_(gotResultCallback);

@@ -15,8 +15,7 @@ struct Request {
      * @param [in] payload QJsonObject of the request payload.
      * @param [in] deferredRequest deferredRequest of the request.
      */
-    Request(QString method, QJsonObject payload, int messageId,
-            std::shared_ptr<DeferredRequest> deferredRequest)
+    Request(QString method, QJsonObject payload, int messageId, DeferredRequest *deferredRequest)
         : method_(method),
           payload_(payload),
           messageId_(messageId),
@@ -39,7 +38,7 @@ struct Request {
     QString method_;
     QJsonObject payload_;
     int messageId_;
-    std::shared_ptr<DeferredRequest> deferredRequest_;
+    DeferredRequest *deferredRequest_;
 };
 
 }  // namespace strata::strataRPC
