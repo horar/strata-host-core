@@ -130,6 +130,26 @@ SGWidgets.SGDialog {
             }
 
             SGWidgets.SGText {
+                text: "Colapse commands:"
+                Layout.alignment: Qt.AlignRight
+            }
+
+            SGWidgets.SGCheckBox {
+                id: commandsColapsed
+                text: ""
+
+                Binding {
+                    target: commandsColapsed
+                    property: "checked"
+                    value: Sci.Settings.commandsCollapsed
+                }
+
+                onCheckedChanged : {
+                    Sci.Settings.commandsCollapsed = checked
+                }
+            }
+
+            SGWidgets.SGText {
                 text: "Reset Settings"
                 fontSizeMultiplier: 1.1
                 font.bold: true

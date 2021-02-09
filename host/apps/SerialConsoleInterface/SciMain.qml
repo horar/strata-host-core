@@ -41,6 +41,12 @@ Item {
         value: Sci.Settings.maxCommandsInHistory
     }
 
+    Binding {
+        target: sciModel.platformModel
+        property: "condensedInScrollback"
+        value: Sci.Settings.commandsCollapsed
+    }
+
     Item {
         id: tabBar
         anchors {
