@@ -517,8 +517,9 @@ function generateAssistedNoPlatformListing (platform) {
     if (fw_class_id === "") {
         fw_class_id = "no_firmware"
     }
-    let description = "Connected only Strata Assisted controller (" + fw_class_id + ") without platform."
-    return generateErrorListing(platform, "Strata Assisted (no platform)", "", "N/A", description)
+
+    let description = "Please connect platform to controller"
+    return generateErrorListing(platform, "Strata Assisted Controller", "", "N/A", description)
 }
 
 function generateAssistedIncompatibleListing (platform) {
