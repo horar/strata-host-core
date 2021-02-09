@@ -5,53 +5,53 @@
     "documents": {
         "datasheets": [
             {
-                "category": "Discretes & Drivers",
+                "category": "Discretes \u0026 Drivers",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/1SMB5913BT3-D.PDF",
                 "name": "1SMB5937BT3G",
                 "opn": "1SMB5937BT3G",
-                "subcategory": "Diodes & Rectifiers"
+                "subcategory": "Diodes \u0026 Rectifiers"
             },
             {
-                "category": "Discretes & Drivers",
+                "category": "Discretes \u0026 Drivers",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/MBRAF360-D.PDF",
                 "name": "NRVBAF360T3G",
                 "opn": "NRVBAF360T3G",
-                "subcategory": "Diodes & Rectifiers"
+                "subcategory": "Diodes \u0026 Rectifiers"
             },
             {
-                "category": "Discretes & Drivers",
+                "category": "Discretes \u0026 Drivers",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/NVMFS5C460NL-D.PDF",
                 "name": "NVMFS5C460NLAFT1G",
                 "opn": "NVMFS5C460NLAFT1G",
                 "subcategory": "MOSFETs"
             },
             {
-                "category": "Discretes & Drivers",
+                "category": "Discretes \u0026 Drivers",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/NZ9F2V4S-D.PDF",
                 "name": "NZ9F3V3ST5G",
                 "opn": "NZ9F3V3ST5G",
-                "subcategory": "Diodes & Rectifiers"
+                "subcategory": "Diodes \u0026 Rectifiers"
             },
             {
-                "category": "Discretes & Drivers",
+                "category": "Discretes \u0026 Drivers",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/BZX84C2V4LT1-D.PDF",
                 "name": "SZBZX84C15LT1G",
                 "opn": "SZBZX84C15LT1G",
-                "subcategory": "Diodes & Rectifiers"
+                "subcategory": "Diodes \u0026 Rectifiers"
             },
             {
                 "category": "Power Management",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/NCV6357-D.PDF",
                 "name": "NCV6357MTWDTXG",
                 "opn": "NCV6357MTWDTXG",
-                "subcategory": "DC-DC Controllers, Converters, & Regulators"
+                "subcategory": "DC-DC Controllers, Converters, \u0026 Regulators"
             },
             {
                 "category": "Power Management",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/NCV881930-D.PDF",
                 "name": "NCV881930MW00R2G",
                 "opn": "NCV881930MW00R2G",
-                "subcategory": "DC-DC Controllers, Converters, & Regulators"
+                "subcategory": "DC-DC Controllers, Converters, \u0026 Regulators"
             },
             {
                 "category": "Memory",
@@ -61,21 +61,21 @@
                 "subcategory": "EEPROM Memory"
             },
             {
-                "category": "Discretes & Drivers",
+                "category": "Discretes \u0026 Drivers",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/2N7002W-D.PDF",
                 "name": "2V7002W",
                 "opn": "2V7002W",
                 "subcategory": "MOSFETs"
             },
             {
-                "category": "Discretes & Drivers",
+                "category": "Discretes \u0026 Drivers",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/NVATS5A108PLZ-D.PDF",
                 "name": "NVATS5A108PLZ",
                 "opn": "NVATS5A108PLZ",
                 "subcategory": "MOSFETs"
             },
             {
-                "category": "Amplifiers & Comparators",
+                "category": "Amplifiers \u0026 Comparators",
                 "datasheet": "https://www.onsemi.com/pub/Collateral/NCS210R-D.PDF",
                 "name": "NCS214RSQT2G",
                 "opn": "NCS214RSQT2G",
