@@ -55,7 +55,7 @@ SGWidgets.SGMainWindow {
     }
 
     onClosing: {
-        if (controlViewCreator.blockWindowClose()) {
+        if (controlViewCreatorLoader.active && controlViewCreatorLoader.item.blockWindowClose()) {
             close.accepted = false
             return
         }
@@ -150,8 +150,8 @@ SGWidgets.SGMainWindow {
                 delegate: SGPlatformView {}
             }
 
-            ControlViewCreator {
-                id: controlViewCreator
+            CVCLoader {
+                id: controlViewCreatorLoader
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }

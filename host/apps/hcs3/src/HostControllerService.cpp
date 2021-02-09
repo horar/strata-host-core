@@ -126,7 +126,9 @@ bool HostControllerService::initialize(const QString& config)
     storageManager_.setBaseUrl(baseUrl);
     storageManager_.setDatabase(&db_);
 
-    db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
+    db_.initReplicator(db_cfg["gateway_sync"].GetString(), 
+        std::string(ReplicatorCredentials::replicator_username).c_str(),
+        std::string(ReplicatorCredentials::replicator_password).c_str());
 
     boardsController_.initialize();
 
@@ -488,7 +490,7 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
     // Remove the client from the mapping
     current_client_ = nullptr;
     clientList_.remove(client);
-    qCInfo(logCategoryHcs) << "Client unregistered: " << clientId.toHex();
+    qCInfo(logCategoryHcs).nospace().noquote() << "Client unregistered: 0x" << clientId.toHex();
 }
 
 void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* payload)
@@ -700,7 +702,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     //check the client's ID (dealer_id) is in list
     Client* client = getClientById(clientId);
     if (client == nullptr) {
-        qCInfo(logCategoryHcs) << "new Client:" << clientId.toHex();
+        qCInfo(logCategoryHcs).nospace().noquote() << "new Client: 0x" << clientId.toHex();
 
         client = new Client(clientId);
         clientList_.push_back(client);
@@ -710,7 +712,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 
     rapidjson::Document service_command;
     if (service_command.Parse(msg.message.constData(), msg.message.size()).HasParseError()) {
-        qCWarning(logCategoryHcs) << "Client:" << clientId.toHex() << "parse error!";
+        qCWarning(logCategoryHcs).nospace().noquote() << "Client: 0x" << clientId.toHex() << " parse error!";
         return;
     }
 
@@ -733,14 +735,16 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     }
 
     QByteArray cmd_name(firstIt->value.GetString(), firstIt->value.GetStringLength());
-    qCInfo(logCategoryHcs) << "Client:" << clientId.toHex() << "Type:" << msg_type << "cmd:" << cmd_name;
+    qCInfo(logCategoryHcs).nospace().noquote() << "Client: 0x"
+            << clientId.toHex() << ", Type: " << msg_type << ", cmd: " << cmd_name;
 
     if (msg_type == "hcs::cmd") {
 
         auto findIt = hostCmdHandler_.find(cmd_name);
         if (findIt == hostCmdHandler_.end()) {
             //TODO: error handling...
-            qCWarning(logCategoryHcs) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << msg_type << "cmd:" << cmd_name;
+            qCWarning(logCategoryHcs).nospace().noquote() << "Unhandled command, Client: 0x"
+                    << clientId.toHex() << ", Type: " << msg_type << ", cmd: " << cmd_name;
             return;
         }
 
@@ -750,14 +754,16 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 
         auto findIt = clientCmdHandler_.find(cmd_name);
         if (findIt == clientCmdHandler_.end()) {
-            qCWarning(logCategoryHcs) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << msg_type << "cmd:" << cmd_name;
+            qCWarning(logCategoryHcs).nospace().noquote() << "Unhandled command, Client: 0x"
+                    << clientId.toHex() << ", Type: " << msg_type << ", cmd: " << cmd_name;
             return;
         }
 
         findIt->second(payload);
     }
     else {
-        qCWarning(logCategoryHcs) << "Unhandled command type" <<  "Client:" << clientId.toHex() << "Type:" << msg_type << "cmd:" << cmd_name;
+        qCWarning(logCategoryHcs).nospace().noquote() << "Unhandled command type, Client: 0x"
+                << clientId.toHex() << ", Type: " << msg_type << ", cmd: " << cmd_name;
         return;
     }
 }

@@ -571,7 +571,7 @@ void StorageManager::requestDownloadControlView(const QByteArray &clientId, cons
 
 void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
 {
-    qCInfo(logCategoryHcsStorage) << "clientId" << clientId.toHex();
+    qCInfo(logCategoryHcsStorage).nospace().noquote() << "clientId: 0x" << clientId.toHex();
 
     QMutableHashIterator<QString, DownloadRequest*> iter(downloadRequests_);
     while (iter.hasNext()) {
