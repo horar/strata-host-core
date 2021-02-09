@@ -3602,6 +3602,7 @@ const BasicItemProperties = [
     "enabled: ${1: true}",
     "focus: ${1: }",
     "height: ${1: parent.height}",
+    "id: ",
     "implicitHeight: ${1: 100}",
     "implicitWidth: ${1: 100}",
     "opacity: ${1: 1.0}",
@@ -3625,11 +3626,11 @@ const BasicItemProperties = [
 ]
 const qtQuickBody = [
 {
-        "body": "property alias ${1:name}: ${2:val}\n",
+        "body": "property\n",
         "description": "QML property alias",
-        "prefix": "alias",
+        "prefix": "property",
         "scope": "source.qml",
-        "properties": [""]
+        "properties": ["alias","real","string","url","double","int","bool","color","var","coordinate","date","default","enumeration","size","point","list","vector2d","vector3d","rect","palette"]
     },
     {
         "body": "anchors {\n \n}",
@@ -3639,60 +3640,11 @@ const qtQuickBody = [
         "properties":["margins: ","left: ","right: ","top: ","bottom: ","verticalCenter: ","horizontalCenter: ","fill: ","centerIn: ","horizontalOffset: ","verticalOffset: "]
     },
     {
-        "body": "bool",
-        "description": "bool",
-        "prefix": "bool",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-   {
-        "body": "color",
-        "description": "color",
-        "prefix": "color",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
         "body": "console.${1}",
         "description": "console",
         "prefix": "console",
         "scope": "source.js",
         "properties": ["log(\"${1:}: \")", "debug(\"${1:}: \")","info(\"${1:}: \")","warn(\"${1:}: \")","error(\"${1:}: \")"]
-    },
-    {
-        "body": "coordinate",
-        "description": "coordinate",
-        "prefix": "coordinate",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "date",
-        "description": "date",
-        "prefix": "date",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "default",
-        "description": "default",
-        "prefix": "default",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "double",
-        "description": "double",
-        "prefix": "double",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "enumeration",
-        "description": "enumeration",
-        "prefix": "enumeration",
-        "scope": "source.qml",
-        "properties": [""]
     },
     {
         "body": "font",
@@ -3708,166 +3660,13 @@ const qtQuickBody = [
         "scope": "source.qml",
         "properties": [""]
     },
-    {
-        "body": "geocircle",
-        "description": "geocircle",
-        "prefix": "geocircle",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "geopath",
-        "description": "geopath",
-        "prefix": "geopath",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "geopolygon",
-        "description": "geopolygon",
-        "prefix": "geopolygon",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "georectangle",
-        "description": "georectangle",
-        "prefix": "georectangle",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "geoshape",
-        "description": "geoshape",
-        "prefix": "geoshape",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "id: ",
-        "description": "id",
-        "prefix": "id",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "int",
-        "description": "int",
-        "prefix": "int",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "\nLayout.fillHeight: ${1:true}\n",
-        "description": "height",
-        "prefix": "layout.fillHeight",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "\nLayout.fillWidth: ${1:true}\n",
-        "description": "width",
-        "prefix": "layout.fillWidth",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "list{\n    \n}",
-        "description": "list",
-        "prefix": "list",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "palette",
-        "description": "palette",
-        "prefix": "palette",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "point{\n //x: 0\n //y: 0 \n}",
-        "description": "point",
-        "prefix": "point",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "property ${1:var} ${2:name}\n",
-        "description": "QML property",
-        "prefix": "property",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "real",
-        "description": "real",
-        "prefix": "real",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "rect{\n  //x: 0\n //y: 0  \n}",
-        "description": "rect",
-        "prefix": "rect",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "size",
-        "description": "size",
-        "prefix": "size",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "string",
-        "description": "string",
-        "prefix": "string",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "url",
-        "description": "url",
-        "prefix": "url",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "var",
-        "description": "var",
-        "prefix": "var",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "variant",
-        "description": "variant",
-        "prefix": "variant",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "vector2d",
-        "description": "vector2d",
-        "prefix": "vector2d",
-        "scope": "source.qml",
-        "properties": [""]
-    },
-    {
-        "body": "vector3d",
-        "description": "vector3d",
-        "prefix": "vector3d",
-        "scope": "source.qml",
-        "properties": [""]
-    },
 ]
 
 function createDynamicProperty(property, range){
     return {
         "label": property,
         "kind": monaco.languages.CompletionItemKind.Function,
+        "insertTextRules":monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
         "insertText": property,
         "range": range,
     }
