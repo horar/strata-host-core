@@ -66,29 +66,9 @@
 
         <script>
            monaco.languages.register({ id: 'qml' })
-           var builtInTypes = []
-           var builtInVariables = []
-
-           for(var i = 0; i < qtQuick.length; i++){
-               builtInTypes.push(qtQuick[i].prefix)
-               for(var y = 0; y < qtQuick[i].properties.length; y++){
-                   builtInVariables.push(qtQuick[i].properties[y])
-               }
-           }
-
-           for(var j = 0; j < SGWidgets.length; j++){
-               builtInTypes.push(SGWidgets[j].prefix)
-               for(var y = 0; y < SGWidgets[j].properties.length; y++){
-                   builtInVariables.push(`${SGWidgets[j].properties[y]}`)
-               }
-           }
-
             monaco.languages.setMonarchTokensProvider('qml',{
-                    keywords: ['readonly','property','for','if','else','do','while','true','false','signal','const','switch','import','as',"on",'async','console',"let","default"],
+                    keywords: ['readonly','property','for','if','else','do','while','true','false','signal','const','switch','import','as',"on",'async','console',"let","default","function"],
                     typeKeywords: ['int','real','var','string','color','url','alias','bool'],
-                    builtInFunctions: ['eval','parseInt','parseFloat','isNaN','isFinite','decodeURI','decodeURIComponent','encodeURI','encodeURIComponent','escape','unescape'],
-                    builtInTypes: builtInTypes,
-                    builtInVariables:builtInVariables,
                     operators: [
                         '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=','===','<==','>==','!==',
                         '&&', '||', '++', '--', '+', '-', '*', '/', '&', '|', '^', '%',
@@ -213,7 +193,7 @@
 
             monaco.languages.registerCompletionItemProvider('qml',{
                 provideCompletionItems: (model, position) => {
-                    var textUntilPosition = model.getValueInRange({startLineNumber: position.lineNumber, startColumn: position.column});
+                    var textUntilPosition = model.getValueInRange({startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column});
                     var word = model.getWordUntilPosition(position);
                     var range = {
                         startLineNumber: position.lineNumber,
@@ -222,6 +202,7 @@
                         endColumn: word.endColumn
                     };
                     var suggestions = []
+                    var propertySuggestions = []
                     for (var x = 0; x < BasicItemProperties.length; x++){
                         suggestions.push({
                             label: BasicItemProperties[x],
@@ -258,12 +239,11 @@
                             range: range
                         })
                     }
-                    for( var i = 0; i < qtQuick.length; i++){
+                    for(var i = 0; i < qtQuick.length; i++){
                         var regex = new RegExp(qtQuick[i].prefix)
                         var match = textUntilPosition.match(regex);
                         if (match) {
-                            convertStrArrayToObjArray(suggestions, qtQuick[i].properties, range)
-                            break
+                            convertStrArrayToObjArray(propertySuggestions, qtQuick[i].properties, range)
                         }
                     }
 
@@ -271,18 +251,17 @@
                         var regex = new RegExp(qtQuickBody[j].prefix)
                         var match = textUntilPosition.match(regex);
                         if (match) {
-                            convertStrArrayToObjArray(suggestions, qtQuickBody[j].properties, range)
-                            break
+                            convertStrArrayToObjArray(propertySuggestions, qtQuickBody[j].properties, range)
                         }
                     }
                     for (var y = 0; y < SGWidgets.length; y++){
                         var regex = new RegExp(SGWidgets[y].prefix)
                         var match = textUntilPosition.match(regex);
                         if (match) {
-                            convertStrArrayToObjArray(suggestions, SGWidgets[y].properties, range)
-                            break
+                            convertStrArrayToObjArray(propertySuggestions, SGWidgets[y].properties, range)
                         }
                     }
+                    suggestions = suggestions.concat(propertySuggestions)
                     return {suggestions: suggestions}
                 }
             })

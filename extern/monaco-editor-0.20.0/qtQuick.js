@@ -18,14 +18,16 @@ const qtQuick = [
         "description": "Axis",
         "prefix": "Axis",
         "scope": "source.qml",
-        "properties": ["buttons: ", "inputs: ", "scale: ","value: ","velocity: "]
+        "properties": ["buttons: ", "inputs: ", "scale: ","value: ","velocity: "],
+        "regex":/Axis\s{\n(\*)/
     },
     {
         "body": "Binding {\n //id: \n}",
         "description": "Binding",
         "prefix": "Binding",
         "scope": "source.qml",
-        "properties": ["delayed: ","property: ","target: ","value: ","when: "]
+        "properties": ["delayed: ","property: ","target: ","value: ","when: "],
+        "regex":/Binding\s{\n(\*)/
     },
     {
         "body": "BusyIndicator {\n //id: \n}",
@@ -1042,7 +1044,8 @@ const qtQuick = [
             "y: ",
             "z: ",
             "objectName: "
-        ]
+        ],
+        "regex":/Item\s{\n(\*)/
     },
     {
         "body": "Label {\n //id: \n}",
@@ -1104,11 +1107,12 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Layout",
+        "body": "Layout.",
         "description": "Layout",
         "prefix": "Layout",
         "scope": "source.qml",
-        "properties": ["preferredHeight: ", "preferredWidth: ", "minimumWidth: ", "maximumWidth: ","minimumHeight","maximumHeight: ","alignment: ","fillWidth: ","fillHeight: "]
+        "properties": ["preferredHeight: ", "preferredWidth: ", "minimumWidth: ", "maximumWidth: ","minimumHeight","maximumHeight: ","alignment: ","fillWidth: ","fillHeight: "],
+        "regex":/Layout.(\*)/
     },
     {
         "body": "ListElement {\n //id: \n}",
@@ -3626,7 +3630,7 @@ const BasicItemProperties = [
 ]
 const qtQuickBody = [
 {
-        "body": "property\n",
+        "body": "property\s",
         "description": "QML property alias",
         "prefix": "property",
         "scope": "source.qml",
