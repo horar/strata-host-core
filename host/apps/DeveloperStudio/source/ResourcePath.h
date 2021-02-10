@@ -5,7 +5,7 @@
 class ResourcePath final
 {
 public:
-    ResourcePath();
+    ResourcePath() = default;
 
     static QString& coreResourcePath();
     static QString& viewsResourcePath();
