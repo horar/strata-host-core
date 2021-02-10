@@ -88,7 +88,7 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
             return;
         }
     }
-    Î qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
+    qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
     emit newServerMessageParsed(serverMessage);
 }
 
