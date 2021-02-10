@@ -19,12 +19,18 @@ var platformSelectorModel
 var classMap = {} // contains metadata for platformSelectorModel for faster lookups
 var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
-var notificationAction = Qt.createQmlObject("import QtQuick.Controls 2.12; Action {}",Qt.application, "PlatformNotifications")
+var notificationActions = []
 var localPlatformList = []
 
 function createPlatformActions() {
-    notificationAction.text = "Disable Platform Notifications"
-    notificationAction.triggered.connect(function () { disablePlatformNotifications() });
+    for(var i = 0; i < 2; i++){
+        notificationActions[i] = Qt.createQmlObject("import QtQuick.Controls 2.12; Action {}",Qt.application, `PlatformNotifications${i}`)
+    }
+
+    notificationActions[0].text = "Disable platform notifications"
+    notificationActions[0].triggered.connect(function(){disablePlatformNotifications()})
+    notificationActions[1].text = "Ok"
+    notificationActions[1].triggered.connect(function(){})
 }
 
 function initialize (newCoreInterface) {
@@ -635,16 +641,16 @@ function notifyConnectedState(connected, platformOPN){
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
                                                                    {
-                                                                       "timeout": 4000,
-                                                                       "actions": [notificationAction]
+                                                                       "timeout": 8000,
+                                                                       "actions": [notificationActions[0],notificationActions[1]]
                                                                    })
         } else {
             PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is disconnected`,
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
                                                                    {
-                                                                       "timeout": 4000,
-                                                                       "actions": [notificationAction]
+                                                                       "timeout": 8000,
+                                                                       "actions": [notificationActions[0],notificationActions[1]]
                                                                    })
         }
     }
