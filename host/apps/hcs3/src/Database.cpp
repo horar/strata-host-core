@@ -24,7 +24,7 @@ bool Database::open(std::string_view db_path, const std::string& db_name, const 
     }
 
     // TODO: use replUrl, username, password. Hardcoded for development only
-    const QString endpointURL_ = "ws://localhost:4984/platform-list";
+    const QString endpointURL_ = "ws://10.0.0.157:4984/platform-list";
 
     auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 

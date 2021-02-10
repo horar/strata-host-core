@@ -9,15 +9,15 @@
 #include <QStandardPaths>
 
 // Replicator URL endpoint
-const QString endpointURL = "ws://localhost:4984/platform-list";
-const QString endpointUsername = "user_1";
+const QString endpointURL = "ws://10.0.0.157:4984/platform-list";
+const QString endpointUsername = "user_public";
 
 int main() {
     // Open database manager
     auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
         qDebug() << "DatabaseManager-sampleapp changeListener -> replication status changed!";
     };
-    auto databaseManager = std::make_unique<DatabaseManager>(endpointURL, changeListener);
+    auto databaseManager = std::make_unique<DatabaseManager>("", endpointURL, changeListener);
 
     // Wait until user_access_map replication is finished
     unsigned int retries = 0;
@@ -33,7 +33,7 @@ int main() {
     }
 
     // Open database, provide QStringList of channels for connection
-    QStringList channels = {"channel_A", "channel_B"};
+    QStringList channels = {"channel_public"};
     auto DB = databaseManager->login(endpointUsername, channels, changeListener);
 
     // Object valid if database open successful
@@ -78,7 +78,7 @@ int main() {
         qDebug() << "Failed to set document contents, body must be in JSON format.";
     }
 
-    if (DB->write(&Doc2, "channel_A")) {
+    if (DB->write(&Doc2, "channel_public")) {
         qDebug() << "Successfully saved database.";
     } else {
         qDebug() << "Error saving database.";
