@@ -149,6 +149,7 @@ void SGJsonFormatter::resolveNextToken(
                 return;
             } else {
                 state = ScannerState::SyntaxError;
+                nextToken.startIndex = i;
                 nextToken.type = TokenType::SyntaxError;
             }
             break;
