@@ -8,8 +8,6 @@ import "partial-views"
 import "partial-views/platform-selector"
 import "partial-views/distribution-portal"
 import "js/navigation_control.js" as NavigationControl
-import "js/platform_selection.js" as PlatformControl
-import "js/constants.js" as Constants
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -26,7 +24,6 @@ Rectangle{
     property string user_id: ""
     property string first_name: ""
     property string last_name: ""
-    property var fakePlatformTab: null
 
     Image {
         id: background
@@ -156,7 +153,6 @@ Rectangle{
             bottom: container.bottom
             margins: 20
         }
-
         source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40

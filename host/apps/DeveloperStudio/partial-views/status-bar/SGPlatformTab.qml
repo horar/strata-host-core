@@ -26,7 +26,7 @@ Item {
     property bool inView: NavigationControl.stack_container_.currentIndex === index + 1
     property string selectedButtonIcon: ""
 
-    property alias currIcon: currIcon
+    property alias currIcon: currentIcon
     property alias platformName: platformName
 
     Component.onCompleted: {
@@ -58,8 +58,10 @@ Item {
             if(!tour_running){
                 menu.state = "normal"
                 dropDownPopup.close()
+                dropDownPopup.z = 0
             } else {
                 menu.state = "help_tour"
+                dropDownPopup.z = -1
             }
         }
     }
@@ -153,12 +155,12 @@ Item {
         spacing: 0
 
         Rectangle {
-            id: platformName
             color: mouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
             Layout.fillHeight: true
             Layout.fillWidth: true
 
             SGText {
+                id: platformName
                 color: "white"
                 text: platformTabRoot.name
                 elide: Text.ElideRight
@@ -184,7 +186,6 @@ Item {
         }
 
         Rectangle {
-            id: currIcon
             Layout.fillHeight: true
             Layout.preferredWidth: height
             color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouse.containsMouse ? platformTabRoot.menuColor :"#444"
@@ -230,6 +231,7 @@ Item {
         onOpened: {
             if(menu.state === "help_tour"){
                 Help.refreshView(Help.internal_tour_index)
+                dropDownPopup.z = -1
             }
         }
 

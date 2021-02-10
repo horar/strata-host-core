@@ -225,11 +225,7 @@ Rectangle {
 
                onInternal_tour_indexChanged: {
                    if(Help.current_tour_targets[index]["target"] === help_tour){
-                       if(!help_tour.visible){
-                           help_tour.visible = true
-                       } else {
-                           help_tour.visible = false
-                       }
+                        help_tour.visible = true
                    }
                }
            }
