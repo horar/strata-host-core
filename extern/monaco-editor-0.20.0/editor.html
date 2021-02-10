@@ -223,7 +223,7 @@
                                 insertText: qtQuick[n].body,
                                 range: range
                             })
-                            var regex = new RegExp(qtQuick[n].prefix + "[^{]+\s\{([^}]+)\}")
+                            var regex = new RegExp(qtQuick[n].prefix)
                             var match = textUntilPosition.match(regex);
                             if (match) {
                                 convertStrArrayToObjArray(propertySuggestions, qtQuick[n].properties, range)
@@ -241,7 +241,7 @@
                             var regex = new RegExp(qtQuickBody[m].prefix)
                             var match = textUntilPosition.match(regex);
                             if (match) {
-                                convertStrArrayToObjArray(propertySuggestions, qtQuick[m].properties, range)
+                                convertStrArrayToObjArray(propertySuggestions, qtQuickBody[m].properties, range)
                             }
                         }
                     }
@@ -254,7 +254,7 @@
                                 insertText: SGWidgets[k].body,
                                 range: range
                             })
-                            var regex = new RegExp(SGWidgets[k].prefix+"[^{]+\s\{([^}]+)\}")
+                            var regex = new RegExp(SGWidgets[k].prefix)
                             var match = textUntilPosition.match(regex);
                             if (match) {
                                 convertStrArrayToObjArray(propertySuggestions, SGWidgets[k].properties, range)
