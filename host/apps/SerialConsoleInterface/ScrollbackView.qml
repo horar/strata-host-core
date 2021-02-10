@@ -495,26 +495,27 @@ Item {
     }
 
     function copyToClipboard() {
-        var text = ""
-        if (selectionStartIndex == selectionEndIndex) {
-            var sourceIndex = scrollbackFilterModel.mapIndexToSource(selectionStartIndex)
-            if (sourceIndex >= 0) {
-                text = model.data(sourceIndex, "message")
-                text = text.slice(selectionStartPosition, selectionEndPosition)
-            }
-        } else {
-            for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
-                sourceIndex = scrollbackFilterModel.mapIndexToSource(i)
-                if (sourceIndex < 0) {
-                    text = ""
-                    break
-                }
+        if (selectionStartPosition < 0 || selectionEndPosition < 0) {
+            return
+        }
 
-                text += model.data(sourceIndex, "message")
-                if (i !== selectionEndIndex) {
-                    text += '\n'
-                }
+        var text = ""
+
+        for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
+            var sourceIndex = scrollbackFilterModel.mapIndexToSource(i)
+            if (sourceIndex < 0) {
+                text = ""
+                break
             }
+
+            text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(model.data(sourceIndex, "message"))
+            if (i !== selectionEndIndex) {
+                text += '\n'
+            }
+        }
+
+        if (selectionStartIndex == selectionEndIndex) {
+            text = text.slice(selectionStartPosition, selectionEndPosition)
         }
 
         CommonCpp.SGUtilsCpp.copyToClipboard(text)
