@@ -63,4 +63,11 @@ QtObject {
       Feedback result signals
     */
     signal feedbackResult(string result)
+
+    /*
+      Misc Signal for CVC
+    */
+    signal loadCVC()
+    signal requestCVCClose()
+    signal closeCVC()
 }
