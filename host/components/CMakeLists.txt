@@ -13,9 +13,7 @@ if(APPS_CORECOMPONENTS)
         add_custom_target(${PROJECT_NAME})
         generate_ifw_version(GITTAG_PREFIX "components_")
 
-        if(WIN32)
-            add_subdirectory(qt)
-        endif()
+        add_subdirectory(qt)
     endif()
 
     add_subdirectory(theme)
