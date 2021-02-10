@@ -89,7 +89,6 @@ function logout_error(error){
     } else {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "Logout error:", JSON.stringify(error))
     }
-    SignalsModule.Signals.logout()
 }
 
 /*
