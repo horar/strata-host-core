@@ -194,8 +194,6 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
 
         serverMessage->handlerName = request.method_;
         *deferredRequest = request.deferredRequest_;
-        // qCDebug(logCategoryStrataClient) << "def req address..." << request.deferredRequest_;
-        // qCDebug(logCategoryStrataClient) << "def req address" << deferredRequest;
 
         if (true == jsonObject.contains("error") && true == jsonObject.value("error").isObject()) {
             serverMessage->payload = jsonObject.value("error").toObject();
