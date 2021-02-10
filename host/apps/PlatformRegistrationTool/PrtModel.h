@@ -21,6 +21,7 @@ class PrtModel : public QObject
     Q_PROPERTY(Authenticator* authenticator READ authenticator CONSTANT)
     Q_PROPERTY(RestClient* restClient READ restClient CONSTANT)
     Q_PROPERTY(QString bootloaderFilepath READ bootloaderFilepath NOTIFY bootloaderFilepathChanged)
+    Q_PROPERTY(QString serverType READ serverType CONSTANT)
 
 public:
     explicit PrtModel(QObject *parent = nullptr);
@@ -30,6 +31,7 @@ public:
     Authenticator* authenticator();
     RestClient* restClient();
     QString bootloaderFilepath();
+    QString serverType() const;
 
     Q_INVOKABLE QString deviceFirmwareVersion() const;
     Q_INVOKABLE QString deviceFirmwareVerboseName() const;
@@ -90,6 +92,7 @@ private:
     RestClient restClient_;
     Authenticator authenticator_;
     QUrl cloudServiceUrl_;
+    QString serverType_;
 
     QString downloadJobId_;
     QPointer<QTemporaryFile> bootloaderFile_;

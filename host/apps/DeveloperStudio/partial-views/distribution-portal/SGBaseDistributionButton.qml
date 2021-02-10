@@ -20,7 +20,7 @@ RowLayout {
     property string providerName: ''
     readonly property var providers: [
         {
-            name: "Distribution Portal...",
+            name: "Choose preferred distributor...",
             url: '',
             visible: false
         },
@@ -80,7 +80,7 @@ RowLayout {
             elide: Text.ElideRight
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
-            fontSizeMultiplier: 1.25
+            fontSizeMultiplier: 1
         }
 
         MouseArea {
@@ -203,8 +203,8 @@ RowLayout {
 
     TextMetrics {
         id: textSize
-        font.pixelSize: SGSettings.fontPixelSize * 1.25
+        font.pixelSize: SGSettings.fontPixelSize
         font.family: Fonts.franklinGothicBold
-        text: "Distribution Portal..."
+        text: providers[0].name
     }
 }

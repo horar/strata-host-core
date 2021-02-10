@@ -367,3 +367,33 @@ int CouchbaseDatabase::getReplicatorError() {
     }
     return error_code_;
 }
+
+void CouchbaseDatabase::setLogLevel(const QString &level) {
+    if (level == "debug") {
+        CBLLog_SetConsoleLevel(CBLLogDebug);
+    } else if (level == "verbose") {
+        CBLLog_SetConsoleLevel(CBLLogVerbose);
+    } else if (level == "info") {
+        CBLLog_SetConsoleLevel(CBLLogInfo);
+    } else if (level == "warning") {
+        CBLLog_SetConsoleLevel(CBLLogWarning);
+    } else if (level == "error") {
+        CBLLog_SetConsoleLevel(CBLLogError);
+    } else if (level == "none") {
+        CBLLog_SetConsoleLevel(CBLLogNone);
+    } else {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: unknown log level";
+    }
+}
+
+void CouchbaseDatabase::setLogCallback(void (*callback)(CBLLogDomain domain, CBLLogLevel level, const char *message)) {
+    if (callback) {
+        CBLLog_SetCallback(callback);
+    } else {
+        CBLLog_SetCallback(CouchbaseDatabase::logReceived);
+    }
+}
+
+void CouchbaseDatabase::logReceived(CBLLogDomain domain, CBLLogLevel level, const char *message) {
+    qCCritical(logCategoryCouchbaseDatabase) << "Received Couchbase log" << message;
+}

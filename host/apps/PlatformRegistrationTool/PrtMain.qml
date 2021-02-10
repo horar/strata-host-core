@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.prt 1.0 as PrtCommon
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
     id: prtMain
@@ -73,6 +74,44 @@ Item {
         ProgramDeviceWizard {
             focus: true
             prtModel: prtMain.prtModel
+        }
+    }
+
+ Rectangle {
+        id: testServerWarningContainer
+        anchors {
+            left: parent.left 
+            top: parent.top
+            margins: 10
+        }
+        height: testServerWarningRow.height + 10
+        width: testServerWarningRow.width + 16
+
+        color: TangoTheme.palette.error
+        radius: 5
+        visible: prtModel.serverType !== "production"
+
+        Row {
+            id: testServerWarningRow
+            anchors.centerIn: parent
+
+            spacing: 5
+            SGWidgets.SGIcon {
+                id: testServerWarningIcon
+                height: testServerWarning.height
+                width: height
+
+                iconColor: "white"
+                source: "qrc:/sgimages/exclamation-circle.svg"
+            }
+
+            SGWidgets.SGText {
+                id: testServerWarning
+                
+                alternativeColorEnabled: true
+                font.bold: true
+                text: "Non-production server in use."
+            }            
         }
     }
 }

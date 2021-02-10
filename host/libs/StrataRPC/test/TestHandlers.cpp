@@ -27,7 +27,7 @@ void TestHandlers::handler_4(const Message &message)
 
 void TestHandlers::printClientMessage(const Message &message)
 {
-    qDebug() << "client id: " << message.clientID.toHex();
-    qDebug() << "handler name: " << message.handlerName;
-    qDebug() << "message id: " << message.messageID;
+    qDebug().nospace().noquote() << "client id: 0x" << message.clientID.toHex();
+    qDebug() << "handler name:" << message.handlerName;
+    qDebug() << "message id:" << message.messageID;
 }

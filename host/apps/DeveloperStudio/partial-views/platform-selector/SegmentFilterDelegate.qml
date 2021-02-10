@@ -1,15 +1,20 @@
 import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0
 
-Item {
+import "qrc:/js/platform_filters.js" as Filters
+
+Rectangle {
     id: root
-    height: column.height
-    width: column.width
+    implicitHeight: row.implicitHeight
+    Layout.fillWidth: true
+    color: mouseArea.containsMouse ? "#f2f2f2" : "white"
 
     property bool checked: false
 
-    signal selected(string filter)
+    signal selected()
 
     MouseArea {
         id: mouseArea
@@ -19,51 +24,32 @@ Item {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            root.selected(model.filterName)
+            Filters.setFilterActive(model.filterName, true)
+            root.selected()
         }
     }
 
-    Column {
-        id: column
+    RowLayout {
+        id: row
         spacing: 5
-
-        Rectangle {
-            id: iconBackground
-            color: root.checked ? Theme.palette.green : "black"
-            width: 75
-            height: 75
-            radius: width/2
-
-            Image {
-                id: icon
-                anchors {
-                    fill: parent
-                }
-                source: model.iconSource
-                mipmap: true
-            }
+        anchors {
+            fill: parent
         }
 
-        Text {
+        SGIcon {
+            id: icon
+            implicitWidth: 25
+            implicitHeight: 25
+            source: model.iconSource
+            mipmap: true
+            iconColor: "black"
+            Layout.leftMargin: 20
+        }
+
+        SGText {
             text: model.text
-            anchors {
-                horizontalCenter: iconBackground.horizontalCenter
-            }
-            horizontalAlignment: Text.AlignHCenter
-            color: "#666"
-        }
-    }
-
-    Connections {
-        target: segmentFilterRow
-        onSelected: {
-            if (model.filterName !== filter) {
-                root.checked = false
-            } else if (root.checked) {
-                root.checked = false
-            } else {
-                root.checked = true
-            }
+            Layout.fillWidth: true
+            elide: Text.ElideRight
         }
     }
 }

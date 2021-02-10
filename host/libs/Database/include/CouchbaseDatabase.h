@@ -121,6 +121,12 @@ public:
 
     int getReplicatorError();
 
+    void setLogLevel(const QString &level);
+
+    void setLogCallback(void (*callback)(CBLLogDomain domain, CBLLogLevel level, const char *message) = nullptr);
+
+    static void logReceived(CBLLogDomain domain, CBLLogLevel level, const char *message);
+
 private:
     struct LatestReplicationInformation {
         std::string url;
