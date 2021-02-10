@@ -626,6 +626,13 @@ Module {
             Parameter { name: "offsetY"; type: "double" }
         }
         Method { name: "update" }
+        Method {
+            name: "setSymbol"
+            Parameter { name: "newStyle"; type: "int" }
+            Parameter { name: "color"; type: "QColor" }
+            Parameter { name: "penStyle"; type: "int" }
+            Parameter { name: "size"; type: "int" }
+        }
     }
     Component {
         name: "SGSortFilterProxyModel"
@@ -897,6 +904,10 @@ Module {
             name: "toHex"
             type: "string"
             Parameter { name: "number"; type: "qlonglong" }
+        }
+        Method {
+            name: "copyToClipboard"
+            Parameter { name: "text"; type: "string" }
         }
     }
     Component {

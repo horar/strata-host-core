@@ -16,7 +16,7 @@ constexpr int BACKUP_PROGRESS_STEP = 5;
 constexpr std::chrono::milliseconds IDENTIFY_OPERATION_DELAY(1000);
 
 // max count of 'get_firmware_info' command retries in identify operation
-constexpr uint MAX_GET_FW_INFO_RETRIES = 5;
+constexpr unsigned int MAX_GET_FW_INFO_RETRIES = 5;
 
 }
 

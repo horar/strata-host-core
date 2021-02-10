@@ -7,6 +7,8 @@ using Connector = strata::connector::Connector;
 HostControllerClient::HostControllerClient(const std::string& net_in_address)
     : connector_(Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER))
 {
+    // will be a random 5 byte identity by default (0 + a random 32bit integer)
+    //connector_->setDealerID("HostControllerClient");
     connector_->open(net_in_address);
 }
 
@@ -16,12 +18,8 @@ HostControllerClient::~HostControllerClient()
 
 bool HostControllerClient::close()
 {
-    return connector_->close();
-}
-
-bool HostControllerClient::closeContext()
-{
-    return connector_->closeContext();
+    // interupts the blocking read on messages in the notification_thread_
+    return connector_->shutdown();
 }
 
 bool HostControllerClient::sendCmd(const std::string& cmd)

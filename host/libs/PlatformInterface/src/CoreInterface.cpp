@@ -50,7 +50,7 @@ CoreInterface::CoreInterface(QObject* parent, const std::string& hcsInAddress)
 CoreInterface::~CoreInterface()
 {
     setNotificationThreadRunning(false);
-    bool closed = hcc->closeContext();
+    bool closed = hcc->close();
 
     if (closed && notification_thread_.joinable()) {
         notification_thread_.join();
@@ -142,8 +142,6 @@ void CoreInterface::notificationsThread()
         // dispatch handler for notification
         handler->second(notification_json[notification].toObject());
     }
-
-    hcc->close();
 }
 
 // ---
