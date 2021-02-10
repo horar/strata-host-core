@@ -7,8 +7,12 @@ get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/libzmq" "${EXTERN_INS
 function(ReadLibzmqSoVersion)
     file(READ "${SOURCE_DIR_EXTERN}/libzmq/CMakeLists.txt" LIBZMQ_CMAKELIST)
     string(REGEX MATCH "SOVERSION \"([0-9\\.]+)\"" _ ${LIBZMQ_CMAKELIST})
-    set(LIBZMQ_SOVERSION ${CMAKE_MATCH_1} CACHE STRING "Detected LIBZMQ SOVERSION" FORCE)
-    message(STATUS "Detected LIBZMQ_SOVERSION: ${LIBZMQ_SOVERSION}")
+    if( DEFINED CMAKE_MATCH_1 AND NOT CMAKE_MATCH_1 STREQUAL "" )
+        message(STATUS "Detected LIBZMQ_SOVERSION: ${CMAKE_MATCH_1}")
+    else()
+        message( FATAL_ERROR "Unable to detect LIBZMQ_SOVERSION, cmake will exit")
+    endif()
+    set(LIBZMQ_SOVERSION ${CMAKE_MATCH_1} PARENT_SCOPE)
 endfunction()
 
 if(NOT LIB_INSTALLED)
@@ -59,9 +63,8 @@ else()
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq$<$<CONFIG:DEBUG>:d>${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
         )
     else()
-        if(NOT DEFINED LIBZMQ_SOVERSION OR LIBZMQ_SOVERSION STREQUAL "")
-            ReadLibzmqSoVersion()
-        endif()
+        # re-run the detection in case user keeps swapping branches with different libzmq libraries
+        ReadLibzmqSoVersion()
         execute_process(
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
             COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq.${LIBZMQ_SOVERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
