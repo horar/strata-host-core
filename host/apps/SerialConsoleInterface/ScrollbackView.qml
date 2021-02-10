@@ -16,11 +16,17 @@ Item {
     property var filterList
     readonly property int count: scrollbackFilterModel.count
 
+    property int selectionStartIndex: -1
+    property int selectionEndIndex: -1
+    property int selectionStartPosition: -1
+    property int selectionEndPosition: -1
+
     signal resendMessageRequested(string message)
 
 
     function invalidateFilter() {
         scrollbackFilterModel.invalidate()
+        clearSelection()
     }
 
     function positionViewAtEnd() {
@@ -28,8 +34,23 @@ Item {
     }
 
     // internal stuff
+    property int delegateBaseSpacing: 1
+    property int delegateRightMargin: 2
     property int buttonRowIconSize: SGWidgets.SGSettings.fontPixelSize - 4
     property int buttonRowSpacing: 2
+    property int timestampWidth: timestampTextMetrics.width
+    property int buttonRowWidth: 2*dummyIconButton.width + buttonRowSpacing
+    property int delegateTimestampX: delegateBaseSpacing
+    property int delegateButtonRowX: delegateTimestampX + timestampWidth + buttonRowSpacing
+    property int delegateTextX: delegateButtonRowX + buttonRowWidth + delegateBaseSpacing
+
+    Shortcut {
+        id: copyShortcut
+        sequence: StandardKey.Copy
+        onActivated: {
+            copyToClipboard()
+        }
+    }
 
     Timer {
         id: scrollbackViewAtEndTimer
@@ -47,10 +68,35 @@ Item {
         sortEnabled: false
         invokeCustomFilter: true
 
+        // New messages can be added only at the end
+        // Existing messages can be removed only from beginning
+
         onRowsInserted: {
             if (automaticScroll) {
                 scrollbackViewAtEndTimer.restart()
             }
+        }
+
+        onModelReset: {
+            clearSelection()
+        }
+
+        onRowsRemoved: {
+            if (selectionEndIndex <= last) {
+                var newSelectionStartIndex = -1
+                var newSelectionEndIndex = -1;
+            } else {
+                if (selectionStartIndex <= last) {
+                    newSelectionStartIndex = 0
+                } else {
+                    newSelectionStartIndex = selectionStartIndex - last - 1
+                }
+
+                newSelectionEndIndex = selectionEndIndex - last - 1
+            }
+
+            selectionStartIndex = newSelectionStartIndex;
+            selectionEndIndex = newSelectionEndIndex
         }
 
         function filterAcceptsRow(row) {
@@ -88,12 +134,18 @@ Item {
         }
     }
 
-
     SGWidgets.SGIconButton {
         id: dummyIconButton
         visible: false
         icon.source: "qrc:/sgimages/chevron-right.svg"
         iconSize: scrollbackView.buttonRowIconSize
+    }
+
+    TextMetrics {
+        id: timestampTextMetrics
+        font.family: "monospace"
+        font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+        text: model.timestampFormat
     }
 
     Rectangle {
@@ -113,6 +165,108 @@ Item {
         clip: true
         boundsBehavior: Flickable.StopAtBounds
 
+        onActiveFocusChanged: {
+            if (activeFocus === false) {
+                clearSelection()
+            }
+        }
+
+        MouseArea {
+            id: textSelectionMouseArea
+            height: Math.min(listView.height, listView.contentHeight)
+            anchors {
+                top: listView.top
+                left: listView.left
+                leftMargin: delegateTextX
+                right: listView.right
+                rightMargin: delegateRightMargin
+            }
+
+            cursorShape: Qt.IBeamCursor
+
+            /*this is to stop interaction with flickable while selecting text */
+            drag.target: Item {}
+
+            property int startIndex
+            property int startPosition
+
+            onPressed: {
+                listView.forceActiveFocus()
+
+                var position = resolvePosition(mouse.x, mouse.y)
+                if (position === undefined) {
+                    return
+                }
+
+                startIndex = position.delegate_index
+                startPosition = position.cursor_pos
+
+                selectionStartIndex = startIndex
+                selectionEndIndex = startIndex
+                selectionStartPosition = startPosition
+                selectionEndPosition = startPosition
+            }
+
+            onPositionChanged: {
+                //do not allow to select delegates outside of view
+                if (mouse.y < 0) {
+                   var mouseY = 0
+                } else if (mouse.y > textSelectionMouseArea.height * 0.95) {
+                    mouseY = textSelectionMouseArea.height
+                } else {
+                    mouseY = mouse.y
+                }
+
+                var position = resolvePosition(mouse.x, mouseY)
+                if (position === undefined) {
+                    return
+                }
+
+                //make sure start <= end
+                if (startIndex <= position.delegate_index) {
+                   selectionStartIndex = startIndex
+                   selectionEndIndex = position.delegate_index
+                } else {
+                    selectionStartIndex = position.delegate_index
+                    selectionEndIndex = startIndex
+                }
+
+                if (startPosition <= position.cursor_pos) {
+                    selectionStartPosition = startPosition
+                    selectionEndPosition = position.cursor_pos
+                } else {
+                    selectionStartPosition = position.cursor_pos
+                    selectionEndPosition = startPosition
+                }
+
+                //flick view while dragging
+                if (mouse.y > textSelectionMouseArea.height * 0.95) {
+                    listView.flick(0, -300)
+                } else if (mouse.y < textSelectionMouseArea.height * 0.05) {
+                    listView.flick(0, 300)
+                }
+            }
+
+            function resolvePosition(x,y) {
+                var posInListViewX = listView.contentX + textSelectionMouseArea.x + x
+                var posInListViewY = listView.contentY + textSelectionMouseArea.y + y
+
+                var delegateIndex = listView.indexAt(posInListViewX, posInListViewY)
+                if (delegateIndex < 0) {
+                    return
+                }
+
+                var item = listView.itemAt(posInListViewX, posInListViewY)
+                var posInDelegate = item.mapFromItem(textSelectionMouseArea, x, y)
+                var cursorPos = item.positionAtTextEdit(posInDelegate.x, posInDelegate.y)
+
+                return {
+                    "delegate_index": delegateIndex,
+                    "cursor_pos": cursorPos
+                }
+            }
+        }
+
         ScrollBar.vertical: ScrollBar {
             width: 12
             policy: ScrollBar.AlwaysOn
@@ -126,6 +280,9 @@ Item {
             height: cmdText.height + 3
 
             property color helperTextColor: "#333333"
+
+            property int delegateIndex: index
+            onDelegateIndexChanged: selectTimer.restart()
 
             Rectangle {
                 id: messageTypeBg
@@ -169,7 +326,7 @@ Item {
                     top: parent.top
                     topMargin: 1
                     left: parent.left
-                    leftMargin: 1
+                    leftMargin: delegateBaseSpacing
                 }
 
                 text: model.timestamp
@@ -180,10 +337,10 @@ Item {
             Item {
                 id: buttonRow
                 height: dummyIconButton.height
-                width: 2*dummyIconButton.width + scrollbackView.buttonRowSpacing
+                width: buttonRowWidth
                 anchors {
-                    left: timeText.right
-                    leftMargin: scrollbackView.buttonRowSpacing
+                    left: parent.left
+                    leftMargin: delegateButtonRowX
                     verticalCenter: timeText.verticalCenter
                 }
 
@@ -211,26 +368,49 @@ Item {
                 id: cmdText
                 anchors {
                     top: timeText.top
-                    left: buttonRow.right
-                    leftMargin: 1
+                    left: parent.left
+                    leftMargin: delegateTextX
                     right: parent.right
-                    rightMargin: 2
+                    rightMargin: delegateRightMargin
                 }
 
                 textFormat: Text.PlainText
                 font.family: "monospace"
                 wrapMode: Text.WordWrap
                 selectByKeyboard: true
-                selectByMouse: true
+                selectByMouse: false
                 readOnly: true
                 text: model.message
                 selectionColor: TangoTheme.palette.selectedText
                 selectedTextColor: "white"
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.IBeamCursor
-                    acceptedButtons: Qt.NoButton
+                Component.onCompleted: {
+                    selectTimer.restart()
+                }
+
+                Connections {
+                    target: scrollbackView
+                    onSelectionStartIndexChanged: selectTimer.restart()
+                    onSelectionEndIndexChanged: selectTimer.restart()
+                    onSelectionStartPositionChanged: selectTimer.restart()
+                    onSelectionEndPositionChanged: selectTimer.restart()
+                }
+
+                Timer {
+                    id: selectTimer
+                    interval: 1
+                    repeat: false
+                    onTriggered: {
+                        if (index >= selectionStartIndex && index <= selectionEndIndex) {
+                            if (selectionStartIndex === selectionEndIndex) {
+                                cmdText.select(selectionStartPosition, selectionEndPosition)
+                            } else {
+                                cmdText.selectAll()
+                            }
+                        } else {
+                            cmdText.deselect()
+                        }
+                    }
                 }
             }
 
@@ -289,6 +469,7 @@ Item {
                     onClicked: {
                         var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
                         var item = scrollbackView.model.setIsCondensed(sourceIndex, !model.isCondensed)
+                        clearSelection()
                     }
                 }
             }
@@ -299,6 +480,44 @@ Item {
                     textDocument: cmdText.textDocument
                 }
             }
+
+            function positionAtTextEdit(x,y) {
+                return cmdText.positionAt(x-cmdText.x , y)
+            }
         }
+    }
+
+    function clearSelection() {
+        selectionStartIndex = -1
+        selectionEndIndex = -1
+        selectionStartPosition = -1
+        selectionEndPosition = -1
+    }
+
+    function copyToClipboard() {
+        if (selectionStartPosition < 0 || selectionEndPosition < 0) {
+            return
+        }
+
+        var text = ""
+
+        for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
+            var sourceIndex = scrollbackFilterModel.mapIndexToSource(i)
+            if (sourceIndex < 0) {
+                text = ""
+                break
+            }
+
+            text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(model.data(sourceIndex, "message"))
+            if (i !== selectionEndIndex) {
+                text += '\n'
+            }
+        }
+
+        if (selectionStartIndex == selectionEndIndex) {
+            text = text.slice(selectionStartPosition, selectionEndPosition)
+        }
+
+        CommonCpp.SGUtilsCpp.copyToClipboard(text)
     }
 }

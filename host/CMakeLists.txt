@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
 message(STATUS "CMake version: ${CMAKE_VERSION}")
 
@@ -38,6 +38,7 @@ include(SetupCompileOptions)
 
 include(GitVersionMacro)
 include(TimestampMacro)
+include(ReplicatorCredentialsMacro)
 include(AddQmlImportPathMacro)
 
 # common for 'apps' and 'components' that use resource files
@@ -49,6 +50,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "OTA")
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_BUILD_RPATH "${CMAKE_BINARY_DIR}/bin")
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 option(BUILD_TESTING "Build the testing tree" ON)
