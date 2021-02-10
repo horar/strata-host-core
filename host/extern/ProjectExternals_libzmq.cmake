@@ -3,6 +3,14 @@
 #
 
 get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/libzmq" "${EXTERN_INSTALL_DIR_PATH}/libzmq")
+
+function(ReadLibzmqSoVersion)
+    file(READ "${SOURCE_DIR_EXTERN}/libzmq/CMakeLists.txt" LIBZMQ_CMAKELIST)
+    string(REGEX MATCH "SOVERSION \"([0-9\\.]+)\"" _ ${LIBZMQ_CMAKELIST})
+    set(LIBZMQ_SOVERSION ${CMAKE_MATCH_1} CACHE STRING "Detected LIBZMQ SOVERSION" FORCE)
+    message(STATUS "Detected LIBZMQ_SOVERSION: ${LIBZMQ_SOVERSION}")
+endfunction()
+
 if(NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/include)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib)
@@ -26,11 +34,7 @@ if(NOT LIB_INSTALLED)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different <INSTALL_DIR>/bin/libzmq$<$<CONFIG:DEBUG>:d>${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
         )
     else()
-        file(READ "${SOURCE_DIR_EXTERN}/libzmq/CMakeLists.txt" LIBZMQ_CMAKELIST)
-        string(REGEX MATCH "SOVERSION \"([0-9\\.]+)\"" _ ${LIBZMQ_CMAKELIST})
-        set(LIBZMQ_SOVERSION ${CMAKE_MATCH_1} CACHE STRING "Detected LIBZMQ SOVERSION" FORCE)
-        message(STATUS "Detected LIBZMQ_SOVERSION: ${LIBZMQ_SOVERSION}")
-
+        ReadLibzmqSoVersion()
         ExternalProject_Add(libzmq
             INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}
             SOURCE_DIR ${SOURCE_DIR_EXTERN}/libzmq
@@ -55,6 +59,9 @@ else()
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq$<$<CONFIG:DEBUG>:d>${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
         )
     else()
+        if(NOT DEFINED LIBZMQ_SOVERSION OR LIBZMQ_SOVERSION STREQUAL "")
+            ReadLibzmqSoVersion()
+        endif()
         execute_process(
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
             COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}zmq.${LIBZMQ_SOVERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
