@@ -28,7 +28,8 @@ class SciPlatformModel: public QAbstractListModel
 
     Q_PROPERTY(bool condensedInScrollback
                READ condensedInScrollback
-               WRITE setCondensedInScrollback)
+               WRITE setCondensedInScrollback
+               NOTIFY condensedInScrollbackChanged)
 
 public:
     SciPlatformModel(strata::BoardManager *boardManager, QObject *parent = nullptr);

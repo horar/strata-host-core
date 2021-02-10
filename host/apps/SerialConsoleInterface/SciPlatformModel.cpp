@@ -84,6 +84,7 @@ void SciPlatformModel::setCondensedInScrollback(bool condensedInScrollback)
     if (condensedInScrollback_ != condensedInScrollback) {
         condensedInScrollback_ = condensedInScrollback;
     }
+    emit condensedInScrollbackChanged();
 }
 
 bool SciPlatformModel::condensedInScrollback() const

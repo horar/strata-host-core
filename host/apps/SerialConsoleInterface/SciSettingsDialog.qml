@@ -130,16 +130,26 @@ SGWidgets.SGDialog {
             }
 
             SGWidgets.SGText {
-                text: "Colapse commands:"
+                text: "General"
+                fontSizeMultiplier: 1.1
+                font.bold: true
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignLeft
+            }
+
+            SGWidgets.SGText {
+                text: "Commands collapsed at startup:"
                 Layout.alignment: Qt.AlignRight
             }
 
             SGWidgets.SGCheckBox {
-                id: commandsColapsed
-                text: ""
+                id: commandsCollapsed
+                padding: 0
+                Layout.alignment: Qt.AlignLeft
+                text: " "
 
                 Binding {
-                    target: commandsColapsed
+                    target: commandsCollapsed
                     property: "checked"
                     value: Sci.Settings.commandsCollapsed
                 }
