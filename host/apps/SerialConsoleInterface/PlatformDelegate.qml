@@ -328,6 +328,13 @@ FocusScope {
                     onTextChanged: {
                         model.platform.errorString = "";
                     }
+
+                    Keys.onReturnPressed: {
+                        if (event.modifiers & Qt.ControlModifier) {
+                            sendMessageInputTextAsComand()
+                        }
+                        event.accepted = true
+                    }
                 }
 
                 SGWidgets.SGTag {
@@ -390,6 +397,7 @@ FocusScope {
 
                     enabled: messageEditor.enabled
                     focusPolicy: Qt.NoFocus
+                    hintText: prettifyHintText("Send command", messageEditor.multilineCommand)
                     text: qsTr("SEND")
                     onClicked: {
                         sendMessageInputTextAsComand()
