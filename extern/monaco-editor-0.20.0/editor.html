@@ -203,67 +203,68 @@
                     };
                     var suggestions = []
                     var propertySuggestions = []
-                    for (var x = 0; x < BasicItemProperties.length; x++){
-                        suggestions.push({
-                            label: BasicItemProperties[x],
-                            kind:  monaco.languages.CompletionItemKind.Property,
-                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                            insertText: BasicItemProperties[x],
-                            range: range
-                        })
-                    }
-                    for (var n = 0; n < qtQuick.length; n++){
-                        suggestions.push({
-                            label: qtQuick[n].prefix,
-                            kind:  monaco.languages.CompletionItemKind.Property,
-                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                            insertText: qtQuick[n].body,
-                            range: range
-                        })
-                    }
-                    for(var m = 0; m < qtQuickBody.length; m++){
-                        suggestions.push({
-                            label: qtQuickBody[m].prefix,
-                            kind:  monaco.languages.CompletionItemKind.Property,
-                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                            insertText: qtQuickBody[m].body,
-                            range: range
-                        })
-                    }
-                    for(var k = 0; k < SGWidgets.length;k++){
-                        suggestions.push({
-                            label: SGWidgets[k].prefix,
-                            kind:  monaco.languages.CompletionItemKind.Property,
-                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                            insertText: SGWidgets[k].body,
-                            range: range
-                        })
-                    }
-                    for(var i = 0; i < qtQuick.length; i++){
-                        var regex = new RegExp(qtQuick[i].prefix)
-                        var match = textUntilPosition.match(regex);
-                        if (match) {
-                            convertStrArrayToObjArray(propertySuggestions, qtQuick[i].properties, range)
+                    var sgwidgetsFlag = textUntilPosition.match(`import tech.strata.sgwidgets 1.0`);
+                    var qtQuickFlag = textUntilPosition.match(`import QtQuick`)
+                    if(qtQuickFlag){ 
+                        for (var x = 0; x < BasicItemProperties.length; x++){
+                            suggestions.push({
+                                label: BasicItemProperties[x],
+                                kind:  monaco.languages.CompletionItemKind.Property,
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                insertText: BasicItemProperties[x],
+                                range: range
+                            })
                         }
-                    }
+                        for (var n = 0; n < qtQuick.length; n++){
+                            suggestions.push({
+                                label: qtQuick[n].prefix,
+                                kind:  monaco.languages.CompletionItemKind.Property,
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                insertText: qtQuick[n].body,
+                                range: range
+                            })
+                            var regex = new RegExp(qtQuick[n].prefix + "[^{]+\s\{([^}]+)\}")
+                            var match = textUntilPosition.match(regex);
+                            if (match) {
+                                convertStrArrayToObjArray(propertySuggestions, qtQuick[n].properties, range)
+                            }
+                        }
+                        for(var m = 0; m < qtQuickBody.length; m++){
+                            suggestions.push({
+                                label: qtQuickBody[m].prefix,
+                                kind:  monaco.languages.CompletionItemKind.Property,
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                insertText: qtQuickBody[m].body,
+                                range: range
+                            })
 
-                    for (var j = 0; j < qtQuickBody.length; j++){
-                        var regex = new RegExp(qtQuickBody[j].prefix)
-                        var match = textUntilPosition.match(regex);
-                        if (match) {
-                            convertStrArrayToObjArray(propertySuggestions, qtQuickBody[j].properties, range)
+                            var regex = new RegExp(qtQuickBody[m].prefix)
+                            var match = textUntilPosition.match(regex);
+                            if (match) {
+                                convertStrArrayToObjArray(propertySuggestions, qtQuick[m].properties, range)
+                            }
                         }
                     }
-                    for (var y = 0; y < SGWidgets.length; y++){
-                        var regex = new RegExp(SGWidgets[y].prefix)
-                        var match = textUntilPosition.match(regex);
-                        if (match) {
-                            convertStrArrayToObjArray(propertySuggestions, SGWidgets[y].properties, range)
+                    if(sgwidgetsFlag){
+                        for(var k = 0; k < SGWidgets.length;k++){
+                            suggestions.push({
+                                label: SGWidgets[k].prefix,
+                                kind:  monaco.languages.CompletionItemKind.Property,
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                insertText: SGWidgets[k].body,
+                                range: range
+                            })
+                            var regex = new RegExp(SGWidgets[k].prefix+"[^{]+\s\{([^}]+)\}")
+                            var match = textUntilPosition.match(regex);
+                            if (match) {
+                                convertStrArrayToObjArray(propertySuggestions, SGWidgets[k].properties, range)
+                            }
                         }
                     }
                     suggestions = suggestions.concat(propertySuggestions)
                     return {suggestions: suggestions}
-                }
+                
+            }
             })
 
             var editor = monaco.editor.create(document.getElementById('container'), {

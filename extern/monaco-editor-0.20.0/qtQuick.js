@@ -3626,7 +3626,8 @@ const BasicItemProperties = [
     "x: ${1: 0}",
     "y: ${1: 0}",
     "z: ${1: 0}",
-    "objectName: ${1: }"
+    "objectName: ${1: }",
+    "function ${1:function_name}(${2:argument}) {\n    ${0:// body...}\n}",
 ]
 const qtQuickBody = [
 {
@@ -3644,11 +3645,11 @@ const qtQuickBody = [
         "properties":["margins: ","left: ","right: ","top: ","bottom: ","verticalCenter: ","horizontalCenter: ","fill: ","centerIn: ","horizontalOffset: ","verticalOffset: "]
     },
     {
-        "body": "console.${1}",
+        "body": "console.",
         "description": "console",
         "prefix": "console",
         "scope": "source.js",
-        "properties": ["log(\"${1:}: \")", "debug(\"${1:}: \")","info(\"${1:}: \")","warn(\"${1:}: \")","error(\"${1:}: \")"]
+        "properties": ["log(\"\")", "debug(\"\")","info(\"\")","warn(\"\")","error(\"\")"]
     },
     {
         "body": "font",
@@ -3656,13 +3657,6 @@ const qtQuickBody = [
         "prefix": "font",
         "scope": "source.qml",
         "properties":["bold","capitalization","family","italic","pixelSize","pointSize","spacing","underline"]
-    },
-    {
-        "body": "function ${1:function_name}(${2:argument}) {\n    ${0:// body...}\n}",
-        "description": "function() {}",
-        "prefix": "function",
-        "scope": "source.qml",
-        "properties": [""]
     },
 ]
 
