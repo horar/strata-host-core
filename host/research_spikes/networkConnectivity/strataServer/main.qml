@@ -49,7 +49,7 @@ Window {
         id: datagramLog
         x: 30
         y: 110
-        text: Server.buffer
+        text: Server.udpBuffer
     }
 
 

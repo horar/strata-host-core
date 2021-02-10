@@ -11,7 +11,8 @@ class Server : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(quint16 port READ getPort WRITE setPort)
-    Q_PROPERTY(QString buffer READ getBuffer NOTIFY bufferUpdated)
+    Q_PROPERTY(QString udpBuffer READ getUdpBuffer NOTIFY udpBufferUpdated)
+    Q_PROPERTY(QString tcpBuffer READ getTcpBuffer NOTIFY tcpBufferUpdated)
 
 public:
     Server(QObject *parent = nullptr);
@@ -21,21 +22,25 @@ public slots:
     void setPort(quint16 port);
     quint16 getPort() const;
     void preccessPendingDatagrams();
-    QString getBuffer();
+    QString getUdpBuffer();
+    QString getTcpBuffer();
     void connectToStrataClient(QHostAddress hostAddress, qint16 port);
     void newTcpMessage();
-    void sendTcpMessge();
+    void sendTcpMessge(QByteArray message);
 
 signals:
-    void bufferUpdated();
+    void udpBufferUpdated();
+    void tcpBufferUpdated();
 
 private:
-    void setBuffer(const QByteArray &newDatagram);
+    void setUdpBuffer(const QByteArray &newDatagram);
+    void setTcpBuffer(const QByteArray &newData);
 
     QTcpSocket *tcpSocket_ = nullptr;
     QUdpSocket *udpSocket_ = nullptr;
     quint16 port_ = 5146;
-    QString buffer_;
+    QString udpBuffer_;
+    QString tcpBuffer_;
 };
 
 #endif  // SERVER_H

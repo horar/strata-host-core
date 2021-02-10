@@ -17,11 +17,11 @@ Server::Server(QObject *parent)
     connect(tcpSocket_, &QTcpSocket::disconnected, this,
             []() { qDebug() << "tcp socket disconnected"; });
 
-//     connect(tcpSocket_, &QAbstractSocket::error, this, [](QAbstractSocket::SocketError
-//     socketError) {
-//         qDebug() << "tcp socket error!";
-//         qDebug() << socketError;
-//     });
+    //     connect(tcpSocket_, &QAbstractSocket::error, this, [](QAbstractSocket::SocketError
+    //     socketError) {
+    //         qDebug() << "tcp socket error!";
+    //         qDebug() << socketError;
+    //     });
 
     connect(tcpSocket_, &QTcpSocket::bytesWritten, this,
             [](qint64 bytesWritten) { qDebug() << "tcp bytes written" << bytesWritten; });
@@ -60,16 +60,21 @@ void Server::preccessPendingDatagrams()
         udpSocket_->readDatagram(datagram.data(), datagram.size(), &hostAddress);
         qDebug() << "host address:" << hostAddress.toString() << "datagram:" << datagram;
     }
-    setBuffer(datagram);
+    setUdpBuffer(datagram);
 
     if (datagram == "strata client") {
         connectToStrataClient(hostAddress, TCP_PORT);
     }
 }
 
-QString Server::getBuffer()
+QString Server::getUdpBuffer()
 {
-    return buffer_;
+    return udpBuffer_;
+}
+
+QString Server::getTcpBuffer()
+{
+    return tcpBuffer_;
 }
 
 void Server::connectToStrataClient(QHostAddress hostAddress, qint16 port)
@@ -86,21 +91,31 @@ void Server::connectToStrataClient(QHostAddress hostAddress, qint16 port)
         qDebug() << "failed to connect.";
     }
 
-    tcpSocket_->write("connected?");
+    sendTcpMessge("Connected?");
 }
 
 void Server::newTcpMessage()
 {
-    qDebug() << "tcp:" << QString(tcpSocket_->readAll());
+    qDebug() << "tcp: New message received.";
+    QByteArray data;
+    data = tcpSocket_->readAll();
+    qDebug() << "tcp: message:" << QString(data);
+    setTcpBuffer(data);
 }
 
-void Server::sendTcpMessge()
+void Server::sendTcpMessge(QByteArray message)
 {
-    tcpSocket_->write("test write");
+    tcpSocket_->write(message);
 }
 
-void Server::setBuffer(const QByteArray &newDatagram)
+void Server::setUdpBuffer(const QByteArray &newDatagram)
 {
-    buffer_ += newDatagram + '\n';
-    emit bufferUpdated();
+    udpBuffer_ += newDatagram + '\n';
+    emit udpBufferUpdated();
+}
+
+void Server::setTcpBuffer(const QByteArray &newData)
+{
+    tcpBuffer_ += newData + '\n';
+    emit tcpBufferUpdated();
 }
