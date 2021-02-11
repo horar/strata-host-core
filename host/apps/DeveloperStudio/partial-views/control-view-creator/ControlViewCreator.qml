@@ -5,6 +5,7 @@ import QtQuick.Controls 2.12
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.signals 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "navigation"
@@ -51,10 +52,18 @@ Rectangle {
         onPopupClosed: {
             if (closeReason === confirmClosePopup.closeFilesReason) {
                 controlViewCreator.openFilesModel.closeAll()
-                mainWindow.close()
+                if (cvcCloseRequested){
+                    Signals.closeCVC()
+                } else {
+                    mainWindow.close()
+                }
             } else if (closeReason === confirmClosePopup.acceptCloseReason) {
                 controlViewCreator.openFilesModel.saveAll(true)
-                mainWindow.close()
+                if (cvcCloseRequested){
+                    Signals.closeCVC()
+                } else {
+                    mainWindow.close()
+                }
             }
             isConfirmCloseOpen = false
         }
