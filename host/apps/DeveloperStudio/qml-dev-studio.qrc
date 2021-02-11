@@ -106,5 +106,6 @@
         <file>partial-views/notifications/NotificationsInbox.qml</file>
         <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
         <file>partial-views/notifications/NotificationContent.qml</file>
+        <file>partial-views/control-view-creator/CVCLoader.qml</file>
     </qresource>
 </RCC>

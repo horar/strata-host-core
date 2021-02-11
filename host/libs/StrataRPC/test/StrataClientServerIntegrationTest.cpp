@@ -146,27 +146,30 @@ void StrataClientServerIntegrationTest::testSingleClient()
     client.connectServer();
     waitForZmqMessages();
 
-    auto requestInfo_1 = client.sendRequest("example_command_sends_response", {{"key", "value"}});
-    QVERIFY_(true == requestInfo_1.first);
-    QVERIFY_(requestInfo_1.second != 0);
-    waitForZmqMessages();
-
-    auto requestInfo_2 =
-        client.sendRequest("example_command_sends_response_and_notification", {{"key", "value"}});
-    QVERIFY_(true == requestInfo_2.first);
-    QVERIFY_(requestInfo_2.second != 0);
-    waitForZmqMessages();
-
-    auto requestInfo_3 = client.sendRequest("example_command_sends_error", {{"key", "value"}});
-    QVERIFY_(true == requestInfo_3.first);
-    QVERIFY_(requestInfo_3.second != 0);
-    waitForZmqMessages();
-
-    auto requestInfo_4 =
-        client.sendRequest("platform_message", {{"device_id", 2020}, {"message", "json string!"}});
-    QVERIFY_(true == requestInfo_4.first);
-    QVERIFY_(requestInfo_4.second != 0);
-    waitForZmqMessages();
+    {
+        auto deferredRequest =
+            client.sendRequest("example_command_sends_response", {{"key", "value"}});
+        QVERIFY_(deferredRequest != nullptr);
+        waitForZmqMessages();
+    }
+    {
+        auto deferredRequest = client.sendRequest("example_command_sends_response_and_notification",
+                                                  {{"key", "value"}});
+        QVERIFY_(deferredRequest != nullptr);
+        waitForZmqMessages();
+    }
+    {
+        auto deferredRequest =
+            client.sendRequest("example_command_sends_error", {{"key", "value"}});
+        QVERIFY_(deferredRequest != nullptr);
+        waitForZmqMessages();
+    }
+    {
+        auto deferredRequest = client.sendRequest(
+            "platform_message", {{"device_id", 2020}, {"message", "json string!"}});
+        QVERIFY_(deferredRequest != nullptr);
+        waitForZmqMessages();
+    }
 
     server.notifyAllClients("server_notification", {{"list", "of platforms"}});
     waitForZmqMessages();
@@ -264,4 +267,45 @@ void StrataClientServerIntegrationTest::testMultipleClients()
 
     QVERIFY_(client1ReceivedServerBroadcast);
     QVERIFY_(client2ReceivedServerBroadcast);
+}
+
+void StrataClientServerIntegrationTest::testCallbacks()
+{
+    int waitZmqDelay = 50;
+    bool gotErrorCallback = false;
+    bool gotResultCallback = false;
+
+    StrataServer server(address_);
+    StrataClient client(address_);
+
+    server.registerHandler("test_error_callback", [&server](const Message &message) {
+        server.notifyClient(message, QJsonObject{}, strata::strataRPC::ResponseType::Error);
+    });
+
+    server.registerHandler("test_result_callback", [&server](const Message &message) {
+        server.notifyClient(message, QJsonObject{}, strata::strataRPC::ResponseType::Response);
+    });
+
+    QVERIFY_(server.initializeServer());
+    QVERIFY_(client.connectServer());
+
+    {
+        auto deferredRequest = client.sendRequest("test_error_callback", QJsonObject{});
+
+        connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this,
+                [&gotErrorCallback](const Message &) { gotErrorCallback = true; });
+
+        waitForZmqMessages(waitZmqDelay);
+        QVERIFY_(gotErrorCallback);
+    }
+
+    {
+        auto deferredRequest = client.sendRequest("test_result_callback", QJsonObject{});
+
+        connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this,
+                [&gotResultCallback](const Message &) { gotResultCallback = true; });
+
+        waitForZmqMessages(waitZmqDelay);
+        QVERIFY_(gotResultCallback);
+    }
 }
