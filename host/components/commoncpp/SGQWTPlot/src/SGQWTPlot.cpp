@@ -11,6 +11,7 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
 
     qwtPlot = new QwtPlot();
     qwtGrid_ = new QwtPlotGrid();
+    qwtLegend_ = new QwtLegend();
 
     setBackgroundColor("white");
     setForegroundColor("black");
@@ -23,10 +24,6 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     qwtGrid_->enableYMin(yMinorGrid_);
     setGridColor("lightgrey");
 
-    qwtLegend_ = new QwtLegend();
-
-    // set visi
-    //    qwtPlot->legend()->setVisible(legendVisible_);
 }
 
 SGQWTPlot::~SGQWTPlot()
