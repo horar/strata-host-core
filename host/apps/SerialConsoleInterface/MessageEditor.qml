@@ -15,7 +15,6 @@ FocusScope {
     property bool tabAllowed: true
     property int tabSize: 4
     property alias cursorPosition: edit.cursorPosition
-    property alias multilineCommand: executeMultilineCommand.nativeText
 
     readonly property var currentCoordinates: resolveCoordinates(edit.cursorPosition, edit.text)
     readonly property int currentLine: currentCoordinates.line
@@ -33,11 +32,6 @@ FocusScope {
 
             event.accepted = true
         }
-    }
-
-    Shortcut {
-        id: executeMultilineCommand
-        sequence: "Ctrl+Enter"
     }
 
     // This is to match look and feel of other controls
@@ -246,7 +240,7 @@ FocusScope {
                 opacity: edit.enabled ? 0.5 : 1
                 font: edit.font
                 elide: Text.ElideRight
-                text: "Enter JSON Message and Send with " + multilineCommand + "..." 
+                text: "Enter JSON Message..." 
             }
         }
     }

@@ -61,6 +61,11 @@ FocusScope {
                 onActivated: mainPage.toggleExpand()
             }
 
+            Shortcut {
+                id: executeMultilineCommand
+                sequence: "Ctrl+Enter"
+            }
+
             ScrollbackView {
                 id: scrollbackView
                 anchors {
@@ -329,8 +334,8 @@ FocusScope {
                         model.platform.errorString = "";
                     }
 
-                    Keys.onReturnPressed: {
-                        if (event.modifiers & Qt.ControlModifier) {
+                    Keys.onPressed: {
+                        if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && (event.modifiers & Qt.ControlModifier)) {
                             sendMessageInputTextAsComand()
                         }
                         event.accepted = true
@@ -397,7 +402,7 @@ FocusScope {
 
                     enabled: messageEditor.enabled
                     focusPolicy: Qt.NoFocus
-                    hintText: prettifyHintText("Send command", messageEditor.multilineCommand)
+                    hintText: prettifyHintText("Send command", executeMultilineCommand.nativeText)
                     text: qsTr("SEND")
                     onClicked: {
                         sendMessageInputTextAsComand()
