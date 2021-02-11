@@ -12,6 +12,8 @@
         "properties": [""]
     }
 */
+const qtObjectKeyValues = {}
+const propertySuggestions = []
 const qtQuick = [
     {
         "body": "Axis {\n //id: \n}",
@@ -2479,8 +2481,37 @@ function createDynamicProperty(property, range){
     }
 }
 
-function convertStrArrayToObjArray(objArray,properties, range){
+function convertStrArrayToObjArray(properties, range){
     for(var i = 0; i < properties.length; i++){
-        objArray.push(createDynamicProperty(properties[i], range))
+        propertySuggestions.push(createDynamicProperty(properties[i], range))
     }
 }
+
+function createQtObjectValPairs(key,val){
+    qtObjectKeyValues[key] = val
+}
+
+function convertQtQuickToObject(objArray){
+    for(var i = 0; i < objArray.length; i++){
+        createQtObjectValPairs(objArray[i].prefix,{label: objArray[i].prefix, insertText: objArray[i].body, properties: objArray[i].properties})
+    }
+}
+
+
+function initializeQtQuick(flags){
+    if(flags.qtQuickFlag){
+        convertQtQuickToObject(qtQuick)
+        convertQtQuickToObject(qtQuickBody)
+    }
+    if(flags.sgwidgetsFlag){
+        convertQtQuickToObject(SGWidgets)
+    }
+}
+
+function clearPropertySuggestions(){
+    propertySuggestions.splice(0, propertySuggestions.length)
+}
+
+
+
+
