@@ -1,63 +1,199 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.3
+import QtQuick.Extras 1.4
 
 Window {
     visible: true
     width: 640
-    height: 480
+    height: 340
     title: qsTr("Strata Server")
 
-    Label {
-        id: labelPort
-        x: 35
-        y: 61
-        width: 53
-        height: 39
-        text: qsTr("Port")
-        font.pointSize: 21
-        styleColor: "#e36464"
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-    }
+    Item {
+        id: setPortItem
+        x: 25
+        y: 35
+        width: 281
+        height: 41
 
-    TextField {
-        id: portField
-        x: 111
-        y: 58
-        width: 128
-        height: 46
-        text: Server.getPort()
-        placeholderText: "Enter broadcasting port"
-    }
+        Label {
+            id: labelPort
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            height: parent.height
+            text: qsTr("Port")
+            font.bold: false
+            font.pointSize: 19
+            styleColor: "#e36464"
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+        }
 
-    Button {
-        id: setPortBtn
-        x: 250
-        y: 61
-        width: 71
-        height: 40
-        text: qsTr("Set")
+        TextField {
+            id: portField
+            anchors.left: labelPort.right
+            anchors.right: setPortBtn.left
+            anchors.verticalCenter: parent.verticalCenter
+            height: parent.height
+            text: Server.getPort()
+            placeholderText: "Enter broadcasting port"
+            anchors.margins: 5
 
-        Connections {
-            target: setPortBtn
-            onClicked: Server.setPort(portField.text)
+        }
+
+        Button {
+            id: setPortBtn
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+            anchors.verticalCenter: parent.verticalCenter
+            width: 60
+            height: parent.height
+            text: qsTr("Set")
+
+            Connections {
+                target: setPortBtn
+                onClicked: Server.setPort(portField.text)
+            }
         }
     }
 
-    Text {
-        id: datagramLog
-        x: 30
-        y: 110
-        text: Server.udpBuffer
+    Item {
+        id: udpItem
+        x: 25
+        y: 134
+        width: 281
+        height: 189
+
+        Label {
+            id: udpLogLabel
+            anchors.top: parent.top
+            anchors.left: parent.left
+            text: qsTr("UDP Messages:")
+        }
+
+        ScrollView {
+            id: udpLogSV
+            width: parent.width
+            anchors.top: udpLogLabel.bottom
+            anchors.bottom: parent.bottom
+            clip: true
+
+            TextArea {
+                id: udpLogTA
+                anchors.fill: parent
+                text: Server.udpBuffer
+                clip: false
+            }
+        }
     }
 
 
+
+    Item {
+        id: connectionStatusItem
+        x: 25
+        y: 90
+        width: 281
+        height: 38
+
+        StatusIndicator {
+            id: connectionStatusIndicator
+            x: 110
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            width: 32
+            height: 32
+            color: "#65c903"
+            active: (Server.isConnected === true)
+        }
+
+        Button {
+            id: disconnectBtn
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.right: connectionStatusIndicator.left
+            anchors.rightMargin: 5
+            height: parent.height
+            text: qsTr("Disconnect")
+            enabled: (Server.isConnected === true)
+            Connections {
+                target: disconnectBtn
+                onClicked: Server.disconnectTcpSocket()
+            }
+        }
+    }
+
+    Item {
+        id: tcpItem
+        x: 341
+        y: 133
+        width: 281
+        height: 177
+
+        Item {
+            id: tcpLogItem
+            anchors.top: parent.top
+            width: parent.width
+            anchors.bottom: sendMsgItem.top
+
+            Label {
+                id: tcpLogLabel
+                anchors.left: parent.left
+                anchors.top: parent.top
+                text: qsTr("TCP Messages:")
+            }
+
+            ScrollView {
+                id: tcpLogSV
+                width: parent.width
+                anchors.top: tcpLogLabel.bottom
+                anchors.bottom: parent.bottom
+
+                TextArea {
+                    id: tcpLogTA
+                    anchors.fill: parent
+                    text: Server.tcpBuffer
+                }
+            }
+        }
+
+        Item {
+            id: sendMsgItem
+            anchors.bottom: parent.bottom
+            anchors.topMargin: 5
+            width: parent.width
+            height: 34
+
+            TextField {
+                id: sendMsgTextField
+                anchors.left: parent.left
+                anchors.right: sendMsgBtn.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: 5
+                height: parent.height
+                placeholderText: qsTr("TCP Message...")
+            }
+
+            Button {
+                id: sendMsgBtn
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                width: 60
+                height: parent.height
+                text: qsTr("Send")
+
+                Connections {
+                    target: sendMsgBtn
+                    onClicked: Server.sendTcpMessge(sendMsgTextField.text)
+                }
+
+            }
+        }
+    }
 }
 
 /*##^##
 Designer {
-    D{i:0;annotation:"1 //;;// MainAppWindow //;;//  //;;//  //;;// 1612428635";customId:"";formeditorZoom:0.75}
-D{i:1;annotation:"1 //;;// btnBroadcast //;;//  //;;//  //;;// 1612428784";customId:""}
+    D{i:0;annotation:"1 //;;// MainAppWindow //;;//  //;;//  //;;// 1612428635";customId:"";formeditorZoom:1.5}
 }
 ##^##*/

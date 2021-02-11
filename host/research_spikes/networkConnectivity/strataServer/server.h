@@ -10,13 +10,17 @@ constexpr qint16 TCP_PORT(24125);
 class Server : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(quint16 port READ getPort WRITE setPort)
-    Q_PROPERTY(QString udpBuffer READ getUdpBuffer NOTIFY udpBufferUpdated)
-    Q_PROPERTY(QString tcpBuffer READ getTcpBuffer NOTIFY tcpBufferUpdated)
+    Q_PROPERTY(quint16 port READ getPort WRITE setPort);
+    Q_PROPERTY(QString udpBuffer READ getUdpBuffer NOTIFY udpBufferUpdated);
+    Q_PROPERTY(QString tcpBuffer READ getTcpBuffer NOTIFY tcpBufferUpdated);
+    Q_PROPERTY(bool isConnected READ getConnectionStatus NOTIFY connectionStatusUpdated);
 
 public:
     Server(QObject *parent = nullptr);
     ~Server();
+
+    enum class ConnectionStatus { Connected, Disconnected };
+    Q_ENUM(ConnectionStatus);
 
 public slots:
     void setPort(quint16 port);
@@ -24,13 +28,16 @@ public slots:
     void preccessPendingDatagrams();
     QString getUdpBuffer();
     QString getTcpBuffer();
+    bool getConnectionStatus();
     void connectToStrataClient(QHostAddress hostAddress, qint16 port);
     void newTcpMessage();
     void sendTcpMessge(QByteArray message);
+    void disconnectTcpSocket();
 
 signals:
     void udpBufferUpdated();
     void tcpBufferUpdated();
+    void connectionStatusUpdated();
 
 private:
     void setUdpBuffer(const QByteArray &newDatagram);
@@ -41,6 +48,7 @@ private:
     quint16 port_ = 5146;
     QString udpBuffer_;
     QString tcpBuffer_;
+    ConnectionStatus connectionStatus_;
 };
 
 #endif  // SERVER_H

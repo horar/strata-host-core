@@ -1,7 +1,10 @@
 #include "server.h"
 
 Server::Server(QObject *parent)
-    : QObject(parent), tcpSocket_(new QTcpSocket(this)), udpSocket_(new QUdpSocket(this))
+    : QObject(parent),
+      tcpSocket_(new QTcpSocket(this)),
+      udpSocket_(new QUdpSocket(this)),
+      connectionStatus_(ConnectionStatus::Disconnected)
 {
     // UDP Socket set up.
     if (false == udpSocket_->bind(port_, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint)) {
@@ -12,10 +15,17 @@ Server::Server(QObject *parent)
     connect(udpSocket_, &QUdpSocket::readyRead, this, &Server::preccessPendingDatagrams);
 
     // TCP socket set up
-    connect(tcpSocket_, &QTcpSocket::connected, this, []() { qDebug() << "tcp socket connected"; });
+    connect(tcpSocket_, &QTcpSocket::connected, this, [this]() {
+        qDebug() << "tcp: socket connected";
+        connectionStatus_ = ConnectionStatus::Connected;
+        emit connectionStatusUpdated();
+    });
 
-    connect(tcpSocket_, &QTcpSocket::disconnected, this,
-            []() { qDebug() << "tcp socket disconnected"; });
+    connect(tcpSocket_, &QTcpSocket::disconnected, this, [this]() {
+        qDebug() << "tcp: socket disconnected";
+        connectionStatus_ = ConnectionStatus::Disconnected;
+        emit connectionStatusUpdated();
+    });
 
     //     connect(tcpSocket_, &QAbstractSocket::error, this, [](QAbstractSocket::SocketError
     //     socketError) {
@@ -24,7 +34,7 @@ Server::Server(QObject *parent)
     //     });
 
     connect(tcpSocket_, &QTcpSocket::bytesWritten, this,
-            [](qint64 bytesWritten) { qDebug() << "tcp bytes written" << bytesWritten; });
+            [](qint64 bytesWritten) { qDebug() << "tcp: bytes written" << bytesWritten; });
 
     connect(tcpSocket_, &QTcpSocket::readyRead, this, &Server::newTcpMessage);
 }
@@ -77,21 +87,26 @@ QString Server::getTcpBuffer()
     return tcpBuffer_;
 }
 
+bool Server::getConnectionStatus()
+{
+    return connectionStatus_ == Server::ConnectionStatus::Connected;
+}
+
 void Server::connectToStrataClient(QHostAddress hostAddress, qint16 port)
 {
     if (tcpSocket_->state() == QTcpSocket::ConnectedState) {
-        qDebug() << "tcp socket already connected";
+        qDebug() << "tcp: socket already connected";
         return;
     }
 
-    qDebug() << "connecting to:" << hostAddress.toString() << "port:" << port;
+    qDebug() << "tcp: connecting to:" << hostAddress.toString() << "port:" << port;
     tcpSocket_->connectToHost(hostAddress, port);
 
     if (false == tcpSocket_->waitForConnected(5000)) {
-        qDebug() << "failed to connect.";
+        qDebug() << "tcp: failed to connect.";
     }
 
-    sendTcpMessge("Connected?");
+    sendTcpMessge("tcp: Connected?");
 }
 
 void Server::newTcpMessage()
@@ -106,6 +121,18 @@ void Server::newTcpMessage()
 void Server::sendTcpMessge(QByteArray message)
 {
     tcpSocket_->write(message);
+}
+
+void Server::disconnectTcpSocket()
+{
+    qDebug() << "tcp: Disconnecting socket...";
+
+    if (tcpSocket_->state() != QTcpSocket::ConnectedState) {
+        qDebug() << "tcp: socket not connected.";
+        return;
+    }
+
+    tcpSocket_->disconnectFromHost();
 }
 
 void Server::setUdpBuffer(const QByteArray &newDatagram)
