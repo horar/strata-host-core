@@ -439,6 +439,8 @@ FocusScope {
                     return
                 }
 
+                scrollbackView.clearSelection()
+
                 toggleExpandButton.enabled = false
                 scrollbackModel.condensedMode = ! scrollbackModel.condensedMode
                 scrollbackModel.setIsCondensedAll(scrollbackModel.condensedMode)

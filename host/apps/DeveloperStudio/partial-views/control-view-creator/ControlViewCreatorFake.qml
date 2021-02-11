@@ -4,8 +4,4 @@ Item {
     id: controlViewCreatorRoot
 
     // Control View Creator only available in Debug Builds
-
-    function blockWindowClose() {
-        return false
-    }
 }

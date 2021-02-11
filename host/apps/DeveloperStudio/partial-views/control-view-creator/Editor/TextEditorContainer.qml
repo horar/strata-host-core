@@ -130,7 +130,7 @@ Item {
             }
         }
     }
-    
+
     Connections {
         target: openFilesModel
 
@@ -258,7 +258,6 @@ Item {
 
     WebEngineView {
         id: webEngine
-
         webChannel: channel
         settings.localContentCanAccessRemoteUrls: false
         settings.localContentCanAccessFileUrls: true
@@ -293,9 +292,10 @@ Item {
                 channelObject.setHtml(fileText)
                 channelObject.fileText = fileText
             }
+
         }
 
-        url: "qrc:///partial-views/control-view-creator/editor.html"
+        url: "qrc:///tech/strata/monaco/minified/editor.html"
 
         Rectangle {
             id: barContainer
@@ -329,4 +329,3 @@ Item {
         }
     }
 }
-
