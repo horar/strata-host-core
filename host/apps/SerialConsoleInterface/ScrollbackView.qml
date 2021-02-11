@@ -166,7 +166,7 @@ Item {
         boundsBehavior: Flickable.StopAtBounds
 
         onActiveFocusChanged: {
-            if (activeFocus === false) {
+            if (activeFocus === false && contextMenu.opened) {
                 clearSelection()
             }
         }
@@ -183,14 +183,20 @@ Item {
             }
 
             cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
 
             /*this is to stop interaction with flickable while selecting text */
             drag.target: Item {}
 
+            property bool leftMouseButtonPressed
             property int startIndex
             property int startPosition
 
             onPressed: {
+                if (mouse.button === Qt.RightButton) {
+                    return
+                }
+
                 listView.forceActiveFocus()
 
                 var position = resolvePosition(mouse.x, mouse.y)
@@ -198,6 +204,7 @@ Item {
                     return
                 }
 
+                leftMouseButtonPressed = true
                 startIndex = position.delegate_index
                 startPosition = position.cursor_pos
 
@@ -207,7 +214,22 @@ Item {
                 selectionEndPosition = startPosition
             }
 
+            onReleased: {
+                if ((mouse.button === Qt.RightButton) &&
+                    (selectionStartPosition !== selectionEndPosition)) {
+                    var posInDelegate = listView.mapFromItem(textSelectionMouseArea, mouse.x, mouse.y)
+                    if (listView.contains(posInDelegate)) {
+                        contextMenu.popup()
+                    }
+                }
+
+                leftMouseButtonPressed = false
+            }
+
             onPositionChanged: {
+                if (leftMouseButtonPressed === false)
+                    return
+
                 //do not allow to select delegates outside of view
                 if (mouse.y < 0) {
                    var mouseY = 0
@@ -263,6 +285,20 @@ Item {
                 return {
                     "delegate_index": delegateIndex,
                     "cursor_pos": cursorPos
+                }
+            }
+
+            Menu {
+                id: contextMenu
+                Action {
+                    id: copyAction
+                    text: "Copy"
+                    onTriggered: {
+                        copyToClipboard()
+                    }
+                }
+                onClosed: {
+                    listView.forceActiveFocus()
                 }
             }
         }
