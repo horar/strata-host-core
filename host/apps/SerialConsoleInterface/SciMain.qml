@@ -44,7 +44,7 @@ Item {
     Binding {
         target: sciModel.platformModel
         property: "condensedAtStartup"
-        value: Sci.Settings.commandsCollapsed
+        value: Sci.Settings.commandsCondensedAtStartup
     }
 
     Item {

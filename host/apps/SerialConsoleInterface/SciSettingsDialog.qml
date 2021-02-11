@@ -151,11 +151,11 @@ SGWidgets.SGDialog {
                 Binding {
                     target: commandsCollapsed
                     property: "checked"
-                    value: Sci.Settings.commandsCollapsed
+                    value: Sci.Settings.commandsCondensedAtStartup
                 }
 
                 onCheckedChanged : {
-                    Sci.Settings.commandsCollapsed = checked
+                    Sci.Settings.commandsCondensedAtStartup = checked
                 }
             }
 

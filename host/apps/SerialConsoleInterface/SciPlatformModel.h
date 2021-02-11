@@ -55,7 +55,7 @@ public:
     void setMaxCmdInHistoryCount(int maxCmdInHistoryCount);
 
     bool condensedAtStartup() const;
-    void setCondensedAtStartup(bool condensedInScrollback);
+    void setCondensedAtStartup(bool condensedAtStartup);
 
     Q_INVOKABLE void disconnectPlatformFromSci(int index);
     Q_INVOKABLE void removePlatform(int index);

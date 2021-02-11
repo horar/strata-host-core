@@ -11,12 +11,12 @@ Item {
     property bool commandsInScrollbackUnlimited: defaultCommandsInScrollbackUnlimited
     property int maxCommandsInHistory: defaultMaxCommandsInHistory
     property string lastSelectedFirmware
-    property bool commandsCollapsed: defaultCommandsCollapsed
+    property bool commandsCondensedAtStartup: defaultcommandsCondensedAtStartup
 
     readonly property int defaultMaxCommandsInScrollback: 5000
     readonly property bool defaultCommandsInScrollbackUnlimited: false
     readonly property int defaultMaxCommandsInHistory: 20
-    readonly property bool defaultCommandsCollapsed: false
+    readonly property bool defaultcommandsCondensedAtStartup: false
 
     QtLabsSettings.Settings {
         category: "App"
@@ -24,13 +24,13 @@ Item {
         property alias commandsInScrollbackUnlimited: root.commandsInScrollbackUnlimited
         property alias maxCommandsInHistory: root.maxCommandsInHistory
         property alias lastSelectedFirmware: root.lastSelectedFirmware
-        property alias commandsCollapsed: root.commandsCollapsed
+        property alias commandsCondensedAtStartup: root.commandsCondensedAtStartup
     }
 
     function resetToDefaultValues() {
         maxCommandsInScrollback = defaultMaxCommandsInScrollback
         commandsInScrollbackUnlimited = defaultCommandsInScrollbackUnlimited
         maxCommandsInHistory = defaultMaxCommandsInHistory
-        commandsCollapsed = defaultCommandsCollapsed
+        commandsCondensedAtStartup = defaultcommandsCondensedAtStartup
     }
 }
