@@ -38,10 +38,10 @@ void ServerConnector::readNewMessages(/*int socket*/)
         if (connector_->read(message) == false) {
             break;
         }
-        qCDebug(logCategoryStrataServerConnector)
-            << "message received. Client ID:"
+        qCDebug(logCategoryStrataServerConnector).nospace().noquote()
+            << "message received. Client ID: 0x"
             << QByteArray::fromStdString(connector_->getDealerID()).toHex()
-            << "Message:" << QByteArray::fromStdString(message);
+            << ", Message: '" << QByteArray::fromStdString(message) << "'";
         emit newMessageReceived(QByteArray::fromStdString(connector_->getDealerID()),
                                QByteArray::fromStdString(message));
     }
@@ -60,8 +60,8 @@ void ServerConnector::readMessages()
 
 bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &message)
 {
-    qCDebug(logCategoryStrataServerConnector)
-        << "Sending message. Client ID:" << clientId.toHex() << "Message:" << message;
+    qCDebug(logCategoryStrataServerConnector).nospace().noquote()
+        << "Sending message. Client ID: 0x" << clientId.toHex() << ", Message: '" << message << "'";
 
     if (connector_) {
         connector_->setDealerID(clientId.toStdString());

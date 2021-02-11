@@ -1,0 +1,12 @@
+#pragma once
+
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logCategoryConnector)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryZmqConnector)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryZmqDealerConnector)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryZmqPublisherConnector)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryZmqRequestConnector)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryZmqResponseConnector)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryZmqRouterConnector)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryZmqSubscriberConnector)

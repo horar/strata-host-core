@@ -51,6 +51,14 @@ public:
      */
     Q_INVOKABLE static QString minifyJson(const QString &jsonString);
 
+
+    /*!
+     * Replaces all soft break lines with hard breaks
+     * \param text text to be converted
+     * \return converted text
+     */
+    Q_INVOKABLE static QString convertToHardBreakLines(const QString &text);
+
     static void resolveNextToken(
             const QString &text,
             int startIndex,
@@ -60,6 +68,7 @@ private:
     enum class ScannerState {
         Start,
         String,
+        MaybeInteger,      // maybe integer (+ or -), digit has to follow
         Integer,
         MaybeReal,         // maybe real number (12.), digit has to follow
         Real,              // real number (12.3)
@@ -70,6 +79,11 @@ private:
         OnlyLettersType,   // maybe true, false or null
         SyntaxError
     };
+
+    /* Soft breaks allow to process whole text with SyntaxHighlighter at once,
+     * otherwise text would be processed line by line */
+    static constexpr QChar softBreakLine_ = QChar(0x2028);
+    static constexpr QChar hardBreakLine_ = QChar('\n');
 
     bool static isCorrectRightChar(const QChar &c);
 };

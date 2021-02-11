@@ -2,6 +2,7 @@
 
 #include <QObject>
 
+#include "DeferredRequest.h"
 #include "Message.h"
 
 namespace strata::strataRPC
@@ -66,12 +67,14 @@ public:
 
     /**
      * Sends a request to the server.
+     * @note callbacks are optional, if a callback is not provided, then the response is handled by
+     * the registered handlers in the dispatcher.
      * @param [in] method The handler name in StrataServer.
      * @param [in] payload QJsonObject of the request payload.
-     * @return std::pair<bool, int>, Boolean to indicate if the request was sent successfully or
-     * not, and an int of the request id.
+     * @return pointer to DeferredRequest to connect callbacks, on failure, this will return
+     * nullptr
      */
-    std::pair<bool, int> sendRequest(const QString &method, const QJsonObject &payload);
+    DeferredRequest *sendRequest(const QString &method, const QJsonObject &payload);
 
 signals:
     /**
@@ -92,9 +95,11 @@ private:
      * Parse the incoming json message from StrataServer into a Message object.
      * @param [in] jsonServerMessage QByteArray json of StrataServer's message.
      * @param [out] serverMessage populated Message object with the notification meta data.
+     * @param [out] deferredRequest pointer to the request's callbacks.
      * @return True if the json message was parsed successfully. False otherwise.
      */
-    bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage);
+    bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
+                            DeferredRequest **deferredRequest);
 
     std::unique_ptr<Dispatcher> dispatcher_;
     std::unique_ptr<ClientConnector> connector_;

@@ -1,64 +1,5 @@
-diff --git a/vendor/couchbase-lite-core/Networking/HTTP/HTTPLogic.cc b/vendor/couchbase-lite-core/Networking/HTTP/HTTPLogic.cc
-index d21c27b2..5a7df435 100644
---- a/vendor/couchbase-lite-core/Networking/HTTP/HTTPLogic.cc
-+++ b/vendor/couchbase-lite-core/Networking/HTTP/HTTPLogic.cc
-@@ -311,7 +311,7 @@ namespace litecore { namespace net {
-         if (!_isWebSocket)
-             return failure(WebSocketDomain, kCodeProtocolError);
- 
--        if (_responseHeaders["Connection"_sl] != "Upgrade"_sl
-+        if ((_responseHeaders["Connection"_sl] != "Upgrade"_sl && _responseHeaders["Connection"_sl] != "upgrade"_sl)
-                 || _responseHeaders["Upgrade"_sl] != "websocket"_sl) {
-             return failure(WebSocketDomain, kCodeProtocolError,
-                            "Server failed to upgrade connection"_sl);
-diff --git a/vendor/couchbase-lite-core/Networking/WebSockets/WebSocketImpl.cc b/vendor/couchbase-lite-core/Networking/WebSockets/WebSocketImpl.cc
-index c1015735..cfcf61e2 100644
---- a/vendor/couchbase-lite-core/Networking/WebSockets/WebSocketImpl.cc
-+++ b/vendor/couchbase-lite-core/Networking/WebSockets/WebSocketImpl.cc
-@@ -37,7 +37,7 @@ namespace litecore { namespace websocket {
-     constexpr long WebSocketImpl::kConnectTimeoutSecs;
- 
-     // Default interval at which to send PING messages (configurable via options)
--    static constexpr auto kDefaultHeartbeatInterval = chrono::seconds(5 * 60);
-+    static constexpr auto kDefaultHeartbeatInterval = chrono::seconds(30);
- 
-     // Timeout for disconnecting if no PONG response received
-     static constexpr auto kPongTimeout  = chrono::seconds(10);
-diff --git a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
-index b9ff9bcc..c4550386 100644
---- a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
-+++ b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
-@@ -243,13 +243,7 @@ namespace litecore::net {
- #ifdef __APPLE__
-         // Apple platforms always have an mDNS/Bonjour hostname.
-         string hostName;
--    #if TARGET_OS_OSX
--        // On macOS, we can get it from SystemConfiguration (not available on iOS)
--        if (CFStringRef cfName = SCDynamicStoreCopyLocalHostName(NULL); cfName) {
--            nsstring_slice strsl(cfName);
--            hostName = string(strsl);
--        }
--    #else
-+    #if !TARGET_OS_OSX
-         // From <http://stackoverflow.com/a/16902907/98077>.
-         // On iOS, gethostname() returns the mDNS/Bonjour hostname (without the ".local")
-         char baseHostName[256];
-diff --git a/vendor/couchbase-lite-core/Crypto/PublicKey.hh b/vendor/couchbase-lite-core/Crypto/PublicKey.hh
-index de513642..8909d8fc 100644
---- a/vendor/couchbase-lite-core/Crypto/PublicKey.hh
-+++ b/vendor/couchbase-lite-core/Crypto/PublicKey.hh
-@@ -147,9 +147,6 @@ namespace litecore { namespace crypto {
-     };
- 
- 
--#ifdef __APPLE__                // TODO: Implement subclasses for other platforms
--    #define PERSISTENT_PRIVATE_KEY_AVAILABLE
--#endif
- 
- #ifdef PERSISTENT_PRIVATE_KEY_AVAILABLE
- 
 diff --git a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh b/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
-index a4e51654..407aeffb 100644
+index 05c4cf31..175eb5bd 100644
 --- a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
 +++ b/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
 @@ -27,7 +27,7 @@ namespace c4Internal {
@@ -70,3 +11,43 @@ index a4e51654..407aeffb 100644
          static constexpr unsigned kMaxContinuousRetryCount = UINT_MAX;
  
          // Longest possible retry delay, in seconds. The delay doubles on each failed retry
+diff --git a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
+index b9ff9bcc..083cdea2 100644
+--- a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
++++ b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
+@@ -239,34 +239,7 @@ namespace litecore::net {
+ #pragma mark - PLATFORM SPECIFIC CODE:
+ 
+ 
+-    optional<string> GetMyHostName() {
+-#ifdef __APPLE__
+-        // Apple platforms always have an mDNS/Bonjour hostname.
+-        string hostName;
+-    #if TARGET_OS_OSX
+-        // On macOS, we can get it from SystemConfiguration (not available on iOS)
+-        if (CFStringRef cfName = SCDynamicStoreCopyLocalHostName(NULL); cfName) {
+-            nsstring_slice strsl(cfName);
+-            hostName = string(strsl);
+-        }
+-    #else
+-        // From <http://stackoverflow.com/a/16902907/98077>.
+-        // On iOS, gethostname() returns the mDNS/Bonjour hostname (without the ".local")
+-        char baseHostName[256];
+-        if (gethostname(baseHostName, 255) == 0) {
+-            baseHostName[255] = '\0';
+-            hostName = baseHostName;
+-        }
+-    #endif
+-        if (!hostName.empty()) {
+-            if (!hasSuffix(hostName, ".local"))
+-                hostName += ".local";
+-            return hostName;
+-        }
+-#endif
+-        //TODO: Android supports mDNS; is there an API to get the hostname?
+-        return nullopt;
+-    }
++
+ 
+ 
+     // Platform-specific code to read the enabled network interfaces.
