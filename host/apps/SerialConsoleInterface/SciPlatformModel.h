@@ -26,10 +26,10 @@ class SciPlatformModel: public QAbstractListModel
                WRITE setMaxCmdInHistoryCount
                NOTIFY maxCmdInHistoryCountChanged)
 
-    Q_PROPERTY(bool condensedInScrollback
-               READ condensedInScrollback
-               WRITE setCondensedInScrollback
-               NOTIFY condensedInScrollbackChanged)
+    Q_PROPERTY(bool condensedAtStartup
+               READ condensedAtStartup
+               WRITE setCondensedAtStartup
+               NOTIFY condensedAtStartupChanged)
 
 public:
     SciPlatformModel(strata::BoardManager *boardManager, QObject *parent = nullptr);
@@ -54,8 +54,8 @@ public:
     int maxCmdInHistoryCount() const;
     void setMaxCmdInHistoryCount(int maxCmdInHistoryCount);
 
-    bool condensedInScrollback() const;
-    void setCondensedInScrollback(bool condensedInScrollback);
+    bool condensedAtStartup() const;
+    void setCondensedAtStartup(bool condensedInScrollback);
 
     Q_INVOKABLE void disconnectPlatformFromSci(int index);
     Q_INVOKABLE void removePlatform(int index);
@@ -65,7 +65,7 @@ signals:
     void countChanged();
     void maxScrollbackCountChanged();
     void maxCmdInHistoryCountChanged();
-    void condensedInScrollbackChanged();
+    void condensedAtStartupChanged();
     void platformConnected(int index);
     void platformReady(int index);
 
@@ -87,7 +87,7 @@ private:
 
     int maxScrollbackCount_ = 99;
     int maxCmdInHistoryCount_ = 99;
-    bool condensedInScrollback_ = false;
+    bool condensedAtStartup_ = false;
 
     void setModelRoles();
     int findPlatform(int deviceId) const;

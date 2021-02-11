@@ -79,17 +79,17 @@ void SciPlatformModel::setMaxCmdInHistoryCount(int maxCmdInHistoryCount)
     }
 }
 
-void SciPlatformModel::setCondensedInScrollback(bool condensedInScrollback)
+void SciPlatformModel::setCondensedAtStartup(bool condensedAtStartup)
 {
-    if (condensedInScrollback_ != condensedInScrollback) {
-        condensedInScrollback_ = condensedInScrollback;
+    if (condensedAtStartup_ != condensedAtStartup) {
+        condensedAtStartup_ = condensedAtStartup;
+        emit condensedAtStartupChanged();
     }
-    emit condensedInScrollbackChanged();
 }
 
-bool SciPlatformModel::condensedInScrollback() const
+bool SciPlatformModel::condensedAtStartup() const
 {
-    return condensedInScrollback_;
+    return condensedAtStartup_;
 }
 
 void SciPlatformModel::disconnectPlatformFromSci(int index)
@@ -224,7 +224,7 @@ void SciPlatformModel::appendNewPlatform(int deviceId)
     item->setStatus(SciPlatform::PlatformStatus::Connected);
     item->scrollbackModel()->setMaximumCount(maxScrollbackCount_);
     item->commandHistoryModel()->setMaximumCount(maxCmdInHistoryCount_);
-    item->scrollbackModel()->setCondensedMode(condensedInScrollback_);
+    item->scrollbackModel()->setCondensedMode(condensedAtStartup_);
     item->setDeviceName(device->deviceName());
     platformList_.append(item);
 

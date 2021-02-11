@@ -43,7 +43,7 @@ Item {
 
     Binding {
         target: sciModel.platformModel
-        property: "condensedInScrollback"
+        property: "condensedAtStartup"
         value: Sci.Settings.commandsCollapsed
     }
 
