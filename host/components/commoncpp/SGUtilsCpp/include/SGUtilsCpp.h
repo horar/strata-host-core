@@ -38,6 +38,7 @@ public:
     Q_INVOKABLE static QString generateUuid();
     Q_INVOKABLE static bool validateJson(const QByteArray &json, const QByteArray &schema);
     Q_INVOKABLE static QString toHex(qint64 number, int width = 0);
+    Q_INVOKABLE static void copyToClipboard(const QString &text);
 
 private:
     const QStringList fileSizePrefixList_;
