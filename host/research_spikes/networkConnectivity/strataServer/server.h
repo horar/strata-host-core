@@ -14,6 +14,9 @@ class Server : public QObject
     Q_PROPERTY(QString udpBuffer READ getUdpBuffer NOTIFY udpBufferUpdated);
     Q_PROPERTY(QString tcpBuffer READ getTcpBuffer NOTIFY tcpBufferUpdated);
     Q_PROPERTY(bool isConnected READ getConnectionStatus NOTIFY connectionStatusUpdated);
+    Q_PROPERTY(QString hostAddress READ getHostAddress);
+    Q_PROPERTY(QString tcpPort READ getTcpPort);
+    Q_PROPERTY(QString clientAddreass READ getClientAddress NOTIFY clientAddressUpdated);
 
 public:
     Server(QObject *parent = nullptr);
@@ -33,11 +36,15 @@ public slots:
     void newTcpMessage();
     void sendTcpMessge(QByteArray message);
     void disconnectTcpSocket();
+    QString getHostAddress();
+    QString getTcpPort();
+    QString getClientAddress();
 
 signals:
     void udpBufferUpdated();
     void tcpBufferUpdated();
     void connectionStatusUpdated();
+    void clientAddressUpdated();
 
 private:
     void setUdpBuffer(const QByteArray &newDatagram);
@@ -49,6 +56,7 @@ private:
     QString udpBuffer_;
     QString tcpBuffer_;
     ConnectionStatus connectionStatus_;
+    QString clientAddress_;
 };
 
 #endif  // SERVER_H

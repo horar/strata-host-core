@@ -190,10 +190,62 @@ Window {
             }
         }
     }
+
+    Item {
+        id: hostInfoItem
+        x: 341
+        y: 35
+        width: 281
+        height: 63
+
+        Label {
+            id: hostAddressLable
+            anchors.left: hostInfoItem.left
+            anchors.top: hostInfoItem.top
+            text: qsTr("Host Address: ")
+            padding: 0
+        }
+
+        Label {
+            id: hostAddressValueLable
+            anchors.left: hostAddressLable.right
+            y: hostAddressLable.y
+            text: Server.hostAddress
+        }
+
+        Label {
+            id: tcpPortLabel
+            anchors.left: hostInfoItem.left
+            anchors.top: hostAddressLable.bottom
+            y: 30
+            text: qsTr("TCP Port: ")
+        }
+
+        Label {
+            id: tcpPortValueLabel
+            anchors.left: tcpPortLabel.right
+            y: tcpPortLabel.y
+            text: Server.tcpPort
+        }
+
+        Label {
+            id: clientAdressLabel
+            anchors.left: hostInfoItem.left
+            anchors.top: tcpPortLabel.bottom
+            text: qsTr("Client Address: ")
+        }
+
+        Label {
+            id: clientAdressValueLabel
+            anchors.left: clientAdressLabel.right
+            y: clientAdressLabel.y
+            text: Server.clientAddreass
+        }
+    }
 }
 
 /*##^##
 Designer {
-    D{i:0;annotation:"1 //;;// MainAppWindow //;;//  //;;//  //;;// 1612428635";customId:"";formeditorZoom:1.5}
+    D{i:0;annotation:"1 //;;// MainAppWindow //;;//  //;;//  //;;// 1612428635";customId:"";formeditorZoom:1.100000023841858}
 }
 ##^##*/

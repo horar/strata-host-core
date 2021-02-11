@@ -1,10 +1,14 @@
 #include "server.h"
+#include <QList>
+#include <QNetworkInterface>
+#include <QStringList>
 
 Server::Server(QObject *parent)
     : QObject(parent),
       tcpSocket_(new QTcpSocket(this)),
       udpSocket_(new QUdpSocket(this)),
-      connectionStatus_(ConnectionStatus::Disconnected)
+      connectionStatus_(ConnectionStatus::Disconnected),
+      clientAddress_("")
 {
     // UDP Socket set up.
     if (false == udpSocket_->bind(port_, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint)) {
@@ -18,13 +22,17 @@ Server::Server(QObject *parent)
     connect(tcpSocket_, &QTcpSocket::connected, this, [this]() {
         qDebug() << "tcp: socket connected";
         connectionStatus_ = ConnectionStatus::Connected;
+        clientAddress_ = tcpSocket_->peerAddress().toString();
         emit connectionStatusUpdated();
+        emit clientAddressUpdated();
     });
 
     connect(tcpSocket_, &QTcpSocket::disconnected, this, [this]() {
         qDebug() << "tcp: socket disconnected";
         connectionStatus_ = ConnectionStatus::Disconnected;
+        clientAddress_ = "";
         emit connectionStatusUpdated();
+        emit clientAddressUpdated();
     });
 
     //     connect(tcpSocket_, &QAbstractSocket::error, this, [](QAbstractSocket::SocketError
@@ -37,6 +45,7 @@ Server::Server(QObject *parent)
             [](qint64 bytesWritten) { qDebug() << "tcp: bytes written" << bytesWritten; });
 
     connect(tcpSocket_, &QTcpSocket::readyRead, this, &Server::newTcpMessage);
+    qDebug() << "host Addresses:" << getHostAddress();
 }
 
 Server::~Server()
@@ -106,7 +115,7 @@ void Server::connectToStrataClient(QHostAddress hostAddress, qint16 port)
         qDebug() << "tcp: failed to connect.";
     }
 
-    sendTcpMessge("tcp: Connected?");
+    sendTcpMessge("Strata Host!");
 }
 
 void Server::newTcpMessage()
@@ -133,6 +142,28 @@ void Server::disconnectTcpSocket()
     }
 
     tcpSocket_->disconnectFromHost();
+}
+
+QString Server::getHostAddress()
+{
+    QList<QString> hostAddressesList;
+    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
+    for (const QHostAddress &address : QNetworkInterface::allAddresses()) {
+        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost) {
+            hostAddressesList.push_back(address.toString());
+        }
+    }
+    return hostAddressesList.join(", ");
+}
+
+QString Server::getTcpPort()
+{
+    return QString::number(TCP_PORT);
+}
+
+QString Server::getClientAddress()
+{
+    return clientAddress_;
 }
 
 void Server::setUdpBuffer(const QByteArray &newDatagram)
