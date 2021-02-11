@@ -13,14 +13,15 @@ class client : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString connectionStatus READ getConnectionStatus WRITE setConnectionStatus NOTIFY connectionStatusChanged)
-    Q_PROPERTY(QString receivedMessages READ gotTcpMessage NOTIFY gotTcpMessageUpdated)
+    Q_PROPERTY(QString receivedMessages READ getTcpMessage NOTIFY tcpMessageUpdated)
 
 public:
     client(QObject *parent = nullptr);
     ~client();
     QString getConnectionStatus() const;
     void setConnectionStatus(QString &status);
-    QString gotTcpMessage();
+    void readTcpMessage();
+    QString getTcpMessage() const;
 
 
 public slots:
@@ -33,7 +34,7 @@ public slots:
 
 signals:
     void connectionStatusChanged();
-    void gotTcpMessageUpdated();
+    void tcpMessageUpdated();
 
 private:
     QString status_[2] = {"Disconnected", "Connected"};

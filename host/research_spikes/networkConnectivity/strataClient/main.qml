@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Extras 1.4
 
 Window {
+    id: window
     visible: true
     width: 640
     height: 340
@@ -13,9 +14,9 @@ Window {
     Button {
         id: broadcastBtn
         x: 25
-        y: 109
+        y: 98
         width: 255
-        height: 56
+        height: 44
         text: qsTr("Broadcast")
         font.pointSize: 21
         clip: false
@@ -38,7 +39,7 @@ Window {
         height: 48
         text: qsTr("Port")
         font.bold: false
-        font.pointSize: 19
+        font.pointSize: 17
         styleColor: "#e36464"
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
@@ -48,8 +49,8 @@ Window {
         id: portField
         x: 84
         y: 55
-        width: 96
-        height: 46
+        width: 99
+        height: 37
         text: client.getPort()
         placeholderText: "Enter broadcasting port"
     }
@@ -59,8 +60,9 @@ Window {
         x: 197
         y: 55
         width: 83
-        height: 48
+        height: 37
         text: qsTr("Set")
+        rotation: 0.536
 
         Connections {
             target: setPortBtn
@@ -71,7 +73,7 @@ Window {
     Label {
         id: statusLabel
         x: 172
-        y: 189
+        y: 200
         width: 96
         height: 48
         text: client.connectionStatus
@@ -83,11 +85,11 @@ Window {
     Button {
         id: disconnectBtn
         x: 25
-        y: 189
+        y: 206
         width: 86
-        height: 54
+        height: 42
         text: qsTr("Disconnect")
-        enabled: client.connectionStatus == "Connected"
+        enabled: client.connectionStatus === "Connected"
 
         Connections {
             target: disconnectBtn
@@ -102,49 +104,60 @@ Window {
         width: 305
         height: 117
         clip: true
-//        enabled: client.connectionStatus == "Connected"
+        enabled: client.connectionStatus === "Connected"
 
         TextArea {
             id: messageTextArea
-            x: 0
-            y: 0
-            width: 305
-            height: 124
-            text: client.gotTcpMessage()
+            x: -10
+            y: -6
+            width: 300
+            height: 117
+            text: client.receivedMessages
             font.pointSize: 17
-            clip: false
+            readOnly: true
+            enabled: client.connectionStatus === "Connected"
+//            background: Rectangle {
+//                radius: 2
+//                x: messageTextArea.x
+//                y: messageTextArea.y
+//                border.color: "#333"
+//                border.width: 1
+//            }
         }
     }
 
-    TextInput {
+    TextField {
         id: userInputField
         x: 25
-        y: 249
+        y: 268
         width: 192
-        height: 57
+        height: 31
         text: qsTr("")
         font.pointSize: 16
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
+        enabled: client.connectionStatus === "Connected"
     }
 
     Button {
         id: sendBtn1
         x: 223
-        y: 249
+        y: 268
         width: 57
-        height: 57
+        height: 31
         text: qsTr("Send")
         Connections {
             target: sendBtn1
             onClicked: client.tcpWrite(userInputField.text)
         }
+        enabled: client.connectionStatus === "Connected"
+
     }
 
     StatusIndicator {
         id: statusIndicator
         x: 117
-        y: 195
+        y: 206
         width: 49
         height: 42
         color: "#65c903"

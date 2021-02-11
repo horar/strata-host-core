@@ -27,14 +27,15 @@ void client::setConnectionStatus(QString &status)
     }
 }
 
-QString client::gotTcpMessage()
+void client::readTcpMessage()
 {
-    recivedBuffer_.clear();
-    qDebug() << "recived buffer:" << QString(clientConnection_->readAll());
-    recivedBuffer_.append(QString(clientConnection_->readAll()));
-    emit gotTcpMessageUpdated();
-    return recivedBuffer_;
+    recivedBuffer_ += "Host: " + (QString(clientConnection_->readAll())) + "\n";
+    emit tcpMessageUpdated();
+}
 
+QString client::getTcpMessage() const
+{
+    return recivedBuffer_;
 }
 
 void client::broadcastDatagram()
@@ -65,10 +66,16 @@ void client::gotTcpConnection()
     clientConnection_ = tcpSever_->nextPendingConnection();
 
     // ensure that the socket will be deleted after disconnecting
-    connect(clientConnection_, &QAbstractSocket::disconnected,
-            clientConnection_, &QObject::deleteLater);
+    connect(clientConnection_, &QAbstractSocket::disconnected, clientConnection_, &QObject::deleteLater);
 
-    connect(clientConnection_, &QTcpSocket::readyRead, this, &client::gotTcpMessage);
+    connect(clientConnection_, &QTcpSocket::readyRead, this, &client::readTcpMessage);
+
+
+    connect(clientConnection_, &QTcpSocket::disconnected, this, [this]() {
+        qDebug() << "Host close connection";
+        setConnectionStatus(status_[0]);;
+        emit connectionStatusChanged();
+    });
 
 }
 
@@ -76,9 +83,12 @@ void client::disconnect()
 {
     clientConnection_->disconnectFromHost();
     setConnectionStatus(status_[0]);
+    emit connectionStatusChanged();
 }
 
 void client::tcpWrite(QByteArray block)
 {
     clientConnection_->write(block);
+    recivedBuffer_ += "Client: " + QString(block) + "\n";
+    emit tcpMessageUpdated();
 }
