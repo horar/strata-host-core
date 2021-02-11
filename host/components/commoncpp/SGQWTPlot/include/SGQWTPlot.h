@@ -56,7 +56,7 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setYRightVisible NOTIFY yRightVisibleChanged)
     Q_PROPERTY(QColor yRightAxisColor MEMBER yRightAxisColor_ WRITE setYRightAxisColor NOTIFY yRightAxisColorChanged)
     Q_PROPERTY(QColor yLeftAxisColor MEMBER yLeftAxisColor_ WRITE setYLeftAxisColor NOTIFY yLeftAxisColorChanged)
-    Q_PROPERTY(bool legendVisible READ legendVisible WRITE setLegendVisible NOTIFY legendVisibleChanged)
+    Q_PROPERTY(bool legend READ legend WRITE insertLegend NOTIFY legendChanged)
 
 
 public:
@@ -126,8 +126,8 @@ public:
     bool yRightVisible();
     void setYRightAxisColor(QColor newColor);
     void setYLeftAxisColor(QColor newColor);
-    void setLegendVisible(bool showLegend);
-    bool legendVisible();
+    void insertLegend(bool showLegend);
+    bool legend();
 
 protected:
     QwtPlot* qwtPlot = nullptr;
@@ -162,13 +162,14 @@ signals:
     void yRightMaxChanged();
     void yRightAxisColorChanged();
     void yLeftAxisColorChanged();
-    void legendVisibleChanged();
+    void legendChanged();
 
 private:
     friend class SGQWTPlotCurve;
 
     QList<SGQWTPlotCurve*> curves_;
     QwtPlotGrid * qwtGrid_  = nullptr;
+    QwtLegend * qwtLegend_  = nullptr;
     bool xLogarithmic_ = false;
     bool yLogarithmic_ = false;
     QColor backgroundColor_;
@@ -182,7 +183,7 @@ private:
     bool yRightVisible_ = false;
     QColor yRightAxisColor_;
     QColor yLeftAxisColor_;
-    bool legendVisible_ = false;
+    bool legend_ = false;
 
 private slots:
     void updatePlotSize();

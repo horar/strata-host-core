@@ -28,6 +28,7 @@ Item {
                 xGrid: false
                 yGrid: true
                 gridColor: "red"
+
             }
 
             Column {
@@ -154,7 +155,7 @@ Item {
                 yGrid: true
                 gridColor: "green"
                 yRightVisible: true
-                legendVisible : true //enable to add legend
+                legend: true  //enable to add legend
             }
 
             Column {
@@ -203,9 +204,23 @@ Item {
                             yAxisGraph.yLeftAxisColor = "black"
                         }
                     }
-
                     onClicked: {
                         yAxisGraph.removeCurve(0);
+                    }
+                }
+
+                Button {
+                    text: "Remove Legend"
+                    enabled: yAxisGraph.count > 0
+                    onClicked: {
+                        yAxisGraph.legend = false
+                    }
+                }
+                Button {
+                    text: "Add Legend"
+                    enabled: yAxisGraph.count > 0 && (!yAxisGraph.legend)
+                    onClicked: {
+                        yAxisGraph.legend = true
                     }
                 }
             }

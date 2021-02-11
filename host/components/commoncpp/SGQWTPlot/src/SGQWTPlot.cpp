@@ -22,12 +22,22 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     qwtGrid_->enableXMin(xMinorGrid_);
     qwtGrid_->enableYMin(yMinorGrid_);
     setGridColor("lightgrey");
+
+    qwtLegend_ = new QwtLegend();
+
+    // set visi
+    //    qwtPlot->legend()->setVisible(legendVisible_);
 }
 
 SGQWTPlot::~SGQWTPlot()
 {
     delete qwtGrid_;
     qwtGrid_ = nullptr;
+
+    if(qwtLegend_) {
+        delete qwtLegend_;
+        qwtLegend_ = nullptr;
+    }
 
     delete qwtPlot;
     qwtPlot = nullptr;
@@ -627,26 +637,32 @@ void SGQWTPlot :: setYLeftAxisColor(QColor newColor)
     }
 }
 
-void SGQWTPlot :: setLegendVisible(bool legend)
+void SGQWTPlot :: insertLegend(bool legend)
 {
-    if(legendVisible_ != legend) {
-        legendVisible_ = legend;
+    if(legend_ != legend) {
+        legend_ = legend;
         if(legend) {
-            QwtLegend * qwtLegend_ = new QwtLegend();
+            if(qwtLegend_ == nullptr) {
+                qwtLegend_ = new QwtLegend;
+            }
             qwtPlot->insertLegend(qwtLegend_,QwtPlot::BottomLegend);
             qwtPlot->legend()->setStyleSheet("color: black");
         }
+        else {
+            qwtPlot->insertLegend(0);
+            qwtLegend_ = nullptr;
+        }
 
-        emit legendVisibleChanged();
+        emit legendChanged();
         if (autoUpdate_) {
             update();
         }
     }
 }
 
-bool SGQWTPlot :: legendVisible()
+bool SGQWTPlot :: legend()
 {
-    return legendVisible_;
+    return legend_;
 }
 
 void SGQWTPlot::updatePlotSize()
