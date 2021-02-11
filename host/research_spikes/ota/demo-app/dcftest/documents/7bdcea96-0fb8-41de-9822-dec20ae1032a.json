@@ -240,14 +240,14 @@
         {
             "file": "str-level-shifters-gevb-v002.bin",
             "device": "water-heater",
-            "md5": "b2c8ad80cd23f2fc1df83538dda0ec7f",
+            "md5": "2cb7483b5d92ead2de3df8ccf8b63077",
             "timestamp": "2021-01-18 12:41:26",
             "version": "1.0.2"
         },
         {
             "file": "str-level-shifters-gevb-v10100.bin",
             "device": "water-heater",
-            "md5": "dd5710c6e007d0ef042f18d486d26e31",
+            "md5": "390b4e226e9219b09a3c0c8744a02b3b",
             "timestamp": "2020-06-25 12:41:31",
             "version": "1.0.100"
         },
