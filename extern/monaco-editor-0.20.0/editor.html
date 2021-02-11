@@ -188,9 +188,14 @@
         })
 
         monaco.languages.registerCompletionItemProvider('qml', {
+            triggerCharacters: ['{', '.'],
             provideCompletionItems: (model, position) => {
                 var textUntilPosition = model.getValueInRange({ startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
+                var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
+                var currWords = currText.replace("\t", "").split(" ");
                 var word = model.getWordUntilPosition(position);
+                var active = currWords[currWords.length - 1]
+
                 var range = {
                     startLineNumber: position.lineNumber,
                     endLineNumber: position.lineNumber,
@@ -201,20 +206,38 @@
                 var qtQuickFlag = textUntilPosition.match(`import QtQuick`)
                 initializeQtQuick({ qtQuickFlag: qtQuickFlag, sgwidgetsFlag: sgwidgetsFlag })
                 var suggestions = []
-                clearPropertySuggestions()
-                for (const [key] of Object.entries(qtObjectKeyValues)) {
+                for(var i = 0; i < BasicItemProperties.length; i++){
                     suggestions.push({
-                        label: qtObjectKeyValues[key].label,
-                        kind: monaco.languages.CompletionItemKind.Property,
+                        label: BasicItemProperties[i],
+                        kind: monaco.languages.CompletionItemKind.KeyWord,
                         insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                        insertText: qtObjectKeyValues[key].insertText,
+                        insertText: BasicItemProperties[i],
                         range: range
                     })
-                    convertStrArrayToObjArray(qtObjectKeyValues[key].properties, range)
                 }
-                suggestions = suggestions.concat(propertySuggestions)
-                return { suggestions: suggestions }
-
+                for (const [key] of Object.entries(qtObjectKeyValues)) { 
+                    suggestions.push({
+                            label: qtObjectKeyValues[key].label,
+                            kind: monaco.languages.CompletionItemKind.Class,
+                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                            insertText: qtObjectKeyValues[key].insertText,
+                            range: range
+                    })
+                }
+                          
+                if(qtObjectKeyValues.hasOwnProperty(active.substring(0,active.length - 1).split('.'|'{'|'\s{')[0])){
+                        var propRange = {
+                            startLineNumber: position.lineNumber + 1,
+                            endLineNumber: position.lineNumber + 1,
+                            startColumn: word.startColumn,
+                            endColumn: word.endColumn
+                        };
+                        convertStrArrayToObjArray(qtObjectKeyValues[active.substring(0,active.length - 1).split('.'|'{'|'\s{')[0]].properties, propRange)
+                        return { suggestions: propertySuggestions, incomplete: true}
+                } else {
+                    clearPropertySuggestions()
+                }
+                return {suggestions: suggestions}
             }
         })
 
@@ -226,7 +249,7 @@
             detectIndentation: true,
             tabCompletion: "on",
             formatOnPaste: true,
-
+            insertMode: "replace",
         });
 
         function getValue() {

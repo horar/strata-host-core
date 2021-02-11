@@ -13,24 +13,24 @@
     }
 */
 const qtObjectKeyValues = {}
-const propertySuggestions = []
+var propertySuggestions = []
 const qtQuick = [
     {
-        "body": "Axis {\n //id: \n}",
+        "body": "Axis",
         "description": "Axis",
         "prefix": "Axis",
         "scope": "source.qml",
         "properties": ["buttons: ", "inputs: ","value: ","velocity: "],
     },
     {
-        "body": "Binding {\n //id: \n}",
+        "body": "Binding",
         "description": "Binding",
         "prefix": "Binding",
         "scope": "source.qml",
         "properties": ["delayed: ","property: ","target: ","value: ","when: "],
     },
     {
-        "body": "BusyIndicator {\n //id: \n}",
+        "body": "BusyIndicator",
         "description": "BusyIndicator",
         "prefix": "BusyIndicator",
         "scope": "source.qml",
@@ -65,14 +65,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "BusyIndicatorStyle {\n //id: \n}",
+        "body": "BusyIndicatorStyle",
         "description": "BusyIndicatorStyle",
         "prefix": "BusyIndicatorStyle",
         "scope": "source.qml",
         "properties": ["control: ", "indicator: "]
     },
     {
-        "body": "Button {\n //id: \n}",
+        "body": "Button",
         "description": "Button",
         "prefix": "Button",
         "scope": "source.qml",
@@ -129,28 +129,28 @@ const qtQuick = [
         ]
     },
     {
-        "body": "ButtonAxisInput {\n //id: \n}",
+        "body": "ButtonAxisInput",
         "description": "ButtonAxisInput",
         "prefix": "ButtonAxisInput",
         "scope": "source.qml",
         "properties": ["acceleration: ","buttons: ","deceleration: "]
     },
     {
-        "body": "ButtonGroup {\n //id: \n}",
+        "body": "ButtonGroup",
         "description": "ButtonGroup",
         "prefix": "ButtonGroup",
         "scope": "source.qml",
         "properties": ["buttons: ","checkState: ","checkedButtons: ","exclusive: ","objectName: "]
     },
     {
-        "body": "ButtonStyle {\n //id: \n}",
+        "body": "ButtonStyle",
         "description": "ButtonStyle",
         "prefix": "ButtonStyle",
         "scope": "source.qml",
         "properties": ["background: ","control: ","label: "]
     },
     {
-        "body": "Canvas {\n //id: \n}",
+        "body": "Canvas",
         "description": "Canvas",
         "prefix": "Canvas",
         "scope": "source.qml",
@@ -164,7 +164,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "CheckBox {\n //id: \n}",
+        "body": "CheckBox",
         "description": "CheckBox",
         "prefix": "CheckBox",
         "scope": "source.qml",
@@ -231,14 +231,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "CheckBoxStyle {\n //id: \n}",
+        "body": "CheckBoxStyle",
         "description": "CheckBoxStyle",
         "prefix": "CheckBoxStyle",
         "scope": "source.qml",
         "properties": ["background: ","control: ","indicator: ","label: ","spacing: "]
     },
     {
-        "body": "CheckDelegate {\n //id: \n}",
+        "body": "CheckDelegate",
         "description": "CheckDelegate",
         "prefix": "CheckDelegate",
         "scope": "source.qml",
@@ -305,7 +305,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Column {\n //id: \n}",
+        "body": "Column",
         "description": "Column",
         "prefix": "Column",
         "scope": "source.qml",
@@ -325,7 +325,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "ColumnLayout {\n //id: \n}",
+        "body": "ColumnLayout",
         "description": "ColumnLayout",
         "prefix": "ColumnLayout",
         "scope": "source.qml",
@@ -335,7 +335,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "ComboBox {\n //id: \n}",
+        "body": "ComboBox",
         "description": "ComboBox",
         "prefix": "ComboBox",
         "scope": "source.qml",
@@ -396,14 +396,14 @@ const qtQuick = [
         "properties": ["progress: ","status: ","url: ","onCompleted{}","onDestruction{}"]
     },
     {
-        "body": "Connections {\n //id: \n}",
+        "body": "Connections",
         "description": "Connections",
         "prefix": "Connections",
         "scope": "source.qml",
         "properties": ["enabled: ","ignoreUnknownSignals: ","target: "]
     },
     {
-        "body": "Container {\n //id: \n}",
+        "body": "Container",
         "description": "Container",
         "prefix": "Container",
         "scope": "source.qml",
@@ -454,7 +454,7 @@ const qtQuick = [
         "properties": []
     },
     {
-        "body": "DropShadow {\n //id: \n}",
+        "body": "DropShadow",
         "description": "DropShadow",
         "prefix": "DropShadow",
         "scope": "source.qml",
@@ -482,7 +482,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Grid {\n //id: \n}",
+        "body": "Grid",
         "description": "Grid",
         "prefix": "Grid",
         "scope": "source.qml",
@@ -509,7 +509,7 @@ const qtQuick = [
         ]  
     },
     {
-        "body": "GridLayout {\n //id: \n}",
+        "body": "GridLayout",
         "description": "GridLayout",
         "prefix": "GridLayout",
         "scope": "source.qml",
@@ -523,7 +523,7 @@ const qtQuick = [
         ]        
     },
     {
-        "body": "GridView {\n //id: \n}",
+        "body": "GridView",
         "description": "GridView",
         "prefix": "GridView",
         "scope": "source.qml",
@@ -541,14 +541,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Icon {\n //id: \n}",
+        "body": "Icon",
         "description": "Icon",
         "prefix": "Icon",
         "scope": "source.qml",
         "properties": ["icon: ","parameters: ","plugin: "]
     },
     {
-        "body": "Image {\n //id: \n}",
+        "body": "Image",
         "description": "Image",
         "prefix": "Image",
         "scope": "source.qml",
@@ -571,14 +571,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Item {\n //id: \n}",
+        "body": "Item",
         "description": "Item",
         "prefix": "Item",
         "scope": "source.qml",
         "properties": [],
     },
     {
-        "body": "Label {\n //id: \n}",
+        "body": "Label",
         "description": "Label",
         "prefix": "Label",
         "scope": "source.qml",
@@ -637,7 +637,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Layout.",
+        "body": "Layout",
         "description": "Layout",
         "prefix": "Layout",
         "scope": "source.qml",
@@ -645,14 +645,14 @@ const qtQuick = [
         "regex":/Layout.(\*)/
     },
     {
-        "body": "ListElement {\n //id: \n}",
+        "body": "ListElement",
         "description": "ListElement",
         "prefix": "ListElement",
         "scope": "source.qml",
         "properties": []
     },
     {
-        "body": "ListModel {\n //id: \n}",
+        "body": "ListModel",
         "description": "ListModel",
         "prefix": "ListModel",
         "scope": "source.qml",
@@ -670,7 +670,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "ListView {\n //id: \n}",
+        "body": "ListView",
         "description": "ListView",
         "prefix": "ListView",
         "scope": "source.qml",
@@ -783,7 +783,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Loader {\n //id: \n}",
+        "body": "Loader",
         "description": "Loader",
         "prefix": "Loader",
         "scope": "source.qml",
@@ -799,7 +799,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Menu {\n //id: \n}",
+        "body": "Menu",
         "description": "Menu",
         "prefix": "Menu",
         "scope": "source.qml",
@@ -815,7 +815,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "MenuBar {\n //id: \n}",
+        "body": "MenuBar",
         "description": "MenuBar",
         "prefix": "MenuBar",
         "scope": "source.qml",
@@ -865,7 +865,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "MenuBarItem {\n //id: \n}",
+        "body": "MenuBarItem",
         "description": "MenuBarItem",
         "prefix": "MenuBarItem",
         "scope": "source.qml",
@@ -934,7 +934,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "MenuItem {\n //id: \n}",
+        "body": "MenuItem",
         "description": "MenuItem",
         "prefix": "MenuItem",
         "scope": "source.qml",
@@ -1004,7 +1004,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "MenuSeparator {\n //id: \n}",
+        "body": "MenuSeparator",
         "description": "MenuSeparator",
         "prefix": "MenuSeparator",
         "scope": "source.qml",
@@ -1042,7 +1042,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "MouseArea {\n //id: \n}",
+        "body": "MouseArea",
         "description": "MouseArea",
         "prefix": "MouseArea",
         "scope": "source.qml",
@@ -1090,7 +1090,7 @@ const qtQuick = [
         "properties": []
     },
     {
-        "body": "Popup {\n //id: \n}",
+        "body": "Popup",
         "description": "Popup",
         "prefix": "Popup",
         "scope": "source.qml",
@@ -1104,21 +1104,21 @@ const qtQuick = [
         "properties": []
     },
     {
-        "body": "QtObject {\n //id: \n}",
+        "body": "QtObject",
         "description": "QtObject",
         "prefix": "QtObject",
         "scope": "source.qml",
         "properties": ["objectName: "]
     },
     {
-        "body": "QtPositioning {\n //id: \n}",
+        "body": "QtPositioning",
         "description": "QtPositioning",
         "prefix": "QtPositioning",
         "scope": "source.qml",
         "properties": []
     },
     {
-        "body": "RadioButton {\n //id: \n}",
+        "body": "RadioButton",
         "description": "RadioButton",
         "prefix": "RadioButton",
         "scope": "source.qml",
@@ -1184,7 +1184,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "RangeSlider {\n //id: \n}",
+        "body": "RangeSlider",
         "description": "RangeSlider",
         "prefix": "RangeSlider",
         "scope": "source.qml",
@@ -1251,21 +1251,21 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Rectangle {\n //id: \n}",
+        "body": "Rectangle",
         "description": "Rectangle",
         "prefix": "Rectangle",
         "scope": "source.qml",
         "properties": []
     },
     {
-        "body": "RegExpValidator {\n //id: \n}",
+        "body": "RegExpValidator",
         "description": "RegExpValidator",
         "prefix": "RegExpValidator",
         "scope": "source.qml",
         "properties": ["regExp: "]
     },
     {
-        "body": "Repeater {\n //id: \n}",
+        "body": "Repeater",
         "description": "Repeater",
         "prefix": "Repeater",
         "scope": "source.qml",
@@ -1278,14 +1278,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Rotation {\n //id: \n}",
+        "body": "Rotation",
         "description": "Rotation",
         "prefix": "Rotation",
         "scope": "source.qml",
         "properties": ["angle: ","axis.x","axis.y","axis.z","origin.x","origin.y"]
     },
     {
-        "body": "Row {\n //id: \n}",
+        "body": "Row",
         "description": "Row",
         "prefix": "Row",
         "scope": "source.qml",
@@ -1305,7 +1305,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "RowLayout {\n //id: \n}",
+        "body": "RowLayout",
         "description": "RowLayout",
         "prefix": "RowLayout",
         "scope": "source.qml",
@@ -1315,14 +1315,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Scale {\n //id: \n}",
+        "body": "Scale",
         "description": "Scale",
         "prefix": "Scale",
         "scope": "source.qml",
         "properties": ["origin.x: ","origin.y: ","xScale: ","yScale: "]
     },
     {
-        "body": "ScrollBar {\n //id: \n}",
+        "body": "ScrollBar",
         "description": "ScrollBar",
         "prefix": "ScrollBar",
         "scope": "source.qml",
@@ -1378,7 +1378,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "ScrollIndicator {\n //id: \n}",
+        "body": "ScrollIndicator",
         "description": "ScrollIndicator",
         "prefix": "ScrollIndicator",
         "scope": "source.qml",
@@ -1429,7 +1429,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "ScrollView {\n //id: \n}",
+        "body": "ScrollView",
         "description": "ScrollView",
         "prefix": "ScrollView",
         "scope": "source.qml",
@@ -1473,14 +1473,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Settings {\n //id: \n}",
+        "body": "Settings",
         "description": "Settings",
         "prefix": "Settings",
         "scope": "source.qml",
         "properties": ["category: ", "fileName: ","setValue(key,value)"]
     },
     {
-        "body": "Slider {\n //id: \n}",
+        "body": "Slider",
         "description": "Slider",
         "prefix": "Slider",
         "scope": "source.qml",
@@ -1537,7 +1537,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "SplitView {\n //id: \n}",
+        "body": "SplitView",
         "description": "SplitView",
         "prefix": "SplitView",
         "scope": "source.qml",
@@ -1548,14 +1548,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Stack {\n //id: \n}",
+        "body": "Stack",
         "description": "Stack",
         "prefix": "Stack",
         "scope": "source.qml",
         "properties": []
     },
     {
-        "body": "StackLayout {\n //id: \n}",
+        "body": "StackLayout",
         "description": "StackLayout",
         "prefix": "StackLayout",
         "scope": "source.qml",
@@ -1565,7 +1565,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "StackView {\n //id: \n}",
+        "body": "StackView",
         "description": "StackView",
         "prefix": "StackView",
         "scope": "source.qml",
@@ -1623,7 +1623,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "State {\n //id: \n}",
+        "body": "State",
         "description": "State",
         "prefix": "State",
         "scope": "source.qml",
@@ -1637,7 +1637,7 @@ const qtQuick = [
         "properties": []
     },
     {
-        "body": "Switch {\n //id: \n}",
+        "body": "Switch",
         "description": "Switch",
         "prefix": "Switch",
         "scope": "source.qml",
@@ -1705,14 +1705,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Tab {\n //id: \n}",
+        "body": "Tab",
         "description": "Tab",
         "prefix": "Tab",
         "scope": "source.qml",
         "properties": ["title: ","active: ","asynchronous: ","item: ","progress: ","source: ","sourceComponent: ","status: ","loaded()","setSource()"]
     },
     {
-        "body": "TabBar {\n //id: \n}",
+        "body": "TabBar",
         "description": "TabBar",
         "prefix": "TabBar",
         "scope": "source.qml",
@@ -1764,7 +1764,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "TabButton {\n //id: \n}",
+        "body": "TabButton",
         "description": "TabButton",
         "prefix": "TabButton",
         "scope": "source.qml",
@@ -1830,14 +1830,14 @@ const qtQuick = [
         ]
     },
     {
-        "body": "TabView {\n //id: \n}",
+        "body": "TabView",
         "description": "TabView",
         "prefix": "TabView",
         "scope": "source.qml",
         "properties": ["contentItem: ","count: ","currentIndex: ","frameVisible: ","tabPosition: ","tabsVisible: "]
     },
     {
-        "body": "TableView {\n //id: \n}",
+        "body": "TableView",
         "description": "TableView",
         "prefix": "TableView",
         "scope": "source.qml",
@@ -1866,7 +1866,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Text {\n //id: \n}",
+        "body": "Text",
         "description": "Text",
         "prefix": "Text",
         "scope": "source.qml",
@@ -1917,7 +1917,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "TextArea {\n //id: \n}",
+        "body": "TextArea",
         "description": "TextArea",
         "prefix": "TextArea",
         "scope": "source.qml",
@@ -2009,7 +2009,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "TextEdit {\n //id: \n}",
+        "body": "TextEdit",
         "description": "TextEdit",
         "prefix": "TextEdit",
         "scope": "source.qml",
@@ -2078,7 +2078,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "TextField{\n \n}",
+        "body": "TextField",
         "description": "TextField",
         "prefix": "TextField",
         "scope": "source.qml",
@@ -2168,7 +2168,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "TextInput {\n //id: \n}",
+        "body": "TextInput",
         "description": "TextInput",
         "prefix": "TextInput",
         "scope": "source.qml",
@@ -2239,21 +2239,21 @@ const qtQuick = [
         ]
     },
     {
-        "body": "TextMetrics {\n //id: \n}",
+        "body": "TextMetrics",
         "description": "TextMetrics",
         "prefix": "TextMetrics",
         "scope": "source.qml",
         "properties": ["advanceWidth: ","boundingRect: ","elide: ","elideWidth: ","elidedText: ","font: ","height: ","text: ","tightBoundingRect: ","width: "]
     },
     {
-        "body": "Timer {\n //id: \n}",
+        "body": "Timer",
         "description": "Timer",
         "prefix": "Timer",
         "scope": "source.qml",
         "properties": ["interval: ","repeat: ","running: ","triggeredOnStart: ","restart()","start()","stop()","triggered()"]
     },
     {
-        "body": "ToggleButton {\n //id: \n}",
+        "body": "ToggleButton",
         "description": "ToggleButton",
         "prefix": "ToggleButton",
         "scope": "source.qml",
@@ -2263,140 +2263,140 @@ const qtQuick = [
 
 const SGWidgets = [
     {
-        "body": "SGAccordion {\n //id: \n}",
+        "body": "SGAccordion",
         "description": "SGAccordion",
         "prefix": "SGAccordion",
         "scope": "tech.strata.sgwidgets",
         "properties": ["accordionItems: ","contentItem: ","openCloseTime: ","statusIcon: ","exclusive: ","contentsColor: ","textOpenColor: ","textClosedColor: ","headerOpenColor: ","headerClosedColor: ","dividerColor: "]
     },
     {
-        "body": "SGAlignedLabel {\n //id: \n}",
+        "body": "SGAlignedLabel",
         "description": "SGAlignedLabel",
         "prefix": "SGAlignedLabel",
         "scope": "tech.strata.sgwidgets",
         "properties":["target: ","alignment: ","margin: ","overrideLabelWidth: ","text: ","alternativeColorEnabled: ","color: ","implicitColor: ","alternativeColor: ","fontSizeMultiplier: ","font: ","horizontalAlignment: ","contentHeight: ","contentWidth: ","clickable: ","clicked()"]
     },
     {
-        "body": "SGButton {\n //id:  \n}",
+        "body": "SGButton",
         "description": "SGButton",
         "prefix": "SGButton",
         "scope": "source.qml",
         "properties": ["alternativeColorEnabled: ","fontSizeMultiplier: ","minimumContentHeight: ","minimumContentWidth: ","preferredContentWidth: ","preferredContentHeight: ","contentHorizontalAlignment: ","contentVerticalAlignment: ","backgroundOnlyOnHovered: ","scaleToFit: ","hintText: ","iconSize: ","iconMirror: ","iconColor","implicitColor: ","color: ","pressedColor: ","checkedColor: ","roundedLeft: ","roundedBottom: ","roundedRight: ","roundedTop: "]
     },
     {
-        "body": "SGButtonStrip {\n //id:  \n}",
+        "body": "SGButtonStrip",
         "description": "SGButtonStrip",
         "prefix": "SGButtonStrip",
         "scope": "source.qml",
         "properties": ["model: ","count: ","exclusive: ","orientation: ","checkedIndices: ","clicked(index)"]
     },
     {
-        "body": "SGCircularGauge {\n //id:  \n}",
+        "body": "SGCircularGauge",
         "description": "SGCircularGauge",
         "prefix": "SGCircularGauge",
         "scope": "source.qml",
         "properties": ["real: ","gaugeFillColor1: ","gaugeFillColor2: ","gaugeBackgroundColor: ","centerTextColor: ","outerTextColor: ","unitTextFontSizeMultiplier: ","outerTextFontSizeMultiplier: ","valueDecimalPlaces: ","tickmarkDecimalPlaces: ","minimumValue: ","maximumValue: ","tickmarkStepSize: ","unitText: "]
     },
     {
-        "body": "SGComboBox {\n //id:  \n}",
+        "body": "SGComboBox",
         "description": "SGComboBox",
         "prefix": "SGComboBox",
         "scope": "source.qml",
         "properties": ["textColor: ","indicatorColor: ","borderColor: ","borderColorFocused: ","boxColor: ","dividers: ","popupHeight: ","fontSizeMultiplier: ","placeholderText: ","modelWidth: ","iconImage: ","textField: ","textFieldBackground: ","backgroundItem: ","popupItem: ","popupBackground: "]
     },
     {
-        "body": "SGGraph {\n //id:  \n}",
+        "body": "SGGraph",
         "description": "SGGraph",
         "prefix": "SGGraph",
         "scope": "source.qml",
         "properties": ["panXEnabled: ","panYEnabled: ","zoomXEnabled: ","zoomYEnabled: ","fontSizeMultiplier: ","mouseArea: "]
     },
     {
-        "body": "SGHueSlider {\n //id:  \n}",
+        "body": "SGHueSlider",
         "description": "SGHueSlider",
         "prefix": "SGHueSlider",
         "scope": "source.qml",
         "properties": ["color1: ","color2: ","color_value1: ","color_value2: ","rgbArray: ","powerSave: "]
     },
     {
-        "body": "SGInfoBox {\n //id:  \n}",
+        "body": "SGInfoBox",
         "description": "SGInfoBox",
         "prefix": "SGInfoBox",
         "scope": "source.qml",
         "properties": ["textColor: ","invalidTextColor: ","fontSizeMultiplier: ","boxBorderColor: ","boxBorderWidth: ","text: ","horizontalAlignment: ","placeholderText: ","readOnly: ","boxColor: ","unit: ","textPadding: ","validator: ","acceptableInput: ","boxFont: ","unitFont: ","unitHorizontalAlignment: ","unitOverrideWidth: ","boxObject: ","infoTextObject: ","mouseAreaObject: ","placeholderObject: ","unitObject: ","accepted(text)","editingFinished(text)"]
     },
     {
-        "body": "SGRadioButton {\n //id:  \n}",
+        "body": "SGRadioButton",
         "description": "SGRadioButton",
         "prefix": "SGRadioButton",
         "scope": "source.qml",
         "properties": ["buttonContainer: ","radioSize: ","radioColor: ","index: ","fontSizeMultiplier: ","color: ","alignment: "]
     },
     {
-        "body": "SGRGBSlider {\n //id:  \n}",
+        "body": "SGRGBSlider",
         "description": "SGRGBSlide",
         "prefix": "SGRGBSlide",
         "scope": "source.qml",
         "properties": ["rgbArray: ","color: ","color_value: "]
     },
     {
-        "body": "SGSlider {\n //id:  \n}",
+        "body": "SGSlider",
         "description": "SGSlider",
         "prefix": "SGSlider",
         "scope": "source.qml",
         "properties": ["fontSizeMultiplier: ","textColor: ","mirror: ","handleSize: ","orientation: ","value: ","from: ","to: ","horizontal: ","vertical: ","showTickmarks: ","showLabels: ","showInputBox: ","showToolTip: "," stepSize: ","live: ","visualPosition: ","position: ","snapMode: ","pressed: ","grooveColor: ","fillColor: ","slider: ","inputBox: ","fromText: ","toText: ","tickmarkRepeater: ","inputBoxWidth: ","toolTip: ","toolTipText: ","toolTipBackground: ","validatorObject: ","userSet(value)","moved()"]
     },
     {
-        "body": "SGSpinBox {\n //id:  \n}",
+        "body": "SGSpinBox",
         "description": "SGSpinBox",
         "prefix": "SGSpinBox",
         "scope": "source.qml",
         "properties": [""]
     },
     {
-        "body": "SGStatusLight {\n //id:  \n}",
+        "body": "SGStatusLight",
         "description": "SGStatusLight",
         "prefix": "SGStatusLight",
         "scope": "source.qml",
         "properties": ["status: ","customColor: ","flatStyle: "]
     },
     {
-        "body": "SGStatusLogBox{\n //id:  \n}",
+        "body": "SGStatusLogBox",
         "description": "",
         "prefix": "",
         "scope": "source.qml",
         "properties": ["title: ","titleTextColor: ","titleBoxColor: ","titleBoxBorderColor: ","statusTextColor: ","statusBoxColor: ","statusBoxBorderColor: ","showMessageIds: ","model: ","filterRole: ","copyRole: ","fontSizeMultiplier: ","scrollToEnd: ","listView: ","listViewMouse: ","delegate: ","filterEnabled: ","copyEnabled: ","filterModel: ","listElementTemplate: "]
     },
     {
-        "body": "SGSubmitInfoBox {\n //id:  \n}",
+        "body": "SGSubmitInfoBox",
         "description": "SGSubmitInfoBo",
         "prefix": "SGSubmitInfoBo",
         "scope": "source.qml",
         "properties": ["accepted(text)","editingFinished(text)","text: ","infoBoxObject: ","textColor: ","textPadding: ","invalidTextColor: ","boxColor: ","boxBorderColor: ","boxBorderWidth: ","unit: ","readOnly: ","validator: ","placeholderText: ","horizontalAlignment: ","buttonText: ","buttonImplicitWidth: ","floatValue: ","intValue: ","fontSizeMultiplier: ","appliedString","infoBoxHeight: "]
     },
     {
-        "body": "SGSwitch {\n //id:  \n}",
+        "body": "SGSwitch",
         "description": "SGSwitch",
         "prefix": "SGSwitch",
         "scope": "source.qml",
         "properties": ["released()","canceled()","clicked()","toggled()","press()","pressAndHold()","fontSizeMultiplier: ","handleColor: ","textColor: ","labelsInside: ","labelsInside: ","pressed: ","down: ","checked: ","checkedLabel: ","uncheckedLabel: ","grooveFillColor: ","grooveColor: "]
     },
     {
-        "body": "SGTextField {\n //id:  \n}",
+        "body": "SGTextField",
         "description": "SGTextField",
         "prefix": "SGTextField",
         "scope": "source.qml",
         "properties": ["isValid: ","activeEditing: ","validationReady: ","timerIsRunning: ","isValidAffectsBackground: ","leftIconColor: ","leftIconSource: ","darkMode: ","showCursorPosition: ","showClearButton: ","passwordMode: ","busyIndicatorRunning: ","suggestionListModel: ","suggestionListDelegate: ","suggestionModelTextRole: ","suggestionPosition: ","suggestionEmptyModelText: ","suggestionHeaderText: ","suggestionCloseOnDown: ","suggestionOpenWithAnyKey: ","suggestionMaxHeight: ","suggestionDelegateNumbering: ","suggestionDelegateRemovable: ","suggestionDelegateTextWrap: ","suggestionPopup: ","suggestionDelegateSelected(index)","suggestionDelegateRemoveRequested(index)","hasRightIcons: ","revealPassword: "]
     },
     {
-        "body": "SGText {\n //id:  \n}",
+        "body": "SGText",
         "description": "SGText",
         "prefix": "SGText",
         "scope": "source.qml",
         "properties": ["alternativeEnabledColor: ","implicitColor: ","alternativeColor: ","fontSizeMultiplier: "]
     },
     {
-        "body": "SGTextArea {\n //id:  \n}",
+        "body": "SGTextArea",
         "description": "SGTextArea",
         "prefix": "SGTextArea",
         "scope": "source.qml",
@@ -2417,7 +2417,7 @@ const BasicItemProperties = [
     "enabled: ${1: true}",
     "focus: ${1: }",
     "height: ${1: parent.height}",
-    "id: ",
+    "id: ${newId}",
     "implicitHeight: ${1: 100}",
     "implicitWidth: ${1: 100}",
     "opacity: ${1: 1.0}",
@@ -2449,14 +2449,14 @@ const qtQuickBody = [
         "properties": ["alias","real","string","url","double","int","bool","color","var","coordinate","date","default","enumeration","size","point","list","vector2d","vector3d","rect","palette"]
     },
     {
-        "body": "anchors {\n \n}",
+        "body": "anchors",
         "description": "(all sides)",
         "prefix": "anchors",
         "scope": "source.qml",
         "properties":["margins: ","left: ","right: ","top: ","bottom: ","verticalCenter: ","horizontalCenter: ","fill: ","centerIn: ","horizontalOffset: ","verticalOffset: "]
     },
     {
-        "body": "console.",
+        "body": "console",
         "description": "console",
         "prefix": "console",
         "scope": "source.js",
@@ -2475,15 +2475,23 @@ function createDynamicProperty(property, range){
     return {
         "label": property,
         "kind": monaco.languages.CompletionItemKind.Function,
-        "insertTextRules":monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        "insertTextRules": 1,
         "insertText": property,
         "range": range,
     }
+}
+function removeDuplicates(){
+    propertySuggestions = propertySuggestions.sort().filter(function(itm, idx, arr){
+        return !idx || itm.label !== arr[idx - 1].label;
+    })
 }
 
 function convertStrArrayToObjArray(properties, range){
     for(var i = 0; i < properties.length; i++){
         propertySuggestions.push(createDynamicProperty(properties[i], range))
+    } 
+    if(propertySuggestions.length !== 0){
+        removeDuplicates()
     }
 }
 
@@ -2497,7 +2505,6 @@ function convertQtQuickToObject(objArray){
     }
 }
 
-
 function initializeQtQuick(flags){
     if(flags.qtQuickFlag){
         convertQtQuickToObject(qtQuick)
@@ -2509,7 +2516,7 @@ function initializeQtQuick(flags){
 }
 
 function clearPropertySuggestions(){
-    propertySuggestions.splice(0, propertySuggestions.length)
+    propertySuggestions = []
 }
 
 
