@@ -130,6 +130,36 @@ SGWidgets.SGDialog {
             }
 
             SGWidgets.SGText {
+                text: "General"
+                fontSizeMultiplier: 1.1
+                font.bold: true
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignLeft
+            }
+
+            SGWidgets.SGText {
+                text: "Commands collapsed at startup:"
+                Layout.alignment: Qt.AlignRight
+            }
+
+            SGWidgets.SGCheckBox {
+                id: commandsCollapsed
+                padding: 0
+                Layout.alignment: Qt.AlignLeft
+                text: " "
+
+                Binding {
+                    target: commandsCollapsed
+                    property: "checked"
+                    value: Sci.Settings.commandsCondensedAtStartup
+                }
+
+                onCheckedChanged : {
+                    Sci.Settings.commandsCondensedAtStartup = checked
+                }
+            }
+
+            SGWidgets.SGText {
                 text: "Reset Settings"
                 fontSizeMultiplier: 1.1
                 font.bold: true
