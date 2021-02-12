@@ -10,7 +10,7 @@
 #define DEBUG(...) printf("Database: "); printf(__VA_ARGS__); printf("\n");
 
 // Replicator URL endpoint
-const QString replicator_url = "ws://localhost:4984/strata-db";
+const QString replicator_url = "ws://10.0.0.157:4984/strata-db";
 const QString replicator_username = "";
 const QString replicator_password = "";
 const QStringList replicator_channels = {};
@@ -21,7 +21,7 @@ int main() {
      *******************************************/
 
     // Default DB location will be the current location
-    Database DB_1("Sample Database 1");
+    DatabaseLib DB_1("Sample Database 1");
 
     // Open DB 1
     if (DB_1.open()) {
@@ -113,7 +113,7 @@ int main() {
     QDir dir;
     const QString documentsPath = dir.absolutePath();
 
-    Database DB_2("Sample Database 2", documentsPath);
+    DatabaseLib DB_2("Sample Database 2", documentsPath);
 
     // Open DB 2
     if (DB_2.open()) {
@@ -137,7 +137,7 @@ int main() {
     document_keys = DB_2.getAllDocumentKeys();
     qDebug() << "\nAll document keys of DB 2 after replication: " << document_keys << "\n";
 
-    Database DB_3("Sample Database 3", documentsPath);
+    DatabaseLib DB_3("Sample Database 3", documentsPath);
 
     // Open DB 3
     if (DB_3.open()) {
