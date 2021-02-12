@@ -14,20 +14,26 @@
 */
 const qtObjectKeyValues = {}
 var propertySuggestions = []
+var isInitialized = false
+var flags = { sgwidgetsFlag: false, qtQuickFlag: false }
+
+
+var editor = null
+
 const qtQuick = [
     {
         "body": "Axis",
         "description": "Axis",
         "prefix": "Axis",
         "scope": "source.qml",
-        "properties": ["buttons: ", "inputs: ","value: ","velocity: "],
+        "properties": ["buttons: ", "inputs: ", "value: ", "velocity: "],
     },
     {
         "body": "Binding",
         "description": "Binding",
         "prefix": "Binding",
         "scope": "source.qml",
-        "properties": ["delayed: ","property: ","target: ","value: ","when: "],
+        "properties": ["delayed: ", "property: ", "target: ", "value: ", "when: "],
     },
     {
         "body": "BusyIndicator",
@@ -133,21 +139,21 @@ const qtQuick = [
         "description": "ButtonAxisInput",
         "prefix": "ButtonAxisInput",
         "scope": "source.qml",
-        "properties": ["acceleration: ","buttons: ","deceleration: "]
+        "properties": ["acceleration: ", "buttons: ", "deceleration: "]
     },
     {
         "body": "ButtonGroup",
         "description": "ButtonGroup",
         "prefix": "ButtonGroup",
         "scope": "source.qml",
-        "properties": ["buttons: ","checkState: ","checkedButtons: ","exclusive: ","objectName: "]
+        "properties": ["buttons: ", "checkState: ", "checkedButtons: ", "exclusive: ", "objectName: "]
     },
     {
         "body": "ButtonStyle",
         "description": "ButtonStyle",
         "prefix": "ButtonStyle",
         "scope": "source.qml",
-        "properties": ["background: ","control: ","label: "]
+        "properties": ["background: ", "control: ", "label: "]
     },
     {
         "body": "Canvas",
@@ -235,7 +241,7 @@ const qtQuick = [
         "description": "CheckBoxStyle",
         "prefix": "CheckBoxStyle",
         "scope": "source.qml",
-        "properties": ["background: ","control: ","indicator: ","label: ","spacing: "]
+        "properties": ["background: ", "control: ", "indicator: ", "label: ", "spacing: "]
     },
     {
         "body": "CheckDelegate",
@@ -393,14 +399,14 @@ const qtQuick = [
         "description": "Component",
         "prefix": "Component",
         "scope": "source.qml",
-        "properties": ["progress: ","status: ","url: ","onCompleted{}","onDestruction{}"]
+        "properties": ["progress: ", "status: ", "url: ", "onCompleted{}", "onDestruction{}"]
     },
     {
         "body": "Connections",
         "description": "Connections",
         "prefix": "Connections",
         "scope": "source.qml",
-        "properties": ["enabled: ","ignoreUnknownSignals: ","target: "]
+        "properties": ["enabled: ", "ignoreUnknownSignals: ", "target: "]
     },
     {
         "body": "Container",
@@ -506,7 +512,7 @@ const qtQuick = [
             "forceLayout()",
             "positioningComplete()",
             "active: ",
-        ]  
+        ]
     },
     {
         "body": "GridLayout",
@@ -520,7 +526,7 @@ const qtQuick = [
             "layoutDirection: ",
             "rowSpacing: ",
             "rows: ",
-        ]        
+        ]
     },
     {
         "body": "GridView",
@@ -545,7 +551,7 @@ const qtQuick = [
         "description": "Icon",
         "prefix": "Icon",
         "scope": "source.qml",
-        "properties": ["icon: ","parameters: ","plugin: "]
+        "properties": ["icon: ", "parameters: ", "plugin: "]
     },
     {
         "body": "Image",
@@ -641,8 +647,8 @@ const qtQuick = [
         "description": "Layout",
         "prefix": "Layout",
         "scope": "source.qml",
-        "properties": ["preferredHeight: ", "preferredWidth: ", "minimumWidth: ", "maximumWidth: ","minimumHeight","maximumHeight: ","alignment: ","fillWidth: ","fillHeight: "],
-        "regex":/Layout.(\*)/
+        "properties": ["preferredHeight: ", "preferredWidth: ", "minimumWidth: ", "maximumWidth: ", "minimumHeight", "maximumHeight: ", "alignment: ", "fillWidth: ", "fillHeight: "],
+        "regex": /Layout.(\*)/
     },
     {
         "body": "ListElement",
@@ -783,7 +789,7 @@ const qtQuick = [
         ]
     },
     {
-        "body": "Loader",
+        "body": "Loader {\n \n}",
         "description": "Loader",
         "prefix": "Loader",
         "scope": "source.qml",
@@ -1282,7 +1288,7 @@ const qtQuick = [
         "description": "Rotation",
         "prefix": "Rotation",
         "scope": "source.qml",
-        "properties": ["angle: ","axis.x","axis.y","axis.z","origin.x","origin.y"]
+        "properties": ["angle: ", "axis.x", "axis.y", "axis.z", "origin.x", "origin.y"]
     },
     {
         "body": "Row",
@@ -1319,7 +1325,7 @@ const qtQuick = [
         "description": "Scale",
         "prefix": "Scale",
         "scope": "source.qml",
-        "properties": ["origin.x: ","origin.y: ","xScale: ","yScale: "]
+        "properties": ["origin.x: ", "origin.y: ", "xScale: ", "yScale: "]
     },
     {
         "body": "ScrollBar",
@@ -1477,7 +1483,7 @@ const qtQuick = [
         "description": "Settings",
         "prefix": "Settings",
         "scope": "source.qml",
-        "properties": ["category: ", "fileName: ","setValue(key,value)"]
+        "properties": ["category: ", "fileName: ", "setValue(key,value)"]
     },
     {
         "body": "Slider",
@@ -1627,7 +1633,7 @@ const qtQuick = [
         "description": "State",
         "prefix": "State",
         "scope": "source.qml",
-        "properties": ["changes: ","extend: ","name: ","when: "]
+        "properties": ["changes: ", "extend: ", "name: ", "when: "]
     },
     {
         "body": "String",
@@ -1709,7 +1715,7 @@ const qtQuick = [
         "description": "Tab",
         "prefix": "Tab",
         "scope": "source.qml",
-        "properties": ["title: ","active: ","asynchronous: ","item: ","progress: ","source: ","sourceComponent: ","status: ","loaded()","setSource()"]
+        "properties": ["title: ", "active: ", "asynchronous: ", "item: ", "progress: ", "source: ", "sourceComponent: ", "status: ", "loaded()", "setSource()"]
     },
     {
         "body": "TabBar",
@@ -1834,7 +1840,7 @@ const qtQuick = [
         "description": "TabView",
         "prefix": "TabView",
         "scope": "source.qml",
-        "properties": ["contentItem: ","count: ","currentIndex: ","frameVisible: ","tabPosition: ","tabsVisible: "]
+        "properties": ["contentItem: ", "count: ", "currentIndex: ", "frameVisible: ", "tabPosition: ", "tabsVisible: "]
     },
     {
         "body": "TableView",
@@ -2243,21 +2249,21 @@ const qtQuick = [
         "description": "TextMetrics",
         "prefix": "TextMetrics",
         "scope": "source.qml",
-        "properties": ["advanceWidth: ","boundingRect: ","elide: ","elideWidth: ","elidedText: ","font: ","height: ","text: ","tightBoundingRect: ","width: "]
+        "properties": ["advanceWidth: ", "boundingRect: ", "elide: ", "elideWidth: ", "elidedText: ", "font: ", "height: ", "text: ", "tightBoundingRect: ", "width: "]
     },
     {
         "body": "Timer",
         "description": "Timer",
         "prefix": "Timer",
         "scope": "source.qml",
-        "properties": ["interval: ","repeat: ","running: ","triggeredOnStart: ","restart()","start()","stop()","triggered()"]
+        "properties": ["interval: ", "repeat: ", "running: ", "triggeredOnStart: ", "restart()", "start()", "stop()", "triggered()"]
     },
     {
         "body": "ToggleButton",
         "description": "ToggleButton",
         "prefix": "ToggleButton",
         "scope": "source.qml",
-        "properties": ["isDefault: ","menu: "]
+        "properties": ["isDefault: ", "menu: "]
     },
 ]
 
@@ -2267,84 +2273,84 @@ const SGWidgets = [
         "description": "SGAccordion",
         "prefix": "SGAccordion",
         "scope": "tech.strata.sgwidgets",
-        "properties": ["accordionItems: ","contentItem: ","openCloseTime: ","statusIcon: ","exclusive: ","contentsColor: ","textOpenColor: ","textClosedColor: ","headerOpenColor: ","headerClosedColor: ","dividerColor: "]
+        "properties": ["accordionItems: ", "contentItem: ", "openCloseTime: ", "statusIcon: ", "exclusive: ", "contentsColor: ", "textOpenColor: ", "textClosedColor: ", "headerOpenColor: ", "headerClosedColor: ", "dividerColor: "]
     },
     {
         "body": "SGAlignedLabel",
         "description": "SGAlignedLabel",
         "prefix": "SGAlignedLabel",
         "scope": "tech.strata.sgwidgets",
-        "properties":["target: ","alignment: ","margin: ","overrideLabelWidth: ","text: ","alternativeColorEnabled: ","color: ","implicitColor: ","alternativeColor: ","fontSizeMultiplier: ","font: ","horizontalAlignment: ","contentHeight: ","contentWidth: ","clickable: ","clicked()"]
+        "properties": ["target: ", "alignment: ", "margin: ", "overrideLabelWidth: ", "text: ", "alternativeColorEnabled: ", "color: ", "implicitColor: ", "alternativeColor: ", "fontSizeMultiplier: ", "font: ", "horizontalAlignment: ", "contentHeight: ", "contentWidth: ", "clickable: ", "clicked()"]
     },
     {
         "body": "SGButton",
         "description": "SGButton",
         "prefix": "SGButton",
         "scope": "source.qml",
-        "properties": ["alternativeColorEnabled: ","fontSizeMultiplier: ","minimumContentHeight: ","minimumContentWidth: ","preferredContentWidth: ","preferredContentHeight: ","contentHorizontalAlignment: ","contentVerticalAlignment: ","backgroundOnlyOnHovered: ","scaleToFit: ","hintText: ","iconSize: ","iconMirror: ","iconColor","implicitColor: ","color: ","pressedColor: ","checkedColor: ","roundedLeft: ","roundedBottom: ","roundedRight: ","roundedTop: "]
+        "properties": ["alternativeColorEnabled: ", "fontSizeMultiplier: ", "minimumContentHeight: ", "minimumContentWidth: ", "preferredContentWidth: ", "preferredContentHeight: ", "contentHorizontalAlignment: ", "contentVerticalAlignment: ", "backgroundOnlyOnHovered: ", "scaleToFit: ", "hintText: ", "iconSize: ", "iconMirror: ", "iconColor", "implicitColor: ", "color: ", "pressedColor: ", "checkedColor: ", "roundedLeft: ", "roundedBottom: ", "roundedRight: ", "roundedTop: "]
     },
     {
         "body": "SGButtonStrip",
         "description": "SGButtonStrip",
         "prefix": "SGButtonStrip",
         "scope": "source.qml",
-        "properties": ["model: ","count: ","exclusive: ","orientation: ","checkedIndices: ","clicked(index)"]
+        "properties": ["model: ", "count: ", "exclusive: ", "orientation: ", "checkedIndices: ", "clicked(index)"]
     },
     {
         "body": "SGCircularGauge",
         "description": "SGCircularGauge",
         "prefix": "SGCircularGauge",
         "scope": "source.qml",
-        "properties": ["real: ","gaugeFillColor1: ","gaugeFillColor2: ","gaugeBackgroundColor: ","centerTextColor: ","outerTextColor: ","unitTextFontSizeMultiplier: ","outerTextFontSizeMultiplier: ","valueDecimalPlaces: ","tickmarkDecimalPlaces: ","minimumValue: ","maximumValue: ","tickmarkStepSize: ","unitText: "]
+        "properties": ["real: ", "gaugeFillColor1: ", "gaugeFillColor2: ", "gaugeBackgroundColor: ", "centerTextColor: ", "outerTextColor: ", "unitTextFontSizeMultiplier: ", "outerTextFontSizeMultiplier: ", "valueDecimalPlaces: ", "tickmarkDecimalPlaces: ", "minimumValue: ", "maximumValue: ", "tickmarkStepSize: ", "unitText: "]
     },
     {
         "body": "SGComboBox",
         "description": "SGComboBox",
         "prefix": "SGComboBox",
         "scope": "source.qml",
-        "properties": ["textColor: ","indicatorColor: ","borderColor: ","borderColorFocused: ","boxColor: ","dividers: ","popupHeight: ","fontSizeMultiplier: ","placeholderText: ","modelWidth: ","iconImage: ","textField: ","textFieldBackground: ","backgroundItem: ","popupItem: ","popupBackground: "]
+        "properties": ["textColor: ", "indicatorColor: ", "borderColor: ", "borderColorFocused: ", "boxColor: ", "dividers: ", "popupHeight: ", "fontSizeMultiplier: ", "placeholderText: ", "modelWidth: ", "iconImage: ", "textField: ", "textFieldBackground: ", "backgroundItem: ", "popupItem: ", "popupBackground: "]
     },
     {
         "body": "SGGraph",
         "description": "SGGraph",
         "prefix": "SGGraph",
         "scope": "source.qml",
-        "properties": ["panXEnabled: ","panYEnabled: ","zoomXEnabled: ","zoomYEnabled: ","fontSizeMultiplier: ","mouseArea: "]
+        "properties": ["panXEnabled: ", "panYEnabled: ", "zoomXEnabled: ", "zoomYEnabled: ", "fontSizeMultiplier: ", "mouseArea: "]
     },
     {
         "body": "SGHueSlider",
         "description": "SGHueSlider",
         "prefix": "SGHueSlider",
         "scope": "source.qml",
-        "properties": ["color1: ","color2: ","color_value1: ","color_value2: ","rgbArray: ","powerSave: "]
+        "properties": ["color1: ", "color2: ", "color_value1: ", "color_value2: ", "rgbArray: ", "powerSave: "]
     },
     {
         "body": "SGInfoBox",
         "description": "SGInfoBox",
         "prefix": "SGInfoBox",
         "scope": "source.qml",
-        "properties": ["textColor: ","invalidTextColor: ","fontSizeMultiplier: ","boxBorderColor: ","boxBorderWidth: ","text: ","horizontalAlignment: ","placeholderText: ","readOnly: ","boxColor: ","unit: ","textPadding: ","validator: ","acceptableInput: ","boxFont: ","unitFont: ","unitHorizontalAlignment: ","unitOverrideWidth: ","boxObject: ","infoTextObject: ","mouseAreaObject: ","placeholderObject: ","unitObject: ","accepted(text)","editingFinished(text)"]
+        "properties": ["textColor: ", "invalidTextColor: ", "fontSizeMultiplier: ", "boxBorderColor: ", "boxBorderWidth: ", "text: ", "horizontalAlignment: ", "placeholderText: ", "readOnly: ", "boxColor: ", "unit: ", "textPadding: ", "validator: ", "acceptableInput: ", "boxFont: ", "unitFont: ", "unitHorizontalAlignment: ", "unitOverrideWidth: ", "boxObject: ", "infoTextObject: ", "mouseAreaObject: ", "placeholderObject: ", "unitObject: ", "accepted(text)", "editingFinished(text)"]
     },
     {
         "body": "SGRadioButton",
         "description": "SGRadioButton",
         "prefix": "SGRadioButton",
         "scope": "source.qml",
-        "properties": ["buttonContainer: ","radioSize: ","radioColor: ","index: ","fontSizeMultiplier: ","color: ","alignment: "]
+        "properties": ["buttonContainer: ", "radioSize: ", "radioColor: ", "index: ", "fontSizeMultiplier: ", "color: ", "alignment: "]
     },
     {
         "body": "SGRGBSlider",
         "description": "SGRGBSlide",
         "prefix": "SGRGBSlide",
         "scope": "source.qml",
-        "properties": ["rgbArray: ","color: ","color_value: "]
+        "properties": ["rgbArray: ", "color: ", "color_value: "]
     },
     {
         "body": "SGSlider",
         "description": "SGSlider",
         "prefix": "SGSlider",
         "scope": "source.qml",
-        "properties": ["fontSizeMultiplier: ","textColor: ","mirror: ","handleSize: ","orientation: ","value: ","from: ","to: ","horizontal: ","vertical: ","showTickmarks: ","showLabels: ","showInputBox: ","showToolTip: "," stepSize: ","live: ","visualPosition: ","position: ","snapMode: ","pressed: ","grooveColor: ","fillColor: ","slider: ","inputBox: ","fromText: ","toText: ","tickmarkRepeater: ","inputBoxWidth: ","toolTip: ","toolTipText: ","toolTipBackground: ","validatorObject: ","userSet(value)","moved()"]
+        "properties": ["fontSizeMultiplier: ", "textColor: ", "mirror: ", "handleSize: ", "orientation: ", "value: ", "from: ", "to: ", "horizontal: ", "vertical: ", "showTickmarks: ", "showLabels: ", "showInputBox: ", "showToolTip: ", " stepSize: ", "live: ", "visualPosition: ", "position: ", "snapMode: ", "pressed: ", "grooveColor: ", "fillColor: ", "slider: ", "inputBox: ", "fromText: ", "toText: ", "tickmarkRepeater: ", "inputBoxWidth: ", "toolTip: ", "toolTipText: ", "toolTipBackground: ", "validatorObject: ", "userSet(value)", "moved()"]
     },
     {
         "body": "SGSpinBox",
@@ -2358,49 +2364,49 @@ const SGWidgets = [
         "description": "SGStatusLight",
         "prefix": "SGStatusLight",
         "scope": "source.qml",
-        "properties": ["status: ","customColor: ","flatStyle: "]
+        "properties": ["status: ", "customColor: ", "flatStyle: "]
     },
     {
         "body": "SGStatusLogBox",
-        "description": "",
-        "prefix": "",
+        "description": "SGStatusLogBox",
+        "prefix": "SGStatusLogBox",
         "scope": "source.qml",
-        "properties": ["title: ","titleTextColor: ","titleBoxColor: ","titleBoxBorderColor: ","statusTextColor: ","statusBoxColor: ","statusBoxBorderColor: ","showMessageIds: ","model: ","filterRole: ","copyRole: ","fontSizeMultiplier: ","scrollToEnd: ","listView: ","listViewMouse: ","delegate: ","filterEnabled: ","copyEnabled: ","filterModel: ","listElementTemplate: "]
+        "properties": ["title: ", "titleTextColor: ", "titleBoxColor: ", "titleBoxBorderColor: ", "statusTextColor: ", "statusBoxColor: ", "statusBoxBorderColor: ", "showMessageIds: ", "model: ", "filterRole: ", "copyRole: ", "fontSizeMultiplier: ", "scrollToEnd: ", "listView: ", "listViewMouse: ", "delegate: ", "filterEnabled: ", "copyEnabled: ", "filterModel: ", "listElementTemplate: "]
     },
     {
         "body": "SGSubmitInfoBox",
         "description": "SGSubmitInfoBo",
         "prefix": "SGSubmitInfoBo",
         "scope": "source.qml",
-        "properties": ["accepted(text)","editingFinished(text)","text: ","infoBoxObject: ","textColor: ","textPadding: ","invalidTextColor: ","boxColor: ","boxBorderColor: ","boxBorderWidth: ","unit: ","readOnly: ","validator: ","placeholderText: ","horizontalAlignment: ","buttonText: ","buttonImplicitWidth: ","floatValue: ","intValue: ","fontSizeMultiplier: ","appliedString","infoBoxHeight: "]
+        "properties": ["accepted(text)", "editingFinished(text)", "text: ", "infoBoxObject: ", "textColor: ", "textPadding: ", "invalidTextColor: ", "boxColor: ", "boxBorderColor: ", "boxBorderWidth: ", "unit: ", "readOnly: ", "validator: ", "placeholderText: ", "horizontalAlignment: ", "buttonText: ", "buttonImplicitWidth: ", "floatValue: ", "intValue: ", "fontSizeMultiplier: ", "appliedString", "infoBoxHeight: "]
     },
     {
         "body": "SGSwitch",
         "description": "SGSwitch",
         "prefix": "SGSwitch",
         "scope": "source.qml",
-        "properties": ["released()","canceled()","clicked()","toggled()","press()","pressAndHold()","fontSizeMultiplier: ","handleColor: ","textColor: ","labelsInside: ","labelsInside: ","pressed: ","down: ","checked: ","checkedLabel: ","uncheckedLabel: ","grooveFillColor: ","grooveColor: "]
+        "properties": ["released()", "canceled()", "clicked()", "toggled()", "press()", "pressAndHold()", "fontSizeMultiplier: ", "handleColor: ", "textColor: ", "labelsInside: ", "labelsInside: ", "pressed: ", "down: ", "checked: ", "checkedLabel: ", "uncheckedLabel: ", "grooveFillColor: ", "grooveColor: "]
     },
     {
         "body": "SGTextField",
         "description": "SGTextField",
         "prefix": "SGTextField",
         "scope": "source.qml",
-        "properties": ["isValid: ","activeEditing: ","validationReady: ","timerIsRunning: ","isValidAffectsBackground: ","leftIconColor: ","leftIconSource: ","darkMode: ","showCursorPosition: ","showClearButton: ","passwordMode: ","busyIndicatorRunning: ","suggestionListModel: ","suggestionListDelegate: ","suggestionModelTextRole: ","suggestionPosition: ","suggestionEmptyModelText: ","suggestionHeaderText: ","suggestionCloseOnDown: ","suggestionOpenWithAnyKey: ","suggestionMaxHeight: ","suggestionDelegateNumbering: ","suggestionDelegateRemovable: ","suggestionDelegateTextWrap: ","suggestionPopup: ","suggestionDelegateSelected(index)","suggestionDelegateRemoveRequested(index)","hasRightIcons: ","revealPassword: "]
+        "properties": ["isValid: ", "activeEditing: ", "validationReady: ", "timerIsRunning: ", "isValidAffectsBackground: ", "leftIconColor: ", "leftIconSource: ", "darkMode: ", "showCursorPosition: ", "showClearButton: ", "passwordMode: ", "busyIndicatorRunning: ", "suggestionListModel: ", "suggestionListDelegate: ", "suggestionModelTextRole: ", "suggestionPosition: ", "suggestionEmptyModelText: ", "suggestionHeaderText: ", "suggestionCloseOnDown: ", "suggestionOpenWithAnyKey: ", "suggestionMaxHeight: ", "suggestionDelegateNumbering: ", "suggestionDelegateRemovable: ", "suggestionDelegateTextWrap: ", "suggestionPopup: ", "suggestionDelegateSelected(index)", "suggestionDelegateRemoveRequested(index)", "hasRightIcons: ", "revealPassword: "]
     },
     {
         "body": "SGText",
         "description": "SGText",
         "prefix": "SGText",
         "scope": "source.qml",
-        "properties": ["alternativeEnabledColor: ","implicitColor: ","alternativeColor: ","fontSizeMultiplier: "]
+        "properties": ["alternativeEnabledColor: ", "implicitColor: ", "alternativeColor: ", "fontSizeMultiplier: "]
     },
     {
         "body": "SGTextArea",
         "description": "SGTextArea",
         "prefix": "SGTextArea",
         "scope": "source.qml",
-        "properties": ["text: ","font: ","placeholderText: ","minimumLineCount: ","maximumLineCount: ","tabAllowed: ","readOnly: ","keepCursorAtEnd: ","isValid: "]
+        "properties": ["text: ", "font: ", "placeholderText: ", "minimumLineCount: ", "maximumLineCount: ", "tabAllowed: ", "readOnly: ", "keepCursorAtEnd: ", "isValid: "]
     }
 ]
 
@@ -2441,37 +2447,37 @@ const BasicItemProperties = [
     "function ${1:function_name}(${2:argument}) {\n    ${0:// body...}\n}",
 ]
 const qtQuickBody = [
-{
-        "body": "property\s",
+    {
+        "body": "property",
         "description": "QML property alias",
         "prefix": "property",
         "scope": "source.qml",
-        "properties": ["alias","real","string","url","double","int","bool","color","var","coordinate","date","default","enumeration","size","point","list","vector2d","vector3d","rect","palette"]
+        "properties": ["alias", "real", "string", "url", "double", "int", "bool", "color", "var", "coordinate", "date", "default", "enumeration", "size", "point", "list", "vector2d", "vector3d", "rect", "palette"]
     },
     {
         "body": "anchors",
         "description": "(all sides)",
         "prefix": "anchors",
         "scope": "source.qml",
-        "properties":["margins: ","left: ","right: ","top: ","bottom: ","verticalCenter: ","horizontalCenter: ","fill: ","centerIn: ","horizontalOffset: ","verticalOffset: "]
+        "properties": ["margins: ", "left: ", "right: ", "top: ", "bottom: ", "verticalCenter: ", "horizontalCenter: ", "fill: ", "centerIn: ", "horizontalOffset: ", "verticalOffset: "]
     },
     {
         "body": "console",
         "description": "console",
         "prefix": "console",
         "scope": "source.js",
-        "properties": ["log(\"\")", "debug(\"\")","info(\"\")","warn(\"\")","error(\"\")"]
+        "properties": ["log(\"\")", "debug(\"\")", "info(\"\")", "warn(\"\")", "error(\"\")"]
     },
     {
         "body": "font",
         "description": "font",
         "prefix": "font",
         "scope": "source.qml",
-        "properties":["bold","capitalization","family","italic","pixelSize","pointSize","spacing","underline"]
+        "properties": ["bold", "capitalization", "family", "italic", "pixelSize", "pointSize", "spacing", "underline"]
     },
 ]
 
-function createDynamicProperty(property, range){
+function createDynamicProperty(property, range) {
     return {
         "label": property,
         "kind": monaco.languages.CompletionItemKind.Function,
@@ -2480,44 +2486,287 @@ function createDynamicProperty(property, range){
         "range": range,
     }
 }
-function removeDuplicates(){
-    propertySuggestions = propertySuggestions.sort().filter(function(itm, idx, arr){
+function removeDuplicates() {
+    return propertySuggestions.sort().filter(function (itm, idx, arr) {
         return !idx || itm.label !== arr[idx - 1].label;
     })
 }
 
-function convertStrArrayToObjArray(properties, range){
-    for(var i = 0; i < properties.length; i++){
+function convertStrArrayToObjArray(properties, range) {
+    for (var i = 0; i < properties.length; i++) {
         propertySuggestions.push(createDynamicProperty(properties[i], range))
-    } 
-    if(propertySuggestions.length !== 0){
-        removeDuplicates()
+    }
+    if (propertySuggestions.length !== 0) {
+        propertySuggestions = removeDuplicates()
     }
 }
 
-function createQtObjectValPairs(key,val){
+function createQtObjectValPairs(key, val) {
     qtObjectKeyValues[key] = val
 }
 
-function convertQtQuickToObject(objArray){
-    for(var i = 0; i < objArray.length; i++){
-        createQtObjectValPairs(objArray[i].prefix,{label: objArray[i].prefix, insertText: objArray[i].body, properties: objArray[i].properties})
+function convertQtQuickToObject(objArray) {
+    for (var i = 0; i < objArray.length; i++) {
+        createQtObjectValPairs(objArray[i].prefix, { label: objArray[i].prefix, insertText: objArray[i].body, properties: objArray[i].properties })
     }
 }
 
-function initializeQtQuick(flags){
-    if(flags.qtQuickFlag){
+function initializeQtQuick(flags) {
+    if (flags.qtQuickFlag) {
         convertQtQuickToObject(qtQuick)
         convertQtQuickToObject(qtQuickBody)
     }
-    if(flags.sgwidgetsFlag){
+    if (flags.sgwidgetsFlag) {
         convertQtQuickToObject(SGWidgets)
     }
 }
 
-function clearPropertySuggestions(){
+function clearPropertySuggestions() {
     propertySuggestions = []
 }
+
+
+function registerQmlAsLanguage() {
+    monaco.languages.register({ id: 'qml' })
+    const config = {
+        surroundingPairs: [
+            { open: '{', close: '}' },
+            { open: '[', close: ']' },
+            { open: '(', close: ')' },
+            { open: "'", close: "'" },
+            { open: '"', close: '"' },
+        ],
+        autoClosingPairs: [
+            { open: '{', close: '}' },
+            { open: '[', close: ']' },
+            { open: '(', close: ')' },
+            { open: "'", close: "'", notIn: ['string', 'comment'] },
+            { open: '"', close: '"', notIn: ['string', 'comment'] },
+        ],
+    };
+    monaco.languages.setLanguageConfiguration('qml', config);
+    monaco.languages.setMonarchTokensProvider('qml', {
+        keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function"],
+        typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool'],
+        operators: [
+            '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=', '===', '<==', '>==', '!==',
+            '&&', '||', '++', '--', '+', '-', '*', '/', '&', '|', '^', '%',
+            '<<', '>>', '>>>', '+=', '-=', '*=', '/=', '&=', '|=', '^=',
+            '%=', '<<=', '>>=', '>>>='
+        ],
+        digits: /\d+(_+\d+)*/,
+        symbols: /[=><!~?:&|+\-*\/\^%]+/,
+        escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+        regexpctl: /[(){}\[\]\$\^|\-*+?\.]/,
+        regexpesc: /\\(?:[bBdDfnrstvwWn0\\\/]|@regexpctl|c[A-Z]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})/,
+        tokenizer: {
+            root: [
+                [/[{}]/, 'delimiter.bracket'],
+                [/[a-z_$][\w$]*/, {
+                    cases: {
+                        '@typeKeywords': 'keyword',
+                        '@keywords': 'keyword',
+
+                    }
+                }
+                ],
+                [/[A-Z][\w\$]*/, 'type.identifier'],
+                [/(?:^|\{|;)\s*[a-z][\w\.]*\s*(?=\:|\{)/, "property.defs"],
+                { include: '@whitespace' },
+                [/\/(?=([^\\\/]|\\.)+\/([gimsuy]*)(\s*)(\.|;|\/|,|\)|\]|\}|$))/, { token: 'regexp', bracket: '@open', next: '@regexp' }],
+                [/[()\[\]]/, '@brackets'],
+                [/[<>](?!@symbols)/, '@brackets'],
+                [/@symbols/, {
+                    cases: {
+                        '@operators': 'delimiter',
+                        '@default': ''
+                    }
+                }
+                ],
+                [/(@digits)[eE]([\-+]?(@digits))?/, 'number.float'],
+                [/(@digits)\.(@digits)([eE][\-+]?(@digits))?/, 'number.float'],
+                [/(@digits)/, 'number'],
+                [/[;,.]/, 'delimiter'],
+                [/"([^"\\]|\\.)*$/, 'string.invalid'],  // non-teminated string
+                [/'([^'\\]|\\.)*$/, 'string.invalid'],  // non-teminated string
+                [/"/, 'string', '@string_double'],
+                [/'/, 'string', '@string_single'],
+                [/`/, 'string', '@string_backtick'],
+
+            ],
+            whitespace: [
+                [/[ \t\r\n]+/, ''],
+                [/\/\*\*(?!\/)/, 'comment.doc', '@jsdoc'],
+                [/\/\*/, 'comment', '@comment'],
+                [/\/\/.*$/, 'comment'],
+            ],
+
+            comment: [
+                [/[^\/*]+/, 'comment'],
+                [/\*\//, 'comment', '@pop'],
+                [/[\/*]/, 'comment']
+            ],
+
+            jsdoc: [
+                [/[^\/*]+/, 'comment.doc'],
+                [/\*\//, 'comment.doc', '@pop'],
+                [/[\/*]/, 'comment.doc']
+            ],
+
+            // We match regular expression quite precisely
+            regexp: [
+                [/(\{)(\d+(?:,\d*)?)(\})/, ['regexp.escape.control', 'regexp.escape.control', 'regexp.escape.control']],
+                [/(\[)(\^?)(?=(?:[^\]\\\/]|\\.)+)/, ['regexp.escape.control', { token: 'regexp.escape.control', next: '@regexrange' }]],
+                [/(\()(\?:|\?=|\?!)/, ['regexp.escape.control', 'regexp.escape.control']],
+                [/[()]/, 'regexp.escape.control'],
+                [/@regexpctl/, 'regexp.escape.control'],
+                [/[^\\\/]/, 'regexp'],
+                [/@regexpesc/, 'regexp.escape'],
+                [/\\\./, 'regexp.invalid'],
+                [/(\/)([gimsuy]*)/, [{ token: 'regexp', bracket: '@close', next: '@pop' }, 'keyword.other']],
+            ],
+
+            regexrange: [
+                [/-/, 'regexp.escape.control'],
+                [/\^/, 'regexp.invalid'],
+                [/@regexpesc/, 'regexp.escape'],
+                [/[^\]]/, 'regexp'],
+                [/\]/, { token: 'regexp.escape.control', next: '@pop', bracket: '@close' }],
+            ],
+
+            string_double: [
+                [/[^\\"]+/, 'string'],
+                [/@escapes/, 'string.escape'],
+                [/\\./, 'string.escape.invalid'],
+                [/"/, 'string', '@pop']
+            ],
+
+            string_single: [
+                [/[^\\']+/, 'string'],
+                [/@escapes/, 'string.escape'],
+                [/\\./, 'string.escape.invalid'],
+                [/'/, 'string', '@pop']
+            ],
+
+            string_backtick: [
+                [/\$\{/, { token: 'delimiter.bracket' }],
+                [/[^\\`$]+/, 'string'],
+                [/@escapes/, 'string.escape'],
+                [/\\./, 'string.escape.invalid'],
+                [/`/, 'string', '@pop']
+            ],
+        }
+
+    })
+    monaco.editor.defineTheme('qmlTheme', {
+        base: 'vs',
+        inherit: false,
+        rules: [
+            { token: "comment", foreground: "#32C132" },
+            { token: "delimiter.bracket", foreground: "#000000" },
+            { token: "keyword", foreground: "#C6CC18" },
+            { token: "type.identifier", foreground: "#DF00FF" },
+            { token: "string", foreground: "#32C132" },
+            { token: "property.defs", foreground: "#BA262B" },
+        ]
+    })
+
+    monaco.languages.registerCompletionItemProvider('qml', {
+        triggerCharacters: ['{', '.'],
+        provideCompletionItems: (model, position) => {
+            var textUntilPosition = model.getValueInRange({ startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
+            var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
+            var currWords = currText.replace("\t", "").split(" ");
+            var word = model.getWordUntilPosition(position);
+            var active = currWords[currWords.length - 1]
+            var isSpaceActive = (currWords[currWords.length - 2] !== "" && currWords[currWords.length - 1] === "{")
+            var range = {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: word.startColumn,
+                endColumn: word.endColumn
+            };
+            alert(word)
+            flags.sgwidgetsFlag = textUntilPosition.match(`import tech.strata.sgwidgets 1.0`);
+            flags.qtQuickFlag = textUntilPosition.match(`import QtQuick`)
+            initializeQtQuick(flags)
+            var suggestions = []
+            for (var i = 0; i < BasicItemProperties.length; i++) {
+                suggestions.push({
+                    label: BasicItemProperties[i],
+                    kind: monaco.languages.CompletionItemKind.KeyWord,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    insertText: BasicItemProperties[i],
+                    range: range
+                })
+            }
+            for (const [key] of Object.entries(qtObjectKeyValues)) {
+                suggestions.push({
+                    label: qtObjectKeyValues[key].label,
+                    kind: monaco.languages.CompletionItemKind.Class,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    insertText: qtObjectKeyValues[key].insertText,
+                    range: range
+                })
+            }
+
+            if (qtObjectKeyValues.hasOwnProperty(active.substring(0, active.length - 1).split('.')[0])) {
+                var propRange = {
+                    startLineNumber: position.lineNumber,
+                    endLineNumber: position.lineNumber,
+                    startColumn: word.startColumn,
+                    endColumn: word.endColumn
+                };
+                convertStrArrayToObjArray(qtObjectKeyValues[active.substring(0, active.length - 1).split('.')[0]].properties, propRange)
+                return { suggestions: propertySuggestions }
+            } else {
+                var textBeforeNewLine = ""
+                if (isSpaceActive) {
+                    textBeforeNewLine = currWords[currWords.length - 2]
+                } else {
+                    textBeforeNewLine = active.substring(0, active.length - 1).split('{')[0]
+                }
+                if (qtObjectKeyValues.hasOwnProperty(textBeforeNewLine)) {
+                    var e_pos = position.lineNumber + 1
+                    var propRange = {
+                        startLineNumber: position.lineNumber,
+                        endLineNumber: e_pos,
+                        startColumn: word.startColumn,
+                        endColumn: position.column,
+                    }
+                    convertStrArrayToObjArray(qtObjectKeyValues[textBeforeNewLine].properties, propRange)
+                    return { suggestions: propertySuggestions }
+                }
+            }
+            return { suggestions: suggestions }
+        }
+    })
+
+
+    editor = monaco.editor.create(document.getElementById('container'), {
+        value: "",
+        language: 'qml',
+        theme: "qmlTheme",
+        insertSpaces: true,
+        detectIndentation: true,
+        tabCompletion: "on",
+        formatOnPaste: true,
+    });
+
+    editor.updateOptions({suggest: {insertMode: 'replace', filterGraceful: false}, matchBrackets: 'near'})
+
+    function getValue() {
+        return editor.getValue();
+    }
+
+    function setValue(value) {
+        editor.setValue(value)
+    }
+
+    isInitialized = true
+}
+
+
 
 
 
