@@ -28,11 +28,12 @@ public:
         DownloadFilenameRole,
         DirnameRole,
         PreviousDirnameRole,
+        HistoryStateRole,
         ProgressRole,
         StatusRole,
         ErrorStringRole,
         BytesReceivedRole,
-        BytesTotalRole,
+        BytesTotalRole
     };
 
     enum class DownloadStatus {
@@ -55,6 +56,11 @@ public:
 
     Q_INVOKABLE void setSelected(int index, bool selected);
     Q_INVOKABLE void downloadSelectedFiles(const QUrl &saveUrl);
+    Q_INVOKABLE QString getMD5();
+    Q_INVOKABLE void setHistoryState(const QString &doc, const QString &state);
+    Q_INVOKABLE void setAllHistoryStateToSeen();
+    Q_INVOKABLE bool anyItemsUnseen();
+    Q_INVOKABLE QStringList getItemsUnseen();
 
 signals:
     void countChanged();
@@ -82,12 +88,15 @@ struct DownloadDocumentItem {
             const QString &uri,
             const QString &prettyName,
             const QString &dirname,
+            const QString &md5,
             const qint64 &filesize)
         : status(DownloadDocumentListModel::DownloadStatus::NotSelected)
     {
         this->uri = uri;
         this->prettyName = prettyName;
         this->dirname = dirname;
+        this->md5 = md5;
+        this->historyState = "seen";
         this->bytesTotal = filesize;
     }
 
@@ -95,6 +104,8 @@ struct DownloadDocumentItem {
     QString prettyName;
     QString downloadFilename;
     QString dirname;
+    QString md5;
+    QString historyState;
     QString errorString;
     float progress;
     qint64 bytesTotal;
