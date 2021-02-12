@@ -11,6 +11,7 @@ SGCapacityBarElement 1.0 SGCapacityBarElement.qml
 SGCheckBox 1.0 SGCheckBox.qml
 SGCircularGauge 1.0 SGCircularGauge.qml
 SGComboBox 1.0 SGComboBox.qml
+SGContextMenu 1.0 SGContextMenu.qml
 SGFileSelector 1.0 SGFileSelector.qml
 SGGraph 1.0 SGGraph.qml
 SGHueSlider 1.0 SGHueSlider.qml

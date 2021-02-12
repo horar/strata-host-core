@@ -299,43 +299,42 @@ Item {
                 }
             }
 
-            Menu {
+            SGWidgets.SGContextMenu {
                 id: contextMenu
-                MenuItem {
+
+                Action {
                     id: undoAction
                     text: qsTr("Undo")
                     enabled: false
                 }
-                MenuItem {
+                Action {
                     id: redoAction
                     text: qsTr("Redo")
                     enabled: false
                 }
                 MenuSeparator { }
-                MenuItem {
+                Action {
                     id: cutAction
                     text: qsTr("Cut")
                     enabled: false
                 }
-                MenuItem {
+                Action {
                     id: copyAction
                     text: qsTr("Copy")
-                    highlighted: hovered
                     enabled: (selectionStartPosition !== selectionEndPosition) || (selectionStartIndex !== selectionEndIndex)
                     onTriggered: {
                         copyToClipboard()
                     }
                 }
-                MenuItem {
+                Action {
                     id: pasteAction
                     text: qsTr("Paste")
                     enabled: false
                 }
                 MenuSeparator { }
-                MenuItem {
+                Action {
                     id: selectAction
                     text: qsTr("Select All")
-                    highlighted: hovered
                     enabled: listView.count > 0
                     onTriggered: {
                         selectAllText()

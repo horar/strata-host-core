@@ -188,59 +188,53 @@ FocusScope {
                 }
             }
 
-            Menu {
+            SGWidgets.SGContextMenu {
                 id: contextMenu
-                MenuItem {
+                Action {
                     id: undoAction
                     text: qsTr("Undo")
-                    highlighted: hovered
                     enabled: edit.canUndo
                     onTriggered: {
                         edit.undo()
                     }
                 }
-                MenuItem {
+                Action {
                     id: redoAction
                     text: qsTr("Redo")
-                    highlighted: hovered
                     enabled: edit.canRedo
                     onTriggered: {
                         edit.redo()
                     }
                 }
                 MenuSeparator { }
-                MenuItem {
+                Action {
                     id: cutAction
                     text: qsTr("Cut")
-                    highlighted: hovered
                     enabled: edit.selectedText.length > 0
                     onTriggered: {
                         edit.cut()
                     }
                 }
-                MenuItem {
+                Action {
                     id: copyAction
                     text: qsTr("Copy")
-                    highlighted: hovered
                     enabled: edit.selectedText.length > 0
                     onTriggered: {
                         edit.copy()
                     }
                 }
-                MenuItem {
+                Action {
                     id: pasteAction
                     text: qsTr("Paste")
-                    highlighted: hovered
                     enabled: edit.canPaste
                     onTriggered: {
                         edit.paste()
                     }
                 }
                 MenuSeparator { }
-                MenuItem {
+                Action {
                     id: selectAction
                     text: qsTr("Select All")
-                    highlighted: hovered
                     enabled: edit.length > 0
                     onTriggered: {
                         edit.selectAll()
