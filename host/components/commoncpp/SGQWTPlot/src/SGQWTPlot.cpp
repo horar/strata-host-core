@@ -23,7 +23,6 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     qwtGrid_->enableXMin(xMinorGrid_);
     qwtGrid_->enableYMin(yMinorGrid_);
     setGridColor("lightgrey");
-
 }
 
 SGQWTPlot::~SGQWTPlot()
