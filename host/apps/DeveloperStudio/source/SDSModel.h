@@ -39,6 +39,7 @@ public:
 
 public slots:
     void shutdownService();
+    void resetService();
 
 signals:
     void hcsConnectedChanged();

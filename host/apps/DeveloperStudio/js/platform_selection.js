@@ -42,7 +42,7 @@ function initialize (newCoreInterface) {
 }
 
 function disablePlatformNotifications(){
-    NavigationControl.userSettings.disablePlatformNotifications = true
+    NavigationControl.userSettings.notifyOnPlatformConnections = false
 }
 
 function getPlatformList () {
@@ -635,7 +635,7 @@ function copyObject(object){
 }
 
 function notifyConnectedState(connected, platformOPN){
-    if(!NavigationControl.userSettings.disablePlatformNotifications){
+    if(NavigationControl.userSettings.notifyOnPlatformConnections){
         if (connected){
             PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is connected`,
                                                                    PlatformNotifications.Notifications.Info,

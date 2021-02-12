@@ -596,7 +596,7 @@ Rectangle {
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
-        property bool disablePlatformNotifications: false
+        property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
         property int selectedDistributionPortal: 0
         // updated this so we can mitigate undefined variables
@@ -615,8 +615,8 @@ Rectangle {
             if (settings.hasOwnProperty("notifyOnCollateralDocumentUpdate")) {
                 notifyOnCollateralDocumentUpdate = settings.notifyOnCollateralDocumentUpdate
             }
-            if(settings.hasOwnProperty("disablePlatformNotifications")){
-                disablePlatformNotifications = settings.disablePlatformNotifications
+            if(settings.hasOwnProperty("notifyOnPlatformConnections")){
+                notifyOnPlatformConnections = settings.notifyOnPlatformConnections
             }
             NavigationControl.userSettings = userSettings
         }
@@ -627,7 +627,7 @@ Rectangle {
                 closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
                 selectedDistributionPortal: selectedDistributionPortal,
-                disablePlatformNotifications: disablePlatformNotifications,
+                notifyOnPlatformConnections: notifyOnPlatformConnections,
                 notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate
             }
             userSettings.writeFile("general-settings.json", settings)

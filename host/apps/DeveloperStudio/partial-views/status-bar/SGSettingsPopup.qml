@@ -55,16 +55,6 @@ SGStrataPopup {
             }
         }
 
-            SGSettingsCheckbox {
-                text: "Disable platform notifications"
-                checked: userSettings.disablePlatformNotifications
-
-                onCheckedChanged: {
-                    userSettings.disablePlatformNotifications  = checked
-                    userSettings.saveSettings()
-                }
-            }
-
             // to be uncommented in CS-880
 //            SGText {
 //                text: "Firmware Settings"
@@ -108,6 +98,16 @@ SGStrataPopup {
 
             onCheckedChanged: {
                 userSettings.notifyOnCollateralDocumentUpdate = checked
+                userSettings.saveSettings()
+            }
+        }
+
+        SGSettingsCheckbox {
+            text: "Notify me when a platform is connected/disconnected"
+            checked: userSettings.notifyOnPlatformConnections
+
+            onCheckedChanged: {
+                userSettings.notifyOnPlatformConnections  = checked
                 userSettings.saveSettings()
             }
         }
