@@ -639,7 +639,6 @@ void SGQWTPlot :: insertLegend(bool legend)
         if(legend) {
             qwtLegend_ = new QwtLegend();
             qwtPlot->insertLegend(qwtLegend_,QwtPlot::BottomLegend);
-            //qwtPlot->legend()->setStyleSheet("color:'black'");
         }
         else {
             qwtPlot->insertLegend(0);
@@ -774,10 +773,7 @@ SGQWTPlot* SGQWTPlotCurve::graph()
 void SGQWTPlotCurve::setName(QString name)
 {
     if (name != this->name()){
-        QwtText title = curve_->title().text();
-        title.setColor("Qt::black");
         curve_->setTitle(name);
-
         if (autoUpdate_) {
             update();
         }
