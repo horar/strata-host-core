@@ -91,7 +91,7 @@ StackLayout {
 
         Action {
             id: documentsHistoryShowDocumentsView
-            text: "Go to documents view"
+            text: "View documents"
             onTriggered: {
                 model.view = "collateral"
             }
@@ -99,7 +99,7 @@ StackLayout {
 
         Action {
             id: doNotNotifyOnCollateralDocumentUpdate
-            text: "Do not notify me of document updates again"
+            text: "Don't show this message again"
             onTriggered: {
                 NavigationControl.userSettings.notifyOnCollateralDocumentUpdate = false
                 NavigationControl.userSettings.saveSettings()
