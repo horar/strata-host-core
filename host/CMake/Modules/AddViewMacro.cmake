@@ -7,9 +7,9 @@ macro(add_view)
                        add_feature_info(APPS_VIEWS-${local_NAME} APPS_VIEWS_${local_NAME} "Strata '${local_NAME}' view")
 
     if(NOT APPS_VIEWS OR NOT ${APPS_VIEWS_${local_NAME}})
-        if(EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc)
+        if(EXISTS ${CMAKE_VIEWS_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc)
             message(STATUS "...removing 'views-${local_NAME}.rcc'")
-            file(REMOVE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc)
+            file(REMOVE ${CMAKE_VIEWS_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc)
         endif()
         return()
     endif()
@@ -23,7 +23,7 @@ macro(add_view)
     qt5_add_binary_resources(views-${local_NAME}
         ${QRC_SRCS}
         OPTIONS ARGS --compress 9 --threshold 0 --verbose
-        DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc
+        DESTINATION ${CMAKE_VIEWS_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc
     )
 
     set(PROJECT_NAME views-${local_NAME})

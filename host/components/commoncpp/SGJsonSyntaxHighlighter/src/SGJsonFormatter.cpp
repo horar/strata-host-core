@@ -13,7 +13,7 @@ QString SGJsonFormatter::prettifyJson(
 {
     QString prettifiedJson;
     QChar spaceChar = QChar::Space;
-    QChar breakLineChar = softWrap ? QChar(0x2028) : QChar('\n');
+    QChar breakLineChar = softWrap ? softBreakLine_ : hardBreakLine_;
     Token previousToken, token, nextToken;
 
     resolveNextToken(jsonString, 0, token);
@@ -86,6 +86,12 @@ QString SGJsonFormatter::minifyJson(const QString &jsonString)
     return minifiedJson;
 }
 
+QString SGJsonFormatter::convertToHardBreakLines(const QString &text)
+{
+    QString textWithHardBreakLines = text;
+    return textWithHardBreakLines.replace(softBreakLine_, hardBreakLine_);
+}
+
 void SGJsonFormatter::resolveNextToken(
         const QString &text,
         int startIndex,
@@ -149,6 +155,7 @@ void SGJsonFormatter::resolveNextToken(
                 return;
             } else {
                 state = ScannerState::SyntaxError;
+                nextToken.startIndex = i;
                 nextToken.type = TokenType::SyntaxError;
             }
             break;
