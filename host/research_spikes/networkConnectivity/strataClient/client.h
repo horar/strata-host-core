@@ -14,6 +14,8 @@ class client : public QObject
     Q_OBJECT
     Q_PROPERTY(QString connectionStatus READ getConnectionStatus WRITE setConnectionStatus NOTIFY connectionStatusChanged)
     Q_PROPERTY(QString receivedMessages READ getTcpMessage NOTIFY tcpMessageUpdated)
+    Q_PROPERTY(QString log READ getLog NOTIFY logUpdated)
+
 
 public:
     client(QObject *parent = nullptr);
@@ -22,6 +24,9 @@ public:
     void setConnectionStatus(QString &status);
     void readTcpMessage();
     QString getTcpMessage() const;
+    QString getLog() const;
+    void setLog(QString LogMsg);
+
 
 
 public slots:
@@ -35,15 +40,17 @@ public slots:
 signals:
     void connectionStatusChanged();
     void tcpMessageUpdated();
+    void logUpdated();
 
 private:
     QString status_[2] = {"Disconnected", "Connected"};
     QUdpSocket *udpSocket_ = nullptr;
     QTcpServer *tcpSever_ = nullptr;
+    QTcpSocket *tcpSocket_ = nullptr;
     quint16 port_ = 5146;
     QString tcpConnectionStatus_ = status_[0];
-    QTcpSocket *clientConnection_ = nullptr;
-    QString recivedBuffer_;
+    QString receivedMsgsBuffer;
+    QString logsBuffer_;
 };
 
 #endif // CLIENT_H

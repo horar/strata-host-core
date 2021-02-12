@@ -10,7 +10,7 @@ Server::Server(QObject *parent)
       connectionStatus_(ConnectionStatus::Disconnected),
       clientAddress_("")
 {
-    // UDP Socket set up.
+    // UDP Socket set up
     if (false == udpSocket_->bind(port_, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint)) {
         qDebug() << "udp: failed to bind to port" << port_;
     }

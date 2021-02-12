@@ -2,10 +2,17 @@
 
 client::client(QObject *parent) : QObject(parent)
 {
+    // No need to bind UDP socket for sending
     udpSocket_ = new QUdpSocket(this);
-    tcpSever_ = new QTcpServer(this);
-    tcpSever_->listen(QHostAddress::Any, TCP_PORT);
 
+    tcpSever_ = new QTcpServer(this);
+
+    // TCP server socket set up
+    if (! tcpSever_->listen(QHostAddress::Any, TCP_PORT)) {
+        setLog("Unable to start TCP server.\n" + tcpSever_->errorString());
+        return;
+    }
+    setLog("TCP server has been started and listning at port: " + QString::number(TCP_PORT));
     connect(tcpSever_, &QTcpServer::newConnection, this, &client::gotTcpConnection);
 }
 
@@ -29,20 +36,31 @@ void client::setConnectionStatus(QString &status)
 
 void client::readTcpMessage()
 {
-    recivedBuffer_ += "Host: " + (QString(clientConnection_->readAll())) + "\n";
+    receivedMsgsBuffer += "Host: " + (QString(tcpSocket_->readAll())) + "\n";
     emit tcpMessageUpdated();
 }
 
 QString client::getTcpMessage() const
 {
-    return recivedBuffer_;
+    return receivedMsgsBuffer;
+}
+
+QString client::getLog() const
+{
+    return logsBuffer_;
+}
+
+void client::setLog(QString LogMsg)
+{
+   logsBuffer_ += "- " + LogMsg + "\n";
+   emit logUpdated();
 }
 
 void client::broadcastDatagram()
 {
-    qDebug() << "broadcasting at port:" << port_;
-    QByteArray datageam = "strata client";
-    udpSocket_->writeDatagram(datageam, QHostAddress::Broadcast, port_);
+    QByteArray datagram = "strata client";
+    udpSocket_->writeDatagram(datagram, QHostAddress::Broadcast, port_);
+    setLog("Sent Datagram: " + datagram + " at port: " + QString::number(port_));
 }
 
 void client::setPort(quint16 port)
@@ -59,36 +77,34 @@ quint16 client::getPort() const
 
 void client::gotTcpConnection()
 {
-    qDebug() << "TCP connection has been established";
     setConnectionStatus(status_[1]);
 
     // get tcp socket from server
-    clientConnection_ = tcpSever_->nextPendingConnection();
+    tcpSocket_ = tcpSever_->nextPendingConnection();
+
+    setLog("Received and established a TCP connection from IP: "+ tcpSocket_->peerAddress().toString());
+
 
     // ensure that the socket will be deleted after disconnecting
-    connect(clientConnection_, &QAbstractSocket::disconnected, clientConnection_, &QObject::deleteLater);
+    connect(tcpSocket_, &QAbstractSocket::disconnected, tcpSocket_, &QObject::deleteLater);
 
-    connect(clientConnection_, &QTcpSocket::readyRead, this, &client::readTcpMessage);
+    connect(tcpSocket_, &QTcpSocket::readyRead, this, &client::readTcpMessage);
 
-
-    connect(clientConnection_, &QTcpSocket::disconnected, this, [this]() {
-        qDebug() << "Host close connection";
+    connect(tcpSocket_, &QTcpSocket::disconnected, this, [this]() {
+        setLog("TCP connection has been closed");
         setConnectionStatus(status_[0]);;
         emit connectionStatusChanged();
     });
-
 }
 
 void client::disconnect()
 {
-    clientConnection_->disconnectFromHost();
-    setConnectionStatus(status_[0]);
-    emit connectionStatusChanged();
+    tcpSocket_->disconnectFromHost();
 }
 
 void client::tcpWrite(QByteArray block)
 {
-    clientConnection_->write(block);
-    recivedBuffer_ += "Client: " + QString(block) + "\n";
+    tcpSocket_->write(block);
+    receivedMsgsBuffer += "Client: " + QString(block) + "\n";
     emit tcpMessageUpdated();
 }

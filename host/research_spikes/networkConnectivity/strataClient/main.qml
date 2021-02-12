@@ -72,8 +72,8 @@ Window {
 
     Label {
         id: statusLabel
-        x: 172
-        y: 200
+        x: 445
+        y: 71
         width: 96
         height: 48
         text: client.connectionStatus
@@ -84,10 +84,10 @@ Window {
 
     Button {
         id: disconnectBtn
-        x: 25
-        y: 206
+        x: 298
+        y: 55
         width: 86
-        height: 42
+        height: 88
         text: qsTr("Disconnect")
         enabled: client.connectionStatus === "Connected"
 
@@ -99,10 +99,10 @@ Window {
 
     ScrollView {
         id: messageScrollView
-        x: 313
-        y: 195
-        width: 305
-        height: 117
+        x: 298
+        y: 176
+        width: 326
+        height: 120
         clip: true
         enabled: client.connectionStatus === "Connected"
 
@@ -110,11 +110,12 @@ Window {
             id: messageTextArea
             x: -10
             y: -6
-            width: 300
-            height: 117
+            width: 326
+            height: 120
             text: client.receivedMessages
-            font.pointSize: 17
+            font.pointSize: 13
             readOnly: true
+            wrapMode: Text.Wrap
             enabled: client.connectionStatus === "Connected"
 //            background: Rectangle {
 //                radius: 2
@@ -128,27 +129,35 @@ Window {
 
     TextField {
         id: userInputField
-        x: 25
-        y: 268
-        width: 192
+        x: 298
+        y: 302
+        width: 250
         height: 31
         text: qsTr("")
         font.pointSize: 16
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
+        Keys.onPressed: {
+            if (event.key === Qt.Key_Return && userInputField.text.length > 0) {
+                sendBtn.clicked()
+            }
+        }
         enabled: client.connectionStatus === "Connected"
     }
 
     Button {
-        id: sendBtn1
-        x: 223
-        y: 268
-        width: 57
+        id: sendBtn
+        x: 559
+        y: 302
+        width: 65
         height: 31
         text: qsTr("Send")
         Connections {
-            target: sendBtn1
-            onClicked: client.tcpWrite(userInputField.text)
+            target: sendBtn
+            onClicked: {
+                client.tcpWrite(userInputField.text)
+                userInputField.text = qsTr("")
+            }
         }
         enabled: client.connectionStatus === "Connected"
 
@@ -156,8 +165,8 @@ Window {
 
     StatusIndicator {
         id: statusIndicator
-        x: 117
-        y: 206
+        x: 390
+        y: 77
         width: 49
         height: 42
         color: "#65c903"
@@ -166,8 +175,8 @@ Window {
 
     Text {
         id: messageElement
-        x: 313
-        y: 170
+        x: 298
+        y: 149
         width: 114
         height: 21
         text: qsTr("Messages:")
@@ -177,27 +186,28 @@ Window {
 
     ScrollView {
         id: logScrollView
-        x: 313
-        y: 53
-        width: 305
-        height: 117
+        x: 19
+        y: 176
+        width: 261
+        height: 157
         TextArea {
             id: logTextArea
-            x: -20
-            y: -133
+            x: -10
+            y: -6
             width: 305
             height: 124
-            text: qsTr("")
-            font.pointSize: 17
-            clip: false
+            text: client.log
+            font.pointSize: 13
+            readOnly: true
+            wrapMode: Text.Wrap
         }
         clip: true
     }
 
     Text {
-        id: logElement1
-        x: 313
-        y: 26
+        id: logElement
+        x: 25
+        y: 149
         width: 114
         height: 21
         text: qsTr("Logs:")
