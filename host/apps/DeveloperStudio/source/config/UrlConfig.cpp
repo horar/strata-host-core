@@ -32,20 +32,30 @@ bool UrlConfig::parseUrl(const QString &fileName) {
         return false;
     }
 
-    QJsonValue value = loadDoc[QLatin1String("url_cloud_service")];
+    QJsonValue value = loadDoc[QLatin1String("cloud_service")];
     if (value == QJsonValue::Undefined) {
-        qCCritical(logCategoryStrataDevStudioConfig) << "missing 'url cloud service' key";
+        qCCritical(logCategoryStrataDevStudioConfig) << "missing 'cloud service' key";
         return false;
     }
 
-    if (setUrlValue(value[QLatin1String("auth_server")], &authServer_) == false ||
-        setUrlValue(value[QLatin1String("sales_popup_url")], &salesPopupUrl_) == false ||
+    if (setUrlValue(value[QLatin1String("auth_server")], &authServer_) == false) {
+        qCCritical(logCategoryStrataDevStudioConfig) << "authentication server was not set";
+            return false;
+    }
+
+    value = loadDoc[QLatin1String("static_website")];
+    if (value == QJsonValue::Undefined) {
+        qCCritical(logCategoryStrataDevStudioConfig) << "missing 'static website' key";
+        return false;
+    }
+
+    if (setUrlValue(value[QLatin1String("sales_popup_url")], &salesPopupUrl_) == false ||
         setUrlValue(value[QLatin1String("license_url")], &licenseUrl_) == false ||
         setUrlValue(value[QLatin1String("privacy_policy_url")], &privacyPolicyUrl_) == false ||
         setUrlValue(value[QLatin1String("mouser_url")], &mouserUrl_) == false ||
         setUrlValue(value[QLatin1String("digikey_url")], &digiKeyUrl_) == false ||
         setUrlValue(value[QLatin1String("avnet_url")], &avnetUrl_) == false) {
-            qCCritical(logCategoryStrataDevStudioConfig) << "at least one value was not set";
+            qCCritical(logCategoryStrataDevStudioConfig) << "at least one value from 'static websites' was not set";
             return false;
     }
         
