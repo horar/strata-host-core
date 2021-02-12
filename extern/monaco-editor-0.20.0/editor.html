@@ -60,6 +60,25 @@
     </script>
     <script>
         if(!isInitialized){
+            flags.sgwidgetsFlag = true
+            flags.qtQuickFlag = true
+            initializeQtQuick(flags)
+            for (var i = 0; i < BasicItemProperties.length; i++) {
+                suggestions.push({
+                    label: BasicItemProperties[i],
+                    kind: monaco.languages.CompletionItemKind.KeyWord,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    insertText: BasicItemProperties[i],
+                })
+            }
+            for (const [key] of Object.entries(qtObjectKeyValues)) {
+                suggestions.push({
+                    label: qtObjectKeyValues[key].label,
+                    kind: monaco.languages.CompletionItemKind.Class,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    insertText: qtObjectKeyValues[key].insertText,
+                })
+            }      
             registerQmlAsLanguage()
         } else {
             editor.dispose()

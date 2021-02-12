@@ -13,9 +13,12 @@
     }
 */
 const qtObjectKeyValues = {}
+var qtObjectPropertyValues = {}
 var propertySuggestions = []
 var isInitialized = false
 var flags = { sgwidgetsFlag: false, qtQuickFlag: false }
+var suggestions = []
+var lastUsedText = ""
 
 
 var editor = null
@@ -2492,13 +2495,15 @@ function removeDuplicates() {
     })
 }
 
-function convertStrArrayToObjArray(properties, range) {
+function convertStrArrayToObjArray(key, properties, range) {
     for (var i = 0; i < properties.length; i++) {
         propertySuggestions.push(createDynamicProperty(properties[i], range))
     }
     if (propertySuggestions.length !== 0) {
         propertySuggestions = removeDuplicates()
     }
+
+    qtObjectPropertyValues[key] = propertySuggestions;
 }
 
 function createQtObjectValPairs(key, val) {
@@ -2521,8 +2526,8 @@ function initializeQtQuick(flags) {
     }
 }
 
-function clearPropertySuggestions() {
-    propertySuggestions = []
+function clearPropertySuggestions(key) {
+    
 }
 
 
@@ -2686,39 +2691,24 @@ function registerQmlAsLanguage() {
                 startColumn: word.startColumn,
                 endColumn: word.endColumn
             };
-            alert(word)
-            flags.sgwidgetsFlag = textUntilPosition.match(`import tech.strata.sgwidgets 1.0`);
-            flags.qtQuickFlag = textUntilPosition.match(`import QtQuick`)
-            initializeQtQuick(flags)
-            var suggestions = []
-            for (var i = 0; i < BasicItemProperties.length; i++) {
-                suggestions.push({
-                    label: BasicItemProperties[i],
-                    kind: monaco.languages.CompletionItemKind.KeyWord,
-                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: BasicItemProperties[i],
-                    range: range
-                })
-            }
-            for (const [key] of Object.entries(qtObjectKeyValues)) {
-                suggestions.push({
-                    label: qtObjectKeyValues[key].label,
-                    kind: monaco.languages.CompletionItemKind.Class,
-                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: qtObjectKeyValues[key].insertText,
-                    range: range
-                })
+
+            if(lastUsedText !== ""){
+                suggestions.concat(qtObjectPropertyValues[lastUsedText])
             }
 
             if (qtObjectKeyValues.hasOwnProperty(active.substring(0, active.length - 1).split('.')[0])) {
+                if (lastUsedText !== "") {
+                    clearPropertySuggestions(lastUsedText)
+                }
                 var propRange = {
                     startLineNumber: position.lineNumber,
                     endLineNumber: position.lineNumber,
                     startColumn: word.startColumn,
                     endColumn: word.endColumn
                 };
-                convertStrArrayToObjArray(qtObjectKeyValues[active.substring(0, active.length - 1).split('.')[0]].properties, propRange)
-                return { suggestions: propertySuggestions }
+                convertStrArrayToObjArray(active.substring(0, active.length - 1).split('.')[0], qtObjectKeyValues[active.substring(0, active.length - 1).split('.')[0]].properties, propRange)
+                lastUsedText = active.substring(0, active.length - 1).split('.')[0]
+                return { suggestions: qtObjectPropertyValues[active.substring(0, active.length - 1).split('.')[0]] }
             } else {
                 var textBeforeNewLine = ""
                 if (isSpaceActive) {
@@ -2727,6 +2717,9 @@ function registerQmlAsLanguage() {
                     textBeforeNewLine = active.substring(0, active.length - 1).split('{')[0]
                 }
                 if (qtObjectKeyValues.hasOwnProperty(textBeforeNewLine)) {
+                    if (lastUsedText !== "") {
+                        clearPropertySuggestions(lastUsedText)
+                    }
                     var e_pos = position.lineNumber + 1
                     var propRange = {
                         startLineNumber: position.lineNumber,
@@ -2734,8 +2727,10 @@ function registerQmlAsLanguage() {
                         startColumn: word.startColumn,
                         endColumn: position.column,
                     }
-                    convertStrArrayToObjArray(qtObjectKeyValues[textBeforeNewLine].properties, propRange)
-                    return { suggestions: propertySuggestions }
+                    convertStrArrayToObjArray(textBeforeNewLine, qtObjectKeyValues[textBeforeNewLine].properties, propRange)
+                    lastUsedText = textBeforeNewLine
+                    suggestions = suggestions.concat(qtObjectPropertyValues[textBeforeNewLine])
+                    return { suggestions: suggestions}
                 }
             }
             return { suggestions: suggestions }
@@ -2751,9 +2746,10 @@ function registerQmlAsLanguage() {
         detectIndentation: true,
         tabCompletion: "on",
         formatOnPaste: true,
+        suggest: {
+            snippetsPreventQuickSuggestions: false
+        },
     });
-
-    editor.updateOptions({suggest: {insertMode: 'replace', filterGraceful: false}, matchBrackets: 'near'})
 
     function getValue() {
         return editor.getValue();
@@ -2767,7 +2763,4 @@ function registerQmlAsLanguage() {
 }
 
 
-
-
-
-
+function buildBracketRanges() { }
