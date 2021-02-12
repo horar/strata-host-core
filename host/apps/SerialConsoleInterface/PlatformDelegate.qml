@@ -62,8 +62,15 @@ FocusScope {
             }
 
             Shortcut {
-                id: executeMultilineCommand
+                id: sendMultilineCommandWinOS
                 sequence: "Ctrl+Enter"
+                onActivated: mainPage.sendMessageInputTextAsComand()
+            }
+
+            Shortcut {
+                id: sendMultilineCommandMacOS
+                sequence: "Ctrl+Return"
+                onActivated: mainPage.sendMessageInputTextAsComand()
             }
 
             ScrollbackView {
@@ -333,13 +340,6 @@ FocusScope {
                     onTextChanged: {
                         model.platform.errorString = "";
                     }
-
-                    Keys.onPressed: {
-                        if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && (event.modifiers & Qt.ControlModifier)) {
-                            sendMessageInputTextAsComand()
-                        }
-                        event.accepted = true
-                    }
                 }
 
                 SGWidgets.SGTag {
@@ -402,7 +402,7 @@ FocusScope {
 
                     enabled: messageEditor.enabled
                     focusPolicy: Qt.NoFocus
-                    hintText: prettifyHintText("Send command", executeMultilineCommand.nativeText)
+                    hintText: prettifyHintText("Send command", showSendShorcut(sendMultilineCommandMacOS,sendMultilineCommandWinOS))
                     text: qsTr("SEND")
                     onClicked: {
                         sendMessageInputTextAsComand()
@@ -511,5 +511,9 @@ FocusScope {
 
     function prettifyHintText(hintText, shortcut) {
         return hintText + " - " + shortcut
+    }
+
+    function showSendShorcut(macShortcut, winShortcut) {
+        return Qt.platform.os === "osx" ? macShortcut.nativeText : winShortcut.nativeText 
     }
 }
