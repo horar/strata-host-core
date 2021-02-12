@@ -52,6 +52,14 @@ Item {
         }
     }
 
+    Shortcut {
+        id: selectShortcut
+        sequence: StandardKey.SelectAll
+        onActivated: {
+            selectAllText()
+        }
+    }
+
     Timer {
         id: scrollbackViewAtEndTimer
         interval: 1
@@ -166,24 +174,19 @@ Item {
         boundsBehavior: Flickable.StopAtBounds
 
         onActiveFocusChanged: {
-            if (activeFocus === false && contextMenu.opened) {
+            if ((activeFocus === false) && (contextMenu.visible === false)) {
                 clearSelection()
             }
         }
 
         MouseArea {
             id: textSelectionMouseArea
-            height: Math.min(listView.height, listView.contentHeight)
-            anchors {
-                top: listView.top
-                left: listView.left
-                leftMargin: delegateTextX
-                right: listView.right
-                rightMargin: delegateRightMargin
-            }
+            anchors.fill: parent
 
-            cursorShape: Qt.IBeamCursor
+            cursorShape: mouseX > delegateTextX ? Qt.IBeamCursor : Qt.ArrowCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
+            hoverEnabled: true
+            propagateComposedEvents: true
 
             /*this is to stop interaction with flickable while selecting text */
             drag.target: Item {}
@@ -193,11 +196,17 @@ Item {
             property int startPosition
 
             onPressed: {
+                listView.forceActiveFocus()
+
                 if (mouse.button === Qt.RightButton) {
                     return
                 }
 
-                listView.forceActiveFocus()
+                if (mouseX <= delegateTextX) {
+                    // we can add another functionality when licking on the left side
+                    mouse.accepted = false
+                    return
+                }
 
                 var position = resolvePosition(mouse.x, mouse.y)
                 if (position === undefined) {
@@ -215,15 +224,17 @@ Item {
             }
 
             onReleased: {
-                if ((mouse.button === Qt.RightButton) &&
-                    (selectionStartPosition !== selectionEndPosition)) {
-                    var posInDelegate = listView.mapFromItem(textSelectionMouseArea, mouse.x, mouse.y)
-                    if (listView.contains(posInDelegate)) {
-                        contextMenu.popup()
+                if (mouse.button === Qt.RightButton) {
+                    if (textSelectionMouseArea.containsMouse) {
+                        contextMenu.popup(null)
                     }
+                    return
                 }
 
                 leftMouseButtonPressed = false
+                if (mouseX <= delegateTextX) {
+                    mouse.accepted = false
+                }
             }
 
             onPositionChanged: {
@@ -290,13 +301,47 @@ Item {
 
             Menu {
                 id: contextMenu
-                Action {
+                MenuItem {
+                    id: undoAction
+                    text: qsTr("Undo")
+                    enabled: false
+                }
+                MenuItem {
+                    id: redoAction
+                    text: qsTr("Redo")
+                    enabled: false
+                }
+                MenuSeparator { }
+                MenuItem {
+                    id: cutAction
+                    text: qsTr("Cut")
+                    enabled: false
+                }
+                MenuItem {
                     id: copyAction
-                    text: "Copy"
+                    text: qsTr("Copy")
+                    highlighted: hovered
+                    enabled: (selectionStartPosition !== selectionEndPosition) || (selectionStartIndex !== selectionEndIndex)
                     onTriggered: {
                         copyToClipboard()
                     }
                 }
+                MenuItem {
+                    id: pasteAction
+                    text: qsTr("Paste")
+                    enabled: false
+                }
+                MenuSeparator { }
+                MenuItem {
+                    id: selectAction
+                    text: qsTr("Select All")
+                    highlighted: hovered
+                    enabled: listView.count > 0
+                    onTriggered: {
+                        selectAllText()
+                    }
+                }
+
                 onClosed: {
                     listView.forceActiveFocus()
                 }
@@ -520,6 +565,10 @@ Item {
             function positionAtTextEdit(x,y) {
                 return cmdText.positionAt(x-cmdText.x , y)
             }
+
+            function positionAtTextEditEnd() {
+                return cmdText.length
+            }
         }
     }
 
@@ -555,5 +604,23 @@ Item {
         }
 
         CommonCpp.SGUtilsCpp.copyToClipboard(text)
+    }
+
+    function selectAllText() {
+        if (listView.count === 0) {
+            return
+        }
+
+        var delegateIndexEnd = listView.count -1
+        var delegatePositionEnd = 0
+        if (delegateIndexEnd === 0) {
+            var delegateItemEnd = listView.itemAt(0, 0)
+            delegatePositionEnd = delegateItemEnd.positionAtTextEditEnd()
+        }
+
+        selectionStartIndex = 0
+        selectionEndIndex = delegateIndexEnd
+        selectionStartPosition = 0
+        selectionEndPosition = delegatePositionEnd
     }
 }

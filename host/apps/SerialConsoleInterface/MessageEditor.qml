@@ -169,13 +169,86 @@ FocusScope {
         }
 
         MouseArea {
-            height: flick.height
-            width: flick.width
+            height: flick.height > flick.contentHeight ? flick.height : flick.contentHeight
+            width: flick.width > flick.contentWidth ? flick.width : flick.contentWidth
 
             cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
             onClicked: {
                 edit.forceActiveFocus()
-                edit.cursorPosition = edit.text.length
+            }
+
+            onReleased: {
+                if (containsMouse && (mouse.button === Qt.RightButton)) {
+                    var selectionStart = edit.selectionStart
+                    var selectionEnd = edit.selectionEnd
+                    contextMenu.popup(null)
+                    edit.select(selectionStart, selectionEnd)
+                }
+            }
+
+            Menu {
+                id: contextMenu
+                MenuItem {
+                    id: undoAction
+                    text: qsTr("Undo")
+                    highlighted: hovered
+                    enabled: edit.canUndo
+                    onTriggered: {
+                        edit.undo()
+                    }
+                }
+                MenuItem {
+                    id: redoAction
+                    text: qsTr("Redo")
+                    highlighted: hovered
+                    enabled: edit.canRedo
+                    onTriggered: {
+                        edit.redo()
+                    }
+                }
+                MenuSeparator { }
+                MenuItem {
+                    id: cutAction
+                    text: qsTr("Cut")
+                    highlighted: hovered
+                    enabled: edit.selectedText.length > 0
+                    onTriggered: {
+                        edit.cut()
+                    }
+                }
+                MenuItem {
+                    id: copyAction
+                    text: qsTr("Copy")
+                    highlighted: hovered
+                    enabled: edit.selectedText.length > 0
+                    onTriggered: {
+                        edit.copy()
+                    }
+                }
+                MenuItem {
+                    id: pasteAction
+                    text: qsTr("Paste")
+                    highlighted: hovered
+                    enabled: edit.canPaste
+                    onTriggered: {
+                        edit.paste()
+                    }
+                }
+                MenuSeparator { }
+                MenuItem {
+                    id: selectAction
+                    text: qsTr("Select All")
+                    highlighted: hovered
+                    enabled: edit.length > 0
+                    onTriggered: {
+                        edit.selectAll()
+                    }
+                }
+                onClosed: {
+                    edit.forceActiveFocus()
+                }
             }
         }
 
@@ -193,6 +266,10 @@ FocusScope {
 
         TextEdit {
             id: edit
+            height: flick.height > (contentHeight + topPadding + bottomPadding) ?
+                        flick.height : (contentHeight + topPadding + bottomPadding)
+            width: (flick.width - x) > (contentWidth + leftPadding + rightPadding) ?
+                       (flick.width - x) : (contentWidth + leftPadding + rightPadding)
 
             wrapMode: TextEdit.NoWrap
             padding: 4 + 4
@@ -204,6 +281,7 @@ FocusScope {
             font.pixelSize: SGWidgets.SGSettings.fontPixelSize
             selectByMouse: true
             selectByKeyboard: true
+            persistentSelection: true   // must deselect manually
             activeFocusOnTab: true
             textFormat: Text.PlainText
             focus: true
@@ -224,6 +302,12 @@ FocusScope {
 
             onCursorRectangleChanged: {
                 flick.ensureVisible(cursorRectangle)
+            }
+
+            onActiveFocusChanged: {
+                if ((activeFocus === false) && (contextMenu.visible === false)) {
+                    edit.deselect()
+                }
             }
 
             Text {
