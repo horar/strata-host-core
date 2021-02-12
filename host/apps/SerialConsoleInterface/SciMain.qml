@@ -41,6 +41,12 @@ Item {
         value: Sci.Settings.maxCommandsInHistory
     }
 
+    Binding {
+        target: sciModel.platformModel
+        property: "condensedAtStartup"
+        value: Sci.Settings.commandsCondensedAtStartup
+    }
+
     Item {
         id: tabBar
         anchors {

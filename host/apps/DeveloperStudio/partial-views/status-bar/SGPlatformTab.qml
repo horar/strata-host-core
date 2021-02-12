@@ -63,7 +63,10 @@ Item {
             }
         }
 
-        bringIntoView()
+        if (inView === false) {
+            dropDownPopup.close()
+            bringIntoView()
+        }
     }
 
     function bringIntoView() {
@@ -231,12 +234,6 @@ Item {
             color: Qt.darker(Theme.palette.green, 1.15)
             width: platformTabRoot.width
             height: menuColumn.height + 1
-
-            signal clicked(int index)
-
-            onClicked: {
-                platformTabRoot.menuClicked(index)
-            }
 
             ColumnLayout {
                 id: menuColumn
