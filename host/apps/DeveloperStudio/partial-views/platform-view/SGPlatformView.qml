@@ -3,11 +3,11 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.notifications 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 import QtQuick.Controls 2.12
-import tech.strata.notifications 1.0
 
 StackLayout {
     id: platformStack
@@ -59,6 +59,7 @@ StackLayout {
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
+         Notifications.createNotification(`Platform ${name} closed`,Notifications.info,"all")
     }
 
     function initialize () {
@@ -66,6 +67,7 @@ StackLayout {
         if (fullyInitialized) {
             if (connected && model.available.control) {
                 controlViewContainer.initialize()
+                Notifications.createNotification(`Platform ${name} opened`,Notifications.info,"all")
             } else {
                 controlViewContainer.removeControl()
             }
