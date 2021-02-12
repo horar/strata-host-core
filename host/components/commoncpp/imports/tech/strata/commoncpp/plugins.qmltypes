@@ -542,6 +542,7 @@ Module {
         Property { name: "yRightVisible"; type: "bool" }
         Property { name: "yRightAxisColor"; type: "QColor" }
         Property { name: "yLeftAxisColor"; type: "QColor" }
+        Property { name: "xAxisColor"; type: "QColor" }
         Property { name: "legend"; type: "bool" }
         Method { name: "initialize" }
         Method { name: "update" }
