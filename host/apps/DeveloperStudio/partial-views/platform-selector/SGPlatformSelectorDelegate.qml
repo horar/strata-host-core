@@ -12,7 +12,6 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
-import tech.strata.notifications 1.0
 
 Item {
     id: root
