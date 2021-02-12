@@ -96,6 +96,12 @@ class Flasher : public QObject
         void backupFirmware(bool startApplication = true);
 
         /*!
+         * Set firmware class ID (without flashing firmware).
+         * \param startApplication if set to true start application after setting firmware class ID
+         */
+        void setFwClassId(bool startApplication = true);
+
+        /*!
          * Cancel flash firmware operation.
          */
         void cancel();
@@ -151,6 +157,8 @@ class Flasher : public QObject
         void handleOperationFinished(device::operation::Result result, int status, QString errStr);
 
     private:
+        // check if flasher action can start
+        bool startActionCheck(const QString& errorString);
         // prepare for flash (file checks)
         bool prepareForFlash(bool flashFirmware);
         // prepare for backup (file checks)
@@ -210,7 +218,8 @@ class Flasher : public QObject
         enum class Action {
             FlashFirmware,
             FlashBootloader,
-            BackupFirmware
+            BackupFirmware,
+            SetFwClassId
         };
         Action action_;
 };

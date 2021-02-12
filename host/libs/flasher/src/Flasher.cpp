@@ -34,7 +34,8 @@ Flasher::Flasher(const DevicePtr& device, const QString& fileName, const QString
     qCDebug(logCategoryFlasher) << device_ << "Flasher created (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
 }
 
-Flasher::~Flasher() {
+Flasher::~Flasher()
+{
     if ((operationList_.size() != 0) && (currentOperation_ != operationList_.end())) {
         currentOperation_->operation->disconnect();
         currentOperation_->operation->cancelOperation();
@@ -42,14 +43,12 @@ Flasher::~Flasher() {
     qCDebug(logCategoryFlasher) << device_ << "Flasher deleted (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
 }
 
-void Flasher::flashFirmware(bool startApplication) {
+void Flasher::flashFirmware(bool startApplication)
+{
     constexpr bool flashingFw = true;
     action_ = Action::FlashFirmware;
 
-    if (operationList_.size() != 0) {
-        QString errStr(QStringLiteral("Cannot flash firmware, flasher is already running."));
-        qCCritical(logCategoryFlasher) << device_ << errStr;
-        finish(Result::Error, errStr);
+    if (startActionCheck(QStringLiteral("Cannot flash firmware")) == false) {
         return;
     }
 
@@ -110,14 +109,12 @@ void Flasher::flashFirmware(bool startApplication) {
     runFlasherOperation();
 }
 
-void Flasher::flashBootloader() {
+void Flasher::flashBootloader()
+{
     constexpr bool flashingFw = false;
     action_ = Action::FlashBootloader;
 
-    if (operationList_.size() != 0) {
-        QString errStr(QStringLiteral("Cannot flash bootloader, flasher is already running."));
-        qCCritical(logCategoryFlasher) << device_ << errStr;
-        finish(Result::Error, errStr);
+    if (startActionCheck(QStringLiteral("Cannot flash bootloader")) == false) {
         return;
     }
 
@@ -150,13 +147,11 @@ void Flasher::flashBootloader() {
     runFlasherOperation();
 }
 
-void Flasher::backupFirmware(bool startApplication) {
+void Flasher::backupFirmware(bool startApplication)
+{
     action_ = Action::BackupFirmware;
 
-    if (operationList_.size() != 0) {
-        QString errStr(QStringLiteral("Cannot backup firmware, flasher is already running."));
-        qCCritical(logCategoryFlasher) << device_ << errStr;
-        finish(Result::Error, errStr);
+    if (startActionCheck(QStringLiteral("Cannot backup firmware")) == false) {
         return;
     }
 
@@ -191,12 +186,68 @@ void Flasher::backupFirmware(bool startApplication) {
     runFlasherOperation();
 }
 
-void Flasher::cancel() {
+void Flasher::setFwClassId(bool startApplication)
+{
+    action_ = Action::SetFwClassId;
+
+    if (startActionCheck(QStringLiteral("Cannot set firmware class ID")) == false) {
+        return;
+    }
+
+    if (fwClassId_.isNull()) {
+        QString errStr(QStringLiteral("Cannot set firmware class ID, no fwClassId was provided."));
+        qCCritical(logCategoryFlasher) << device_ << errStr;
+        finish(Result::Error, errStr);
+        return;
+    }
+
+    operationList_.reserve(3);
+
+    operationList_.emplace_back(
+            OperationPtr(new operation::StartBootloader(device_), operationDeleter),
+            State::SwitchToBootloader,
+            std::bind(&Flasher::startBootloaderFinished, this, std::placeholders::_1),
+            this);
+
+    operation::SetAssistedPlatformId* setAssisted = new operation::SetAssistedPlatformId(device_);
+    setAssisted->setFwClassId(fwClassId_);
+    operationList_.emplace_back(
+            OperationPtr(setAssisted, operationDeleter),
+            State::SetFwClassId,
+            std::bind(&Flasher::setAssistPlatfIdFinished, this, std::placeholders::_1),
+            this);
+
+    if (startApplication) {
+        operationList_.emplace_back(
+                OperationPtr(new operation::StartApplication(device_), operationDeleter),
+                State::StartApplication,
+                std::bind(&Flasher::startApplicationFinished, this, std::placeholders::_1),
+                this);
+    }
+
+    currentOperation_ = operationList_.begin();
+
+    runFlasherOperation();
+}
+
+void Flasher::cancel()
+{
     if ((operationList_.size() != 0) && (currentOperation_ != operationList_.end())) {
         currentOperation_->operation->cancelOperation();
         qCWarning(logCategoryFlasher) << device_ << "Firmware operation was cancelled.";
         finish(Result::Cancelled);
     }
+}
+
+bool Flasher::startActionCheck(const QString& errorString)
+{
+    if (operationList_.size() != 0) {
+        QString errorMessage = errorString + QStringLiteral(", flasher is already running.");
+        qCCritical(logCategoryFlasher) << device_ << errorMessage;
+        finish(Result::Error, errorMessage);
+        return false;
+    }
+    return true;
 }
 
 bool Flasher::prepareForFlash(bool flashingFirmware)
@@ -288,7 +339,8 @@ void Flasher::runFlasherOperation()
     }
 }
 
-void Flasher::finish(Result result, QString errorString) {
+void Flasher::finish(Result result, QString errorString)
+{
     operationList_.clear();
     currentOperation_ = operationList_.end();
     if (binaryFile_.isOpen()) {
@@ -297,7 +349,8 @@ void Flasher::finish(Result result, QString errorString) {
     emit finished(result, errorString);
 }
 
-void Flasher::handleOperationFinished(operation::Result result, int status, QString errStr) {
+void Flasher::handleOperationFinished(operation::Result result, int status, QString errStr)
+{
     switch (result) {
     case operation::Result::Success :
         if (operationList_.empty() || currentOperation_ == operationList_.end()) {
@@ -347,7 +400,8 @@ Flasher::FlasherOperation::FlasherOperation(
     flasher->connect(operation.get(), &operation::BaseDeviceOperation::finished, flasher, &Flasher::handleOperationFinished);
 }
 
-void Flasher::operationDeleter(operation::BaseDeviceOperation* operation) {
+void Flasher::operationDeleter(operation::BaseDeviceOperation* operation)
+{
     operation->deleteLater();
 }
 
@@ -498,7 +552,8 @@ void Flasher::manageFlash(bool flashingFirmware, int lastFlashedChunk)
     }
 }
 
-void Flasher::manageBackup(int chunkNumber) {
+void Flasher::manageBackup(int chunkNumber)
+{
     operation::Backup *backupOp = dynamic_cast<operation::Backup*>(currentOperation_->operation.get());
     if (backupOp == nullptr) {
         operationCastError();
