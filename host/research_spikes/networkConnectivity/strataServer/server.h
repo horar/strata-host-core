@@ -14,8 +14,8 @@ class Server : public QObject
     Q_PROPERTY(QString udpBuffer READ getUdpBuffer NOTIFY udpBufferUpdated);
     Q_PROPERTY(QString tcpBuffer READ getTcpBuffer NOTIFY tcpBufferUpdated);
     Q_PROPERTY(bool isConnected READ getConnectionStatus NOTIFY connectionStatusUpdated);
-    Q_PROPERTY(QString hostAddress READ getHostAddress);
-    Q_PROPERTY(QString tcpPort READ getTcpPort);
+    Q_PROPERTY(QString hostAddress READ getHostAddress CONSTANT);
+    Q_PROPERTY(QString tcpPort READ getTcpPort CONSTANT);
     Q_PROPERTY(QString clientAddreass READ getClientAddress NOTIFY clientAddressUpdated);
 
 public:
