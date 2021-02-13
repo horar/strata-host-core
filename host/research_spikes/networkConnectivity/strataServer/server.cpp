@@ -7,7 +7,6 @@ Server::Server(QObject *parent)
     : QObject(parent),
       tcpSocket_(new QTcpSocket(this)),
       udpSocket_(new QUdpSocket(this)),
-      connectionStatus_(ConnectionStatus::Disconnected),
       clientAddress_("")
 {
     // UDP Socket set up
@@ -21,7 +20,6 @@ Server::Server(QObject *parent)
     // TCP socket set up
     connect(tcpSocket_, &QTcpSocket::connected, this, [this]() {
         qDebug() << "tcp: socket connected";
-        connectionStatus_ = ConnectionStatus::Connected;
         clientAddress_ = tcpSocket_->peerAddress().toString();
         emit connectionStatusUpdated();
         emit clientAddressUpdated();
@@ -29,7 +27,6 @@ Server::Server(QObject *parent)
 
     connect(tcpSocket_, &QTcpSocket::disconnected, this, [this]() {
         qDebug() << "tcp: socket disconnected";
-        connectionStatus_ = ConnectionStatus::Disconnected;
         clientAddress_ = "";
         emit connectionStatusUpdated();
         emit clientAddressUpdated();
@@ -98,7 +95,7 @@ QString Server::getTcpBuffer()
 
 bool Server::getConnectionStatus()
 {
-    return connectionStatus_ == Server::ConnectionStatus::Connected;
+    return tcpSocket_->state() == QTcpSocket::ConnectedState ? true : false;
 }
 
 void Server::connectToStrataClient(QHostAddress hostAddress, qint16 port)

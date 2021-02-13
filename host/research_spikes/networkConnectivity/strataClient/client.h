@@ -9,24 +9,23 @@
 
 constexpr qint16 TCP_PORT(24125);
 
-class client : public QObject
+class Client : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString connectionStatus READ getConnectionStatus WRITE setConnectionStatus NOTIFY connectionStatusChanged)
+    Q_PROPERTY(bool isConnected READ getConnectionStatus NOTIFY connectionStatusUpdated)
     Q_PROPERTY(QString receivedMessages READ getTcpMessage NOTIFY tcpMessageUpdated)
     Q_PROPERTY(QString log READ getLog NOTIFY logUpdated)
 
 
 public:
-    client(QObject *parent = nullptr);
-    ~client();
-    QString getConnectionStatus() const;
-    void setConnectionStatus(QString &status);
+    Client(QObject *parent = nullptr);
+    ~Client();
+    bool getConnectionStatus() const;
     void readTcpMessage();
     QString getTcpMessage() const;
     QString getLog() const;
-    void setLog(QString LogMsg);
-
+    void setLog(QString logMsg);
+    void startTcpServer();
 
 
 public slots:
@@ -38,17 +37,15 @@ public slots:
    void tcpWrite(QByteArray block);
 
 signals:
-    void connectionStatusChanged();
+    void connectionStatusUpdated();
     void tcpMessageUpdated();
     void logUpdated();
 
 private:
-    QString status_[2] = {"Disconnected", "Connected"};
     QUdpSocket *udpSocket_ = nullptr;
     QTcpServer *tcpSever_ = nullptr;
     QTcpSocket *tcpSocket_ = nullptr;
     quint16 port_ = 5146;
-    QString tcpConnectionStatus_ = status_[0];
     QString receivedMsgsBuffer;
     QString logsBuffer_;
 };

@@ -22,9 +22,6 @@ public:
     Server(QObject *parent = nullptr);
     ~Server();
 
-    enum class ConnectionStatus { Connected, Disconnected };
-    Q_ENUM(ConnectionStatus);
-
 public slots:
     void setPort(quint16 port);
     quint16 getPort() const;
@@ -55,7 +52,6 @@ private:
     quint16 port_ = 5146;
     QString udpBuffer_;
     QString tcpBuffer_;
-    ConnectionStatus connectionStatus_;
     QString clientAddress_;
 };
 

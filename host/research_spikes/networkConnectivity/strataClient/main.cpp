@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
-    client client_;
-    engine.rootContext()->setContextProperty("client", &client_);
+    Client client_;
+    engine.rootContext()->setContextProperty("Client", &client_);
 
     return app.exec();
 }

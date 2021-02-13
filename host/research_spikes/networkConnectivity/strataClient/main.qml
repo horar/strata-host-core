@@ -19,14 +19,11 @@ Window {
         height: 44
         text: qsTr("Broadcast")
         font.pointSize: 21
-        clip: false
-        checkable: false
-        checked: false
         display: AbstractButton.TextBesideIcon
-
+        enabled: !Client.isConnected
         Connections {
             target: broadcastBtn
-            onClicked: client.broadcastDatagram()
+            onClicked: Client.broadcastDatagram()
         }
 
     }
@@ -51,8 +48,9 @@ Window {
         y: 55
         width: 99
         height: 37
-        text: client.getPort()
+        text: Client.getPort()
         placeholderText: "Enter broadcasting port"
+        enabled: !Client.isConnected
     }
 
     Button {
@@ -62,21 +60,21 @@ Window {
         width: 83
         height: 37
         text: qsTr("Set")
-        rotation: 0.536
+        enabled: !Client.isConnected
 
         Connections {
             target: setPortBtn
-            onClicked: client.setPort(portField.text)
+            onClicked: Client.setPort(portField.text)
         }
     }
 
     Label {
         id: statusLabel
-        x: 445
-        y: 71
+        x: 499
+        y: 80
         width: 96
         height: 48
-        text: client.connectionStatus
+        text: Client.isConnected ? "Connected" : "Disconnected"
         font.pointSize: 14
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
@@ -89,11 +87,11 @@ Window {
         width: 86
         height: 88
         text: qsTr("Disconnect")
-        enabled: client.connectionStatus === "Connected"
+        enabled: Client.isConnected
 
         Connections {
             target: disconnectBtn
-            onClicked: client.disconnect()
+            onClicked: Client.disconnect()
         }
     }
 
@@ -104,7 +102,7 @@ Window {
         width: 326
         height: 120
         clip: true
-        enabled: client.connectionStatus === "Connected"
+        enabled: Client.isConnected
 
         TextArea {
             id: messageTextArea
@@ -112,11 +110,11 @@ Window {
             y: -6
             width: 326
             height: 120
-            text: client.receivedMessages
+            text: Client.receivedMessages
             font.pointSize: 13
             readOnly: true
             wrapMode: Text.Wrap
-            enabled: client.connectionStatus === "Connected"
+            enabled: Client.isConnected
 //            background: Rectangle {
 //                radius: 2
 //                x: messageTextArea.x
@@ -142,7 +140,7 @@ Window {
                 sendBtn.clicked()
             }
         }
-        enabled: client.connectionStatus === "Connected"
+        enabled: Client.isConnected
     }
 
     Button {
@@ -155,22 +153,22 @@ Window {
         Connections {
             target: sendBtn
             onClicked: {
-                client.tcpWrite(userInputField.text)
+                Client.tcpWrite(userInputField.text)
                 userInputField.text = qsTr("")
             }
         }
-        enabled: client.connectionStatus === "Connected"
+        enabled: Client.isConnected
 
     }
 
     StatusIndicator {
         id: statusIndicator
-        x: 390
-        y: 77
+        x: 414
+        y: 86
         width: 49
         height: 42
         color: "#65c903"
-        active: client.connectionStatus == "Connected" ? true : false
+        active: Client.isConnected
     }
 
     Text {
@@ -196,7 +194,7 @@ Window {
             y: -6
             width: 305
             height: 124
-            text: client.log
+            text: Client.log
             font.pointSize: 13
             readOnly: true
             wrapMode: Text.Wrap
