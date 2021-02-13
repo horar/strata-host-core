@@ -530,8 +530,8 @@ void SGQWTPlot::setForegroundColor(QColor newColor)
         setYLeftAxisColor(foregroundColor_);
         setXAxisColor(foregroundColor_);
         setYRightAxisColor(foregroundColor_);
-        emit foregroundColorChanged();
 
+        emit foregroundColorChanged();
         if (autoUpdate_) {
             update();
         }
@@ -608,7 +608,7 @@ void SGQWTPlot :: setYLeftAxisColor(QColor newColor)
         palette.setColor(QPalette::Text, yLeftAxisColor_);           //for  ticks' labels
         qwtsw_->setPalette(palette);
 
-        emit xAxisColorChanged();
+        emit yLeftAxisColorChanged();
         if (autoUpdate_) {
             update();
         }
@@ -625,7 +625,7 @@ void SGQWTPlot :: setXAxisColor(QColor newColor)
         palette.setColor(QPalette::Text, xAxisColor_);           //for  ticks' labels
         qwtsw_->setPalette(palette);
 
-        emit yLeftAxisColorChanged();
+        emit xAxisColorChanged();
         if (autoUpdate_) {
             update();
         }
