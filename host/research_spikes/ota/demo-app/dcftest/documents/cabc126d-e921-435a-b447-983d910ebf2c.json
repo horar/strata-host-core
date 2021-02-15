@@ -1,0 +1,25 @@
+{
+    "_id": "cabc126d-e921-435a-b447-983d910ebf2c",
+    "_rev": "2-ab508f6626ea92a2c03774bb901e6b29",
+    "channels": "cabc126d-e921-435a-b447-983d910ebf2c",
+    "documents": {
+        "datasheets": [],
+        "downloads": [],
+        "views": []
+    },
+    "firmware": [
+        {
+            "device": "RSL10-rev1"
+        }
+    ],
+    "name": "ONSEC-19-029 REV1",
+    "platform_selector": {
+        "file": "cabc126d-e921-435a-b447-983d910ebf2c/platform_selector/thumb.jpeg",
+        "filename": "image.jpeg",
+        "filesize": "38314",
+        "md5": "8fd574a9a22c59d5348e1fe4b13336a5",
+        "name": "platform_selector",
+        "prettyName": "image.jpeg",
+        "timestamp": "2020-11-03T03:39:25.176Z"
+    }
+}

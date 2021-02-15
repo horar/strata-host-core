@@ -1,0 +1,208 @@
+{
+    "_id": "2286e1e0-4035-46b9-b197-4d729653c101",
+    "_rev": "3-e6b88832badfe8791ff6e8824d4d7995",
+    "channels": "2286e1e0-4035-46b9-b197-4d729653c101",
+    "documents": {
+        "datasheets": [
+            {
+                "category": "Power Management",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/NCV896530-D.PDF",
+                "name": "NCV896530",
+                "opn": "NCV896530",
+                "subcategory": "DC-DC Controllers, Converters, \u0026 Regulators"
+            },
+            {
+                "category": "Sensors",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/NCT375-D.PDF",
+                "name": "NCT375DR2G",
+                "opn": "NCT375DR2G",
+                "subcategory": "Thermal Management"
+            },
+            {
+                "category": "Power Management",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/NCV8664C-D.PDF",
+                "name": "NCV8664CDT50RKG",
+                "opn": "NCV8664CDT50RKG",
+                "subcategory": "LDO Regulators \u0026 Linear Voltage Regulators"
+            },
+            {
+                "category": "Amplifiers \u0026 Comparators",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/NCS210R-D.PDF",
+                "name": "NCS213RSQT2G",
+                "opn": "NCS213RSQT2G",
+                "subcategory": "Current Sense Amplifiers"
+            },
+            {
+                "category": "Memory",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/CAT24C512-D.PDF",
+                "name": "CAT24C512WI-GT3",
+                "opn": "CAT24C512WI-GT3",
+                "subcategory": "EEPROM Memory"
+            },
+            {
+                "category": "Discretes \u0026 Drivers",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/NTMFS4C302N-D.PDF",
+                "name": "NTMFS4C302NT1G",
+                "opn": "NTMFS4C302NT1G",
+                "subcategory": "MOSFETs"
+            },
+            {
+                "category": "Discretes \u0026 Drivers",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/ENA1604-D.PDF",
+                "name": "ATP108-TL-H",
+                "opn": "ATP108-TL-H",
+                "subcategory": "MOSFETs"
+            },
+            {
+                "category": "Discretes \u0026 Drivers",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/BC550-D.pdf",
+                "name": "BC546BTF",
+                "opn": "BC546BTF",
+                "subcategory": "General Purpose and Low VCE(sat) Transistors"
+            },
+            {
+                "category": "Discretes \u0026 Drivers",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/1SMB5913BT3-D.PDF",
+                "name": "SZ1SMB5938BT3G",
+                "opn": "SZ1SMB5938BT3G",
+                "subcategory": "Diodes \u0026 Rectifiers"
+            },
+            {
+                "category": "Discretes \u0026 Drivers",
+                "datasheet": "https://www.onsemi.com/pub/Collateral/MMSZ5221BT1-D.PDF",
+                "name": "MMSZ5225BT1G",
+                "opn": "MMSZ5225BT1G",
+                "subcategory": "Diodes \u0026 Rectifiers"
+            }
+        ],
+        "downloads": [
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/CAD/17a574f5797f7510a211a02fc78cc67e.zip",
+                "filename": "CAD.zip",
+                "filesize": "9963598",
+                "md5": "17a574f5797f7510a211a02fc78cc67e",
+                "name": "CAD",
+                "order": 2,
+                "prettyName": "CAD.zip",
+                "timestamp": "2020-10-29T18:02:35.116Z"
+            },
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/Fabrication/c78d1de5c17eba2d8382f323d70a451a.zip",
+                "filename": "NCV896530.zip",
+                "filesize": "76281",
+                "md5": "c78d1de5c17eba2d8382f323d70a451a",
+                "name": "Fabrication",
+                "order": 1,
+                "prettyName": "NCV896530.zip",
+                "timestamp": "2020-10-29T18:02:35.118Z"
+            },
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/Bill of Materials/1d4f0a7f396336947f02d8fe30d3eb96.zip",
+                "filename": "BOM.zip",
+                "filesize": "22419",
+                "md5": "1d4f0a7f396336947f02d8fe30d3eb96",
+                "name": "Bill of Materials",
+                "order": 3,
+                "prettyName": "BOM.zip",
+                "timestamp": "2020-10-29T18:02:35.119Z"
+            },
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/Bill of Materials/deccb3db9c4d2da8c1cb769c6566204b.xlsx",
+                "filename": "bom.xlsx",
+                "filesize": "14554",
+                "md5": "deccb3db9c4d2da8c1cb769c6566204b",
+                "name": "Bill of Materials",
+                "order": 3,
+                "prettyName": "bom.xlsx",
+                "timestamp": "2020-10-29T18:02:35.120Z"
+            }
+        ],
+        "views": [
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/Block Diagram/751961bdf33799b3b2d592838d60a3fb.pdf",
+                "filename": "block diagram_LVDCDC_NCV896530_public.pdf",
+                "filesize": "63717",
+                "md5": "751961bdf33799b3b2d592838d60a3fb",
+                "name": "Block Diagram",
+                "order": 4,
+                "prettyName": "block diagram_LVDCDC_NCV896530_public.pdf",
+                "timestamp": "2020-10-29T18:02:35.108Z"
+            },
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/Schematic Dongle/9536b3d49b6d6d8590af56fed0ac6eca.pdf",
+                "filename": "onsec-19-029_schematic.pdf",
+                "filesize": "138867",
+                "md5": "9536b3d49b6d6d8590af56fed0ac6eca",
+                "name": "Schematic Dongle",
+                "order": 2,
+                "prettyName": "onsec-19-029_schematic.pdf",
+                "timestamp": "2020-10-29T18:02:35.109Z"
+            },
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/User Guide/c48111f86e8bbcd077e7a5caca66bc86.pdf",
+                "filename": "User Guide.pdf",
+                "filesize": "3364709",
+                "md5": "c48111f86e8bbcd077e7a5caca66bc86",
+                "name": "User Guide",
+                "order": 5,
+                "prettyName": "User Guide.pdf",
+                "timestamp": "2020-10-29T18:02:35.110Z"
+            },
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/Schematic Motherboard/e4a607de206cfc31109e6ad091482d64.pdf",
+                "filename": "STR-LVDCDCECOSYSTEM-R1-GEVK_schematic.pdf",
+                "filesize": "1693121",
+                "md5": "e4a607de206cfc31109e6ad091482d64",
+                "name": "Schematic Motherboard",
+                "order": 1,
+                "prettyName": "STR-LVDCDCECOSYSTEM-R1-GEVK_schematic.pdf",
+                "timestamp": "2020-10-29T18:02:35.112Z"
+            },
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/Schematic Daughterboard/508bac03ce6661728f302bf2182816b5.PDF",
+                "filename": "Schematic NCV896530.PDF",
+                "filesize": "84882",
+                "md5": "508bac03ce6661728f302bf2182816b5",
+                "name": "Schematic Daughterboard",
+                "order": 3,
+                "prettyName": "Schematic NCV896530.PDF",
+                "timestamp": "2020-10-29T18:02:35.113Z"
+            },
+            {
+                "file": "2286e1e0-4035-46b9-b197-4d729653c101/datasheet/datasheet.csv",
+                "filename": "datasheet.csv",
+                "filesize": 897,
+                "md5": "100de332178d7313840085451ec20028",
+                "name": "datasheet",
+                "prettyName": "datasheet.csv",
+                "timestamp": "2020-10-29T18:02:35.123Z"
+            }
+        ]
+    },
+    "firmware": [
+        {
+            "file": "strata_assisted_ecosystem_platform_100.bin",
+            "device": "RSL10-rev1",
+            "md5": "7f408274a80b624f78b0a983739b4239",
+            "timestamp": "2021-01-29 14:28:29",
+            "version": "1.0.0"
+        },
+        {
+            "file": "strata_assisted_ecosystem_platform_101.bin",
+            "device": "RSL10-rev1",
+            "md5": "36476eff13bc3675b7c4cfda43660e96",
+            "timestamp": "2021-02-02 15:06:03",
+            "version": "1.0.1"
+        }
+    ],
+    "name": "STR-PWRNCV896530-R0-GEVK",
+    "platform_selector": {
+        "file": "2286e1e0-4035-46b9-b197-4d729653c101/platform_selector/7b2b7a8120af905307d22da2c46716ef.jpeg",
+        "filename": "thumbnail",
+        "filesize": "7865",
+        "md5": "7b2b7a8120af905307d22da2c46716ef",
+        "name": "platform_selector",
+        "prettyName": "thumbnail",
+        "timestamp": "2020-10-29T18:02:35.123Z"
+    }
+}
