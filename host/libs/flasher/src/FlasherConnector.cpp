@@ -12,6 +12,12 @@ FlasherConnector::FlasherConnector(const device::DevicePtr& device,
     FlasherConnector(device, firmwarePath, QString(), QString(), parent)
 { }
 
+FlasherConnector::FlasherConnector(const QString& fwClassId,
+                                   const device::DevicePtr& device,
+                                   QObject* parent) :
+    FlasherConnector(device, QString(), QString(), fwClassId, parent)
+{ }
+
 FlasherConnector::FlasherConnector(const device::DevicePtr& device,
                                    const QString& firmwarePath,
                                    const QString& firmwareMD5,
@@ -46,6 +52,11 @@ bool FlasherConnector::flash(bool backupBeforeFlash) {
         return false;
     }
 
+    if (filePath_.isEmpty()) {
+        processStartupError(QStringLiteral("No firmware file was provided."));
+        return false;
+    }
+
     if (QFile::exists(filePath_) == false) {
         processStartupError(QStringLiteral("Firmware file does not exist."));
         return false;
@@ -74,13 +85,46 @@ bool FlasherConnector::backup() {
     emit operationStateChanged(operation_, State::Started);
 
     if (action_ != Action::None) {
-        processStartupError(QStringLiteral("Cannot flash firmware because another firmware operation is running."));
+        processStartupError(QStringLiteral("Cannot backup firmware because another firmware operation is running."));
+        return false;
+    }
+
+    if (filePath_.isEmpty()) {
+        processStartupError(QStringLiteral("No backup file was provided."));
         return false;
     }
 
     qCInfo(logCategoryFlasherConnector) << "Starting to backup firmware.";
     action_ = Action::Backup;
     backupFirmware(false);
+
+    return true;
+}
+
+bool FlasherConnector::setFwClassId() {
+    operation_ = Operation::Preparation;
+    emit operationStateChanged(operation_, State::Started);
+
+    if (action_ != Action::None) {
+        processStartupError(QStringLiteral("Cannot set firmware class ID because another firmware operation is running."));
+        return false;
+    }
+
+    if (newFwClassId_.isNull()) {
+        processStartupError(QStringLiteral("No firmware class ID was provided."));
+        return false;
+    }
+
+    qCInfo(logCategoryFlasherConnector) << "Starting to set firmware class ID.";
+    action_ = Action::SetFwClassId;
+
+    flasher_ = std::make_unique<Flasher>(device_, QString(), QString(), newFwClassId_);
+
+    connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
+    connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
+    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
+
+    flasher_->setFwClassId();
 
     return true;
 }
@@ -219,6 +263,10 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         action_ = Action::None;
         emit finished((flasherResult == Flasher::Result::Ok) ? Result::Unsuccess : Result::Failure);
         break;
+    case Action::SetFwClassId :
+        action_ = Action::None;
+        emit finished((flasherResult == Flasher::Result::Ok) ? Result::Success : Result::Unsuccess);
+        break;
     }
 
     return;
@@ -229,6 +277,8 @@ void FlasherConnector::handleFlasherState(Flasher::State flasherState, bool done
 
     switch (flasherState) {
     case Flasher::State::SwitchToBootloader :
+        // When FlasherConnector starts some operation, 'operation_' is set to 'Preparation'.
+        // Ignore 'SwitchToBootloader' state if 'operation_' is not 'Preparation' and this state is not done.
         if ((operation_ != Operation::Preparation) || (done == false)) {
             return;
         }

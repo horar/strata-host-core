@@ -27,6 +27,13 @@ public:
 
     /*!
      * FlasherConnector constructor.
+     * \param fwClassId firmware class id which will be set to device
+     * \param device device which will be used by FlasherConnector
+     */
+    FlasherConnector(const QString& fwClassId, const device::DevicePtr& device, QObject* parent = nullptr);
+
+    /*!
+     * FlasherConnector constructor.
      * \param device device which will be used by FlasherConnector
      * \param firmwarePath path to firmware file
      * \param firmwareMD5 MD5 checksum of firmware
@@ -63,6 +70,12 @@ public:
      * \return true if backup process has started, otherwise false
      */
     bool backup();
+
+    /*!
+     * Set Firmware Class ID (without flashing firmware)
+     * \return true if set process has started, otherwise false
+     */
+    bool setFwClassId();
 
     /*!
      * Stop flash/backup firmware operation.
@@ -165,11 +178,12 @@ private:
 
     enum class Action {
         None,
-        Flash,      // only flash firmware (without backup)
-        Backup,     // only backup firmware
-        BackupOld,  // backup old firmware
-        FlashNew,   // flash new firmware
-        FlashOld    // flash backed up (old) firmware
+        Flash,        // only flash firmware (without backup)
+        Backup,       // only backup firmware
+        BackupOld,    // backup old firmware
+        FlashNew,     // flash new firmware
+        FlashOld,     // flash backed up (old) firmware
+        SetFwClassId  // set firmware class ID (without flash)
     };
     Action action_;
 
