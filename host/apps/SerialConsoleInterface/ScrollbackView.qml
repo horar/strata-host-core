@@ -174,7 +174,7 @@ Item {
         boundsBehavior: Flickable.StopAtBounds
 
         onActiveFocusChanged: {
-            if ((activeFocus === false) && (contextMenu.visible === false)) {
+            if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
                 clearSelection()
             }
         }
@@ -226,7 +226,7 @@ Item {
             onReleased: {
                 if (mouse.button === Qt.RightButton) {
                     if (textSelectionMouseArea.containsMouse) {
-                        contextMenu.popup(null)
+                        contextMenuPopup.popup(null)
                     }
                     return
                 }
@@ -300,7 +300,7 @@ Item {
             }
 
             SGWidgets.SGContextMenu {
-                id: contextMenu
+                id: contextMenuPopup
 
                 Action {
                     id: undoAction

@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.12
 import tech.strata.theme 1.0
 
 Menu {
+    id: contextMenu
     topPadding: 8
     bottomPadding: 8
     implicitWidth: 150

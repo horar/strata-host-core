@@ -181,68 +181,13 @@ FocusScope {
 
             onReleased: {
                 if (containsMouse && (mouse.button === Qt.RightButton)) {
-                    var selectionStart = edit.selectionStart
-                    var selectionEnd = edit.selectionEnd
-                    contextMenu.popup(null)
-                    edit.select(selectionStart, selectionEnd)
+                    contextMenuPopup.popup(null)
                 }
             }
 
-            SGWidgets.SGContextMenu {
-                id: contextMenu
-                Action {
-                    id: undoAction
-                    text: qsTr("Undo")
-                    enabled: edit.canUndo
-                    onTriggered: {
-                        edit.undo()
-                    }
-                }
-                Action {
-                    id: redoAction
-                    text: qsTr("Redo")
-                    enabled: edit.canRedo
-                    onTriggered: {
-                        edit.redo()
-                    }
-                }
-                MenuSeparator { }
-                Action {
-                    id: cutAction
-                    text: qsTr("Cut")
-                    enabled: edit.selectedText.length > 0
-                    onTriggered: {
-                        edit.cut()
-                    }
-                }
-                Action {
-                    id: copyAction
-                    text: qsTr("Copy")
-                    enabled: edit.selectedText.length > 0
-                    onTriggered: {
-                        edit.copy()
-                    }
-                }
-                Action {
-                    id: pasteAction
-                    text: qsTr("Paste")
-                    enabled: edit.canPaste
-                    onTriggered: {
-                        edit.paste()
-                    }
-                }
-                MenuSeparator { }
-                Action {
-                    id: selectAction
-                    text: qsTr("Select All")
-                    enabled: edit.length > 0
-                    onTriggered: {
-                        edit.selectAll()
-                    }
-                }
-                onClosed: {
-                    edit.forceActiveFocus()
-                }
+            SGWidgets.SGContextMenuEdit {
+                id: contextMenuPopup
+                textEditor: edit
             }
         }
 
@@ -299,7 +244,7 @@ FocusScope {
             }
 
             onActiveFocusChanged: {
-                if ((activeFocus === false) && (contextMenu.visible === false)) {
+                if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
                     edit.deselect()
                 }
             }
