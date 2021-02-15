@@ -240,7 +240,7 @@ FocusScope {
                 opacity: edit.enabled ? 0.5 : 1
                 font: edit.font
                 elide: Text.ElideRight
-                text: "Enter JSON Message..." 
+                text: "Enter JSON Message..."
             }
         }
     }
