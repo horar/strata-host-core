@@ -191,8 +191,7 @@ class Flasher : public QObject
 
         // methods for adding operations to operationList_
         void addSwitchToBootloaderOperation();
-        void addClearFwClassIdOperation();
-        void addSetFwClassIdOperation();
+        void addSetFwClassIdOperation(bool clear = false);
         void addFlashOperation(bool flashingFirmware);
         void addBackupFirmwareOperation();
         void addStartApplicationOperation();

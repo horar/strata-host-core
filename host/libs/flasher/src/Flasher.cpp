@@ -61,13 +61,13 @@ void Flasher::flashFirmware(bool startApplication)
     addSwitchToBootloaderOperation();      // switch to bootloader
 
     if (fwClassId_.isNull() == false) {
-        addClearFwClassIdOperation();      // clear fw_class_id
+        addSetFwClassIdOperation(true);    // clear fw_class_id
     }
 
     addFlashOperation(flashingFw);         // flash firmware
 
     if (fwClassId_.isNull() == false) {
-        addSetFwClassIdOperation();        // set fw_class_id
+        addSetFwClassIdOperation(false);   // set fw_class_id
     }
 
     if (startApplication) {
@@ -153,7 +153,7 @@ void Flasher::setFwClassId(bool startApplication)
 
     addSwitchToBootloaderOperation();    // switch to bootloader
 
-    addSetFwClassIdOperation();          // set fw_class_id
+    addSetFwClassIdOperation(false);     // set fw_class_id
 
     if (startApplication) {
         addStartApplicationOperation();  // start application
@@ -554,24 +554,17 @@ void Flasher::addSwitchToBootloaderOperation()
             this);
 }
 
-void Flasher::addClearFwClassIdOperation()
+void Flasher::addSetFwClassIdOperation(bool clear)
 {
     operation::SetAssistedPlatformId* setAssisted = new operation::SetAssistedPlatformId(device_);
-    setAssisted->setFwClassId(QStringLiteral("00000000-0000-4000-0000-000000000000"));
+    if (clear) {
+        setAssisted->setFwClassId(QStringLiteral("00000000-0000-4000-0000-000000000000"));
+    } else {
+        setAssisted->setFwClassId(fwClassId_);
+    }
     operationList_.emplace_back(
             OperationPtr(setAssisted, operationDeleter),
-            State::ClearFwClassId,
-            std::bind(&Flasher::setAssistPlatfIdFinished, this, std::placeholders::_1),
-            this);
-}
-
-void Flasher::addSetFwClassIdOperation()
-{
-    operation::SetAssistedPlatformId* setAssisted = new operation::SetAssistedPlatformId(device_);
-    setAssisted->setFwClassId(fwClassId_);
-    operationList_.emplace_back(
-            OperationPtr(setAssisted, operationDeleter),
-            State::SetFwClassId,
+            (clear) ? State::ClearFwClassId : State::SetFwClassId,
             std::bind(&Flasher::setAssistPlatfIdFinished, this, std::placeholders::_1),
             this);
 }
