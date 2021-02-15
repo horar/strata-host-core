@@ -3,8 +3,38 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 
 TextEdit {
     id: control
+    persistentSelection: contextMenuEnabled
 
     property real fontSizeMultiplier: 1.0
+    property bool contextMenuEnabled: false
 
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
+
+    onActiveFocusChanged: {
+        if ((contextMenuEnabled === true) && (activeFocus === false) && (contextMenuPopup.visible === false)) {
+            control.deselect()
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.IBeamCursor
+        acceptedButtons: Qt.RightButton
+        enabled: contextMenuEnabled
+
+        onReleased: {
+            if (containsMouse) {
+                contextMenuPopup.popup(null)
+            }
+        }
+
+        onClicked: {
+            control.forceActiveFocus()
+        }
+
+        SGWidgets.SGContextMenuEdit {
+            id: contextMenuPopup
+            textEditor: control
+        }
+    }
 }

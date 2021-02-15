@@ -39,6 +39,7 @@ FocusScope {
 
             SGWidgets.SGFileSelector {
                 id: exportPathSelector
+                contextMenuEnabled: true
                 width: content.width
                 hasHelperText: false
                 filePath: model.platform.scrollbackModel.exportFilePath
@@ -133,6 +134,7 @@ FocusScope {
 
             SGWidgets.SGFileSelector {
                 id: autoExportPathSelector
+                contextMenuEnabled: true
                 width: content.width
                 anchors {
                     top: autoExportSubTitle.bottom

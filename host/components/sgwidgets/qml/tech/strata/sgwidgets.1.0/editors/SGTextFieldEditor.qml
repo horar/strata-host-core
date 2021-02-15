@@ -15,6 +15,7 @@ SGWidgets.SGBaseEditor {
     property bool passwordMode: false
     property string textFieldLeftIconSource
     property bool textFieldBusyIndicatorRunning: false
+    property alias contextMenuEnabled: editorItem.contextMenuEnabled
 
     editor: SGWidgets.SGTextField {
         id: editorItem
