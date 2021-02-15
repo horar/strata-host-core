@@ -218,15 +218,43 @@ SGWidgets.SGDialog {
 
                             SGWidgets.SGTextField {
                                 id: filterStringTextField
+                                persistentSelection: true   // must deselect manually
 
                                 onTextChanged: {
                                     filterConditionModel.setProperty(index, "filter_string", text)
+                                }
+
+                                onActiveFocusChanged: {
+                                    if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                                        filterStringTextField.deselect()
+                                    }
                                 }
 
                                 Binding {
                                     target: filterStringTextField
                                     property: "text"
                                     value: model["filter_string"]
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.IBeamCursor
+                                    acceptedButtons: Qt.RightButton
+
+                                    onReleased: {
+                                        if (containsMouse) {
+                                            contextMenuPopup.popup(null)
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        contextMenuPopup.forceActiveFocus()
+                                    }
+
+                                    SGWidgets.SGContextMenuEdit {
+                                        id: contextMenuPopup
+                                        textEditor: filterStringTextField
+                                    }
                                 }
                             }
 
