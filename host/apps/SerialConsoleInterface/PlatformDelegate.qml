@@ -62,13 +62,13 @@ FocusScope {
             }
 
             Shortcut {
-                id: sendMultilineCommandWinOS
+                id: sendMessageEnterShortcut
                 sequence: "Ctrl+Enter"
                 onActivated: mainPage.sendMessageInputTextAsComand()
             }
 
             Shortcut {
-                id: sendMultilineCommandMacOS
+                id: sendMessageReturnShortcut
                 sequence: "Ctrl+Return"
                 onActivated: mainPage.sendMessageInputTextAsComand()
             }
@@ -402,7 +402,8 @@ FocusScope {
 
                     enabled: messageEditor.enabled
                     focusPolicy: Qt.NoFocus
-                    hintText: prettifyHintText("Send command", showSendShorcut(sendMultilineCommandMacOS,sendMultilineCommandWinOS))
+                    hintText: prettifyHintText("Send command",
+                                               Qt.platform.os === "osx" ? sendMessageReturnShortcut.nativeText : sendMessageEnterShortcut.nativeText)
                     text: qsTr("SEND")
                     onClicked: {
                         sendMessageInputTextAsComand()
@@ -511,9 +512,5 @@ FocusScope {
 
     function prettifyHintText(hintText, shortcut) {
         return hintText + " - " + shortcut
-    }
-
-    function showSendShorcut(macShortcut, winShortcut) {
-        return Qt.platform.os === "osx" ? macShortcut.nativeText : winShortcut.nativeText 
     }
 }
