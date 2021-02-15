@@ -238,8 +238,9 @@ Item {
             }
 
             onPositionChanged: {
-                if (leftMouseButtonPressed === false)
+                if (leftMouseButtonPressed === false) {
                     return
+                }
 
                 //do not allow to select delegates outside of view
                 if (mouse.y < 0) {
