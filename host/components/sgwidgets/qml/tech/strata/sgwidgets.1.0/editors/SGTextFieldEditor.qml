@@ -15,11 +15,12 @@ SGWidgets.SGBaseEditor {
     property bool passwordMode: false
     property string textFieldLeftIconSource
     property bool textFieldBusyIndicatorRunning: false
-    property alias contextMenuEnabled: editorItem.contextMenuEnabled
+    property bool contextMenuEnabled: false
 
     editor: SGWidgets.SGTextField {
         id: editorItem
         width: root.itemWidth
+        contextMenuEnabled: root.contextMenuEnabled
 
         text: root.text
         isValid: root.validStatus !== SGWidgets.SGBaseEditor.Invalid
