@@ -32,6 +32,7 @@ FlasherConnector::FlasherConnector(const device::DevicePtr& device,
                                    QObject* parent) :
     QObject(parent),
     device_(device),
+    flasher_(nullptr, nullptr),
     filePath_(firmwarePath),
     newFirmwareMD5_(firmwareMD5),
     newFwClassId_(fwClassId),
@@ -118,7 +119,7 @@ bool FlasherConnector::setFwClassId() {
     qCInfo(logCategoryFlasherConnector) << "Starting to set firmware class ID.";
     action_ = Action::SetFwClassId;
 
-    flasher_ = std::make_unique<Flasher>(device_, QString(), QString(), newFwClassId_);
+    flasher_ = FlasherPtr(new Flasher(device_, QString(), QString(), newFwClassId_), flasherDeleter);
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::flasherState, this, &FlasherConnector::handleFlasherState);
@@ -135,15 +136,19 @@ void FlasherConnector::stop() {
     }
 }
 
+void FlasherConnector::flasherDeleter(Flasher* flasher) {
+    flasher->deleteLater();
+}
+
 void FlasherConnector::flashFirmware(bool flashOld) {
     QString firmwarePath;
     if (flashOld) {
         firmwarePath = tmpBackupFile_.fileName();
-        flasher_ = std::make_unique<Flasher>(device_, firmwarePath, QString(), oldFwClassId_);
+        flasher_ = FlasherPtr(new Flasher(device_, firmwarePath, QString(), oldFwClassId_), flasherDeleter);
         connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::restoreProgress);
     } else {
         firmwarePath = filePath_;
-        flasher_ = std::make_unique<Flasher>(device_, firmwarePath, newFirmwareMD5_, newFwClassId_);
+        flasher_ = FlasherPtr(new Flasher(device_, firmwarePath, newFirmwareMD5_, newFwClassId_), flasherDeleter);
         connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FlasherConnector::flashProgress);
     }
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
@@ -159,7 +164,7 @@ void FlasherConnector::backupFirmware(bool backupOld) {
     bool startApp = (backupOld) ? false : true;
 
     const QString& firmwarePath = (backupOld) ? tmpBackupFile_.fileName() : filePath_;
-    flasher_ = std::make_unique<Flasher>(device_, firmwarePath);
+    flasher_ = FlasherPtr(new Flasher(device_, firmwarePath), flasherDeleter);
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::backupFirmwareProgress, this, &FlasherConnector::backupProgress);
@@ -176,6 +181,8 @@ void FlasherConnector::processStartupError(const QString& errorString) {
 }
 
 void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QString errorString) {
+    // We cannot delete object while we are handling signal emitted by it.
+    // This is reason why custom deleter which calls deleteLater() is needed.
     flasher_.reset();
 
     QString errorMessage;

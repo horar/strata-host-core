@@ -164,12 +164,18 @@ private slots:
     void handleFlasherState(Flasher::State flasherState, bool done);
 
 private:
+    // deleter for flasher_ unique pointer
+    static void flasherDeleter(Flasher* flasher);
+
     void flashFirmware(bool flashOld);
     void backupFirmware(bool backupOld);
     void processStartupError(const QString& errorString);
 
     device::DevicePtr device_;
-    std::unique_ptr<Flasher> flasher_;
+
+    typedef std::unique_ptr<Flasher, void(*)(Flasher*)> FlasherPtr;
+    FlasherPtr flasher_;
+
     const QString filePath_;
     const QString newFirmwareMD5_;
     const QString newFwClassId_;
