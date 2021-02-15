@@ -17,6 +17,7 @@ class UrlConfig : public QObject{
     Q_PROPERTY(QString privacyPolicyUrl READ getPrivacyPolicyUrl CONSTANT);
     Q_PROPERTY(QString licenseUrl READ getLicenseUrl CONSTANT);
     Q_PROPERTY(QString authServer READ getAuthServer CONSTANT);
+    Q_PROPERTY(QString nonprodServer READ getNonprodServer CONSTANT);
 
 public:
     explicit UrlConfig(QObject *parent = nullptr);
@@ -28,6 +29,7 @@ public:
     QString getMouserUrl() const;
     QString getDigiKeyUrl() const;
     QString getAvnetUrl() const;
+    QString getNonprodServer() const;
     virtual ~UrlConfig();
 
 
@@ -35,6 +37,7 @@ public:
 
 private:
     QString authServer_;
+    QString nonprodServer_;
     QString salesPopupUrl_;
     QString licenseUrl_;
     QString privacyPolicyUrl_;
