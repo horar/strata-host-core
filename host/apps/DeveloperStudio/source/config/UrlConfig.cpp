@@ -43,7 +43,7 @@ bool UrlConfig::parseUrl(const QString &fileName) {
             return false;
     }
 
-    if (setUrlValue(value[QLatin1String("nonprod_auth_server")], &nonprodServer_) == false) {
+    if (setUrlValue(value[QLatin1String("test_auth_server")], &testAuthServer_) == false) {
         qCCritical(logCategoryStrataDevStudioConfig) << " non-production server was not set";
             return false;
     }
@@ -98,8 +98,8 @@ QString UrlConfig::getAuthServer() const {
     return authServer_;
 }
 
-QString UrlConfig::getNonprodServer() const {
-    return nonprodServer_;
+QString UrlConfig::getTestAuthServer() const {
+    return testAuthServer_;
 }
 
 QString UrlConfig::getMouserUrl() const {

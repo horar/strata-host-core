@@ -200,7 +200,7 @@ Item {
                     if (Rest.url !== urls.authServer) {
                         Rest.url = urls.authServer
                     } else {
-                        Rest.url = urls.nonprodServer
+                        Rest.url = urls.testAuthServer
                     }
                     Signals.serverChanged()
                 }
