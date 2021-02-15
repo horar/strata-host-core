@@ -1,10 +1,12 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtGraphicalEffects 1.12
 import tech.strata.theme 1.0
 
 Menu {
     topPadding: 8
     bottomPadding: 8
+    implicitWidth: 150
 
     delegate: MenuItem {
             id: menuItem
@@ -20,12 +22,25 @@ Menu {
             }
     }
 
-    background: Rectangle {
-        id: contextMenuBackground
-        implicitWidth: 150
-        color: Theme.palette.white
-        border.color: Theme.palette.gray
-        border.width: 1
-        radius: 4
+    background: Item {
+        RectangularGlow {
+            id: contextMenuEffect
+            anchors {
+                fill: parent
+                topMargin: glowRadius - 2
+                bottomMargin: 0
+            }
+            glowRadius: 8
+            color: Theme.palette.gray
+        }
+
+        Rectangle {
+            id: contextMenuBackground
+            anchors.fill: parent
+            color: Theme.palette.white
+            border.color: Theme.palette.gray
+            border.width: 1
+            radius: 4
+        }
     }
 }
