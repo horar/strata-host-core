@@ -55,6 +55,7 @@ class Flasher : public QObject
          * \param device device which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
          */
+
         Flasher(const device::DevicePtr& device, const QString& fileName);
         /*!
          * Flasher constructor.
@@ -163,6 +164,7 @@ class Flasher : public QObject
         bool prepareForFlash(bool flashFirmware);
         // prepare for backup (file checks)
         bool prepareForBackup();
+
         // run next operation in operationList_
         void runNextOperation();
         // finish flasher
@@ -187,7 +189,14 @@ class Flasher : public QObject
         // error logic when dynamic_cast on DeviceOperation fails
         void operationCastError();
 
-        device::DevicePtr device_;
+        // methods for adding operations to operationList_
+        void addSwitchToBootloaderOperation();
+        void addClearFwClassIdOperation();
+        void addSetFwClassIdOperation();
+        void addFlashOperation(bool flashingFirmware);
+        void addBackupFirmwareOperation();
+        void addStartApplicationOperation();
+        void addIdentifyOperation(bool flashingFirmware);
 
         typedef std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> OperationPtr;
 
@@ -204,6 +213,8 @@ class Flasher : public QObject
 
         std::vector<FlasherOperation> operationList_;
         std::vector<FlasherOperation>::iterator currentOperation_;
+
+        device::DevicePtr device_;
 
         QFile binaryFile_;
         QString fileMD5_;

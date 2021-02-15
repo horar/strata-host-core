@@ -58,50 +58,22 @@ void Flasher::flashFirmware(bool startApplication)
 
     operationList_.reserve(5);
 
-    operationList_.emplace_back(
-            OperationPtr(new operation::StartBootloader(device_), operationDeleter),
-            State::SwitchToBootloader,
-            std::bind(&Flasher::startBootloaderFinished, this, std::placeholders::_1),
-            this);
+    addSwitchToBootloaderOperation();      // switch to bootloader
 
     if (fwClassId_.isNull() == false) {
-        operation::SetAssistedPlatformId* setAssisted = new operation::SetAssistedPlatformId(device_);
-        setAssisted->setFwClassId(QStringLiteral("00000000-0000-4000-0000-000000000000"));
-        operationList_.emplace_back(
-                OperationPtr(setAssisted, operationDeleter),
-                State::ClearFwClassId,
-                std::bind(&Flasher::setAssistPlatfIdFinished, this, std::placeholders::_1),
-                this);
+        addClearFwClassIdOperation();      // clear fw_class_id
     }
 
-    operationList_.emplace_back(
-            OperationPtr(new operation::Flash(device_, binaryFile_.size(), chunkCount_, fileMD5_, flashingFw), operationDeleter),
-            State::FlashFirmware,
-            std::bind(&Flasher::flashFinished, this, flashingFw, std::placeholders::_1),
-            this);
+    addFlashOperation(flashingFw);         // flash firmware
 
     if (fwClassId_.isNull() == false) {
-        operation::SetAssistedPlatformId* setAssisted = new operation::SetAssistedPlatformId(device_);
-        setAssisted->setFwClassId(fwClassId_);
-        operationList_.emplace_back(
-                OperationPtr(setAssisted, operationDeleter),
-                State::SetFwClassId,
-                std::bind(&Flasher::setAssistPlatfIdFinished, this, std::placeholders::_1),
-                this);
+        addSetFwClassIdOperation();        // set fw_class_id
     }
 
     if (startApplication) {
-        operationList_.emplace_back(
-                OperationPtr(new operation::StartApplication(device_), operationDeleter),
-                State::StartApplication,
-                std::bind(&Flasher::startApplicationFinished, this, std::placeholders::_1),
-                this);
+        addStartApplicationOperation();    // start application
     } else {
-        operationList_.emplace_back(
-                OperationPtr(new operation::Identify(device_, true), operationDeleter),
-                State::IdentifyBoard,
-                std::bind(&Flasher::identifyFinished, this, flashingFw, std::placeholders::_1),
-                this);
+        addIdentifyOperation(flashingFw);  // identify board
     }
 
     currentOperation_ = operationList_.begin();
@@ -124,23 +96,11 @@ void Flasher::flashBootloader()
 
     operationList_.reserve(3);
 
-    operationList_.emplace_back(
-            OperationPtr(new operation::StartBootloader(device_), operationDeleter),
-            State::SwitchToBootloader,
-            std::bind(&Flasher::startBootloaderFinished, this, std::placeholders::_1),
-            this);
+    addSwitchToBootloaderOperation();  // switch to bootloader
 
-    operationList_.emplace_back(
-            OperationPtr(new operation::Flash(device_, binaryFile_.size(), chunkCount_, fileMD5_, flashingFw), operationDeleter),
-            State::FlashBootloader,
-            std::bind(&Flasher::flashFinished, this, flashingFw, std::placeholders::_1),
-            this);
+    addFlashOperation(flashingFw);     // flash bootloader
 
-    operationList_.emplace_back(
-            OperationPtr(new operation::Identify(device_, true, MAX_GET_FW_INFO_RETRIES), operationDeleter),
-            State::IdentifyBoard,
-            std::bind(&Flasher::identifyFinished, this, flashingFw, std::placeholders::_1),
-            this);
+    addIdentifyOperation(flashingFw);  // identify board
 
     currentOperation_ = operationList_.begin();
 
@@ -161,24 +121,12 @@ void Flasher::backupFirmware(bool startApplication)
 
     operationList_.reserve(3);
 
-    operationList_.emplace_back(
-            OperationPtr(new operation::StartBootloader(device_), operationDeleter),
-            State::SwitchToBootloader,
-            std::bind(&Flasher::startBootloaderFinished, this, std::placeholders::_1),
-            this);
+    addSwitchToBootloaderOperation();    // switch to bootloader
 
-    operationList_.emplace_back(
-            OperationPtr(new operation::Backup(device_), operationDeleter),
-            State::BackupFirmware,
-            std::bind(&Flasher::backupFinished, this, std::placeholders::_1),
-            this);
+    addBackupFirmwareOperation();        // backup firmware
 
     if (startApplication) {
-        operationList_.emplace_back(
-                OperationPtr(new operation::StartApplication(device_), operationDeleter),
-                State::StartApplication,
-                std::bind(&Flasher::startApplicationFinished, this, std::placeholders::_1),
-                this);
+        addStartApplicationOperation();  // start application
     }
 
     currentOperation_ = operationList_.begin();
@@ -203,26 +151,12 @@ void Flasher::setFwClassId(bool startApplication)
 
     operationList_.reserve(3);
 
-    operationList_.emplace_back(
-            OperationPtr(new operation::StartBootloader(device_), operationDeleter),
-            State::SwitchToBootloader,
-            std::bind(&Flasher::startBootloaderFinished, this, std::placeholders::_1),
-            this);
+    addSwitchToBootloaderOperation();    // switch to bootloader
 
-    operation::SetAssistedPlatformId* setAssisted = new operation::SetAssistedPlatformId(device_);
-    setAssisted->setFwClassId(fwClassId_);
-    operationList_.emplace_back(
-            OperationPtr(setAssisted, operationDeleter),
-            State::SetFwClassId,
-            std::bind(&Flasher::setAssistPlatfIdFinished, this, std::placeholders::_1),
-            this);
+    addSetFwClassIdOperation();          // set fw_class_id
 
     if (startApplication) {
-        operationList_.emplace_back(
-                OperationPtr(new operation::StartApplication(device_), operationDeleter),
-                State::StartApplication,
-                std::bind(&Flasher::startApplicationFinished, this, std::placeholders::_1),
-                this);
+        addStartApplicationOperation();  // start application
     }
 
     currentOperation_ = operationList_.begin();
@@ -609,6 +543,73 @@ void Flasher::operationCastError()
     QString errStr(QStringLiteral("Unexpected flasher operation error."));
     qCCritical(logCategoryFlasher) << device_ << errStr;
     finish(Result::Error, errStr);
+}
+
+void Flasher::addSwitchToBootloaderOperation()
+{
+    operationList_.emplace_back(
+            OperationPtr(new operation::StartBootloader(device_), operationDeleter),
+            State::SwitchToBootloader,
+            std::bind(&Flasher::startBootloaderFinished, this, std::placeholders::_1),
+            this);
+}
+
+void Flasher::addClearFwClassIdOperation()
+{
+    operation::SetAssistedPlatformId* setAssisted = new operation::SetAssistedPlatformId(device_);
+    setAssisted->setFwClassId(QStringLiteral("00000000-0000-4000-0000-000000000000"));
+    operationList_.emplace_back(
+            OperationPtr(setAssisted, operationDeleter),
+            State::ClearFwClassId,
+            std::bind(&Flasher::setAssistPlatfIdFinished, this, std::placeholders::_1),
+            this);
+}
+
+void Flasher::addSetFwClassIdOperation()
+{
+    operation::SetAssistedPlatformId* setAssisted = new operation::SetAssistedPlatformId(device_);
+    setAssisted->setFwClassId(fwClassId_);
+    operationList_.emplace_back(
+            OperationPtr(setAssisted, operationDeleter),
+            State::SetFwClassId,
+            std::bind(&Flasher::setAssistPlatfIdFinished, this, std::placeholders::_1),
+            this);
+}
+
+void Flasher::addFlashOperation(bool flashingFirmware)
+{
+    operationList_.emplace_back(
+            OperationPtr(new operation::Flash(device_, binaryFile_.size(), chunkCount_, fileMD5_, flashingFirmware), operationDeleter),
+            (flashingFirmware) ? State::FlashFirmware : State::FlashBootloader,
+            std::bind(&Flasher::flashFinished, this, flashingFirmware, std::placeholders::_1),
+            this);
+}
+
+void Flasher::addBackupFirmwareOperation()
+{
+    operationList_.emplace_back(
+            OperationPtr(new operation::Backup(device_), operationDeleter),
+            State::BackupFirmware,
+            std::bind(&Flasher::backupFinished, this, std::placeholders::_1),
+            this);
+}
+
+void Flasher::addStartApplicationOperation()
+{
+    operationList_.emplace_back(
+            OperationPtr(new operation::StartApplication(device_), operationDeleter),
+            State::StartApplication,
+            std::bind(&Flasher::startApplicationFinished, this, std::placeholders::_1),
+            this);
+}
+
+void Flasher::addIdentifyOperation(bool flashingFirmware)
+{
+    operationList_.emplace_back(
+            OperationPtr(new operation::Identify(device_, true, MAX_GET_FW_INFO_RETRIES), operationDeleter),
+            State::IdentifyBoard,
+            std::bind(&Flasher::identifyFinished, this, flashingFirmware, std::placeholders::_1),
+            this);
 }
 
 }  // namespace
