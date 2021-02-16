@@ -16,25 +16,28 @@ TextEdit {
         }
     }
 
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.IBeamCursor
-        acceptedButtons: Qt.RightButton
-        enabled: contextMenuEnabled
+    Loader {
+        id: contextMenuPopupLoader
+        active: contextMenuEnabled
+        sourceComponent: MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.RightButton
 
-        onReleased: {
-            if (containsMouse) {
-                contextMenuPopup.popup(null)
+            onReleased: {
+                if (containsMouse) {
+                    contextMenuPopup.popup(null)
+                }
             }
-        }
 
-        onClicked: {
-            control.forceActiveFocus()
-        }
+            onClicked: {
+                control.forceActiveFocus()
+            }
 
-        SGWidgets.SGContextMenuEdit {
-            id: contextMenuPopup
-            textEditor: control
+            SGWidgets.SGContextMenuEdit {
+                id: contextMenuPopup
+                textEditor: control
+            }
         }
     }
 }
