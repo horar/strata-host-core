@@ -42,7 +42,6 @@ Item {
         setControlIcon()
     }
 
-<<<<<<< HEAD
     Connections {
         target: Help.utility
 
@@ -65,7 +64,7 @@ Item {
                 dropDownPopup.z = -1
             }
         }
-=======
+    }
     onViewChanged: {
         setSelectedButton()
     }
@@ -79,7 +78,6 @@ Item {
 
         // must call last - model entry/delegate begins destruction
         NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)
->>>>>>> 9ddfe6758621f5aff99f49aa7a579d11710822e5
     }
 
     function menuClicked(index) {
@@ -260,7 +258,6 @@ Item {
         width: menu.width
         height: menu.height
         padding: 0
-<<<<<<< HEAD
         closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
 
         onOpened: {
@@ -269,9 +266,6 @@ Item {
                 dropDownPopup.z = -1
             }
         }
-=======
-        closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
->>>>>>> 9ddfe6758621f5aff99f49aa7a579d11710822e5
 
         Rectangle {
             id: menu
