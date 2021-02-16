@@ -11,7 +11,7 @@ TextEdit {
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
 
     onActiveFocusChanged: {
-        if ((contextMenuEnabled === true) && (activeFocus === false) && (contextMenuPopup.visible === false)) {
+        if ((contextMenuEnabled === true) && (activeFocus === false) && (contextMenuPopupLoader.item.contextMenuPopupVisible === false)) {
             control.deselect()
         }
     }
@@ -19,10 +19,14 @@ TextEdit {
     Loader {
         id: contextMenuPopupLoader
         active: contextMenuEnabled
+        anchors.fill: parent
+
         sourceComponent: MouseArea {
             anchors.fill: parent
             cursorShape: Qt.IBeamCursor
             acceptedButtons: Qt.RightButton
+
+            property alias contextMenuPopupVisible: contextMenuPopup.visible
 
             onReleased: {
                 if (containsMouse) {
