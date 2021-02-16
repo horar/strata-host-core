@@ -90,6 +90,12 @@ private slots:
      */
     void newServerMessage(const QByteArray &jsonServerMessage);
 
+    /**
+     * Handles timed-out requests.
+     * @param [in] requestId request id of the timed-out request.
+     */
+    void onRequestTimedout(int requestId);
+
 private:
     /**
      * Parse the incoming json message from StrataServer into a Message object.

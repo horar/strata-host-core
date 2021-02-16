@@ -557,3 +557,27 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
         QVERIFY_(errorCallbackHander);
     }
 }
+
+void StrataClientTest::testTimedoutRequest()
+{
+    using Message = strata::strataRPC::Message;
+    using DeferredRequest = strata::strataRPC::DeferredRequest;
+
+    int testsNum = 10;
+    int timedOutRequests = 0;
+
+    strata::strataRPC::ServerConnector server(address_);
+    server.initilizeConnector();
+
+    StrataClient client(address_);
+    client.connectServer();
+
+    for (int i = 0; i < testsNum; i++) {
+        auto deferredRequest = client.sendRequest("test_timeout_request", QJsonObject({{}}));
+        QVERIFY_(deferredRequest != nullptr);
+        connect(deferredRequest, &DeferredRequest::requestTimedout, this,
+                [&timedOutRequests](int) { ++timedOutRequests; });
+    }
+    waitForZmqMessages(1000);
+    QCOMPARE_(timedOutRequests, testsNum);
+}

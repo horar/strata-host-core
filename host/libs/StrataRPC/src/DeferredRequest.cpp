@@ -1,10 +1,13 @@
 #include <StrataRPC/DeferredRequest.h>
-#include <QDebug>
 #include <QMetaMethod>
 using namespace strata::strataRPC;
 
-DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_(id)
+DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_(id), timer_(this)
 {
+    timer_.setSingleShot(true);
+    connect(&timer_, &QTimer::timeout, this, [this]() {
+        emit requestTimedout(id_);
+    });
 }
 
 DeferredRequest::~DeferredRequest()
@@ -34,4 +37,14 @@ void DeferredRequest::callSuccessCallback(const Message &message)
 void DeferredRequest::callErrorCallback(const Message &message)
 {
     emit finishedWithError(message);
+}
+
+void DeferredRequest::startTimer() 
+{
+    timer_.start(500);
+}
+
+void DeferredRequest::stopTimer() 
+{
+    timer_.stop();
 }

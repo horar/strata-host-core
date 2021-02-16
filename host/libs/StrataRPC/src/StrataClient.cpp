@@ -71,8 +71,8 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
         return;
     }
 
-    qCDebug(logCategoryStrataClient) << "def req address" << deferredRequest;
     if (deferredRequest != nullptr) {
+        deferredRequest->stopTimer();
         if (serverMessage.messageType == Message::MessageType::Error &&
             deferredRequest->hasErrorCallback()) {
             qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
@@ -87,6 +87,7 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
             deferredRequest->deleteLater();
             return;
         }
+        deferredRequest->deleteLater();
     }
     qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
     emit newServerMessageParsed(serverMessage);
@@ -125,6 +126,10 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
         qCCritical(logCategoryStrataClient) << "Failed to send request.";
         return nullptr;
     }
+
+    deferredRequest->startTimer();
+    connect(deferredRequest, &DeferredRequest::requestTimedout, this,
+            &StrataClient::onRequestTimedout);
 
     return deferredRequest;
 }
@@ -225,4 +230,17 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     }
 
     return true;
+}
+
+void StrataClient::onRequestTimedout(int requestId)
+{
+    qCDebug(logCategoryStrataClient) << "Request timedout. request ID:" << requestId;
+    auto [requestFound, request] = requestController_->popPendingRequest(requestId);
+    if (false == requestFound && request.deferredRequest_ == nullptr) {
+        qCCritical(logCategoryStrataClient) << "Failed to remove timed out request.";
+        return;
+    }
+
+    request.deferredRequest_->deleteLater();
+    qCDebug(logCategoryStrataClient) << "Timedout request removed successfully.";
 }
