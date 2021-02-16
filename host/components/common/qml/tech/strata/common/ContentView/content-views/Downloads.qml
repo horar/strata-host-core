@@ -21,6 +21,8 @@ Item {
                                          QtLabsPlatform.StandardPaths.writableLocation(
                                              QtLabsPlatform.StandardPaths.DocumentsLocation))
 
+    property bool historySeen: false
+
     QtLabsSettings.Settings {
         category: "Strata.Download"
 
@@ -80,6 +82,8 @@ Item {
 
                     onCheckedChanged: {
                         repeater.model.setSelected(index, checked)
+                        documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
+                        downloadSection.historySeen = true
                     }
 
                     Binding {
@@ -188,6 +192,37 @@ Item {
                             elide: Text.ElideNone
                             textFormat: Text.PlainText
                             maximumLineCount: 2
+                        }
+
+                        Rectangle {
+                            id: historyUpdate
+                            width: historyText.implicitWidth + height
+                            height: 14
+                            radius: height/2
+                            color: "green"
+                            visible: model.historyState != "seen"
+                            anchors {
+                                right: textItem.right
+                                rightMargin: 2
+                                verticalCenter: parent.verticalCenter
+                            }
+
+                            Label {
+                                id: historyText
+                                anchors.centerIn: parent
+                                text: {
+                                    if (model.historyState == "new_document") {
+                                        return "NEW"
+                                    }
+                                    if (model.historyState == "different_md5") {
+                                        return "UPDATED"
+                                    }
+                                    return ""
+                                }
+                                color: "white"
+                                font.bold: true
+                                font.pointSize: 10
+                            }
                         }
 
                         Rectangle {
@@ -439,6 +474,12 @@ Item {
         title: qsTr("Please choose a file")
         onAccepted: {
             savePath = CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.folder)
+        }
+    }
+
+    Component.onDestruction: {
+        if (platformStack.documentsHistoryDisplayed || downloadSection.historySeen) {
+            documentsHistory.markAllDocumentsAsSeen()
         }
     }
 }

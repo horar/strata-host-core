@@ -24,11 +24,9 @@ BaseDeviceOperation::BaseDeviceOperation(const device::DevicePtr& device, Type t
     responseTimer_.setInterval(RESPONSE_TIMEOUT);
 
     connect(this, &BaseDeviceOperation::sendCommand, this, &BaseDeviceOperation::handleSendCommand, Qt::QueuedConnection);
-    connect(device_.get(), &Device::msgFromDevice, this, &BaseDeviceOperation::handleDeviceResponse);
-    connect(device_.get(), &Device::deviceError, this, &BaseDeviceOperation::handleDeviceError);
     connect(&responseTimer_, &QTimer::timeout, this, &BaseDeviceOperation::handleResponseTimeout);
 
-    //qCDebug(logCategoryDeviceOperations) << device_ << "Created new device operation (" << static_cast<int>(type_) << ")." ;
+    //qCDebug(logCategoryDeviceOperations) << device_ << "Created new device operation (" << static_cast<int>(type_) << ").";
 }
 
 BaseDeviceOperation::~BaseDeviceOperation() {
@@ -51,6 +49,9 @@ void BaseDeviceOperation::run()
         finishOperation(Result::Error, errStr);
         return;
     }
+
+    connect(device_.get(), &Device::msgFromDevice, this, &BaseDeviceOperation::handleDeviceResponse);
+    connect(device_.get(), &Device::deviceError, this, &BaseDeviceOperation::handleDeviceError);
 
     currentCommand_ = commandList_.begin();
     started_ = true;
@@ -284,6 +285,9 @@ void BaseDeviceOperation::nextCommand()
 void BaseDeviceOperation::finishOperation(Result result, const QString &errorString) {
     reset();
     finished_ = true;
+
+    disconnect(device_.get(), &Device::msgFromDevice, this, &BaseDeviceOperation::handleDeviceResponse);
+    disconnect(device_.get(), &Device::deviceError, this, &BaseDeviceOperation::handleDeviceError);
 
     QString effectiveErrorString = errorString;
     if (result == Result::Success) {

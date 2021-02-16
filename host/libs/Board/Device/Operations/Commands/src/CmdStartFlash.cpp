@@ -1,6 +1,8 @@
 #include "CmdStartFlash.h"
 #include "DeviceOperationsConstants.h"
 
+#include <DeviceOperationsStatus.h>
+
 #include <CommandValidator.h>
 
 namespace strata::device::command {
@@ -22,10 +24,10 @@ bool CmdStartFlash::processNotification(rapidjson::Document& doc) {
                                           ? CommandValidator::JsonType::startFlashFirmwareNotif
                                           : CommandValidator::JsonType::startFlashBootloaderNotif;
     if (CommandValidator::validateNotification(jsonType, doc)) {
-        const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
-        result_ = (status == JSON_OK) ? CommandResult::Partial : CommandResult::Failure;
-        if (status == JSON_OK) {
+        const rapidjson::Value& jsonStatus = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
+        if (jsonStatus == JSON_OK) {
             result_ = CommandResult::Partial;
+            status_ = operation::FLASH_STARTED;
             if (flashFirmware_) { setDeviceVersions(nullptr, ""); }  // clear firmware version
             else { setDeviceVersions("", nullptr); }  // clear bootloader version
         } else {

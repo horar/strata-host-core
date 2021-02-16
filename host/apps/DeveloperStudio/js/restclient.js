@@ -2,9 +2,9 @@
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.signals 1.0 as SignalsModule
-.import "constants.js" as Constants
 
-var url = Constants.PRODUCTION_AUTH_SERVER;
+var urlObject = Qt.createQmlObject('import QtQuick 2.0; Text { text: urls.authServer }', Qt.application, 'urlObject');
+var url = urlObject.text;
 
 var jwt = '';
 var session = '';
