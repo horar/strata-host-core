@@ -43,6 +43,11 @@ FocusScope {
         }
     }
 
+    SGWidgets.SGContextMenuEdit {
+        id: contextMenuPopup
+        textEditor: edit
+    }
+
     Flickable {
         id: flick
         anchors.fill: parent
@@ -86,10 +91,6 @@ FocusScope {
                 if ((contextMenuEnabled === true) && containsMouse && (mouse.button === Qt.RightButton)) {
                     contextMenuPopup.popup(null)
                 }
-            }
-            SGWidgets.SGContextMenuEdit {
-                id: contextMenuPopup
-                textEditor: edit
             }
         }
 

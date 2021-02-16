@@ -161,6 +161,53 @@ Item {
         color: "white"
     }
 
+    SGWidgets.SGContextMenu {
+        id: contextMenuPopup
+
+        Action {
+            id: undoAction
+            text: qsTr("Undo")
+            enabled: false
+        }
+        Action {
+            id: redoAction
+            text: qsTr("Redo")
+            enabled: false
+        }
+        MenuSeparator { }
+        Action {
+            id: cutAction
+            text: qsTr("Cut")
+            enabled: false
+        }
+        Action {
+            id: copyAction
+            text: qsTr("Copy")
+            enabled: (selectionStartPosition !== selectionEndPosition) || (selectionStartIndex !== selectionEndIndex)
+            onTriggered: {
+                copyToClipboard()
+            }
+        }
+        Action {
+            id: pasteAction
+            text: qsTr("Paste")
+            enabled: false
+        }
+        MenuSeparator { }
+        Action {
+            id: selectAction
+            text: qsTr("Select All")
+            enabled: listView.count > 0
+            onTriggered: {
+                selectAllText()
+            }
+        }
+
+        onClosed: {
+            listView.forceActiveFocus()
+        }
+    }
+
     ListView {
         id: listView
         anchors {
@@ -296,53 +343,6 @@ Item {
                 return {
                     "delegate_index": delegateIndex,
                     "cursor_pos": cursorPos
-                }
-            }
-
-            SGWidgets.SGContextMenu {
-                id: contextMenuPopup
-
-                Action {
-                    id: undoAction
-                    text: qsTr("Undo")
-                    enabled: false
-                }
-                Action {
-                    id: redoAction
-                    text: qsTr("Redo")
-                    enabled: false
-                }
-                MenuSeparator { }
-                Action {
-                    id: cutAction
-                    text: qsTr("Cut")
-                    enabled: false
-                }
-                Action {
-                    id: copyAction
-                    text: qsTr("Copy")
-                    enabled: (selectionStartPosition !== selectionEndPosition) || (selectionStartIndex !== selectionEndIndex)
-                    onTriggered: {
-                        copyToClipboard()
-                    }
-                }
-                Action {
-                    id: pasteAction
-                    text: qsTr("Paste")
-                    enabled: false
-                }
-                MenuSeparator { }
-                Action {
-                    id: selectAction
-                    text: qsTr("Select All")
-                    enabled: listView.count > 0
-                    onTriggered: {
-                        selectAllText()
-                    }
-                }
-
-                onClosed: {
-                    listView.forceActiveFocus()
                 }
             }
         }

@@ -21,26 +21,28 @@ TextEdit {
         active: contextMenuEnabled
         anchors.fill: parent
 
-        sourceComponent: MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.IBeamCursor
-            acceptedButtons: Qt.RightButton
-
+        sourceComponent: Item {
             property alias contextMenuPopupVisible: contextMenuPopup.visible
-
-            onReleased: {
-                if (containsMouse) {
-                    contextMenuPopup.popup(null)
-                }
-            }
-
-            onClicked: {
-                control.forceActiveFocus()
-            }
 
             SGWidgets.SGContextMenuEdit {
                 id: contextMenuPopup
                 textEditor: control
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+
+                onReleased: {
+                    if (containsMouse) {
+                        contextMenuPopup.popup(null)
+                    }
+                }
+
+                onClicked: {
+                    control.forceActiveFocus()
+                }
             }
         }
     }
