@@ -637,8 +637,7 @@ void SGQWTPlot :: insertLegend(bool legend)
     if(legend_ != legend) {
         legend_ = legend;
         if(legend) {
-            qwtLegend_ = new QwtLegend();
-            qwtPlot->insertLegend(qwtLegend_,QwtPlot::BottomLegend);
+            qwtPlot->insertLegend(new QwtLegend(),QwtPlot::BottomLegend);
         }
         else {
             qwtPlot->insertLegend(0);

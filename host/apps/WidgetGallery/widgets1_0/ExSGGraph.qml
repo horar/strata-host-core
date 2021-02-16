@@ -210,7 +210,7 @@ Item {
 
                 Button {
                     text: "Remove Legend"
-                    enabled: yAxisGraph.count > 0
+                    enabled:  yAxisGraph.count > 0 && yAxisGraph.legend
                     onClicked: {
                         yAxisGraph.legend = false
                     }

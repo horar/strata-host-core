@@ -172,7 +172,6 @@ private:
 
     QList<SGQWTPlotCurve*> curves_;
     QwtPlotGrid * qwtGrid_  = nullptr;
-    QwtLegend * qwtLegend_  = nullptr;
     bool xLogarithmic_ = false;
     bool yLogarithmic_ = false;
     QColor backgroundColor_;
