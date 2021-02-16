@@ -75,9 +75,9 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         enabled: true
-        onClicked: {
-            menu.clicked(index)
-        }
         cursorShape: Qt.PointingHandCursor
+        onClicked: {
+            platformTabRoot.menuClicked(index)
+        }
     }
 }

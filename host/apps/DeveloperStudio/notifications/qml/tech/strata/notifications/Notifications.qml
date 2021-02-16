@@ -9,6 +9,7 @@ import tech.strata.signals 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/constants.js" as Constants
+import "qrc:/js/login_utilities.js" as Authenticator
 
 /*
   Core notifications: see createNotification() below for use
@@ -16,7 +17,7 @@ import "qrc:/js/constants.js" as Constants
 
 Item {
     property alias model: filteredNotifications
-    property string currentUser: Constants.GUEST_USER_ID
+    property string currentUser: ""
 
     enum Level {
         Info = 0,
@@ -82,19 +83,17 @@ Item {
         }
 
         onLogout: {
-            for (let i = 0; i < Notifications.model.count; i++) {
+            for (let i = 0; i < model_.count; i++) {
                 // Clear any actions when the user logs out
-                Notifications.model.get(i).actions.clear()
+                model_.get(i).actions.clear()
             }
 
             currentUser = ""
         }
 
         onValidationResult: {
-            if (result === "Current token is valid") {
+            if (result === "Current token is valid" && currentUser !== Constants.GUEST_USER_ID) {
                 currentUser = Authenticator.settings.user
-            } else {
-                currentUser = ""
             }
         }
     }

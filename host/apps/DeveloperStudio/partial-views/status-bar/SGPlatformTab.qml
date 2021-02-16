@@ -64,7 +64,10 @@ Item {
             }
         }
 
-        bringIntoView()
+        if (inView === false) {
+            dropDownPopup.close()
+            bringIntoView()
+        }
     }
 
     function bringIntoView() {
@@ -251,12 +254,6 @@ Item {
 
             Accessible.role: Accessible.Pane
             Accessible.name: "Platform Tab Popup"
-
-            signal clicked(int index)
-
-            onClicked: {
-                platformTabRoot.menuClicked(index)
-            }
 
             ColumnLayout {
                 id: menuColumn
