@@ -13,13 +13,14 @@
     }
 */
 const qtObjectKeyValues = {}
+const qtIdPairs = {}
 var qtObjectPropertyValues = {}
 var propertySuggestions = []
 var isInitialized = false
+var isInChildBrackets = false
 var flags = { sgwidgetsFlag: false, qtQuickFlag: false }
-var suggestions = []
+var suggestions = {}
 var lastUsedText = ""
-
 
 var editor = null
 
@@ -2414,40 +2415,39 @@ const SGWidgets = [
 ]
 
 const BasicItemProperties = [
-    "activeFocus: ${1: }",
-    "activeFocusOnTab: ${1: }",
-    "antialiasing: ${1: }",
-    "baselineOffset: ${1: }",
-    "children: ${1: }",
-    "childrenRect: ${1: }",
-    "clip: ${1: false}",
-    "containmentMask: ${1: }",
-    "data: ${1: }",
-    "enabled: ${1: true}",
-    "focus: ${1: }",
-    "height: ${1: parent.height}",
-    "id: ${newId}",
-    "implicitHeight: ${1: 100}",
-    "implicitWidth: ${1: 100}",
-    "opacity: ${1: 1.0}",
-    "parent: ${1:parent}",
-    "resources: ${1: }",
-    "rotation: ${1: {\nx: 0,\ny:0\n}}",
-    "scale: ${1: 1.0}",
-    "smooth: ${1: false}",
-    "state: ${1: }",
-    "states: [\n State: {\n \n} \n]",
-    "transform: ${1: }",
-    "transformOrigin: ${1: }",
-    "transitions: ${1: }",
-    "visible: ${1: true}",
-    "visibleChildren: ${1: }",
-    "width: ${1: parent.width}",
-    "x: ${1: 0}",
-    "y: ${1: 0}",
-    "z: ${1: 0}",
-    "objectName: ${1: }",
-    "function ${1:function_name}(${2:argument}) {\n    ${0:// body...}\n}",
+    "activeFocus",
+    "activeFocusOnTab",
+    "antialiasing",
+    "baselineOffset",
+    "children",
+    "childrenRect",
+    "clip",
+    "containmentMask",
+    "data",
+    "enabled",
+    "focus",
+    "height",
+    "id",
+    "implicitHeight",
+    "implicitWidth",
+    "opacity",
+    "parent",
+    "resources",
+    "rotation",
+    "scale",
+    "smooth",
+    "state",
+    "states",
+    "transform",
+    "transformOrigin",
+    "transitions",
+    "visible",
+    "visibleChildren",
+    "width",
+    "x",
+    "y",
+    "z",
+    "objectName",
 ]
 const qtQuickBody = [
     {
@@ -2526,30 +2526,16 @@ function initializeQtQuick(flags) {
     }
 }
 
-function clearPropertySuggestions(key) {
-    
+function addCustomIdAndTypes(idText, type = "Item") {
+    qtIdPairs[idText] = type
 }
 
+function clearPropertySuggestions(key) {
+
+}
 
 function registerQmlAsLanguage() {
     monaco.languages.register({ id: 'qml' })
-    const config = {
-        surroundingPairs: [
-            { open: '{', close: '}' },
-            { open: '[', close: ']' },
-            { open: '(', close: ')' },
-            { open: "'", close: "'" },
-            { open: '"', close: '"' },
-        ],
-        autoClosingPairs: [
-            { open: '{', close: '}' },
-            { open: '[', close: ']' },
-            { open: '(', close: ')' },
-            { open: "'", close: "'", notIn: ['string', 'comment'] },
-            { open: '"', close: '"', notIn: ['string', 'comment'] },
-        ],
-    };
-    monaco.languages.setLanguageConfiguration('qml', config);
     monaco.languages.setMonarchTokensProvider('qml', {
         keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function"],
         typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool'],
@@ -2677,27 +2663,16 @@ function registerQmlAsLanguage() {
     })
 
     monaco.languages.registerCompletionItemProvider('qml', {
-        triggerCharacters: ['{', '.'],
+        triggerCharacters: ['}', '.'],
         provideCompletionItems: (model, position) => {
-            var textUntilPosition = model.getValueInRange({ startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
             var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
             var currWords = currText.replace("\t", "").split(" ");
             var word = model.getWordUntilPosition(position);
             var active = currWords[currWords.length - 1]
             var isSpaceActive = (currWords[currWords.length - 2] !== "" && currWords[currWords.length - 1] === "{")
-            var range = {
-                startLineNumber: position.lineNumber,
-                endLineNumber: position.lineNumber,
-                startColumn: word.startColumn,
-                endColumn: word.endColumn
-            };
-
-            if(lastUsedText !== ""){
-                suggestions.concat(qtObjectPropertyValues[lastUsedText])
-            }
 
             if (qtObjectKeyValues.hasOwnProperty(active.substring(0, active.length - 1).split('.')[0])) {
-                if (lastUsedText !== "") {
+                if (lastUsedText !== " ") {
                     clearPropertySuggestions(lastUsedText)
                 }
                 var propRange = {
@@ -2710,16 +2685,18 @@ function registerQmlAsLanguage() {
                 lastUsedText = active.substring(0, active.length - 1).split('.')[0]
                 return { suggestions: qtObjectPropertyValues[active.substring(0, active.length - 1).split('.')[0]] }
             } else {
-                var textBeforeNewLine = ""
+                /* var textBeforeNewLine = ""
                 if (isSpaceActive) {
                     textBeforeNewLine = currWords[currWords.length - 2]
                 } else {
                     textBeforeNewLine = active.substring(0, active.length - 1).split('{')[0]
                 }
                 if (qtObjectKeyValues.hasOwnProperty(textBeforeNewLine)) {
+                    isInChildBrackets = true
                     if (lastUsedText !== "") {
                         clearPropertySuggestions(lastUsedText)
                     }
+                    determineBracketSource(model, position)
                     var e_pos = position.lineNumber + 1
                     var propRange = {
                         startLineNumber: position.lineNumber,
@@ -2729,11 +2706,10 @@ function registerQmlAsLanguage() {
                     }
                     convertStrArrayToObjArray(textBeforeNewLine, qtObjectKeyValues[textBeforeNewLine].properties, propRange)
                     lastUsedText = textBeforeNewLine
-                    suggestions = suggestions.concat(qtObjectPropertyValues[textBeforeNewLine])
-                    return { suggestions: suggestions}
-                }
+                    return { suggestions: qtObjectPropertyValues[textBeforeNewLine] }
+                } */
             }
-            return { suggestions: suggestions }
+            return { suggestions: !isInChildBrackets ? Object.values(suggestions) : qtObjectPropertyValues[lastUsedText] !== undefined ? qtObjectPropertyValues[lastUsedText] : Object.values(suggestions) }
         }
     })
 
@@ -2762,5 +2738,3 @@ function registerQmlAsLanguage() {
     isInitialized = true
 }
 
-
-function buildBracketRanges() { }

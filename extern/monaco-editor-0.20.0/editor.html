@@ -64,25 +64,25 @@
             flags.qtQuickFlag = true
             initializeQtQuick(flags)
             for (var i = 0; i < BasicItemProperties.length; i++) {
-                suggestions.push({
+                suggestions[BasicItemProperties[i]] = {
                     label: BasicItemProperties[i],
                     kind: monaco.languages.CompletionItemKind.KeyWord,
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: BasicItemProperties[i],
-                })
+                    range: null,
+                }
             }
             for (const [key] of Object.entries(qtObjectKeyValues)) {
-                suggestions.push({
+                suggestions[key] = {
                     label: qtObjectKeyValues[key].label,
                     kind: monaco.languages.CompletionItemKind.Class,
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: qtObjectKeyValues[key].insertText,
-                })
-            }      
+                    range: null,
+                }
+            }
             registerQmlAsLanguage()
-        } else {
-            editor.dispose()
-        }
+        } 
     </script>
 </body>
 
