@@ -3,7 +3,6 @@
 .import "qrc:/js/platform_filters.js" as PlatformFilters
 .import "constants.js" as Constants
 .import "uuid_map.js" as UuidMap
-.import "utilities.js" as Utils
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
@@ -218,7 +217,6 @@ function parseConnectedPlatforms (connected_platform_list_json) {
                 // properties (class_id, ...) could be changed (e.g. controller (dongle) removed from platform (board))
                 disconnectPlatform(previouslyConnected[previousIndex])
                 addConnectedPlatform(platform)
-
             }
             // device previously connected: keep status, remove from previouslyConnected list
             previouslyConnected.splice(previousIndex, 1);

@@ -59,7 +59,6 @@ StackLayout {
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
-         Notifications.createNotification(`Platform ${name} closed`,Notifications.info,"all")
     }
 
     function initialize () {
@@ -67,7 +66,6 @@ StackLayout {
         if (fullyInitialized) {
             if (connected && model.available.control) {
                 controlViewContainer.initialize()
-                Notifications.createNotification(`Platform ${name} opened`,Notifications.info,"all")
             } else {
                 controlViewContainer.removeControl()
             }
