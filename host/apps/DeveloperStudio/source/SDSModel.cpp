@@ -170,16 +170,10 @@ void SDSModel::shutdownService()
 {
     if (externalHcsConnected_) {
         qCDebug(logCategoryStrataDevStudio) << "connected to externally started HCS; skipping shutdown request";
-        //return;
+        return;
     }
 
     remoteHcsNode_->shutdownService();
-}
-
-void SDSModel::resetService()
-{
-    shutdownService();
-    QTimer::singleShot(3000, this, &SDSModel::startHcs);
 }
 
 void SDSModel::startedProcess()

@@ -606,6 +606,9 @@ Rectangle {
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
             }
+            if(settings.hasOwnProperty("notifyOnFirmwareUpdate")){
+                notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+            }
             if (settings.hasOwnProperty("closeOnDisconnect")) {
                 closeOnDisconnect = settings.closeOnDisconnect
             }

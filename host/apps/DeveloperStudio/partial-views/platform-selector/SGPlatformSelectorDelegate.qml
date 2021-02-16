@@ -12,13 +12,11 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
-import tech.strata.notifications 1.0
 
 Item {
     id: root
 
     property bool isCurrentItem: false
-    property bool connected: model.connected
     property real filterAndControlWidth: segmentCategoryList.width + delegateRow.spacing + platformControlsColumn.width + delegateRow.anchors.margins + (listview.ScrollBar.vertical.width + 2)
 
     onFilterAndControlWidthChanged: {
@@ -56,7 +54,7 @@ Item {
             implicitWidth: imageContainer.implicitWidth
 
             Rectangle {
-                color: connected ? Theme.palette.darkGray : Theme.palette.gray
+                color: model.connected ? Theme.palette.darkGray : Theme.palette.gray
                 anchors {
                     centerIn: imageContainer
                 }

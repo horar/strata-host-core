@@ -25,12 +25,11 @@ var localPlatformList = []
 function createPlatformActions() {
     for(var i = 0; i < 2; i++){
         notificationActions[i] = Qt.createQmlObject("import QtQuick.Controls 2.12; Action {}",Qt.application, `PlatformNotifications${i}`)
-    }
-
-    notificationActions[0].text = "Disable platform notifications"
-    notificationActions[0].triggered.connect(function(){disablePlatformNotifications()})
-    notificationActions[1].text = "Ok"
-    notificationActions[1].triggered.connect(function(){})
+    }   
+    notificationActions[0].text = "Ok"
+    notificationActions[0].triggered.connect(function(){})
+    notificationActions[1].text = "Disable platform notifications"
+    notificationActions[1].triggered.connect(function(){disablePlatformNotifications()})
 }
 
 function initialize (newCoreInterface) {
@@ -219,33 +218,18 @@ function parseConnectedPlatforms (connected_platform_list_json) {
                 // properties (class_id, ...) could be changed (e.g. controller (dongle) removed from platform (board))
                 disconnectPlatform(previouslyConnected[previousIndex])
                 addConnectedPlatform(platform)
-                if(UuidMap.uuid_map.hasOwnProperty(platform.class_id)){
-                    notifyConnectedState(true,UuidMap.uuid_map[platform.class_id])
-                } else {
-                    notifyConnectedState(true,"Custom Platform/Unknown Platform")
-                }
+
             }
             // device previously connected: keep status, remove from previouslyConnected list
             previouslyConnected.splice(previousIndex, 1);
             continue
         } else {
-            if(UuidMap.uuid_map.hasOwnProperty(platform.class_id)){
-                notifyConnectedState(true,UuidMap.uuid_map[platform.class_id])
-            } else {
-                notifyConnectedState(true,"Custom Platform/Unknown Platform")
-            }
             addConnectedPlatform(platform)
         }
     }
 
     // Clean up disconnected platforms remaining in previouslyConnected, restore model state
     for (let disconnected_platform of previouslyConnected) {
-        if(UuidMap.uuid_map.hasOwnProperty(disconnected_platform.class_id)){
-            notifyConnectedState(false,UuidMap.uuid_map[disconnected_platform.class_id])
-        } else {
-            notifyConnectedState(false,"Custom Platform/Unknown Platform")
-        }
-
         disconnectPlatform(disconnected_platform)
     }
 
@@ -298,22 +282,27 @@ function addConnectedPlatform(platform) {
 
     if (class_id_string !== "") {
         if (classMap.hasOwnProperty(class_id_string)) {
+            notifyConnectedState(true,classMap[class_id_string].original_listing.opn)
             connectListing(class_id_string, platform.device_id, platform.firmware_version)
         } else if (UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
             // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
+            notifyConnectedState(true,"Custom Platform/Unknown Platform")
             insertUnlistedListing(platform)
         } else {
             // connected platform class_id not listed in UuidMap or DP platform list
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
+            notifyConnectedState(true,"Custom Platform/Unknown Platform")
             insertUnknownListing(platform)
         }
     } else {
         if (platform.controller_class_id !== undefined && platform.class_id === undefined) {
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Assisted Strata without platform connected:", platform.controller_class_id);
+            notifyConnectedState(true,"Custom Platform/Unknown Platform")
             insertAssistedNoPlatformListing(platform)
         } else {
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
+            notifyConnectedState(true,"Custom Platform/Unknown Platform")
             insertUnregisteredListing(platform)
         }
     }
@@ -417,6 +406,12 @@ function disconnectPlatform(platform) {
 
     if (selector_listing.view_open === false) {
         resetListing(selector_listing)
+    }
+
+    if(classMap.hasOwnProperty(class_id_string)){
+        notifyConnectedState(false,classMap[class_id_string].original_listing.opn)
+    } else {
+        notifyConnectedState(false,"Custom Platform/Unknown Platform")
     }
 
     let data = {

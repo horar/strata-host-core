@@ -243,13 +243,6 @@ Item {
             SGControlViewDevPopup {
                 id: controlViewDevDialog
             }
-
-            Button {
-                 text: "reset HCS"
-                 onClicked: {
-                     sdsModel.resetService()
-                 }
-            }
         }
     }
 
