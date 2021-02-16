@@ -119,7 +119,7 @@ FocusScope {
         }
     }
 
-    SGWidgets.SGContextMenuEdit {
+    SGWidgets.SGContextMenuEditActions {
         id: contextMenuPopup
         textEditor: edit
     }

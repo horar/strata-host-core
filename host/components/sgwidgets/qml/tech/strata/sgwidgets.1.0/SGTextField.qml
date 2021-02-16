@@ -250,7 +250,7 @@ TextField {
         sourceComponent: Item {
             property alias contextMenuPopupVisible: contextMenuPopup.visible
 
-            SGWidgets.SGContextMenuEdit {
+            SGWidgets.SGContextMenuEditActions {
                 id: contextMenuPopup
                 textEditor: control
             }

@@ -2,7 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
-SGWidgets.SGContextMenu {
+SGWidgets.SGAbstractContextMenu {
     id: contextMenuEdit
 
     property var textEditor: null

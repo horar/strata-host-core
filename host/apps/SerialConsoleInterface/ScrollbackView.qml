@@ -161,7 +161,7 @@ Item {
         color: "white"
     }
 
-    SGWidgets.SGContextMenu {
+    SGWidgets.SGAbstractContextMenu {
         id: contextMenuPopup
 
         Action {
