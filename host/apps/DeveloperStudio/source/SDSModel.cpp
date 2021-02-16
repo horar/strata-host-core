@@ -10,7 +10,6 @@
 #include <PlatformInterface/core/CoreInterface.h>
 
 #include <QThread>
-#include <QTimer>
 
 #ifdef Q_OS_WIN
 #include <ShlObj.h>
@@ -198,11 +197,6 @@ void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
         qCDebug(logCategoryStrataDevStudio) << "Quitting - another HCS instance was running";
         externalHcsConnected_ = true;
         return;
-    }
-
-    if (exitStatus == QProcess::CrashExit)
-    {
-        setHcsConnected(false);
     }
 
     if (killHcsSilently == false) {
