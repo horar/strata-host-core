@@ -81,8 +81,15 @@ file(GLOB HCS_CREDENTIALS_LOCATION_CHOICES
     ${HCS_CREDENTIALS_LOCATION}/*.json
 )
 set_property(CACHE APPS_CORESW_HCS_CREDENTIALS PROPERTY STRINGS ${HCS_CREDENTIALS_LOCATION_CHOICES})
-file(READ ${CMAKE_SOURCE_DIR}/assets/config/hcs/credentials/${APPS_CORESW_HCS_CREDENTIALS} JSON_CREDENTIALS)
-generate_replicator_credentials(JSON_FILE ${JSON_CREDENTIALS})
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${HCS_CREDENTIALS_LOCATION}/${APPS_CORESW_HCS_CREDENTIALS}
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/credentials.config
+    COMMENT "Deploying 'credentials.config'..."
+    VERBATIM
+)
+generate_replicator_credentials()
 
 set_target_properties(${PROJECT_NAME}Lib PROPERTIES
     AUTOMOC ON
