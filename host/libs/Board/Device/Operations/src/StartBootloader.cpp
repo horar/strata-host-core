@@ -32,6 +32,17 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     postCommandHandler_ = std::bind(&StartBootloader::skipCommands, this, std::placeholders::_1, std::placeholders::_2);
 }
 
+void StartBootloader::setWaitTime(const std::chrono::milliseconds &waitTime)
+{
+    CmdStartBootloader *cmd = dynamic_cast<CmdStartBootloader*>(commandList_[2].get());
+    if (cmd == nullptr) {
+        qCCritical(logCategoryDeviceOperations()) << "Cannot cast CmdStartBootloader";
+        return;
+    }
+
+    cmd->setWaitTime(waitTime);
+}
+
 void StartBootloader::skipCommands(CommandResult& result, int& status)
 {
     if ((currentCommand_ == beforeStartBootloader_) && (result == CommandResult::Done)) {
