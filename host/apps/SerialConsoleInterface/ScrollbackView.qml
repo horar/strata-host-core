@@ -186,7 +186,6 @@ Item {
             cursorShape: mouseX > delegateTextX ? Qt.IBeamCursor : Qt.ArrowCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             hoverEnabled: true
-            propagateComposedEvents: true
 
             /*this is to stop interaction with flickable while selecting text */
             drag.target: Item {}
