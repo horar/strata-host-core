@@ -44,7 +44,6 @@ signals:
     void connectionStatusUpdated();
     void tcpMessageUpdated();
     void logUpdated();
-    void listeningStatusUpdated();
 
 private:
     QUdpSocket *udpSocket_ = nullptr;
