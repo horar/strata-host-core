@@ -1,4 +1,5 @@
 #include "client.h"
+#include <QNetworkInterface>
 
 Client::Client(QObject *parent)
     : QObject(parent),
@@ -53,12 +54,27 @@ void Client::startTcpServer()
     setLog("TCP server has been started and listning at port: " + QString::number(TCP_PORT));
 }
 
+QString Client::getHostAddress()
+{
+    QList<QString> hostAddressesList;
+    foreach(QNetworkInterface interface, QNetworkInterface::allInterfaces()) {
+        if (interface.flags().testFlag(QNetworkInterface::IsUp) && !interface.flags().testFlag(QNetworkInterface::IsLoopBack)) {
+            foreach (QNetworkAddressEntry entry, interface.addressEntries()) {
+            if ( interface.hardwareAddress() != "00:00:00:00:00:00" && entry.ip().toString().contains(".") && !interface.humanReadableName().contains("vnic"))
+               hostAddressesList.push_back(entry.ip().toString());
+            }
+        }
+    }
+    return hostAddressesList.join(", ");
+}
+
+QString Client::getTcpPort()
+{
+    return QString::number(TCP_PORT);
+}
+
 void Client::broadcastDatagram()
 {
-    if (tcpSocket_->state() == QTcpSocket::ConnectedState) {
-        qDebug() << "TCP socket already connected.";
-        return;
-    }
     QByteArray datagram = "strata client";
     udpSocket_->writeDatagram(datagram, QHostAddress::Broadcast, port_);
     setLog("Sent Datagram: " + datagram + " at port: " + QString::number(port_));

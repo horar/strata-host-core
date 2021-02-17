@@ -70,16 +70,16 @@ void Server::preccessPendingDatagrams()
 {
     qDebug() << "datagram..";
     QByteArray datagram;
-    QHostAddress hostAddress;
+    QHostAddress clientAddress;
     while (udpSocket_->hasPendingDatagrams()) {
         datagram.resize(int(udpSocket_->pendingDatagramSize()));
-        udpSocket_->readDatagram(datagram.data(), datagram.size(), &hostAddress);
-        qDebug() << "host address:" << hostAddress.toString() << "datagram:" << datagram;
+        udpSocket_->readDatagram(datagram.data(), datagram.size(), &clientAddress);
+        qDebug() << "Clint(sender)'s address:" << clientAddress.toString()  << "datagram:" << datagram;
     }
     setUdpBuffer(datagram);
 
     if (datagram == "strata client") {
-        connectToStrataClient(hostAddress, TCP_PORT);
+        connectToStrataClient(clientAddress, TCP_PORT);
     }
 }
 
@@ -126,6 +126,8 @@ void Server::newTcpMessage()
 
 void Server::sendTcpMessge(QByteArray message)
 {
+    tcpBuffer_ += "Host: " + message + '\n';
+    emit tcpBufferUpdated();
     tcpSocket_->write(message);
 }
 
@@ -144,10 +146,12 @@ void Server::disconnectTcpSocket()
 QString Server::getHostAddress()
 {
     QList<QString> hostAddressesList;
-    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
-    for (const QHostAddress &address : QNetworkInterface::allAddresses()) {
-        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost) {
-            hostAddressesList.push_back(address.toString());
+    foreach(QNetworkInterface interface, QNetworkInterface::allInterfaces()) {
+        if (interface.flags().testFlag(QNetworkInterface::IsUp) && !interface.flags().testFlag(QNetworkInterface::IsLoopBack)) {
+            foreach (QNetworkAddressEntry entry, interface.addressEntries()) {
+            if (interface.hardwareAddress() != "00:00:00:00:00:00" && entry.ip().toString().contains(".") && !interface.humanReadableName().contains("vnic"))
+               hostAddressesList.push_back(entry.ip().toString());
+            }
         }
     }
     return hostAddressesList.join(", ");
@@ -171,6 +175,6 @@ void Server::setUdpBuffer(const QByteArray &newDatagram)
 
 void Server::setTcpBuffer(const QByteArray &newData)
 {
-    tcpBuffer_ += newData + '\n';
+    tcpBuffer_ += "Client: " + newData + '\n';
     emit tcpBufferUpdated();
 }

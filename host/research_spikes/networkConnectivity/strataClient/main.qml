@@ -18,7 +18,7 @@ Window {
         width: 255
         height: 44
         text: qsTr("Broadcast")
-        font.pointSize: 21
+        font.pointSize: 14
         display: AbstractButton.TextBesideIcon
         enabled: !Client.isConnected
         Connections {
@@ -31,14 +31,15 @@ Window {
     Label {
         id: labelPort
         x: 25
-        y: 53
+        y: 55
         width: 53
-        height: 48
-        text: qsTr("Port")
+        height: 37
+        text: qsTr("UDP Port")
         font.bold: false
-        font.pointSize: 17
+        font.pointSize: 13
         styleColor: "#e36464"
         verticalAlignment: Text.AlignVCenter
+        wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
     }
 
@@ -68,24 +69,12 @@ Window {
         }
     }
 
-    Label {
-        id: statusLabel
-        x: 499
-        y: 80
-        width: 96
-        height: 48
-        text: Client.isConnected ? "Connected" : "Disconnected"
-        font.pointSize: 14
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-    }
-
     Button {
         id: disconnectBtn
         x: 298
         y: 55
         width: 86
-        height: 88
+        height: 46
         text: qsTr("Disconnect")
         enabled: Client.isConnected
 
@@ -104,24 +93,38 @@ Window {
         clip: true
         enabled: Client.isConnected
 
-        TextArea {
-            id: messageTextArea
-            x: -10
-            y: -6
-            width: 326
-            height: 120
-            text: Client.receivedMessages
-            font.pointSize: 13
-            readOnly: true
-            wrapMode: Text.Wrap
-            enabled: Client.isConnected
-//            background: Rectangle {
-//                radius: 2
-//                x: messageTextArea.x
-//                y: messageTextArea.y
-//                border.color: "#333"
-//                border.width: 1
-//            }
+        Flickable {
+            anchors.fill: parent
+            anchors.rightMargin: -9
+            anchors.bottomMargin: -5
+            anchors.leftMargin: 9
+            anchors.topMargin: 5
+            boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar {}
+
+            TextArea.flickable: TextArea {
+                id: messageTextArea
+                property int msgCount: 0
+                x: -10
+                y: -6
+                width: 326
+                height: 120
+                text: {
+                    clear(Client.receivedMessages)
+                    append(Client.receivedMessages.arg(msgCount++))
+                }
+                font.pointSize: 13
+                readOnly: true
+                wrapMode: Text.Wrap
+                enabled: Client.isConnected
+    //            background: Rectangle {
+    //                radius: 2
+    //                x: messageTextArea.x
+    //                y: messageTextArea.y
+    //                border.color: "#333"
+    //                border.width: 1
+    //            }
+            }
         }
     }
 
@@ -134,6 +137,7 @@ Window {
         text: qsTr("")
         font.pointSize: 16
         verticalAlignment: Text.AlignVCenter
+        placeholderText: "TCP Message..."
         horizontalAlignment: Text.AlignLeft
         Keys.onPressed: {
             if (event.key === Qt.Key_Return && userInputField.text.length > 0) {
@@ -163,8 +167,8 @@ Window {
 
     StatusIndicator {
         id: statusIndicator
-        x: 414
-        y: 86
+        x: 317
+        y: 107
         width: 49
         height: 42
         color: "#65c903"
@@ -177,9 +181,10 @@ Window {
         y: 149
         width: 114
         height: 21
-        text: qsTr("Messages:")
+        text: qsTr("TCP Messages:")
         verticalAlignment: Text.AlignVCenter
-        font.pixelSize: 17
+        minimumPixelSize: 13
+        font.pixelSize: 15
     }
 
     ScrollView {
@@ -188,18 +193,32 @@ Window {
         y: 176
         width: 261
         height: 157
-        TextArea {
-            id: logTextArea
-            x: -10
-            y: -6
-            width: 305
-            height: 124
-            text: Client.log
-            font.pointSize: 13
-            readOnly: true
-            wrapMode: Text.Wrap
+
+        Flickable {
+            anchors.fill: parent
+            anchors.rightMargin: -9
+            anchors.bottomMargin: -5
+            anchors.leftMargin: 9
+            anchors.topMargin: 5
+            boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar {}
+
+            TextArea.flickable: TextArea {
+                id: logTextArea
+                property int logCount : 0
+                x: -10
+                y: -6
+                width: 305
+                height: 124
+                text: {
+                    clear(Client.log)
+                    append(Client.log.arg(logCount++))
+                }
+                font.pointSize: 13
+                readOnly: true
+                wrapMode: Text.Wrap
+            }
         }
-        clip: true
     }
 
     Text {
@@ -209,9 +228,49 @@ Window {
         width: 114
         height: 21
         text: qsTr("Logs:")
-        font.pixelSize: 17
+        font.pixelSize: 13
         verticalAlignment: Text.AlignVCenter
     }
 
+    Text {
+        id: ipText
+        x: 398
+        y: 55
+        width: 215
+        height: 19
+        text: qsTr("IP: ") + Client.hostAddress
+        font.pixelSize: 12
+        wrapMode: Text.Wrap
+        minimumPixelSize: 19
+    }
+
+    Text {
+        id: tcpText
+        x: 398
+        y: 81
+        width: 215
+        height: 20
+        text: qsTr("TCP Port: ") + Client.tcpPort
+        font.pixelSize: 12
+        wrapMode: Text.Wrap
+        minimumPixelSize: 19
+    }
+
+    Text {
+        id: appTitle
+        x: 21
+        y: 8
+        width: 259
+        height: 41
+        text: qsTr("Strata Client")
+        font.pixelSize: 24
+        horizontalAlignment: Text.AlignLeft
+        verticalAlignment: Text.AlignVCenter
+        wrapMode: Text.Wrap
+        font.italic: true
+        font.bold: true
+        minimumPixelSize: 21
+        fontSizeMode: Text.HorizontalFit
+    }
 }
 

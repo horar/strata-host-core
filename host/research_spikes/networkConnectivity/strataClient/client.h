@@ -15,7 +15,8 @@ class Client : public QObject
     Q_PROPERTY(bool isConnected READ getConnectionStatus NOTIFY connectionStatusUpdated)
     Q_PROPERTY(QString receivedMessages READ getTcpMessage NOTIFY tcpMessageUpdated)
     Q_PROPERTY(QString log READ getLog NOTIFY logUpdated)
-
+    Q_PROPERTY(QString hostAddress READ getHostAddress CONSTANT)
+    Q_PROPERTY(QString tcpPort READ getTcpPort CONSTANT)
 
 public:
     Client(QObject *parent = nullptr);
@@ -26,6 +27,9 @@ public:
     QString getLog() const;
     void setLog(QString logMsg);
     void startTcpServer();
+    QString getHostAddress();
+    QString getTcpPort();
+
 
 
 public slots:
@@ -40,6 +44,7 @@ signals:
     void connectionStatusUpdated();
     void tcpMessageUpdated();
     void logUpdated();
+    void listeningStatusUpdated();
 
 private:
     QUdpSocket *udpSocket_ = nullptr;
