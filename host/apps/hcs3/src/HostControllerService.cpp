@@ -641,8 +641,8 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
 
         QString currentMD5 = storageManager_.getFirmwareMD5(programData.firmwareClassId, controllerClassDevice, device->applicationVer());
         if (currentMD5.isNull()) {
-            errorString = "Cannot get MD5 of curent firmware from database";
-            break;
+            qCWarning(logCategoryHcs).nospace() << "Cannot get MD5 of curent firmware from database (device ID 0x"
+                                                << hex << static_cast<uint>(programData.deviceId) << ")";
         }
 
         programData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);

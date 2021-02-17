@@ -119,7 +119,7 @@ QPair<QUrl,QString> StorageManager::getLatestFirmware(const QString &classId, co
 QString StorageManager::getFirmwareMD5(const QString &classId, const QString &controllerClassDevice, const QString &version)
 {
     qCDebug(logCategoryHcsStorage) << "Searching for firmware MD5 for" << classId
-                                   << "and" << controllerClassDevice << "and" << version;
+                                   << "and" << controllerClassDevice << "and version" << version;
 
     PlatformDocument *platfDoc = fetchPlatformDoc(classId);
     if (platfDoc) {
