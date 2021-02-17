@@ -101,7 +101,7 @@ SGWidgets.SGMainWindow {
             id: stackContainer
 
             property alias mainContainer: mainContainer
-            property alias controlViewDevContainer: controlViewDevContainer
+           // property alias controlViewDevContainer: controlViewDevContainer
             property alias platformViewModel: platformViewModel
             property alias platformViewRepeater: platformViewRepeater
 
@@ -127,9 +127,9 @@ SGWidgets.SGMainWindow {
                 Layout.fillWidth: true
             }
             
-            ControlViewDevContainer {
-                id: controlViewDevContainer
-            }
+//            ControlViewDevContainer {
+//                id: controlViewDevContainer
+//            }
         }
     }
 
