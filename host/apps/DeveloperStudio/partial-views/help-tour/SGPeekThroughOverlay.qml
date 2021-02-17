@@ -216,7 +216,6 @@ Item {
      SGToolTipPopup {
          id: toolTipPopup
          showOn: true
-
          // anchors and arrow alignment dynamically in setTarget
          color: "white"
          property int index
