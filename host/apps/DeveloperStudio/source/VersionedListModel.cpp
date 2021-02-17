@@ -119,6 +119,11 @@ QString VersionedListModel::name(int index)
     return data(VersionedListModel::index(index, 0), NameRole).toString();
 }
 
+QString VersionedListModel::device(int index)
+{
+    return data(VersionedListModel::index(index, 0), DeviceRole).toString();
+}
+
 QString VersionedListModel::timestamp(int index)
 {
     return data(VersionedListModel::index(index, 0), TimestampRole).toString();

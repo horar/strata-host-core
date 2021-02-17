@@ -156,6 +156,7 @@ function generatePlatform (platform) {
     platform.program_controller = false
     platform.program_controller_progress = 0.0
     platform.program_controller_error_string = ""
+    platform.controller_class_device = ""
 
     // Create entry in classMap
     classMap[class_id_string] = {
@@ -268,7 +269,7 @@ function addConnectedPlatform(platform) {
             insertUnregisteredListing(platform)
         } else {
             if (classMap.hasOwnProperty(class_id_string)) {
-                connectListing(class_id_string, platform.device_id, platform.firmware_version)
+                connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_device)
             } else {
                 // connected platform class_id not listed in DP platform list
                 console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
@@ -293,7 +294,7 @@ function addConnectedPlatform(platform) {
             insertUnregisteredListing(platform)
         } else {
             if (platform.class_id === platform.fw_class_id) {
-                connectListing(platform.class_id, platform.device_id, platform.firmware_version)
+                connectListing(platform.class_id, platform.device_id, platform.firmware_version, platform.controller_class_device)
             } else {
                 //program controller
                 insertProgramControllerListing(platform)
@@ -315,7 +316,7 @@ function addConnectedPlatform(platform) {
     Update existing listing's 'connected' state
     OR add duplicate listing when 2 boards with same class_id connected
 */
-function connectListing(class_id_string, device_id, firmware_version) {
+function connectListing(class_id_string, device_id, firmware_version, controller_class_device) {
     let found_visible = false
     let selector_listing
     let selector_index = -1
@@ -357,6 +358,7 @@ function connectListing(class_id_string, device_id, firmware_version) {
     let available = copyObject(copyObject(selector_listing.available))
     available.unlisted = false // override unlisted to show hidden listing when physical board present
     selector_listing.available = available
+    selector_listing.controller_class_device = controller_class_device
 
     if (NavigationControl.userSettings.autoOpenView){
         if (selector_listing.available.control) {
@@ -368,7 +370,8 @@ function connectListing(class_id_string, device_id, firmware_version) {
                 "firmware_version": selector_listing.firmware_version,
                 "index": selector_index,
                 "view": "control",
-                "connected": true
+                "connected": true,
+                "controller_class_device": selector_listing.controller_class_device,
             }
             openPlatformView(data)
         }
@@ -389,7 +392,8 @@ function openPlatformView(platform) {
         "view": platform.view,
         "connected": platform.connected,
         "available": platform.available,
-        "firmware_version": platform.firmware_version
+        "firmware_version": platform.firmware_version,
+        "controller_class_device": platform.controller_class_device,
     }
 
     NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
@@ -573,7 +577,8 @@ function generateErrorListing (platform, verbose_name, class_id, opn, descriptio
         "firmware_version": platform.firmware_version,
         "program_controller": program_controller,
         "program_controller_progress": 0.0,
-        "program_controller_error_string": ""
+        "program_controller_error_string": "",
+        "controller_class_device": "",
     }
     return error
 }

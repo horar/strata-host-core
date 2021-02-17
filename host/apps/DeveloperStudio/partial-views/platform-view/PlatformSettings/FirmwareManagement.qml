@@ -14,7 +14,8 @@ ColumnLayout {
 
     Component.onCompleted: {
         firmwareListModel = sdsModel.documentManager.getClassDocuments(platformStack.class_id).firmwareListModel
-        firmwareList.firmwareRepeater.model = firmwareListModel
+        firmwareSortFilterModel.sourceModel = firmwareListModel
+        firmwareList.firmwareRepeater.model = firmwareSortFilterModel
     }
 
     property var firmwareListModel: null
@@ -49,6 +50,9 @@ ColumnLayout {
             checkForNewerVersion()
         }
 
+        onController_class_deviceChanged: {
+            firmwareSortFilterModel.invalidate()
+        }
     }
 
     function matchVersion() {
@@ -64,6 +68,12 @@ ColumnLayout {
     function checkForNewerVersion() {
         matchVersion()
         for (let i = 0; i < firmwareListModel.count; i++) {
+
+            if (platformStack.controller_class_device.length === 0
+                    || platformStack.controller_class_device !== firmwareListModel.device(i)) {
+                continue
+            }
+
             if (SGVersionUtils.lessThan(platformStack.firmware_version, firmwareListModel.version(i))) {
                 firmwareIsOutOfDate = true
             }
@@ -150,6 +160,27 @@ ColumnLayout {
             text: platformStack.firmware_version
             font.bold: true
             fontSizeMultiplier: 1.38
+        }
+    }
+
+    SGSortFilterProxyModel {
+        id: firmwareSortFilterModel
+
+        invokeCustomFilter: true
+        sortEnabled: false
+
+        function filterAcceptsRow(row) {
+            console.log(row, firmwareListModel.device(row), platformStack.controller_class_device)
+
+            if (platformStack.controller_class_device.length == 0) {
+                return false
+            }
+
+            if (firmwareListModel.device(row) !== platformStack.controller_class_device) {
+                return false
+            }
+
+            return true
         }
     }
 

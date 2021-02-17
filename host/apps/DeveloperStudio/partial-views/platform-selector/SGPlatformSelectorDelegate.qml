@@ -322,6 +322,7 @@ Item {
                 function openView(view) {
                     let data = {
                         "device_id": model.device_id,
+                        "controller_class_device": model.controller_class_device,
                         "class_id": model.class_id,
                         "name": model.verbose_name,
                         "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
