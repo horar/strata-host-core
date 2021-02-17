@@ -560,7 +560,6 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
 
 void StrataClientTest::testTimedoutRequest()
 {
-    using Message = strata::strataRPC::Message;
     using DeferredRequest = strata::strataRPC::DeferredRequest;
 
     int testsNum = 10;
