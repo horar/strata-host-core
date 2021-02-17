@@ -285,22 +285,22 @@ function addConnectedPlatform(platform) {
         } else if (UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
             // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
-            notifyConnectedState(true,"Custom Platform/Unknown Platform")
+            notifyConnectedState(true,"Unknown Platform")
             insertUnlistedListing(platform)
         } else {
             // connected platform class_id not listed in UuidMap or DP platform list
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
-            notifyConnectedState(true,"Custom Platform/Unknown Platform")
+            notifyConnectedState(true,"Unknown Platform")
             insertUnknownListing(platform)
         }
     } else {
         if (platform.controller_class_id !== undefined && platform.class_id === undefined) {
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Assisted Strata without platform connected:", platform.controller_class_id);
-            notifyConnectedState(true,"Custom Platform/Unknown Platform")
+            notifyConnectedState(true,"Unknown Platform")
             insertAssistedNoPlatformListing(platform)
         } else {
             console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unregistered platform connected.");
-            notifyConnectedState(true,"Custom Platform/Unknown Platform")
+            notifyConnectedState(true,"Unknown Platform")
             insertUnregisteredListing(platform)
         }
     }
@@ -409,7 +409,7 @@ function disconnectPlatform(platform) {
     if(classMap.hasOwnProperty(class_id_string)){
         notifyConnectedState(false,classMap[class_id_string].original_listing.verbose_name)
     } else {
-        notifyConnectedState(false,"Custom Platform/Unknown Platform")
+        notifyConnectedState(false,"Unknown Platform")
     }
 
     let data = {
