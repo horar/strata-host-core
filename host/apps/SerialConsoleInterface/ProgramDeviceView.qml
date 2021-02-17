@@ -124,6 +124,7 @@ FocusScope {
 
         SGWidgets.SGFileSelector {
             id: firmwarePathEdit
+            contextMenuEnabled: true
             width: content.width
             anchors {
                 top: title.bottom
