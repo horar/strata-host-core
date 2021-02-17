@@ -12,5 +12,5 @@ public:
 
 private:
     static QString coreResourcePath_;
-    static QString viewsPhysicalPath_;
+    static QString viewsResourcePath_;
 };

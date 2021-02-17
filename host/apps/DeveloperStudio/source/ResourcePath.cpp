@@ -6,7 +6,7 @@
 #include <QDir>
 
 QString ResourcePath::coreResourcePath_ = QString();
-QString ResourcePath::viewsPhysicalPath_ = QString();
+QString ResourcePath::viewsResourcePath_ = QString();
 
 QString &ResourcePath::coreResourcePath()
 {
@@ -36,5 +36,5 @@ QString &ResourcePath::viewsPhysicalPath()
                 qUtf8Printable(viewsResourcePath_));
     }
 
-    return viewsPhysicalPath_;
+    return viewsResourcePath_;
 }
