@@ -7,7 +7,7 @@ def INSTALLER_PATH_ONLINE = ""
 pipeline {
     agent {
         node {
-            label 'master'
+            label 'OTA'
             // TODO: hard drive letter should be loaded from ${env.SystemDrive} but node can't access env
             customWorkspace "C:/${REPO_NAME}"
         }
@@ -45,8 +45,9 @@ pipeline {
                 sh "python -m venv ${env.workspace}/deployment/OTA/ota-deploy-env"
                 sh "source ${env.workspace}/deployment/OTA/ota-deploy-env/Scripts/activate"
                 sh "python -m pip install -r ${env.workspace}/deployment/OTA/requirements.txt"
-                sh """python '${env.workspace}/deployment/OTA/main.py' strata \
+                sh """python '${env.workspace}/deployment/OTA/main.py' \
                     --dir 'ota' \
+					strata \
                     --repo '${ROOT_BUILD_DIR}/${BUILD_NAME}/public/repository/strata' \
                     """
                 // Note: Online and Offline installer will be part of artifacts and will not be uploaded to S3/DP for the moment
