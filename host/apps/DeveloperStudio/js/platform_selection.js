@@ -280,7 +280,7 @@ function addConnectedPlatform(platform) {
 
     if (class_id_string !== "") {
         if (classMap.hasOwnProperty(class_id_string)) {
-            notifyConnectedState(true,classMap[class_id_string].original_listing.opn)
+            notifyConnectedState(true,classMap[class_id_string].original_listing.verbose_name)
             connectListing(class_id_string, platform.device_id, platform.firmware_version)
         } else if (UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
             // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
@@ -407,7 +407,7 @@ function disconnectPlatform(platform) {
     }
 
     if(classMap.hasOwnProperty(class_id_string)){
-        notifyConnectedState(false,classMap[class_id_string].original_listing.opn)
+        notifyConnectedState(false,classMap[class_id_string].original_listing.verbose_name)
     } else {
         notifyConnectedState(false,"Custom Platform/Unknown Platform")
     }
@@ -627,10 +627,10 @@ function copyObject(object){
     return JSON.parse(JSON.stringify(object))
 }
 
-function notifyConnectedState(connected, platformOPN){
+function notifyConnectedState(connected, platformName){
     if(NavigationControl.userSettings.notifyOnPlatformConnections){
         if (connected){
-            PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is connected`,
+            PlatformNotifications.Notifications.createNotification(`${platformName} is connected`,
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
                                                                    {
@@ -638,7 +638,7 @@ function notifyConnectedState(connected, platformOPN){
                                                                        "actions": [notificationActions[0],notificationActions[1]]
                                                                    })
         } else {
-            PlatformNotifications.Notifications.createNotification(`Platform ${platformOPN} is disconnected`,
+            PlatformNotifications.Notifications.createNotification(`${platformName} is disconnected`,
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
                                                                    {
