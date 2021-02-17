@@ -213,7 +213,7 @@ Item {
          opacity: root.globalOpacity
      }
 
-     SGToolTipPopup {
+     SGHelpTourPopup {
          id: toolTipPopup
          showOn: true
          // anchors and arrow alignment dynamically in setTarget

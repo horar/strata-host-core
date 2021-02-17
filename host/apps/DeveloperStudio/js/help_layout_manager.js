@@ -127,7 +127,6 @@ function startHelpTour(tourName, device_id) {
 
     // tour_count initializes the x/y tour counter
     tour_count = current_tour_targets.length
-
     for (let i = 0; i < tour_count; i++){
         let tour_target = current_tour_targets[i]
         if (tour_target.index === 0) {
@@ -153,6 +152,7 @@ function startHelpTour(tourName, device_id) {
 
 function next(currentIndex) {
     for (let i = 0; i < current_tour_targets.length; i++){
+
         if (current_tour_targets[i]["index"] === currentIndex) {
             current_tour_targets[i]["helpObject"].visible = false
             if (current_tour_targets[i]["index"] === tour_count - 1) { //if last, end tour
@@ -250,4 +250,5 @@ function createHelpObject(tourTarget) {
     tourStop.index = tourTarget.index
     tourStop.description = tourTarget.description
     tourTarget.helpObject = tourStop
+    console.log(tourStop)
 }
