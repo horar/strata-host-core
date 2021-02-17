@@ -108,21 +108,21 @@ signals:
 public slots:
     /**
      * Update firmware.
-     * @param updateData struct containing data for updating firmware
+     * @param data struct containing data for updating firmware
      */
-    void updateFirmware(UpdateFirmwareData updateData);
+    void updateFirmware(UpdateFirmwareData data);
 
     /**
      * Program controller.
-     * @param programData struct containing data for programing controller
+     * @param data struct containing data for programing controller
      */
-    void programController(ProgramControllerData programData);
+    void programController(ProgramControllerData data);
 
     /**
      * Set controller firmware class ID.
-     * @param programData struct containing data for setting controller fw_class_id (URL and MD5 are unused)
+     * @param data struct containing data for setting controller fw_class_id (URL and MD5 are unused)
      */
-    void setControllerFwClassId(ProgramControllerData programData);
+    void setControllerFwClassId(ProgramControllerData data);
 
 
 private slots:
@@ -139,13 +139,32 @@ private:
     };
 
     struct FlashData {
+        // constructror for update firmware action
+        FlashData(int deviceId,
+                  const QByteArray& clientId,
+                  const QString& jobUuid,
+                  const QUrl& firmwareUrl,
+                  const QString& firmwareMD5);
+        // constructor for program controller action
+        FlashData(int deviceId,
+                  const QByteArray& clientId,
+                  const QString& jobUuid,
+                  const QUrl& firmwareUrl,
+                  const QString& firmwareMD5,
+                  const QString& firmwareClassId);
+        // constructor for set controller fw_class_id action
+        FlashData(int deviceId,
+                  const QByteArray& clientId,
+                  const QString& jobUuid,
+                  const QString& firmwareClassId);
+
         Action action;
-        QByteArray clientId;
         int deviceId;
+        QByteArray clientId;
+        QString jobUuid;
         QUrl firmwareUrl;
         QString firmwareMD5;
         QString firmwareClassId;
-        QString jobUuid;
     };
 
     void runUpdate(const FlashData& data);

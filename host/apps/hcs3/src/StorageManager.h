@@ -53,28 +53,22 @@ public:
     QUrl getBaseUrl() const;
 
     /**
-     * Gets string which represnets device controler class
+     * Gets string which represnets device controller class
      * @param device class id
-     * @return device controler class (RSL10, ...) or null string
+     * @return device controller class (RSL10, ...) or null string
      */
     QString getControllerClassDevice(const QString &classId);
 
     /**
-     * Gets URI of latest firmware
-     * @param class ID of device
-     * @param device controler class
-     * @return firmware URI and firmware MD5 as pair
-     */
-    QPair<QUrl,QString> getLatestFirmware(const QString &classId, const QString &controllerClassDevice);
-
-    /**
      * Gets MD5 of firmware
      * @param class ID of device
-     * @param device controler class
-     * @param version of firmware
-     * @return firmware MD5
+     * @param device controller class
+     * @param version of firmware, if empty latest firmware will be returned
+     * @return firmware URI and firmware MD5 as pair
      */
-    QString getFirmwareMD5(const QString &classId, const QString &controllerClassDevice, const QString &version);
+    QPair<QUrl,QString> getFirmwareUriMd5(const QString &classId,
+                                          const QString &controllerClassDevice,
+                                          const QString &version = QString());
 
 public slots:
     void requestPlatformList(const QByteArray &clientId);

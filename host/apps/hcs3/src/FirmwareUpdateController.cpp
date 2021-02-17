@@ -40,56 +40,78 @@ FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid,
 {
 }
 
-void FirmwareUpdateController::updateFirmware(UpdateFirmwareData updateData)
-{
-    FlashData data;
-    data.action = Action::UpdateFirmware;
-    data.clientId = updateData.clientId;
-    data.deviceId = updateData.deviceId;
-    data.firmwareUrl = updateData.firmwareUrl;
-    data.firmwareMD5 = updateData.firmwareMD5;
-    data.jobUuid = updateData.jobUuid;
+void FirmwareUpdateController::updateFirmware(UpdateFirmwareData data)
+{   
+    FlashData flashData(data.deviceId, data.clientId, data.jobUuid, data.firmwareUrl, data.firmwareMD5);
 
-    runUpdate(data);
+    runUpdate(flashData);
 }
 
-void FirmwareUpdateController::programController(ProgramControllerData programData)
+void FirmwareUpdateController::programController(ProgramControllerData data)
 {
-    if (programData.firmwareClassId.isNull()) {
-        logAndEmitError(programData.deviceId,
-                        QStringLiteral("Cannot program controller - firmware class ID was not provided."));
+    if (data.firmwareClassId.isNull()) {
+        logAndEmitError(data.deviceId, QStringLiteral("Cannot program controller - firmware class ID was not provided."));
         return;
     }
 
-    FlashData data;
-    data.action = Action::ProgramController;
-    data.clientId = programData.clientId;
-    data.deviceId = programData.deviceId;
-    data.firmwareUrl = programData.firmwareUrl;
-    data.firmwareMD5 = programData.firmwareMD5;
-    data.firmwareClassId = programData.firmwareClassId;
-    data.jobUuid = programData.jobUuid;
+    FlashData flashData(data.deviceId, data.clientId, data.jobUuid, data.firmwareUrl, data.firmwareMD5, data.firmwareClassId);
 
-    runUpdate(data);
+    runUpdate(flashData);
 }
 
-void FirmwareUpdateController::setControllerFwClassId(ProgramControllerData programData)
+void FirmwareUpdateController::setControllerFwClassId(ProgramControllerData data)
 {
-    if (programData.firmwareClassId.isNull()) {
-        logAndEmitError(programData.deviceId,
-                        QStringLiteral("Cannot set controller firmware class ID - it is not provided."));
+    if (data.firmwareClassId.isNull()) {
+        logAndEmitError(data.deviceId, QStringLiteral("Cannot set controller firmware class ID - it is not provided."));
         return;
     }
 
-    FlashData data;
-    data.action = Action::SetControllerFwClassId;
-    data.clientId = programData.clientId;
-    data.deviceId = programData.deviceId;
-    data.firmwareClassId = programData.firmwareClassId;
-    data.jobUuid = programData.jobUuid;
+    FlashData flashData(data.deviceId, data.clientId, data.jobUuid, data.firmwareClassId);
 
-    runUpdate(data);
+    runUpdate(flashData);
 }
+
+// FlashData constructror for update firmware action
+FirmwareUpdateController::FlashData::FlashData(int deviceId,
+                                               const QByteArray& clientId,
+                                               const QString& jobUuid,
+                                               const QUrl& firmwareUrl,
+                                               const QString& firmwareMD5)
+    : action(Action::UpdateFirmware),
+      deviceId(deviceId),
+      clientId(clientId),
+      jobUuid(jobUuid),
+      firmwareUrl(firmwareUrl),
+      firmwareMD5(firmwareMD5)
+{ }
+
+// FlashData constructror for program controller action
+FirmwareUpdateController::FlashData::FlashData(int deviceId,
+                                               const QByteArray& clientId,
+                                               const QString& jobUuid,
+                                               const QUrl& firmwareUrl,
+                                               const QString& firmwareMD5,
+                                               const QString& firmwareClassId)
+    : action(Action::ProgramController),
+      deviceId(deviceId),
+      clientId(clientId),
+      jobUuid(jobUuid),
+      firmwareUrl(firmwareUrl),
+      firmwareMD5(firmwareMD5),
+      firmwareClassId(firmwareClassId)
+{ }
+
+// FlashData constructror for set controller fw_class_id action
+FirmwareUpdateController::FlashData::FlashData(int deviceId,
+                                               const QByteArray& clientId,
+                                               const QString& jobUuid,
+                                               const QString& firmwareClassId)
+    : action(Action::SetControllerFwClassId),
+      deviceId(deviceId),
+      clientId(clientId),
+      jobUuid(jobUuid),
+      firmwareClassId(firmwareClassId)
+{ }
 
 void FirmwareUpdateController::runUpdate(const FlashData& data)
 {

@@ -631,7 +631,7 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
             break;
         }
 
-        QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(programData.firmwareClassId, controllerClassDevice);
+        QPair<QUrl,QString> firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassDevice);
         if (firmware.first.isEmpty()) {
             errorString = "Cannot get latest firmware";
             break;
@@ -639,7 +639,8 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
         programData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
         programData.firmwareMD5 = firmware.second;
 
-        QString currentMD5 = storageManager_.getFirmwareMD5(programData.firmwareClassId, controllerClassDevice, device->applicationVer());
+        firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassDevice, device->applicationVer());
+        const QString& currentMD5 = firmware.second;
         if (currentMD5.isNull()) {
             qCWarning(logCategoryHcs).nospace() << "Cannot get MD5 of curent firmware from database (device ID 0x"
                                                 << hex << static_cast<uint>(programData.deviceId) << ")";
