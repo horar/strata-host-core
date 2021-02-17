@@ -51,7 +51,7 @@ Rectangle {
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
-        Help.registerTarget(help_tour, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
+        Help.registerTarget(help_tour, "When a platform has been selected, this tab will come into view.", 2, "selectorHelp")
         userSettings.loadSettings()
         alertIconContainer.visible = hasNotifications
     }
@@ -210,8 +210,8 @@ Rectangle {
             }
 
            Component.onCompleted: {
-               Help.registerTarget(help_tour.currIcon, "Use this button to toggle the platform options", 4, "selectorHelp")
-               Help.registerTarget(help_tour.platformName, "Use this button to enter the platform", 3, "selectorHelp")
+               Help.registerTarget(help_tour.currIcon, "This button opens the platform dropdown menu.", 4, "selectorHelp")
+               Help.registerTarget(help_tour.platformName, "This button opens the Interface that interacts with the board. ", 3, "selectorHelp")
            }
 
            Connections {

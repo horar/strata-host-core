@@ -250,5 +250,4 @@ function createHelpObject(tourTarget) {
     tourStop.index = tourTarget.index
     tourStop.description = tourTarget.description
     tourTarget.helpObject = tourStop
-    console.log(tourStop)
 }

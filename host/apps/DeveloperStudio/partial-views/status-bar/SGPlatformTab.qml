@@ -33,10 +33,7 @@ Item {
         populateButtons()
         setControlIcon()
         setSelectedButton()
-        Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(0).toolRow, "Use this menu item to open the platform and control the board, documentation, or close the platform", 6, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(1).toolRow, "Use this menu item to open the documentation of the board", 7, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(2).toolRow, "Use this menu item to close the platform", 8, "selectorHelp")
+        Help.registerTarget(menu, "This is the platform controls dropdown menu. \nControl: This displays an interface that interacts with a connected board. \nDocuments: This displays schematics and diagrams of the currently connected board", 5, "selectorHelp")
     }
 
     onConnectedChanged: {
@@ -47,19 +44,9 @@ Item {
         target: Help.utility
         // if order is hardcoded, toggle help_tour popup after dropdown popup otherwise reset z height.
         onInternal_tour_indexChanged: {
-            if(Help.current_tour_targets[index]["target"] === repeater.itemAt(0).toolRow || Help.current_tour_targets[index]["target"] === repeater.itemAt(1).toolRow ||
-                    Help.current_tour_targets[index]["target"] === repeater.itemAt(2).toolRow || Help.current_tour_targets[index]["target"] === menu) {
-                    if(Help.current_tour_targets[index]["target"] === menu) {
-                        dropDownPopup.open()
-                        menu.state = "help_tour"
-                    }
-                    if(Help.current_tour_targets[index]["target"] === repeater.itemAt(0)) {
-                        repeater.children[1].destroy()
-                    } if(Help.current_tour_targets[index]["target"] === repeater.itemAt(1)) {
-                        repeater.children[0].destroy()
-                    } if(Help.current_tour_targets[index]["target"] === repeater.itemAt(2)) {
-
-                    }
+            if(Help.current_tour_targets[index]["target"] === menu) {
+                dropDownPopup.open()
+                menu.state = "help_tour"
             } else {
                 dropDownPopup.close()
             }
@@ -269,7 +256,7 @@ Item {
         closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
 
         onOpened: {
-            if(menu.state === "help_tour"){         
+            if(menu.state === "help_tour"){
                 Help.refreshView(Help.internal_tour_index)
             }
         }
