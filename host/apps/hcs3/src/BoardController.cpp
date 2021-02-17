@@ -102,8 +102,8 @@ void BoardController::messageFromBoard(QString message)
     emit boardMessage(platformId, wrapperStrJson);
 }
 
-QString BoardController::createPlatformsList() {
-    QJsonArray arr;
+QJsonArray BoardController::createPlatformsList() {
+    QJsonArray list;
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
         Device::ControllerType controllerType = it.value().device->controllerType();
         QJsonObject item {
@@ -119,18 +119,10 @@ QString BoardController::createPlatformsList() {
             item.insert(JSON_CONTROLLER_CLASS_ID, it.value().device->controllerClassId());
             item.insert(JSON_FW_CLASS_ID, it.value().device->firmwareClassId());
         }
-        arr.append(item);
+        list.append(item);
     }
-    QJsonObject notif {
-        { JSON_LIST, arr },
-        { JSON_TYPE, JSON_CONNECTED_PLATFORMS }
-    };
-    QJsonObject msg {
-        { JSON_HCS_NOTIFICATION, notif }
-    };
-    QJsonDocument doc(msg);
 
-    return doc.toJson(QJsonDocument::Compact);
+    return list;
 }
 
 QString BoardController::logDeviceId(const int deviceId) const {

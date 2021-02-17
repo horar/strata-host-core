@@ -55,9 +55,9 @@ public:
 
     /**
      * Creates JSON with list of platforms
-     * @return list of platforms in JSON format
+     * @return list of platforms in QJsonArray
      */
-    QString createPlatformsList();
+    QJsonArray createPlatformsList();
 
 signals:
     void boardConnected(int deviceId);
