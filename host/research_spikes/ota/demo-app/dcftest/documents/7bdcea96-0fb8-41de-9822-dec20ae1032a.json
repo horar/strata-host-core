@@ -242,7 +242,7 @@
             "device": "water-heater",
             "md5": "2cb7483b5d92ead2de3df8ccf8b63077",
             "timestamp": "2021-01-18 12:41:26",
-            "version": "1.0.2"
+            "version": "0.0.2"
         },
         {
             "file": "str-level-shifters-gevb-v10100.bin",
