@@ -4,7 +4,7 @@ project(HostControllerService
 )
 
 set(PROJECT_BUNDLE_ID com.onsemi.strata.hcs)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -70,6 +70,20 @@ endif()
 generate_app_version(GITTAG_PREFIX "hcs_" MACBUNDLE OFF)
 generate_app_build_timestamp()
 
+set(HCS_CREDENTIALS_LOCATION ${CMAKE_SOURCE_DIR}/assets/config/hcs/credentials)
+
+if(NOT APPS_CORESW_HCS_CREDENTIALS)
+    set(APPS_CORESW_HCS_CREDENTIALS qa.json CACHE STRING "Desired HCS configuration file with credentials." FORCE)
+    message(STATUS "Defaulting 'APPS_CORESW_HCS_CREDENTIALS' to ${APPS_CORESW_HCS_CREDENTIALS}.")
+endif()
+file(GLOB HCS_CREDENTIALS_LOCATION_CHOICES
+    RELATIVE ${HCS_CREDENTIALS_LOCATION}
+    ${HCS_CREDENTIALS_LOCATION}/*.json
+)
+set_property(CACHE APPS_CORESW_HCS_CREDENTIALS PROPERTY STRINGS ${HCS_CREDENTIALS_LOCATION_CHOICES})
+file(READ ${CMAKE_SOURCE_DIR}/assets/config/hcs/credentials/${APPS_CORESW_HCS_CREDENTIALS} JSON_CREDENTIALS)
+generate_replicator_credentials(JSON_FILE ${JSON_CREDENTIALS})
+
 set_target_properties(${PROJECT_NAME}Lib PROPERTIES
     AUTOMOC ON
     AUTORCC ON
@@ -89,6 +103,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     strata::CouchbaseLiteCPP
     strata::QtLogger
     strata::CbLogger
+    rapidjson::rapidjson
 )
 
 target_include_directories(${PROJECT_NAME}Lib
@@ -97,14 +112,6 @@ target_include_directories(${PROJECT_NAME}Lib
 )
 
 if(WIN32)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMENT "Deploying dependant 3rd party ZMQ library..."
-        VERBATIM
-    )
-
     get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
     get_filename_component(QT_SSL_LIBRARY_DIR "${QT_LIBRARY_DIR}/../../../Tools/OpenSSL/Win_x64//bin" ABSOLUTE)
@@ -148,4 +155,9 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/hcs.config
     COMMENT "Deploying 'hcs.config'..."
     VERBATIM
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )

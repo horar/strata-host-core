@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
+import QtQml 2.12
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -22,6 +23,8 @@ import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
+import tech.strata.notifications 1.0
+import tech.strata.signals 1.0
 
 Rectangle {
     id: container
@@ -36,14 +39,21 @@ Rectangle {
     property color backgroundColor: "#3a3a3a"
     property color menuColor: Theme.palette.green
     property color alternateColor1: "#575757"
+    property bool hasNotifications: criticalNotifications.count > 0
+
+    onHasNotificationsChanged: {
+        alertIconContainer.visible = hasNotifications
+    }
 
     property alias platformTabListView: platformTabListView
+    property var mainWindow
 
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
         userSettings.loadSettings()
+        alertIconContainer.visible = hasNotifications
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -53,6 +63,17 @@ Rectangle {
 
     Component.onDestruction: {
         Help.destroyHelp()
+    }
+
+    SGSortFilterProxyModel {
+        id: criticalNotifications
+        sourceModel: Notifications.model
+        sortEnabled: false
+        invokeCustomFilter: true
+
+        function filterAcceptsRow(index) {
+            return sourceModel.get(index).level === Notifications.Level.Critical
+        }
     }
 
     RowLayout {
@@ -110,11 +131,78 @@ Rectangle {
             }
         }
 
+        Rectangle {
+            id: platformLeftArrow
+            Layout.preferredHeight: 40
+            Layout.preferredWidth: 20
+
+            enabled: platformTabListView.contentX > 0
+
+            visible: platformTabListView.contentWidth > platformTabListView.width
+
+            color: enabled && leftArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            onEnabledChanged: {
+                if (enabled == false) {
+                    leftArrowTimer.stop()
+                }
+            }
+
+            Timer {
+                id: leftArrowTimer
+                interval: 10
+                running: false
+                repeat: true
+                onTriggered: {
+                    platformTabListView.setPlatformTabContentX(-30)
+                }
+            }
+
+            SGIcon {
+                id: leftArrowIcon
+                height: width
+                width: parent.width - 4
+                anchors {
+                    centerIn: parent
+                }
+                source: "qrc:/sgimages/chevron-left.svg"
+                iconColor : "white"
+                opacity: enabled ? 1 : 0.4
+            }
+
+            MouseArea {
+                id: leftArrowMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                pressAndHoldInterval: 300
+                onClicked: {
+                    platformTabListView.setPlatformTabContentX(-100)
+                }
+                onPressAndHold: {
+                    leftArrowTimer.start()
+                }
+                onReleased: {
+                    leftArrowTimer.stop()
+                }
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
+        }
+
         ListView {
             id: platformTabListView
             Layout.fillHeight: true
             Layout.fillWidth: true
-            delegate: SGPlatformTab {}
+
+            property int platformTabWidth: ((count > 0) && (width > count)) ?
+                    Math.max(Math.min(Math.floor((width - count) / count), 250), 140) : 250
+
+            property int platformTabWidthRemainder : (platformTabWidth < 250) ?
+                    Math.max(width - ((platformTabWidth * count) + count), 0) : 0
+
+            delegate: SGPlatformTab {
+                width: platformTabListView.platformTabWidth +
+                       (index == (platformTabListView.count - 1) ? platformTabListView.platformTabWidthRemainder : 0)
+            }
             orientation: ListView.Horizontal
             spacing: 1
             clip: true
@@ -123,6 +211,124 @@ Rectangle {
             highlightMoveVelocity: -1
 
             model: NavigationControl.platform_view_model_
+
+            flickableDirection: Flickable.HorizontalFlick
+            boundsBehavior: Flickable.StopAtBounds
+
+            Behavior on contentX {
+                NumberAnimation {
+                    id: platformTabAnimation
+                    duration: 100
+                    easing.type: Easing.Linear
+
+                    property int animationContentX: 0   // to facilitate smooth mouse movements
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                propagateComposedEvents: true
+                onWheel: {
+                    let movementDelta = 0
+                    if (wheel.pixelDelta != null) {
+                        // as input we have pixelDelta which is how many pixels we have to move in this scroll step
+                        if (Math.abs(wheel.pixelDelta.x) > Math.abs(wheel.pixelDelta.y)) {
+                            movementDelta = wheel.pixelDelta.x
+                        } else {
+                            movementDelta = wheel.pixelDelta.y
+                        }
+                    }
+
+                    if (wheel.angleDelta != null && movementDelta === 0) {
+                        // as input we have angleDelta which is in multiples of 120, where 120 is one scroll step
+                        if (Math.abs(wheel.angleDelta.x) > Math.abs(wheel.angleDelta.y)) {
+                            movementDelta = wheel.angleDelta.x
+                        } else {
+                            movementDelta = wheel.angleDelta.y
+                        }
+                        // we make it so that 10 scrolls will move 1 page
+                        movementDelta = ((movementDelta / 120.0) * (platformTabListView.width / 10.0))
+                    }
+
+                    if (movementDelta !== 0) {
+                        platformTabListView.setPlatformTabContentX(-movementDelta)
+                    }
+                    wheel.accepted = true
+                }
+            }
+
+            function setPlatformTabContentX(val) {
+                if (platformTabAnimation.running == false) {
+                    platformTabAnimation.animationContentX = platformTabListView.contentX
+                }
+                platformTabAnimation.animationContentX += val
+                if (platformTabAnimation.animationContentX < 0) {
+                    platformTabAnimation.animationContentX = 0
+                } else {
+                    let maxContentX = Math.max(platformTabListView.contentWidth - platformTabListView.width, 0)
+                    if (platformTabAnimation.animationContentX > maxContentX) {
+                        platformTabAnimation.animationContentX = maxContentX
+                    }
+                }
+                platformTabListView.contentX = platformTabAnimation.animationContentX
+            }
+        }
+
+        Rectangle {
+            id: platformRightArrow
+            Layout.preferredHeight: 40
+            Layout.preferredWidth: 20
+
+            enabled: platformTabListView.contentX < Math.max(platformTabListView.contentWidth - platformTabListView.width, 0)
+
+            visible: platformTabListView.contentWidth > platformTabListView.width
+
+            color: enabled && rightArrowMouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : "#444"
+
+            onEnabledChanged: {
+                if (enabled == false) {
+                    rightArrowTimer.stop()
+                }
+            }
+
+            Timer {
+                id: rightArrowTimer
+                interval: 10
+                running: false
+                repeat: true
+                onTriggered: {
+                    platformTabListView.setPlatformTabContentX(30)
+                }
+            }
+
+            SGIcon {
+                id: rightArrowIcon
+                height: width
+                width: parent.width - 4
+                anchors {
+                    centerIn: parent
+                }
+                source: "qrc:/sgimages/chevron-right.svg"
+                iconColor : "white"
+                opacity: enabled ? 1 : 0.4
+            }
+
+            MouseArea {
+                id: rightArrowMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                pressAndHoldInterval: 300
+                onClicked: {
+                    platformTabListView.setPlatformTabContentX(100)
+                }
+                onPressAndHold: {
+                    rightArrowTimer.start()
+                }
+                onReleased: {
+                    rightArrowTimer.stop()
+                }
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
         }
 
         CVCButton {
@@ -214,7 +420,7 @@ Rectangle {
             height: 12
             width: height
             radius: height / 2
-            color: Theme.palette.green
+            color: "white"
 
             SGIcon {
                 id: alertIcon
@@ -224,7 +430,7 @@ Rectangle {
                     centerIn: parent
                 }
                 source: "qrc:/sgimages/exclamation-circle.svg"
-                iconColor : "white"
+                iconColor : Theme.palette.error
             }
         }
 
@@ -252,7 +458,7 @@ Rectangle {
             y: profileIconContainer.height
             padding: 0
             topPadding: 10
-            width: 100
+            width: 140
             background: Canvas {
                 width: profileMenu.width
                 height: profileMenu.contentItem.height + 10
@@ -274,8 +480,7 @@ Rectangle {
                 }
             }
 
-            contentItem:
-                Column {
+            contentItem: Column {
                 id: profileColumn
                 width: profileMenu.width
 
@@ -295,6 +500,16 @@ Rectangle {
                         feedLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Notifications (" + Notifications.model.count + ")")
+                    iconSource: hasNotifications ? "qrc:/sgimages/exclamation-circle.svg" : ""
+                    width: profileMenu.width
+                    onClicked: {
+                        profileMenu.close()
+                        mainWindow.notificationsInbox.open()
+                    }
                 }
 
                 SGMenuItem {
@@ -321,7 +536,8 @@ Rectangle {
                     width: profileMenu.width
 
                     onClicked: {
-                        cvcButton.toggleVisibility()
+                        Signals.loadCVC()
+                        profileMenu.close()
                     }
                 }
 
@@ -341,6 +557,7 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
 
+                        Signals.logout()
                         PlatformFilters.clearActiveFilters()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()
@@ -379,17 +596,28 @@ Rectangle {
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
-
+        property bool notifyOnCollateralDocumentUpdate: true
         property int selectedDistributionPortal: 0
 
         function loadSettings() {
             const settings = readFile("general-settings.json")
+
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
+            }
+            if (settings.hasOwnProperty("closeOnDisconnect")) {
                 closeOnDisconnect = settings.closeOnDisconnect
+            }
+            if (settings.hasOwnProperty("autoOpenView")) {
                 notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+            }
+            if (settings.hasOwnProperty("selectedDistributionPortal")) {
                 selectedDistributionPortal = settings.selectedDistributionPortal
             }
+            if (settings.hasOwnProperty("notifyOnCollateralDocumentUpdate")) {
+                notifyOnCollateralDocumentUpdate = settings.notifyOnCollateralDocumentUpdate
+            }
+
             NavigationControl.userSettings = userSettings
         }
 
@@ -398,7 +626,8 @@ Rectangle {
                 autoOpenView: autoOpenView,
                 closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
-                selectedDistributionPortal: selectedDistributionPortal
+                selectedDistributionPortal: selectedDistributionPortal,
+                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate
             }
             userSettings.writeFile("general-settings.json", settings)
         }

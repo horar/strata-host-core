@@ -15,6 +15,8 @@
 #include <qwt/qwt_plot_layout.h>
 #include <qwt/qwt_text_label.h>
 #include <qwt/qwt_plot_grid.h>
+#include <qwt/qwt_symbol.h>
+#include <qwt/qwt_legend.h>
 
 #include <QDebug>
 
@@ -52,6 +54,10 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool yMinorGrid READ yMinorGrid WRITE setYMinorGrid NOTIFY yMinorGridChanged)
     Q_PROPERTY(QColor gridColor MEMBER gridColor_ WRITE setGridColor NOTIFY gridColorChanged)
     Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setYRightVisible NOTIFY yRightVisibleChanged)
+    Q_PROPERTY(QColor yRightAxisColor MEMBER yRightAxisColor_ WRITE setYRightAxisColor NOTIFY yRightAxisColorChanged)
+    Q_PROPERTY(QColor yLeftAxisColor MEMBER yLeftAxisColor_ WRITE setYLeftAxisColor NOTIFY yLeftAxisColorChanged)
+    Q_PROPERTY(QColor xAxisColor MEMBER xAxisColor_ WRITE setXAxisColor NOTIFY xAxisColorChanged)
+    Q_PROPERTY(bool legend READ legend WRITE insertLegend NOTIFY legendChanged)
 
 
 public:
@@ -119,6 +125,11 @@ public:
     void setGridColor(QColor newColor);
     void setYRightVisible(bool showYRightAxis);
     bool yRightVisible();
+    void setYRightAxisColor(QColor newColor);
+    void setYLeftAxisColor(QColor newColor);
+    void setXAxisColor(QColor newColor);
+    void insertLegend(bool showLegend);
+    bool legend();
 
 protected:
     QwtPlot* qwtPlot = nullptr;
@@ -151,6 +162,10 @@ signals:
     void yRightVisibleChanged();
     void yRightMinChanged();
     void yRightMaxChanged();
+    void yRightAxisColorChanged();
+    void yLeftAxisColorChanged();
+    void xAxisColorChanged();
+    void legendChanged();
 
 private:
     friend class SGQWTPlotCurve;
@@ -168,7 +183,10 @@ private:
     bool yMinorGrid_ = false;
     QColor gridColor_;
     bool yRightVisible_ = false;
-
+    QColor yRightAxisColor_;
+    QColor yLeftAxisColor_;
+    QColor xAxisColor_;
+    bool legend_ = false;
 
 private slots:
     void updatePlotSize();
@@ -199,7 +217,7 @@ public:
     Q_INVOKABLE int count();
     Q_INVOKABLE void shiftPoints(double offsetX, double offsetY);
     Q_INVOKABLE void update();
-
+    Q_INVOKABLE void setSymbol(int newStyle , QColor color ,  int penStyle , int size);
 
 
 protected:

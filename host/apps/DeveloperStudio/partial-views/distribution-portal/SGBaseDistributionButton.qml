@@ -7,7 +7,6 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
 
-import "qrc:/js/constants.js" as Constants
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 RowLayout {
@@ -20,23 +19,23 @@ RowLayout {
     property string providerName: ''
     readonly property var providers: [
         {
-            name: "Distribution Portal...",
+            name: "Choose preferred distributor...",
             url: '',
             visible: false
         },
         {
             name: "Avnet",
-            url: Constants.AVNET_URL,
+            url: urls.avnetUrl,
             visible: true
         },
         {
             name: "Digi-Key",
-            url: Constants.DIGIKEY_URL,
+            url: urls.digiKeyUrl,
             visible: true
         },
         {
             name: "Mouser",
-            url: Constants.MOUSER_URL,
+            url: urls.mouserUrl,
             visible: true
         }
     ]
@@ -80,7 +79,7 @@ RowLayout {
             elide: Text.ElideRight
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
-            fontSizeMultiplier: 1.25
+            fontSizeMultiplier: 1
         }
 
         MouseArea {
@@ -203,8 +202,8 @@ RowLayout {
 
     TextMetrics {
         id: textSize
-        font.pixelSize: SGSettings.fontPixelSize * 1.25
+        font.pixelSize: SGSettings.fontPixelSize
         font.family: Fonts.franklinGothicBold
-        text: "Distribution Portal..."
+        text: providers[0].name
     }
 }

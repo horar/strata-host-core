@@ -259,6 +259,7 @@ function updateState(event, data)
 
                 // Update StatusBar
                 status_bar_container_.visible = true
+                context.mainWindow = main_qml_object_
                 let statusBar = createView(screens.STATUS_BAR, status_bar_container_)
                 platform_tab_list_view_ = statusBar.platformTabListView
 
@@ -288,6 +289,7 @@ function updateState(event, data)
                     let open_view = platform_view_model_.get(i)
                     if (open_view.class_id === data.class_id && open_view.device_id === data.device_id) {
                         updateState(events.SWITCH_VIEW_EVENT, {"index": i+1})
+                        open_view.view = data.view
                         return
                     }
                 }
@@ -371,13 +373,11 @@ function updateState(event, data)
                     stack_container_.currentIndex = data.index
                 }
 
-                if ((platform_tab_list_view_ !== undefined) && (platform_tab_list_view_ !== null)) {
-                    if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
-                        (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
-                        platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
-                    } else {
-                         platform_tab_list_view_.currentIndex =  -1
-                    }
+                if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
+                    (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
+                    platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
+                } else {
+                     platform_tab_list_view_.currentIndex =  -1
                 }
 
                 break;

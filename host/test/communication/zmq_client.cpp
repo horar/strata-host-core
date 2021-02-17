@@ -5,87 +5,168 @@
  * Needs testing on Windows 32bit
  */
 
+#include <future>
 #include <iostream>
-#include <libserialport.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
 #include <string>
-#include <functional>
-#include <thread>
-#include <mutex>
-#include <unistd.h>
-#include <event2/event.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
-
-#include "ArduinoJson/ArduinoJson.h"
-#include "zmq.hpp"
-#include "zmq_addon.hpp"
-#include "zhelpers.hpp"
+#include <rapidjson/document.h>
+#include <rapidjson/error/en.h>
+#include <zmq.hpp>
+#include <zmq_addon.hpp>
 
 using namespace std;
-
-
-// * Counter to keep track of valid and invalid jason
-int valid_json_, invalid_json_;
-
+std::mutex coutMutex;
 
 /*!
  * \brief : checks whether the received json over ZMQ_SUB is valid or not
  *          and increment the respective counter
  */
-void verifyJson(string received) {
-
-  if(received.compare("")) {
-    StaticJsonBuffer<2000> jsonBuffer;
-    JsonObject& root = jsonBuffer.parseObject(received.c_str());
-
-    if(root.success()) {
-
-      valid_json_+=1;
+bool verifyJson(const string& received)
+{
+    //parse json
+    rapidjson::Document jsonDoc;
+    rapidjson::ParseResult result = jsonDoc.Parse(received.c_str());
+    if (result.IsError()) {
+        return false;
     } else {
-
-      invalid_json_+=1;
+        return true;
     }
-  }
 }
 
-int main() {
+void DealerThread(zmq::context_t *context) {
+    //  Prepare dealer
 
-  valid_json_=invalid_json_=0;
-  zmq::context_t context(1);
-  zmq::socket_t command(context,ZMQ_DEALER);
-  zmq::socket_t notify(context,ZMQ_SUB);
+    // dealer - messages not duplicates, only one will get them
+    // publisher - it will duplicate the messages to all subscribers
 
-  command.connect("tcp://127.0.0.1:5564");
-  int i = 1;
-  #ifdef _WIN32
-  s_set_id(command, (intptr_t)&i);
-  #else
-  s_set_id(command);
-  #endif
+    zmq::socket_t dealer(*context, zmq::socket_type::dealer);
+    dealer.bind("inproc://#1");
 
-  notify.connect("tcp://127.0.0.1:5563");
-  notify.setsockopt(ZMQ_SUBSCRIBE,"ONSEMI",strlen("ONSEMI"));
+    // Give the subscribers a chance to connect, so they don't lose any messages
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-  string cmd = "{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}\n";
-  while(1) {
+    for(int i = 0; i < 50; ++i) {
+        {
+            lock_guard<mutex> lock(coutMutex);
+            cout << "Dealer: Sending Loop = " << i << endl;
+        }
+        //  Write three messages, each with an envelope and content
+        dealer.send(zmq::str_buffer("ONSEMI A"), zmq::send_flags::sndmore);
+        dealer.send(zmq::str_buffer("{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}"));
+        dealer.send(zmq::str_buffer("ONSEMI B"), zmq::send_flags::sndmore);
+        dealer.send(zmq::str_buffer("{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}"));
+        dealer.send(zmq::str_buffer("ONSEMI C"), zmq::send_flags::sndmore);
+        dealer.send(zmq::str_buffer("{\"cmd\":\"request_platform_id\",\"Host_OS\":\"Linux\"}"));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 
-    s_send(command,cmd);
-    s_recv(notify);
-    string received = s_recv(notify);
-    verifyJson(received);
-    cout << "Valid Json Count = " << valid_json_ <<endl;
-    cout << "InValid Json Count = " << invalid_json_ <<endl;
+    // send twice so all get the message
+    dealer.send(zmq::str_buffer("ONSEMI A"), zmq::send_flags::sndmore);
+    dealer.send(zmq::str_buffer("EXIT"));
+    dealer.send(zmq::str_buffer("ONSEMI A"), zmq::send_flags::sndmore);
+    dealer.send(zmq::str_buffer("EXIT"));
+}
 
-    #ifdef _WIN32
-      Sleep(1000);
-    #else
-      sleep(1);
-    #endif
-  }
+void SubscriberThread1(zmq::context_t *context) {
+    //  Counter to keep track of valid and invalid jason
+    int validJson = 0;
+    int invalidJson = 0;
+
+    //  Prepare subscriber
+    zmq::socket_t subscriber(*context, zmq::socket_type::sub);
+    subscriber.connect("inproc://#1");
+
+    //  Subscriber Thread1 opens "ONSEMI A" and "ONSEMI B" envelopes
+    subscriber.set(zmq::sockopt::subscribe, "ONSEMI A");
+    subscriber.set(zmq::sockopt::subscribe, "ONSEMI B");
+
+    while (1) {
+        // Receive all parts of the message
+        std::vector<zmq::message_t> recv_msgs;
+        zmq::recv_result_t result =
+                zmq::recv_multipart(subscriber, std::back_inserter(recv_msgs));
+        assert(result && "recv failed");
+
+        std::string iMessage = recv_msgs[1].to_string();
+        if(iMessage == "EXIT")
+            break;
+
+        if (false == verifyJson(iMessage)) {
+            ++invalidJson;
+        } else {
+            ++validJson;
+        }
+
+        {
+            lock_guard<mutex> lock(coutMutex);
+            std::cout << "Sub Thread1: [" << recv_msgs[0].to_string_view() << "] "
+                      << recv_msgs[1].to_string_view() << std::endl;
+        }
+    }
+    {
+        lock_guard<mutex> lock(coutMutex);
+        cout << "Valid Json Count Sub Thread1 = " << validJson << endl;
+        cout << "InValid Json Count Sub Thread1 = " << invalidJson << endl;
+    }
+}
+
+void SubscriberThread2(zmq::context_t *context) {
+    //  Counter to keep track of valid and invalid jason
+    int validJson = 0;
+    int invalidJson = 0;
+
+    //  Prepare our context and subscriber
+    zmq::socket_t subscriber(*context, zmq::socket_type::sub);
+    subscriber.connect("inproc://#1");
+
+    //  Subscriber Thread2 opens ALL envelopes
+    subscriber.set(zmq::sockopt::subscribe, "");
+
+    while (1) {
+        // Receive all parts of the message
+        std::vector<zmq::message_t> recv_msgs;
+        zmq::recv_result_t result =
+                zmq::recv_multipart(subscriber, std::back_inserter(recv_msgs));
+        assert(result && "recv failed");
+
+        std::string iMessage = recv_msgs[1].to_string();
+        if(iMessage == "EXIT")
+            break;
+
+        if (false == verifyJson(iMessage)) {
+            ++invalidJson;
+        } else {
+            ++validJson;
+        }
+
+        {
+            lock_guard<mutex> lock(coutMutex);
+            std::cout << "Sub Thread2: [" << recv_msgs[0].to_string_view() << "] "
+                      << recv_msgs[1].to_string_view() << std::endl;
+        }
+    }
+    {
+        lock_guard<mutex> lock(coutMutex);
+        cout << "Valid Json Count Sub Thread2 = " << validJson << endl;
+        cout << "InValid Json Count Sub Thread2 = " << invalidJson << endl;
+    }
+}
+
+int main()
+{
+    cout << "Inicializing test" << endl;
+    zmq::context_t context(0);
+
+    auto thread1 = std::async(std::launch::async, DealerThread, &context);
+
+    // Give the dealer a chance to connect
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    auto thread2 = std::async(std::launch::async, SubscriberThread1, &context);
+    auto thread3 = std::async(std::launch::async, SubscriberThread2, &context);
+    thread1.wait();
+    thread2.wait();
+    thread3.wait();
+
+    cout << "Test ended" << endl;
 }

@@ -8,16 +8,21 @@ struct DocumentItem {
     DocumentItem(
             const QString &uri,
             const QString &filename,
-            const QString &dirname)
+            const QString &dirname,
+            const QString &md5 = "")
     {
         this->uri = uri;
         this->prettyName = filename;
         this->dirname = dirname;
+        this->md5 = md5;
+        this->historyState = "seen";
     }
 
     QString uri;
     QString prettyName;
     QString dirname;
+    QString md5;
+    QString historyState;
 };
 
 class DocumentListModel: public QAbstractListModel
@@ -36,6 +41,7 @@ public:
         PrettyNameRole,
         DirnameRole,
         PreviousDirnameRole,
+        HistoryStateRole
     };
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -46,7 +52,11 @@ public:
 
     Q_INVOKABLE QString getFirstUri();
     Q_INVOKABLE QString dirname(int index);
-
+    Q_INVOKABLE QString getMD5();
+    Q_INVOKABLE void setHistoryState(const QString &doc, const QString &state);
+    Q_INVOKABLE void setAllHistoryStateToSeen();
+    Q_INVOKABLE bool anyItemsUnseen();
+    Q_INVOKABLE QStringList getItemsUnseen();
 
 signals:
     void countChanged();

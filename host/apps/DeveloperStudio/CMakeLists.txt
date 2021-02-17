@@ -6,7 +6,7 @@ project(StrataDeveloperStudio
 set(PROJECT_WIN32_ICO resources/icons/app/on-logo.ico)
 set(PROJECT_MACOS_ICNS on-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
 set(QT5_MINIMUM_VERSION 5.12.4)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -36,12 +36,13 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/SGQrcTreeNode.cpp
     source/SGFileTabModel.cpp
     source/SGNewControlView.cpp
-    $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
+    source/ResourcePath.cpp
     source/RunGuard.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp
     source/config/AppConfig.cpp
+    source/config/UrlConfig.cpp
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
@@ -71,7 +72,6 @@ if(APPLE)
         resources/icons/app/on-logo.icns
         PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
-
 endif()
 
 target_link_libraries(${PROJECT_NAME}
@@ -111,14 +111,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 if(WIN32)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMENT "Deploying dependant 3rd party libraries..."
-        VERBATIM
-    )
-
     get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
     get_filename_component(QT_SSL_LIBRARY_DIR "${QT_LIBRARY_DIR}/../../../Tools/OpenSSL/Win_x64//bin" ABSOLUTE)
@@ -139,14 +131,15 @@ if(WIN32)
     endif()
 endif()
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_DISABLE_DEPRECATED_BEFORE=0x060000
-    $<$<CONFIG:Debug>:QT_QML_DEBUG>
-)
-
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
     COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")

@@ -14,8 +14,8 @@ cmake_host_system_information(RESULT hostName QUERY HOSTNAME)
 message(STATUS "Processing build timestamp info...")
 file(READ ${INPUT_DIR}/Timestamp.cpp.in tsFile_temporary)
 string(CONFIGURE "${tsFile_temporary}" tsFile_updated @ONLY)
-file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}Timestamp.cpp.tmp "${tsFile_updated}")
+file(WRITE ${OUTPUT_DIR}/Timestamp.cpp.tmp "${tsFile_updated}")
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${OUTPUT_DIR}/${PROJECT_NAME}Timestamp.cpp.tmp ${OUTPUT_DIR}/${PROJECT_NAME}Timestamp.cpp
+    ${OUTPUT_DIR}/Timestamp.cpp.tmp ${OUTPUT_DIR}/Timestamp.cpp
 )

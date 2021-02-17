@@ -70,11 +70,13 @@ function login_error(error)
   Login: Clear token on logout
 */
 function logout() {
-    Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_error)
-    Rest.jwt = ""
-    Rest.session = ""
-    if (settings.rememberMe) {
-        settings.rememberMe = false
+    if (Rest.session !== "") {
+        Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_error)
+        Rest.jwt = ""
+        Rest.session = ""
+        if (settings.rememberMe) {
+            settings.rememberMe = false
+        }
     }
 }
 
@@ -89,7 +91,6 @@ function logout_error(error){
     } else {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "Logout error:", JSON.stringify(error))
     }
-    SignalsModule.Signals.logout()
 }
 
 /*

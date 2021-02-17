@@ -33,7 +33,6 @@ public:
     CoreInterface* coreInterface() const;
     ResourceLoader* resourceLoader() const;
     SGNewControlView* newControlView() const;
-
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 

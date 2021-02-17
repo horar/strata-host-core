@@ -6,7 +6,7 @@ project(PlatformRegistrationTool
 set(PROJECT_WIN32_ICO resources/icons/app/prt-logo.ico)
 set(PROJECT_MACOS_ICNS prt-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.prt)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2021 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -84,14 +84,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_DISABLE_DEPRECATED_BEFORE=0x060000
-    $<$<CONFIG:Debug>:QT_QML_DEBUG>
-)
-
-add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
-add_qml_import_path(PATH ":/")
-
 if(WIN32)
     get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
@@ -112,7 +104,6 @@ if(WIN32)
         message(WARNING "Please install OpenSSL coming with your Qt installer (can't find OpenSSL DLL's in '${QT_SSL_LIBRARY_DIR}'")
     endif()
 endif()
-
 
 # deploy desired config file into side-by-side to compiled binary/bundle
 set(PRT_CONFIG_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/configs)
@@ -139,3 +130,11 @@ add_custom_command(
     COMMENT "Deploying config file ${APPS_TOOLBOX_PRT_CONFIG} as 'prt-config.ini'"
     VERBATIM
 )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
+    $<$<CONFIG:Debug>:QT_QML_DEBUG>
+)
+
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")

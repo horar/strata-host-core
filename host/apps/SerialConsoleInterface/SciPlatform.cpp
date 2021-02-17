@@ -176,46 +176,43 @@ void SciPlatform::resetPropertiesFromDevice()
     setDeviceName(device_->deviceName());
 }
 
-bool SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
+QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
 {
+    QVariantMap retStatus;
+
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
 
-        setErrorString("Platform not connected");
-        return false;
+        retStatus["error"] = "not_connected";
+        return retStatus;
     }
 
-    QByteArray messageUtf8 = message.toUtf8();
-
-    // replace all soft wraps as QJsonDocument cannot handle them
-    messageUtf8 = messageUtf8.replace(QChar(0x2028),"");
-
     QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(messageUtf8, &parseError);
+    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
     bool isJsonValid = parseError.error == QJsonParseError::NoError;
 
     if (onlyValidJson) {
         if (isJsonValid == false) {
-            QString error = QString("JSON error at position %1 - %2")
-                    .arg(parseError.offset)
-                    .arg(parseError.errorString());
-
-            setErrorString(error);
-            return false;
+            retStatus["error"] = "json_error";
+            retStatus["offset"] = parseError.offset;
+            retStatus["message"] = parseError.errorString();
+            return retStatus;
         }
-
-        messageUtf8 = doc.toJson(QJsonDocument::Compact);
-    } else {
-        ; //message is sent as is
     }
 
-    bool result = device_->sendMessage(messageUtf8);
+    //compact format as line break is end of input for serial library
+    QString compactMsg = SGJsonFormatter::minifyJson(message);
+
+    bool result = device_->sendMessage(compactMsg.toUtf8());
     if (result) {
-        commandHistoryModel_->add(messageUtf8, isJsonValid);
+        commandHistoryModel_->add(compactMsg, isJsonValid);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+        retStatus["error"] = "no_error";
+    } else {
+        retStatus["error"] = "send_error";
     }
 
-    return result;
+    return retStatus;
 }
 
 bool SciPlatform::programDevice(QString filePath, bool doBackup)

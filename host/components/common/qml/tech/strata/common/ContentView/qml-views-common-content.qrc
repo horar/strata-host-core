@@ -13,5 +13,6 @@
         <file>content-views/EmptyDocuments.qml</file>
         <file>HelpButton.qml</file>
         <file>images/HelpTourDocument.pdf</file>
+        <file>DocumentsHistory.qml</file>
     </qresource>
 </RCC>

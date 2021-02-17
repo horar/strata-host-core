@@ -26,7 +26,11 @@ var uuid_map = {
     "TEST.2018.002.0.0": "motor-vortex",
     "entice_rgb" : "entice_rgb",
     "template": "template",
+<<<<<<< HEAD
     "100V-ncp1034": "100V-ncp1034",
+=======
+    "core-test-ui":"core-test-ui",
+>>>>>>> develop
 
     /*****
         CES HACK or temporary Class ID for development purposes(class_id)
@@ -75,6 +79,7 @@ var uuid_map = {
     "245": "bldcMotorControl",
     "246": "meshNetwork",
     "265": "zigbee",
+    "9b8fb506-dd43-40a5-b762-2ec8b70cbb78":"template",
 
     /*****
         Real UUID generated from interaction with Deployment Portal (class_id)
@@ -109,5 +114,4 @@ var uuid_map = {
     "4aad7090-eac3-470e-a304-00988c8c006d": "rsl10-dcdc",
     "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-dcdc",
     "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators"
-
 }

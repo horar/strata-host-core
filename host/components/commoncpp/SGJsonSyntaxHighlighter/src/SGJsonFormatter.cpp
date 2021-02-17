@@ -8,12 +8,12 @@ SGJsonFormatter::SGJsonFormatter(QObject *parent)
 
 QString SGJsonFormatter::prettifyJson(
         const QString &jsonString,
-        int indentSize,
-        bool softWrap)
+        bool softWrap,
+        int indentSize)
 {
     QString prettifiedJson;
     QChar spaceChar = QChar::Space;
-    QChar breakLineChar = softWrap ? QChar(0x2028) : QChar('\n');
+    QChar breakLineChar = softWrap ? softBreakLine_ : hardBreakLine_;
     Token previousToken, token, nextToken;
 
     resolveNextToken(jsonString, 0, token);
@@ -86,6 +86,12 @@ QString SGJsonFormatter::minifyJson(const QString &jsonString)
     return minifiedJson;
 }
 
+QString SGJsonFormatter::convertToHardBreakLines(const QString &text)
+{
+    QString textWithHardBreakLines = text;
+    return textWithHardBreakLines.replace(softBreakLine_, hardBreakLine_);
+}
+
 void SGJsonFormatter::resolveNextToken(
         const QString &text,
         int startIndex,
@@ -104,9 +110,12 @@ void SGJsonFormatter::resolveNextToken(
         case ScannerState::Start:
             if (c.isSpace()) {
                 ;
-            } else if (c.isDigit() || c == '+' || c == '-') {
+            } else if (c.isDigit()) {
                 state = ScannerState::Integer;
                 nextToken.type = TokenType::Integer;
+                nextToken.startIndex = i;
+            } else if (c == '+' || c == '-') {
+                state = ScannerState::MaybeInteger;
                 nextToken.startIndex = i;
             } else if (c == '"') {
                 state = ScannerState::String;
@@ -146,7 +155,16 @@ void SGJsonFormatter::resolveNextToken(
                 return;
             } else {
                 state = ScannerState::SyntaxError;
+                nextToken.startIndex = i;
                 nextToken.type = TokenType::SyntaxError;
+            }
+            break;
+        case ScannerState::MaybeInteger:
+            if (c.isDigit()) {
+                state = ScannerState::Integer;
+                nextToken.type = TokenType::Integer;
+            } else {
+                state = ScannerState::SyntaxError;
             }
             break;
         case ScannerState::Integer:
@@ -261,7 +279,8 @@ void SGJsonFormatter::resolveNextToken(
 
     //text input for block is over, but token was not determined
 
-    if (state == ScannerState::MaybeReal
+    if (state == ScannerState::MaybeInteger
+            || state == ScannerState::MaybeReal
             || state == ScannerState::MaybeExpReal
             || state == ScannerState::MaybeExpRealSign
             || state == ScannerState::OnlyLettersType) {
