@@ -11,7 +11,7 @@ FocusScope {
 
     property string firmwareBinaryPath: Sci.Settings.lastSelectedFirmware
     property int processingStatus: ProgramDeviceView.Setup
-    property bool doBackup: true
+    property bool doBackup: Sci.Settings.backupFirmware
 
     property int backupProgress: 0
     property int programProgress: 0
@@ -285,6 +285,7 @@ FocusScope {
                                     error)
                     } else {
                         Sci.Settings.lastSelectedFirmware = firmwareBinaryPath
+                        Sci.Settings.backupFirmware = doBackup
                         startProgramProcess()
                     }
                 }
