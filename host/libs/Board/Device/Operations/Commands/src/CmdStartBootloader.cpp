@@ -40,8 +40,8 @@ std::chrono::milliseconds CmdStartBootloader::waitBeforeNextCommand() const {
     // Platform and bootloader uses the same setting for clock source.
     // Clock source for bootloader and application must match. Otherwise when application jumps to bootloader,
     // it will have a hardware fault which requires board to be reset.
-    if (waitTime_ >= std::chrono::milliseconds(5000)) {
-        qCInfo(logCategoryDeviceOperations) << device_ << "Waiting 5 seconds for bootloader to start.";
+    if (waitTime_ >= std::chrono::milliseconds(WAIT_TIME_IN_MS)) {
+        qCInfo(logCategoryDeviceOperations) << device_ << "Waiting " <<  waitTime_.count() << " miliseconds for bootloader to start.";
     } else {
         qCInfo(logCategoryDeviceOperations) << device_ << "Skipping wait-time-for-bootloader-to-start for test purposes. (" << waitTime_.count() << " ms)";
     }
