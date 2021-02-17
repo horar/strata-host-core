@@ -27,6 +27,13 @@ public:
 
     /*!
      * FlasherConnector constructor.
+     * \param fwClassId firmware class id which will be set to device
+     * \param device device which will be used by FlasherConnector
+     */
+    FlasherConnector(const QString& fwClassId, const device::DevicePtr& device, QObject* parent = nullptr);
+
+    /*!
+     * FlasherConnector constructor.
      * \param device device which will be used by FlasherConnector
      * \param firmwarePath path to firmware file
      * \param firmwareMD5 MD5 checksum of firmware
@@ -63,6 +70,12 @@ public:
      * \return true if backup process has started, otherwise false
      */
     bool backup();
+
+    /*!
+     * Set Firmware Class ID (without flashing firmware)
+     * \return true if set process has started, otherwise false
+     */
+    bool setFwClassId();
 
     /*!
      * Stop flash/backup firmware operation.
@@ -151,12 +164,18 @@ private slots:
     void handleFlasherState(Flasher::State flasherState, bool done);
 
 private:
+    // deleter for flasher_ unique pointer
+    static void flasherDeleter(Flasher* flasher);
+
     void flashFirmware(bool flashOld);
     void backupFirmware(bool backupOld);
     void processStartupError(const QString& errorString);
 
     device::DevicePtr device_;
-    std::unique_ptr<Flasher> flasher_;
+
+    typedef std::unique_ptr<Flasher, void(*)(Flasher*)> FlasherPtr;
+    FlasherPtr flasher_;
+
     const QString filePath_;
     const QString newFirmwareMD5_;
     const QString newFwClassId_;
@@ -165,11 +184,12 @@ private:
 
     enum class Action {
         None,
-        Flash,      // only flash firmware (without backup)
-        Backup,     // only backup firmware
-        BackupOld,  // backup old firmware
-        FlashNew,   // flash new firmware
-        FlashOld    // flash backed up (old) firmware
+        Flash,        // only flash firmware (without backup)
+        Backup,       // only backup firmware
+        BackupOld,    // backup old firmware
+        FlashNew,     // flash new firmware
+        FlashOld,     // flash backed up (old) firmware
+        SetFwClassId  // set firmware class ID (without flash)
     };
     Action action_;
 

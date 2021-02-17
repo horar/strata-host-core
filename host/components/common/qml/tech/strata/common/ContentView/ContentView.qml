@@ -6,6 +6,11 @@ import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
 import "qrc:/js/help_layout_manager.js" as Help
 
+import tech.strata.common 1.0
+import tech.strata.commoncpp 1.0
+
+import "qrc:/js/navigation_control.js" as NavigationControl
+
 Rectangle {
     id: view
     anchors {
@@ -24,6 +29,7 @@ Rectangle {
     signal finished()
 
     property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
+
     onTotalDocumentsChanged: {
         if(helpIcon.class_id === "help_docs_demo" ) {
             pdfViewer.url = "qrc:/tech/strata/common/ContentView/images/" + classDocuments.pdfListModel.getFirstUri()
@@ -110,6 +116,10 @@ Rectangle {
                 pdfViewer.url = ""
                 loadingImage.currentFrame = 0
             }
+        }
+
+        onMd5Ready: {
+            documentsHistory.processDocumentsHistory()
         }
     }
 
@@ -224,6 +234,31 @@ Rectangle {
                                 Help.liveResize()
                             }
                         }
+
+                        Rectangle {
+                            width: pdfAlert.implicitWidth + height
+                            height: 14
+                            radius: height/2
+                            color: "green"
+                            visible: documentsHistory.displayPdfUnseenAlert && !parent.open
+                            anchors {
+                                right: parent.right
+                                rightMargin: 2 + titleBarHeight
+                                top: parent.top
+                                topMargin: (titleBarHeight - height) / 2
+                            }
+
+                            property real titleBarHeight: parent.children[0].height
+
+                            Label {
+                                id: pdfAlert
+                                anchors.centerIn: parent
+                                text: "UPDATED"
+                                color: "white"
+                                font.bold: true
+                                font.pointSize: 10
+                            }
+                        }
                     }
 
                     SGAccordionItem {
@@ -271,6 +306,31 @@ Rectangle {
                         onAnimationCompleted: {
                             if (helpIcon.class_id === "help_docs_demo" && Help.tour_running) {
                                 Help.liveResize()
+                            }
+                        }
+
+                        Rectangle {
+                            width: downloadAlert.implicitWidth + height
+                            height: 14
+                            radius: height/2
+                            color: "green"
+                            visible: documentsHistory.displayPdfUnseenAlert && !parent.open
+                            anchors {
+                                right: parent.right
+                                rightMargin: 2 + titleBarHeight
+                                top: parent.top
+                                topMargin: (titleBarHeight - height) / 2
+                            }
+
+                            property real titleBarHeight: parent.children[0].height
+
+                            Label {
+                                id: downloadAlert
+                                anchors.centerIn: parent
+                                text: "UPDATED"
+                                color: "white"
+                                font.bold: true
+                                font.pointSize: 10
                             }
                         }
                     }
@@ -425,5 +485,9 @@ Rectangle {
             preventStealing: true
             propagateComposedEvents: false
         }
+    }
+
+    DocumentsHistory {
+        id: documentsHistory
     }
 }

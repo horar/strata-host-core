@@ -1,5 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.3
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 // SGAccordionItem is a clickable title bar that drops down an area that can be filled with items
 

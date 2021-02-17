@@ -8,10 +8,6 @@
 QString ResourcePath::coreResourcePath_ = QString();
 QString ResourcePath::viewsPhysicalPath_ = QString();
 
-ResourcePath::ResourcePath()
-{
-}
-
 QString &ResourcePath::coreResourcePath()
 {
     if (coreResourcePath_.isEmpty()) {
@@ -34,16 +30,10 @@ QString &ResourcePath::coreResourcePath()
 
 QString &ResourcePath::viewsPhysicalPath()
 {
-    QDir* dir;
-    if(viewsPhysicalPath_.isEmpty()) {
-        dir = new QDir(coreResourcePath());
-        dir->cdUp();
-        dir->cdUp();
-        dir->cd("host");
-        dir->cd("components");
-        dir->cd("views");
-        viewsPhysicalPath_ = dir->absolutePath();
-        qDebug() << viewsPhysicalPath_;
+    if (viewsResourcePath_.isEmpty()) {
+        viewsResourcePath_ = QStringLiteral("%1/views").arg(coreResourcePath());
+        qCDebug(logCategoryStrataDevStudio(), "app views resources path: '%s'",
+                qUtf8Printable(viewsResourcePath_));
     }
 
     return viewsPhysicalPath_;

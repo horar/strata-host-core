@@ -24,7 +24,7 @@ SGStrataPopup {
         width: parent.width - 40
 
         SGText {
-            text: "Platform Views"
+            text: "Platform View Settings"
             fontSizeMultiplier: 1.3
         }
 
@@ -56,8 +56,7 @@ SGStrataPopup {
         }
 
         SGText {
-            Layout.topMargin: 5
-            text: "Updates"
+            text: "Notification Settings"
             fontSizeMultiplier: 1.3
         }
 
@@ -75,6 +74,15 @@ SGStrataPopup {
             onCheckedChanged: {
                 userSettings.notifyOnFirmwareUpdate = checked
                 userSettings.saveSettings()
+            }
+        }
+
+        SGSettingsCheckbox {
+            text: "Notify me when a collateral document is updated"
+            checked: userSettings.notifyOnCollateralDocumentUpdate
+
+            onCheckedChanged: {
+                userSettings.notifyOnCollateralDocumentUpdate = checked
             }
         }
     }

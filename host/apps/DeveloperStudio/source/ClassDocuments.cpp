@@ -142,7 +142,8 @@ void ClassDocuments::populateModels(QJsonObject data)
         if (documentObject.contains("category") == false
                 || documentObject.contains("name")  == false
                 || documentObject.contains("prettyname") == false
-                || documentObject.contains("uri")  == false) {
+                || documentObject.contains("uri")  == false
+                || documentObject.contains("md5")  == false) {
 
             qCWarning(logCategoryDocumentManager) << "file object is not complete";
             continue;
@@ -152,6 +153,7 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString uri = documentObject["uri"].toString();
         QString prettyName = documentObject["prettyname"].toString();
         QString name = documentObject["name"].toString();
+        QString md5 = documentObject["md5"].toString();
 
         if (category == "view") {
             if (name == "datasheet") {
@@ -161,7 +163,7 @@ void ClassDocuments::populateModels(QJsonObject data)
                     populateDatasheetList(uri, datasheetList);
                 }
             } else {
-                DocumentItem *di = new DocumentItem(uri, prettyName, name);
+                DocumentItem *di = new DocumentItem(uri, prettyName, name, md5);
                 pdfList.append(di);
             }
         } else if (category == "download") {
@@ -171,7 +173,7 @@ void ClassDocuments::populateModels(QJsonObject data)
             }
 
             qint64 filesize = documentObject["filesize"].toVariant().toLongLong();
-            DownloadDocumentItem *ddi = new DownloadDocumentItem(uri, prettyName, name, filesize);
+            DownloadDocumentItem *ddi = new DownloadDocumentItem(uri, prettyName, name, md5, filesize);
             downloadList.append(ddi);
         } else {
             qCWarning(logCategoryDocumentManager) << "unknown category" << category;
@@ -181,6 +183,8 @@ void ClassDocuments::populateModels(QJsonObject data)
     pdfModel_.populateModel(pdfList);
     datasheetModel_.populateModel(datasheetList);
     downloadDocumentModel_.populateModel(downloadList);
+
+    emit md5Ready();
 
     setLoading(false);
 }

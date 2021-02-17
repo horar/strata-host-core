@@ -36,6 +36,7 @@
 
 #include "AppUi.h"
 #include "config/AppConfig.h"
+#include "config/UrlConfig.h"
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {
@@ -121,6 +122,11 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
+    strata::sds::config::UrlConfig urlCfg;
+    if (urlCfg.parseUrl(configFilePath) == false) {
+        return EXIT_FAILURE;
+    }
+
     RunGuard appGuard{QStringLiteral("tech.strata.sds:%1").arg(cfg.hcsDealerAddresss().port())};
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryStrataDevStudio) << QStringLiteral("Another instance of Developer Studio is already running.");
@@ -136,6 +142,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<SGFileTabModel>("tech.strata.SGFileTabModel", 1, 0, "SGFileTabModel");
     qmlRegisterUncreatableType<SGQrcTreeNode, 1>("tech.strata.SGQrcTreeModel",1,0,"SGTreeNode", "You can't instantiate SGTreeNode in QML");
     qmlRegisterType<SGQrcTreeModel>("tech.strata.SGQrcTreeModel", 1, 0, "SGQrcTreeModel");
+    qmlRegisterUncreatableType<strata::sds::config::UrlConfig>("tech.strata.UrlConfig",1,0,"UrlConfig", "You can't instantiate UrlConfig in QML");
     qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
@@ -158,6 +165,7 @@ int main(int argc, char *argv[])
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty ("logger", &strata::loggers::QtLogger::instance());
+    engine.rootContext()->setContextProperty ("urls", &urlCfg);
     engine.rootContext()->setContextProperty ("sdsModel", sdsModel.get());
 
     /* deprecated context property, use sdsModel.coreInterface instead */
