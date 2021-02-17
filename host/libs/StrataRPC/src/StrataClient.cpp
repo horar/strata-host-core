@@ -128,8 +128,8 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
     }
 
     deferredRequest->startTimer();
-    connect(deferredRequest, &DeferredRequest::requestTimedout, this,
-            &StrataClient::onRequestTimedout);
+    connect(deferredRequest, &DeferredRequest::requestTimedOut, this,
+            &StrataClient::onRequestTimedOut);
 
     return deferredRequest;
 }
@@ -232,9 +232,9 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     return true;
 }
 
-void StrataClient::onRequestTimedout(int requestId)
+void StrataClient::onRequestTimedOut(int requestId)
 {
-    qCDebug(logCategoryStrataClient) << "Request timedout. request ID:" << requestId;
+    qCDebug(logCategoryStrataClient) << "Request timed out. request ID:" << requestId;
     auto [requestFound, request] = requestController_->popPendingRequest(requestId);
     if (false == requestFound && request.deferredRequest_ == nullptr) {
         qCCritical(logCategoryStrataClient) << "Failed to remove timed out request.";
@@ -242,5 +242,5 @@ void StrataClient::onRequestTimedout(int requestId)
     }
 
     request.deferredRequest_->deleteLater();
-    qCDebug(logCategoryStrataClient) << "Timedout request removed successfully.";
+    qCDebug(logCategoryStrataClient) << "Timed out request removed successfully.";
 }

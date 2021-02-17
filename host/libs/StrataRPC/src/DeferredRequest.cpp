@@ -6,7 +6,7 @@ DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_
 {
     timer_.setSingleShot(true);
     connect(&timer_, &QTimer::timeout, this, [this]() {
-        emit requestTimedout(id_);
+        emit requestTimedOut(id_);
     });
 }
 

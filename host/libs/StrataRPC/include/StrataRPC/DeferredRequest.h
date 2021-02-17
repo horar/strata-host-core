@@ -58,7 +58,7 @@ signals:
      * Signal emitted on timeout
      * @param [in] requestId request id.
      */
-    void requestTimedout(int requestId);
+    void requestTimedOut(int requestId);
 
 private:
     friend class StrataClient;

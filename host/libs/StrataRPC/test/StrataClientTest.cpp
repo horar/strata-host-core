@@ -575,7 +575,7 @@ void StrataClientTest::testTimedoutRequest()
     for (int i = 0; i < testsNum; i++) {
         auto deferredRequest = client.sendRequest("test_timeout_request", QJsonObject({{}}));
         QVERIFY_(deferredRequest != nullptr);
-        connect(deferredRequest, &DeferredRequest::requestTimedout, this,
+        connect(deferredRequest, &DeferredRequest::requestTimedOut, this,
                 [&timedOutRequests](int) { ++timedOutRequests; });
     }
     waitForZmqMessages(1000);

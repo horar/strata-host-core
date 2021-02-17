@@ -91,10 +91,10 @@ private slots:
     void newServerMessage(const QByteArray &jsonServerMessage);
 
     /**
-     * Handles timed-out requests.
-     * @param [in] requestId request id of the timed-out request.
+     * Handles timed out requests.
+     * @param [in] requestId request id of the timed out request.
      */
-    void onRequestTimedout(int requestId);
+    void onRequestTimedOut(int requestId);
 
 private:
     /**
