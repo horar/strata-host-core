@@ -2,6 +2,7 @@
     <qresource prefix="/tech/strata/sgwidgets.1.0">
         <file>qmldir</file>
         <file>SGAboutWindow.qml</file>
+        <file>SGAbstractContextMenu.qml</file>
         <file>SGAlignedLabel.qml</file>
         <file>SGButton.qml</file>
         <file>SGButtonStrip.qml</file>
@@ -11,6 +12,7 @@
         <file>SGCircularGauge.qml</file>
         <file>SGCircularProgress.qml</file>
         <file>SGComboBox.qml</file>
+        <file>SGContextMenuEditActions.qml</file>
         <file>SGFileSelector.qml</file>
         <file>SGGraph.qml</file>
         <file>SGHueSlider.qml</file>
