@@ -11,6 +11,7 @@
 #include "DeviceOperationsTest.h"
 
 using strata::device::operation::BaseDeviceOperation;
+using strata::device::operation::StartBootloader;
 
 namespace operation = strata::device::operation;
 
@@ -369,11 +370,14 @@ void DeviceOperationsTest::switchToBootloaderAndBackTest()
     rapidjson::Document expectedDoc;
     rapidjson::ParseResult parseResult;
 
+    operation::StartBootloader* startBootloaderOperation = new operation::StartBootloader(device_);
     deviceOperation_ = QSharedPointer<operation::StartBootloader>(
-        new operation::StartBootloader(device_), &QObject::deleteLater);
+            startBootloaderOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
+
+    startBootloaderOperation->setWaitTime(std::chrono::milliseconds(1));
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 6000);
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(device_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response_bootloader.data());
