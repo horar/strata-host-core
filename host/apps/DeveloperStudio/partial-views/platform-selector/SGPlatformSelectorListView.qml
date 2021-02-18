@@ -198,6 +198,7 @@ Item {
                 width: 1
                 color: "#DDD"
             }
+            visible: PlatformSelection.platformSelectorModel.platformListStatus == "loaded"
 
             RowLayout {
                 id: filterRow
