@@ -9,7 +9,7 @@ Window {
     width: 640
     height: 340
     color: "#9abfa8"
-    title: qsTr("Strata Client")
+    title: qsTr("Strata Platform")
 
     Button {
         id: broadcastBtn
@@ -262,7 +262,7 @@ Window {
         y: 8
         width: 259
         height: 41
-        text: qsTr("Strata Client")
+        text: qsTr("Strata Platform")
         font.pixelSize: 24
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter

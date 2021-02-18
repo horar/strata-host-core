@@ -32,7 +32,6 @@ Window {
             anchors.verticalCenterOffset: 25
             anchors.leftMargin: -8
             horizontalAlignment: Text.AlignHCenter
-            enabled: !Server.isConnected
 
         }
 
