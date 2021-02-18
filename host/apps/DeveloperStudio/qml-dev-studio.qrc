@@ -49,9 +49,7 @@
         <file>partial-views/platform-selector/images/icons/filter-icons/motor_drivers.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/sensors.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/usb.svg</file>
-        <file>partial-views/platform-selector/CategoryFilterDelegate.qml</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/offline_controllers.svg</file>
-        <file>partial-views/platform-selector/FilterColumn.qml</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-automotive.svg</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-industrial-cloud-power.svg</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg</file>

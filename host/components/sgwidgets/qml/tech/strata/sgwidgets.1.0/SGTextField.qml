@@ -18,6 +18,7 @@ TextField {
     property bool showClearButton: false
     property bool passwordMode: false
     property bool busyIndicatorRunning: false
+    property bool contextMenuEnabled: false
 
     /* properties for suggestion list */
     property variant suggestionListModel
@@ -46,6 +47,7 @@ TextField {
     placeholderText: "Input..."
     selectByMouse: true
     focus: true
+    persistentSelection: contextMenuEnabled
     Keys.forwardTo: suggestionPopupLoader.status === Loader.Ready ? suggestionPopupLoader.item.contentItem : []
     Keys.priority: Keys.BeforeItem
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize
@@ -74,6 +76,12 @@ TextField {
         validationReady = true
         timerIsRunning = true
         activeEditingTimer.restart()
+    }
+
+    onActiveFocusChanged: {
+        if ((contextMenuEnabled === true) && (activeFocus === false) && (contextMenuPopupLoader.item.contextMenuPopupVisible === false)) {
+            control.deselect()
+        }
     }
 
     Timer {
@@ -230,6 +238,37 @@ TextField {
             onClicked: {
                 control.forceActiveFocus()
                 control.clear()
+            }
+        }
+    }
+
+    Loader {
+        id: contextMenuPopupLoader
+        active: contextMenuEnabled
+        anchors.fill: parent
+
+        sourceComponent: Item {
+            property alias contextMenuPopupVisible: contextMenuPopup.visible
+
+            SGWidgets.SGContextMenuEditActions {
+                id: contextMenuPopup
+                textEditor: control
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+
+                onReleased: {
+                    if (containsMouse) {
+                        contextMenuPopup.popup(null)
+                    }
+                }
+
+                onClicked: {
+                    control.forceActiveFocus()
+                }
             }
         }
     }
