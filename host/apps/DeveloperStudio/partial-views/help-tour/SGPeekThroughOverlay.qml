@@ -40,7 +40,7 @@ Item {
      }
 
      function restoreFocus(){
-        toolTipPopup.contentItem.forceActiveFocus()
+        toolTipPopup.popupItem.forceActiveFocus()
      }
 
      property alias index: toolTipPopup.index
@@ -54,7 +54,7 @@ Item {
          anchors {
              fill: root
          }
-         onClicked: toolTipPopup.contentItem.close()
+         onClicked: toolTipPopup.popupItem.close()
          onWheel: {} // Prevent views behind from scrolling, which will misalign the peekthrough
      }
 

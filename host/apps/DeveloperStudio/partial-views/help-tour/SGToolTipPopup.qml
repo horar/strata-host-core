@@ -6,10 +6,12 @@ import QtGraphicalEffects 1.12
 Popup{
     id: root
     property alias content: content.sourceComponent
+    property alias popupItem: content.item
     property bool arrowOnTop: false
     property string horizontalAlignment: "center"
     property real radius: 5
     property color color: "#00ccee"
+    closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnPressOutside | Popup.CloseOnEscape
     opacity: 0
     z: 65
 
