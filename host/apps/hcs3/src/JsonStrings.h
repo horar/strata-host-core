@@ -18,5 +18,6 @@ const QString JSON_MESSAGE("message");
 const QString JSON_NOTIFICATION("notification");
 const QString JSON_CONNECTED_PLATFORMS("connected_platforms");
 const QString JSON_HCS_NOTIFICATION("hcs::notification");
+const QString CONTROLLER_CLASS_DEVICE("controller_class_device");
 
 #endif

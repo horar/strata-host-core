@@ -131,6 +131,8 @@ public slots:
             const QJsonArray &componentList,
             const QString &errorString);
 
+    void broadcastConnectedPlatformListMessage();
+
 private slots:
     void sendMessageToClients(const QString &platformId, const QString& message);
 

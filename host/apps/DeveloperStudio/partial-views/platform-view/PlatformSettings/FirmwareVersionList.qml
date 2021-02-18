@@ -391,7 +391,7 @@ ColumnLayout {
     RowLayout {
         id: noFirmwareFound
         spacing: 10
-        visible: firmwareVersions.visible === false
+        visible: firmwareVersions.visible === false && platformStack.connected
         Layout.maximumHeight: visible ? implicitHeight : 0
 
         SGIcon {

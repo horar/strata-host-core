@@ -2,6 +2,7 @@
 #include "Client.h"
 #include "ReplicatorCredentials.h"
 #include "logging/LoggingQtCategories.h"
+#include "JsonStrings.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
@@ -405,7 +406,7 @@ void HostControllerService::platformConnected(const int deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    broadcastMessage(boardsController_.createPlatformsList());
+    broadcastConnectedPlatformListMessage();
 }
 
 void HostControllerService::platformDisconnected(const int deviceId)
@@ -413,7 +414,7 @@ void HostControllerService::platformDisconnected(const int deviceId)
     Q_UNUSED(deviceId)
 
     //send update to all clients
-    broadcastMessage(boardsController_.createPlatformsList());
+    broadcastConnectedPlatformListMessage();
 }
 
 void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
@@ -876,7 +877,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
             progress.status == FirmwareUpdateController::UpdateStatus::Success) {
         // If firmware was updated broadcast new platforms list
         // to indicate the firmware version has changed.
-        broadcastMessage(boardsController_.createPlatformsList());
+        broadcastConnectedPlatformListMessage();
     }
 }
 
@@ -973,4 +974,38 @@ void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, co
     QByteArray notification = createHcsNotification(hcsNotificationType::updatesAvailable, payload, false);
 
     clients_.sendMessage(clientId, notification);
+}
+
+void HostControllerService::broadcastConnectedPlatformListMessage()
+{
+    QJsonArray connectedPlatformList = boardsController_.createPlatformsList();
+
+    for (QJsonValueRef value : connectedPlatformList) {
+        QString classId = value.toObject().value(JSON_CONTROLLER_CLASS_ID).toString();
+        if (classId.isEmpty()) {
+            classId = value.toObject().value(JSON_CLASS_ID).toString();
+            if (classId.isEmpty()) {
+                qCCritical(logCategoryHcsStorage) << "controller_class_id and class_id keys are missing";
+            }
+        }
+
+        QString device = storageManager_.getControllerClassDevice(classId);
+
+        QJsonObject modifiedObj = value.toObject();
+        modifiedObj.insert(CONTROLLER_CLASS_DEVICE, device);
+        value = modifiedObj;
+    }
+
+    QJsonObject notification {
+        { JSON_LIST, connectedPlatformList },
+        { JSON_TYPE, JSON_CONNECTED_PLATFORMS }
+    };
+
+    QJsonObject message {
+        { JSON_HCS_NOTIFICATION, notification }
+    };
+
+    QJsonDocument doc(message);
+
+    broadcastMessage(doc.toJson(QJsonDocument::Compact));
 }
