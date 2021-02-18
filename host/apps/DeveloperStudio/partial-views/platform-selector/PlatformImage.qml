@@ -87,7 +87,7 @@ Rectangle {
             height: parent.paintedHeight
             fillMode: Image.PreserveAspectFit
             source: visible ? "images/platform-images/comingsoon.png" : ""
-            visible: !model.available.documents && !model.available.order && !model.error
+            visible: model.coming_soon
         }
 
         Image {

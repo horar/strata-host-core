@@ -11,13 +11,19 @@ import "qrc:/js/platform_filters.js" as PlatformFilters
 Item {
     id: root
     implicitHeight: iconContainer.implicitHeight
-    Layout.fillWidth: true
+    implicitWidth: Math.min(iconContainer.width + (textColumn.anchors.margins * 2) + textMetrics.wideWidth, flow.width)
+
+    onYChanged: {
+        if (parent === flow) {
+            model.row = Math.ceil(y/(segmentCategoryList.delegateHeight + flow.spacing))
+        }
+    }
 
     Rectangle {
         id: iconContainer
         color: "black"
         radius: implicitHeight/2
-        implicitHeight: 35
+        implicitHeight: segmentCategoryList.delegateHeight
         implicitWidth: implicitHeight
         z:1
 
@@ -33,67 +39,77 @@ Item {
     }
 
     Rectangle {
+        id: textArea
         color: Theme.palette.green
         height: 30
-        width: Math.min(textColumn.implicitWidth + (iconContainer.width / 2) + 10, root.width - (iconContainer.width / 2))
         anchors {
             verticalCenter: parent.verticalCenter
             left: iconContainer.horizontalCenter
+            right: parent.right
         }
         radius: 5
+    }
 
-        ColumnLayout {
-            id: textColumn
-            anchors {
-                verticalCenter: parent.verticalCenter
-                left: parent.left
-                leftMargin: (iconContainer.width / 2) + 5
-            }
-            width: parent.width - 10 - (iconContainer.width / 2)
-            spacing: 1
+    ColumnLayout {
+        id: textColumn
+        anchors {
+            verticalCenter: textArea.verticalCenter
+            left: iconContainer.right
+            right: textArea.right
+            margins: 5
+        }
+        spacing: 1
 
-            SGText {
-                text: model.text
-                elide: Text.ElideRight
-                Layout.fillWidth: true
-                font.underline: filterLinkMouse.containsMouse
-                color: "white"
-                fontSizeMultiplier: .9
+        SGText {
+            id: mainText
+            text: model.text
+            elide: Text.ElideRight
+            Layout.fillWidth: true
+            font.underline: filterLinkMouse.containsMouse
+            color: "white"
+            fontSizeMultiplier: .9
 
-                MouseArea {
-                    id: filterLinkMouse
-                    anchors {
-                        fill: parent
-                    }
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
+            MouseArea {
+                id: filterLinkMouse
+                anchors {
+                    fill: parent
+                }
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
 
-                    onClicked:  {
-                        PlatformFilters.setFilterActive(model.filterName, true)
-                    }
+                onClicked:  {
+                    PlatformFilters.setFilterActive(model.filterName, true)
+                }
 
-                    ToolTip {
-                        delay: 1000
-                        visible: parent.containsMouse
-                        text: {
-                            if (model.type === "category") {
-                                return "Filter platforms in this category"
-                            } else {
-                                return "Filter platforms in this Segment"
-                            }
+                ToolTip {
+                    delay: 1000
+                    visible: parent.containsMouse
+                    text: {
+                        if (model.type === "category") {
+                            return "Filter platforms in this category"
+                        } else {
+                            return "Filter platforms in this Segment"
                         }
                     }
                 }
             }
 
-            SGText {
-                text: model.type
-                elide: Text.ElideRight
-                Layout.fillWidth: true
-                fontSizeMultiplier: .5
-                font.capitalization: Font.AllUppercase
-                color: "white"
+            TextMetrics {
+                id: textMetrics
+                text: model.text
+                font: mainText.font
+
+                property real wideWidth: width + 5 // +5 to make sure elide isn't prematurely applied due to rounding
             }
+        }
+
+        SGText {
+            text: model.type
+            elide: Text.ElideRight
+            Layout.fillWidth: true
+            fontSizeMultiplier: .5
+            font.capitalization: Font.AllUppercase
+            color: "white"
         }
     }
 }

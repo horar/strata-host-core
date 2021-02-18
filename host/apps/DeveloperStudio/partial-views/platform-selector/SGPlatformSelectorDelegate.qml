@@ -137,9 +137,12 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 font {
-                    pixelSize: 12
+                    pixelSize: name.font.pixelSize
                     family: Fonts.franklinGothicBook
                 }
+                fontSizeMode: Text.Fit
+                minimumPixelSize: 12
+                lineHeight: 1.2
                 color: "#666"
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
@@ -189,6 +192,35 @@ Item {
             Layout.preferredWidth: 150
             Layout.minimumWidth: 100
 
+            property real delegateHeight: 35
+
+            Flow {
+                id: flow
+                Layout.fillWidth: true
+                spacing: 2
+
+                property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
+                property int maxRows: 2
+
+                onRowsChanged: {
+                    if (rows < maxRows) {
+                        reset()
+                    }
+                }
+
+                function reset () {
+                    for (let i = 0; i < filters.count; i++) {
+                        filters.get(i).row = -1
+                    }
+                }
+
+                Repeater {
+                    id: segmentCategoryRepeater
+                    model: visibleButtons
+                    delegate: iconDelegate
+                }
+            }
+
             SGSortFilterProxyModel {
                 id: segmentsCategories
                 sourceModel: filters
@@ -197,35 +229,31 @@ Item {
             }
 
             SGSortFilterProxyModel {
-                id: firstFour
+                id: visibleButtons
                 sourceModel: segmentsCategories
                 invokeCustomFilter: true
 
                 function filterAcceptsRow (index) {
-                    return index < 2
+                    var listing = sourceModel.get(index)
+                    return listing.row < flow.maxRows
                 }
             }
 
             SGSortFilterProxyModel {
-                id: remaining
+                id: remainingButtons
                 sourceModel: segmentsCategories
                 invokeCustomFilter: true
 
                 function filterAcceptsRow (index) {
-                    return index >= 2
+                    var listing = sourceModel.get(index)
+                    return listing.row >= flow.maxRows
                 }
-            }
-
-            Repeater {
-                id: segmentCategoryRepeater
-                model: firstFour
-                delegate: iconDelegate
             }
 
             SGText {
                 id: remainingText
-                visible: remaining.count > 0
-                text: "And " + remaining.count + " more..."
+                visible: remainingButtons.count > 0
+                text: "And " + remainingButtons.count + " more..."
                 Layout.leftMargin: 30 // width of icon + rowLayout's spacing in iconDelegate
                 font.underline: moreFiltersMouse.containsMouse
 
@@ -256,7 +284,7 @@ Item {
 
                         Repeater {
                             id: overflowRepeater
-                            model: remaining
+                            model: remainingButtons
                             delegate: iconDelegate
                         }
                     }
@@ -275,7 +303,7 @@ Item {
             Layout.fillWidth: false
             Layout.preferredWidth: 170
 
-            property bool comingSoon: !model.available.documents && !model.available.order && !model.error && (!model.connected || !model.available.control)//&& !model.available.control
+            property bool comingSoon: model.coming_soon
 
             Text {
                 id: comingSoonWarn
