@@ -216,7 +216,6 @@ Item {
          id: toolTipBackgroundItem
          width: toolTipPopup.width
          height: toolTipPopup.height
-         z: -65
          SGToolTipPopup {
              id: toolTipPopup
              // anchors and arrow alignment dynamically in setTarget
