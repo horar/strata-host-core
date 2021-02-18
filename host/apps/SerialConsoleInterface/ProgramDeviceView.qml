@@ -172,6 +172,7 @@ FocusScope {
             text: "Backup firmware before programming"
             onCheckStateChanged: {
                 programDeviceView.doBackup = checked
+                Sci.Settings.backupFirmware = checked
             }
 
             Binding {
@@ -285,7 +286,6 @@ FocusScope {
                                     error)
                     } else {
                         Sci.Settings.lastSelectedFirmware = firmwareBinaryPath
-                        Sci.Settings.backupFirmware = doBackup
                         startProgramProcess()
                     }
                 }
