@@ -107,5 +107,6 @@
         <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
         <file>partial-views/notifications/NotificationContent.qml</file>
         <file>partial-views/control-view-creator/CVCLoader.qml</file>
+        <file>partial-views/help-tour/SGToolTipPopup.qml</file>
     </qresource>
 </RCC>

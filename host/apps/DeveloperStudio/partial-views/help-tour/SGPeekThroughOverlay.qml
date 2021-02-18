@@ -1,5 +1,4 @@
 import QtQuick 2.12
-import tech.strata.sgwidgets 0.9
 
 Item {
      id: root
@@ -13,6 +12,7 @@ Item {
          mockTarget.y = remappedTarget.y
          mockTarget.width = target.width
          mockTarget.height = target.height
+         toolTipPopup.parent = mockTarget
 
          // apply default alignment settings:
          toolTipPopup.anchors.bottom = undefined
@@ -215,13 +215,12 @@ Item {
 
      SGToolTipPopup {
          id: toolTipPopup
-         showOn: true
          // anchors and arrow alignment dynamically in setTarget
          color: "white"
          property int index
          property string description
          property real fontSizeMultiplier: 1
-
+         visible: root.visible
          content: SGTourControl {
              id: tourControl
              index: toolTipPopup.index
