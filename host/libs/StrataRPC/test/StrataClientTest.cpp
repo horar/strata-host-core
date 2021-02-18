@@ -1,6 +1,7 @@
 #include "StrataClientTest.h"
-
 #include "ServerConnector.h"
+
+#include <QSignalSpy>
 
 void StrataClientTest::waitForZmqMessages(int delay)
 {
@@ -579,4 +580,73 @@ void StrataClientTest::testTimedoutRequest()
     }
     waitForZmqMessages(1000);
     QCOMPARE_(timedOutRequests, testsNum);
+}
+
+void StrataClientTest::testErrorOccourredSignal()
+{
+    qRegisterMetaType<StrataClient::ClientError>("StrataClient::ClientError");
+
+    StrataClient client(address_);
+    strata::strataRPC::ServerConnector server(address_);
+    StrataClient::ClientError errorType;
+    QSignalSpy errorOccurred(&client, &StrataClient::errorOccurred);
+
+    client.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
+    client.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::FailedToRegisterHandler);
+    errorOccurred.clear();
+
+    client.unregisterHandler("handler_2");
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::FailedToUnrigersterHandler);
+    errorOccurred.clear();
+
+    client.disconnectServer();
+    QCOMPARE_(errorOccurred.count(), 2);  // fail to send unregister & fail to disconnect.
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.at(0).at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::FailedToSendRequest);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.at(1).at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::FailedToDisconnect);
+    errorOccurred.clear();
+
+    server.initilizeConnector();
+    client.connectServer();
+    client.connectServer();     // This should fail
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::FailedToConnect);
+    errorOccurred.clear();
+
+    waitForZmqMessages(500);  // wait for the register_client messages to be timed out.
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::RequestTimedOut);
+    errorOccurred.clear();
+
+    server.sendMessage("StrataClient", "not Json message");
+    server.sendMessage("StrataClient", R"({"cmd":"this-is-invalid-api})");
+    waitForZmqMessages();
+    QCOMPARE_(errorOccurred.count(), 4);
+    for (const auto &error : errorOccurred) {
+        errorType = qvariant_cast<StrataClient::ClientError>(error.at(0));
+        QCOMPARE_(errorType, StrataClient::ClientError::FailedToBuildServerMessage);
+    }
+    errorOccurred.clear();
+
+    QByteArray response = QJsonDocument(QJsonObject({{"jsonrpc", "2.0"},
+                                                     {"method", "random_handler"},
+                                                     {"result", QJsonObject()},
+                                                     {"id", 10}}))
+                              .toJson(QJsonDocument::JsonFormat::Compact);
+    server.sendMessage("StrataClient", response);
+    waitForZmqMessages();
+    QCOMPARE_(errorOccurred.count(), 2);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.at(0).at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::PendingRequestNotFound);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.at(1).at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::FailedToBuildServerMessage);
+    errorOccurred.clear();
 }

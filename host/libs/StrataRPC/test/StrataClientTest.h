@@ -21,7 +21,7 @@ private slots:
     void testWithOnlyResultCallbacks();
     void testWithOnlyErrorCallbacks();
     void testTimedoutRequest();
-
+    void testErrorOccourredSignal();
 private:
     void waitForZmqMessages(int delay = 100);
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
