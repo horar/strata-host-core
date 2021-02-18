@@ -112,7 +112,7 @@ namespace strata {
         bool addSerialPort(const int deviceId);
         bool openDevice(const device::DevicePtr newDevice);
         void startDeviceOperations(const device::DevicePtr device);
-        bool closeDevice(const int deviceId);
+        bool removeDevice(const int deviceId);
 
         void logInvalidDeviceId(const QString& message, const int deviceId) const;
 

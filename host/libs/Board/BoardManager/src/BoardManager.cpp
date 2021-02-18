@@ -177,7 +177,7 @@ void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial por
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
         for (auto deviceId : removed) {
-            if (closeDevice(deviceId)) {  // modifies openedDevices_ and reconnectTimers_
+            if (removeDevice(deviceId)) {  // modifies openedDevices_ and reconnectTimers_
                 deleted.emplace_back(deviceId);
             }
         }
@@ -270,7 +270,7 @@ void BoardManager::startIdentifyOperation(const DevicePtr device) {
 }
 
 // mutex_ must be locked before calling this function (due to modification openedDevices_ and reconnectTimers_)
-bool BoardManager::closeDevice(const int deviceId) {
+bool BoardManager::removeDevice(const int deviceId) {
     identifyOperations_.remove(deviceId);
 
     // If device is physically disconnected, remove reconnect timer (if exists).
