@@ -7,11 +7,9 @@ Popup{
     id: root
     property alias content: content.sourceComponent
     property bool arrowOnTop: false
-    y: mockTarget.height + 20
     property string horizontalAlignment: "center"
     property real radius: 5
     property color color: "#00ccee"
-    property alias colorRectangle: colorRect
     opacity: 0
     z: 65
 

@@ -12,30 +12,29 @@ Item {
          mockTarget.y = remappedTarget.y
          mockTarget.width = target.width
          mockTarget.height = target.height
-         toolTipPopup.parent = mockTarget
 
          // apply default alignment settings:
-         toolTipPopup.anchors.bottom = undefined
-         toolTipPopup.anchors.right = undefined
-         toolTipPopup.anchors.left = undefined
-         toolTipPopup.anchors.horizontalCenter = bottomFade.horizontalCenter
-         toolTipPopup.anchors.top = bottomFade.bottom
+         toolTipBackgroundItem.anchors.bottom = undefined
+         toolTipBackgroundItem.anchors.right = undefined
+         toolTipBackgroundItem.anchors.left = undefined
+         toolTipBackgroundItem.anchors.horizontalCenter = bottomFade.horizontalCenter
+         toolTipBackgroundItem.anchors.top = bottomFade.bottom
          toolTipPopup.horizontalAlignment = "center"
          toolTipPopup.arrowOnTop = true
 
          // change alignment if default alignment extends beyond window edges
-         if ( toolTipPopup.x < 0 ) {
-             toolTipPopup.anchors.horizontalCenter = undefined
-             toolTipPopup.anchors.left = bottomFade.horizontalCenter
+         if ( toolTipBackgroundItem.x < 0 ) {
+             toolTipBackgroundItem.anchors.horizontalCenter = undefined
+             toolTipBackgroundItem.anchors.left = bottomFade.horizontalCenter
              toolTipPopup.horizontalAlignment = "left"
-         } else if ( toolTipPopup.x + toolTipPopup.width > fill.width ) {
-             toolTipPopup.anchors.horizontalCenter = undefined
-             toolTipPopup.anchors.right = bottomFade.horizontalCenter
+         } else if ( toolTipBackgroundItem.x + toolTipBackgroundItem.width > fill.width ) {
+             toolTipBackgroundItem.anchors.horizontalCenter = undefined
+             toolTipBackgroundItem.anchors.right = bottomFade.horizontalCenter
              toolTipPopup.horizontalAlignment = "right"
          }
-         if ( toolTipPopup.y + toolTipPopup.height > fill.height ) {
-             toolTipPopup.anchors.top = undefined
-             toolTipPopup.anchors.bottom = topFade.top
+         if ( toolTipBackgroundItem.y + toolTipBackgroundItem.height > fill.height ) {
+             toolTipBackgroundItem.anchors.top = undefined
+             toolTipBackgroundItem.anchors.bottom = topFade.top
              toolTipPopup.arrowOnTop = false
          }
      }
@@ -213,19 +212,25 @@ Item {
          opacity: root.globalOpacity
      }
 
-     SGToolTipPopup {
-         id: toolTipPopup
-         // anchors and arrow alignment dynamically in setTarget
-         color: "white"
-         property int index
-         property string description
-         property real fontSizeMultiplier: 1
-         visible: root.visible
-         content: SGTourControl {
-             id: tourControl
-             index: toolTipPopup.index
-             description: toolTipPopup.description
-             fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
+     Item {
+         id: toolTipBackgroundItem
+         width: toolTipPopup.width
+         height: toolTipPopup.height
+         z: -65
+         SGToolTipPopup {
+             id: toolTipPopup
+             // anchors and arrow alignment dynamically in setTarget
+             color: "white"
+             property int index
+             property string description
+             property real fontSizeMultiplier: 1
+             visible: root.visible
+             content: SGTourControl {
+                 id: tourControl
+                 index: toolTipPopup.index
+                 description: toolTipPopup.description
+                 fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
+             }
          }
      }
  }
