@@ -40,9 +40,10 @@ namespace strata {
         /**
          * Disconnect from the device.
          * @param deviceId device ID
+         * @param seconds if it is more than 0, the device will be reconnected after the specified number of seconds
          * @return true if device was disconnected, otherwise false
          */
-        Q_INVOKABLE bool disconnectDevice(const int deviceId);
+        Q_INVOKABLE bool disconnectDevice(const int deviceId, const int seconds = 0);
 
         /**
          * Reconnect the device.
@@ -119,12 +120,13 @@ namespace strata {
 
         QMutex mutex_;
 
-        // Access to next 3 members should be protected by mutex (one mutex for all) in case of multithread usage.
+        // Access to next 4 members should be protected by mutex (one mutex for all) in case of multithread usage.
         // Do not emit signals in block of locked code (because their slots are executed immediately in QML
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
         QHash<int, device::DevicePtr> openedDevices_;
+        QHash<int, QTimer*> reconnectTimers_;
 
         QHash<int, std::shared_ptr<device::operation::BaseDeviceOperation>> identifyOperations_;
 

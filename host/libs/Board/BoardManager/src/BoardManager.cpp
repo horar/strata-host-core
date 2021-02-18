@@ -35,7 +35,7 @@ void BoardManager::init(bool requireFwInfoResponse, bool keepDevicesOpen) {
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
-bool BoardManager::disconnectDevice(const int deviceId) {
+bool BoardManager::disconnectDevice(const int deviceId, const int seconds) {
     bool success = false;
     {
         QMutexLocker lock(&mutex_);
@@ -43,11 +43,30 @@ bool BoardManager::disconnectDevice(const int deviceId) {
         if (it != openedDevices_.end()) {
             it.value()->close();
             openedDevices_.erase(it);
+
+            if (seconds > 0) {
+                QTimer* reconnectTimer = new QTimer(this);
+                reconnectTimers_.insert(deviceId, reconnectTimer);
+                reconnectTimer->setSingleShot(true);
+                reconnectTimer->callOnTimeout(this, [this, deviceId, reconnectTimer](){
+                    {
+                        QMutexLocker lock(&mutex_);
+                        reconnectTimer->deleteLater();
+                        reconnectTimers_.remove(deviceId);
+                    }
+                    reconnectDevice(deviceId);
+                });
+                reconnectTimer->start(seconds * 1000);
+            }
+
             success = true;
         }
     }
     if (success) {
         qCInfo(logCategoryBoardManager).nospace() << "Disconnected serial device 0x" << hex << static_cast<uint>(deviceId);
+        if (seconds > 0) {
+            qCInfo(logCategoryBoardManager) << "Device will be reconnected after" << seconds << "seconds.";
+        }
         emit boardDisconnected(deviceId);
     } else {
         logInvalidDeviceId(QStringLiteral("Cannot disconnect"), deviceId);
@@ -158,7 +177,7 @@ void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial por
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
         for (auto deviceId : removed) {
-            if (closeDevice(deviceId)) {  // modifies openedDevices_
+            if (closeDevice(deviceId)) {  // modifies openedDevices_ and reconnectTimers_
                 deleted.emplace_back(deviceId);
             }
         }
@@ -250,13 +269,24 @@ void BoardManager::startIdentifyOperation(const DevicePtr device) {
     identifyOperations_.insert(device->deviceId(), operation);
 }
 
-// mutex_ must be locked before calling this function (due to modification openedDevices_)
+// mutex_ must be locked before calling this function (due to modification openedDevices_ and reconnectTimers_)
 bool BoardManager::closeDevice(const int deviceId) {
     identifyOperations_.remove(deviceId);
-    auto it = openedDevices_.find(deviceId);
-    if (it != openedDevices_.end()) {
-        it.value()->close();
-        openedDevices_.erase(it);
+
+    // If device is physically disconnected, remove reconnect timer (if exists).
+    auto timerIter = reconnectTimers_.find(deviceId);
+    if (timerIter != reconnectTimers_.end()) {
+        QTimer* reconnectTimer = timerIter.value();
+        reconnectTimer->stop();
+        delete reconnectTimer;
+        reconnectTimers_.erase(timerIter);
+        qCInfo(logCategoryBoardManager).nospace() << "Removed timer for reconnecting device 0x" << hex << static_cast<uint>(deviceId);
+    }
+
+    auto deviceIter = openedDevices_.find(deviceId);
+    if (deviceIter != openedDevices_.end()) {
+        deviceIter.value()->close();
+        openedDevices_.erase(deviceIter);
         qCInfo(logCategoryBoardManager).nospace() << "Removed serial device 0x" << hex << static_cast<uint>(deviceId);
         return true;
     } else {
@@ -316,6 +346,7 @@ void BoardManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) 
         disconnect(device, &Device::msgFromDevice, this, &BoardManager::checkNotification);
         int deviceId = device->deviceId();
         qCWarning(logCategoryBoardManager).nospace() << "Interrupted connection with device 0x" << hex << static_cast<uint>(deviceId);
+
         // Device cannot be removed in this slot (this slot is connected to signal emitted by device).
         // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
         // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
