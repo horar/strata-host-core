@@ -25,7 +25,7 @@ public:
         FailedToDisconnect,
         FailedToBuildServerMessage,
         FailedToRegisterHandler,
-        FailedToUnrigersterHandler,
+        FailedToUnregisterHandler,
         FailedToAddReequest,
         FailedToSendRequest,
         PendingRequestNotFound,

@@ -117,7 +117,7 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
     if (false == dispatcher_->unregisterHandler(handlerName)) {
         QString errorMessage(QStringLiteral("Failed to unregister handler."));
         qCCritical(logCategoryStrataClient) << errorMessage;
-        emit errorOccurred(ClientError::FailedToUnrigersterHandler, errorMessage);
+        emit errorOccurred(ClientError::FailedToUnregisterHandler, errorMessage);
         return false;
     }
     return true;

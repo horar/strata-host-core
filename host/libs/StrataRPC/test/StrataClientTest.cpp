@@ -601,7 +601,7 @@ void StrataClientTest::testErrorOccourredSignal()
     client.unregisterHandler("handler_2");
     QCOMPARE_(errorOccurred.count(), 1);
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
-    QCOMPARE_(errorType, StrataClient::ClientError::FailedToUnrigersterHandler);
+    QCOMPARE_(errorType, StrataClient::ClientError::FailedToUnregisterHandler);
     errorOccurred.clear();
 
     client.disconnectServer();
