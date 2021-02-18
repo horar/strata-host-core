@@ -627,7 +627,7 @@ function notifyConnectedState(connected, platformName){
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
                                                                    {
-                                                                       "timeout": 8000,
+                                                                       "timeout": 4000,
                                                                        "actions": [notificationActions[0],notificationActions[1]]
                                                                    })
         } else {
@@ -635,7 +635,7 @@ function notifyConnectedState(connected, platformName){
                                                                    PlatformNotifications.Notifications.Info,
                                                                    "all",
                                                                    {
-                                                                       "timeout": 8000,
+                                                                       "timeout": 4000,
                                                                        "actions": [notificationActions[0],notificationActions[1]]
                                                                    })
         }
