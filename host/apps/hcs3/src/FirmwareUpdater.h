@@ -49,6 +49,13 @@ public:
                     const QUrl& url, const QString& md5, const QString& fwClassId);
 
     /**
+     * FirmwareUpdater constructor for setting fw_class_id (without flash) to assisted controller (dongle)
+     * @param devPtr device
+     * @param fwClassId firmware class id
+     */
+    FirmwareUpdater(const strata::device::DevicePtr& devPtr, const QString& fwClassId);
+
+    /**
      * FirmwareUpdater destructor
      */
     ~FirmwareUpdater();
@@ -57,6 +64,11 @@ public:
      * Update Firmware
      */
     void updateFirmware();
+
+    /**
+     * Set Firmware ClassId
+     */
+    void setFwClassId();
 
 signals:
     void updateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation, FirmwareUpdateController::UpdateStatus status,
@@ -82,6 +94,8 @@ private slots:
 private:
     void updateFinished(FirmwareUpdateController::UpdateStatus status);
     void downloadFirmware();
+
+    void logAndEmitError(const QString& errorString);
 
     bool running_;
 

@@ -62,6 +62,7 @@ signals:
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(FirmwareUpdateController::UpdateFirmwareData updateData);
     void programControllerRequested(FirmwareUpdateController::ProgramControllerData programData);
+    void setControllerFwClassIdRequested(FirmwareUpdateController::ProgramControllerData programData);
     void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
     void updateInfoRequested(QByteArray clientId);
 

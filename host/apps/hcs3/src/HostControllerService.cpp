@@ -99,6 +99,7 @@ bool HostControllerService::initialize(const QString& config)
 
     connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
     connect(this, &HostControllerService::programControllerRequested, &updateController_, &FirmwareUpdateController::programController, Qt::QueuedConnection);
+    connect(this, &HostControllerService::setControllerFwClassIdRequested, &updateController_, &FirmwareUpdateController::setControllerFwClassId, Qt::QueuedConnection);
 
     connect(this, &HostControllerService::updateInfoRequested, &componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfo, Qt::QueuedConnection);
     connect(&componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfoFinished, this, &HostControllerService::sendUpdateInfoMessage);
@@ -126,7 +127,7 @@ bool HostControllerService::initialize(const QString& config)
     storageManager_.setBaseUrl(baseUrl);
     storageManager_.setDatabase(&db_);
 
-    db_.initReplicator(db_cfg["gateway_sync"].GetString(), 
+    db_.initReplicator(db_cfg["gateway_sync"].GetString(),
         std::string(ReplicatorCredentials::replicator_username).c_str(),
         std::string(ReplicatorCredentials::replicator_password).c_str());
 
@@ -630,13 +631,20 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
             break;
         }
 
-        QPair<QUrl,QString> firmware = storageManager_.getLatestFirmware(programData.firmwareClassId, controllerClassDevice);
+        QPair<QUrl,QString> firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassDevice);
         if (firmware.first.isEmpty()) {
             errorString = "Cannot get latest firmware";
             break;
         }
         programData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
         programData.firmwareMD5 = firmware.second;
+
+        firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassDevice, device->applicationVer());
+        const QString& currentMD5 = firmware.second;
+        if (currentMD5.isNull()) {
+            qCWarning(logCategoryHcs).nospace() << "Cannot get MD5 of curent firmware from database (device ID 0x"
+                                                << hex << static_cast<uint>(programData.deviceId) << ")";
+        }
 
         programData.jobUuid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
@@ -647,7 +655,13 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
         QByteArray notification = createHcsNotification(hcsNotificationType::programController, payloadBody, true);
         clients_.sendMessage(programData.clientId, notification);
 
-        emit programControllerRequested(programData);
+        if (currentMD5 != programData.firmwareMD5
+                || programData.firmwareMD5.isEmpty()
+                || currentMD5.isEmpty()) {
+            emit programControllerRequested(programData);
+        } else {
+            emit setControllerFwClassIdRequested(programData);
+        }
 
         return;
 
@@ -849,7 +863,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
             progress.status == FirmwareUpdateController::UpdateStatus::Unsuccess) {
         payload.insert("error_string", progress.error);
     }
-    hcsNotificationType type = (progress.programController)
+    hcsNotificationType type = (progress.workWithController)
             ? hcsNotificationType::programControllerJob
             : hcsNotificationType::updateFirmwareJob;
     QByteArray notification = createHcsNotification(type, payload, true);

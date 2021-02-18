@@ -68,14 +68,14 @@ public:
      */
     struct UpdateProgress {
         UpdateProgress();  // Q_DECLARE_METATYPE needs default constructor
-        UpdateProgress(const QString& jobUuid, bool programController);
+        UpdateProgress(const QString& jobUuid, bool workWithController);
         UpdateOperation operation;
         UpdateStatus status;
         int complete;
         int total;
         QString error;
         const QString jobUuid;
-        const bool programController;
+        const bool workWithController;
     };
 
     /**
@@ -108,15 +108,21 @@ signals:
 public slots:
     /**
      * Update firmware.
-     * @param updateData struct containing data for updating firmware
+     * @param data struct containing data for updating firmware
      */
-    void updateFirmware(UpdateFirmwareData updateData);
+    void updateFirmware(UpdateFirmwareData data);
 
     /**
      * Program controller.
-     * @param programData struct containing data for programing controller
+     * @param data struct containing data for programing controller
      */
-    void programController(ProgramControllerData programData);
+    void programController(ProgramControllerData data);
+
+    /**
+     * Set controller firmware class ID.
+     * @param data struct containing data for setting controller fw_class_id (URL and MD5 are unused)
+     */
+    void setControllerFwClassId(ProgramControllerData data);
 
 
 private slots:
@@ -124,20 +130,56 @@ private slots:
                               FirmwareUpdateController::UpdateStatus status, int complete, int total, QString errorString);
 
 private:
-    void runUpdate(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl,
-                   const QString& firmwareMD5, const QString& firmwareClassId, const QString& jobUuid);
+    void logAndEmitError(int deviceId, const QString& errorString);
+
+    enum class Action {
+        UpdateFirmware,
+        ProgramController,
+        SetControllerFwClassId
+    };
+
+    struct FlashData {
+        // constructror for update firmware action
+        FlashData(int deviceId,
+                  const QByteArray& clientId,
+                  const QString& jobUuid,
+                  const QUrl& firmwareUrl,
+                  const QString& firmwareMD5);
+        // constructor for program controller action
+        FlashData(int deviceId,
+                  const QByteArray& clientId,
+                  const QString& jobUuid,
+                  const QUrl& firmwareUrl,
+                  const QString& firmwareMD5,
+                  const QString& firmwareClassId);
+        // constructor for set controller fw_class_id action
+        FlashData(int deviceId,
+                  const QByteArray& clientId,
+                  const QString& jobUuid,
+                  const QString& firmwareClassId);
+
+        Action action;
+        int deviceId;
+        QByteArray clientId;
+        QString jobUuid;
+        QUrl firmwareUrl;
+        QString firmwareMD5;
+        QString firmwareClassId;
+    };
+
+    void runUpdate(const FlashData& data);
 
     QPointer<BoardController> boardController_;
     QPointer<strata::DownloadManager> downloadManager_;
 
-    struct UpdateData {
-        UpdateData(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool programController);
+    struct UpdateInfo {
+        UpdateInfo(const QByteArray& client, FirmwareUpdater* updater, const QString& jobUuid, bool workWithController);
         const QByteArray clientId;
         FirmwareUpdater* fwUpdater;
         UpdateProgress updateProgress;
     };
 
-    QHash<int, struct UpdateData*> updates_;
+    QHash<int, struct UpdateInfo*> updates_;
 };
 
 Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateOperation)
