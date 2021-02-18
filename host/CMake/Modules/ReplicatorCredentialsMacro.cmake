@@ -6,11 +6,11 @@
 #
 
 macro(generate_replicator_credentials)
-
-    file(READ ${CMAKE_BINARY_DIR}/bin/credentials.config JSON_FILE)
-
-    string(JSON USERNAME ERROR_VARIABLE ERROR_PASSWORD GET ${JSON_FILE} username)
-    string(JSON PASSWORD ERROR_VARIABLE ERROR_USERNAME GET ${JSON_FILE} password)
+    set(credentials JSON_FILE)
+    cmake_parse_arguments(local "" ${credentials} "" ${ARGN})
+ 
+    string(JSON USERNAME ERROR_VARIABLE ERROR_PASSWORD GET ${local_JSON_FILE} username)
+    string(JSON PASSWORD ERROR_VARIABLE ERROR_USERNAME GET ${local_JSON_FILE} password)
 
     if(ERROR_PASSWORD OR ERROR_USERNAME)
         message(WARNING "Username or passwrd were not loaded for '${PROJECT_NAME}'")
