@@ -128,7 +128,7 @@ function startHelpTour(tourName, device_id) {
     // tour_count initializes the x/y tour counter
     tour_count = current_tour_targets.length
     
-  	for (let i = 0; i < tour_count; i++){
+  for (let i = 0; i < tour_count; i++){
         let tour_target = current_tour_targets[i]
         if (tour_target.index === 0) {
             tour_running = true
