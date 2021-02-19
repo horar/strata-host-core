@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
+import "qrc:/js/help_layout_manager.js" as Help
 
 Popup{
     id: root
@@ -11,9 +12,9 @@ Popup{
     property string horizontalAlignment: "center"
     property real radius: 5
     property color color: "#00ccee"
-    closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnPressOutside | Popup.CloseOnEscape
+    closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnPressOutside
     opacity: 0
-    z: 65
+    z: 50
 
     enter: Transition {
         PropertyAnimation{
@@ -87,6 +88,19 @@ Popup{
             anchors.fill: parent
         }
 
+        DropShadow {
+                anchors.fill: colorRect
+                horizontalOffset: 1.5
+                verticalOffset: 1.5
+                radius: 6.0
+                samples: 13
+                color: "#88000000"
+                source: colorRect
+                visible: root.visible
+                opacity: root.opacity
+                z: -1
+            }
+
         Canvas {
             id: triangleArrow
 
@@ -113,6 +127,7 @@ Popup{
         id: contentItems
         implicitWidth: content.childrenRect.width + 20
         implicitHeight: content.childrenRect.height + 30 // 30 because 10 padding*2 and 10 for pointer
+
 
         MouseArea {
             // Blocks clickthroughs

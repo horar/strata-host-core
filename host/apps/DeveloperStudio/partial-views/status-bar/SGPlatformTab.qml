@@ -34,9 +34,9 @@ Item {
         setControlIcon()
         setSelectedButton()
         Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(0).toolRow, "Use this menu item to open the platform and control the board, documentation, or close the platform", 6, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(1).toolRow, "Use this menu item to open the documentation of the board", 7, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(2).toolRow, "Use this menu item to close the platform", 8, "selectorHelp")
+        Help.registerTarget(repeater.itemAt(0).toolItem, "Use this menu item to open the platform and control the board, documentation, or close the platform", 6, "selectorHelp")
+        Help.registerTarget(repeater.itemAt(1).toolItem, "Use this menu item to open the documentation of the board", 7, "selectorHelp")
+        Help.registerTarget(repeater.itemAt(2).toolItem, "Use this menu item to close the platform", 8, "selectorHelp")
     }
 
     onConnectedChanged: {
@@ -47,8 +47,8 @@ Item {
         target: Help.utility
         // if order is hardcoded, toggle help_tour popup after dropdown popup otherwise reset z height.
         onInternal_tour_indexChanged: {
-            if(Help.current_tour_targets[index]["target"] === menu || Help.current_tour_targets[index]["target"] === repeater.itemAt(0).toolRow ||
-                    Help.current_tour_targets[index]["target"] === repeater.itemAt(1).toolRow || Help.current_tour_targets[index]["target"] === repeater.itemAt(2).toolRow) {
+            if(Help.current_tour_targets[index]["target"] === menu || Help.current_tour_targets[index]["target"] === repeater.itemAt(0).toolItem ||
+                    Help.current_tour_targets[index]["target"] === repeater.itemAt(1).toolItem || Help.current_tour_targets[index]["target"] === repeater.itemAt(2).toolItem) {
                 dropDownPopup.open()
                 menu.state = "help_tour"
             } else {

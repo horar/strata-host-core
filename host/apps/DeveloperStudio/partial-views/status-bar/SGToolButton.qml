@@ -21,7 +21,14 @@ Rectangle {
         }
     }
     clip: true
-    property alias toolRow: row
+    property alias toolItem: toolItem
+
+    Item {
+        id: toolItem
+        implicitWidth: parent.width
+        height: 14
+        z: -1
+    }
 
     Rectangle {
         id: selectedSideHighlight
@@ -45,6 +52,7 @@ Rectangle {
             rightMargin: 10
         }
         spacing: 10
+        height: 25
 
         Text {
             color: "white"

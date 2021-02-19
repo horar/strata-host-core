@@ -1,10 +1,12 @@
 import QtQuick 2.12
+import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
      id: root
      visible: false
      z: 50
      anchors.fill: parent
+
 
      function setTarget(target, fill) {
          var remappedTarget = target.mapToItem(fill, 0, 0)
@@ -212,10 +214,15 @@ Item {
          opacity: root.globalOpacity
      }
 
-     Item {
+     Rectangle{
          id: toolTipBackgroundItem
          width: toolTipPopup.width
          height: toolTipPopup.height
+         color: "transparent"
+         radius: 15
+
+        Keys.forwardTo: [toolTipPopup.content]
+
          SGToolTipPopup {
              id: toolTipPopup
              // anchors and arrow alignment dynamically in setTarget

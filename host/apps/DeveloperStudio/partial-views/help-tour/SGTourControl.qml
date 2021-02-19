@@ -9,6 +9,7 @@ Item {
     id: root
     height: root.childrenRect.height
     width: 360
+    focus: true
 
     property int index: 0
     property alias description: description.text
@@ -28,15 +29,18 @@ Item {
     Keys.onLeftPressed: {
         if (root.index > 0) {
             Help.prev(root.index)
+            event.accepted = true
         }
     }
 
     Keys.onRightPressed: {
         Help.next(root.index)
+        event.accepted = true
     }
 
     Keys.onEscapePressed: {
         root.close()
+        event.accepted = true
     }
 
     // Capture tab/backtab to retain focus
@@ -156,6 +160,7 @@ Item {
                 ToolTip {
                     text: "Hotkey: ←"
                     visible: prevButton.showToolTip
+                    z: 67
                 }
 
                 MouseArea {
@@ -204,6 +209,7 @@ Item {
                 ToolTip {
                     text: "Hotkey: →"
                     visible: nextButton.showToolTip
+                    z: 67
                 }
 
                 MouseArea {
