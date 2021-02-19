@@ -13,6 +13,13 @@ SerialDevice::SerialDevice(const int deviceId, const QString& name) : Device(dev
 {
     readBuffer_.reserve(READ_BUFFER_SIZE);
 
+    serialPort_.setPortName(deviceName_);
+    serialPort_.setBaudRate(QSerialPort::Baud115200);
+    serialPort_.setDataBits(QSerialPort::Data8);
+    serialPort_.setParity(QSerialPort::NoParity);
+    serialPort_.setStopBits(QSerialPort::OneStop);
+    serialPort_.setFlowControl(QSerialPort::NoFlowControl);
+
     connect(&serialPort_, &QSerialPort::errorOccurred, this, &SerialDevice::handleError);
     connect(&serialPort_, &QSerialPort::readyRead, this, &SerialDevice::readMessage);
     connect(this, &SerialDevice::writeToPort, this, &SerialDevice::handleWriteToPort);
@@ -33,13 +40,6 @@ bool SerialDevice::open() {
         return true;
     }
 
-    serialPort_.setPortName(deviceName_);
-    serialPort_.setBaudRate(QSerialPort::Baud115200);
-    serialPort_.setDataBits(QSerialPort::Data8);
-    serialPort_.setParity(QSerialPort::NoParity);
-    serialPort_.setStopBits(QSerialPort::OneStop);
-    serialPort_.setFlowControl(QSerialPort::NoFlowControl);
-
     bool opened = serialPort_.open(QIODevice::ReadWrite);
     if (opened) {
         serialPort_.clear(QSerialPort::AllDirections);
@@ -51,6 +51,22 @@ void SerialDevice::close() {
     if (serialPort_.isOpen()) {
         serialPort_.close();
     }
+}
+
+bool SerialDevice::portCanBeOpen(const QString& portName) {
+    QSerialPort serialPort(portName);
+    serialPort.setBaudRate(QSerialPort::Baud115200);
+    serialPort.setDataBits(QSerialPort::Data8);
+    serialPort.setParity(QSerialPort::NoParity);
+    serialPort.setStopBits(QSerialPort::OneStop);
+    serialPort.setFlowControl(QSerialPort::NoFlowControl);
+
+    if (serialPort.open(QIODevice::ReadWrite)) {
+        serialPort.close();
+        return true;
+    }
+
+    return false;
 }
 
 void SerialDevice::readMessage() {

@@ -39,6 +39,13 @@ public:
     virtual void close() override;
 
     /**
+     * Check if serial port can be opened.
+     * @param portName name of port for check
+     * @return true if port can be open, false otherwise
+     */
+    static bool portCanBeOpen(const QString& portName);
+
+    /**
      * Send message to serial device. Emits deviceError in case of failure.
      * @param msg message to be written to device
      * @return true if message can be sent, otherwise false
