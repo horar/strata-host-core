@@ -256,16 +256,15 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
 
 void StrataClient::onRequestTimedOut(int requestId)
 {
-    // TODO: fix warning related to naming.
-    QString errorMessage("Request timed out. request ID: " + QString::number(requestId));
-    qCCritical(logCategoryStrataClient) << errorMessage;
-    emit errorOccurred(ClientError::RequestTimedOut, errorMessage);
+    QString timeoutErrorMessage("Request timed out. request ID: " + QString::number(requestId));
+    qCCritical(logCategoryStrataClient) << timeoutErrorMessage;
+    emit errorOccurred(ClientError::RequestTimedOut, timeoutErrorMessage);
 
     auto [requestFound, request] = requestController_->popPendingRequest(requestId);
     if (false == requestFound && request.deferredRequest_ == nullptr) {
-        QString errorMessage(QStringLiteral("Failed to remove timed out request."));
-        qCCritical(logCategoryStrataClient) << errorMessage;
-        emit errorOccurred(ClientError::PendingRequestNotFound, errorMessage);
+        QString requestNotFoundErrorMessage(QStringLiteral("Failed to remove timed out request."));
+        qCCritical(logCategoryStrataClient) << requestNotFoundErrorMessage;
+        emit errorOccurred(ClientError::PendingRequestNotFound, requestNotFoundErrorMessage);
         return;
     }
 
