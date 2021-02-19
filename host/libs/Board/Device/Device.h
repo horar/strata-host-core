@@ -206,9 +206,6 @@ namespace strata::device {
         friend QDebug operator<<(QDebug dbg, const Device* d);
         friend QDebug operator<<(QDebug dbg, const DevicePtr& d);
 
-        virtual bool bootloaderMode() final;
-        /*Moved to public because of DeviceMock*/
-
     signals:
         /**
          * Emitted when there is available new message from device.
@@ -242,6 +239,7 @@ namespace strata::device {
         virtual bool sendMessage(const QByteArray msg, quintptr lockId) = 0;
         virtual void setBootloaderMode(bool inBootloaderMode) final;
         // Before calling bootloaderMode(), commands get_firmware_info and request_platform_id must be called.
+        virtual bool bootloaderMode() final;
         virtual void setApiVersion(ApiVersion apiVersion) final;
       // ***
 

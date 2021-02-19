@@ -93,8 +93,9 @@ void DeviceOperationsV2Test::identifyEmbeddedApplicationTest()
     rapidjson::Document expectedDoc;
     rapidjson::ParseResult parseResult;
 
+    operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(device_, true), &QObject::deleteLater);
+        identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
     device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_app);
@@ -123,7 +124,8 @@ void DeviceOperationsV2Test::identifyEmbeddedApplicationTest()
 
     expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data());
 
-    QVERIFY(!device_->bootloaderMode());
+    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Application);
+
     QCOMPARE("application",
              expectedDoc["notification"]["payload"]["active"]);
     QCOMPARE(device_->bootloaderVer(),
@@ -138,8 +140,9 @@ void DeviceOperationsV2Test::identifyEmbeddedBootloaderTest()
     rapidjson::Document expectedDoc;
     rapidjson::ParseResult parseResult;
 
+    operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(device_, true), &QObject::deleteLater);
+        identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
     device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_btloader);
@@ -168,7 +171,8 @@ void DeviceOperationsV2Test::identifyEmbeddedBootloaderTest()
 
     expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_bootloader.data());
 
-    QVERIFY(device_->bootloaderMode());
+    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Bootloader);
+
     QCOMPARE("bootloader",
              expectedDoc["notification"]["payload"]["active"]);
     QCOMPARE(device_->bootloaderVer(),
@@ -183,8 +187,9 @@ void DeviceOperationsV2Test::identifyAssistedApplicationTest()
     rapidjson::Document expectedDoc;
     rapidjson::ParseResult parseResult;
 
+    operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(device_, true), &QObject::deleteLater);
+        identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
     device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_app);
@@ -213,9 +218,10 @@ void DeviceOperationsV2Test::identifyAssistedApplicationTest()
              expectedDoc["notification"]["payload"]["controller_class_id"].GetString());
     QVERIFY(device_->isControllerConnectedToPlatform());
 
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data());
+    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data());;
 
-    QVERIFY(!device_->bootloaderMode());
+    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Application);
+
     QCOMPARE("application",
              expectedDoc["notification"]["payload"]["active"]);
     QCOMPARE(device_->bootloaderVer(),
@@ -230,8 +236,9 @@ void DeviceOperationsV2Test::identifyAssistedBootloaderTest()
     rapidjson::Document expectedDoc;
     rapidjson::ParseResult parseResult;
 
+    operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(device_, true), &QObject::deleteLater);
+        identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
     device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_btloader);
@@ -262,7 +269,8 @@ void DeviceOperationsV2Test::identifyAssistedBootloaderTest()
 
     expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_bootloader.data());
 
-    QVERIFY(device_->bootloaderMode());
+    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Bootloader);
+
     QCOMPARE("bootloader",
              expectedDoc["notification"]["payload"]["active"].GetString());
     QCOMPARE(device_->bootloaderVer(),
@@ -277,8 +285,9 @@ void DeviceOperationsV2Test::identifyAssistedNoBoardTest()
     rapidjson::Document expectedDoc;
     rapidjson::ParseResult parseResult;
 
+    operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
-        new operation::Identify(device_, true), &QObject::deleteLater);
+        identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
     device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_no_board);
@@ -305,7 +314,9 @@ void DeviceOperationsV2Test::identifyAssistedNoBoardTest()
     QVERIFY(!device_->isControllerConnectedToPlatform());
 
     expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data());
-    QVERIFY(!device_->bootloaderMode());
+
+    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Application);
+
     QCOMPARE("application",
              expectedDoc["notification"]["payload"]["active"]);
     QCOMPARE(device_->bootloaderVer(),
