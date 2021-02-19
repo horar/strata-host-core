@@ -41,7 +41,7 @@ void DeferredRequest::callErrorCallback(const Message &message)
 
 void DeferredRequest::startTimer() 
 {
-    timer_.start(500);
+    timer_.start(REQUEST_TIMEOUT);
 }
 
 void DeferredRequest::stopTimer() 
