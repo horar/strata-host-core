@@ -105,7 +105,7 @@ signals:
      * @param [in] errorMessage QString of the actual error.
      */
     void errorOccurred(StrataClient::ClientError errorType,
-                       const QString &errorMessage = "");
+                       const QString &errorMessage);
 
 private slots:
     /**

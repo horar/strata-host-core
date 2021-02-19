@@ -614,7 +614,7 @@ void StrataClientTest::testErrorOccourredSignal()
 
     server.initilizeConnector();
     client.connectServer();
-    client.connectServer();     // This should fail
+    client.connectServer();  // This should fail
     QCOMPARE_(errorOccurred.count(), 1);
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
     QCOMPARE_(errorType, StrataClient::ClientError::FailedToConnect);
