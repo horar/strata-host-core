@@ -7,7 +7,7 @@ def INSTALLER_PATH_ONLINE = ""
 pipeline {
     agent {
         node {
-            label 'OTA'
+            label 'OTA || OTA-Dev || OTA-Prod'
             // TODO: hard drive letter should be loaded from ${env.SystemDrive} but node can't access env
             customWorkspace "C:/${REPO_NAME}"
         }
