@@ -4,12 +4,12 @@ import QtQml 2.12
 
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.notifications 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_notification.js" as PlatformNotification
 
 import QtQuick.Controls 2.12
-import tech.strata.notifications 1.0
 
 StackLayout {
     id: platformStack

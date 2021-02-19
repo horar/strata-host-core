@@ -33,6 +33,7 @@ SGWidgets.SGMainWindow {
     property alias notificationsInbox: notificationsInbox
 
     signal initialized()
+    property bool hcsReconnecting: false
 
     function resetWindowSize()
     {
@@ -76,7 +77,25 @@ SGWidgets.SGMainWindow {
         onHcsConnectedChanged: {
             if (sdsModel.hcsConnected) {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
+                if (hcsReconnecting) {
+                    Notifications.createNotification(`Host Controller Service reconnected`,
+                                                     Notifications.Info,
+                                                     "all",
+                                                     {
+                                                         "singleton": true,
+                                                         "timeout":0
+                                                     })
+                    hcsReconnecting = false
+                }
             } else {
+                Notifications.createNotification(`Host Controller Service disconnected`,
+                                                 Notifications.Critical,
+                                                 "all",
+                                                 {
+                                                     "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
+                                                     "singleton": true
+                                                 })
+                hcsReconnecting = true
                 PlatformFilters.clearActiveFilters()
                 PlatformSelection.logout()
                 SessionUtils.initialized = false
