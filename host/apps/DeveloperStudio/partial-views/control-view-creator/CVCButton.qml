@@ -18,7 +18,7 @@ Rectangle {
     id: controlViewCreatorContainer
     height: container.height
     width: controlViewCreatorRow.implicitWidth
-    color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? Theme.palette.green : "#444"
+    color: controlViewCreatorMouse.containsMouse ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.green : "#444"
     state: "debug"
 
     MouseArea {
@@ -30,7 +30,7 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
 
         onClicked: {
-            let data = {"index": NavigationControl.stack_container_.count-2}
+            let data = {"index": NavigationControl.stack_container_.count-1}
             NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
         }
     }
@@ -58,7 +58,7 @@ Rectangle {
             Layout.preferredHeight: controlViewCreatorContainer.height
             Layout.preferredWidth: Layout.preferredHeight
             Layout.alignment: Qt.AlignRight
-            color:controlViewCreatorMouse.containsMouse ? Theme.palette.green : closeArea.containsMouse  ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-2 ? Theme.palette.green : "#444"
+            color:controlViewCreatorMouse.containsMouse ? Theme.palette.green : closeArea.containsMouse  ? "#34883b" : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.green : "#444"
 
             SGIcon {
                 id: timesSignIcon

@@ -120,7 +120,6 @@ SGWidgets.SGMainWindow {
             id: stackContainer
 
             property alias mainContainer: mainContainer
-            property alias controlViewDevContainer: controlViewDevContainer
             property alias platformViewModel: platformViewModel
             property alias platformViewRepeater: platformViewRepeater
 
@@ -144,10 +143,6 @@ SGWidgets.SGMainWindow {
                 id: controlViewCreatorLoader
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-            }
-            
-            ControlViewDevContainer {
-                id: controlViewDevContainer
             }
         }
     }
@@ -175,14 +170,14 @@ SGWidgets.SGMainWindow {
         target: sdsModel.coreInterface
 
         onPlatformListChanged: {
-//            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
+            //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
                 PlatformSelection.generatePlatformSelectorModel(list)
             }
         }
 
         onConnectedPlatformListChanged: {
-//            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
+            //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
