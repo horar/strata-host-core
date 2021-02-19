@@ -18,6 +18,7 @@ import "qrc:/js/login_utilities.js" as Authenticator
 Item {
     property alias model: filteredNotifications
     property string currentUser: ""
+    property var currentNotifications: ({})
 
     enum Level {
         Info = 0,
@@ -133,14 +134,13 @@ Item {
                         })
 
      **/
-    function createNotification(title, level, to, additionalParameters = {}) {
+    function createNotification(title, level, to, additionalParameters = {}, key) {
         const description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";
         const actions = additionalParameters.hasOwnProperty("actions") ? additionalParameters["actions"].map((action) => ({"action": action})) : [];
         const saveToDisk = additionalParameters.hasOwnProperty("saveToDisk") ? additionalParameters["saveToDisk"] : false;
         const singleton = additionalParameters.hasOwnProperty("singleton") ? additionalParameters["singleton"] : false;
         const iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
         let timeout = additionalParameters.hasOwnProperty("timeout") ? additionalParameters["timeout"] : -1;
-
         if (timeout < 0) {
             if (level < 2) {
                 timeout = 10000
@@ -166,6 +166,13 @@ Item {
             "singleton": singleton,
             "actions": actions
         };
+
+        if(currentNotifications[key] !== undefined){
+            currentNotifications[key].push(notification)
+        } else {
+            currentNotifications[key] = []
+            currentNotifications[key].push(notification)
+        }
 
         let foundEntry = false;
         // Check the pre-existing entry in the model and see if that one is a singleton
@@ -235,6 +242,20 @@ Item {
             };
 
             model_.append(notification)
+        }
+    }
+
+    function getNotifications(key){
+        return currentNotifications[key]
+    }
+
+
+    function deleteNotification(notification){
+        for(var i = 0;i < model_.count; i++){
+            if(model_.get(i).date.toString() === notification.date.toString()){
+                model_.remove(i)
+                break
+            }
         }
     }
 }

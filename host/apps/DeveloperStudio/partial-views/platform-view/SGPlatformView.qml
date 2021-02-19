@@ -1,10 +1,12 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQml 2.12
 
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/platform_notification.js" as PlatformNotification
 
 import QtQuick.Controls 2.12
 import tech.strata.notifications 1.0
@@ -53,12 +55,60 @@ StackLayout {
         }
     }
 
+    Connections {
+        target: PlatformNotification.signals
+
+        onExecuteAction:{
+            if(key === "Collateral"){
+                switch(type){
+                case "View": viewDocuments()
+                    break;
+                case "Close": closeNotification()
+                    break;
+                case "Disable": disableNotification()
+                    break;
+                }
+            }
+        }
+    }
+
+
+    function viewDocuments() {
+        model.view = "collateral"
+    }
+
+    function closeNotification(){
+
+    }
+
+    function disableNotification() {
+        NavigationControl.userSettings.notifyOnCollateralDocumentUpdate = false
+        NavigationControl.userSettings.saveSettings()
+    }
+
+
     Component.onCompleted: {
         platformStackInitialized = true
+        PlatformNotification.createDynamicNotifications({key:"Collateral",data: [
+                                                                {
+                                                                    "text": "View documents",
+                                                                    "action": "View"
+                                                                },
+                                                                {
+                                                                    "text": "Ok",
+                                                                    "action": "Close"
+                                                                },
+                                                                {
+                                                                    "text": "Don't show this message again",
+                                                                    "action": "Disable"
+                                                                },
+                                                            ]
+                                                        })
     }
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
+        PlatformNotification.destroyNotifications("Collateral")
     }
 
     function initialize () {
@@ -87,29 +137,6 @@ StackLayout {
             class_id: model.class_id
         }
 
-        Action {
-            id: documentsHistoryShowDocumentsView
-            text: "View documents"
-            onTriggered: {
-                model.view = "collateral"
-            }
-        }
-
-        Action {
-            id: doNotNotifyOnCollateralDocumentUpdate
-            text: "Don't show this message again"
-            onTriggered: {
-                NavigationControl.userSettings.notifyOnCollateralDocumentUpdate = false
-                NavigationControl.userSettings.saveSettings()
-            }
-        }
-
-        Action {
-            id: ok
-            text: "Ok"
-            onTriggered: {}
-        }
-
         function launchDocumentsHistoryNotification(unseenPdfItems, unseenDownloadItems) {
             if (NavigationControl.userSettings.notifyOnCollateralDocumentUpdate == false) {
                 return
@@ -125,16 +152,17 @@ StackLayout {
             }
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed
-                Notifications.createNotification(
+                PlatformNotification.createNotification(
                     "Document updates for this platform",
                     Notifications.Info,
                     "current",
                     {
                         "description": description,
                         "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                        "actions": [documentsHistoryShowDocumentsView, ok, doNotNotifyOnCollateralDocumentUpdate],
+                        "actions": PlatformNotification.getNotificationActions("Collateral"),
                         "timeout": 0
-                    }
+                    },
+                    "Collateral"
                 )
             }
         }
