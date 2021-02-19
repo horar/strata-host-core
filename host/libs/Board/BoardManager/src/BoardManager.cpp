@@ -49,12 +49,12 @@ bool BoardManager::disconnectDevice(const int deviceId, const int seconds) {
                 reconnectTimers_.insert(deviceId, reconnectTimer);
                 reconnectTimer->setSingleShot(true);
                 reconnectTimer->callOnTimeout(this, [this, deviceId, reconnectTimer](){
-                    {
-                        QMutexLocker lock(&mutex_);
-                        reconnectTimer->deleteLater();
-                        reconnectTimers_.remove(deviceId);
-                    }
-                    reconnectDevice(deviceId);
+                    QMutexLocker lock(&mutex_);
+                    reconnectTimer->deleteLater();
+                    reconnectTimers_.remove(deviceId);
+                    // Remove serial port from list of known ports, device will be
+                    // added (reconnected) in next round of scaning serial ports.
+                    serialPortsList_.erase(deviceId);
                 });
                 reconnectTimer->start(seconds * 1000);
             }
@@ -122,7 +122,9 @@ QVector<int> BoardManager::activeDeviceIds() {
     return QVector<int>::fromList(openedDevices_.keys());
 }
 
-void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial port functionality out from this class
+void BoardManager::checkNewSerialDevices() {
+    // TODO refactoring, take serial port functionality out from this class
+    // or make another check function for bluetooth devices when it will be needed
 #if defined(Q_OS_MACOS)
     const QString usbKeyword("usb");
     const QString cuKeyword("cu");
@@ -184,6 +186,10 @@ void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial por
         for (auto deviceId : added) {
             if (addSerialPort(deviceId)) {  // modifies openedDevices_, uses serialIdToName_
                 opened.emplace_back(deviceId);
+            } else {
+                // If serial port cannot be opened (for example it is hold by another application),
+                // remove it from list of known ports. There will be another attempt to open it in next round.
+                ports.erase(deviceId);
             }
         }
 
@@ -217,6 +223,13 @@ bool BoardManager::addSerialPort(const int deviceId) {
     // 3. attach DeviceOperations object
 
     const QString name = serialIdToName_.value(deviceId);
+
+    if (device::serial::SerialDevice::portCanBeOpen(name) == false) {
+        qCInfo(logCategoryBoardManager).nospace() <<
+            "Port for device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " <<
+            name << " cannot be open, it is probably hold by another application.";
+        return false;
+    }
 
     DevicePtr device = std::make_shared<device::serial::SerialDevice>(deviceId, name);
 
