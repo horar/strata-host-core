@@ -166,7 +166,6 @@ void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial por
 
     std::set<int> added, removed;
     std::vector<int> opened, deleted;
-    opened.reserve(added.size());
 
     {  // this block of code modifies serialPortsList_, openedDevices_, serialIdToName_
         QMutexLocker lock(&mutex_);
