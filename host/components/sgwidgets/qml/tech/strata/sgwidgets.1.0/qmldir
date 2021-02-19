@@ -3,6 +3,7 @@ module tech.strata.sgwidgets
 SGUtilsJS 1.0 utils/SGUtils.js
 
 SGAboutWindow 1.0 SGAboutWindow.qml
+SGAbstractContextMenu 1.0 SGAbstractContextMenu.qml
 SGAlignedLabel 1.0 SGAlignedLabel.qml
 SGButton 1.0 SGButton.qml
 SGButtonStrip 1.0 SGButtonStrip.qml
@@ -11,6 +12,7 @@ SGCapacityBarElement 1.0 SGCapacityBarElement.qml
 SGCheckBox 1.0 SGCheckBox.qml
 SGCircularGauge 1.0 SGCircularGauge.qml
 SGComboBox 1.0 SGComboBox.qml
+SGContextMenuEditActions 1.0 SGContextMenuEditActions.qml
 SGFileSelector 1.0 SGFileSelector.qml
 SGGraph 1.0 SGGraph.qml
 SGHueSlider 1.0 SGHueSlider.qml

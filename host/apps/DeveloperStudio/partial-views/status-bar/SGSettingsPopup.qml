@@ -101,5 +101,15 @@ SGStrataPopup {
                 userSettings.saveSettings()
             }
         }
+
+        SGSettingsCheckbox {
+            text: "Notify me when a platform is connected/disconnected"
+            checked: userSettings.notifyOnPlatformConnections
+
+            onCheckedChanged: {
+                userSettings.notifyOnPlatformConnections  = checked
+                userSettings.saveSettings()
+            }
+        }
     }
 }

@@ -21,7 +21,7 @@ Loader {
 
         onLoadCVC:{
             cvcLoader.active = true
-            let data = {"index": NavigationControl.stack_container_.count-2}
+            let data = {"index": NavigationControl.stack_container_.count-1}
             NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
         }
 
@@ -35,7 +35,7 @@ Loader {
         onCloseCVC:{
             cvcLoader.cvcCloseRequested = false
             cvcLoader.active = false
-            let data = {"index": NavigationControl.stack_container_.count-3}
+            let data = {"index": NavigationControl.stack_container_.count-2}
             NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
         }
     }
