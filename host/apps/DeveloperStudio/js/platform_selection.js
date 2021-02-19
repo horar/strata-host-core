@@ -3,10 +3,11 @@
 .import "qrc:/js/platform_filters.js" as PlatformFilters
 .import "constants.js" as Constants
 .import "uuid_map.js" as UuidMap
+.import "platform_notification.js" as PlatformNotifications
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
-.import tech.strata.notifications 1.0 as PlatformNotifications
+
 
 var isInitialized = false
 var coreInterface
@@ -21,27 +22,15 @@ var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1;
 var notificationActions = []
 var localPlatformList = []
 
-function createPlatformActions() {
-    for(var i = 0; i < 2; i++){
-        notificationActions[i] = Qt.createQmlObject("import QtQuick.Controls 2.12; Action {}",Qt.application, `PlatformNotifications${i}`)
-    }   
-    notificationActions[0].text = "Ok"
-    notificationActions[0].triggered.connect(function(){})
-    notificationActions[1].text = "Disable platform notifications"
-    notificationActions[1].triggered.connect(function(){disablePlatformNotifications()})
-}
-
 function initialize (newCoreInterface) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     coreInterface = newCoreInterface
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
-    createPlatformActions()
+    PlatformNotifications.setTriggerFunction("Platform","Close",close)
+    PlatformNotifications.setTriggerFunction("Platform","Disable", disable)
 }
 
-function disablePlatformNotifications(){
-    NavigationControl.userSettings.notifyOnPlatformConnections = false
-}
 
 function getPlatformList () {
     platformSelectorModel.platformListStatus = "loading"
@@ -190,7 +179,15 @@ function generatePlatform (platform) {
     Determine platform connection changes and update model accordingly.
     Generate listings for duplicate/unlisted/unknown platforms.
 */
+
+function close(){}
+function disable(){
+    NavigationControl.userSettings.notifyOnPlatformConnections = false
+    NavigationControl.userSettings.saveSettings()
+}
+
 function parseConnectedPlatforms (connected_platform_list_json) {
+    PlatformNotifications.createDynamicNotifications({key: "Platform", data:[{text: "Ok",action: "Close"},{text: "Disable platform notifications",action: "Disable"}]})
     let currentlyConnected
     try {
         currentlyConnected = JSON.parse(connected_platform_list_json).list
@@ -623,22 +620,23 @@ function copyObject(object){
 
 function notifyConnectedState(connected, platformName){
     if(NavigationControl.userSettings.notifyOnPlatformConnections){
+        const actions = PlatformNotifications.getNotificationActions("Platform")
         if (connected){
-            PlatformNotifications.Notifications.createNotification(`${platformName} is connected`,
-                                                                   PlatformNotifications.Notifications.Info,
+            PlatformNotifications.createNotification(`${platformName} is connected`,
+                                                                   PlatformNotifications.notifications.Info,
                                                                    "all",
                                                                    {
                                                                        "timeout": 4000,
-                                                                       "actions": [notificationActions[0],notificationActions[1]]
-                                                                   })
+                                                                       "actions": actions
+                                                                   },"Platform")
         } else {
-            PlatformNotifications.Notifications.createNotification(`${platformName} is disconnected`,
-                                                                   PlatformNotifications.Notifications.Info,
+            PlatformNotifications.createNotification(`${platformName} is disconnected`,
+                                                                   PlatformNotifications.notifications.Info,
                                                                    "all",
                                                                    {
                                                                        "timeout": 4000,
-                                                                       "actions": [notificationActions[0],notificationActions[1]]
-                                                                   })
+                                                                       "actions": actions
+                                                                   },"Platform")
         }
     }
 }

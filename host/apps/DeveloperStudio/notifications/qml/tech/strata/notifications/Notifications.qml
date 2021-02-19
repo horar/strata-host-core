@@ -134,7 +134,7 @@ Item {
                         })
 
      **/
-    function createNotification(title, level, to, additionalParameters = {}, key) {
+    function createNotification(title, level, to, additionalParameters = {}, key = "general") {
         const description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";
         const actions = additionalParameters.hasOwnProperty("actions") ? additionalParameters["actions"].map((action) => ({"action": action})) : [];
         const saveToDisk = additionalParameters.hasOwnProperty("saveToDisk") ? additionalParameters["saveToDisk"] : false;
@@ -245,7 +245,7 @@ Item {
         }
     }
 
-    function getNotifications(key){
+    function getNotifications(key = "general"){
         return currentNotifications[key]
     }
 

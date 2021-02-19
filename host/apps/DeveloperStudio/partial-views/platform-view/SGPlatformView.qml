@@ -55,24 +55,6 @@ StackLayout {
         }
     }
 
-    Connections {
-        target: PlatformNotification.signals
-
-        onExecuteAction:{
-            if(key === "Collateral"){
-                switch(type){
-                case "View": viewDocuments()
-                    break;
-                case "Close": closeNotification()
-                    break;
-                case "Disable": disableNotification()
-                    break;
-                }
-            }
-        }
-    }
-
-
     function viewDocuments() {
         model.view = "collateral"
     }
@@ -89,6 +71,9 @@ StackLayout {
 
     Component.onCompleted: {
         platformStackInitialized = true
+        PlatformNotification.setTriggerFunction("Collateral","View",viewDocuments)
+        PlatformNotification.setTriggerFunction("Collateral","Close",closeNotification)
+        PlatformNotification.setTriggerFunction("Collateral","Disable",disableNotification)
         PlatformNotification.createDynamicNotifications({key:"Collateral",data: [
                                                                 {
                                                                     "text": "View documents",
