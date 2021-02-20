@@ -8,6 +8,7 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "qrc:/js/platform_notification.js" as PlatformNotifications
 import "qrc:/partial-views/platform-view"
 
 // imports below must be qrc:/ due to qrc aliases for debug/release differences
@@ -48,6 +49,17 @@ SGWidgets.SGMainWindow {
         if (!PlatformSelection.isInitialized) {
             PlatformSelection.initialize(sdsModel.coreInterface)
         }
+        function contactSales(){
+            var salesPopup = NavigationControl.createView("qrc:/partial-views/general/SGWebPopup.qml", mainWindow)
+            salesPopup.width = Qt.binding(()=> width-100)
+            salesPopup.height = Qt.binding(()=> height - 100)
+            salesPopup.x = Qt.binding(()=> width/2 - salesPopup.width/2)
+            salesPopup.y =  Qt.binding(()=> container.height/2 - salesPopup.height/2)
+            salesPopup.url = urls.salesPopupUrl
+            salesPopup.open()
+        }
+
+        PlatformNotifications.setTriggerFunction("HCS","Contact",contactSales)
         initialized()
     }
 
@@ -75,26 +87,29 @@ SGWidgets.SGMainWindow {
     Connections {
         target: sdsModel
         onHcsConnectedChanged: {
+            PlatformNotifications.createDynamicNotifications({key:"HCS",data:[{text: "Contact customer service",action:"Contact"}]})
             if (sdsModel.hcsConnected) {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
                 if (hcsReconnecting) {
-                    Notifications.createNotification(`Host Controller Service reconnected`,
+                    PlatformNotifications.createNotification(`Host Controller Service reconnected`,
                                                      Notifications.Info,
                                                      "all",
                                                      {
                                                          "singleton": true,
-                                                         "timeout":0
-                                                     })
+                                                         "timeout":0,
+                                                         "actions": PlatformNotifications.getNotificationActions("HCS")
+                                                     },"HCS")
                     hcsReconnecting = false
                 }
             } else {
-                Notifications.createNotification(`Host Controller Service disconnected`,
+                PlatformNotifications.createNotification(`Host Controller Service disconnected`,
                                                  Notifications.Critical,
                                                  "all",
                                                  {
                                                      "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
-                                                     "singleton": true
-                                                 })
+                                                     "singleton": true,
+                                                      "actions": PlatformNotifications.getNotificationActions("HCS")
+                                                 },"HCS")
                 hcsReconnecting = true
                 PlatformFilters.clearActiveFilters()
                 PlatformSelection.logout()

@@ -14,14 +14,14 @@ function destroyNotifications(key_ = null) {
             const notifications = PlatformNotifications.Notifications.getNotifications(key)
             unRegisterNotificationActions(key)
             if(notifications !== undefined){
-                notifications.forEach(notification => PlatformNotifications.Notifications.deleteNotification(notification))
+                notifications.forEach(notification =>  notification.level === 2 ? PlatformNotifications.Notifications.deleteNotification(notification) : null)
             }
         }
     } else {
         const notifications = PlatformNotifications.Notifications.getNotifications(key_)
         unRegisterNotificationActions(key_)
         if(notifications !== undefined){
-            notifications.forEach(notification => PlatformNotifications.Notifications.deleteNotification(notification))
+            notifications.forEach(notification => notification.level === 2 ? PlatformNotifications.Notifications.deleteNotification(notification): null)
         }
     }
 }
