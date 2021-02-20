@@ -14,15 +14,16 @@ bool ClientConnector::initializeConnector()
 {
     using Connector = strata::connector::Connector;
 
-    if (!connector_) {
-        connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER);
-    } else {
+    if (connector_) {
         qInfo(logCategoryStrataClientConnector) << "ZMQ connector already created.";
+    } else {
+        connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER);
     }
 
     connector_->setDealerID(dealerId_.toStdString());
     if (false == connectClient()) {
-        qCCritical(logCategoryStrataClientConnector) << "Failed to open ClientConnector. Or Client already connected.";
+        qCCritical(logCategoryStrataClientConnector)
+            << "Failed to open ClientConnector. Or Client already connected.";
         return false;
     }
 

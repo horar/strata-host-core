@@ -16,10 +16,10 @@ bool ServerConnector::initilizeConnector()
 {
     using Connector = strata::connector::Connector;
 
-    if (!connector_) {
-        connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
-    } else {
+    if (connector_) {
         qInfo(logCategoryStrataClientConnector) << "ZMQ connector already created.";
+    } else {
+        connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
     }
 
     if (false == connector_->open(serverAddress_.toStdString())) {
