@@ -9,18 +9,22 @@ function createNotification(msg,level = PlatformNotifications.Notifications.Info
 }
 
 function destroyNotifications(key_ = null) {
-        if (key_ === null) {
-            for (const [key] in Object.keys(notificationMap)) {
-                const notifications = PlatformNotifications.Notifications.getNotifications(key)
-                unRegisterNotificationActions(key)
+    if (key_ === null) {
+        for (const [key] in Object.keys(notificationMap)) {
+            const notifications = PlatformNotifications.Notifications.getNotifications(key)
+            unRegisterNotificationActions(key)
+            if(notifications !== undefined){
                 notifications.forEach(notification => PlatformNotifications.Notifications.deleteNotification(notification))
             }
-        } else {
-            const notifications = PlatformNotifications.Notifications.getNotifications(key_)
-            unRegisterNotificationActions(key_)
-            notifications.forEach(notification => PlatformNotifications.Notifications.deleteNotification(notification))
-            }
         }
+    } else {
+        const notifications = PlatformNotifications.Notifications.getNotifications(key_)
+        unRegisterNotificationActions(key_)
+        if(notifications !== undefined){
+            notifications.forEach(notification => PlatformNotifications.Notifications.deleteNotification(notification))
+        }
+    }
+}
 
 
 function unRegisterNotificationActions(key) {
