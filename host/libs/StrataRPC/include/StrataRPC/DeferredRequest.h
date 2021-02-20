@@ -60,6 +60,12 @@ signals:
      */
     void requestTimedOut(int requestId);
 
+private slots:
+    /**
+     * Handles timeout signal from QTimer
+     */
+    void onRequestTimout();
+
 private:
     friend class StrataClient;
 

@@ -5,9 +5,7 @@ using namespace strata::strataRPC;
 DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_(id), timer_(this)
 {
     timer_.setSingleShot(true);
-    connect(&timer_, &QTimer::timeout, this, [this]() {
-        emit requestTimedOut(id_);
-    });
+    connect(&timer_, &QTimer::timeout, this, &DeferredRequest::onRequestTimout);
 }
 
 DeferredRequest::~DeferredRequest()
@@ -39,12 +37,17 @@ void DeferredRequest::callErrorCallback(const Message &message)
     emit finishedWithError(message);
 }
 
-void DeferredRequest::startTimer() 
+void DeferredRequest::startTimer()
 {
     timer_.start(REQUEST_TIMEOUT);
 }
 
-void DeferredRequest::stopTimer() 
+void DeferredRequest::stopTimer()
 {
     timer_.stop();
+}
+
+void DeferredRequest::onRequestTimout()
+{
+    emit requestTimedOut(id_);
 }
