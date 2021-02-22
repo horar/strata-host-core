@@ -18,35 +18,6 @@ Item {
     signal close()
     onClose: Help.closeTour()
 
-    onVisibleChanged: {
-        if (visible) {
-            forceActiveFocus(); // focus on this to catch Keys below
-        } else if (focus){
-            focus = false
-        }
-    }
-
-    Keys.onLeftPressed: {
-        if (root.index > 0) {
-            Help.prev(root.index)
-            event.accepted = true
-        }
-    }
-
-    Keys.onRightPressed: {
-        Help.next(root.index)
-        event.accepted = true
-    }
-
-    Keys.onEscapePressed: {
-        root.close()
-        event.accepted = true
-    }
-
-    // Capture tab/backtab to retain focus
-    Keys.onTabPressed: {}
-    Keys.onBacktabPressed: {}
-
     SGIcon {
         id: closer
         source: "qrc:/sgimages/times.svg"

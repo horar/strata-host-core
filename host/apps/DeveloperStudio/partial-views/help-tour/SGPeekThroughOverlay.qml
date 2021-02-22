@@ -29,12 +29,12 @@ Item {
              toolTipBackgroundItem.anchors.horizontalCenter = undefined
              toolTipBackgroundItem.anchors.left = bottomFade.horizontalCenter
              toolTipPopup.horizontalAlignment = "left"
-         } else if ( toolTipBackgroundItem.x + toolTipBackgroundItem.width > fill.width ) {
+         } else if ( toolTipBackgroundItem.x + toolTipBackgroundItem.width >= fill.width ) {
              toolTipBackgroundItem.anchors.horizontalCenter = undefined
              toolTipBackgroundItem.anchors.right = bottomFade.horizontalCenter
              toolTipPopup.horizontalAlignment = "right"
          }
-         if ( toolTipBackgroundItem.y + toolTipBackgroundItem.height > fill.height ) {
+         if ( toolTipBackgroundItem.y + toolTipBackgroundItem.height >= fill.height ) {
              toolTipBackgroundItem.anchors.top = undefined
              toolTipBackgroundItem.anchors.bottom = topFade.top
              toolTipPopup.arrowOnTop = false
@@ -42,14 +42,13 @@ Item {
      }
 
      function restoreFocus(){
-        toolTipPopup.popupItem.forceActiveFocus()
+        toolTipBackgroundItem.forceActiveFocus()
      }
 
      property alias index: toolTipPopup.index
      property alias description: toolTipPopup.description
      property alias fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
      property alias toolTipPopup: toolTipPopup
-
      property real globalOpacity: .5
 
      MouseArea {
@@ -213,15 +212,39 @@ Item {
          rotation: 180
          opacity: root.globalOpacity
      }
-
+    // This is a rectangle only because the dropshadow was clipping to the Item radius or lack thereof. This fixes the issue
      Rectangle{
          id: toolTipBackgroundItem
          width: toolTipPopup.width
          height: toolTipPopup.height
          color: "transparent"
          radius: 15
+         focus: true
 
-        Keys.forwardTo: [toolTipPopup.content]
+         onVisibleChanged: {
+             if (visible) {
+                 forceActiveFocus(); // focus on this to catch Keys below
+             } else if(focus){
+                 focus = false
+             }
+         }
+        // Originally this was three different keys.pressed events I combined into one, so that a user couldnt hold left and right and constantly toggle <- ->
+         Keys.onPressed: {
+             if(event.key === Qt.Key_Escape){
+                 toolTipPopup.popupItem.close()
+                 Help.closeTour()
+             } else if(event.key === Qt.Key_Left){
+                 if (toolTipPopup.index > 0) {
+                     Help.prev(root.index)
+                 }
+             } else if(event.key === Qt.Key_Right){
+                 Help.next(toolTipPopup.index)
+             }
+         }
+
+         Keys.onTabPressed: {}
+         Keys.onBacktabPressed: {}
+
 
          SGToolTipPopup {
              id: toolTipPopup
