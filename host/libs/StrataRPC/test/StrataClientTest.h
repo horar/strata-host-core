@@ -21,6 +21,7 @@ private slots:
     void testWithOnlyResultCallbacks();
     void testWithOnlyErrorCallbacks();
     void testTimedoutRequest();
+    void testNoTimedoutRequest();
     void testErrorOccourredSignal();
 
 private:
