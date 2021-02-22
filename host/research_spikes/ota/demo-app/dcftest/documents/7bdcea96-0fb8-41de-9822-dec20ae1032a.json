@@ -1,7 +1,7 @@
 {
-    "_id": "7bdcea96-0fb8-41de-9822-dec20ae1032a",
-    "_rev": "5-3ea8d8fab95c7cf9a2dd266b7deafe75",
+    "controller_type": 2,
     "channels": "7bdcea96-0fb8-41de-9822-dec20ae1032a",
+    "name": "STR-LEVEL-SHIFTERS-GEVB",
     "documents": {
         "datasheets": [
             {
@@ -238,28 +238,30 @@
     ],
     "firmware": [
         {
+            "name": "STR-LEVEL-SHIFTERS-WATER-HEATER-FIRMWARE",
+            "controller_class_id": "6057eb97-5e00-4adc-8bff-9c5e8205b353",
             "file": "str-level-shifters-gevb-v002.bin",
-            "device": "water-heater",
             "md5": "2cb7483b5d92ead2de3df8ccf8b63077",
             "timestamp": "2021-01-18 12:41:26",
             "version": "0.0.2"
         },
         {
+            "name": "STR-LEVEL-SHIFTERS-WATER-HEATER-FIRMWARE",
+            "controller_class_id": "6057eb97-5e00-4adc-8bff-9c5e8205b353",
             "file": "str-level-shifters-gevb-v10100.bin",
-            "device": "water-heater",
             "md5": "390b4e226e9219b09a3c0c8744a02b3b",
             "timestamp": "2020-06-25 12:41:31",
             "version": "1.0.100"
         },
         {
+            "name": "STR-LEVEL-SHIFTERS-RSL10-FIRMWARE",
+            "controller_class_id": "cabc126d-e921-435a-b447-983d910ebf2c",
             "file": "str-level-shifters-gevb-rsl10-v110.bin",
-            "device": "RSL10-rev1",
             "md5": "00000000000000000000000000000003",
             "timestamp": "2021-01-20 13:41:31",
             "version": "1.1.0"
         }
     ],
-    "name": "STR-LEVEL-SHIFTERS-GEVB",
     "platform_selector": {
         "file": "7bdcea96-0fb8-41de-9822-dec20ae1032a/platform_selector/thumb.jpeg",
         "filename": "thumbnail",

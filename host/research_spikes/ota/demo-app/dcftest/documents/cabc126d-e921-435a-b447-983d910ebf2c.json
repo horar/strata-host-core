@@ -1,18 +1,25 @@
 {
-    "_id": "cabc126d-e921-435a-b447-983d910ebf2c",
-    "_rev": "2-ab508f6626ea92a2c03774bb901e6b29",
+    "controller_type": 3,
     "channels": "cabc126d-e921-435a-b447-983d910ebf2c",
+    "name": "ONSEC-19-029 REV1",
+    "mcu": {
+        "jlink_device": "RSL10",
+        "bootloader_start_address": 131072
+    },
     "documents": {
         "datasheets": [],
         "downloads": [],
         "views": []
     },
-    "firmware": [
+    "bootloader": [
         {
-            "device": "RSL10-rev1"
+            "name": "RSL10-BOOTLOADER-1",
+            "file": "strata_assisted_bootloader-100.bin",
+            "md5": "a33611a3b729f63add72b7d672655912",
+            "timestamp": "2021-01-29 14:28:29",
+            "version": "1.0.0"
         }
     ],
-    "name": "ONSEC-19-029 REV1",
     "platform_selector": {
         "file": "cabc126d-e921-435a-b447-983d910ebf2c/platform_selector/thumb.jpeg",
         "filename": "image.jpeg",
