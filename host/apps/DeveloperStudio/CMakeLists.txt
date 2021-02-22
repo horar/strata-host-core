@@ -55,14 +55,16 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     qml-dev-studio-resources.qrc
     ${CMAKE_SOURCE_DIR}/assets/config/sds.qrc
 
-    $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
-
     source/HcsNode.cpp
     ${NODE_RO_SRCS}
 )
 
 generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
 generate_app_build_timestamp()
+
+add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "DEBUGBAR" PLUGIN_NAME "debugbar")
+add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "CVC" PLUGIN_NAME "cvc")
+
 
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
