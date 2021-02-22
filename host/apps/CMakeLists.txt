@@ -12,6 +12,16 @@ if(NOT MINGW)
     cmake_dependent_option(APPS_CORESW_SDS "Build 'Strata Developer Studio' app" ON
                             "APPS_CORESW" OFF)
     add_feature_info(APPS_CORESW_SDS APPS_CORESW_SDS "Strata Developer Studio")
+
+    # DevStudio plugins
+    include(AddDevStudioPLugin)
+    cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_DEBUGBAR "Build DevStudio 'debugbar' plugin" ON
+        "APPS_CORESW_SDS" OFF)
+    add_feature_info(APPS_CORESW_SDS_PLUGIN_DEBUGBAR APPS_CORESW_SDS_PLUGIN_DEBUGBAR "DevStudio 'debugbar' plugin")
+
+    cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_CVC "Build DevStudio 'CVC' plugin" ON
+        "APPS_CORESW_SDS" OFF)
+    add_feature_info(APPS_CORESW_SDS_PLUGIN_CVC APPS_CORESW_SDS_PLUGIN_CVC "DevStudio 'Control View Creator' plugin")
 else()
     message(WARNING "Strata Developer Studio is not supported in MinGW development environment!")
 endif()
