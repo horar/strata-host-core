@@ -16,6 +16,11 @@ Rectangle {
 
     signal selected()
 
+    function onClicked() {
+        Filters.setFilterActive(model.filterName, true)
+        selected()
+    }
+
     MouseArea {
         id: mouseArea
         anchors {
@@ -24,14 +29,13 @@ Rectangle {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            Filters.setFilterActive(model.filterName, true)
-            root.selected()
+            root.onClicked()
         }
     }
 
     RowLayout {
         id: row
-        spacing: 5
+        spacing: 0
         anchors {
             fill: parent
         }
@@ -44,11 +48,13 @@ Rectangle {
             mipmap: true
             iconColor: "black"
             Layout.leftMargin: 20
+            visible: model.iconSource !== ""
         }
 
         SGText {
             text: model.text
             Layout.fillWidth: true
+            Layout.margins: 5
             elide: Text.ElideRight
         }
     }
