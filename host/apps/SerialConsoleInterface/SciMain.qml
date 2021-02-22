@@ -72,7 +72,7 @@ Item {
             visible: false
             fontSizeMultiplier: 1.2
             font.bold: true
-            text: "Default Board Name Length"
+            text: "Default Board Name Length Length"
         }
 
         Rectangle {
