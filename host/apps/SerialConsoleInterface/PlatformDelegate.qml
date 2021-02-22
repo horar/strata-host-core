@@ -61,6 +61,18 @@ FocusScope {
                 onActivated: mainPage.toggleExpand()
             }
 
+            Shortcut {
+                id: sendMessageEnterShortcut
+                sequence: "Ctrl+Enter"
+                onActivated: mainPage.sendMessageInputTextAsComand()
+            }
+
+            Shortcut {
+                id: sendMessageReturnShortcut
+                sequence: "Ctrl+Return"
+                onActivated: mainPage.sendMessageInputTextAsComand()
+            }
+
             ScrollbackView {
                 id: scrollbackView
                 anchors {
@@ -390,6 +402,8 @@ FocusScope {
 
                     enabled: messageEditor.enabled
                     focusPolicy: Qt.NoFocus
+                    hintText: prettifyHintText("Send command",
+                                               Qt.platform.os === "osx" ? sendMessageReturnShortcut.nativeText : sendMessageEnterShortcut.nativeText)
                     text: qsTr("SEND")
                     onClicked: {
                         sendMessageInputTextAsComand()
@@ -438,6 +452,8 @@ FocusScope {
                 if (toggleExpandButton.enabled === false) {
                     return
                 }
+
+                scrollbackView.clearSelection()
 
                 toggleExpandButton.enabled = false
                 scrollbackModel.condensedMode = ! scrollbackModel.condensedMode

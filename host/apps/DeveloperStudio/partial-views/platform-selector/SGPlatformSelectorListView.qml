@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import QtQml 2.12
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as Filters
@@ -74,6 +75,30 @@ Item {
                 // ensure item fulfills all active filters
                 mainLoop: // label for continuing from nested loop
                 for (let i = 0; i < Filters.activeFilters.length; i++){
+
+                    if (Filters.activeFilters[i].startsWith("status-")) {
+                        switch (Filters.activeFilters[i]) {
+                        case "status-connected":
+                            if (item.connected) {
+                                continue mainLoop
+                            } else {
+                                return false
+                            }
+                        case "status-coming-soon":
+                            if (item.coming_soon) {
+                                continue mainLoop
+                            } else {
+                                return false
+                            }
+                        case "status-recently-released":
+                            if (item.recently_released) {
+                                continue mainLoop
+                            } else {
+                                return false
+                            }
+                        }
+                    }
+
                     for (let j = 0; j < item.filters.count; j++){
                         if (Filters.activeFilters[i] === item.filters.get(j).filterName) {
                             continue mainLoop
@@ -173,6 +198,7 @@ Item {
                 width: 1
                 color: "#DDD"
             }
+            visible: PlatformSelection.platformSelectorModel.platformListStatus == "loaded"
 
             RowLayout {
                 id: filterRow
@@ -181,32 +207,119 @@ Item {
                 }
                 spacing: 0
 
+                Rectangle {
+                    id: stateFilter // coming soon, recently released, connected
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 168 + 20 // matches PlatformImage + left margin
+                    border {
+                        width: 1
+                        color: "#DDD"
+                    }
+                    color: (stateMouse.containsMouse || statePopup.visible) ? "#f2f2f2" : "white"
+
+                    RowLayout {
+                        anchors {
+                            fill: parent
+                            leftMargin: 8
+                            rightMargin: 8
+                        }
+                        spacing: 8
+
+                        Text {
+                            id: stateFilterText
+                            text: "Filter by Status"
+                            color: segmentFilterMouse.enabled? "#666" : "#ddd"
+                            Layout.fillWidth: true
+                            elide: Text.ElideRight
+                        }
+
+                        SGIcon {
+                            id: angleIcon1
+                            source: "qrc:/sgimages/chevron-down.svg"
+                            iconColor: stateMouse.enabled? "#666" : "#ddd"
+                            height: 20
+                            width: height
+                        }
+                    }
+
+                    MouseArea {
+                        id: stateMouse
+                        anchors {
+                            fill: parent
+                        }
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked:  {
+                            statePopup.open()
+                        }
+                    }
+
+                    Popup {
+                        id: statePopup
+                        width: parent.width
+                        y: stateFilter.height -1
+                        height: stateColumn.height + 20
+                        padding: 0
+                        background: Rectangle {
+                            border {
+                                width: 1
+                                color: "#DDD"
+                            }
+                        }
+
+                        ColumnLayout {
+                            id: stateColumn
+                            width: parent.width - 20
+                            anchors {
+                                centerIn: parent
+                            }
+
+                            Repeater {
+                                model: ListModel {
+
+                                    ListElement {
+                                        filterName: "status-recently-released"
+                                        text: "Show Recently Released"
+                                        iconSource: ""
+                                    }
+
+                                    ListElement {
+                                        filterName: "status-coming-soon"
+                                        text: "Show Coming Soon"
+                                        iconSource: ""
+                                    }
+
+                                    ListElement {
+                                        filterName: "status-connected"
+                                        text: "Show Connected"
+                                        iconSource: ""
+                                    }
+                                }
+
+                                delegate: SegmentFilterDelegate {
+                                    Component.onCompleted: {
+                                        selected.connect(statePopup.close)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Item {
                     id: textFilterContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     clip: true
 
-                    SGIcon {
-                        id: searchIcon
-                        source: "qrc:/sgimages/zoom.svg"
-                        height: filter.height * .75
-                        width: height
-                        iconColor: "#666"
-                        anchors {
-                            left: textFilterContainer.left
-                            leftMargin: 10
-                            verticalCenter: textFilterContainer.verticalCenter
-                        }
-                    }
-
                     TextInput {
                         id: filter
                         text: ""
                         anchors {
                             verticalCenter: textFilterContainer.verticalCenter
-                            left: searchIcon.right
-                            leftMargin: 5
+                            left: parent.left
+                            leftMargin: 10
                             right: clearIcon.left
                             rightMargin: 10
                         }
@@ -377,25 +490,12 @@ Item {
                     }
                     color: (segmentFilterMouse.containsMouse || segmentFilters.visible) ? "#f2f2f2" : "white"
 
-                    SGIcon {
-                        id: filterIcon
-                        source: "qrc:/sgimages/funnel.svg"
-                        height: filter.height * .75
-                        width: height
-                        iconColor: "#666"
-                        anchors {
-                            left: segmentFilterContainer.left
-                            leftMargin: 10
-                            verticalCenter: parent.verticalCenter
-                        }
-                    }
-
                     Text {
                         id: defaultSegmentFilterText
                         text: "Filter by Segment or Category"
                         color: segmentFilterMouse.enabled? "#666" : "#ddd"
                         anchors {
-                            left: filterIcon.right
+                            left: parent.left
                             leftMargin: 10
                             verticalCenter: segmentFilterContainer.verticalCenter
                         }

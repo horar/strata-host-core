@@ -187,10 +187,8 @@ QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
         return retStatus;
     }
 
-    QByteArray messageUtf8 = message.toUtf8();
-
     QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(messageUtf8, &parseError);
+    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
     bool isJsonValid = parseError.error == QJsonParseError::NoError;
 
     if (onlyValidJson) {
@@ -200,15 +198,14 @@ QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
             retStatus["message"] = parseError.errorString();
             return retStatus;
         }
-
-        messageUtf8 = doc.toJson(QJsonDocument::Compact);
-    } else {
-        ; //message is sent as is
     }
 
-    bool result = device_->sendMessage(messageUtf8);
+    //compact format as line break is end of input for serial library
+    QString compactMsg = SGJsonFormatter::minifyJson(message);
+
+    bool result = device_->sendMessage(compactMsg.toUtf8());
     if (result) {
-        commandHistoryModel_->add(messageUtf8, isJsonValid);
+        commandHistoryModel_->add(compactMsg, isJsonValid);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
         retStatus["error"] = "no_error";
     } else {

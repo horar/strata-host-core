@@ -5,6 +5,8 @@
 #include <QFile>
 
 #include <memory>
+#include <functional>
+#include <vector>
 
 #include <Device/Device.h>
 
@@ -53,6 +55,7 @@ class Flasher : public QObject
          * \param device device which will be used by Flasher
          * \param fileName path to firmware (or bootloader) file
          */
+
         Flasher(const device::DevicePtr& device, const QString& fileName);
         /*!
          * Flasher constructor.
@@ -92,6 +95,12 @@ class Flasher : public QObject
          * \param startApplication if set to true start application after backup
          */
         void backupFirmware(bool startApplication = true);
+
+        /*!
+         * Set firmware class ID (without flashing firmware).
+         * \param startApplication if set to true start application after setting firmware class ID
+         */
+        void setFwClassId(bool startApplication = true);
 
         /*!
          * Cancel flash firmware operation.
@@ -139,28 +148,70 @@ class Flasher : public QObject
          */
         void devicePropertiesChanged();
 
+        // private signal:
+        void nextOperation(QPrivateSignal);
+
     private slots:
+        // run current operation from operationList_
+        void runFlasherOperation();
+        // process operation finished signal
         void handleOperationFinished(device::operation::Result result, int status, QString errStr);
 
     private:
-        typedef std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> FlasherOperation;
+        // check if flasher action can start
+        bool startActionCheck(const QString& errorString);
+        // prepare for flash (file checks)
+        bool prepareForFlash(bool flashFirmware);
+        // prepare for backup (file checks)
+        bool prepareForBackup();
 
-        // flash firmware of bootloader
-        void flash(bool flashFirmware);
-        // do next operation in flash (backup) process
-        void doNextOperation(device::operation::BaseDeviceOperation* baseOp, int status);
-        // create operation to flash or back up firmware
-        void createFlasherOperation(FlasherOperation& operation, State& state);
-        // manage flash process - handle flashed chunks
-        void manageFlash(int lastFlashedChunk);
-        // manage backup process - handle becked up chunks
-        void manageBackup(int chunkNumber);
+        // run next operation in operationList_
+        void runNextOperation();
         // finish flasher
         void finish(Result result, QString errorString = QString());
-        // connect handlers for flasher operation
-        void connectHandlers(device::operation::BaseDeviceOperation* operation);
-        // deleter for flasher operations
+
+        // hanlers which are called when operation in operationList_ finishes
+        void startBootloaderFinished(int status);
+        void setAssistPlatfIdFinished(int status);
+        void flashFinished(bool flashingFirmware, int status);
+        void backupFinished(int status);
+        void startApplicationFinished(int status);
+        void identifyFinished(bool flashingFirmware, int status);
+
+        // flash logic
+        void manageFlash(bool flashingFirmware, int lastFlashedChunk);
+        // backup logic
+        void manageBackup(int chunkNumber);
+
+        // deleter for flasher oparation
         static void operationDeleter(device::operation::BaseDeviceOperation* operation);
+
+        // error logic when dynamic_cast on DeviceOperation fails
+        void operationCastError();
+
+        // methods for adding operations to operationList_
+        void addSwitchToBootloaderOperation();
+        void addSetFwClassIdOperation(bool clear = false);
+        void addFlashOperation(bool flashingFirmware);
+        void addBackupFirmwareOperation();
+        void addStartApplicationOperation();
+        void addIdentifyOperation(bool flashingFirmware);
+
+        typedef std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> OperationPtr;
+
+        struct FlasherOperation {
+            FlasherOperation(OperationPtr&& deviceOperation,
+                             State stateOfFlasher,
+                             const std::function<void(int)>& finishedOperationHandler,
+                             const Flasher* parent);
+            OperationPtr operation;
+            State state;
+            std::function<void(int)> finishedHandler;
+            const Flasher* flasher;
+        };
+
+        std::vector<FlasherOperation> operationList_;
+        std::vector<FlasherOperation>::iterator currentOperation_;
 
         device::DevicePtr device_;
 
@@ -170,8 +221,6 @@ class Flasher : public QObject
 
         QString fwClassId_;
 
-        FlasherOperation operation_;
-
         int chunkNumber_;
         int chunkCount_;
         int chunkProgress_;
@@ -179,13 +228,10 @@ class Flasher : public QObject
         enum class Action {
             FlashFirmware,
             FlashBootloader,
-            BackupFirmware
+            BackupFirmware,
+            SetFwClassId
         };
         Action action_;
-
-        State state_;
-
-        bool startApp_;
 };
 
 }  // namespace

@@ -17,6 +17,7 @@ FocusScope {
     property bool dialogSelectExisting: true
     property string dialogDefaultSuffix: ""
     property variant dialogNameFilters: []
+    property alias contextMenuEnabled: textEdit.contextMenuEnabled
 
 
     function inputValidationErrorMsg() {

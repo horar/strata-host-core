@@ -119,6 +119,11 @@ FocusScope {
         }
     }
 
+    SGWidgets.SGContextMenuEditActions {
+        id: contextMenuPopup
+        textEditor: edit
+    }
+
     Flickable {
         id: flick
         anchors {
@@ -169,13 +174,20 @@ FocusScope {
         }
 
         MouseArea {
-            height: flick.height
-            width: flick.width
+            height: flick.height > flick.contentHeight ? flick.height : flick.contentHeight
+            width: flick.width > flick.contentWidth ? flick.width : flick.contentWidth
 
             cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
             onClicked: {
                 edit.forceActiveFocus()
-                edit.cursorPosition = edit.text.length
+            }
+
+            onReleased: {
+                if (containsMouse && (mouse.button === Qt.RightButton)) {
+                    contextMenuPopup.popup(null)
+                }
             }
         }
 
@@ -193,6 +205,10 @@ FocusScope {
 
         TextEdit {
             id: edit
+            height: flick.height > (contentHeight + topPadding + bottomPadding) ?
+                        flick.height : (contentHeight + topPadding + bottomPadding)
+            width: (flick.width - x) > (contentWidth + leftPadding + rightPadding) ?
+                       (flick.width - x) : (contentWidth + leftPadding + rightPadding)
 
             wrapMode: TextEdit.NoWrap
             padding: 4 + 4
@@ -204,6 +220,7 @@ FocusScope {
             font.pixelSize: SGWidgets.SGSettings.fontPixelSize
             selectByMouse: true
             selectByKeyboard: true
+            persistentSelection: true   // must deselect manually
             activeFocusOnTab: true
             textFormat: Text.PlainText
             focus: true
@@ -224,6 +241,12 @@ FocusScope {
 
             onCursorRectangleChanged: {
                 flick.ensureVisible(cursorRectangle)
+            }
+
+            onActiveFocusChanged: {
+                if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                    edit.deselect()
+                }
             }
 
             Text {

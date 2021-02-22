@@ -495,6 +495,11 @@ Module {
             type: "string"
             Parameter { name: "jsonString"; type: "string" }
         }
+        Method {
+            name: "convertToHardBreakLines"
+            type: "string"
+            Parameter { name: "text"; type: "string" }
+        }
     }
     Component {
         name: "SGJsonSyntaxHighlighter"
@@ -535,6 +540,10 @@ Module {
         Property { name: "yMinorGrid"; type: "bool" }
         Property { name: "gridColor"; type: "QColor" }
         Property { name: "yRightVisible"; type: "bool" }
+        Property { name: "yRightAxisColor"; type: "QColor" }
+        Property { name: "yLeftAxisColor"; type: "QColor" }
+        Property { name: "xAxisColor"; type: "QColor" }
+        Property { name: "legend"; type: "bool" }
         Method { name: "initialize" }
         Method { name: "update" }
         Method {
@@ -626,6 +635,13 @@ Module {
             Parameter { name: "offsetY"; type: "double" }
         }
         Method { name: "update" }
+        Method {
+            name: "setSymbol"
+            Parameter { name: "newStyle"; type: "int" }
+            Parameter { name: "color"; type: "QColor" }
+            Parameter { name: "penStyle"; type: "int" }
+            Parameter { name: "size"; type: "int" }
+        }
     }
     Component {
         name: "SGSortFilterProxyModel"
@@ -897,6 +913,10 @@ Module {
             name: "toHex"
             type: "string"
             Parameter { name: "number"; type: "qlonglong" }
+        }
+        Method {
+            name: "copyToClipboard"
+            Parameter { name: "text"; type: "string" }
         }
     }
     Component {
