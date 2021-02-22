@@ -27,8 +27,6 @@ function initialize (newCoreInterface) {
     coreInterface = newCoreInterface
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
-    PlatformNotifications.setTriggerFunction("Platform","Close",close)
-    PlatformNotifications.setTriggerFunction("Platform","Disable", disable)
 }
 
 
@@ -187,7 +185,7 @@ function disable(){
 }
 
 function parseConnectedPlatforms (connected_platform_list_json) {
-    PlatformNotifications.createDynamicNotifications({key: "Platform", data:[{text: "Ok",action: "Close"},{text: "Disable platform notifications",action: "Disable"}]})
+    PlatformNotifications.createDynamicNotificationActions({key: "Platform", data:[PlatformNotifications.createDynamicAction("Platform","Close","Okay",close),PlatformNotifications.createDynamicAction("Platform","Disable","Disable platform notifications",disable)]})
     let currentlyConnected
     try {
         currentlyConnected = JSON.parse(connected_platform_list_json).list

@@ -71,22 +71,10 @@ StackLayout {
 
     Component.onCompleted: {
         platformStackInitialized = true
-        PlatformNotification.setTriggerFunction("Collateral","View",viewDocuments)
-        PlatformNotification.setTriggerFunction("Collateral","Close",closeNotification)
-        PlatformNotification.setTriggerFunction("Collateral","Disable",disableNotification)
-        PlatformNotification.createDynamicNotifications({key:"Collateral",data: [
-                                                                {
-                                                                    "text": "View documents",
-                                                                    "action": "View"
-                                                                },
-                                                                {
-                                                                    "text": "Ok",
-                                                                    "action": "Close"
-                                                                },
-                                                                {
-                                                                    "text": "Don't show this message again",
-                                                                    "action": "Disable"
-                                                                },
+        PlatformNotification.createDynamicNotificationActions({key:"Collateral",data: [
+                                                                PlatformNotification.createDynamicAction("Collateral","View","View Documents",viewDocuments),
+                                                                PlatformNotification.createDynamicAction("Collateral","Close","Ok",closeNotification),
+                                                                PlatformNotification.createDynamicAction("Collateral","Disable","Don't show this message again",disableNotification)
                                                             ]
                                                         })
     }

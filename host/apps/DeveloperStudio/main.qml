@@ -42,21 +42,22 @@ SGWidgets.SGMainWindow {
         mainWindow.height = 900
     }
 
+    function contactSales(){
+        var salesPopup = NavigationControl.createView("qrc:/partial-views/general/SGWebPopup.qml", mainWindow)
+        salesPopup.width = Qt.binding(()=> width-100)
+        salesPopup.height = Qt.binding(()=> height - 100)
+        salesPopup.x = Qt.binding(()=> width/2 - salesPopup.width/2)
+        salesPopup.y =  Qt.binding(()=> container.height/2 - salesPopup.height/2)
+        salesPopup.url = urls.salesPopupUrl
+        salesPopup.open()
+    }
+
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(statusBarContainer, stackContainer, sdsModel.resourceLoader, mainWindow)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
             PlatformSelection.initialize(sdsModel.coreInterface)
-        }
-        function contactSales(){
-            var salesPopup = NavigationControl.createView("qrc:/partial-views/general/SGWebPopup.qml", mainWindow)
-            salesPopup.width = Qt.binding(()=> width-100)
-            salesPopup.height = Qt.binding(()=> height - 100)
-            salesPopup.x = Qt.binding(()=> width/2 - salesPopup.width/2)
-            salesPopup.y =  Qt.binding(()=> container.height/2 - salesPopup.height/2)
-            salesPopup.url = urls.salesPopupUrl
-            salesPopup.open()
         }
 
         PlatformNotifications.setTriggerFunction("HCS","Contact",contactSales)
@@ -87,7 +88,7 @@ SGWidgets.SGMainWindow {
     Connections {
         target: sdsModel
         onHcsConnectedChanged: {
-            PlatformNotifications.createDynamicNotifications({key:"HCS",data:[{text: "Contact customer service",action:"Contact"}]})
+            PlatformNotifications.createDynamicNotificationActions({key:"HCS",data:[PlatformNotifications.createDynamicAction("HCS","Contact","Contact customer service",contactSales)]})
             if (sdsModel.hcsConnected) {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
                 if (hcsReconnecting) {

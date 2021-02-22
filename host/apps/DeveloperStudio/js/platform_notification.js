@@ -6,40 +6,41 @@ var notifications = PlatformNotifications.Notifications
 
 function createNotification(msg,level = PlatformNotifications.Notifications.Info,reciever = "all",context = {},key = "general") {
    PlatformNotifications.Notifications.createNotification(msg,level,reciever,context,key)
+    if(!notificationMap.hasOwnProperty(key)){
+        notificationMap[key] = []
+    }
 }
 
 function destroyNotifications(key_ = null) {
     if (key_ === null) {
         for (const [key] in Object.keys(notificationMap)) {
-            const currentNotifications = PlatformNotifications.Notifications.getNotifications(key)
-            unRegisterNotificationActions(key)
-            if(currentNotifications !== undefined){
-                currentNotifications.forEach(notification =>  notification.level === 2 ? PlatformNotifications.Notifications.deleteNotification(notification) : null)
+            const notifications = PlatformNotifications.Notifications.getNotifications(key)
+            if(notifications !== undefined){
+                unRegisterNotificationActions(key)
+                notifications.forEach(notification =>  notification.level !== 2 ? PlatformNotifications.Notifications.deleteNotification(notification) : null)
             }
         }
     } else {
-        const currentNotifications = PlatformNotifications.Notifications.getNotifications(key_)
-        unRegisterNotificationActions(key_)
-        if(currentNotifications !== undefined){
-            currentNotifications.forEach(notification => notification.level === 2 ? PlatformNotifications.Notifications.deleteNotification(notification): null)
+        const notifications = PlatformNotifications.Notifications.getNotifications(key_)
+        if(notifications !== undefined){
+            unRegisterNotificationActions(key_)
+            notifications.forEach(notification => notification.level !== 2 ? PlatformNotifications.Notifications.deleteNotification(notification): null)
         }
     }
 }
 
-
 function unRegisterNotificationActions(key) {
-    notificationMap[key].forEach(mapIndex => delete mapIndex)
+    notificationMap[key].forEach(mapIndex => mapIndex.destroy())
     delete notificationMap[key]
 }
 
-function createDynamicNotifications(actions) {
+function createDynamicNotificationActions(actions) {
     notificationMap[actions.key !== null ? actions.key : "general" ] = []
     for (var i = 0; i < actions.data.length; i++) {
         notificationMap[actions.key][i] = Qt.createQmlObject(`import QtQuick.Controls 2.12; Action {}`,Qt.application, `PlatformNotifications${i}.${actions.key}`)
         notificationMap[actions.key][i].text = actions["data"][i].text
-        const actionType = actions["data"][i].action
-        const actionKey = actions.key
-        notificationMap[actions.key][i].triggered.connect(function(){notificationSignalMap[actionKey][actionType]()})
+        const action = actions["data"][i].action
+        notificationMap[actions.key][i].triggered.connect(function(){action()})
     }
 }
 
@@ -54,3 +55,28 @@ function setTriggerFunction(key = "general",type ="generic",func = function(){})
     notificationSignalMap[key][type] = func
 }
 
+function getTriggerFunction(key = "general", type = "generic"){
+    if(notificationSignalMap[key] !== undefined){
+    return notificationSignalMap[key][type]
+    } else {
+        return () => {}
+    }
+}
+
+
+function createDynamicAction(key,type,text,func) {
+    const object = {}
+    Object.defineProperties(object,{
+        text:{
+            value: text
+        },
+        create:{
+            value: setTriggerFunction(key,type,func)
+        },
+        action:{
+            value: getTriggerFunction(key,type)
+        }
+    })
+    Object.prototype.hasOwnProperty.call(object,"create")
+    return object
+}
