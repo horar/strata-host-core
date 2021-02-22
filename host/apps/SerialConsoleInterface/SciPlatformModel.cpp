@@ -92,7 +92,7 @@ bool SciPlatformModel::condensedAtStartup() const
     return condensedAtStartup_;
 }
 
-void SciPlatformModel::disconnectPlatformFromSci(int index)
+void SciPlatformModel::releasePort(int index, int msec)
 {
     if (index < 0 || index >= platformList_.count()) {
         qCCritical(logCategorySci) << "index out of range";
@@ -103,9 +103,7 @@ void SciPlatformModel::disconnectPlatformFromSci(int index)
         return;
     }
 
-    boardManager_->disconnectDevice(platformList_.at(index)->deviceId());
-
-    platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Disconnected);
+    boardManager_->disconnectDevice(platformList_.at(index)->deviceId(), msec);
 }
 
 void SciPlatformModel::removePlatform(int index)

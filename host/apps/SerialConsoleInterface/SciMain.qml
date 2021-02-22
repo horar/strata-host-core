@@ -165,7 +165,7 @@ Item {
                             left: statusLight.right
                             leftMargin: 2
                             top: statusLight.top
-                            right: deleteButton.shown ? deleteButton.left : parent.right
+                            right: buttonRow.shown ? buttonRow.left : parent.right
                             rightMargin: 2
                         }
 
@@ -191,37 +191,53 @@ Item {
                         elide: Text.ElideRight
                     }
 
-                    SGWidgets.SGIconButton {
-                        id: deleteButton
+                    Row {
+                        id: buttonRow
+
                         anchors {
                             right: parent.right
                             rightMargin: 4
                             verticalCenter: parent.verticalCenter
                         }
 
-                        opacity: shown ? 1 : 0
-                        enabled: shown
-                        highlightImplicitColor: "#888888"
-                        icon.source: "qrc:/sgimages/times.svg"
+                        spacing: 4
 
-                        property bool shown: (bgMouseArea.containsMouse || hovered) && model.platform.programInProgress === false
+                        visible: bgMouseArea.containsMouse || releasePortButton.hovered || deleteButton.hovered
 
-                        onClicked: {
-                            if (model.platform.status === Sci.SciPlatform.Ready
-                                    || model.platform.status === Sci.SciPlatform.Connected
-                                    || model.platform.status === Sci.SciPlatform.NotRecognized) {
-                                SGWidgets.SGDialogJS.showConfirmationDialog(
-                                            root,
-                                            "Device is active",
-                                            "Do you really want to disconnect " + model.platform.verboseName + " ?",
-                                            "Disconnect",
-                                            function () {
-                                                removeBoard(model.index)
-                                            },
-                                            "Keep Connected"
-                                            )
-                            } else {
-                                removeBoard(model.index)
+                        SGWidgets.SGIconButton {
+                            id: releasePortButton
+
+                            enabled: model.platform.programInProgress === false && model.platform.status === Sci.SciPlatform.Ready
+                            icon.source: "qrc:/sgimages/disconnected.svg"
+                            hintText: "Release port for 5s"
+                            onClicked: {
+                                releasePort(index)
+                            }
+                        }
+
+                        SGWidgets.SGIconButton {
+                            id: deleteButton
+
+                            enabled: model.platform.programInProgress === false
+                            icon.source: "qrc:/sgimages/times.svg"
+                            hintText: "Close tab"
+                            onClicked: {
+                                if (model.platform.status === Sci.SciPlatform.Ready
+                                        || model.platform.status === Sci.SciPlatform.Connected
+                                        || model.platform.status === Sci.SciPlatform.NotRecognized) {
+                                    SGWidgets.SGDialogJS.showConfirmationDialog(
+                                                root,
+                                                "Device is active",
+                                                "Do you really want to disconnect \"" + model.platform.verboseName + "\" board ?",
+                                                "Disconnect",
+                                                function () {
+                                                    removeBoard(model.index)
+                                                },
+                                                "Keep Connected"
+                                                )
+                                } else {
+                                    removeBoard(model.index)
+                                }
                             }
                         }
                     }
@@ -282,8 +298,12 @@ Item {
             tabBar.currentIndex--
         }
 
-        sciModel.platformModel.disconnectPlatformFromSci(index);
+        sciModel.platformModel.releasePort(index);
         sciModel.platformModel.removePlatform(index)
+    }
+
+    function releasePort(index) {
+        sciModel.platformModel.releasePort(index, 5000);
     }
 
     function showPlatformInfoWindow(classId, className) {
