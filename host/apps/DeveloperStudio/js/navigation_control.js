@@ -111,21 +111,9 @@ function getQMLFile(filename, class_id, version = "") {
 function createView(name, parent)
 {
     //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "createView: name =", name, ", parameters =", JSON.stringify(context))
-
-    try {
-        // Remove children from container before creating another instance
-        removeView(parent)
-    }
-    catch(err){
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
-    }
-        var object = Utility.createObject(name,parent,context);
-    if (object === null) {
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
-    } else {
-        context.error_message = ""
-    }
-    return object;
+    // parent must be a Loader
+    parent.setSource(name, context)
+    parent.active = true
 }
 
 /*
@@ -133,12 +121,7 @@ function createView(name, parent)
 */
 function removeView(parent)
 {
-    if (parent.children.length > 0){
-        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Destroying view")
-        for (var x in parent.children){
-            parent.children[x].destroy()
-        }
-    }
+    parent.active = false
 }
 
 /*
@@ -156,7 +139,6 @@ function globalEventHandler(event,data)
 
         // Remove StatusBar
         removeView(status_bar_container_)
-        status_bar_container_.visible = false
 
         break;
     case events.PROMPT_LOGIN_EVENT:
@@ -168,7 +150,6 @@ function globalEventHandler(event,data)
 
         // Remove StatusBar at Login
         removeView(status_bar_container_)
-        status_bar_container_.visible = false
         break;
 
     case events.LOGOUT_EVENT:
@@ -258,10 +239,8 @@ function updateState(event, data)
                 context.last_name = data.last_name
 
                 // Update StatusBar
-                status_bar_container_.visible = true
-                context.mainWindow = main_qml_object_
-                let statusBar = createView(screens.STATUS_BAR, status_bar_container_)
-                platform_tab_list_view_ = statusBar.platformTabListView
+                createView(screens.STATUS_BAR, status_bar_container_)
+                platform_tab_list_view_ = status_bar_container_.item.platformTabListView
 
                 createView(screens.PLATFORM_SELECTOR, main_container_)
 
@@ -269,7 +248,7 @@ function updateState(event, data)
                 navigation_state_ = states.CONTROL_STATE
 
                  // Populate platforms only after all UI components are complete
-                statusBar.loginSuccessful()
+                 status_bar_container_.item.loginSuccessful()
             break;
 
             default:
