@@ -65,6 +65,12 @@ endif()
 
 if(APPS_CORESW_SDS AND NOT MINGW)
     add_subdirectory(DeveloperStudio)
+else()
+    message(STATUS "Cleaning plugins (DevStudio is disabled)")
+    file(GLOB SDS_PLUGIN_LIST ${CMAKE_PLUGINS_OUTPUT_DIRECTORY}/sds-*.rcc)
+    if(SDS_PLUGIN_LIST)
+        file(REMOVE ${SDS_PLUGIN_LIST})
+    endif()
 endif()
 
 
