@@ -11,26 +11,24 @@ function createNotification(msg,level = PlatformNotifications.Notifications.Info
 function destroyNotifications(key_ = null) {
     if (key_ === null) {
         for (const [key] in Object.keys(notificationMap)) {
-            const notifications = PlatformNotifications.Notifications.getNotifications(key)
+            const currentNotifications = PlatformNotifications.Notifications.getNotifications(key)
             unRegisterNotificationActions(key)
-            if(notifications !== undefined){
-                notifications.forEach(notification =>  notification.level === 2 ? PlatformNotifications.Notifications.deleteNotification(notification) : null)
+            if(currentNotifications !== undefined){
+                currentNotifications.forEach(notification =>  notification.level === 2 ? PlatformNotifications.Notifications.deleteNotification(notification) : null)
             }
         }
     } else {
-        const notifications = PlatformNotifications.Notifications.getNotifications(key_)
+        const currentNotifications = PlatformNotifications.Notifications.getNotifications(key_)
         unRegisterNotificationActions(key_)
-        if(notifications !== undefined){
-            notifications.forEach(notification => notification.level === 2 ? PlatformNotifications.Notifications.deleteNotification(notification): null)
+        if(currentNotifications !== undefined){
+            currentNotifications.forEach(notification => notification.level === 2 ? PlatformNotifications.Notifications.deleteNotification(notification): null)
         }
     }
 }
 
 
 function unRegisterNotificationActions(key) {
-    for(var i = 0; i < notificationMap[key].length; i++){
-        delete notificationMap[key][i]
-    }
+    notificationMap[key].forEach(mapIndex => delete mapIndex)
     delete notificationMap[key]
 }
 
@@ -55,3 +53,4 @@ function setTriggerFunction(key = "general",type ="generic",func = function(){})
     }
     notificationSignalMap[key][type] = func
 }
+

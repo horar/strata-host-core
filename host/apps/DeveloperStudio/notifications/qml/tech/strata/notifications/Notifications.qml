@@ -114,7 +114,7 @@ Item {
             - singleton: Only allow one notification with this title to be exposed to the user | DEFAULT: False
             - timeout: The timeout for the notification (in milliseconds), set 0 for no timeout | DEFAULT: 10000ms for non-critical notifications, critical default is 0
             - iconSource: The icon's source url | DEFAULT: level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
-
+        - key: The key that stores notifications of a type together
         Example:
             Action {
                 id: notificationAction
