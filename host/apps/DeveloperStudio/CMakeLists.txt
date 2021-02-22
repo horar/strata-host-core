@@ -53,7 +53,6 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
-    ${CMAKE_SOURCE_DIR}/assets/config/sds.qrc
 
     $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
 
@@ -130,6 +129,30 @@ if(WIN32)
         message(WARNING "Please install OpenSSL coming with your Qt installer (can't find OpenSSL DLL's in '${QT_SSL_LIBRARY_DIR}'")
     endif()
 endif()
+
+set(SDS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/assets/config/sds)
+
+if(NOT APPS_CORESW_SDS_CONFIG)
+    set(APPS_CORESW_SDS_CONFIG sds_qa.config CACHE STRING "Desired SDS configuration file." FORCE)
+    message(STATUS "Defaulting 'APPS_CORESW_SDS_CONFIG' to ${APPS_CORESW_SDS_CONFIG}.")
+endif()
+file(GLOB APPS_CORESW_SDS_CONFIG_CHOICES
+    RELATIVE ${SDS_CONFIG_LOCATION}
+    ${SDS_CONFIG_LOCATION}/*.config
+)
+
+set_property(CACHE APPS_CORESW_SDS_CONFIG PROPERTY STRINGS ${APPS_CORESW_SDS_CONFIG_CHOICES})
+if(NOT APPS_CORESW_SDS_CONFIG IN_LIST APPS_CORESW_SDS_CONFIG_CHOICES)
+    message(FATAL_ERROR "Specify 'APPS_CORESW_SDS_CONFIG'. Must be one of ${APPS_CORESW_SDS_CONFIG_CHOICES}")
+endif()
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${SDS_CONFIG_LOCATION}/${APPS_CORESW_SDS_CONFIG}
+        ${CMAKE_BINARY_DIR}/bin/sds.config
+    COMMENT "Deploying 'sds.config'..."
+    VERBATIM
+)
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES

@@ -14,8 +14,9 @@ UrlConfig::UrlConfig(QObject *parent)
 UrlConfig::~UrlConfig() {
 }
 
-bool UrlConfig::parseUrl(const QString &fileName) {
-    ConfigFile cfgFile(fileName);
+bool UrlConfig::parseUrl()
+{
+    ConfigFile cfgFile;
 
     QJsonDocument loadDoc;
      if (const auto [data, ok] = cfgFile.loadData(); ok) {
@@ -43,10 +44,14 @@ bool UrlConfig::parseUrl(const QString &fileName) {
             return false;
     }
 
-    if (setUrlValue(value[QLatin1String("test_auth_server")], &testAuthServer_) == false) {
-        qCCritical(logCategoryStrataDevStudioConfig) << " non-production server was not set";
-            return false;
+    if (value[QLatin1String("test_auth_server")] != QJsonValue::Undefined)
+    {
+        if (setUrlValue(value[QLatin1String("test_auth_server")], &testAuthServer_) == false) {
+            qCCritical(logCategoryStrataDevStudioConfig) << " non-production server was not set";
+                return false;
+        }
     }
+
     value = loadDoc[QLatin1String("static_website")];
     if (value == QJsonValue::Undefined) {
         qCCritical(logCategoryStrataDevStudioConfig) << "missing 'static website' key";
