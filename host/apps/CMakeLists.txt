@@ -9,9 +9,9 @@ cmake_dependent_option(APPS_CORESW_HCS "Build 'hcs' service" ON
 add_feature_info(APPS_CORESW_HCS APPS_CORESW_HCS "Host controller service")
 
 if(NOT MINGW)
-    cmake_dependent_option(APPS_CORESW_DEVSTUDIO "Build 'Strata Developer Studio' app" ON
+    cmake_dependent_option(APPS_CORESW_SDS "Build 'Strata Developer Studio' app" ON
                             "APPS_CORESW" OFF)
-    add_feature_info(APPS_CORESW_DEVSTUDIO APPS_CORESW_DEVSTUDIO "Strata Developer Studio")
+    add_feature_info(APPS_CORESW_SDS APPS_CORESW_SDS "Strata Developer Studio")
 else()
     message(WARNING "Strata Developer Studio is not supported in MinGW development environment!")
 endif()
@@ -53,7 +53,7 @@ if(APPS_CORESW_HCS)
     add_subdirectory(hcs3)
 endif()
 
-if(APPS_CORESW_DEVSTUDIO AND NOT MINGW)
+if(APPS_CORESW_SDS AND NOT MINGW)
     add_subdirectory(DeveloperStudio)
 endif()
 
