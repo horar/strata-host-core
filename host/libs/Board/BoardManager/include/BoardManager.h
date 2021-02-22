@@ -40,10 +40,11 @@ namespace strata {
         /**
          * Disconnect from the device.
          * @param deviceId device ID
-         * @param seconds if it is more than 0, the device will be reconnected after the specified number of seconds
+         * @param milliseconds if more than 0, the device reconnects after the specified number of milliseconds at the earliest
+         *                     if 0 or less, there will be no attempt to reconnect device
          * @return true if device was disconnected, otherwise false
          */
-        Q_INVOKABLE bool disconnectDevice(const int deviceId, const int seconds = 0);
+        Q_INVOKABLE bool disconnectDevice(const int deviceId, const int milliseconds = 0);
 
         /**
          * Reconnect the device.

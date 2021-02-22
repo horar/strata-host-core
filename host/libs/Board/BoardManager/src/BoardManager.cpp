@@ -35,7 +35,7 @@ void BoardManager::init(bool requireFwInfoResponse, bool keepDevicesOpen) {
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
-bool BoardManager::disconnectDevice(const int deviceId, const int seconds) {
+bool BoardManager::disconnectDevice(const int deviceId, const int milliseconds) {
     bool success = false;
     {
         QMutexLocker lock(&mutex_);
@@ -44,7 +44,7 @@ bool BoardManager::disconnectDevice(const int deviceId, const int seconds) {
             it.value()->close();
             openedDevices_.erase(it);
 
-            if (seconds > 0) {
+            if (milliseconds > 0) {
                 QTimer* reconnectTimer = new QTimer(this);
                 reconnectTimers_.insert(deviceId, reconnectTimer);
                 reconnectTimer->setSingleShot(true);
@@ -56,7 +56,7 @@ bool BoardManager::disconnectDevice(const int deviceId, const int seconds) {
                     // added (reconnected) in next round of scaning serial ports.
                     serialPortsList_.erase(deviceId);
                 });
-                reconnectTimer->start(seconds * 1000);
+                reconnectTimer->start(milliseconds);
             }
 
             success = true;
@@ -64,8 +64,8 @@ bool BoardManager::disconnectDevice(const int deviceId, const int seconds) {
     }
     if (success) {
         qCInfo(logCategoryBoardManager).nospace() << "Disconnected serial device 0x" << hex << static_cast<uint>(deviceId);
-        if (seconds > 0) {
-            qCInfo(logCategoryBoardManager) << "Device will be reconnected after" << seconds << "seconds.";
+        if (milliseconds > 0) {
+            qCInfo(logCategoryBoardManager) << "Device will be reconnected after" << milliseconds << "milliseconds at the earliest.";
         }
         emit boardDisconnected(deviceId);
     } else {
