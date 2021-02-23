@@ -3,6 +3,7 @@
 
 #include <set>
 #include <memory>
+#include <chrono>
 
 #include <QObject>
 #include <QString>
@@ -40,16 +41,18 @@ namespace strata {
         /**
          * Disconnect from the device.
          * @param deviceId device ID
+         * @param disconnectDuration if more than 0, the device will be connected again after the given milliseconds at the earliest;
+         *                           if 0 or less, there will be no attempt to reconnect device
          * @return true if device was disconnected, otherwise false
          */
-        Q_INVOKABLE bool disconnectDevice(const int deviceId);
+        bool disconnectDevice(const int deviceId, std::chrono::milliseconds disconnectDuration = std::chrono::milliseconds(0));
 
         /**
          * Reconnect the device.
          * @param deviceId device ID
          * @return true if device was reconnected (and identification process has started), otherwise false
          */
-        Q_INVOKABLE bool reconnectDevice(const int deviceId);
+        bool reconnectDevice(const int deviceId);
 
         /**
          * Get smart pointer to the device.
@@ -111,7 +114,7 @@ namespace strata {
         bool addSerialPort(const int deviceId);
         bool openDevice(const device::DevicePtr newDevice);
         void startDeviceOperations(const device::DevicePtr device);
-        bool closeDevice(const int deviceId);
+        bool removeDevice(const int deviceId);
 
         void logInvalidDeviceId(const QString& message, const int deviceId) const;
 
@@ -119,12 +122,13 @@ namespace strata {
 
         QMutex mutex_;
 
-        // Access to next 3 members should be protected by mutex (one mutex for all) in case of multithread usage.
+        // Access to next 4 members should be protected by mutex (one mutex for all) in case of multithread usage.
         // Do not emit signals in block of locked code (because their slots are executed immediately in QML
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
         QHash<int, device::DevicePtr> openedDevices_;
+        QHash<int, QTimer*> reconnectTimers_;
 
         QHash<int, std::shared_ptr<device::operation::BaseDeviceOperation>> identifyOperations_;
 
