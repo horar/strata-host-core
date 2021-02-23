@@ -634,7 +634,7 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
 
         QPair<QUrl,QString> firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassDevice);
         if (firmware.first.isEmpty()) {
-            errorString = "Cannot get latest firmware";
+            errorString = "No compatible firmware for your combination of controller and platform";
             break;
         }
         programData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
