@@ -57,7 +57,7 @@ bool SerialDevice::open() {
     bool opened = false;
 
     if (serialPort_->isOpen()) {
-        if (serialPort_->openMode() == QIODevice::ReadWrite) {
+        if ((serialPort_->openMode() & QIODevice::ReadWrite) == QIODevice::ReadWrite) {
             opened = true;
         } else {
             serialPort_->close();
