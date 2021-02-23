@@ -268,6 +268,11 @@ void StrataClient::onRequestTimedOut(int requestId)
         return;
     }
 
+    qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
+    request.deferredRequest_->callErrorCallback(
+        {request.method_, QJsonObject({{"message", "Request timed out."}}), request.messageId_, "",
+         Message::MessageType::Error});
+
     request.deferredRequest_->deleteLater();
     qCDebug(logCategoryStrataClient) << "Timed out request removed successfully.";
 }

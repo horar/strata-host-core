@@ -55,7 +55,7 @@ signals:
     void finishedWithError(const Message &message);
 
     /**
-     * Signal emitted on timeout
+     * Signal emitted on timeout.
      * @param [in] requestId request id.
      */
     void requestTimedOut(int requestId);

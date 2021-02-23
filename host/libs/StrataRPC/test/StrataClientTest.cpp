@@ -593,8 +593,8 @@ void StrataClientTest::testTimedoutRequest()
     for (int i = 0; i < testsNum; i++) {
         auto deferredRequest = client.sendRequest("test_timeout_request", QJsonObject({{}}));
         QVERIFY_(deferredRequest != nullptr);
-        connect(deferredRequest, &DeferredRequest::requestTimedOut, this,
-                [&timedOutRequests](int) { ++timedOutRequests; });
+        connect(deferredRequest, &DeferredRequest::finishedWithError, this,
+                [&timedOutRequests](const strata::strataRPC::Message &) { ++timedOutRequests; });
     }
     waitForZmqMessages(1000);
     QCOMPARE_(timedOutRequests, testsNum);
