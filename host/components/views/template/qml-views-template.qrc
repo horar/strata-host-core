@@ -7,6 +7,5 @@
         <file>control-views/PlatformInterface.qml</file>
         <file>control-views/images/BoardToStrata.png</file>
         <file>control-views/images/StrataToBoard.png</file>
-        <file>control-views/DebugNotifMenu.qml</file>
     </qresource>
 </RCC>

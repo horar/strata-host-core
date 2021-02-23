@@ -85,30 +85,12 @@ Item {
                 // Make sure view is set to Basic before starting tour
                 if(controlContainer.currentIndex === 0) {
                     Help.startHelpTour("BasicControlHelp")
-                    if(debugNotifMenu.visible){
-                        debugNotifMenu.visible = false
-                    }
                 }
                 if(controlContainer.currentIndex === 1) {
                     Help.startHelpTour("AdvanceControlHelp")
-                    if(debugNotifMenu.visible){
-                        debugNotifMenu.visible = false
-                    }
                 }
             }
             hoverEnabled: true
-        }
-    }
-
-    SGButton {
-        text: "Inject \n Fake Notification"
-        color: "lightgrey"
-        anchors {
-            left: controlContainer.left
-            bottom: controlContainer.bottom
-        }
-        onClicked: {
-            debugNotifMenu.visible = true
         }
     }
 }
