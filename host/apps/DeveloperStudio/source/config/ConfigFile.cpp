@@ -16,7 +16,7 @@ strata::sds::config::ConfigFile::ConfigFile(QObject *parent)
     const QString appDirPath = QCoreApplication::applicationDirPath();
 
     #ifdef Q_OS_WIN
-    const QString sdsPath{ QDir::cleanPath(QString("%1/sds.exe").arg(appDirPath)) };
+    const QString sdsPath{ QDir::cleanPath(QString("%1/Strata Developer Studio.exe").arg(appDirPath)) };
     #if WINDOWS_INSTALLER_BUILD
         QString sdsConfigPath;
         TCHAR programDataPath[MAX_PATH];
