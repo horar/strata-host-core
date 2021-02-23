@@ -34,6 +34,7 @@ public:
     void mockSetLegacy(bool isLegacy) { commandResponseMock_.mockSetLegacy(isLegacy); }
     void mockSetResponseForCommand(CommandResponseMock::MockResponse response, CommandResponseMock::Command command) { commandResponseMock_.mockSetResponseForCommand(response, command); }
     void mockSetResponse(CommandResponseMock::MockResponse response) { commandResponseMock_.mockSetResponse(response); }
+    void mockSetVersion(CommandResponseMock::Version version) { commandResponseMock_.mockSetVersion(version); }
 
 protected:
     virtual bool sendMessage(const QByteArray msg, quintptr lockId) override;

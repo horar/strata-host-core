@@ -28,6 +28,7 @@ void DeviceOperationsV2Test::init()
     operationFinishedCount_ = 0;
     operationTimeoutCount_ = 0;
     device_ = std::make_shared<DeviceMock>(1234, "Mock device");
+    device_->mockSetVersion(CommandResponseMock::Version::version2);
     bool openRes = device_->open();
     QVERIFY(openRes);
 }
@@ -591,7 +592,7 @@ void DeviceOperationsV2Test::invalidValueV2Test()
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
-    device_->mockSetResponseForCommand(CommandResponseMock::MockResponse::v2invalid, CommandResponseMock::Command::get_firmware_info);
+    device_->mockSetResponseForCommand(CommandResponseMock::MockResponse::invalid, CommandResponseMock::Command::get_firmware_info);
 
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 2000);

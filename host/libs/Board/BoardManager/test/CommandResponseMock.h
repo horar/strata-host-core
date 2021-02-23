@@ -28,8 +28,12 @@ public:
         assisted_app,
         assisted_no_board,
         embedded_btloader,
-        assisted_btloader,
-        v2invalid
+        assisted_btloader
+    };
+
+    enum class Version {
+        version1,
+        version2
     };
 
     static std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
@@ -46,12 +50,14 @@ public:
 
     void mockSetResponse(MockResponse response) { response_ = response; }
 
+    void mockSetVersion(Version version) { version_ = version; }
+
 private:
     bool isBootloader_ = false;
-    bool isVer2_ = false;
     bool isLegacy_ = false;  // very old board without 'get_firmware_info' command support
     Command command_ = Command::unknown;
     MockResponse response_ = MockResponse::normal;
+    Version version_ = Version::version1;
 };
 
 
