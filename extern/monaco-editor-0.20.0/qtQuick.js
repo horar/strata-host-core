@@ -20,7 +20,8 @@ var isInitialized = false
 var isInChildBrackets = false
 var flags = { sgwidgetsFlag: false, qtQuickFlag: false }
 var suggestions = {}
-var lastUsedText = ""
+var currentRange = {}
+var currentItems = {}
 
 var editor = null
 
@@ -2669,9 +2670,61 @@ function registerQmlAsLanguage() {
             var currWords = currText.replace("\t", "").split(" ");
             var word = model.getWordUntilPosition(position);
             var active = currWords[currWords.length - 1]
-            var isSpaceActive = (currWords[currWords.length - 2] !== "" && currWords[currWords.length - 1] === "{")
+            // check for range to see if position exists
 
-            if (qtObjectKeyValues.hasOwnProperty(active.substring(0, active.length - 1).split('.')[0])) {
+            if(suggestions.hasOwnProperty(currentItems[currentRange])){
+                if(position.lineNumber > currentRange.startLineNumber && position.lineNumber < currentRange.endLineNumber || (position.lineNumber === currentRange.endLineNumber && position.column < currentRange.endColumn)){
+
+                    return {suggestions: qtObjectPropertyValues[currentItems[currentRange]]}
+                } else if(position.lineNumber > currentRange.startLineNumber && position.lineNumber > currentRange.endLineNumber){
+                    var nextMatch = model.findNextMatch("}",position,false,false)
+                    var nextOpenMatch = model.findNextMatch("{",position, false, false)
+                    if(nextMatch.range.startLineNumber < nextOpenMatch.range.startLineNumber){
+                        var mockRange = {
+                            startLineNumber: currentRange.startLineNumber,
+                            endLineNumber: nextMatch.range.startLineNumber,
+                            startColumn: currentRange.startColumn,
+                            endColumn: nextMatch.range.startColumn,
+                        }
+                        currentItems[mockRange] = currentItems[currentRange]
+                        currentRange = mockRange
+                        return {suggestions: qtObjectPropertyValues[currentItems[currentRange]]}
+                    }
+                }
+            }
+            // These are closing characters for the auto complete
+            if(active.includes(".")){
+                const activeWord = active.substring(0, active.length - 1).split('.')[0]
+                alert(qtObjectKeyValues.hasOwnProperty(activeWord))
+                if(qtObjectKeyValues.hasOwnProperty(activeWord)){
+                    var propRange = {
+                        startLineNumber: position.lineNumber,
+                        endLineNumber: position.lineNumber,
+                        startColumn: word.startColumn,
+                        endColumn: word.endColumn,
+                    }
+                    convertStrArrayToObjArray(activeWord,qtObjectKeyValues[activeWord].properties,propRange)
+                    return {suggestions: qtObjectPropertyValues[activeWord]}
+                }
+            } else if(active.includes("}")) {
+                var prevMatch = model.findPreviousMatch("{",position,false,false)
+                var propRange = {
+                    startLineNumber: prevMatch.range.startLineNumber,
+                    endLineNumber: position.lineNumber,
+                    startColumn: prevMatch.range.startColumn,
+                    endColumn: position.column
+                }
+
+                var content = model.getValueInRange({startLineNumber: prevMatch.range.startLineNumber, startColumn: 1, endLineNumber: prevMatch.range.startLineNumber, endColumn: prevMatch.range.endColumn})
+                var splitContent = content.replace("\t","").split(/\{|\t/)
+                currentRange = propRange
+                currentItems[currentRange] = splitContent[0].trim()
+                convertStrArrayToObjArray(currentItems[currentRange],qtObjectKeyValues[currentItems[currentRange]].properties,currentRange)
+                return {suggestions: []}
+            }
+
+            return {suggestions: Object.values(suggestions)}
+        /*     if (qtObjectKeyValues.hasOwnProperty(active.substring(0, active.length - 1).split('.')[0])) {
                 if (lastUsedText !== " ") {
                     clearPropertySuggestions(lastUsedText)
                 }
@@ -2685,7 +2738,7 @@ function registerQmlAsLanguage() {
                 lastUsedText = active.substring(0, active.length - 1).split('.')[0]
                 return { suggestions: qtObjectPropertyValues[active.substring(0, active.length - 1).split('.')[0]] }
             } else {
-                /* var textBeforeNewLine = ""
+                var textBeforeNewLine = ""
                 if (isSpaceActive) {
                     textBeforeNewLine = currWords[currWords.length - 2]
                 } else {
@@ -2696,7 +2749,6 @@ function registerQmlAsLanguage() {
                     if (lastUsedText !== "") {
                         clearPropertySuggestions(lastUsedText)
                     }
-                    determineBracketSource(model, position)
                     var e_pos = position.lineNumber + 1
                     var propRange = {
                         startLineNumber: position.lineNumber,
@@ -2707,9 +2759,10 @@ function registerQmlAsLanguage() {
                     convertStrArrayToObjArray(textBeforeNewLine, qtObjectKeyValues[textBeforeNewLine].properties, propRange)
                     lastUsedText = textBeforeNewLine
                     return { suggestions: qtObjectPropertyValues[textBeforeNewLine] }
-                } */
+                }
             }
-            return { suggestions: !isInChildBrackets ? Object.values(suggestions) : qtObjectPropertyValues[lastUsedText] !== undefined ? qtObjectPropertyValues[lastUsedText] : Object.values(suggestions) }
+            return { suggestions: !isInChildBrackets ? Object.values(suggestions) : qtObjectPropertyValues[lastUsedText] !== undefined ? qtObjectPropertyValues[lastUsedText] : Object.values(suggestions) } */
+            
         }
     })
 
@@ -2736,5 +2789,7 @@ function registerQmlAsLanguage() {
     }
 
     isInitialized = true
+
+
 }
 
