@@ -11,66 +11,87 @@ namespace strata::device::serial {
 
 SerialDevice::SerialDevice(const int deviceId, const QString& name) : Device(deviceId, name, Type::SerialDevice)
 {
+    serialPort_ = std::make_unique<QSerialPort>(name);
+
+    initSerialDevice();
+}
+
+SerialDevice::SerialDevice(const int deviceId, const QString& name, SerialPortPtr&& port) : Device(deviceId, name, Type::SerialDevice)
+{
+    if ((port != nullptr) && (port->portName() == name)) {
+        serialPort_ = std::move(port);
+    } else {
+        qCWarning(logCategorySerialDevice).nospace()
+            << "Provided port will not be used, is not compatible with device 0x" << hex << static_cast<uint>(deviceId_);
+        serialPort_ = std::make_unique<QSerialPort>(name);
+    }
+
+    initSerialDevice();
+}
+
+SerialDevice::~SerialDevice() {
+    close();
+    serialPort_.reset();
+    qCDebug(logCategorySerialDevice).nospace() << "Deleted serial device 0x" << hex << static_cast<uint>(deviceId_)
+                                               << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
+}
+
+void SerialDevice::initSerialDevice() {
     readBuffer_.reserve(READ_BUFFER_SIZE);
 
-    serialPort_.setPortName(deviceName_);
-    serialPort_.setBaudRate(QSerialPort::Baud115200);
-    serialPort_.setDataBits(QSerialPort::Data8);
-    serialPort_.setParity(QSerialPort::NoParity);
-    serialPort_.setStopBits(QSerialPort::OneStop);
-    serialPort_.setFlowControl(QSerialPort::NoFlowControl);
+    serialPort_->setBaudRate(QSerialPort::Baud115200);
+    serialPort_->setDataBits(QSerialPort::Data8);
+    serialPort_->setParity(QSerialPort::NoParity);
+    serialPort_->setStopBits(QSerialPort::OneStop);
+    serialPort_->setFlowControl(QSerialPort::NoFlowControl);
 
-    connect(&serialPort_, &QSerialPort::errorOccurred, this, &SerialDevice::handleError);
-    connect(&serialPort_, &QSerialPort::readyRead, this, &SerialDevice::readMessage);
+    connect(serialPort_.get(), &QSerialPort::errorOccurred, this, &SerialDevice::handleError);
+    connect(serialPort_.get(), &QSerialPort::readyRead, this, &SerialDevice::readMessage);
     connect(this, &SerialDevice::writeToPort, this, &SerialDevice::handleWriteToPort);
 
     qCDebug(logCategorySerialDevice).nospace() << "Created new serial device 0x" << hex << static_cast<uint>(deviceId_)
                                                << ", name: " << deviceName_ << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
 }
 
-SerialDevice::~SerialDevice() {
-    close();
-    qCDebug(logCategorySerialDevice).nospace() << "Deleted serial device 0x" << hex << static_cast<uint>(deviceId_)
-                                               << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
-}
-
 bool SerialDevice::open() {
-    if (serialPort_.isOpen()) {
-        qCDebug(logCategorySerialDevice) << this << "Attempt to open already opened serial port.";
-        return true;
+    bool opened = false;
+
+    if (serialPort_->isOpen()) {
+        opened = true;
+    } else {
+        opened = serialPort_->open(QIODevice::ReadWrite);
     }
 
-    bool opened = serialPort_.open(QIODevice::ReadWrite);
     if (opened) {
-        serialPort_.clear(QSerialPort::AllDirections);
+        serialPort_->clear(QSerialPort::AllDirections);
     }
+
     return opened;
 }
 
 void SerialDevice::close() {
-    if (serialPort_.isOpen()) {
-        serialPort_.close();
+    if (serialPort_->isOpen()) {
+        serialPort_->close();
     }
 }
 
-bool SerialDevice::portCanBeOpen(const QString& portName) {
-    QSerialPort serialPort(portName);
-    serialPort.setBaudRate(QSerialPort::Baud115200);
-    serialPort.setDataBits(QSerialPort::Data8);
-    serialPort.setParity(QSerialPort::NoParity);
-    serialPort.setStopBits(QSerialPort::OneStop);
-    serialPort.setFlowControl(QSerialPort::NoFlowControl);
+SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName) {
+    SerialPortPtr serialPort = std::make_unique<QSerialPort>(portName);
+    serialPort->setBaudRate(QSerialPort::Baud115200);
+    serialPort->setDataBits(QSerialPort::Data8);
+    serialPort->setParity(QSerialPort::NoParity);
+    serialPort->setStopBits(QSerialPort::OneStop);
+    serialPort->setFlowControl(QSerialPort::NoFlowControl);
 
-    if (serialPort.open(QIODevice::ReadWrite)) {
-        serialPort.close();
-        return true;
+    if (serialPort->open(QIODevice::ReadWrite)) {
+        return serialPort;
     }
 
-    return false;
+    return nullptr;
 }
 
 void SerialDevice::readMessage() {
-    const QByteArray data = serialPort_.readAll();
+    const QByteArray data = serialPort_->readAll();
 
     // messages from Strata boards ends with new line character
     int from = 0;
@@ -162,11 +183,11 @@ Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPor
 }
 
 void SerialDevice::handleWriteToPort(const QByteArray data) {
-    qint64 writtenBytes = serialPort_.write(data);
+    qint64 writtenBytes = serialPort_->write(data);
     qint64 dataSize = data.size();
     // Strata commands must end with '\n'
     if (data.endsWith('\n') == false) {
-        writtenBytes += serialPort_.write("\n", 1);
+        writtenBytes += serialPort_->write("\n", 1);
         ++dataSize;
     }
     if (writtenBytes == dataSize) {
@@ -181,7 +202,7 @@ void SerialDevice::handleWriteToPort(const QByteArray data) {
 void SerialDevice::handleError(QSerialPort::SerialPortError error) {
     // https://doc.qt.io/qt-5/qserialport.html#SerialPortError-enum
     if (error != QSerialPort::NoError) {  // Do not emit error signal if there is no error.
-        QString errMsg = "Serial port error (" + QString::number(error) + "): " + serialPort_.errorString();
+        QString errMsg = "Serial port error (" + QString::number(error) + "): " + serialPort_->errorString();
         if (error == QSerialPort::ResourceError) {
             // board was unconnected from computer (cable was unplugged)
             qCWarning(logCategorySerialDevice) << this << ": " << errMsg << " (Probably unexpectedly disconnected device.)";
@@ -189,7 +210,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         else {
             qCCritical(logCategorySerialDevice) << this << errMsg;
         }
-        emit deviceError(translateQSerialPortError(error), serialPort_.errorString());
+        emit deviceError(translateQSerialPortError(error), serialPort_->errorString());
     }
 }
 

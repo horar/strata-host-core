@@ -2,6 +2,7 @@
 #define SERIAL_DEVICE_H
 
 #include <string>
+#include <memory>
 
 #include <Device/Device.h>
 
@@ -15,12 +16,22 @@ class SerialDevice : public Device
     Q_DISABLE_COPY(SerialDevice)
 
 public:
+    typedef std::unique_ptr<QSerialPort> SerialPortPtr;
+
     /**
      * SerialDevice constructor
      * @param deviceId device ID
      * @param name device name
      */
     SerialDevice(const int deviceId, const QString& name);
+
+    /**
+     * SerialDevice constructor
+     * @param deviceId device ID
+     * @param name device name
+     * @param port already existing serial port
+     */
+    SerialDevice(const int deviceId, const QString& name, SerialPortPtr&& port);
 
     /**
      * SerialDevice destructor
@@ -39,11 +50,11 @@ public:
     virtual void close() override;
 
     /**
-     * Check if serial port can be opened.
-     * @param portName name of port for check
-     * @return true if port can be open, false otherwise
+     * Establish connection with serial port.
+     * @param portName system name of serial port
+     * @return SerialPortPtr if connection was established and port is open, nullptr otherwise
      */
-    static bool portCanBeOpen(const QString& portName);
+    static SerialPortPtr establishPort(const QString& portName);
 
     /**
      * Send message to serial device. Emits deviceError in case of failure.
@@ -63,12 +74,14 @@ private slots:
     void handleWriteToPort(const QByteArray data);
 
 private:
+    void initSerialDevice();
+
     bool sendMessage(const QByteArray msg, quintptr lockId) override;
 
     bool writeData(const QByteArray data, quintptr lockId);
     ErrorCode translateQSerialPortError(QSerialPort::SerialPortError error);
 
-    QSerialPort serialPort_;
+    SerialPortPtr serialPort_;
     std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
 };
 

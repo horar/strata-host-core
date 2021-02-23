@@ -17,6 +17,7 @@ namespace strata {
 
 using device::Device;
 using device::DevicePtr;
+using device::serial::SerialDevice;
 
 namespace operation = device::operation;
 
@@ -224,14 +225,16 @@ bool BoardManager::addSerialPort(const int deviceId) {
 
     const QString name = serialIdToName_.value(deviceId);
 
-    if (device::serial::SerialDevice::portCanBeOpen(name) == false) {
+    SerialDevice::SerialPortPtr serialPort = SerialDevice::establishPort(name);
+
+    if (serialPort == nullptr) {
         qCInfo(logCategoryBoardManager).nospace() <<
             "Port for device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " <<
             name << " cannot be open, it is probably hold by another application.";
         return false;
     }
 
-    DevicePtr device = std::make_shared<device::serial::SerialDevice>(deviceId, name);
+    DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, std::move(serialPort));
 
     if (openDevice(device) == false) {
         qCWarning(logCategoryBoardManager).nospace() <<
