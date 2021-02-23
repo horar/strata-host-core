@@ -3,6 +3,7 @@
 
 #include <set>
 #include <memory>
+#include <chrono>
 
 #include <QObject>
 #include <QString>
@@ -40,18 +41,18 @@ namespace strata {
         /**
          * Disconnect from the device.
          * @param deviceId device ID
-         * @param milliseconds if more than 0, the device reconnects after the specified number of milliseconds at the earliest
-         *                     if 0 or less, there will be no attempt to reconnect device
+         * @param disconnectDuration if more than 0, the device will be connected again after the given milliseconds at the earliest;
+         *                           if 0 or less, there will be no attempt to reconnect device
          * @return true if device was disconnected, otherwise false
          */
-        Q_INVOKABLE bool disconnectDevice(const int deviceId, const int milliseconds = 0);
+        bool disconnectDevice(const int deviceId, std::chrono::milliseconds disconnectDuration = std::chrono::milliseconds(0));
 
         /**
          * Reconnect the device.
          * @param deviceId device ID
          * @return true if device was reconnected (and identification process has started), otherwise false
          */
-        Q_INVOKABLE bool reconnectDevice(const int deviceId);
+        bool reconnectDevice(const int deviceId);
 
         /**
          * Get smart pointer to the device.
