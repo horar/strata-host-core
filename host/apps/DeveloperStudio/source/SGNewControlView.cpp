@@ -2,6 +2,12 @@
 
 #include "SGUtilsCpp.h"
 
+#include <QDebug>
+#include <QString>
+#include <QFileInfo>
+#include <QUrl>
+#include <QResource>
+
 SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
 {
 
@@ -14,7 +20,6 @@ SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
 QUrl SGNewControlView::createNewProject(const QUrl &filepath, const QString &originPath){
     // This is the current path of the origin directory in resources
     QResource orgSrc(originPath);
-    qrcpath_ = "";
 
     QString path = SGUtilsCpp::urlToLocalFile(filepath);
     // Updating the new path to ensure that this file path always has a seperator at the end
@@ -91,6 +96,40 @@ bool SGNewControlView::copyFiles(QDir &oldDir, QDir &newDir, bool resolve_confli
         // Recursive call to traverse the whole directory
         if(copyFiles(fromDir, toDir, resolve_conflict) == false){
             qCritical()<<"The directory is unable to recursively add files and dirs to new directory" << oldDir.path();
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/***
+ * Check if either 'CMakeLists.txt' or 'Control.qml' files exist in the given directory
+ * @param projectPath
+ ***/
+bool SGNewControlView::projectExists(QString projectPath) {
+    projectPath.replace("file://", "");
+
+    QString cmakePath = projectPath + QDir::separator() + "CMakeLists.txt";
+    QFileInfo cmakeFile = QFile(cmakePath);
+
+    QString controlQmlPath = projectPath + QDir::separator() + "Control.qml";
+    QFileInfo controlQmlFile = QFile(controlQmlPath);
+
+    return cmakeFile.exists() || controlQmlFile.exists();
+}
+
+/***
+ * Delete all files in the given directory
+ * @param projectPath
+ ***/
+bool SGNewControlView::deleteProject(QString projectPath) {
+    projectPath.replace("file://", "");
+    QDir projectDir(projectPath);
+
+    foreach (QString file, projectDir.entryList(QDir::Files)) {
+        QString filePath = projectPath + QDir::separator() + file;
+        if (!projectDir.remove(filePath)) {
             return false;
         }
     }

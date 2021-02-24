@@ -1,11 +1,6 @@
 #ifndef SGNEWCONTROLVIEW_H
 
 #include <QDir>
-#include <QDebug>
-#include <QString>
-#include <QFileInfo>
-#include <QUrl>
-#include <QResource>
 
 class SGNewControlView: public QObject
 {
@@ -15,12 +10,14 @@ class SGNewControlView: public QObject
 public:
     SGNewControlView(QObject *parent=nullptr);
     Q_INVOKABLE QUrl createNewProject(const QUrl &filepath, const QString &originPath);
+    Q_INVOKABLE bool projectExists(QString projectPath);
+    Q_INVOKABLE bool deleteProject(QString projectPath);
 
 private:
     bool copyFiles(QDir &oldDir, QDir &newDir, bool resolve_conflict);
 
-    QString qrcpath_;
-    QString rootpath_;
+    QString qrcpath_ = "";
+    QString rootpath_ = "";
 };
 
 #endif // SGNEWCONTROLVIEW_H

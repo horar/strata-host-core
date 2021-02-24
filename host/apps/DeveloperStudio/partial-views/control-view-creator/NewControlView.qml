@@ -24,35 +24,6 @@ Rectangle {
         }
     }
 
-    ConfirmClosePopup {
-        id: confirmClosePopup
-        parent: controlViewCreatorRoot
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-
-        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
-        popupText: "Your changes will be lost if you choose to not save them."
-        acceptButtonText: "Save all"
-
-        property int unsavedFileCount
-
-        onPopupClosed: {
-            if (closeReason === confirmClosePopup.closeFilesReason) {
-                editor.openFilesModel.closeAll()
-            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
-                editor.openFilesModel.saveAll(true)
-            }
-
-            controlViewCreatorRoot.isConfirmCloseOpen = false
-
-            if (closeReason !== confirmClosePopup.cancelCloseReason) {
-                if (createControlView(fileOutput.text)) {
-                    fileOutput.text = "Select a folder for your project..."
-                }
-            }
-        }
-    }
-
     ColumnLayout {
         anchors {
             fill: parent
@@ -257,6 +228,54 @@ Rectangle {
         }
     }
 
+    ConfirmClosePopup {
+        id: confirmClosePopup
+        parent: controlViewCreatorRoot
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        titleText: "You have unsaved changes in " + unsavedFileCount + " files."
+        popupText: "Your changes will be lost if you choose to not save them."
+        acceptButtonText: "Save all"
+
+        property int unsavedFileCount
+
+        onPopupClosed: {
+            if (closeReason === confirmClosePopup.closeFilesReason) {
+                editor.openFilesModel.closeAll()
+            } else if (closeReason === confirmClosePopup.acceptCloseReason) {
+                editor.openFilesModel.saveAll(true)
+            }
+
+            controlViewCreatorRoot.isConfirmCloseOpen = false
+
+            if (closeReason !== confirmClosePopup.cancelCloseReason) {
+                if (createControlView(fileOutput.text)) {
+                    fileOutput.text = "Select a folder for your project..."
+                }
+            }
+        }
+    }
+
+    OverwriteProjectPopup {
+        id: overwriteProjectPopup
+        parent: controlViewCreatorRoot
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        titleText: "A project already exists in the chosen location"
+        popupText: "The existing project in the chosen location will be overwritten if you proceed."
+        closeButtonText: "Overwrite existing project"
+
+        onPopupClosed: {
+            if (closeReason === overwriteProjectPopup.overwriteReason) {
+                if (deleteProject(fileOutput.text)) {
+                    createControlView(fileOutput.text)
+                }
+            }
+        }
+    }
+
     function createControlView(filepath) {
         let path = filepath.trim();
         if (path.startsWith("file:")) {
@@ -274,14 +293,20 @@ Rectangle {
             return false;
         }
 
-        const qrcUrl = sdsModel.newControlView.createNewProject(
-                         SGUtilsCpp.pathToUrl(path),
-                         TemplateSelection.selectedPath
-                         );
-        openProjectContainer.url = qrcUrl
-        openProjectContainer.addToTheProjectList(qrcUrl.toString())
-        controlViewCreatorRoot.rccInitialized = false
-        toolBarListView.currentIndex = toolBarListView.editTab
-        return true;
+        const projectExists = sdsModel.newControlView.projectExists(SGUtilsCpp.pathToUrl(path));
+        if (projectExists) {
+            overwriteProjectPopup.open()
+        } else {
+            const qrcUrl = sdsModel.newControlView.createNewProject(SGUtilsCpp.pathToUrl(path), TemplateSelection.selectedPath);
+            openProjectContainer.url = qrcUrl
+            openProjectContainer.addToTheProjectList(qrcUrl.toString())
+            controlViewCreatorRoot.rccInitialized = false
+            toolBarListView.currentIndex = toolBarListView.editTab
+            return true;
+        }
+    }
+
+    function deleteProject(filepath) {
+        return sdsModel.newControlView.deleteProject(filepath)
     }
 }
