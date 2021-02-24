@@ -14,6 +14,7 @@ macro(add_sds_plugin)
     else()
         message(STATUS "Strata DevStudio plugin '${local_PLUGIN_NAME}'...")
 
+        list(APPEND ${local_PROJ_NAME}_ENABLED_PLUGINS ${local_PLUGIN_NAME})
 
         qt5_add_binary_resources(${local_PROJ_NAME}-plugin-${local_PLUGIN_NAME}
             qml-dev-studio-plugin-${local_PLUGIN_NAME}.qrc
