@@ -30,12 +30,12 @@ public slots:
     QString getTcpBuffer();
     bool getConnectionStatus();
     void connectToStrataClient(QHostAddress hostAddress, qint16 port);
-    void newTcpMessage();
-    void sendTcpMessge(QByteArray message);
-    void disconnectTcpSocket();
+    void sendTcpMessge(QByteArray message, QTcpSocket *tcpSocket);
+//    void disconnectTcpSocket();
     QString getHostAddress();
     QString getTcpPort();
     QString getClientAddress();
+    QTcpSocket * tcpSocketSetup();
 
 signals:
     void udpBufferUpdated();
@@ -45,10 +45,11 @@ signals:
 
 private:
     void setUdpBuffer(const QByteArray &newDatagram);
-    void setTcpBuffer(const QByteArray &newData);
+    void setTcpBuffer(const QByteArray &newData, QTcpSocket *tcpSocket);
 
-    QTcpSocket *tcpSocket_ = nullptr;
     QUdpSocket *udpSocket_ = nullptr;
+    QHash<QTcpSocket *, quint16> tcpSockets_;
+    quint16 clientNumber = 0;
     quint16 port_ = 5146;
     QString udpBuffer_;
     QString tcpBuffer_;
