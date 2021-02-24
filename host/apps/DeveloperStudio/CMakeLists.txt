@@ -59,12 +59,12 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     ${NODE_RO_SRCS}
 )
 
-generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
-generate_app_build_timestamp()
-
+set(${PROJECT_NAME}_ENABLED_PLUGINS "")
 add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "DEBUGBAR" PLUGIN_NAME "debugbar")
 add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "CVC" PLUGIN_NAME "cvc")
 
+generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
+generate_app_build_timestamp()
 
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
