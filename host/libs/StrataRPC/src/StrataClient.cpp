@@ -141,9 +141,9 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
         return nullptr;
     }
 
-    deferredRequest->startTimer();
     connect(deferredRequest, &DeferredRequest::requestTimedOut, this,
             &StrataClient::onRequestTimedOut);
+    deferredRequest->startTimer();
 
     return deferredRequest;
 }
