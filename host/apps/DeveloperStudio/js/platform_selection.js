@@ -5,6 +5,7 @@
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
+.import tech.strata.notifications 1.0 as PlatformNotifications
 
 var isInitialized = false
 var sdsModel
@@ -17,7 +18,18 @@ var platformSelectorModel
 var classMap = {} // contains metadata for platformSelectorModel for faster lookups
 var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
+var notificationActions = []
 var localPlatformList = []
+
+function createPlatformActions() {
+    for(var i = 0; i < 2; i++){
+        notificationActions[i] = Qt.createQmlObject("import QtQuick.Controls 2.12; Action {}",Qt.application, `PlatformNotifications${i}`)
+    }
+    notificationActions[0].text = "Ok"
+    notificationActions[0].triggered.connect(function(){})
+    notificationActions[1].text = "Disable platform notifications"
+    notificationActions[1].triggered.connect(function(){disablePlatformNotifications()})
+}
 
 function initialize (newSdsModel) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
@@ -25,6 +37,11 @@ function initialize (newSdsModel) {
     coreInterface = newSdsModel.coreInterface;
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
+    createPlatformActions()
+}
+
+function disablePlatformNotifications(){
+    NavigationControl.userSettings.notifyOnPlatformConnections = false
 }
 
 function getPlatformList () {
@@ -304,6 +321,8 @@ function addConnectedPlatform(platform) {
         }
     }
 
+    notifyConnectedState(true,classMap[class_id_string].original_listing.verbose_name)
+
     let data = {
         "class_id": class_id_string,
         "device_id": platform.device_id,
@@ -412,6 +431,8 @@ function disconnectPlatform(platform) {
     if (selector_listing.view_open === false) {
         resetListing(selector_listing)
     }
+
+    notifyConnectedState(false,classMap[class_id_string].original_listing.verbose_name)
 
     let data = {
         "device_id": platform.device_id,
@@ -663,6 +684,28 @@ function setPlatformSelectorModelPropertyRev(deviceId, propertyName, value) {
         if (item.device_id === deviceId) {
             platformSelectorModel.setProperty(i, propertyName, value)
             break;
+        }
+    }
+}
+
+function notifyConnectedState(connected, platformName){
+    if(NavigationControl.userSettings.notifyOnPlatformConnections){
+        if (connected){
+            PlatformNotifications.Notifications.createNotification(`${platformName} is connected`,
+                                                                   PlatformNotifications.Notifications.Info,
+                                                                   "all",
+                                                                   {
+                                                                       "timeout": 4000,
+                                                                       "actions": [notificationActions[0],notificationActions[1]]
+                                                                   })
+        } else {
+            PlatformNotifications.Notifications.createNotification(`${platformName} is disconnected`,
+                                                                   PlatformNotifications.Notifications.Info,
+                                                                   "all",
+                                                                   {
+                                                                       "timeout": 4000,
+                                                                       "actions": [notificationActions[0],notificationActions[1]]
+                                                                   })
         }
     }
 }

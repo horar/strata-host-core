@@ -17,6 +17,7 @@ namespace strata {
 
 using device::Device;
 using device::DevicePtr;
+using device::serial::SerialDevice;
 
 namespace operation = device::operation;
 
@@ -35,7 +36,7 @@ void BoardManager::init(bool requireFwInfoResponse, bool keepDevicesOpen) {
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
-bool BoardManager::disconnectDevice(const int deviceId) {
+bool BoardManager::disconnectDevice(const int deviceId, std::chrono::milliseconds disconnectDuration) {
     bool success = false;
     {
         QMutexLocker lock(&mutex_);
@@ -43,11 +44,31 @@ bool BoardManager::disconnectDevice(const int deviceId) {
         if (it != openedDevices_.end()) {
             it.value()->close();
             openedDevices_.erase(it);
+
+            if (disconnectDuration > std::chrono::milliseconds(0)) {
+                QTimer* reconnectTimer = new QTimer(this);
+                reconnectTimers_.insert(deviceId, reconnectTimer);
+                reconnectTimer->setSingleShot(true);
+                reconnectTimer->callOnTimeout(this, [this, deviceId, reconnectTimer](){
+                    QMutexLocker lock(&mutex_);
+                    reconnectTimer->deleteLater();
+                    reconnectTimers_.remove(deviceId);
+                    // Remove serial port from list of known ports, device will be
+                    // added (reconnected) in next round of scaning serial ports.
+                    serialPortsList_.erase(deviceId);
+                });
+                reconnectTimer->start(disconnectDuration);
+            }
+
             success = true;
         }
     }
     if (success) {
         qCInfo(logCategoryBoardManager).nospace() << "Disconnected serial device 0x" << hex << static_cast<uint>(deviceId);
+        if (disconnectDuration > std::chrono::milliseconds(0)) {
+            qCInfo(logCategoryBoardManager) << "Device will be connected again after" << disconnectDuration.count()
+                                            << "milliseconds at the earliest.";
+        }
         emit boardDisconnected(deviceId);
     } else {
         logInvalidDeviceId(QStringLiteral("Cannot disconnect"), deviceId);
@@ -103,7 +124,9 @@ QVector<int> BoardManager::activeDeviceIds() {
     return QVector<int>::fromList(openedDevices_.keys());
 }
 
-void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial port functionality out from this class
+void BoardManager::checkNewSerialDevices() {
+    // TODO refactoring, take serial port functionality out from this class
+    // or make another check function for bluetooth devices when it will be needed
 #if defined(Q_OS_MACOS)
     const QString usbKeyword("usb");
     const QString cuKeyword("cu");
@@ -147,7 +170,6 @@ void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial por
 
     std::set<int> added, removed;
     std::vector<int> opened, deleted;
-    opened.reserve(added.size());
 
     {  // this block of code modifies serialPortsList_, openedDevices_, serialIdToName_
         QMutexLocker lock(&mutex_);
@@ -158,7 +180,7 @@ void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial por
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
         for (auto deviceId : removed) {
-            if (closeDevice(deviceId)) {  // modifies openedDevices_
+            if (removeDevice(deviceId)) {  // modifies openedDevices_ and reconnectTimers_
                 deleted.emplace_back(deviceId);
             }
         }
@@ -166,6 +188,10 @@ void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial por
         for (auto deviceId : added) {
             if (addSerialPort(deviceId)) {  // modifies openedDevices_, uses serialIdToName_
                 opened.emplace_back(deviceId);
+            } else {
+                // If serial port cannot be opened (for example it is hold by another application),
+                // remove it from list of known ports. There will be another attempt to open it in next round.
+                ports.erase(deviceId);
             }
         }
 
@@ -200,7 +226,16 @@ bool BoardManager::addSerialPort(const int deviceId) {
 
     const QString name = serialIdToName_.value(deviceId);
 
-    DevicePtr device = std::make_shared<device::serial::SerialDevice>(deviceId, name);
+    SerialDevice::SerialPortPtr serialPort = SerialDevice::establishPort(name);
+
+    if (serialPort == nullptr) {
+        qCInfo(logCategoryBoardManager).nospace() <<
+            "Port for device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " <<
+            name << " cannot be open, it is probably hold by another application.";
+        return false;
+    }
+
+    DevicePtr device = std::make_shared<SerialDevice>(deviceId, name, std::move(serialPort));
 
     if (openDevice(device) == false) {
         qCWarning(logCategoryBoardManager).nospace() <<
@@ -250,13 +285,24 @@ void BoardManager::startIdentifyOperation(const DevicePtr device) {
     identifyOperations_.insert(device->deviceId(), operation);
 }
 
-// mutex_ must be locked before calling this function (due to modification openedDevices_)
-bool BoardManager::closeDevice(const int deviceId) {
+// mutex_ must be locked before calling this function (due to modification openedDevices_ and reconnectTimers_)
+bool BoardManager::removeDevice(const int deviceId) {
     identifyOperations_.remove(deviceId);
-    auto it = openedDevices_.find(deviceId);
-    if (it != openedDevices_.end()) {
-        it.value()->close();
-        openedDevices_.erase(it);
+
+    // If device is physically disconnected, remove reconnect timer (if exists).
+    auto timerIter = reconnectTimers_.find(deviceId);
+    if (timerIter != reconnectTimers_.end()) {
+        QTimer* reconnectTimer = timerIter.value();
+        reconnectTimer->stop();
+        delete reconnectTimer;
+        reconnectTimers_.erase(timerIter);
+        qCInfo(logCategoryBoardManager).nospace() << "Removed timer for reconnecting device 0x" << hex << static_cast<uint>(deviceId);
+    }
+
+    auto deviceIter = openedDevices_.find(deviceId);
+    if (deviceIter != openedDevices_.end()) {
+        deviceIter.value()->close();
+        openedDevices_.erase(deviceIter);
         qCInfo(logCategoryBoardManager).nospace() << "Removed serial device 0x" << hex << static_cast<uint>(deviceId);
         return true;
     } else {
@@ -316,6 +362,7 @@ void BoardManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) 
         disconnect(device, &Device::msgFromDevice, this, &BoardManager::checkNotification);
         int deviceId = device->deviceId();
         qCWarning(logCategoryBoardManager).nospace() << "Interrupted connection with device 0x" << hex << static_cast<uint>(deviceId);
+
         // Device cannot be removed in this slot (this slot is connected to signal emitted by device).
         // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
         // is done and other slots connected to this signal are also done) - this is why is used single shot timer.

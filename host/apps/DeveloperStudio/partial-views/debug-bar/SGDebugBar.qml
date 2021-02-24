@@ -195,19 +195,6 @@ Item {
 
             SGLogLevelSelector {
             }
-
-            Button {
-                text: "Control View Dev"
-
-                onClicked: {
-                    controlViewDevDialog.setVisible(true)
-                    controlViewDevDialog.raise()
-                }
-            }
-
-            SGControlViewDevPopup {
-                id: controlViewDevDialog
-            }
         }
     }
 
