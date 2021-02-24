@@ -18,7 +18,6 @@ import "qrc:/js/login_utilities.js" as Authenticator
 Item {
     property alias model: filteredNotifications
     property string currentUser: ""
-    property var currentNotification: ({})
 
     enum Level {
         Info = 0,
@@ -114,6 +113,7 @@ Item {
             - singleton: Only allow one notification with this title to be exposed to the user | DEFAULT: False
             - timeout: The timeout for the notification (in milliseconds), set 0 for no timeout | DEFAULT: 10000ms for non-critical notifications, critical default is 0
             - iconSource: The icon's source url | DEFAULT: level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
+
         Example:
             Action {
                 id: notificationAction
@@ -141,6 +141,7 @@ Item {
         const iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
         let timeout = additionalParameters.hasOwnProperty("timeout") ? additionalParameters["timeout"] : -1;
         var uuid = create_UUID()
+
         if (timeout < 0) {
             if (level < 2) {
                 timeout = 10000
@@ -148,7 +149,6 @@ Item {
                 timeout = 0
             }
         }
-
 
         if (to === "current") {
             to = NavigationControl.context.user_id;
@@ -236,7 +236,6 @@ Item {
                 "actions": [],
                 "uuid": savedNotifications.uuid
             };
-            currentNotification[savedNotifications.uuid] = notification
             model_.append(notification)
         }
     }
