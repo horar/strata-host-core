@@ -29,7 +29,7 @@ public:
         FailedToAddReequest,
         FailedToSendRequest,
         PendingRequestNotFound,
-        RequestTimedOut
+        RequestTimeout
     };
     Q_ENUM(ClientError);
 
@@ -118,7 +118,7 @@ private slots:
      * Handles timed out requests.
      * @param [in] requestId request id of the timed out request.
      */
-    void onRequestTimedOut(int requestId);
+    void requestTimeoutHandler(int requestId);
 
 private:
     /**

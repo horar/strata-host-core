@@ -141,8 +141,8 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
         return nullptr;
     }
 
-    connect(deferredRequest, &DeferredRequest::requestTimedOut, this,
-            &StrataClient::onRequestTimedOut);
+    connect(deferredRequest, &DeferredRequest::requestTimedout, this,
+            &StrataClient::requestTimeoutHandler);
     deferredRequest->startTimer();
 
     return deferredRequest;
@@ -254,11 +254,11 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     return true;
 }
 
-void StrataClient::onRequestTimedOut(int requestId)
+void StrataClient::requestTimeoutHandler(int requestId)
 {
     QString timeoutErrorMessage("Request timed out. request ID: " + QString::number(requestId));
     qCCritical(logCategoryStrataClient) << timeoutErrorMessage;
-    emit errorOccurred(ClientError::RequestTimedOut, timeoutErrorMessage);
+    emit errorOccurred(ClientError::RequestTimeout, timeoutErrorMessage);
 
     auto [requestFound, request] = requestController_->popPendingRequest(requestId);
     if (false == requestFound && request.deferredRequest_ == nullptr) {

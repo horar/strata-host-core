@@ -58,13 +58,13 @@ signals:
      * Signal emitted on timeout.
      * @param [in] requestId request id.
      */
-    void requestTimedOut(int requestId);
+    void requestTimedout(int requestId);
 
 private slots:
     /**
      * Handles timeout signal from QTimer
      */
-    void onRequestTimout();
+    void requestTimeoutHandler();
 
 private:
     friend class StrataClient;
@@ -93,6 +93,6 @@ private:
 
     int id_;
     QTimer timer_;
-    static constexpr int REQUEST_TIMEOUT{500};
+    static constexpr std::chrono::milliseconds REQUEST_TIMEOUT{500};
 };
 }  // namespace strata::strataRPC
