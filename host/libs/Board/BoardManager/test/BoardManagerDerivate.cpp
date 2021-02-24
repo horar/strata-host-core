@@ -46,7 +46,7 @@ void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString de
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
         for (auto removedDeviceId : removed) {
-            if (closeDevice(removedDeviceId)) {  // modifies openedDevices_
+            if (removeDevice(removedDeviceId)) {  // modifies openedDevices_
                 deleted.emplace_back(removedDeviceId);
             }
         }
