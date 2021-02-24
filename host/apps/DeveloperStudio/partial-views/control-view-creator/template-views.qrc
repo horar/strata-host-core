@@ -15,6 +15,8 @@
         <file>template-views/template/control-views/DebugMenu.qml</file>
         <file>template-views/template/control-views/platformInterface.json</file>
         <file>template-views/template/control-views/PlatformInterface.qml</file>
+        <file>template-views/basic/DebugMenu.qml</file>
+        <file>template-views/basic/CMakeLists.txt</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
