@@ -24,6 +24,7 @@ var currentRange = {}
 var currentItems = {}
 
 var editor = null
+var qmlSuggestions = null
 
 const qtQuick = [
     {
@@ -2497,6 +2498,7 @@ function removeDuplicates() {
 }
 
 function convertStrArrayToObjArray(key, properties, range) {
+    propertySuggestions = []
     for (var i = 0; i < properties.length; i++) {
         propertySuggestions.push(createDynamicProperty(properties[i], range))
     }
@@ -2663,52 +2665,7 @@ function registerQmlAsLanguage() {
         ]
     })
 
-    qmlSuggestions =  monaco.languages.registerCompletionItemProvider('qml', {
-        triggerCharacters: ['}', '.'],
-        provideCompletionItems: (model, position) => {
-            var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
-            var currWords = currText.replace("\t", "").split(" ");
-            var word = model.getWordUntilPosition(position);
-            var active = currWords[currWords.length - 1]
-            // check for range to see if position exists
-            // These are closing characters for the auto complete
-            if(active.includes(".")){
-                const activeWord = active.substring(0, active.length - 1).split('.')[0]
-                alert(qtObjectKeyValues.hasOwnProperty(activeWord))
-                if(qtObjectKeyValues.hasOwnProperty(activeWord)){
-                    var propRange = {
-                        startLineNumber: position.lineNumber,
-                        endLineNumber: position.lineNumber,
-                        startColumn: word.startColumn,
-                        endColumn: word.endColumn,
-                    }
-                    convertStrArrayToObjArray(activeWord,qtObjectKeyValues[activeWord].properties,propRange)
-                    return {suggestions: qtObjectPropertyValues[activeWord]}
-                }
-            } else if(active.includes("}")) {
-                var prevMatch = model.findPreviousMatch("{",position,false,false)
-
-                var content = model.getValueInRange({startLineNumber: prevMatch.range.startLineNumber, startColumn: 1, endLineNumber: prevMatch.range.startLineNumber, endColumn: prevMatch.range.endColumn})
-                var splitContent = content.replace("\t","").split(/\{|\t/)
-                currentRange[splitContent[0].trim()] = {
-                    startLineNumber: prevMatch.range.startLineNumber,
-                    endLineNumber: position.lineNumber,
-                    startColumn: prevMatch.range.startColumn,
-                    endColumn: position.column
-                }
-                var propRange = currentRange[splitContent[0].trim()]
-                convertStrArrayToObjArray(splitContent[0].trim(),qtObjectKeyValues[splitContent[0].trim()].properties,propRange)
-                currentItems[propRange] = qtObjectPropertyValues[splitContent[0].trim()]
-                return {suggestions: []}
-            }
-             var fetchedSuggestions = determineBracketsAndReturnSuggestions(model,position)
-
-            return {suggestions: fetchedSuggestions === undefined ? Object.values(suggestions): fetchedSuggestions}
-        }
-    })
-
-
-
+    runQmlProvider()
     editor = monaco.editor.create(document.getElementById('container'), {
         value: "",
         language: 'qml',
@@ -2738,6 +2695,13 @@ function registerQmlAsLanguage() {
     }
 
     function searchForChildBrackets(model,position){
+        var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
+        var currWords = currText.replace("\t", "").split(" ");
+        var word = model.getWordUntilPosition(position);
+        var active = currWords[currWords.length - 1]
+        if(active.includes('.')){
+            return []
+        } else {
         var prevMatch = model.findPreviousMatch("{",position,false,false)
         var nextBracketMatch = model.findNextMatch("{",position, false,false)
         var prevBracketMatch = model.findPreviousMatch("}",position, false,false)
@@ -2769,7 +2733,56 @@ function registerQmlAsLanguage() {
         } else if(prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber) {
             var prevPosition = {lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.endColumn}
             searchForChildBrackets(model, prevPosition)
+            }
         }
     }
-}
+
+    function runQmlProvider(){
+       
+        monaco.languages.registerCompletionItemProvider('qml', {
+                triggerCharacters: ['}', '.'],
+                provideCompletionItems: (model, position) => {
+                    var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
+                    var currWords = currText.replace("\t", "").split(" ");
+                    var word = model.getWordUntilPosition(position);
+                    var active = currWords[currWords.length - 1]
+                    // check for range to see if position exists
+                    // These are closing characters for the auto complete
+                    if(active.includes(".")){
+                        const activeWord = active.substring(0, active.length - 1).split('.')[0]
+                        if(qtObjectKeyValues.hasOwnProperty(activeWord)){
+                            var propRange = {
+                                startLineNumber: position.lineNumber,
+                                endLineNumber: position.lineNumber,
+                                startColumn: word.startColumn,
+                                endColumn: word.endColumn,
+                            }
+                            convertStrArrayToObjArray(activeWord,qtObjectKeyValues[activeWord].properties,propRange)
+                            return {suggestions: qtObjectPropertyValues[activeWord]}
+                        }
+                    } else if(active.includes("}")) {
+                        var prevMatch = model.findPreviousMatch("{",position,false,false)
+        
+                        var content = model.getValueInRange({startLineNumber: prevMatch.range.startLineNumber, startColumn: 1, endLineNumber: prevMatch.range.startLineNumber, endColumn: prevMatch.range.endColumn})
+                        var splitContent = content.replace("\t","").split(/\{|\t/)
+                        currentRange[splitContent[0].trim()] = {
+                            startLineNumber: prevMatch.range.startLineNumber,
+                            endLineNumber: position.lineNumber,
+                            startColumn: prevMatch.range.startColumn,
+                            endColumn: position.column
+                        }
+                        var propRange = currentRange[splitContent[0].trim()]
+                        convertStrArrayToObjArray(splitContent[0].trim(),qtObjectKeyValues[splitContent[0].trim()].properties,propRange)
+                        currentItems[propRange] = qtObjectPropertyValues[splitContent[0].trim()]
+                        return {suggestions: []}
+                    }
+                     var fetchedSuggestions = determineBracketsAndReturnSuggestions(model,position)
+                    return {suggestions: fetchedSuggestions === undefined || fetchedSuggestions === null ? Object.values(suggestions): fetchedSuggestions}
+                },
+                resolveCompletionItem:(item) =>{
+                   
+                }
+            })
+        }
+    }
 

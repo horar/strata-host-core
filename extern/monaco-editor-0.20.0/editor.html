@@ -55,6 +55,7 @@
             editor.getModel().onDidChangeContent((event) => {
                 link.fileText = editor.getValue();
                 link.setVersionId(editor.getModel().getAlternativeVersionId());
+                
             });
         });
     </script>
