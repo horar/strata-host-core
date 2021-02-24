@@ -103,7 +103,9 @@ void SciPlatformModel::releasePort(int index, int msec)
         return;
     }
 
-    boardManager_->disconnectDevice(platformList_.at(index)->deviceId(), msec);
+    boardManager_->disconnectDevice(
+                platformList_.at(index)->deviceId(),
+                std::chrono::milliseconds(msec));
 }
 
 void SciPlatformModel::removePlatform(int index)
