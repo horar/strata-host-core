@@ -61,7 +61,7 @@ StackLayout {
     Component.onDestruction: {
         controlViewContainer.removeControl()
         if(notifications[class_id] !== undefined){
-            Notifications.destroyNotifications(notifications[class_id][device_id])
+            Notifications.destroyNotification(notifications[class_id][device_id])
         }
     }
 

@@ -241,17 +241,13 @@ Item {
         }
     }
 
-    function destroyNotifications(uuid_) {
-        if(uuid_ !== null){
-            deleteNotification(uuid_)
-        }
-    }
-
-    function deleteNotification(uuid){
-        for(var i = 0;i < model_.count; i++){
-            if(model_.get(i).uuid === uuid){
-                model_.remove(i)
-                break
+    function destroyNotification(uuid){
+        if(uuid !== null){
+            for(var i = 0;i < model_.count; i++){
+                if(model_.get(i).uuid === uuid){
+                    model_.remove(i)
+                    break
+                }
             }
         }
     }
