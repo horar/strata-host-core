@@ -14,6 +14,7 @@ Item {
     }
 
     property variant platformInfoWindow: null
+    property int releasePortDurationInSec: 5
 
     Connections {
         target: sciModel.platformModel
@@ -209,7 +210,7 @@ Item {
 
                             enabled: model.platform.programInProgress === false && model.platform.status === Sci.SciPlatform.Ready
                             icon.source: "qrc:/sgimages/disconnected.svg"
-                            hintText: "Release port for 5s"
+                            hintText: "Release port for "+releasePortDurationInSec+"s"
                             onClicked: {
                                 releasePort(index)
                             }
@@ -303,7 +304,7 @@ Item {
     }
 
     function releasePort(index) {
-        sciModel.platformModel.releasePort(index, 5000);
+        sciModel.platformModel.releasePort(index, releasePortDurationInSec * 1000);
     }
 
     function showPlatformInfoWindow(classId, className) {
