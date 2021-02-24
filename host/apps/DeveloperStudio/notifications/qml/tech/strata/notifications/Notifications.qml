@@ -18,7 +18,7 @@ import "qrc:/js/login_utilities.js" as Authenticator
 Item {
     property alias model: filteredNotifications
     property string currentUser: ""
-    property var currentNotifications: ({})
+    property var currentNotification: ({})
 
     enum Level {
         Info = 0,
@@ -114,7 +114,6 @@ Item {
             - singleton: Only allow one notification with this title to be exposed to the user | DEFAULT: False
             - timeout: The timeout for the notification (in milliseconds), set 0 for no timeout | DEFAULT: 10000ms for non-critical notifications, critical default is 0
             - iconSource: The icon's source url | DEFAULT: level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
-        - key: The key that stores notifications of a type together
         Example:
             Action {
                 id: notificationAction
@@ -134,13 +133,14 @@ Item {
                         })
 
      **/
-    function createNotification(title, level, to, additionalParameters = {}, key = "general") {
+    function createNotification(title, level, to, additionalParameters = {}) {
         const description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";
         const actions = additionalParameters.hasOwnProperty("actions") ? additionalParameters["actions"].map((action) => ({"action": action})) : [];
         const saveToDisk = additionalParameters.hasOwnProperty("saveToDisk") ? additionalParameters["saveToDisk"] : false;
         const singleton = additionalParameters.hasOwnProperty("singleton") ? additionalParameters["singleton"] : false;
         const iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
         let timeout = additionalParameters.hasOwnProperty("timeout") ? additionalParameters["timeout"] : -1;
+        var uuid = create_UUID()
         if (timeout < 0) {
             if (level < 2) {
                 timeout = 10000
@@ -148,6 +148,7 @@ Item {
                 timeout = 0
             }
         }
+
 
         if (to === "current") {
             to = NavigationControl.context.user_id;
@@ -164,15 +165,9 @@ Item {
             "iconSource": iconSource,
             "saveToDisk": saveToDisk,
             "singleton": singleton,
-            "actions": actions
+            "actions": actions,
+            "uuid": uuid,
         };
-
-        if(currentNotifications[key] !== undefined){
-            currentNotifications[key].push(notification)
-        } else {
-            currentNotifications[key] = []
-            currentNotifications[key].push(notification)
-        }
 
         let foundEntry = false;
         // Check the pre-existing entry in the model and see if that one is a singleton
@@ -190,11 +185,11 @@ Item {
 
         if (singleton && foundEntry) {
             // If the entry being inserted has the singleton property set to true, and the title already exists, don't insert
-            return false;
+            return "";
         }
 
         model_.append(notification);
-        return true;
+        return uuid;
     }
 
     function saveNotifications() {
@@ -238,24 +233,36 @@ Item {
                 "iconSource": savedNotifications[i].iconSource,
                 "saveToDisk": true,
                 "singleton": false,
-                "actions": []
+                "actions": [],
+                "uuid": savedNotifications.uuid
             };
-
+            currentNotification[savedNotifications.uuid] = notification
             model_.append(notification)
         }
     }
 
-    function getNotifications(key = "general"){
-        return currentNotifications[key]
+    function destroyNotifications(uuid_) {
+        if(uuid_ !== null){
+            deleteNotification(uuid_)
+        }
     }
 
-
-    function deleteNotification(notification){
+    function deleteNotification(uuid){
         for(var i = 0;i < model_.count; i++){
-            if(model_.get(i).date.toString() === notification.date.toString()){
+            if(model_.get(i).uuid === uuid){
                 model_.remove(i)
                 break
             }
         }
+    }
+
+    function create_UUID(){
+        var dt = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c =='x' ? r :(r&0x3|0x8)).toString(16);
+        });
+        return uuid;
     }
 }

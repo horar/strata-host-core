@@ -1,13 +1,11 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import QtQml 2.12
 
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.notifications 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/platform_notification.js" as PlatformNotification
 
 import QtQuick.Controls 2.12
 
@@ -40,6 +38,7 @@ StackLayout {
                                     platformMetaDataInitialized
 
     property bool documentsHistoryDisplayed: false
+    property var notifications: ({})
 
     onFullyInitializedChanged: {
         initialize()
@@ -55,33 +54,15 @@ StackLayout {
         }
     }
 
-    function viewDocuments() {
-        model.view = "collateral"
-    }
-
-    function closeNotification(){
-
-    }
-
-    function disableNotification() {
-        NavigationControl.userSettings.notifyOnCollateralDocumentUpdate = false
-        NavigationControl.userSettings.saveSettings()
-    }
-
-
     Component.onCompleted: {
         platformStackInitialized = true
-        PlatformNotification.createDynamicNotificationActions({key:"Collateral",data: [
-                                                                PlatformNotification.createDynamicAction("Collateral","View","View Documents",viewDocuments),
-                                                                PlatformNotification.createDynamicAction("Collateral","Close","Ok",closeNotification),
-                                                                PlatformNotification.createDynamicAction("Collateral","Disable","Don't show this message again",disableNotification)
-                                                            ]
-                                                        })
     }
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
-        PlatformNotification.destroyNotifications("Collateral")
+        if(notifications[class_id] !== undefined){
+            Notifications.destroyNotifications(notifications[class_id][device_id])
+        }
     }
 
     function initialize () {
@@ -110,6 +91,29 @@ StackLayout {
             class_id: model.class_id
         }
 
+        Action {
+            id: documentsHistoryShowDocumentsView
+            text: "View documents"
+            onTriggered: {
+                model.view = "collateral"
+            }
+        }
+
+        Action {
+            id: doNotNotifyOnCollateralDocumentUpdate
+            text: "Don't show this message again"
+            onTriggered: {
+                NavigationControl.userSettings.notifyOnCollateralDocumentUpdate = false
+                NavigationControl.userSettings.saveSettings()
+            }
+        }
+
+        Action {
+            id: ok
+            text: "Ok"
+            onTriggered: {}
+        }
+
         function launchDocumentsHistoryNotification(unseenPdfItems, unseenDownloadItems) {
             if (NavigationControl.userSettings.notifyOnCollateralDocumentUpdate == false) {
                 return
@@ -125,17 +129,20 @@ StackLayout {
             }
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed
-                PlatformNotification.createNotification(
+                if(notifications[class_id] === undefined){
+                    notifications[class_id] = {}
+                }
+
+              notifications[class_id][device_id] = Notifications.createNotification(
                     "Document updates for this platform",
                     Notifications.Info,
                     "current",
                     {
                         "description": description,
                         "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                        "actions": PlatformNotification.getNotificationActions("Collateral"),
+                        "actions": [documentsHistoryShowDocumentsView, ok, doNotNotifyOnCollateralDocumentUpdate],
                         "timeout": 0
-                    },
-                    "Collateral"
+                    }
                 )
             }
         }
