@@ -92,7 +92,7 @@ bool SciPlatformModel::condensedAtStartup() const
     return condensedAtStartup_;
 }
 
-void SciPlatformModel::releasePort(int index, int msec)
+void SciPlatformModel::releasePort(int index, int disconnectDuration)
 {
     if (index < 0 || index >= platformList_.count()) {
         qCCritical(logCategorySci) << "index out of range";
@@ -105,7 +105,7 @@ void SciPlatformModel::releasePort(int index, int msec)
 
     boardManager_->disconnectDevice(
                 platformList_.at(index)->deviceId(),
-                std::chrono::milliseconds(msec));
+                std::chrono::milliseconds(disconnectDuration));
 }
 
 void SciPlatformModel::removePlatform(int index)
