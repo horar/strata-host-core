@@ -5,7 +5,7 @@
         <file>template-views/basic/qml.qrc</file>
         <file>template-views/template/CMakeLists.txt</file>
         <file>template-views/template/Control.qml</file>
-        <file>template-views/template/qml-views-template.qrc</file>
+        <file>template-views/template/qml.qrc</file>
         <file>template-views/template/control-views/AdvancedControl.qml</file>
         <file>template-views/template/control-views/BasicControl.qml</file>
         <file>template-views/images/basic.jpg</file>
