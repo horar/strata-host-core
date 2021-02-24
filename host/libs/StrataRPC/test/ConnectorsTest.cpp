@@ -110,7 +110,7 @@ void ConnectorsTest::testFloodTheServer()
 
     connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
             [&client](const QByteArray &) {
-                for (int i = 0; i < 10000; i++) {
+                for (int i = 0; i < 1000; i++) {
                     client.sendMessage(QByteArray::number(i));
                 }
             });
@@ -130,7 +130,7 @@ void ConnectorsTest::testFloodTheClient()
     connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
             [&server, &timer](const QByteArray &clientId, const QByteArray &message) {
                 if (message == "Start Test") {
-                    for (int i = 0; i < 10000; i++) {
+                    for (int i = 0; i < 1000; i++) {
                         server.sendMessage(clientId, QByteArray::number(i));
                     }
                 }
