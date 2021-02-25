@@ -11,6 +11,8 @@ using command::CmdRequestPlatformId;
 Identify::Identify(const device::DevicePtr& device, bool requireFwInfoResponse, uint maxFwInfoRetries) :
     BaseDeviceOperation(device, Type::Identify)
 {
+    commandList_.reserve(2);
+
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, requireFwInfoResponse, maxFwInfoRetries));
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));

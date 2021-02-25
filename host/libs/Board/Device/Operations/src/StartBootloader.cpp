@@ -15,6 +15,8 @@ using command::CommandResult;
 StartBootloader::StartBootloader(const device::DevicePtr& device) :
     BaseDeviceOperation(device, Type::StartBootloader)
 {
+    commandList_.reserve(5);
+
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true, MAX_GET_FW_INFO_RETRIES)); // 0
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 1
