@@ -228,11 +228,17 @@ Item {
 
         MouseArea {
             id: textSelectionMouseArea
-            anchors.fill: parent
+            height: Math.min(listView.height, listView.contentHeight)
+            anchors {
+                top: listView.top
+                left: listView.left
+                leftMargin: delegateTextX
+                right: listView.right
+                rightMargin: delegateRightMargin
+            }
 
-            cursorShape: mouseX > delegateTextX ? Qt.IBeamCursor : Qt.ArrowCursor
+            cursorShape: Qt.IBeamCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            hoverEnabled: true
 
             /*this is to stop interaction with flickable while selecting text */
             drag.target: Item {}
@@ -245,12 +251,6 @@ Item {
                 listView.forceActiveFocus()
 
                 if (mouse.button === Qt.RightButton) {
-                    return
-                }
-
-                if (mouseX <= delegateTextX) {
-                    // we can add another functionality when licking on the left side
-                    mouse.accepted = false
                     return
                 }
 
@@ -278,9 +278,6 @@ Item {
                 }
 
                 leftMouseButtonPressed = false
-                if (mouseX <= delegateTextX) {
-                    mouse.accepted = false
-                }
             }
 
             onPositionChanged: {
