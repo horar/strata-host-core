@@ -14,6 +14,8 @@ using strata::device::operation::BaseDeviceOperation;
 
 namespace operation = strata::device::operation;
 
+constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
+
 void DeviceOperationsV2Test::initTestCase()
 {
 }
@@ -342,7 +344,7 @@ void DeviceOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
     device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_app);
 
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 6000);
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(device_->mockIsBootloader());
     expectedDoc.Parse(test_commands::request_platform_id_response_ver2_embedded.data());
@@ -540,12 +542,12 @@ void DeviceOperationsV2Test::noResponseEmbeddedTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
         new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    deviceOperation_->setResponseInterval(true);
+    deviceOperation_->setResponseInterval(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_app);
 
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 2200);
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
@@ -565,12 +567,12 @@ void DeviceOperationsV2Test::noResponseAssistedTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
         new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    deviceOperation_->setResponseInterval(true);
+    deviceOperation_->setResponseInterval(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_app);
 
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 2200);
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
@@ -593,12 +595,12 @@ void DeviceOperationsV2Test::invalidValueV2Test()
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    deviceOperation_->setResponseInterval(true);
+    deviceOperation_->setResponseInterval(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponseForCommand(CommandResponseMock::MockResponse::invalid, CommandResponseMock::Command::get_firmware_info);
 
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 2000);
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
 
     QVERIFY(device_->name().isEmpty());
     QVERIFY(device_->classId().isEmpty());
