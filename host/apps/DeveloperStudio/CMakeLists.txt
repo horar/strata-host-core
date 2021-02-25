@@ -42,6 +42,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/config/Url.cpp
     source/config/ConfigFile.cpp
     source/config/AppConfig.cpp
+    source/config/UrlConfig.cpp
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc

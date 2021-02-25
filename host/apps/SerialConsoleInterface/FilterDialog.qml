@@ -218,6 +218,7 @@ SGWidgets.SGDialog {
 
                             SGWidgets.SGTextField {
                                 id: filterStringTextField
+                                contextMenuEnabled: true
 
                                 onTextChanged: {
                                     filterConditionModel.setProperty(index, "filter_string", text)

@@ -35,6 +35,10 @@ Item {
         setControlIcon()
     }
 
+    onViewChanged: {
+        setSelectedButton()
+    }
+    
     function closeTab() {
         let data = {
             "class_id": platformTabRoot.class_id,
@@ -56,7 +60,6 @@ Item {
                 return
             } else {
                 model.view = selection.view
-                setSelectedButton()
             }
         }
 
