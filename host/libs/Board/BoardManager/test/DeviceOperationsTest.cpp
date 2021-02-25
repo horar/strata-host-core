@@ -3,17 +3,20 @@
 
 #include <CommandValidator.h>
 #include <rapidjson/writer.h>
-#include "CommandResponseMock.h"
 #include <Device/Operations/Identify.h>
 #include <Device/Operations/StartBootloader.h>
 #include <Device/Operations/StartApplication.h>
-#include "DeviceMock.h"
+#include <Device/Mock/MockDevice.h>
+#include <Device/Mock/MockDeviceConstants.h>
 #include "DeviceOperationsTest.h"
 
 using strata::device::operation::BaseDeviceOperation;
 using strata::device::operation::StartBootloader;
+using strata::device::mock::MockCommand;
+using strata::device::mock::MockResponse;
 
 namespace operation = strata::device::operation;
+namespace test_commands = strata::device::mock::test_commands;
 
 void DeviceOperationsTest::initTestCase()
 {
@@ -28,7 +31,7 @@ void DeviceOperationsTest::init()
     operationErrorCount_ = 0;
     operationFinishedCount_ = 0;
     operationTimeoutCount_ = 0;
-    device_ = std::make_shared<DeviceMock>(1234, "Mock device");
+    device_ = std::make_shared<strata::device::mock::MockDevice>(1234, "Mock device", true);
     bool openRes = device_->open();
     QVERIFY(openRes);
 }
@@ -70,7 +73,7 @@ void DeviceOperationsTest::printJsonDoc(rapidjson::Document &doc)
 void DeviceOperationsTest::connectTest()
 {
     device_->mockSetAutoResponse(false);
-    QCOMPARE(device_->mockGetMsgCount(), 0);
+    QCOMPARE(device_->mockGetRecordedMessagesCount(), 0);
     QCOMPARE(operationErrorCount_, 0);
 }
 
@@ -153,7 +156,7 @@ void DeviceOperationsTest::notJSONTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
         new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetResponse(CommandResponseMock::MockResponse::no_JSON);
+    device_->mockSetResponse(MockResponse::no_JSON);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 3000);
 
@@ -178,7 +181,7 @@ void DeviceOperationsTest::JSONWithoutPayloadTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetCommandForResponse(CommandResponseMock::Command::get_firmware_info, CommandResponseMock::MockResponse::no_payload);
+    device_->mockSetCommandForResponse(MockCommand::get_firmware_info, MockResponse::no_payload);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 2000);
 
@@ -191,7 +194,7 @@ void DeviceOperationsTest::JSONWithoutPayloadTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetCommandForResponse(CommandResponseMock::Command::request_platform_id, CommandResponseMock::MockResponse::no_payload);
+    device_->mockSetCommandForResponse(MockCommand::request_platform_id, MockResponse::no_payload);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 2000);
 
@@ -207,7 +210,7 @@ void DeviceOperationsTest::JSONWithoutPayloadTest()
     deviceOperation_ = QSharedPointer<operation::StartApplication>(
         new operation::StartApplication(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetCommandForResponse(CommandResponseMock::Command::start_application, CommandResponseMock::MockResponse::no_payload);
+    device_->mockSetCommandForResponse(MockCommand::start_application, MockResponse::no_payload);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
 
@@ -226,7 +229,7 @@ void DeviceOperationsTest::JSONWithoutPayloadTest()
     deviceOperation_ = QSharedPointer<operation::StartBootloader>(
         new operation::StartBootloader(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetCommandForResponse(CommandResponseMock::Command::start_bootloader, CommandResponseMock::MockResponse::no_payload);
+    device_->mockSetCommandForResponse(MockCommand::start_bootloader, MockResponse::no_payload);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 6000);
 
@@ -262,7 +265,7 @@ void DeviceOperationsTest::nackTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetResponse(CommandResponseMock::MockResponse::nack);
+    device_->mockSetResponse(MockResponse::nack);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
 
@@ -285,7 +288,7 @@ void DeviceOperationsTest::invalidValueTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetCommandForResponse(CommandResponseMock::Command::get_firmware_info, CommandResponseMock::MockResponse::invalid);
+    device_->mockSetCommandForResponse(MockCommand::get_firmware_info, MockResponse::invalid);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 2000);
 
@@ -298,7 +301,7 @@ void DeviceOperationsTest::invalidValueTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetCommandForResponse(CommandResponseMock::Command::request_platform_id, CommandResponseMock::MockResponse::invalid);
+    device_->mockSetCommandForResponse(MockCommand::request_platform_id, MockResponse::invalid);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 2000);
 
@@ -314,7 +317,7 @@ void DeviceOperationsTest::invalidValueTest()
     deviceOperation_ = QSharedPointer<operation::StartApplication>(
         new operation::StartApplication(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetCommandForResponse(CommandResponseMock::Command::start_application, CommandResponseMock::MockResponse::invalid);
+    device_->mockSetCommandForResponse(MockCommand::start_application, MockResponse::invalid);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
 
@@ -333,7 +336,7 @@ void DeviceOperationsTest::invalidValueTest()
     deviceOperation_ = QSharedPointer<operation::StartBootloader>(
         new operation::StartBootloader(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    device_->mockSetCommandForResponse(CommandResponseMock::Command::start_bootloader, CommandResponseMock::MockResponse::invalid);
+    device_->mockSetCommandForResponse(MockCommand::start_bootloader, MockResponse::invalid);
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 6000);
 
@@ -436,7 +439,7 @@ void DeviceOperationsTest::cancelOperationTest()
         new operation::StartBootloader(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(device_->mockGetMsgCount(), 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(device_->mockGetRecordedMessagesCount(), 1, 1000);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 1);

@@ -1,56 +1,37 @@
 #pragma once
 
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <regex>
-#include "QtTest.h"
+#include <QRegularExpression>
+#include <QByteArray>
 
-class CommandResponseMock
-{
-public:
-    CommandResponseMock();
+namespace strata::device::mock {
 
-    enum class Command {
-        unknown,
-        get_firmware_info,
-        request_platform_id,
-        start_bootloader,
-        start_application
-    };
+constexpr unsigned MAX_STORED_MESSAGES = 4096;
 
-    enum class MockResponse {
-        normal,
-        no_payload,
-        no_JSON,
-        nack,
-        invalid
-    };
+Q_NAMESPACE
 
-    static std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
-                                                       const rapidjson::Document &requestDoc);
-    static QString getPlaceholderValue(const QString placeholder,
-                                       const rapidjson::Document &requestDoc);
-    std::vector<QByteArray> getResponses(QByteArray request);
-
-    bool mockIsBootloader() { return isBootloader_; }
-
-    void mockSetLegacy(bool legacy) { isLegacy_ = legacy; }
-
-    void mockSetCommandForResponse(Command command, MockResponse response) { command_ = command; response_ = response; }
-
-    void mockSetResponse(MockResponse response) { response_ = response; }
-
-private:
-    bool isBootloader_ = false;
-    bool isLegacy_ = false;  // very old board without 'get_firmware_info' command support
-    Command command_ = Command::unknown;
-    MockResponse response_ = MockResponse::normal;
+enum class MockCommand {
+    all_commands,
+    get_firmware_info,
+    request_platform_id,
+    start_bootloader,
+    start_application
 };
+Q_ENUM_NS(MockCommand)
 
+enum class MockResponse {
+    normal,
+    no_payload,
+    no_JSON,
+    nack,
+    invalid
+};
+Q_ENUM_NS(MockResponse)
 
-// these are global constants, so let's at least encapsulate them in a namespace
-namespace test_commands
-{
+}
+
+// these are global constants for testing
+namespace strata::device::mock::test_commands {
+
 const QRegularExpression parameterRegex = QRegularExpression("\\{\\$.*\\}");
 
 const QByteArray ack =
@@ -125,12 +106,12 @@ R"({
     "notification":{
         "value":"platform_id",
         "payload":{
-            "name":"Logic Gates",
+            "name":"Mock Board",
             "platform_id":"101",
             "class_id":"201",
             "count":11,
             "platform_id_version":"2.0",
-            "verbose_name":"Logic Gates"
+            "verbose_name":"Mock Board"
         }
     }
 })";
@@ -253,4 +234,4 @@ R"({
 const QByteArray no_JSON_response =
 "notJSON";
 
-}  // namespace test_commands
+} // namespace strata::device::mock::test_commands

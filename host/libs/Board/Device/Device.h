@@ -62,8 +62,10 @@ namespace strata::device {
         * The Type enum to recognize device type.
         */
         enum class Type {
-            SerialDevice
+            SerialDevice,
+            MockDevice
         };
+        Q_ENUM(Type)
 
         enum class ApiVersion {
             Unknown,
