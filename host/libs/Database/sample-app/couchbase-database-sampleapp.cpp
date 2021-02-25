@@ -124,7 +124,7 @@ int main() {
     }
 
     // Start replicator on DB 2 with all default arguments
-    if (DB_2.startReplicator(replicator_url)) {
+    if (DB_2.startBasicReplicator(replicator_url)) {
         DEBUG("Replicator successfully started.");
     } else {
         qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";
@@ -156,7 +156,7 @@ int main() {
         qDebug() << "CouchbaseDatabaseSampleApp documentListener -> document status changed!\n";
     };
 
-    if (DB_3.startReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener)) {
+    if (DB_3.startBasicReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener)) {
         DEBUG("Replicator successfully started.");
     } else {
         qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";

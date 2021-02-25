@@ -20,7 +20,7 @@ DatabaseManager::DatabaseManager(const QString &path, const QString &endpointURL
         return;
     }
 
-    if (!userAccessDb_->startReplicator(endpointURL, "", "", "pushandpull", changeListener, documentListener, true)) {
+    if (!userAccessDb_->startBasicReplicator(endpointURL, "", "", "pushandpull", changeListener, documentListener, true)) {
         qDebug() << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid.";
     }
 }
@@ -94,7 +94,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
     }
 
     // Start replicator (pull only for user DBs)
-    if (!dbAccess_->startReplicator(endpointURL_, "", "", "pull", changeListener, documentListener, true)) {
+    if (!dbAccess_->startBasicReplicator(endpointURL_, "", "", "pull", changeListener, documentListener, true)) {
         qDebug() << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid.";
     }
 

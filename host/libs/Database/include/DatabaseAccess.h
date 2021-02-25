@@ -50,6 +50,25 @@ public:
     /**
      * Initializes and starts the DB replicator
      * @param url replicator / sync-gateway URL to connect to
+     * @param token sync-gateway authentication token
+     * @param cookie_name sync-gateway authentication cookie name
+     * @param channels replication channels (optional)
+     * @param type push/pull/push and pull (optional)
+     * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
+     * @param reconnection_policy default behavior or automatically try to reconnect (optional)
+     * @return true when succeeded, otherwise false
+     */
+    bool startSessionReplicator(const QString &url,
+                         const QString &token = "",
+                         const QString cookie_name = "",
+                         const QString &replicator_type = "",
+                         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr,
+                         std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr,
+                         bool continuous = false);
+
+    /**
+     * Initializes and starts the DB replicator
+     * @param url replicator / sync-gateway URL to connect to
      * @param username sync-gateway username (optional, default to empty)
      * @param password sync-gateway password (optional, default to empty)
      * @param replicator_type push/pull/push and pull (optional, default to pull only)
@@ -58,7 +77,7 @@ public:
      * @param continuous replicator continuous (optional, default to one-shot)
      * @return true when succeeded, otherwise false
      */
-    bool startReplicator(const QString &url,
+    bool startBasicReplicator(const QString &url,
                          const QString &username = "",
                          const QString &password = "",
                          const QString &replicator_type = "",

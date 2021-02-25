@@ -17,12 +17,14 @@ add_library(${PROJECT_NAME}
     include/CouchbaseDocument.h
     include/DatabaseManager.h
     include/DatabaseAccess.h
+    include/TokenManager.h
 
     src/DatabaseLib.cpp
     src/CouchbaseDatabase.cpp
     src/CouchbaseDocument.cpp
     src/DatabaseManager.cpp
     src/DatabaseAccess.cpp
+    src/TokenManager.cpp
 
     # Logging Categories
     logging/LoggingQtCategories.h

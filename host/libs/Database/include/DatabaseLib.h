@@ -75,7 +75,7 @@ public:
      * @param reconnection_policy default behavior or automatically try to reconnect (optional)
      * @return true when succeeded, otherwise false
      */
-    bool startReplicator(const QString &url,
+    bool startBasicReplicator(const QString &url,
                          const QString &username = "",
                          const QString &password = "",
                          const QStringList &channels = QStringList(),
