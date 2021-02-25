@@ -335,7 +335,7 @@ R"({
             "platform_id":"platform",
             "class_id":"class",
             "count":count,
-            "platform_id_version":"2.0",
+            "platform_id_version":"version",
             "verbose_name":-1
         }
     }
