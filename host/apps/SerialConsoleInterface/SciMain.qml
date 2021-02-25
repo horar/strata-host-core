@@ -296,7 +296,9 @@ Item {
     function removeBoard(index) {
         if (index <= tabBar.currentIndex) {
             //shift currentIndex
-            tabBar.currentIndex--
+            if ((tabBar.currentIndex !== 0) || (sciModel.platformModel.count === 1)) {
+                tabBar.currentIndex--
+            }
         }
 
         sciModel.platformModel.releasePort(index);
