@@ -21,6 +21,8 @@ Item {
                                          QtLabsPlatform.StandardPaths.writableLocation(
                                              QtLabsPlatform.StandardPaths.DocumentsLocation))
 
+    property bool historySeen: false
+
     QtLabsSettings.Settings {
         category: "Strata.Download"
 
@@ -80,6 +82,8 @@ Item {
 
                     onCheckedChanged: {
                         repeater.model.setSelected(index, checked)
+                        documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
+                        downloadSection.historySeen = true
                     }
 
                     Binding {
@@ -92,11 +96,10 @@ Item {
 
                     contentSourceComponent: Item {
                         id: contentComponent
-
                         height: Math.ceil(textMetrics.boundingRect.height) + progressBar.height + infoItem.contentHeight + 4*spacing
 
-
                         property int spacing: 2
+
                         TextMetrics {
                             id: textMetrics
                             font: textItem.font
@@ -188,6 +191,15 @@ Item {
                             elide: Text.ElideNone
                             textFormat: Text.PlainText
                             maximumLineCount: 2
+                        }
+
+                        HistoryStatus {
+                            id: historyUpdate
+                            anchors {
+                                right: textItem.right
+                                rightMargin: 2
+                                verticalCenter: parent.verticalCenter
+                            }
                         }
 
                         Rectangle {
@@ -355,15 +367,11 @@ Item {
         }
 
         Button {
+            width: Math.min(implicitWidth, parent.width)
             anchors.horizontalCenter: wrapper.horizontalCenter
             opacity: enabled ? 1 : 0.2
             enabled: savePath !== ""
-
-            contentItem: SGWidgets.SGText{
-                text: "Open Selected Save Folder"
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-            }
+            text: "Open Selected Save Folder"
 
             background: Rectangle {
                 implicitWidth: 200
@@ -439,6 +447,12 @@ Item {
         title: qsTr("Please choose a file")
         onAccepted: {
             savePath = CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.folder)
+        }
+    }
+
+    Component.onDestruction: {
+        if (platformStack.documentsHistoryDisplayed || downloadSection.historySeen) {
+            documentsHistory.markAllDocumentsAsSeen()
         }
     }
 }

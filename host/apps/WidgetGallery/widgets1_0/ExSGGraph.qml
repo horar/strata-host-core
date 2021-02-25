@@ -140,7 +140,7 @@ Item {
                 id: yAxisGraph
                 width: 400
                 height: 300
-                title: "Basic Graph - Multiple Y Axis Enabled"
+                title: "Basic Graph - Multiple Y Axis Enabled With Ability To Change Color Of Y Axis And Add Legend"
                 xMin: 0
                 xMax: 1
                 yMin: 0
@@ -154,6 +154,7 @@ Item {
                 yGrid: true
                 gridColor: "green"
                 yRightVisible: true
+                legend: true  //enable to add legend
             }
 
             Column {
@@ -167,6 +168,8 @@ Item {
                     onClicked: {
                         let curve = yAxisGraph.createCurve("graphCurve" + yAxisGraph.count)
                         curve.color = sgGraphExample.randomColor()
+                        //Set the color of yLeft Axis.
+                        yAxisGraph.yLeftAxisColor = curve.color
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
@@ -181,6 +184,8 @@ Item {
                         let curve = yAxisGraph.createCurve("graphCurve" + yAxisGraph.count)
                         curve.color = sgGraphExample.randomColor()
                         curve.yAxisLeft = false // YRight axis is enabled to plot the given curve. Default yAxisLeft = true
+                        //Set the color of yRight Axis.
+                        yAxisGraph.yRightAxisColor = curve.color
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
@@ -192,8 +197,29 @@ Item {
                 Button {
                     text: "Remove first curve from graph"
                     enabled: yAxisGraph.count > 0
+                    onEnabledChanged: {
+                        if(!enabled) {
+                            yAxisGraph.yRightAxisColor = "black"
+                            yAxisGraph.yLeftAxisColor = "black"
+                        }
+                    }
                     onClicked: {
                         yAxisGraph.removeCurve(0);
+                    }
+                }
+
+                Button {
+                    text: "Remove Legend"
+                    enabled:  yAxisGraph.count > 0 && yAxisGraph.legend
+                    onClicked: {
+                        yAxisGraph.legend = false
+                    }
+                }
+                Button {
+                    text: "Add Legend"
+                    enabled: yAxisGraph.count > 0 && (!yAxisGraph.legend)
+                    onClicked: {
+                        yAxisGraph.legend = true
                     }
                 }
             }

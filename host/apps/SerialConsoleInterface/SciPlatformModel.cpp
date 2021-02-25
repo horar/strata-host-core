@@ -79,7 +79,20 @@ void SciPlatformModel::setMaxCmdInHistoryCount(int maxCmdInHistoryCount)
     }
 }
 
-void SciPlatformModel::disconnectPlatformFromSci(int index)
+void SciPlatformModel::setCondensedAtStartup(bool condensedAtStartup)
+{
+    if (condensedAtStartup_ != condensedAtStartup) {
+        condensedAtStartup_ = condensedAtStartup;
+        emit condensedAtStartupChanged();
+    }
+}
+
+bool SciPlatformModel::condensedAtStartup() const
+{
+    return condensedAtStartup_;
+}
+
+void SciPlatformModel::releasePort(int index, int disconnectDuration)
 {
     if (index < 0 || index >= platformList_.count()) {
         qCCritical(logCategorySci) << "index out of range";
@@ -90,9 +103,9 @@ void SciPlatformModel::disconnectPlatformFromSci(int index)
         return;
     }
 
-    boardManager_->disconnectDevice(platformList_.at(index)->deviceId());
-
-    platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Disconnected);
+    boardManager_->disconnectDevice(
+                platformList_.at(index)->deviceId(),
+                std::chrono::milliseconds(disconnectDuration));
 }
 
 void SciPlatformModel::removePlatform(int index)
@@ -211,6 +224,7 @@ void SciPlatformModel::appendNewPlatform(int deviceId)
     item->setStatus(SciPlatform::PlatformStatus::Connected);
     item->scrollbackModel()->setMaximumCount(maxScrollbackCount_);
     item->commandHistoryModel()->setMaximumCount(maxCmdInHistoryCount_);
+    item->scrollbackModel()->setCondensedMode(condensedAtStartup_);
     item->setDeviceName(device->deviceName());
     platformList_.append(item);
 

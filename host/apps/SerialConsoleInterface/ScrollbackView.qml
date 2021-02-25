@@ -52,6 +52,14 @@ Item {
         }
     }
 
+    Shortcut {
+        id: selectShortcut
+        sequence: StandardKey.SelectAll
+        onActivated: {
+            selectAllText()
+        }
+    }
+
     Timer {
         id: scrollbackViewAtEndTimer
         interval: 1
@@ -153,6 +161,53 @@ Item {
         color: "white"
     }
 
+    SGWidgets.SGAbstractContextMenu {
+        id: contextMenuPopup
+
+        Action {
+            id: undoAction
+            text: qsTr("Undo")
+            enabled: false
+        }
+        Action {
+            id: redoAction
+            text: qsTr("Redo")
+            enabled: false
+        }
+        MenuSeparator { }
+        Action {
+            id: cutAction
+            text: qsTr("Cut")
+            enabled: false
+        }
+        Action {
+            id: copyAction
+            text: qsTr("Copy")
+            enabled: (selectionStartPosition !== selectionEndPosition) || (selectionStartIndex !== selectionEndIndex)
+            onTriggered: {
+                copyToClipboard()
+            }
+        }
+        Action {
+            id: pasteAction
+            text: qsTr("Paste")
+            enabled: false
+        }
+        MenuSeparator { }
+        Action {
+            id: selectAction
+            text: qsTr("Select All")
+            enabled: listView.count > 0
+            onTriggered: {
+                selectAllText()
+            }
+        }
+
+        onClosed: {
+            listView.forceActiveFocus()
+        }
+    }
+
     ListView {
         id: listView
         anchors {
@@ -166,38 +221,45 @@ Item {
         boundsBehavior: Flickable.StopAtBounds
 
         onActiveFocusChanged: {
-            if (activeFocus === false) {
+            if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
                 clearSelection()
             }
         }
 
         MouseArea {
             id: textSelectionMouseArea
-            height: Math.min(listView.height, listView.contentHeight)
-            anchors {
-                top: listView.top
-                left: listView.left
-                leftMargin: delegateTextX
-                right: listView.right
-                rightMargin: delegateRightMargin
-            }
+            anchors.fill: parent
 
-            cursorShape: Qt.IBeamCursor
+            cursorShape: mouseX > delegateTextX ? Qt.IBeamCursor : Qt.ArrowCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            hoverEnabled: true
 
             /*this is to stop interaction with flickable while selecting text */
             drag.target: Item {}
 
+            property bool leftMouseButtonPressed
             property int startIndex
             property int startPosition
 
             onPressed: {
                 listView.forceActiveFocus()
 
+                if (mouse.button === Qt.RightButton) {
+                    return
+                }
+
+                if (mouseX <= delegateTextX) {
+                    // we can add another functionality when licking on the left side
+                    mouse.accepted = false
+                    return
+                }
+
                 var position = resolvePosition(mouse.x, mouse.y)
                 if (position === undefined) {
                     return
                 }
 
+                leftMouseButtonPressed = true
                 startIndex = position.delegate_index
                 startPosition = position.cursor_pos
 
@@ -207,7 +269,25 @@ Item {
                 selectionEndPosition = startPosition
             }
 
+            onReleased: {
+                if (mouse.button === Qt.RightButton) {
+                    if (textSelectionMouseArea.containsMouse) {
+                        contextMenuPopup.popup(null)
+                    }
+                    return
+                }
+
+                leftMouseButtonPressed = false
+                if (mouseX <= delegateTextX) {
+                    mouse.accepted = false
+                }
+            }
+
             onPositionChanged: {
+                if (leftMouseButtonPressed === false) {
+                    return
+                }
+
                 //do not allow to select delegates outside of view
                 if (mouse.y < 0) {
                    var mouseY = 0
@@ -484,6 +564,10 @@ Item {
             function positionAtTextEdit(x,y) {
                 return cmdText.positionAt(x-cmdText.x , y)
             }
+
+            function positionAtTextEditEnd() {
+                return cmdText.length
+            }
         }
     }
 
@@ -495,28 +579,47 @@ Item {
     }
 
     function copyToClipboard() {
-        var text = ""
-        if (selectionStartIndex == selectionEndIndex) {
-            var sourceIndex = scrollbackFilterModel.mapIndexToSource(selectionStartIndex)
-            if (sourceIndex >= 0) {
-                text = model.data(sourceIndex, "message")
-                text = text.slice(selectionStartPosition, selectionEndPosition)
-            }
-        } else {
-            for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
-                sourceIndex = scrollbackFilterModel.mapIndexToSource(i)
-                if (sourceIndex < 0) {
-                    text = ""
-                    break
-                }
+        if (selectionStartPosition < 0 || selectionEndPosition < 0) {
+            return
+        }
 
-                text += model.data(sourceIndex, "message")
-                if (i !== selectionEndIndex) {
-                    text += '\n'
-                }
+        var text = ""
+
+        for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
+            var sourceIndex = scrollbackFilterModel.mapIndexToSource(i)
+            if (sourceIndex < 0) {
+                text = ""
+                break
+            }
+
+            text += CommonCpp.SGJsonFormatter.convertToHardBreakLines(model.data(sourceIndex, "message"))
+            if (i !== selectionEndIndex) {
+                text += '\n'
             }
         }
 
+        if (selectionStartIndex == selectionEndIndex) {
+            text = text.slice(selectionStartPosition, selectionEndPosition)
+        }
+
         CommonCpp.SGUtilsCpp.copyToClipboard(text)
+    }
+
+    function selectAllText() {
+        if (listView.count === 0) {
+            return
+        }
+
+        var delegateIndexEnd = listView.count -1
+        var delegatePositionEnd = 0
+        if (delegateIndexEnd === 0) {
+            var delegateItemEnd = listView.itemAt(0, 0)
+            delegatePositionEnd = delegateItemEnd.positionAtTextEditEnd()
+        }
+
+        selectionStartIndex = 0
+        selectionEndIndex = delegateIndexEnd
+        selectionStartPosition = 0
+        selectionEndPosition = delegatePositionEnd
     }
 }

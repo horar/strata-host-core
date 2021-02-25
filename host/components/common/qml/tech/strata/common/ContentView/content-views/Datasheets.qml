@@ -43,13 +43,12 @@ Item {
 
         Repeater {
             id: repeater
-
             model: sortModel
-
 
             delegate: BaseDocDelegate {
                 id: delegate
                 width: wrapper.width
+
                 onCategorySelected: {
                     if(helpIcon.class_id != "help_docs_demo") {
                         datasheetCurrentIndex = index
@@ -96,7 +95,12 @@ Item {
                             leftMargin: 6
                             right: chevronImage.left
                         }
-
+                        font.bold: delegate.checked
+                        alternativeColorEnabled: delegate.checked === false
+                        wrapMode: Text.Wrap
+                        textFormat: Text.PlainText
+                        maximumLineCount: 3
+                        elide: Text.ElideRight
                         text: {
                             /*
                                 the first regexp is looking for HTML RichText
@@ -107,10 +111,6 @@ Item {
                             const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
                             return model.prettyName.replace(htmlTags,"");
                         }
-                        textFormat: Text.PlainText
-                        alternativeColorEnabled: delegate.checked === false
-                        wrapMode: Text.Wrap
-                        font.bold: delegate.checked ? false : true
                     }
 
                     SGWidgets.SGIcon {

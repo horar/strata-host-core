@@ -97,6 +97,27 @@ public:
     /**
      * Initializes and starts the DB replicator
      * @param url replicator / sync-gateway URL to connect to
+     * @param token sync-gateway authentication token
+     * @param cookie_name sync-gateway authentication cookie name
+     * @param channels replication channels (optional)
+     * @param type push/pull/push and pull (optional)
+     * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
+     * @param reconnection_policy default behavior or automatically try to reconnect (optional)
+     * @return true when succeeded, otherwise false
+     */
+    bool startSessionReplicator(const std::string &url,
+                         const std::string &token = "",
+                         const std::string &cookie_name = "",
+                         const std::vector<std::string> &channels = std::vector<std::string>(),
+                         const ReplicatorType &replicator_type = ReplicatorType::kPull,
+                         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr,
+                         std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr,
+                         bool continuous = false
+                        );
+
+    /**
+     * Initializes and starts the DB replicator
+     * @param url replicator / sync-gateway URL to connect to
      * @param username sync-gateway username (optional)
      * @param password sync-gateway password (optional)
      * @param channels replication channels (optional)
@@ -105,7 +126,7 @@ public:
      * @param reconnection_policy default behavior or automatically try to reconnect (optional)
      * @return true when succeeded, otherwise false
      */
-    bool startReplicator(const std::string &url,
+    bool startBasicReplicator(const std::string &url,
                          const std::string &username = "",
                          const std::string &password = "",
                          const std::vector<std::string> &channels = std::vector<std::string>(),

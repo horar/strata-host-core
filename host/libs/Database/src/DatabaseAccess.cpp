@@ -162,14 +162,49 @@ QStringList DatabaseAccess::getAllDocumentKeys(const QString &bucket) {
     return QStringList();
 }
 
-bool DatabaseAccess::startReplicator(const QString &url, const QString &username, const QString &password, const QString &replicator_type,
+bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &token, const QString cookie_name, const QString &replicator_type,
                                std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener,
                                std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener,
                                bool continuous) {
 
-    auto _url = url.toStdString();
-    auto _username = username.toStdString();
-    auto _password = password.toStdString();
+    CouchbaseDatabase::ReplicatorType _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
+    if (replicator_type.isEmpty() || replicator_type == "pull") {
+        _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
+    } else if (replicator_type == "push") {
+        _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
+    } else if (replicator_type == "pushandpull") {
+        _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
+    } else {
+        qDebug() << "Error: empty or invalid replicator type provided, defaulting to Pull.";
+    }
+
+    if (changeListener) {
+        change_listener_callback = changeListener;
+    } else {
+        change_listener_callback = std::bind(&DatabaseAccess::default_changeListener, this, std::placeholders::_1, std::placeholders::_2);
+    }
+
+    if (documentListener) {
+        document_listener_callback = documentListener;
+    } else {
+        document_listener_callback = std::bind(&DatabaseAccess::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    }
+
+    for (const auto& bucket : database_map_) {
+        std::vector<std::string> single_DB_channel;
+        single_DB_channel.push_back(bucket->getDatabaseName());
+        if (!bucket->startSessionReplicator(url.toStdString(), token.toStdString(), cookie_name.toStdString(), single_DB_channel, _replicator_type, nullptr, nullptr, continuous)) {
+            qDebug() << "Error: Failed to start replicator on bucket/channel " << QString::fromStdString(bucket->getDatabaseName());
+        }
+    }
+
+    return true;
+}
+
+bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &username, const QString &password, const QString &replicator_type,
+                               std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener,
+                               std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener,
+                               bool continuous) {
 
     std::vector<std::string> channels;
     for (const auto& channel : channelAccess_) {
@@ -202,7 +237,7 @@ bool DatabaseAccess::startReplicator(const QString &url, const QString &username
     for (const auto& bucket : database_map_) {
         std::vector<std::string> single_DB_channel;
         single_DB_channel.push_back(bucket->getDatabaseName());
-        if (!bucket->startReplicator(_url, _username, _password, single_DB_channel, _replicator_type, change_listener_callback, document_listener_callback, continuous)) {
+        if (!bucket->startBasicReplicator(url.toStdString(), username.toStdString(), password.toStdString(), single_DB_channel, _replicator_type, change_listener_callback, document_listener_callback, continuous)) {
             qDebug() << "Error: Failed to start replicator on bucket/channel " << QString::fromStdString(bucket->getDatabaseName());
         }
     }

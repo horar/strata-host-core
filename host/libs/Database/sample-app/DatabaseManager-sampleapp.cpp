@@ -68,7 +68,7 @@ int main() {
         return -1;
     }
 
-    // Create document 2, write to bucket 'channel_A' only
+    // Create document 2, write to bucket 'channel_public' only
     CouchbaseDocument Doc2("My_Doc_Single_Bucket");
     body_string = R"foo({"StrataTest": "Contents_2"})foo";
 

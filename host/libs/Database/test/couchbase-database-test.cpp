@@ -145,15 +145,15 @@ TEST_F(CouchbaseDatabaseTest, REPLICATOR) {
     DatabaseLib *db_2 = new DatabaseLib("Test Database 6");
 
     // Attempt to start replication (DB not open)
-    EXPECT_FALSE(db_1->startReplicator(replicator_url));
+    EXPECT_FALSE(db_1->startBasicReplicator(replicator_url));
     // Open DB
     EXPECT_TRUE(db_1->open());
     // Attempt to start replication (empty endpoint)
-    EXPECT_FALSE(db_1->startReplicator(""));
+    EXPECT_FALSE(db_1->startBasicReplicator(""));
     // Attempt to start replication (invalid endpoint)
-    EXPECT_FALSE(db_1->startReplicator("Invalid endpoint"));
+    EXPECT_FALSE(db_1->startBasicReplicator("Invalid endpoint"));
     // Attempt to start replication (valid endpoint)
-    EXPECT_TRUE(db_1->startReplicator(replicator_url));
+    EXPECT_TRUE(db_1->startBasicReplicator(replicator_url));
     // Wait until replication is finished
     unsigned int retries = 0;
     const unsigned int REPLICATOR_RETRY_MAX = 50;
@@ -183,7 +183,7 @@ TEST_F(CouchbaseDatabaseTest, REPLICATOR) {
     // Open DB
     EXPECT_TRUE(db_2->open());
     // Attempt to start replication using all possible inputs
-    EXPECT_TRUE(db_2->startReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener));
+    EXPECT_TRUE(db_2->startBasicReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener));
     // Wait until replication is finished
     retries = 0;
     while (db_2->getReplicatorStatus() != "Stopped" && db_2->getReplicatorStatus() != "Idle") {

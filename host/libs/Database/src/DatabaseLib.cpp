@@ -50,7 +50,7 @@ QStringList DatabaseLib::getAllDocumentKeys() {
     return list;
 }
 
-bool DatabaseLib::startReplicator(const QString &url, const QString &username, const QString &password, const QStringList &channels,
+bool DatabaseLib::startBasicReplicator(const QString &url, const QString &username, const QString &password, const QStringList &channels,
                                const QString &replicator_type, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener,
                                std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener,
                                bool continuous) {
@@ -87,7 +87,7 @@ bool DatabaseLib::startReplicator(const QString &url, const QString &username, c
         document_listener_callback = std::bind(&DatabaseLib::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     }
 
-    if (database_->startReplicator(_url, _username, _password, _channels, _replicator_type, change_listener_callback, document_listener_callback, continuous)) {
+    if (database_->startBasicReplicator(_url, _username, _password, _channels, _replicator_type, change_listener_callback, document_listener_callback, continuous)) {
         return true;
     }
 

@@ -23,37 +23,37 @@ SGStrataPopup {
         id: column
         width: parent.width - 40
 
-            SGText {
-                text: "Platform View Settings"
-                fontSizeMultiplier: 1.3
+        SGText {
+            text: "Platform View Settings"
+            fontSizeMultiplier: 1.3
+        }
+
+        Rectangle {
+            // divider
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: "#666"
+        }
+
+        SGSettingsCheckbox {
+            text: "Open/show platform tab when platform is connected"
+            checked: userSettings.autoOpenView
+
+            onCheckedChanged: {
+                userSettings.autoOpenView = checked
+                userSettings.saveSettings()
             }
+        }
 
-            Rectangle {
-                // divider
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: "#666"
+        SGSettingsCheckbox {
+            text: "Close platform tab when platform is disconnected"
+            checked: userSettings.closeOnDisconnect
+
+            onCheckedChanged: {
+                userSettings.closeOnDisconnect = checked
+                userSettings.saveSettings()
             }
-
-            SGSettingsCheckbox {
-                text: "Open/show platform tab when platform is connected"
-                checked: userSettings.autoOpenView
-
-                onCheckedChanged: {
-                    userSettings.autoOpenView = checked
-                    userSettings.saveSettings()
-                }
-            }
-
-            SGSettingsCheckbox {
-                text: "Close platform tab when platform is disconnected"
-                checked: userSettings.closeOnDisconnect
-
-                onCheckedChanged: {
-                    userSettings.closeOnDisconnect = checked
-                    userSettings.saveSettings()
-                }
-            }
+        }
 
             // to be uncommented in CS-880
 //            SGText {
@@ -79,5 +79,37 @@ SGStrataPopup {
 //                enabled: false
 //            }
 //        }
+
+        SGText {
+            text: "Notification Settings"
+            fontSizeMultiplier: 1.3
+        }
+
+        Rectangle {
+            // divider
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: "#666"
+        }
+
+        SGSettingsCheckbox {
+            text: "Notify me when a collateral document is updated"
+            checked: userSettings.notifyOnCollateralDocumentUpdate
+
+            onCheckedChanged: {
+                userSettings.notifyOnCollateralDocumentUpdate = checked
+                userSettings.saveSettings()
+            }
+        }
+
+        SGSettingsCheckbox {
+            text: "Notify me when a platform is connected/disconnected"
+            checked: userSettings.notifyOnPlatformConnections
+
+            onCheckedChanged: {
+                userSettings.notifyOnPlatformConnections  = checked
+                userSettings.saveSettings()
+            }
+        }
     }
 }

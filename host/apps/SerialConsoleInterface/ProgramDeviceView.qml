@@ -11,7 +11,7 @@ FocusScope {
 
     property string firmwareBinaryPath: Sci.Settings.lastSelectedFirmware
     property int processingStatus: ProgramDeviceView.Setup
-    property bool doBackup: true
+    property bool doBackup: Sci.Settings.backupFirmware
 
     property int backupProgress: 0
     property int programProgress: 0
@@ -124,6 +124,7 @@ FocusScope {
 
         SGWidgets.SGFileSelector {
             id: firmwarePathEdit
+            contextMenuEnabled: true
             width: content.width
             anchors {
                 top: title.bottom
@@ -171,6 +172,7 @@ FocusScope {
             text: "Backup firmware before programming"
             onCheckStateChanged: {
                 programDeviceView.doBackup = checked
+                Sci.Settings.backupFirmware = checked
             }
 
             Binding {

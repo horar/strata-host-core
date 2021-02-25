@@ -17,6 +17,7 @@ FocusScope {
     property alias readOnly: edit.readOnly
     property bool keepCursorAtEnd: false
     property bool isValid: true
+    property bool contextMenuEnabled: false
 
     // This is to match look and feel of other controls
     Control {
@@ -40,6 +41,11 @@ FocusScope {
                 }
             }
         }
+    }
+
+    SGWidgets.SGContextMenuEditActions {
+        id: contextMenuPopup
+        textEditor: edit
     }
 
     Flickable {
@@ -76,9 +82,15 @@ FocusScope {
             height: flick.height
 
             cursorShape: Qt.IBeamCursor
+            acceptedButtons: (contextMenuEnabled === true) ? (Qt.LeftButton | Qt.RightButton) : Qt.LeftButton
             onClicked: {
                 edit.forceActiveFocus()
                 edit.cursorPosition = edit.text.length
+            }
+            onReleased: {
+                if ((contextMenuEnabled === true) && containsMouse && (mouse.button === Qt.RightButton)) {
+                    contextMenuPopup.popup(null)
+                }
             }
         }
 
@@ -95,6 +107,7 @@ FocusScope {
             selectByMouse: true
             selectByKeyboard: true
             activeFocusOnTab: true
+            persistentSelection: contextMenuEnabled
             focus: true
 
             Keys.onPressed: {
@@ -114,6 +127,12 @@ FocusScope {
 
             onCursorRectangleChanged: {
                 flick.ensureVisible(cursorRectangle)
+            }
+
+            onActiveFocusChanged: {
+                if ((contextMenuEnabled === true) && (activeFocus === false) && (contextMenuPopup.visible === false)) {
+                    edit.deselect()
+                }
             }
 
             Text {

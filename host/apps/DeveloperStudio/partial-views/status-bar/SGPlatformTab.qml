@@ -35,27 +35,38 @@ Item {
         setControlIcon()
     }
 
+    onViewChanged: {
+        setSelectedButton()
+    }
+    
+    function closeTab() {
+        let data = {
+            "class_id": platformTabRoot.class_id,
+            "device_id": platformTabRoot.device_id
+        }
+        PlatformSelection.closePlatformView(data)
+
+        // must call last - model entry/delegate begins destruction
+        NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)
+    }
+
     function menuClicked(index) {
         let selection = buttonModel.get(index)
         if (selection.view !== view) {
             dropDownPopup.close()
 
             if (selection.view === "close"){
-                let data = {
-                    "class_id": platformTabRoot.class_id,
-                    "device_id": platformTabRoot.device_id
-                }
-                PlatformSelection.closePlatformView(data)
-
-                NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)  // must call last - model entry/delegate begins destruction
+                closeTab()
                 return
             } else {
                 model.view = selection.view
-                setSelectedButton()
             }
         }
 
-        bringIntoView()
+        if (inView === false) {
+            dropDownPopup.close()
+            bringIntoView()
+        }
     }
 
     function bringIntoView() {
@@ -117,6 +128,14 @@ Item {
         }
     }
 
+    function showMenu() {
+        if (dropDownPopup.visible === true) {
+            dropDownPopup.close()
+        } else {
+            dropDownPopup.open()
+        }
+    }
+
     RowLayout {
         anchors {
             fill: parent
@@ -124,7 +143,7 @@ Item {
         spacing: 0
 
         Rectangle {
-            color: mouse.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
+            color: mouseTab.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
             Layout.fillHeight: true
             Layout.fillWidth: true
 
@@ -143,11 +162,18 @@ Item {
             }
 
             MouseArea {
-                id: mouse
+                id: mouseTab
                 anchors.fill: parent
                 hoverEnabled: true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                 onClicked: {
-                    platformTabRoot.bringIntoView()
+                    if (mouse.button == Qt.LeftButton) {
+                        platformTabRoot.bringIntoView()
+                    } else if (mouse.button == Qt.RightButton) {
+                        showMenu()
+                    } else if (mouse.button == Qt.MiddleButton) {
+                        closeTab()
+                    }
                 }
                 cursorShape: Qt.PointingHandCursor
             }
@@ -156,14 +182,21 @@ Item {
         Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: height
-            color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouse.containsMouse ? platformTabRoot.menuColor :"#444"
+            color: mouseMenu.containsMouse ? Qt.darker(Theme.palette.green, 1.15) : inView ? platformTabRoot.menuColor : mouseTab.containsMouse ? platformTabRoot.menuColor :"#444"
 
             MouseArea {
                 id: mouseMenu
                 anchors.fill: parent
                 hoverEnabled: true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                 onClicked: {
-                    dropDownPopup.open()
+                    if (mouse.button == Qt.LeftButton) {
+                        showMenu()
+                    } else if (mouse.button == Qt.RightButton) {
+                        showMenu()
+                    } else if (mouse.button == Qt.MiddleButton) {
+                        closeTab()
+                    }
                 }
                 cursorShape: Qt.PointingHandCursor
             }
@@ -194,19 +227,13 @@ Item {
         width: menu.width
         height: menu.height
         padding: 0
-        closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside
+        closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
 
         Rectangle {
             id: menu
             color: Qt.darker(Theme.palette.green, 1.15)
             width: platformTabRoot.width
             height: menuColumn.height + 1
-
-            signal clicked(int index)
-
-            onClicked: {
-                platformTabRoot.menuClicked(index)
-            }
 
             ColumnLayout {
                 id: menuColumn
