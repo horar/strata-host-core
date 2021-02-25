@@ -13,6 +13,7 @@ FocusScope {
     property variant rootItem
     property variant scrollbackModel
     property variant commandHistoryModel
+    property variant suggestionFilterModel
 
     property bool disableAllFiltering: false
     property var filterList: []

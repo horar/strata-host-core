@@ -38,6 +38,13 @@ void SciPlatformSettings::setCommandHistory(const QString &id, const QStringList
     rearrangeAndSave(index);
 }
 
+void SciPlatformSettings::setSuggestionFilter(const QString &id, const QStringList &list)
+{
+    int index = findBoardIndex(id);
+    settingsList_.at(index)->suggestionFilterList = list;
+    rearrangeAndSave(index);
+}
+
 void SciPlatformSettings::setExportPath(const QString &id, const QString &exportPath)
 {
     int index = findBoardIndex(id);
@@ -131,6 +138,7 @@ void SciPlatformSettings::loadData()
         SciPlatformSettingsItem *item = new SciPlatformSettingsItem();
         item->id = id;
         item->commandHistoryList = board.toObject().value(SCI_SETTINGS_CMD_HISTORY).toVariant().toStringList();
+        item->suggestionFilterList = board.toObject().value(SCI_FILTER_SUGGESTIONS).toVariant().toStringList();
         item->exportPath = board.toObject().value(SCI_EXPORT_PATH).toString();
         item->autoExportPath = board.toObject().value(SCI_AUTOEXPORT_PATH).toString();
 
@@ -148,6 +156,7 @@ void SciPlatformSettings::saveData()
         QJsonObject obj;
         obj.insert(SCI_SETTINGS_ID, item->id);
         obj.insert(SCI_SETTINGS_CMD_HISTORY, QJsonArray::fromStringList(item->commandHistoryList));
+        obj.insert(SCI_FILTER_SUGGESTIONS, QJsonArray::fromStringList(item->suggestionFilterList));
         obj.insert(SCI_EXPORT_PATH, item->exportPath);
         obj.insert(SCI_AUTOEXPORT_PATH, item->autoExportPath);
 

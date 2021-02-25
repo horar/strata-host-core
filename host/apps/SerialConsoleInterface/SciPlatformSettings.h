@@ -5,12 +5,14 @@
 
 const QString SCI_SETTINGS_ID("id");
 const QString SCI_SETTINGS_CMD_HISTORY("commandHistory");
+const QString SCI_FILTER_SUGGESTIONS("suggestionFilter");
 const QString SCI_EXPORT_PATH("exportPath");
 const QString SCI_AUTOEXPORT_PATH("autoExportPath");
 
 struct SciPlatformSettingsItem {
     QString id;
     QStringList commandHistoryList;
+    QStringList suggestionFilterList;
     QString exportPath;
     QString autoExportPath;
 };
@@ -26,6 +28,7 @@ public:
 
     SciPlatformSettingsItem* getBoardData(const QString &id) const;
     void setCommandHistory(const QString &id, const QStringList &list);
+    void setSuggestionFilter(const QString &id, const QStringList &list);
     void setExportPath(const QString &id, const QString &exportPath);
     void setAutoExportPath(const QString &id, const QString &autoExportPath);
 

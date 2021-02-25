@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     SciPlatform.cpp
     SciScrollbackModel.cpp
     SciCommandHistoryModel.cpp
+    SciSuggestionFilterModel.cpp
     SciPlatformSettings.cpp
     qml.qrc
     images/images.qrc

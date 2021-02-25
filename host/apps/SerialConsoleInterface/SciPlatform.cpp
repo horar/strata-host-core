@@ -21,12 +21,14 @@ SciPlatform::SciPlatform(
 
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
+    suggestionFilterModel_ = new SciSuggestionFilterModel(this);
 }
 
 SciPlatform::~SciPlatform()
 {
     scrollbackModel_->deleteLater();
     commandHistoryModel_->deleteLater();
+    suggestionFilterModel_->deleteLater();
 }
 
 int SciPlatform::deviceId()
@@ -117,6 +119,11 @@ SciScrollbackModel *SciPlatform::scrollbackModel()
 SciCommandHistoryModel *SciPlatform::commandHistoryModel()
 {
     return commandHistoryModel_;
+}
+
+SciSuggestionFilterModel *SciPlatform::suggestionFilterModel()
+{
+    return suggestionFilterModel_;
 }
 
 QString SciPlatform::errorString()
@@ -246,6 +253,11 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
 void SciPlatform::storeCommandHistory(const QStringList &list)
 {
     settings_->setCommandHistory(verboseName_, list);
+}
+
+void SciPlatform::storeSuggestionFilter(const QStringList &list)
+{
+    settings_->setSuggestionFilter(verboseName_, list);
 }
 
 void SciPlatform::storeExportPath(const QString &exportPath)

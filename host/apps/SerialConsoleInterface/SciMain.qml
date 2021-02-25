@@ -275,6 +275,7 @@ Item {
                 rootItem: sciMain
                 scrollbackModel: model.platform.scrollbackModel
                 commandHistoryModel: model.platform.commandHistoryModel
+                suggestionFilterModel: model.platform.suggestionFilterModel
             }
         }
     }
