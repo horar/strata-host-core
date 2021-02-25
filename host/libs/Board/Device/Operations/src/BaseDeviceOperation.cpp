@@ -2,8 +2,7 @@
 #include <DeviceOperationsStatus.h>
 
 #include "Commands/include/DeviceCommands.h"
-#include "DeviceOperationsConstants.h"
-
+#include <DeviceOperationsConstants.h>
 #include <CommandValidator.h>
 
 #include "logging/LoggingQtCategories.h"
@@ -21,7 +20,7 @@ BaseDeviceOperation::BaseDeviceOperation(const device::DevicePtr& device, Type t
     finished_(false), device_(device), status_(DEFAULT_STATUS)
 {
     responseTimer_.setSingleShot(true);
-    setResponseInterval();
+    responseTimer_.setInterval(RESPONSE_TIMEOUT);
 
     connect(this, &BaseDeviceOperation::sendCommand, this, &BaseDeviceOperation::handleSendCommand, Qt::QueuedConnection);
     connect(&responseTimer_, &QTimer::timeout, this, &BaseDeviceOperation::handleResponseTimeout);
@@ -101,9 +100,9 @@ QString BaseDeviceOperation::resolveErrorString(Result result)
     return QStringLiteral("Unknown error");
 }
 
-void BaseDeviceOperation::setResponseInterval(bool isTest)
+void BaseDeviceOperation::setResponseInterval(std::chrono::milliseconds responseInterval)
 {
-    responseTimer_.setInterval(isTest ? RESPONSE_TIMEOUT_TESTS : RESPONSE_TIMEOUT);
+    responseTimer_.setInterval(responseInterval);
 }
 
 bool BaseDeviceOperation::bootloaderMode() {
