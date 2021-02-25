@@ -2724,7 +2724,7 @@ function registerQmlAsLanguage() {
                         currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
                         return currentItems[bracketWord][propRange]
                     } else {
-                        return []
+                        return Object.values(suggestions)
                     }
                     // Edge Case 1
                 } else if (nextMatch.range.startLineNumber > nextBracketMatch.range.startLineNumber) {
@@ -2813,8 +2813,9 @@ function registerQmlAsLanguage() {
                             currentItems[splitContent[0].trim()] = {}
                         }
                         currentItems[splitContent[0].trim()][propRange] = qtObjectPropertyValues[splitContent[0].trim()]
-                        return { suggestions: [] }
                     }
+                        return { suggestions: suggestions }
+                    
                 }
                 var fetchedSuggestions = determineBracketsAndReturnSuggestions(model, position)
                 return { suggestions: fetchedSuggestions === undefined || fetchedSuggestions === null ? Object.values(suggestions) : fetchedSuggestions }
