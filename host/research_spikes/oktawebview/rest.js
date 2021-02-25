@@ -9,7 +9,8 @@ function xhr(method, url, headers, data, callback, error) {
         }
         if(xhr.readyState === 4 && xhr.status >= 300){
             console.log("response status: ", xhr.status)
-            error("response status code:" + xhr.status)
+            console.log("response body: ", xhr.responseText)
+            error("response status code: - body:" + xhr.status, xhr.responseText)
         }
     };
 

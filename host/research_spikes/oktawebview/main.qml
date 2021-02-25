@@ -14,12 +14,14 @@ Window {
     property string scope: "openid+profile"
     property string redirectUri: "www.onsemi.com"
     property string codeChallengeMethod: "S256"
-    property string tokenUrl: "https://onsemi.oktapreview.com/oauth2/v1/token"
-    property string userInfoUrl: "https://onsemi.oktapreview.com/oauth2/v1/userinfo"
-    property string oauthUrl: ""
+    property string authServerVersion: "v1"
+    property string tokenEndpoint: "/" + authServerVersion + "/token"
+    property string userInfoEndpoint: "/" + authServerVersion + "/userinfo"
+    property string authorizationServerUrl: "https://onsemi.oktapreview.com/oauth2"
+    property string webviewURL: ""
 
     function buildOAuthUrl(clientId, scope, redirectUri, codeChallengeMethod, codeChallenge){
-        oauthUrl = "https://onsemi.oktapreview.com/oauth2/v1/" +
+        webviewURL = authorizationServerUrl +"/" + authServerVersion + "/" +
                                  "authorize?client_id=" + clientId +
                                  "&response_type=code" +
                                  "&scope=" + scope +
@@ -38,7 +40,7 @@ Window {
             "Content-Type": "application/x-www-form-urlencoded"
         }
 
-        Rest.xhr("POST", tokenUrl, headers, request_body,
+        Rest.xhr("POST", authorizationServerUrl + tokenEndpoint, headers, request_body,
             function(response){
                 try{
                     console.log("Tokens:", response)
@@ -59,7 +61,7 @@ Window {
             "Accept": "application/json",
             "Authorization": "Bearer " + access_token
         }
-        Rest.xhr("GET", userInfoUrl, headers, '',
+        Rest.xhr("GET", authorizationServerUrl + userInfoEndpoint, headers, '',
             function(response){
                 console.log("User Info:", response)
             },
@@ -81,13 +83,13 @@ Window {
 
     Component.onCompleted: {
         buildOAuthUrl(clientId, scope, redirectUri, codeChallengeMethod, pkce.code_challenge)
-        console.log("oauthUrl:", oauthUrl)
+        console.log("Okta webview URL:", webviewURL)
     }
 
     WebView {
         id: webView
         anchors.fill: parent
-        url: oauthUrl
+        url: webviewURL
         onLoadingChanged: {
             if (loadRequest.errorString){
                 console.error(loadRequest.errorString);
