@@ -1,17 +1,19 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import "content-views"
+import QtQuick.Layouts 1.12
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
-import "qrc:/js/help_layout_manager.js" as Help
-
+import tech.strata.sgwidgets 1.0 as SGWidgets1
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
 
+import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/navigation_control.js" as NavigationControl
 
-Rectangle {
+import "content-views"
+
+Item {
     id: view
     anchors {
         fill: parent
@@ -49,9 +51,9 @@ Rectangle {
         }
 
         if (totalDocuments > 0) {
-            navigationSidebar.state = "open"
+            navigationSidebar.visible = true
         } else {
-            navigationSidebar.state = "close"
+            navigationSidebar.visible = false
         }
     }
 
@@ -134,56 +136,19 @@ Rectangle {
         }
     }
 
-    Rectangle {
-        id: divider
-        height: 1
-        anchors {
-            bottom: contentContainer.top
-            left: contentContainer.left
-            right: contentContainer.right
-        }
-
-        color: "#888"
-    }
-
-    Item {
+    SGWidgets1.SGSplitView {
         id: contentContainer
         anchors {
-            top: divider.bottom
-            right: view.right
-            left: view.left
-            bottom: view.bottom
+            fill: parent
         }
 
         Rectangle {
             id: navigationSidebar
             color: Qt.darker("#666")
-            anchors {
-                left: contentContainer.left
-                top: contentContainer.top
-                bottom: contentContainer.bottom
-            }
-            width: 0
+            Layout.fillHeight: true
+            Layout.minimumWidth: 100
+            implicitWidth: 300
             visible: false
-
-            states: [
-                // default state is "", width:0, visible:false
-                State {
-                    name: "open"
-                    PropertyChanges {
-                        target: navigationSidebar
-                        visible: true
-                        width: 300
-                    }
-                },
-                State {
-                    name: "close"
-                    PropertyChanges {
-                        target: navigationSidebar
-                        visible: false
-                    }
-                }
-            ]
 
             SGAccordion {
                 id: accordion
@@ -191,15 +156,10 @@ Rectangle {
                     fill: parent
                 }
 
-                // Optional Configuration:
-                openCloseTime: 80           // Default: 80 (how fast the sliders pop open)
-                statusIcon: "\u25B2"        // Default: "\u25B2" (triangle char)
                 contentsColor: Qt.darker("#555")
-                textOpenColor: "#fff"
                 textClosedColor: "#ccc"
-                headerOpenColor: "#666"
                 headerClosedColor: "#484848"
-                dividerColor: "grey"
+                dividerColor: contentsColor
                 exclusive: false
 
                 accordionItems: Column {
@@ -213,7 +173,7 @@ Rectangle {
                         visible: classDocuments.pdfListModel.count > 0
 
                         onOpenChanged: {
-                            if(open){
+                            if (open){
                                 pdfAccordion.openContent.start();
                             } else {
                                 pdfAccordion.closeContent.start();
@@ -232,11 +192,7 @@ Rectangle {
                             }
                         }
 
-                        Rectangle {
-                            width: pdfAlert.implicitWidth + height
-                            height: 14
-                            radius: height/2
-                            color: "green"
+                        HistoryStatus {
                             visible: documentsHistory.displayPdfUnseenAlert && !parent.open
                             anchors {
                                 right: parent.right
@@ -244,17 +200,9 @@ Rectangle {
                                 top: parent.top
                                 topMargin: (titleBarHeight - height) / 2
                             }
+                            text: "UPDATED"
 
                             property real titleBarHeight: parent.children[0].height
-
-                            Label {
-                                id: pdfAlert
-                                anchors.centerIn: parent
-                                text: "UPDATED"
-                                color: "white"
-                                font.bold: true
-                                font.pointSize: 10
-                            }
                         }
                     }
 
@@ -306,11 +254,7 @@ Rectangle {
                             }
                         }
 
-                        Rectangle {
-                            width: downloadAlert.implicitWidth + height
-                            height: 14
-                            radius: height/2
-                            color: "green"
+                        HistoryStatus {
                             visible: documentsHistory.displayPdfUnseenAlert && !parent.open
                             anchors {
                                 right: parent.right
@@ -318,82 +262,19 @@ Rectangle {
                                 top: parent.top
                                 topMargin: (titleBarHeight - height) / 2
                             }
+                            text: "UPDATED"
 
                             property real titleBarHeight: parent.children[0].height
-
-                            Label {
-                                id: downloadAlert
-                                anchors.centerIn: parent
-                                text: "UPDATED"
-                                color: "white"
-                                font.bold: true
-                                font.pointSize: 10
-                            }
                         }
                     }
                 }
             }
         }
 
-        Rectangle {
-            id: sidebarControl
-            width: 20 + rightDivider.width
-            anchors {
-                left: navigationSidebar.right
-                top: contentContainer.top
-                bottom: contentContainer.bottom
-            }
-            color: controlMouse.containsMouse ? "#444" : "#333"
-
-            Rectangle {
-                id: rightDivider
-                width: 1
-                anchors {
-                    top: sidebarControl.top
-                    bottom: sidebarControl.bottom
-                    right: sidebarControl.right
-                }
-                color: "#33b13b"
-            }
-
-            SGIcon {
-                id: control
-                anchors {
-                    centerIn: sidebarControl
-                }
-                iconColor: "white"
-                source: "images/angle-right-solid.svg"
-                height: 30
-                width: 30
-                rotation: navigationSidebar.visible ? 180 : 0
-            }
-
-            MouseArea {
-                id: controlMouse
-                anchors {
-                    fill: sidebarControl
-                }
-                onClicked: {
-                    if (navigationSidebar.state === "open") {
-                        navigationSidebar.state = "close"
-                    } else {
-                        navigationSidebar.state = "open"
-                    }
-                }
-
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-            }
-        }
-
         SGPdfViewer {
             id: pdfViewer
-            anchors {
-                left: sidebarControl.right
-                right: contentContainer.right
-                top: contentContainer.top
-                bottom: contentContainer.bottom
-            }
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
             url: ""
 
@@ -406,16 +287,13 @@ Rectangle {
                     topMargin: 10
                 }
             }
-        }
 
-        EmptyDocuments {
-            id: empty
-            visible: pdfViewer.url === "" && loading.visible === false
-            anchors {
-                left: sidebarControl.right
-                right: contentContainer.right
-                top: contentContainer.top
-                bottom: contentContainer.bottom
+            EmptyDocuments {
+                id: empty
+                visible: pdfViewer.url === "" && loading.visible === false
+                anchors {
+                    fill: parent
+                }
             }
         }
     }
