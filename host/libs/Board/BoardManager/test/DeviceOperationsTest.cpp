@@ -500,13 +500,13 @@ void DeviceOperationsTest::identifyLegacyTest()
 // TODO tests for DeviceOperations:
 // connect to device + init -> done
 // command combos:
-//   identify
-//   switchToBootloader
-//   startApplication
+//   identify -> done
+//   switchToBootloader -> done
+//   startApplication -> done
 //   flashFirmware
 //   backupFirmware
-//   cancelOperation
-// device error handling
+//   cancelOperation -> done
+// device error handling -> done
 // different command results (nextCommand)
 // reset
 // signals:
@@ -515,4 +515,4 @@ void DeviceOperationsTest::identifyLegacyTest()
 // TODO test device locking
 // TODO test concurrent operations with more devices (can be the same thread, but overlapping
 // operations)
-// TODO modify response timer (in DeviceOperations) for tests
+// TODO modify response timer (in DeviceOperations) for tests -> done
