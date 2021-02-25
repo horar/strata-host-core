@@ -9,7 +9,8 @@
 namespace strata::device::command {
 
 CmdStartBootloader::CmdStartBootloader(const device::DevicePtr& device) :
-    BaseDeviceCommand(device, QStringLiteral("start_bootloader")) { }
+    BaseDeviceCommand(device, QStringLiteral("start_bootloader"), CommandType::StartBootloader)
+{ }
 
 void CmdStartBootloader::setWaitTime(const std::chrono::milliseconds &waitTime)
 {

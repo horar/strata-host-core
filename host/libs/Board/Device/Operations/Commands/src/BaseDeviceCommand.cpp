@@ -4,8 +4,8 @@
 
 namespace strata::device::command {
 
-BaseDeviceCommand::BaseDeviceCommand(const DevicePtr& device, const QString& commandName) :
-    cmdName_(commandName), device_(device), ackOk_(false),
+BaseDeviceCommand::BaseDeviceCommand(const DevicePtr& device, const QString& commandName, CommandType cmdType) :
+    cmdName_(commandName), cmdType_(cmdType), device_(device), ackOk_(false),
     result_(CommandResult::InProgress), status_(operation::DEFAULT_STATUS) { }
 
 BaseDeviceCommand::~BaseDeviceCommand() { }
@@ -38,6 +38,10 @@ std::chrono::milliseconds BaseDeviceCommand::waitBeforeNextCommand() const {
 
 const QString BaseDeviceCommand::name() const {
     return cmdName_;
+}
+
+CommandType BaseDeviceCommand::type() const {
+    return cmdType_;
 }
 
 CommandResult BaseDeviceCommand::result() const {

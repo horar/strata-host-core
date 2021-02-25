@@ -22,6 +22,21 @@ enum class CommandResult : int {
     FinaliseOperation  // finish operation (there is no point in continuing)
 };
 
+enum class CommandType : int {
+    BackupFirmware,
+    FlashBootloader,
+    FlashFirmware,
+    GetFirmwareInfo,
+    RequestPlatformid,
+    SetAssistedPlatformId,
+    SetPlatformId,
+    StartApplication,
+    StartBackupFirmware,
+    StartBootloader,
+    StartFlashBootloader,
+    StartFlashFirmware
+};
+
 class BaseDeviceCommand {
 public:
     /*!
@@ -29,7 +44,7 @@ public:
      * \param name command name
      * \param device the device on which the operation is performed
      */
-    BaseDeviceCommand(const DevicePtr& device, const QString& name);
+    BaseDeviceCommand(const DevicePtr& device, const QString& name, CommandType cmdType);
 
     /*!
      * BaseDeviceCommand destructor.
@@ -95,6 +110,12 @@ public:
     virtual const QString name() const final;
 
     /*!
+     * Command type.
+     * \return type of command (value from CommandType enum)
+     */
+    virtual CommandType type() const final;
+
+    /*!
      * Command result.
      * \return result of command (value from CommandResult enum)
      */
@@ -113,6 +134,7 @@ protected:
     virtual void setDeviceBootloaderMode(bool inBootloaderMode) final;
     virtual void setDeviceApiVersion(Device::ApiVersion apiVersion) final;
     const QString cmdName_;
+    const CommandType cmdType_;
     const DevicePtr& device_;
     bool ackOk_;
     CommandResult result_;

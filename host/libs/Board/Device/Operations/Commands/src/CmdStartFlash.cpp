@@ -8,8 +8,11 @@
 namespace strata::device::command {
 
 CmdStartFlash::CmdStartFlash(const device::DevicePtr& device, int size, int chunks, const QString& md5, bool flashFirmware) :
-    BaseDeviceCommand(device, (flashFirmware) ? QStringLiteral("start_flash_firmware") : QStringLiteral("start_flash_bootloader")),
-    size_(size), chunks_(chunks), md5_(md5.toUtf8()), flashFirmware_(flashFirmware) { }
+    BaseDeviceCommand(device,
+                      (flashFirmware) ? QStringLiteral("start_flash_firmware") : QStringLiteral("start_flash_bootloader"),
+                      (flashFirmware) ? CommandType::StartFlashFirmware : CommandType::StartFlashBootloader),
+    size_(size), chunks_(chunks), md5_(md5.toUtf8()), flashFirmware_(flashFirmware)
+{ }
 
 QByteArray CmdStartFlash::message() {
     QByteArray cmd = (flashFirmware_) ? "start_flash_firmware" : "start_flash_bootloader";
