@@ -156,7 +156,7 @@ Window {
             enabled: (Server.isConnected === true)
             Connections {
                 target: disconnectBtn
-                onClicked: Server.disconnectTcpSocket()
+                onClicked: Server.disconnectTcpSocket(clientsBox.model[clientsBox.currentIndex])
             }
         }
 
@@ -256,7 +256,7 @@ Window {
                 Connections {
                     target: sendMsgBtn
                     onClicked: {
-                        Server.sendTcpMessge(sendMsgTextField.text)
+                        Server.sendTcpMessge(sendMsgTextField.text, clientsBox.model[clientsBox.currentIndex])
                         sendMsgTextField.text = qsTr("")
                     }
                 }

@@ -20,10 +20,10 @@ Server::Server(QObject *parent)
 Server::~Server()
 {
     qDebug() << "Free up memory";
-    QHash<QTcpSocket *, quint16>::const_iterator i;
+    QHash<quint16, QTcpSocket *>::const_iterator i;
     for(i = tcpSockets_.constBegin(); i != tcpSockets_.constEnd(); i++) {
         qDebug() << i.key() << ':' << i.value();
-        delete i.key();
+        delete i.value();
     }
 }
 
@@ -90,27 +90,27 @@ void Server::connectToStrataClient(QHostAddress clientAddress, qint16 port)
         qDebug() << "tcp: failed to connect.";
     }
 
-    sendTcpMessge("Strata Host!", tcpSocket);
+    sendTcpMessge("Strata Host!", clientNumber_);
 }
 
-void Server::sendTcpMessge(QByteArray message, QTcpSocket *tcpSocket)
+void Server::sendTcpMessge(QByteArray message, quint16 clientNumber)
 {
     tcpBuffer_ += "Host: " + message + '\n';
     emit tcpBufferUpdated();
-    tcpSocket->write(message);
+    tcpSockets_[clientNumber]->write(message);
 }
 
-//void Server::disconnectTcpSocket()
-//{
-//    qDebug() << "tcp: Disconnecting socket...";
+void Server::disconnectTcpSocket(quint16 clientNumber)
+{
+    qDebug() << "tcp: Disconnecting socket client number: " << clientNumber;
 
-//    if (tcpSocket_->state() != QTcpSocket::ConnectedState) {
-//        qDebug() << "tcp: socket not connected.";
-//        return;
-//    }
+    if (tcpSockets_[clientNumber]->state() != QTcpSocket::ConnectedState) {
+        qDebug() << "tcp: socket not connected.";
+        return;
+    }
 
-//    tcpSocket_->disconnectFromHost();
-//}
+    tcpSockets_[clientNumber]->disconnectFromHost();
+}
 
 QString Server::getHostAddress()
 {
@@ -144,11 +144,11 @@ QList<QVariant> Server::getAvailableClients() const
 QTcpSocket * Server::tcpSocketSetup()
 {
     QTcpSocket *tcpSocket = new QTcpSocket();
-    tcpSockets_[tcpSocket] = ++clientNumber_;
+    tcpSockets_[++clientNumber_] = tcpSocket;
     quint16 currentClient = clientNumber_;
 
     connect(tcpSocket, &QTcpSocket::connected, this, [this, tcpSocket, currentClient]() {
-        qDebug() << "tcp: socket connected" << tcpSocket << ':' << tcpSockets_[tcpSocket];
+        qDebug() << "tcp: socket connected" << currentClient << ':' << tcpSockets_[currentClient];
         clientAddress_ = tcpSocket->peerAddress().toString();
         availableClients_.append(currentClient);
         emit connectionStatusUpdated();
@@ -156,8 +156,8 @@ QTcpSocket * Server::tcpSocketSetup()
         emit availableClientsUpdated();
     });
 
-    connect(tcpSocket, &QTcpSocket::disconnected, this, [this, tcpSocket,currentClient]() {
-        qDebug() << "tcp: socket disconnected" << tcpSocket << ':' << tcpSockets_[tcpSocket];
+    connect(tcpSocket, &QTcpSocket::disconnected, this, [this,currentClient]() {
+        qDebug() << "tcp: socket disconnected" << currentClient << ':' << tcpSockets_[currentClient];
         clientAddress_ = "";
         availableClients_.removeAll(currentClient);
         emit connectionStatusUpdated();
@@ -168,15 +168,15 @@ QTcpSocket * Server::tcpSocketSetup()
     connect(tcpSocket, &QTcpSocket::bytesWritten, this,
         [](qint64 bytesWritten) { qDebug() << "tcp: bytes written" << bytesWritten; });
 
-    connect(tcpSocket, &QTcpSocket::readyRead, this, [this, tcpSocket]() {
+    connect(tcpSocket, &QTcpSocket::readyRead, this, [this, tcpSocket,currentClient]() {
         qDebug() << "tcp: New message received.";
         QByteArray data;
         data = tcpSocket->readAll();
-        qDebug() << "tcp: message:" << QString(data) << tcpSocket << ':' << tcpSockets_[tcpSocket];;
-        setTcpBuffer(data, tcpSocket);
+        qDebug() << "tcp: message:" << QString(data) << tcpSocket << ':' << tcpSockets_[currentClient];;
+        setTcpBuffer(data, currentClient);
     });
 
-    qDebug() << "tcp: Client:" << tcpSockets_[tcpSocket] << "got address" << tcpSocket;
+    qDebug() << "tcp: Client:" << clientNumber_ << "got address" << tcpSockets_[clientNumber_];
 
     return tcpSocket;
 }
@@ -187,8 +187,8 @@ void Server::setUdpBuffer(const QByteArray &newDatagram)
     emit udpBufferUpdated();
 }
 
-void Server::setTcpBuffer(const QByteArray &newData, QTcpSocket *tcpSocket)
+void Server::setTcpBuffer(const QByteArray &newData, quint16 clientNumber)
 {
-    tcpBuffer_ += "Client "+ QString::number(tcpSockets_[tcpSocket]) + ": " + newData + '\n';
+    tcpBuffer_ += "Client "+ QString::number(clientNumber) + ": " + newData + '\n';
     emit tcpBufferUpdated();
 }
