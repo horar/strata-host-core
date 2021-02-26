@@ -336,7 +336,7 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
 }
 
 std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector<QByteArray> &responses,
-                                                                 const rapidjson::Document &requestDoc)
+                                                               const rapidjson::Document &requestDoc)
 {
     std::vector<QByteArray> retVal;
     std::map<QString, QString> replacements;
