@@ -27,7 +27,7 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     // jumps to bootloader, it will have a hardware fault which requires board to be reset.
     std::unique_ptr<CmdWait> cmdWait = std::make_unique<CmdWait>(
                 device_,
-                std::chrono::milliseconds(5500),
+                BOOTLOADER_5_SEC_BOOT_TIME,
                 QStringLiteral("Waiting for bootloader to start."));
     cmdWait_ = cmdWait.get();
 
