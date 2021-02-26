@@ -32,10 +32,6 @@ bool BaseDeviceCommand::logSendMessage() const {
     return true;
 }
 
-std::chrono::milliseconds BaseDeviceCommand::waitBeforeNextCommand() const {
-    return std::chrono::milliseconds(0);
-}
-
 const QString BaseDeviceCommand::name() const {
     return cmdName_;
 }

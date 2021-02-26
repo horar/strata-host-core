@@ -122,12 +122,15 @@ void BaseDeviceOperation::handleSendCommand()
                 if (description.isEmpty() == false) {
                     qCInfo(logCategoryDeviceOperations) << device_ << description;
                 }
-                qCInfo(logCategoryDeviceOperations) << device_ << "Waiting" << waitTime.count()
-                    << "milliseconds before sending next command.";
+                qCInfo(logCategoryDeviceOperations) << device_ << "Waiting " << waitTime.count()
+                    << " milliseconds before sending next command.";
+                QTimer::singleShot(waitTime, this, [this](){
+                    handleProcessCmdResult();
+                });
+            } else {
+                qCDebug(logCategoryDeviceOperations) << device_ << "Skip waiting before the next command.";
+                emit processCmdResult(QPrivateSignal());
             }
-            QTimer::singleShot(waitTime, this, [this](){
-                handleProcessCmdResult();
-            });
         } else {
             QString errStr(QStringLiteral("Unexpected 'wait' command error."));
             qCCritical(logCategoryDeviceOperations) << device_ << errStr;
@@ -186,6 +189,7 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray data)
                     const QString ackError = payload[JSON_RETURN_STRING].GetString();
                     qCWarning(logCategoryDeviceOperations) << device_ << "ACK for '" << command->name() << "' command is not OK: '" << ackError << "'.";
                     command->commandRejected();
+
                     emit processCmdResult(QPrivateSignal());
                 }
             } else {
@@ -219,7 +223,7 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray data)
                     }
                 }
 
-                QTimer::singleShot(command->waitBeforeNextCommand(), this, [this](){ handleProcessCmdResult(); });
+                emit processCmdResult(QPrivateSignal());
             }
         }
     }

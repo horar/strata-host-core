@@ -1,8 +1,6 @@
 #ifndef BASE_DEVICE_COMMAND_H
 #define BASE_DEVICE_COMMAND_H
 
-#include <chrono>
-
 #include <QByteArray>
 #include <QString>
 
@@ -97,12 +95,6 @@ public:
      * \return true if information about sent message should be logged, otherwise false
      */
     virtual bool logSendMessage() const;
-
-    /*!
-     * Returns how long to wait before sending next command.
-     * \return number of milliseconds
-     */
-    virtual std::chrono::milliseconds waitBeforeNextCommand() const;
 
     /*!
      * Command name.
