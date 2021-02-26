@@ -241,7 +241,7 @@ Item {
     }
 
     function destroyNotification(uuid){
-        if(uuid !== null){
+        if(uuid !== null && uuid !== ""){
             for(var i = 0;i < model_.count; i++){
                 if(model_.get(i).uuid === uuid){
                     model_.remove(i)
