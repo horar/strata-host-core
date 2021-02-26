@@ -20,6 +20,7 @@ var flags = { sgwidgetsFlag: false, qtQuickFlag: false }
 var suggestions = {}
 var currentItems = {}
 var editor = null
+var typing = false
 
 const qtQuick = [
     {
@@ -2790,14 +2791,36 @@ function registerQmlAsLanguage() {
 
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
-            triggerCharacters: ['}', '.', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+            triggerCharacters: ['}', '.', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',':'],
             provideCompletionItems: (model, position) => {
                 var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
                 var currWords = currText.replace("\t", "").split(" ");
                 var word = model.getWordUntilPosition(position);
                 var active = currWords[currWords.length - 1]
+                var fullModelRange = model.getFullModelRange()
+                var getFirstBracket = model.findNextMatch("{",{lineNumber: fullModelRange.startLineNumber, column: fullModelRange.startColumn})
+                var getLastBracket = model.findPreviousMatch("}",{lineNumber: fullModelRange.endLineNumber, column: fullModelRange.endColumn})
                 // check for range to see if position exists
                 // These are closing characters for the auto complete
+                if(position.lineNumber < getFirstBracket.range.startLineNumber || position.lineNumber > getLastBracket.range.startLineNumber){
+                        editor.updateOptions({
+                            suggest: {
+                                showFunctions: false,
+                                showClasses: true,
+                                showKeyWords: false,
+                                showProperties: false,
+                            }
+                        })
+                } else {
+                    editor.updateOptions({
+                        suggest: {
+                            showFunctions: true,
+                            showClasses: true,
+                            showKeyWords: true,
+                            showProperties: true,
+                        }
+                    })
+                }
                 getTypeID(model)
                 if (active.includes(".")) {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
@@ -2856,9 +2879,16 @@ function registerQmlAsLanguage() {
     }
 
     function getTypeID(model) {
+        model.onDidChangeContent((event)=>{
+            if(event.changes.text !== ""){
+                typing = true
+            } else {
+                typing = false
+            }
+        })
         var getFullRange = model.getFullModelRange()
         var position = { lineNumber: getFullRange.endLineNumber, column: getFullRange.endColumn }
-        while (position.lineNumber > getFullRange.startLineNumber) {
+        while (position.lineNumber > getFullRange.startLineNumber && !typing) {
             var getPrevIDPosition = model.findPreviousMatch("id:", position, false, false)
             if (position.lineNumber < getPrevIDPosition.range.startLineNumber) {
                 break;
