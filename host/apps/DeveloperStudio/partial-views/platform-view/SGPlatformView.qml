@@ -14,12 +14,12 @@ StackLayout {
 
     currentIndex: {
         switch (model.view) {
-            case "collateral":
-                return 1
-            case "settings":
-                return 2
-            default: // case "control":
-                return 0
+        case "collateral":
+            return 1
+        case "settings":
+            return 2
+        default: // case "control":
+            return 0
         }
     }
 
@@ -41,6 +41,11 @@ StackLayout {
                                     platformMetaDataInitialized
 
     property bool documentsHistoryDisplayed: false
+    readonly property bool platformOutOfDate: controlViewIsOutOfDate || firmwareIsOutOfDate
+
+    onPlatformOutOfDateChanged: {
+        launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
+    }
 
     onFullyInitializedChanged: {
         initialize()
@@ -133,16 +138,16 @@ StackLayout {
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed
                 Notifications.createNotification(
-                    "Document updates for this platform",
-                    Notifications.Info,
-                    "current",
-                    {
-                        "description": description,
-                        "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                        "actions": [documentsHistoryShowDocumentsView, ok, doNotNotifyOnCollateralDocumentUpdate],
-                        "timeout": 0
-                    }
-                )
+                            "Document updates for this platform",
+                            Notifications.Info,
+                            "current",
+                            {
+                                "description": description,
+                                "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                                "actions": [documentsHistoryShowDocumentsView, ok, doNotNotifyOnCollateralDocumentUpdate],
+                                "timeout": 0
+                            }
+                            )
             }
         }
     }
@@ -159,16 +164,50 @@ StackLayout {
         }
     }
 
-    SGUpdateNotificationPopup {
-        visible: (controlViewIsOutOfDate || firmwareIsOutOfDate) &&
-                 NavigationControl.userSettings.notifyOnFirmwareUpdate &&
-                 model.view !== "settings" &&  // don't show when PlatformSettings already in view
-                 platformStack.visible         // show only when this PlatformView is visible
+    Action {
+        id: close
+        text: "Okay"
+        onTriggered: {}
+    }
 
-        onVisibleChanged: {
-            if (visible) {
-                visible = true // break above binding so it only shows once per PlatformView instantiation
+    Action {
+        id: disableNotifyOnFirmwareUpdate
+        text: "Disable notifications for firmware/software updates"
+        onTriggered: {
+            NavigationControl.userSettings.notifyOnFirmwareUpdate = false
+            NavigationControl.userSettings.saveSettings()
+        }
+    }
+
+    Action {
+        id: goToSettings
+        text: "Go to settings"
+        onTriggered: {
+            openSettings()
+        }
+    }
+
+    function launchOutOfDateNotification(controlViewOutOfDate,firmwareOutOfDate){
+        if((controlViewOutOfDate || firmwareOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate && model.view !== "settings" && platformStack.visible){
+            var description = ""
+            if(firmwareOutOfDate && controlViewOutOfDate){
+                description = "Newer versions of firmware and software are available for this plaform."
+            } else if(firmwareOutOfDate){
+                description = "A newer version of firmware is available for this plaform."
+            } else{
+                description = "A newer version of software is available for this plaform."
             }
+
+            Notifications.createNotification("Firmware and software updates for this platform",
+                                                Notifications.Info,
+                                                "current",
+                                                {
+                                                    "description": description,
+                                                    "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                                                    "actions": [close,goToSettings,disableNotifyOnFirmwareUpdate],
+                                                    "timeout": 0
+                                                }
+                                             )
         }
     }
 
