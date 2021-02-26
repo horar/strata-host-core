@@ -46,7 +46,6 @@ Rectangle {
     }
 
     property alias platformTabListView: platformTabListView
-    property var mainWindow
 
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
