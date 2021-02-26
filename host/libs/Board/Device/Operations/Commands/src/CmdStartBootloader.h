@@ -8,9 +8,6 @@ namespace strata::device::command {
 class CmdStartBootloader : public BaseDeviceCommand {
 public:
     explicit CmdStartBootloader(const device::DevicePtr& device);
-
-    void setWaitTime(const std::chrono::milliseconds &waitTime);
-
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
 };
