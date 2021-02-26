@@ -542,7 +542,7 @@ void DeviceOperationsV2Test::noResponseEmbeddedTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
         new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    deviceOperation_->setResponseInterval(RESPONSE_TIMEOUT_TESTS);
+    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_app);
 
@@ -567,7 +567,7 @@ void DeviceOperationsV2Test::noResponseAssistedTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
         new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    deviceOperation_->setResponseInterval(RESPONSE_TIMEOUT_TESTS);
+    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_app);
 
@@ -595,7 +595,7 @@ void DeviceOperationsV2Test::invalidValueV2Test()
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    deviceOperation_->setResponseInterval(RESPONSE_TIMEOUT_TESTS);
+    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponseForCommand(CommandResponseMock::MockResponse::invalid, CommandResponseMock::Command::get_firmware_info);
 

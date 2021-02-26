@@ -102,7 +102,7 @@ public:
      */
      static QString resolveErrorString(Result result);
 
-     void setResponseInterval(std::chrono::milliseconds responseInterval);
+     void setResponseTimeout(std::chrono::milliseconds responseInterval);
 
 protected:
     /*!

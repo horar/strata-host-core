@@ -100,7 +100,7 @@ QString BaseDeviceOperation::resolveErrorString(Result result)
     return QStringLiteral("Unknown error");
 }
 
-void BaseDeviceOperation::setResponseInterval(std::chrono::milliseconds responseInterval)
+void BaseDeviceOperation::setResponseTimeout(std::chrono::milliseconds responseInterval)
 {
     responseTimer_.setInterval(responseInterval);
 }
