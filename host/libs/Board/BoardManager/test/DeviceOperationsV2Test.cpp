@@ -3,16 +3,18 @@
 
 #include <CommandValidator.h>
 #include <rapidjson/writer.h>
-#include "CommandResponseMock.h"
 #include <Device/Operations/Identify.h>
 #include <Device/Operations/StartBootloader.h>
 #include <Device/Operations/StartApplication.h>
-#include "DeviceMock.h"
 #include "DeviceOperationsV2Test.h"
 
 using strata::device::operation::BaseDeviceOperation;
+using strata::device::mock::MockCommand;
+using strata::device::mock::MockResponse;
+using strata::device::mock::MockVersion;
 
 namespace operation = strata::device::operation;
+namespace test_commands = strata::device::mock::test_commands;
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT_TESTS(100);
 
@@ -29,10 +31,10 @@ void DeviceOperationsV2Test::init()
     operationErrorCount_ = 0;
     operationFinishedCount_ = 0;
     operationTimeoutCount_ = 0;
-    device_ = std::make_shared<DeviceMock>(1234, "Mock device");
-    device_->mockSetVersion(CommandResponseMock::Version::version2);
-    bool openRes = device_->open();
-    QVERIFY(openRes);
+    device_ = std::make_shared<strata::device::mock::MockDevice>(1234, "Mock device", true);
+    QVERIFY(device_->mockSetVersion(MockVersion::version2));
+    QVERIFY(!device_->mockIsOpened());
+    QVERIFY(device_->open());
 }
 
 void DeviceOperationsV2Test::cleanup()
@@ -101,7 +103,7 @@ void DeviceOperationsV2Test::identifyEmbeddedApplicationTest()
         identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_app);
+    device_->mockSetResponse(MockResponse::embedded_app);
 
     deviceOperation_->run();
     QCOMPARE(deviceOperation_->deviceId(), 1234);
@@ -148,7 +150,7 @@ void DeviceOperationsV2Test::identifyEmbeddedBootloaderTest()
         identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_btloader);
+    device_->mockSetResponse(MockResponse::embedded_btloader);
 
     deviceOperation_->run();
     QCOMPARE(deviceOperation_->deviceId(), 1234);
@@ -195,7 +197,7 @@ void DeviceOperationsV2Test::identifyAssistedApplicationTest()
         identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_app);
+    device_->mockSetResponse(MockResponse::assisted_app);
 
     deviceOperation_->run();
     QCOMPARE(deviceOperation_->deviceId(), 1234);
@@ -244,7 +246,7 @@ void DeviceOperationsV2Test::identifyAssistedBootloaderTest()
         identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_btloader);
+    device_->mockSetResponse(MockResponse::assisted_btloader);
 
     deviceOperation_->run();
     QCOMPARE(deviceOperation_->deviceId(), 1234);
@@ -293,7 +295,7 @@ void DeviceOperationsV2Test::identifyAssistedNoBoardTest()
         identifyOperation, &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_no_board);
+    device_->mockSetResponse(MockResponse::assisted_no_board);
 
     deviceOperation_->run();
     QCOMPARE(deviceOperation_->deviceId(), 1234);
@@ -341,7 +343,7 @@ void DeviceOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
 
     startBootloaderOperation->setWaitTime(std::chrono::milliseconds(1));
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_app);
+    device_->mockSetResponse(MockResponse::embedded_app);
 
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
@@ -371,7 +373,7 @@ void DeviceOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
         new operation::StartApplication(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_app);
+    device_->mockSetResponse(MockResponse::embedded_app);
 
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
@@ -415,7 +417,7 @@ void DeviceOperationsV2Test::switchToBootloaderAndBackAssistedTest()
 
     startBootloaderOperation->setWaitTime(std::chrono::milliseconds(1));
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_app);
+    device_->mockSetResponse(MockResponse::assisted_app);
 
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
@@ -485,10 +487,10 @@ void DeviceOperationsV2Test::cancelOperationEmbeddedTest()
         new operation::StartBootloader(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_btloader);
+    device_->mockSetResponse(MockResponse::embedded_btloader);
 
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(device_->mockGetMsgCount(), 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(device_->mockGetRecordedMessagesCount(), 1, 1000);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 1);
@@ -516,10 +518,10 @@ void DeviceOperationsV2Test::cancelOperationAssistedTest()
         new operation::StartBootloader(device_), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_btloader);
+    device_->mockSetResponse(MockResponse::assisted_btloader);
 
     deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(device_->mockGetMsgCount(), 1, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(device_->mockGetRecordedMessagesCount(), 1, 1000);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 1);
@@ -544,7 +546,7 @@ void DeviceOperationsV2Test::noResponseEmbeddedTest()
     connectHandlers(deviceOperation_.data());
     deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::embedded_app);
+    device_->mockSetResponse(MockResponse::embedded_app);
 
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
@@ -569,7 +571,7 @@ void DeviceOperationsV2Test::noResponseAssistedTest()
     connectHandlers(deviceOperation_.data());
     deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
 
-    device_->mockSetResponse(CommandResponseMock::MockResponse::assisted_app);
+    device_->mockSetResponse(MockResponse::assisted_app);
 
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
@@ -597,7 +599,7 @@ void DeviceOperationsV2Test::invalidValueV2Test()
     connectHandlers(deviceOperation_.data());
     deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
 
-    device_->mockSetResponseForCommand(CommandResponseMock::MockResponse::invalid, CommandResponseMock::Command::get_firmware_info);
+    device_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::get_firmware_info);
 
     deviceOperation_->run();
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);

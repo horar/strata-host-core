@@ -2,7 +2,7 @@
 
 #include <rapidjson/document.h>
 #include <QObject>
-#include "DeviceMock.h"
+#include <Device/Mock/MockDevice.h>
 #include "QtTest.h"
 
 namespace strata::device::operation {
@@ -50,7 +50,7 @@ private:
 
     void connectHandlers(strata::device::operation::BaseDeviceOperation* operation);
 
-    std::shared_ptr<DeviceMock> device_;
+    std::shared_ptr<strata::device::mock::MockDevice> device_;
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;

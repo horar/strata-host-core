@@ -13,10 +13,8 @@ add_executable(${PROJECT_NAME}-test
     BoardManagerDerivate.cpp
     BoardManagerIntegrationTest.cpp
     BoardManagerTest.cpp
-    DeviceMock.cpp
     DeviceOperationsTest.cpp
     DeviceOperationsV2Test.cpp
-    CommandResponseMock.cpp
     main.cpp
 )
 
