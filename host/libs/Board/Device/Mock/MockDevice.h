@@ -17,7 +17,7 @@ public:
      * @param deviceId device ID
      * @param name device name
      */
-    MockDevice(const int deviceId, const QString& name, const bool saveMessages = false);
+    MockDevice(const int deviceId, const QString& name, const bool saveMessages);
 
     /**
      * MockDevice destructor
@@ -63,7 +63,8 @@ public:
     bool mockSetSaveMessages(bool saveMessages);
     bool mockSetCommand(MockCommand command);
     bool mockSetResponse(MockResponse response);
-    bool mockSetCommandForResponse(MockCommand command, MockResponse response);
+    bool mockSetResponseForCommand(MockResponse response, MockCommand command);
+    bool mockSetVersion(MockVersion version);
 
 private:
     virtual bool sendMessage(const QByteArray msg, quintptr lockId) override;

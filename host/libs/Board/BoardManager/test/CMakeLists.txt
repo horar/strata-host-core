@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}-test
     BoardManagerIntegrationTest.cpp
     BoardManagerTest.cpp
     DeviceOperationsTest.cpp
+    DeviceOperationsV2Test.cpp
     main.cpp
 )
 

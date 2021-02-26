@@ -163,10 +163,14 @@ bool MockDevice::mockSetResponse(MockResponse response)
     return control_.mockSetResponse(response);
 }
 
-bool MockDevice::mockSetCommandForResponse(MockCommand command,
-                                           MockResponse response)
+bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand command)
 {
-    return control_.mockSetCommandForResponse(command, response);
+    return control_.mockSetResponseForCommand(response, command);
+}
+
+bool MockDevice::mockSetVersion(MockVersion version)
+{
+    return control_.mockSetVersion(version);
 }
 
 }  // namespace strata::device::mock

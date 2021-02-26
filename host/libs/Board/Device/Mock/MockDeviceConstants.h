@@ -23,11 +23,22 @@ enum class MockResponse {
     no_payload,
     no_JSON,
     nack,
-    invalid
+    invalid,
+    embedded_app,
+    assisted_app,
+    assisted_no_board,
+    embedded_btloader,
+    assisted_btloader
 };
 Q_ENUM_NS(MockResponse)
 
-}
+enum class MockVersion {
+    version1,
+    version2
+};
+Q_ENUM_NS(MockVersion)
+
+} // namespace strata::device::mock
 
 // these are global constants for testing
 namespace strata::device::mock::test_commands {
@@ -60,11 +71,85 @@ R"({
         "value":"get_firmware_info",
         "payload": {
             "bootloader": {
-                "version":"1.1.1",
+                "version":"1.0.0",
+                "date":"20180401_123420",
+                "checksum":"0f30116f6544a35404f6d3a24b6aab60"
+            },
+            "application": {
+                "version":"1.0.0",
+                "date":"20180401_131410",
+                "checksum":"0f30116f6544a35404f6d3a24b6aab60"
+            }
+        }
+    }
+})";
+
+const QByteArray get_firmware_info_response_no_bootloader =
+R"({
+    "notification": {
+        "value":"get_firmware_info",
+        "payload": {
+            "bootloader": {},
+            "application": {
+                "version":"1.0.0",
+                "date":"20180401_131410",
+                "checksum":"0f30116f6544a35404f6d3a24b6aab60"
+            }
+        }
+    }
+})";
+
+const QByteArray get_firmware_info_response_ver2_application =
+R"({
+    "notification": {
+        "value":"get_firmware_info",
+        "payload": {
+            "api_version":"2.0",
+            "active":"application",
+            "bootloader": {
+                "version":"1.2.123",
                 "date":"20180401_123420"
             },
             "application": {
-                "version":"1.1.2",
+                "version":"1.1234.1",
+                "date":"20180401_131410"
+            }
+        }
+    }
+})";
+
+const QByteArray get_firmware_info_response_ver2_bootloader =
+R"({
+    "notification": {
+        "value":"get_firmware_info",
+        "payload": {
+            "api_version":"2.0",
+            "active":"bootloader",
+            "bootloader": {
+                "version":"1.2.123",
+                "date":"20180401_123420"
+            },
+            "application": {
+                "version":"1.1234.1",
+                "date":"20180401_131410"
+            }
+        }
+    }
+})";
+
+const QByteArray get_firmware_info_response_ver2_invalid =
+R"({
+    "notification": {
+        "value":"get_firmware_info",
+        "payload": {
+            "api_version":-1,
+            "active":"both",
+            "bootloader": {
+                "version":-1,
+                "date":"20180401_123420"
+            },
+            "application": {
+                "version":-1,
                 "date":"20180401_131410"
             }
         }
@@ -113,6 +198,103 @@ R"({
             "platform_id_version":"2.0",
             "verbose_name":"Mock Board"
         }
+    }
+})";
+
+const QByteArray request_platform_id_response_ver2_embedded =
+R"({
+    "notification":{
+        "value":"platform_id",
+        "payload":{
+            "name":"LED Driver",
+            "controller_type":1,
+            "platform_id":"00000000-0000-0000-0000-000000000000",
+            "class_id":"00000000-0000-0000-0000-000000000000",
+            "board_count":1
+        }
+    }
+})";
+
+const QByteArray request_platform_id_response_ver2_assisted =
+R"({
+    "notification":{
+       "value":"platform_id",
+       "payload":{
+          "name":"LED Driver",
+          "controller_type":2,
+          "platform_id":"00000000-0000-0000-0000-000000000000",
+          "class_id":"00000000-0000-0000-0000-000000000000",
+          "board_count":1,
+          "controller_platform_id":"00000000-0000-0000-0000-000000000000",
+          "controller_class_id":"00000000-0000-0000-0000-000000000000",
+          "controller_board_count":1,
+          "fw_class_id":"00000000-0000-0000-0000-000000000000"
+       }
+    }
+})";
+
+const QByteArray request_platform_id_response_ver2_assisted_without_board =
+R"({
+    "notification":{
+       "value":"platform_id",
+       "payload":{
+          "name":"LED Driver",
+          "controller_type":2,
+          "controller_platform_id":"00000000-0000-0000-0000-000000000000",
+          "controller_class_id":"00000000-0000-0000-0000-000000000000",
+          "controller_board_count":1,
+          "fw_class_id":"00000000-0000-0000-0000-000000000000"
+       }
+    }
+})";
+
+const QByteArray request_platform_id_response_ver2_assisted_invalid =
+R"({
+    "notification":{
+       "value":"platform_id",
+       "payload":{
+          "name":null,
+          "controller_type":2,
+          "platform_id":"00000000-0000-0000-0000-000000000000",
+          "class_id":"00000000-0000-0000-0000-000000000000",
+          "board_count":1,
+          "controller_platform_id":-1,
+          "controller_class_id":-1,
+          "controller_board_count":1,
+          "fw_class_id":"00000000-0000-0000-0000-000000000000"
+       }
+    }
+})";
+
+const QByteArray request_platform_id_response_ver2_embedded_bootloader =
+R"({
+    "notification":{
+        "value":"platform_id",
+        "payload":{
+            "name":"Bootloader",
+            "controller_type":1,
+            "platform_id":"00000000-0000-0000-0000-000000000000",
+            "class_id":"00000000-0000-0000-0000-000000000000",
+            "board_count":1
+        }
+    }
+})";
+
+const QByteArray request_platform_id_response_ver2_assisted_bootloader =
+R"({
+    "notification":{
+       "value":"platform_id",
+       "payload":{
+          "name":"Bootloader",
+          "controller_type":2,
+          "platform_id":"00000000-0000-0000-0000-000000000000",
+          "class_id":"00000000-0000-0000-0000-000000000000",
+          "board_count":1,
+          "controller_platform_id":"6057eb97-5e00-4adc-8bff-9c5e8205b353",
+          "controller_class_id":"6057eb97-5e00-4adc-8bff-9c5e8205b353",
+          "controller_board_count":1234,
+          "fw_class_id": "7bdcea96-0fb8-41de-9822-dec20ae1032a"
+       }
     }
 })";
 

@@ -70,7 +70,7 @@ bool MockDeviceControl::mockSetResponse(MockResponse response)
     return false;
 }
 
-bool MockDeviceControl::mockSetCommandForResponse(MockCommand command, MockResponse response)
+bool MockDeviceControl::mockSetResponseForCommand(MockResponse response, MockCommand command)
 {
     if ((command_ != command) || (response_ != response)) {
         command_ = command;
@@ -81,6 +81,17 @@ bool MockDeviceControl::mockSetCommandForResponse(MockCommand command, MockRespo
     }
     qCDebug(logCategoryMockDevice) << "Command-response pair already configured to"
                                    << command_<< ":" << response_;
+    return false;
+}
+
+bool MockDeviceControl::mockSetVersion(MockVersion version)
+{
+    if (version_ != version) {
+        version_ = version;
+        qCDebug(logCategoryMockDevice) << "Configured version to" << version_;
+        return true;
+    }
+    qCDebug(logCategoryMockDevice) << "Version already configured to" << version_;
     return false;
 }
 
@@ -131,45 +142,107 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
 
         switch (recievedCommand) {
         case MockCommand::get_firmware_info:
-            if (isLegacy_) {
-                retVal.pop_back();  // remove ack
-                retVal.push_back(test_commands::nack_command_not_found);
-            } else if (customResponse) {
-                switch(response_) {
-                case MockResponse::no_payload: {
-                    retVal.push_back(test_commands::get_firmware_info_response_no_payload);
-                } break;
-                case MockResponse::invalid: {
-                    retVal.push_back(test_commands::get_firmware_info_response_invalid);
-                } break;
-                default: {
+            if (version_ == MockVersion::version1) {
+                if (isLegacy_) {
+                    retVal.pop_back();  // remove ack
+                    retVal.push_back(test_commands::nack_command_not_found);
+                } else if (customResponse) {
+                    switch(response_) {
+                    case MockResponse::no_payload: {
+                        retVal.push_back(test_commands::get_firmware_info_response_no_payload);
+                    } break;
+                    case MockResponse::invalid: {
+                        retVal.push_back(test_commands::get_firmware_info_response_invalid);
+                    } break;
+                    default: {
+                        retVal.push_back(test_commands::get_firmware_info_response);
+                    } break;
+                    }
+                } else {
                     retVal.push_back(test_commands::get_firmware_info_response);
-                } break;
+                }
+            } else if (version_ == MockVersion::version2) {
+                if (customResponse) {
+                    switch(response_) {
+                    case MockResponse::embedded_app:
+                    case MockResponse::assisted_app:
+                    case MockResponse::assisted_no_board: {
+                        retVal.push_back(test_commands::get_firmware_info_response_ver2_application);
+                    } break;
+                    case MockResponse::embedded_btloader:
+                    case MockResponse::assisted_btloader:{
+                        retVal.push_back(test_commands::get_firmware_info_response_ver2_bootloader);
+                    } break;
+                    case MockResponse::no_payload: {
+                        retVal.push_back(test_commands::get_firmware_info_response_no_payload);
+                    } break;
+                    case MockResponse::invalid:{
+                        retVal.push_back(test_commands::get_firmware_info_response_ver2_invalid);
+                    } break;
+                    default: {
+                        retVal.push_back(test_commands::get_firmware_info_response);
+                    } break;
+                    }
+                } else {
+                    retVal.push_back(test_commands::get_firmware_info_response);
                 }
             } else {
                 retVal.push_back(test_commands::get_firmware_info_response);
             }
             break;
         case MockCommand::request_platform_id:
-            if (isBootloader_) {
-                if (customResponse) {
-                    switch(response_) {
-                    case MockResponse::no_payload: {
-                        retVal.push_back(test_commands::request_platform_id_response_bootloader_no_payload);
-                    } break;
-                    case MockResponse::invalid: {
-                        retVal.push_back(test_commands::request_platform_id_response_bootloader_invalid);
-                    } break;
-                    default: {
+            if (version_ == MockVersion::version1) {
+                if (isBootloader_) {
+                    if (customResponse) {
+                        switch(response_) {
+                        case MockResponse::no_payload: {
+                            retVal.push_back(test_commands::request_platform_id_response_bootloader_no_payload);
+                        } break;
+                        case MockResponse::invalid: {
+                            retVal.push_back(test_commands::request_platform_id_response_bootloader_invalid);
+                        } break;
+                        default: {
+                            retVal.push_back(test_commands::request_platform_id_response_bootloader);
+                        } break;
+                        }
+                    } else {
                         retVal.push_back(test_commands::request_platform_id_response_bootloader);
-                    } break;
                     }
                 } else {
-                    retVal.push_back(test_commands::request_platform_id_response_bootloader);
+                    if (customResponse) {
+                        switch(response_) {
+                        case MockResponse::no_payload: {
+                            retVal.push_back(test_commands::request_platform_id_response_no_payload);
+                        } break;
+                        case MockResponse::invalid: {
+                            retVal.push_back(test_commands::request_platform_id_response_invalid);
+                        } break;
+                        default: {
+                            retVal.push_back(test_commands::request_platform_id_response);
+                        } break;
+                        }
+                    } else {
+                        retVal.push_back(test_commands::request_platform_id_response);
+                    }
                 }
-            } else {
+            } else if (version_ == MockVersion::version2) {
                 if (customResponse) {
                     switch(response_) {
+                    case MockResponse::embedded_app: {
+                        retVal.push_back(test_commands::request_platform_id_response_ver2_embedded);
+                    } break;
+                    case MockResponse::assisted_app: {
+                        retVal.push_back(test_commands::request_platform_id_response_ver2_assisted);
+                    } break;
+                    case MockResponse::assisted_no_board: {
+                        retVal.push_back(test_commands::request_platform_id_response_ver2_assisted_without_board);
+                    } break;
+                    case MockResponse::embedded_btloader: {
+                        retVal.push_back(test_commands::request_platform_id_response_ver2_embedded_bootloader);
+                    } break;
+                    case MockResponse::assisted_btloader:{
+                        retVal.push_back(test_commands::request_platform_id_response_ver2_assisted_bootloader);
+                    } break;
                     case MockResponse::no_payload: {
                         retVal.push_back(test_commands::request_platform_id_response_no_payload);
                     } break;
@@ -183,6 +256,8 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
                 } else {
                     retVal.push_back(test_commands::request_platform_id_response);
                 }
+            } else {
+                retVal.push_back(test_commands::request_platform_id_response);
             }
             break;
         case MockCommand::start_bootloader:
@@ -221,8 +296,10 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
                 retVal.push_back(test_commands::start_application_response);
             }
             break;
-        default:
-            break;
+        default: {
+            retVal.pop_back();  // remove ack
+            retVal.push_back(test_commands::nack_command_not_found);
+        } break;
         }
     } else {
         return std::vector<QByteArray>({test_commands::nack_badly_formatted_json});

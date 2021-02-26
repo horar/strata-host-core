@@ -25,7 +25,8 @@ public:
     bool mockSetLegacy(bool legacy);
     bool mockSetCommand(MockCommand command);
     bool mockSetResponse(MockResponse response);
-    bool mockSetCommandForResponse(MockCommand command, MockResponse response);
+    bool mockSetResponseForCommand(MockResponse response, MockCommand command);
+    bool mockSetVersion(MockVersion version);
 
 private:
     static std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
@@ -37,6 +38,7 @@ private:
     bool isBootloader_ = false;
     MockCommand command_ = MockCommand::all_commands;
     MockResponse response_ = MockResponse::normal;
+    MockVersion version_ = MockVersion::version1;
 };
 
 } // namespace strata::device::mock

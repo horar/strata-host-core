@@ -102,6 +102,8 @@ public:
      */
      static QString resolveErrorString(Result result);
 
+     void setResponseTimeout(std::chrono::milliseconds responseInterval);
+
 protected:
     /*!
      * Check if device is in bootloader mode. Commands get_firmware_info
