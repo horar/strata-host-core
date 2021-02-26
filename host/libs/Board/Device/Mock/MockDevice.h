@@ -25,18 +25,18 @@ public:
     ~MockDevice() override;
 
     /**
-     * Open serial port.
+     * Open mock device
      * @return true if port was opened, otherwise false
      */
     virtual bool open() override;
 
     /**
-     * Close serial port.
+     * Close mock device
      */
     virtual void close() override;
 
     /**
-     * Send message to serial device. Emits deviceError in case of failure.
+     * Send message to mock device.
      * @param msg message to be written to device
      * @return true if message can be sent, otherwise false
      */
