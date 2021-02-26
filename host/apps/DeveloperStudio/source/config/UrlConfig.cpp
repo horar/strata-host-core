@@ -14,9 +14,10 @@ UrlConfig::UrlConfig(QObject *parent)
 UrlConfig::~UrlConfig() {
 }
 
-bool UrlConfig::parseUrl()
+bool UrlConfig::parseUrl(const QString &fileName)
 {
-    ConfigFile cfgFile;
+
+    ConfigFile cfgFile(fileName);
 
     QJsonDocument loadDoc;
      if (const auto [data, ok] = cfgFile.loadData(); ok) {

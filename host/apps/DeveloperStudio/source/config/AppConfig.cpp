@@ -11,9 +11,9 @@ AppConfig::AppConfig()
 {
 }
 
-bool AppConfig::parse()
+bool AppConfig::parse(const QString &fileName)
 {
-    ConfigFile cfgFile;
+    ConfigFile cfgFile(fileName);
 
     QJsonDocument loadDoc;
     if (const auto [data, ok] = cfgFile.loadData(); ok) {

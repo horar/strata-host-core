@@ -33,7 +33,7 @@ public:
     virtual ~UrlConfig();
 
 
-    bool parseUrl();
+    bool parseUrl(const QString &fileName);
 
 private:
     QString authServer_;

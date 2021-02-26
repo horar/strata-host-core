@@ -91,6 +91,10 @@ int main(int argc, char *argv[])
                        "A cloud-connected development platform that provides a seamless,"
                        "personalized and secure environment for engineers to evaluate and design "
                        "with ON Semiconductor technologies."));
+    parser.addOption({{QStringLiteral("f")},
+                      QObject::tr("Optional configuration <filename>"),
+                      QObject::tr("filename"),
+                      QDir(QCoreApplication::applicationDirPath()).filePath("sds.config")});
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
@@ -112,13 +116,14 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
+    const QString configFilePath{parser.value(QStringLiteral("f"))};
     strata::sds::config::AppConfig cfg;
-    if (cfg.parse() == false) {
+    if (cfg.parse(configFilePath) == false) {
         return EXIT_FAILURE;
     }
 
     strata::sds::config::UrlConfig urlCfg;
-    if (urlCfg.parseUrl() == false) {
+    if (urlCfg.parseUrl(configFilePath) == false) {
         return EXIT_FAILURE;
     }
 

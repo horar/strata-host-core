@@ -149,7 +149,7 @@ endif()
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${SDS_CONFIG_LOCATION}/${APPS_CORESW_SDS_CONFIG}
-        ${CMAKE_BINARY_DIR}/bin/sds.config
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/sds.config
     COMMENT "Deploying 'sds.config'..."
     VERBATIM
 )

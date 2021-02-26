@@ -12,7 +12,7 @@ class AppConfig final
 public:
     explicit AppConfig();
 
-    bool parse();
+    bool parse(const QString &fileName);
 
     QUrl hcsDealerAddresss() const;
 

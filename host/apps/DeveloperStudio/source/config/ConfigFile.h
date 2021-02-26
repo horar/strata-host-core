@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QFile>
-#include<QCoreApplication>
-#include <QDir>
 
 namespace strata::sds::config
 {
