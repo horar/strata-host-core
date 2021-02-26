@@ -17,6 +17,7 @@ class Server : public QObject
     Q_PROPERTY(QString hostAddress READ getHostAddress CONSTANT);
     Q_PROPERTY(QString tcpPort READ getTcpPort CONSTANT);
     Q_PROPERTY(QString clientAddreass READ getClientAddress NOTIFY clientAddressUpdated);
+    Q_PROPERTY(QList<QVariant> availableClients READ getAvailableClients NOTIFY availableClientsUpdated);
 
 public:
     Server(QObject *parent = nullptr);
@@ -35,25 +36,29 @@ public slots:
     QString getHostAddress();
     QString getTcpPort();
     QString getClientAddress();
-    QTcpSocket * tcpSocketSetup();
+    QList<QVariant> getAvailableClients() const;
+
 
 signals:
     void udpBufferUpdated();
     void tcpBufferUpdated();
     void connectionStatusUpdated();
     void clientAddressUpdated();
+    void availableClientsUpdated();
 
 private:
     void setUdpBuffer(const QByteArray &newDatagram);
     void setTcpBuffer(const QByteArray &newData, QTcpSocket *tcpSocket);
+    QTcpSocket * tcpSocketSetup();
 
     QUdpSocket *udpSocket_ = nullptr;
     QHash<QTcpSocket *, quint16> tcpSockets_;
-    quint16 clientNumber = 0;
+    quint16 clientNumber_ = 0;
     quint16 port_ = 5146;
     QString udpBuffer_;
     QString tcpBuffer_;
     QString clientAddress_;
+    QList<QVariant> availableClients_;
 };
 
 #endif  // SERVER_H

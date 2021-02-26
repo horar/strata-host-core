@@ -73,36 +73,38 @@ Window {
     Item {
         id: udpItem
         x: 25
-        y: 165
+        y: 243
         width: 281
-        height: 158
+        height: 97
 
         Label {
             id: udpLogLabel
-            anchors.top: parent.top
-            anchors.leftMargin: -8
-            anchors.topMargin: -7
+            width: 95
+            height: 16
+            anchors.top: udpItem.top
+            anchors.leftMargin: 0
+            anchors.topMargin: -29
             anchors.left: parent.left
             text: qsTr("UDP Messages:")
         }
 
         ScrollView {
             id: udpLogSV
-            x: 0
+            x: -8
             width: parent.width
             anchors.top: udpLogLabel.bottom
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: -16
-            anchors.topMargin: 16
+            anchors.bottomMargin: 7
+            anchors.topMargin: -7
             clip: true
 
             TextArea {
                 id: udpLogTA
-                anchors.fill: parent
-                anchors.rightMargin: -142
-                anchors.bottomMargin: -109
+                anchors.top: udpLogSV.top
+                anchors.bottom: udpLogSV.bottom
+                anchors.bottomMargin: 6
                 anchors.leftMargin: -10
-                anchors.topMargin: -6
+                anchors.topMargin: -75
                 text: Server.udpBuffer
                 clip: false
             }
@@ -114,18 +116,31 @@ Window {
     Item {
         id: connectionStatusItem
         x: 25
-        y: 90
-        width: 281
-        height: 38
+        y: 107
+        width: 286
+        height: 101
+
+        Label {
+            id: clientLabel
+            x: -5
+            y: 48
+            width: 58
+            height: 35
+            text: "Client: "
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.Wrap
+            font.pointSize: 17
+        }
 
         StatusIndicator {
             id: connectionStatusIndicator
-            x: 241
+            x: 229
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.verticalCenterOffset: 15
-            anchors.rightMargin: 8
-            width: 32
+            anchors.verticalCenterOffset: -31
+            anchors.rightMargin: 14
+            width: 43
             height: 32
             color: "#65c903"
             active: (Server.isConnected === true)
@@ -133,19 +148,26 @@ Window {
 
         Button {
             id: disconnectBtn
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.right: connectionStatusIndicator.left
-            anchors.verticalCenterOffset: 18
-            anchors.leftMargin: -7
-            anchors.rightMargin: 12
-            height: parent.height
+            x: -5
+            y: 3
+            width: 223
+            height: 33
             text: qsTr("Disconnect")
             enabled: (Server.isConnected === true)
             Connections {
                 target: disconnectBtn
                 onClicked: Server.disconnectTcpSocket()
             }
+        }
+
+        ComboBox {
+            id: clientsBox
+            x: 48
+            y: 48
+            width: 170
+            height: 40
+            model: Server.availableClients
+            onCurrentIndexChanged: console.debug("current index:", clientsBox.model[currentIndex])
         }
     }
 

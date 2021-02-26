@@ -15,6 +15,10 @@ Client::Client(QObject *parent)
 
 Client::~Client()
 {
+    //cleaning this will crash the other program when it looks for this socket
+//    delete udpSocket_;
+//    delete tcpSever_;
+//    delete tcpSocket_;
 }
 
 bool Client::getConnectionStatus() const

@@ -73,22 +73,18 @@ QString Server::getTcpBuffer()
 
 bool Server::getConnectionStatus()
 {
-    if(tcpSockets_.size() < 1) {
+    if(availableClients_.size() < 1) {
         return false;
     }
-    return false; //tcpSocket_->state() == QTcpSocket::ConnectedState ? true : false;
+    return true; //tcpSocket_->state() == QTcpSocket::ConnectedState ? true : false;
 }
 
-void Server::connectToStrataClient(QHostAddress hostAddress, qint16 port)
+void Server::connectToStrataClient(QHostAddress clientAddress, qint16 port)
 {
     QTcpSocket * tcpSocket = tcpSocketSetup();
-    if (tcpSocket->state() == QTcpSocket::ConnectedState) {
-        qDebug() << "tcp: socket already connected";
-        return;
-    }
 
-    qDebug() << "tcp: connecting to:" << hostAddress.toString() << "port:" << port;
-    tcpSocket->connectToHost(hostAddress, port);
+    qDebug() << "tcp: connecting to:" << clientAddress.toString() << "port:" << port;
+    tcpSocket->connectToHost(clientAddress, port);
 
     if (false == tcpSocket->waitForConnected(5000)) {
         qDebug() << "tcp: failed to connect.";
@@ -140,28 +136,37 @@ QString Server::getClientAddress()
     return clientAddress_;
 }
 
+QList<QVariant> Server::getAvailableClients() const
+{
+    return availableClients_;
+}
+
 QTcpSocket * Server::tcpSocketSetup()
 {
     QTcpSocket *tcpSocket = new QTcpSocket();
-    tcpSockets_[tcpSocket] = ++clientNumber;
+    tcpSockets_[tcpSocket] = ++clientNumber_;
+    quint16 currentClient = clientNumber_;
 
-    connect(tcpSocket, &QTcpSocket::connected, this, [this, tcpSocket]() {
+    connect(tcpSocket, &QTcpSocket::connected, this, [this, tcpSocket, currentClient]() {
         qDebug() << "tcp: socket connected" << tcpSocket << ':' << tcpSockets_[tcpSocket];
         clientAddress_ = tcpSocket->peerAddress().toString();
+        availableClients_.append(currentClient);
         emit connectionStatusUpdated();
         emit clientAddressUpdated();
+        emit availableClientsUpdated();
     });
 
-    connect(tcpSocket, &QTcpSocket::disconnected, this, [this, tcpSocket]() {
+    connect(tcpSocket, &QTcpSocket::disconnected, this, [this, tcpSocket,currentClient]() {
         qDebug() << "tcp: socket disconnected" << tcpSocket << ':' << tcpSockets_[tcpSocket];
         clientAddress_ = "";
+        availableClients_.removeAll(currentClient);
         emit connectionStatusUpdated();
         emit clientAddressUpdated();
-        // freeing up socket here cause a crash
+        emit availableClientsUpdated();
     });
 
     connect(tcpSocket, &QTcpSocket::bytesWritten, this,
-            [](qint64 bytesWritten) { qDebug() << "tcp: bytes written" << bytesWritten; });
+        [](qint64 bytesWritten) { qDebug() << "tcp: bytes written" << bytesWritten; });
 
     connect(tcpSocket, &QTcpSocket::readyRead, this, [this, tcpSocket]() {
         qDebug() << "tcp: New message received.";
