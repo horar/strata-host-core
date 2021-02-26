@@ -2723,7 +2723,31 @@ function registerQmlAsLanguage() {
             var nextMatch = model.findNextMatch("}", position, false, false)
             var topOfFile = model.findNextMatch("{", { lineNumber: 1, column: 1 }, false, false)
             var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
-            if (position.lineNumber >= prevMatch.range.startLineNumber && (prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber || topOfFile.range.startLineNumber === prevprevMatch.range.startLineNumber || prevMatch.range.startLineNumber === topOfFile.range.startLineNumber)) {
+            //Edge Case 4
+            if(prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber){
+                if(position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber < nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextBracketMatch.range.startLineNumber){
+                    var content = model.getValueInRange({ startLineNumber: prevMatch.range.startLineNumber, startColumn: 1, endLineNumber: prevMatch.range.startLineNumber, endColumn: prevMatch.range.endColumn })
+                    var splitContent = content.replace("\t", "").split(/\{|\t/)
+                    var bracketWord = splitContent[0].trim()
+                    if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
+                        var propRange = {
+                            startLineNumber: prevMatch.range.startLineNumber,
+                            endLineNumber: nextMatch.range.startLineNumber,
+                            startColumn: prevMatch.range.startColumn,
+                            endColumn: nextMatch.range.endColumn
+                        }
+                        convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag)
+                        if (currentItems[bracketWord] === undefined) {
+                            currentItems[bracketWord] = {}
+                        }
+                        currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
+                        return currentItems[bracketWord][propRange]
+                    } else {
+                        return Object.values(suggestions)
+                    }
+                }
+            }
+            if (position.lineNumber >= prevMatch.range.startLineNumber && (prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber)) {
                 if (position.lineNumber <= nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextBracketMatch.range.startLineNumber) {
                     var content = model.getValueInRange({ startLineNumber: prevMatch.range.startLineNumber, startColumn: 1, endLineNumber: prevMatch.range.startLineNumber, endColumn: prevMatch.range.endColumn })
                     var splitContent = content.replace("\t", "").split(/\{|\t/)
@@ -2769,7 +2793,7 @@ function registerQmlAsLanguage() {
                     }
                 }
                 //Edge case 2 & 3
-            } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && position.lineNumber >= topOfFile.range.startLineNumber) {
+            } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
                 var prevParent = findPreviousBracketParent(model, { lineNumber: prevBracketMatch.range.startLineNumber, column: prevBracketMatch.range.endColumn }, prevBracketMatch.range.endColumn)
                 if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
                     var propRange = {
@@ -2867,6 +2891,9 @@ function registerQmlAsLanguage() {
         while (currentPosition.lineNumber <= position.lineNumber && currentPosition.column >= column - 1) {
             var newPosition = { lineNumber: currentPosition.lineNumber, column: currentPosition.column }
             var getPrev = model.findPreviousMatch("{", newPosition, false, false)
+            if(currentPosition.lineNumber < getPrev.range.startLineNumber){
+                break
+            }
             var content = model.getValueInRange({ startLineNumber: getPrev.range.startLineNumber, startColumn: 1, endLineNumber: getPrev.range.startLineNumber, endColumn: getPrev.range.endColumn })
             var splitContent = content.replace("\t", "").split(/\{|\t/)
             var bracketWord = splitContent[0].trim()
