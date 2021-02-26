@@ -34,9 +34,7 @@ bool MockDevice::open()
 
 void MockDevice::close()
 {
-    if (opened_ == true) {
-        opened_ = false;
-    }
+    opened_ = false;
 }
 
 bool MockDevice::sendMessage(const QByteArray msg)
