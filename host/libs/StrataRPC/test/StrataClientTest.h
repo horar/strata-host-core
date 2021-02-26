@@ -20,6 +20,9 @@ private slots:
     void testWithAllCallbacks();
     void testWithOnlyResultCallbacks();
     void testWithOnlyErrorCallbacks();
+    void testTimedoutRequest();
+    void testNoTimedoutRequest();
+    void testErrorOccourredSignal();
 
 private:
     void waitForZmqMessages(int delay = 100);
