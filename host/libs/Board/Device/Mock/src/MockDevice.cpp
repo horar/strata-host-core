@@ -35,10 +35,15 @@ bool MockDevice::open()
 void MockDevice::close()
 {
     opened_ = false;
+    recordedMessages_.clear();
 }
 
 bool MockDevice::sendMessage(const QByteArray msg)
 {
+    if (opened_ == false) {
+        return false;
+    }
+
     qCDebug(logCategoryMockDevice) << this << "Received request:" << msg;
     if (saveMessages_) {
         if (recordedMessages_.size() >= MAX_STORED_MESSAGES) {
