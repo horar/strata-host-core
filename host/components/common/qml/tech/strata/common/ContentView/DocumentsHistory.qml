@@ -1,14 +1,14 @@
 import QtQuick 2.9
+import QtQml 2.12
 import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 
-Item {
+QtObject {
     id: documentsHistory
     property bool displayPdfUnseenAlert: false
     property bool displayDownloadUnseenAlert: false
 
-    SGUserSettings {
-        id: documentsHistorySettings
+    property SGUserSettings documentsHistorySettings: SGUserSettings {
         classId: "documents-history"
         user: NavigationControl.context.user_id
 

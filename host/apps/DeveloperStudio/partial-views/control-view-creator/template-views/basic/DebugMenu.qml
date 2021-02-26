@@ -25,12 +25,8 @@ Rectangle {
 
         property var baseModel: ({
             "commands": [
-                {"cmd":"my_cmd_simple","payload":{"dac":"double","io":"bool"}},
-                {"cmd":"my_cmd_simple_periodic_update","payload":{"interval":"int","run_count":"int","run_state":"bool"}},
-                {"cmd":"my_cmd_i2c","payload":null},
             ],
             "notifications": [
-                {"payload":{"adc_read":"double","gauge_ramp":"double","io_read":"bool","random_float":"double","random_float_array":"array-dynamic","random_increment":["int","int"],"toggle_bool":"bool"},"value":"my_cmd_simple_periodic"},
             ]
         })
 
