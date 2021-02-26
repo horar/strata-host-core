@@ -29,6 +29,7 @@ FocusScope {
     property string helperText: ""
     property string errorText
     property bool hasHelperText: true
+    readonly property bool isValid: validStatus === SGBaseEditor.Valid
 
     /* Set this to True if you want input validation to be handled by editor. */
     property bool inputValidation: false
