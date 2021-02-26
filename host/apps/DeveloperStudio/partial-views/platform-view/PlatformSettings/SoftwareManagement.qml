@@ -20,7 +20,6 @@ ColumnLayout {
     property bool downloadError: false
     property string activeDownloadUri: ""
 
-
     Component.onCompleted: {
         if (platformMetaDataInitialized) {
             initialize()
