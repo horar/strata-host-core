@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME}-test
     BoardManagerTest.cpp
     DeviceMock.cpp
     DeviceOperationsTest.cpp
+    DeviceOperationsV2Test.cpp
     CommandResponseMock.cpp
     main.cpp
 )

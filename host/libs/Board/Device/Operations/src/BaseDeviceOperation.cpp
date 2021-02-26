@@ -3,7 +3,6 @@
 
 #include "Commands/include/DeviceCommands.h"
 #include "DeviceOperationsConstants.h"
-
 #include <CommandValidator.h>
 
 #include "logging/LoggingQtCategories.h"
@@ -99,6 +98,11 @@ QString BaseDeviceOperation::resolveErrorString(Result result)
 
     qCCritical(logCategoryDeviceOperations) << "Unsupported result value";
     return QStringLiteral("Unknown error");
+}
+
+void BaseDeviceOperation::setResponseTimeout(std::chrono::milliseconds responseInterval)
+{
+    responseTimer_.setInterval(responseInterval);
 }
 
 bool BaseDeviceOperation::bootloaderMode() {

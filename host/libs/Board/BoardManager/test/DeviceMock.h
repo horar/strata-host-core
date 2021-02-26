@@ -32,8 +32,9 @@ public:
     void mockEmitResponses(const QByteArray msg);
     bool mockIsBootloader() {return commandResponseMock_.mockIsBootloader();}
     void mockSetLegacy(bool isLegacy) { commandResponseMock_.mockSetLegacy(isLegacy); }
-    void mockSetCommandForResponse(CommandResponseMock::Command command, CommandResponseMock::MockResponse response) { commandResponseMock_.mockSetCommandForResponse(command, response); }
+    void mockSetResponseForCommand(CommandResponseMock::MockResponse response, CommandResponseMock::Command command) { commandResponseMock_.mockSetResponseForCommand(response, command); }
     void mockSetResponse(CommandResponseMock::MockResponse response) { commandResponseMock_.mockSetResponse(response); }
+    void mockSetVersion(CommandResponseMock::Version version) { commandResponseMock_.mockSetVersion(version); }
 
 protected:
     virtual bool sendMessage(const QByteArray msg, quintptr lockId) override;
