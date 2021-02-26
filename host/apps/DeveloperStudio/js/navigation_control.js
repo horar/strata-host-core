@@ -247,8 +247,8 @@ function updateState(event, data)
                 // Progress to next state
                 navigation_state_ = states.CONTROL_STATE
 
-                 // Populate platforms only after all UI components are complete
-                 status_bar_container_.item.loginSuccessful()
+                // Populate platforms only after all UI components are complete
+                status_bar_container_.item.loginSuccessful()
             break;
 
             default:
