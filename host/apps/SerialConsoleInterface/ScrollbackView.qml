@@ -227,6 +227,25 @@ Item {
         }
 
         MouseArea {
+            id: menuPopupMouseArea
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton
+
+            /*this is to stop interaction with flickable while selecting text */
+            drag.target: Item {}
+
+            onPressed: {
+                listView.forceActiveFocus()
+            }
+
+            onReleased: {
+                if (menuPopupMouseArea.containsMouse) {
+                    contextMenuPopup.popup(null)
+                }
+            }
+        }
+
+        MouseArea {
             id: textSelectionMouseArea
             height: Math.min(listView.height, listView.contentHeight)
             anchors {
@@ -238,28 +257,22 @@ Item {
             }
 
             cursorShape: Qt.IBeamCursor
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            acceptedButtons: Qt.LeftButton
 
             /*this is to stop interaction with flickable while selecting text */
             drag.target: Item {}
 
-            property bool leftMouseButtonPressed
             property int startIndex
             property int startPosition
 
             onPressed: {
                 listView.forceActiveFocus()
 
-                if (mouse.button === Qt.RightButton) {
-                    return
-                }
-
                 var position = resolvePosition(mouse.x, mouse.y)
                 if (position === undefined) {
                     return
                 }
 
-                leftMouseButtonPressed = true
                 startIndex = position.delegate_index
                 startPosition = position.cursor_pos
 
@@ -269,22 +282,7 @@ Item {
                 selectionEndPosition = startPosition
             }
 
-            onReleased: {
-                if (mouse.button === Qt.RightButton) {
-                    if (textSelectionMouseArea.containsMouse) {
-                        contextMenuPopup.popup(null)
-                    }
-                    return
-                }
-
-                leftMouseButtonPressed = false
-            }
-
             onPositionChanged: {
-                if (leftMouseButtonPressed === false) {
-                    return
-                }
-
                 //do not allow to select delegates outside of view
                 if (mouse.y < 0) {
                    var mouseY = 0
