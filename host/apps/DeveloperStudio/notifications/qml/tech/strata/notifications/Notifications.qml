@@ -234,7 +234,7 @@ Item {
                 "saveToDisk": true,
                 "singleton": false,
                 "actions": [],
-                "uuid": savedNotifications.uuid
+                "uuid": ""
             };
             model_.append(notification)
         }
