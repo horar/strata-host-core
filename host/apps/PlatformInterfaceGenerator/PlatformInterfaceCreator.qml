@@ -817,11 +817,13 @@ Rectangle {
             alertToast.textColor = "black"
             alertToast.color = "#DFDF43"
             alertToast.interval = 0
+            debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
         } else {
             alertToast.textColor = "white"
             alertToast.text = "Successfully generated PlatformInterface.qml"
             alertToast.color = "green"
             alertToast.interval = 4000
+            debugMenuGenerator.generate(jsonInputFilePath, outputFileText.text);
         }
         alertToast.show();
     }
