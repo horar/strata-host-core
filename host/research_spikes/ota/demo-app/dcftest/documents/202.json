@@ -1,5 +1,7 @@
 {
+    "controller_type": 1,
     "channels": "202",
+    "name": "STR-USBC-2PORT-100W-EVK",
     "documents": {
         "downloads": [
             {
@@ -135,7 +137,6 @@
             }
         ]
     },
-    "name": "STR-USBC-2PORT-100W-EVK",
     "platform_selector": {
         "file": "202/platform_selector/thumb.jpeg",
         "filename": "thumbnail",

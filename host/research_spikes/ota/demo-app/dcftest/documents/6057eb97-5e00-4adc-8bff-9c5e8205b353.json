@@ -1,18 +1,25 @@
 {
-    "_id": "6057eb97-5e00-4adc-8bff-9c5e8205b353",
-    "_rev": "2-ab508f6626ea92a2c03774bb901e6b29",
+    "controller_type": 3,
     "channels": "6057eb97-5e00-4adc-8bff-9c5e8205b353",
+    "name": "STR-WATER-HEATER-GEVB",
+    "mcu": {
+        "jlink_device": "EFM32GG380F1024",
+        "bootloader_start_address": 0
+    },
     "documents": {
         "datasheets": [],
         "downloads": [],
         "views": []
     },
-    "firmware": [
+    "bootloader": [
         {
-            "device": "water-heater"
+            "name": "water-heater-bootloader-2",
+            "file": "bootloader-release-091.bin",
+            "md5": "fbf75e924e6221e4368ee657b4e15dac",
+            "timestamp": "2021-02-22 14:56:00",
+            "version": "0.9.1"
         }
     ],
-    "name": "STR-WATER-HEATER-GEVB",
     "platform_selector": {
         "file": "6057eb97-5e00-4adc-8bff-9c5e8205b353/platform_selector/thumb.jpeg",
         "filename": "image.jpeg",
