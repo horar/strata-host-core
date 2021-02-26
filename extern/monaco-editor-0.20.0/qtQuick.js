@@ -2721,75 +2721,68 @@ function registerQmlAsLanguage() {
             var nextBracketMatch = model.findNextMatch("{", position, false, false)
             var prevBracketMatch = model.findPreviousMatch("}", position, false, false)
             var nextMatch = model.findNextMatch("}", position, false, false)
-            var topOfFile = model.findNextMatch("{", { lineNumber: 1, column: 1 }, false, false)
+            var nextnextMatch = model.findNextMatch("}",{lineNumber: nextMatch.range.startLineNumber,column: nextMatch.range.endColumn},false,false)
+            var fullRange = model.getFullModelRange()
+            var topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn }, false, false)
+            var bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }, false, false)
             var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
+            //Edge Case 5
+            if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
+                var propRange = {
+                    startLineNumber: prevMatch.range.startLineNumber,
+                    endLineNumber: nextMatch.range.startLineNumber,
+                    startColumn: prevMatch.range.startColumn,
+                    endColumn: nextMatch.range.endColumn
+                }
+                return retrieveType(model, propRange)
+            }
             //Edge Case 4
-            if(prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber){
-                if(position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber < nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextBracketMatch.range.startLineNumber){
-                    var content = model.getValueInRange({ startLineNumber: prevMatch.range.startLineNumber, startColumn: 1, endLineNumber: prevMatch.range.startLineNumber, endColumn: prevMatch.range.endColumn })
-                    var splitContent = content.replace("\t", "").split(/\{|\t/)
-                    var bracketWord = splitContent[0].trim()
-                    if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
-                        var propRange = {
-                            startLineNumber: prevMatch.range.startLineNumber,
-                            endLineNumber: nextMatch.range.startLineNumber,
-                            startColumn: prevMatch.range.startColumn,
-                            endColumn: nextMatch.range.endColumn
-                        }
-                        convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag)
-                        if (currentItems[bracketWord] === undefined) {
-                            currentItems[bracketWord] = {}
-                        }
-                        currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
-                        return currentItems[bracketWord][propRange]
-                    } else {
-                        return Object.values(suggestions)
+            if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
+                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextBracketMatch.range.startLineNumber) {
+                    var propRange = {
+                        startLineNumber: prevMatch.range.startLineNumber,
+                        endLineNumber: nextMatch.range.startLineNumber,
+                        startColumn: prevMatch.range.startColumn,
+                        endColumn: nextMatch.range.endColumn
                     }
+                    return retrieveType(model, propRange)
                 }
             }
+            //Edge Case 6
+            if(nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber){
+                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
+                    var propRange = {
+                        startLineNumber: prevMatch.range.startLineNumber,
+                        endLineNumber: nextMatch.range.startLineNumber,
+                        startColumn: prevMatch.range.startColumn,
+                        endColumn: nextMatch.range.endColumn
+                    }
+                    return retrieveType(model, propRange)
+                }
+            }
+            //Normal case
             if (position.lineNumber >= prevMatch.range.startLineNumber && (prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber)) {
                 if (position.lineNumber <= nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextBracketMatch.range.startLineNumber) {
-                    var content = model.getValueInRange({ startLineNumber: prevMatch.range.startLineNumber, startColumn: 1, endLineNumber: prevMatch.range.startLineNumber, endColumn: prevMatch.range.endColumn })
-                    var splitContent = content.replace("\t", "").split(/\{|\t/)
-                    var bracketWord = splitContent[0].trim()
-                    if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
-                        var propRange = {
-                            startLineNumber: prevMatch.range.startLineNumber,
-                            endLineNumber: nextMatch.range.startLineNumber,
-                            startColumn: prevMatch.range.startColumn,
-                            endColumn: nextMatch.range.endColumn
-                        }
-                        convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag)
-                        if (currentItems[bracketWord] === undefined) {
-                            currentItems[bracketWord] = {}
-                        }
-                        currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
-                        return currentItems[bracketWord][propRange]
-                    } else {
-                        return Object.values(suggestions)
+                    var propRange = {
+                        startLineNumber: prevMatch.range.startLineNumber,
+                        endLineNumber: nextMatch.range.startLineNumber,
+                        startColumn: prevMatch.range.startColumn,
+                        endColumn: nextMatch.range.endColumn
                     }
+                    return retrieveType(model, propRange)
                     // Edge Case 1
                 } else if (nextMatch.range.startLineNumber > nextBracketMatch.range.startLineNumber) {
                     var nextPosition = { lineNumber: nextBracketMatch.range.startLineNumber, column: nextBracketMatch.range.startColumn }
                     var closePosition = model.findNextMatch("}", nextPosition, false, false)
                     if (nextMatch.range.startLineNumber === closePosition.range.startLineNumber) {
-                        var content = model.getValueInRange({ startLineNumber: prevMatch.range.startLineNumber, startColumn: 1, endLineNumber: prevMatch.range.startLineNumber, endColumn: prevMatch.range.endColumn })
-                        var splitContent = content.replace("\t", "").split(/\{|\t/)
-                        var bracketWord = splitContent[0].trim()
-                        if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
-                            var propRange = {
-                                startLineNumber: prevMatch.range.startLineNumber,
-                                endLineNumber: nextBracketMatch.range.startLineNumber,
-                                startColumn: prevMatch.range.startColumn,
-                                endColumn: nextBracketMatch.range.endColumn
-                            }
-                            convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag)
-                            if (currentItems[bracketWord] === undefined) {
-                                currentItems[bracketWord] = {}
-                            }
-                            currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
-                            return currentItems[bracketWord][propRange]
+                        var propRange = {
+                            startLineNumber: prevMatch.range.startLineNumber,
+                            endLineNumber: nextBracketMatch.range.startLineNumber,
+                            startColumn: prevMatch.range.startColumn,
+                            endColumn: nextBracketMatch.range.endColumn
                         }
+
+                        return retrieveType(model, propRange)
                     }
                 }
                 //Edge case 2 & 3
@@ -2815,26 +2808,30 @@ function registerQmlAsLanguage() {
 
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
-            triggerCharacters: ['}', '.', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',':'],
+            triggerCharacters: ['}', '.'],
             provideCompletionItems: (model, position) => {
                 var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
                 var currWords = currText.replace("\t", "").split(" ");
                 var word = model.getWordUntilPosition(position);
                 var active = currWords[currWords.length - 1]
                 var fullModelRange = model.getFullModelRange()
-                var getFirstBracket = model.findNextMatch("{",{lineNumber: fullModelRange.startLineNumber, column: fullModelRange.startColumn})
-                var getLastBracket = model.findPreviousMatch("}",{lineNumber: fullModelRange.endLineNumber, column: fullModelRange.endColumn})
+                var getFirstBracket = model.findNextMatch("{", { lineNumber: fullModelRange.startLineNumber, column: fullModelRange.startColumn })
+                var getLastBracket = model.findPreviousMatch("}", { lineNumber: fullModelRange.endLineNumber, column: fullModelRange.endColumn })
+                var getId = model.findNextMatch("id:", { lineNumber: fullModelRange.startLineNumber, column: fullModelRange.startColumn })
+                if (getFirstBracket === null && getLastBracket === null) {
+                    return { suggestions: suggestions }
+                }
                 // check for range to see if position exists
                 // These are closing characters for the auto complete
-                if(position.lineNumber < getFirstBracket.range.startLineNumber || position.lineNumber > getLastBracket.range.startLineNumber){
-                        editor.updateOptions({
-                            suggest: {
-                                showFunctions: false,
-                                showClasses: true,
-                                showKeyWords: false,
-                                showProperties: false,
-                            }
-                        })
+                if (position.lineNumber < getFirstBracket.range.startLineNumber || position.lineNumber > getLastBracket.range.startLineNumber) {
+                    editor.updateOptions({
+                        suggest: {
+                            showFunctions: false,
+                            showClasses: true,
+                            showKeyWords: false,
+                            showProperties: false,
+                        }
+                    })
                 } else {
                     editor.updateOptions({
                         suggest: {
@@ -2845,7 +2842,13 @@ function registerQmlAsLanguage() {
                         }
                     })
                 }
-                getTypeID(model)
+                if (getId !== null) {
+                    var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
+                    var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
+                    if (!(nextCheck.range.startLineNumber === getLastBracket.range.startLineNumber && prevCheck.range.startLineNumber === getFirstBracket.range.startLineNumber)) {
+                        getTypeID(model)
+                    }
+                }
                 if (active.includes(".")) {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
@@ -2860,24 +2863,13 @@ function registerQmlAsLanguage() {
                     }
                 } else if (active.includes("}")) {
                     var prevMatch = model.findPreviousMatch("{", position, false, false)
-
-                    var content = model.getValueInRange({ startLineNumber: prevMatch.range.startLineNumber, startColumn: 1, endLineNumber: prevMatch.range.startLineNumber, endColumn: prevMatch.range.endColumn })
-                    var splitContent = content.replace("\t", "").split(/\{|\t/)
                     var propRange = {
                         startLineNumber: prevMatch.range.startLineNumber,
                         endLineNumber: position.lineNumber,
                         startColumn: prevMatch.range.startColumn - 1,
                         endColumn: position.column
                     }
-                    if (qtObjectKeyValues[splitContent[0].trim()]) {
-                        convertStrArrayToObjArray(splitContent[0].trim(), qtObjectKeyValues[splitContent[0].trim()].properties, qtObjectKeyValues[splitContent[0].trim()].flag)
-                        if (currentItems[splitContent[0].trim()] === undefined) {
-                            currentItems[splitContent[0].trim()] = {}
-                        }
-                        currentItems[splitContent[0].trim()][propRange] = qtObjectPropertyValues[splitContent[0].trim()]
-                    }
-                    return { suggestions: suggestions }
-
+                    return retrieveType(model, propRange)
                 }
                 var fetchedSuggestions = searchForChildBrackets(model, position)
                 return { suggestions: fetchedSuggestions === undefined || fetchedSuggestions === null ? Object.values(suggestions) : fetchedSuggestions }
@@ -2891,7 +2883,7 @@ function registerQmlAsLanguage() {
         while (currentPosition.lineNumber <= position.lineNumber && currentPosition.column >= column - 1) {
             var newPosition = { lineNumber: currentPosition.lineNumber, column: currentPosition.column }
             var getPrev = model.findPreviousMatch("{", newPosition, false, false)
-            if(currentPosition.lineNumber < getPrev.range.startLineNumber){
+            if (currentPosition.lineNumber < getPrev.range.startLineNumber) {
                 break
             }
             var content = model.getValueInRange({ startLineNumber: getPrev.range.startLineNumber, startColumn: 1, endLineNumber: getPrev.range.startLineNumber, endColumn: getPrev.range.endColumn })
@@ -2906,9 +2898,10 @@ function registerQmlAsLanguage() {
     }
 
     function getTypeID(model) {
-        model.onDidChangeContent((event)=>{
-            if(event.changes.text !== ""){
+        model.onDidChangeContent((event) => {
+            if (event.changes.text !== "") {
                 typing = true
+                alert(JSON.stringify(event))
             } else {
                 typing = false
             }
@@ -2930,6 +2923,20 @@ function registerQmlAsLanguage() {
             addCustomIdAndTypes(prevId, type)
         }
     }
+
+    function retrieveType(model, propRange) {
+        var content = model.getLineContent(propRange.startLineNumber)
+        var splitContent = content.replace("\t", "").split(/\{|\t/)
+        var bracketWord = splitContent[0].trim()
+        if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
+            convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag)
+            if (currentItems[bracketWord] === undefined) {
+                currentItems[bracketWord] = {}
+            }
+            currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
+            return currentItems[bracketWord][propRange]
+        } else {
+            return Object.values(suggestions)
+        }
+    }
 }
-
-
