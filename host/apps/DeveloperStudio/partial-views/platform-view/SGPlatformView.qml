@@ -38,7 +38,7 @@ StackLayout {
                                     platformMetaDataInitialized
 
     property bool documentsHistoryDisplayed: false
-    property var notificationUUID: ""
+    property string notificationUUID: ""
 
     onFullyInitializedChanged: {
         initialize()
