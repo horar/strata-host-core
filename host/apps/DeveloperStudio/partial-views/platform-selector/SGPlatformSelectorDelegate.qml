@@ -366,7 +366,7 @@ Item {
                     buttonEnabled: model.available.order
 
                     onClicked: {
-                        orderPopup.open()
+                        Qt.openUrlExternally(urls.salesPopupUrl)
                     }
                 }
             }
