@@ -32,9 +32,9 @@ void DeviceOperationsV2Test::init()
     operationFinishedCount_ = 0;
     operationTimeoutCount_ = 0;
     device_ = std::make_shared<strata::device::mock::MockDevice>(1234, "Mock device", true);
-    device_->mockSetVersion(MockVersion::version2);
-    bool openRes = device_->open();
-    QVERIFY(openRes);
+    QVERIFY(device_->mockSetVersion(MockVersion::version2));
+    QVERIFY(!device_->mockIsOpened());
+    QVERIFY(device_->open());
 }
 
 void DeviceOperationsV2Test::cleanup()

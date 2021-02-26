@@ -25,7 +25,7 @@ bool MockDevice::open()
 {
     if (opened_ == true) {
         qCWarning(logCategoryMockDevice) << this << "Attempt to open already opened mock port";
-        return false;
+        return true;
     }
 
     opened_ = true;
