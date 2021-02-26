@@ -25,8 +25,9 @@ bool CmdWait::processNotification(rapidjson::Document& doc)
 {
     Q_UNUSED(doc)
 
-    // This metod should be never called!
-
+    // This command sends nothing to device, any message which comes from
+    // device when this command is being executed cannot belong to this command.
+    // So, return false for every message (notification).
     return false;
 }
 

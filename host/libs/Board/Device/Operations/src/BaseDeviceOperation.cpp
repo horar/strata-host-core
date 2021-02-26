@@ -229,7 +229,7 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray data)
     }
 
     if (ok == false) {
-        qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong or malformed response: '" << data << "'.";
+        qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong, unexpected or malformed response: '" << data << "'.";
     }
 }
 
