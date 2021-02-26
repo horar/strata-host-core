@@ -119,18 +119,19 @@ signals:
      */
     void finished(Result result, int status, QString errorString = QString());
 
-    // signal only for internal use:
+    // signals only for internal use:
     // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
     void sendCommand(QPrivateSignal);
+    void processCmdResult(QPrivateSignal);
 
 private slots:
     void handleSendCommand();
     void handleDeviceResponse(const QByteArray data);
     void handleResponseTimeout();
     void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+    void handleProcessCmdResult();
 
 private:
-    void nextCommand();
     void reset();
 
     const Type type_;

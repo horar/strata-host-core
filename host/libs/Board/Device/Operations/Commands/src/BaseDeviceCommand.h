@@ -34,7 +34,8 @@ enum class CommandType : int {
     StartBackupFirmware,
     StartBootloader,
     StartFlashBootloader,
-    StartFlashFirmware
+    StartFlashFirmware,
+    Wait
 };
 
 class BaseDeviceCommand {
