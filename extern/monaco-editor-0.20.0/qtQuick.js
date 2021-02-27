@@ -13,14 +13,14 @@
     }
 */
 const qtObjectKeyValues = {}
-const qtIdPairs = {}
+var qtIdPairs = {}
 var qtObjectPropertyValues = {}
 var isInitialized = false
 var flags = { sgwidgetsFlag: false, qtQuickFlag: false }
 var suggestions = {}
 var currentItems = {}
 var editor = null
-var typing = false
+var typing = true
 
 const qtQuick = [
     {
@@ -2533,9 +2533,10 @@ function initializeQtQuick(flags) {
     }
 }
 
-function addCustomIdAndTypes(idText, type = "Item") {
-    if (!qtIdPairs.hasOwnProperty(idText)) {
-        qtIdPairs[idText] = type
+function addCustomIdAndTypes(idText, position,type = "Item") {
+    if (!qtIdPairs.hasOwnProperty(position)) {
+        qtIdPairs[position.lineNumber] = {}
+        qtIdPairs[position.lineNumber][idText] = type
         if (!qtObjectKeyValues.hasOwnProperty(type)) {
             type = "Item"
         }
@@ -2721,7 +2722,7 @@ function registerQmlAsLanguage() {
             var nextBracketMatch = model.findNextMatch("{", position, false, false)
             var prevBracketMatch = model.findPreviousMatch("}", position, false, false)
             var nextMatch = model.findNextMatch("}", position, false, false)
-            var nextnextMatch = model.findNextMatch("}",{lineNumber: nextMatch.range.startLineNumber,column: nextMatch.range.endColumn},false,false)
+            var nextnextMatch = model.findNextMatch("}", { lineNumber: nextMatch.range.startLineNumber, column: nextMatch.range.endColumn }, false, false)
             var fullRange = model.getFullModelRange()
             var topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn }, false, false)
             var bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }, false, false)
@@ -2749,7 +2750,7 @@ function registerQmlAsLanguage() {
                 }
             }
             //Edge Case 6
-            if(nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber){
+            if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
                 if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
                     var propRange = {
                         startLineNumber: prevMatch.range.startLineNumber,
@@ -2898,10 +2899,18 @@ function registerQmlAsLanguage() {
     }
 
     function getTypeID(model) {
+
         model.onDidChangeContent((event) => {
-            if (event.changes.text !== "") {
+            var checkID = model.getLineContent(event.changes[0].range.startLineNumber)
+            if (checkID.includes("id:")) {
                 typing = true
-                alert(JSON.stringify(event))
+                if(qtIdPairs.hasOwnProperty(event.changes[0].range.startLineNumber)){
+                    const key = Object.keys(qtIdPairs[event.changes[0].range.startLineNumber])
+                    delete suggestions[key[0]]
+                    delete qtIdPairs[event.changes[0].range.startLineNumber]
+                    delete qtObjectKeyValues[key[0]]
+                    alert(JSON.stringify(qtIdPairs))
+                }
             } else {
                 typing = false
             }
@@ -2913,6 +2922,7 @@ function registerQmlAsLanguage() {
             if (position.lineNumber < getPrevIDPosition.range.startLineNumber) {
                 break;
             }
+
             var prevIdLine = model.getLineContent(getPrevIDPosition.range.startLineNumber)
             var prevId = prevIdLine.replace("\t", "").split(":")[1].trim()
 
@@ -2920,7 +2930,7 @@ function registerQmlAsLanguage() {
             position = { lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn }
             var content = model.getValueInRange({ startLineNumber: getIdType.range.startLineNumber, startColumn: 0, endLineNumber: getIdType.range.startLineNumber, endColumn: getIdType.range.endColumn })
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-            addCustomIdAndTypes(prevId, type)
+            addCustomIdAndTypes(prevId,position,type)
         }
     }
 
