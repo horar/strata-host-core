@@ -6,4 +6,5 @@
 
 * strataHost: An application that act as a Strata Host that listens
   for broadcast messages and when a certain message is found, it
-  initiates a TCP connection with Strata platform.
+  initiates a TCP connection with Strata platform. The application
+  also supports multiple clients connections.
