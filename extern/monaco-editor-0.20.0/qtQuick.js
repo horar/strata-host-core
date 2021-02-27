@@ -2909,7 +2909,6 @@ function registerQmlAsLanguage() {
                     delete suggestions[key[0]]
                     delete qtIdPairs[event.changes[0].range.startLineNumber]
                     delete qtObjectKeyValues[key[0]]
-                    alert(JSON.stringify(qtIdPairs))
                 }
             } else {
                 typing = false
