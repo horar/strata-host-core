@@ -76,7 +76,7 @@ bool Server::getConnectionStatus()
     if(availableClients_.size() < 1) {
         return false;
     }
-    return true; //tcpSocket_->state() == QTcpSocket::ConnectedState ? true : false;
+    return true;
 }
 
 void Server::connectToStrataClient(QHostAddress clientAddress, qint16 port)
@@ -87,7 +87,7 @@ void Server::connectToStrataClient(QHostAddress clientAddress, qint16 port)
     tcpSocket->connectToHost(clientAddress, port);
 
     if (false == tcpSocket->waitForConnected(5000)) {
-        qDebug() << "tcp: failed to connect.";
+        qDebug() << "tcp: failed to connect." << tcpSocket->error();
     }
 
     sendTcpMessge("Strata Host!", clientNumber_);

@@ -117,13 +117,6 @@ Window {
                 readOnly: true
                 wrapMode: Text.Wrap
                 enabled: Client.isConnected
-    //            background: Rectangle {
-    //                radius: 2
-    //                x: messageTextArea.x
-    //                y: messageTextArea.y
-    //                border.color: "#333"
-    //                border.width: 1
-    //            }
             }
         }
     }

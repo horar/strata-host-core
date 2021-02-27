@@ -4,8 +4,7 @@
 Client::Client(QObject *parent)
     : QObject(parent),
       udpSocket_(new QUdpSocket(this)),
-      tcpSever_(new QTcpServer(this)),
-      tcpSocket_(new QTcpSocket(this))
+      tcpSever_(new QTcpServer(this))
 {
     // No need to bind UDP socket for sending
 
@@ -15,15 +14,13 @@ Client::Client(QObject *parent)
 
 Client::~Client()
 {
-    //cleaning this will crash the other program when it looks for this socket
-//    delete udpSocket_;
-//    delete tcpSever_;
-//    delete tcpSocket_;
+    delete udpSocket_;
+    delete tcpSever_;
 }
 
 bool Client::getConnectionStatus() const
 {
-    return tcpSocket_->state() == QTcpSocket::ConnectedState ? true : false;
+    return isConnected;
 }
 
 void Client::readTcpMessage()
@@ -64,8 +61,10 @@ QString Client::getHostAddress()
     foreach(QNetworkInterface interface, QNetworkInterface::allInterfaces()) {
         if (interface.flags().testFlag(QNetworkInterface::IsUp) && !interface.flags().testFlag(QNetworkInterface::IsLoopBack)) {
             foreach (QNetworkAddressEntry entry, interface.addressEntries()) {
-            if ( interface.hardwareAddress() != "00:00:00:00:00:00" && entry.ip().toString().contains(".") && !interface.humanReadableName().contains("vnic"))
-               hostAddressesList.push_back(entry.ip().toString());
+                if (interface.hardwareAddress() != "00:00:00:00:00:00" && entry.ip().toString().contains(".") &&
+                     !interface.humanReadableName().contains("vnic") && !interface.humanReadableName().contains("utun")) {
+                    hostAddressesList.push_back(entry.ip().toString());
+                }
             }
         }
     }
@@ -100,6 +99,7 @@ void Client::gotTcpConnection()
 {
     // get tcp socket from server
     tcpSocket_ = tcpSever_->nextPendingConnection();
+    isConnected = true;
     emit connectionStatusUpdated();
     setLog("Received and established a TCP connection from IP: "+ tcpSocket_->peerAddress().toString());
 
@@ -116,6 +116,7 @@ void Client::gotTcpConnection()
     connect(tcpSocket_, &QTcpSocket::disconnected, this, [this]() {
         setLog("TCP connection has been closed");
         startTcpServer();
+        isConnected = false;
         emit connectionStatusUpdated();
     });
 }

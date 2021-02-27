@@ -97,16 +97,29 @@ Window {
             anchors.bottomMargin: 7
             anchors.topMargin: -7
             clip: true
+            enabled: Server.isConnected
+            Flickable {
+                anchors.fill: parent
+                anchors.rightMargin: -9
+                anchors.bottomMargin: -5
+                anchors.leftMargin: 9
+                anchors.topMargin: 5
+                boundsBehavior: Flickable.StopAtBounds
+                ScrollBar.vertical: ScrollBar {}
 
-            TextArea {
-                id: udpLogTA
-                anchors.top: udpLogSV.top
-                anchors.bottom: udpLogSV.bottom
-                anchors.bottomMargin: 6
-                anchors.leftMargin: -10
-                anchors.topMargin: -75
-                text: Server.udpBuffer
-                clip: false
+                TextArea.flickable: TextArea {
+                    id: udpLogTA
+                    property int logCount: 0
+                    anchors.top: udpLogSV.top
+                    anchors.bottom: udpLogSV.bottom
+                    anchors.bottomMargin: 6
+                    anchors.leftMargin: -10
+                    anchors.topMargin: -75
+                    text: {
+                        clear(Server.udpBuffer)
+                        append(Server.udpBuffer.arg(logCount++))
+                    }
+                }
             }
         }
     }
@@ -201,15 +214,30 @@ Window {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 8
                 anchors.topMargin: -8
+                enabled: Server.isConnected
 
-                TextArea {
-                    id: tcpLogTA
+                Flickable {
                     anchors.fill: parent
-                    anchors.rightMargin: -147
-                    anchors.bottomMargin: -92
-                    anchors.leftMargin: -10
+                    anchors.rightMargin: -9
+                    anchors.bottomMargin: -5
+                    anchors.leftMargin: 9
                     anchors.topMargin: 5
-                    text: Server.tcpBuffer
+                    boundsBehavior: Flickable.StopAtBounds
+                    ScrollBar.vertical: ScrollBar {}
+
+                    TextArea.flickable: TextArea {
+                        id: tcpLogTA
+                        property int logCount: 0
+                        anchors.fill: parent
+                        anchors.rightMargin: -147
+                        anchors.bottomMargin: -92
+                        anchors.leftMargin: -10
+                        anchors.topMargin: 5
+                        text: {
+                            clear(Server.tcpBuffer)
+                            append(Server.tcpBuffer.arg(logCount++))
+                        }
+                    }
                 }
             }
         }
@@ -330,9 +358,3 @@ Window {
         font.bold: true
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;annotation:"1 //;;// MainAppWindow //;;//  //;;//  //;;// 1612428635";customId:"";formeditorZoom:1.100000023841858}
-}
-##^##*/

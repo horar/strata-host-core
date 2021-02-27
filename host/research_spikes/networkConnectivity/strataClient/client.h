@@ -52,6 +52,7 @@ private:
     quint16 port_ = 5146;
     QString receivedMsgsBuffer;
     QString logsBuffer_;
+    bool isConnected = false;
 };
 
 #endif // CLIENT_H
