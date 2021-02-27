@@ -13,12 +13,12 @@
     }
 */
 const qtObjectKeyValues = {}
-var qtIdPairs = {}
-var qtObjectPropertyValues = {}
+const qtIdPairs = {}
+const qtObjectPropertyValues = {}
 var isInitialized = false
 var flags = { sgwidgetsFlag: false, qtQuickFlag: false }
-var suggestions = {}
-var currentItems = {}
+const suggestions = {}
+const currentItems = {}
 var editor = null
 var typing = true
 
@@ -2824,7 +2824,7 @@ function registerQmlAsLanguage() {
                 }
                 // check for range to see if position exists
                 // These are closing characters for the auto complete
-                if (position.lineNumber < getFirstBracket.range.startLineNumber || position.lineNumber > getLastBracket.range.startLineNumber) {
+                if ((position.lineNumber < getFirstBracket.range.startLineNumber || position.lineNumber > getLastBracket.range.startLineNumber) || (getLastBracket === null && getFirstBracket === null)) {
                     editor.updateOptions({
                         suggest: {
                             showFunctions: false,
