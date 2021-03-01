@@ -54,6 +54,7 @@ signals:
     void loadingChanged();
     void loadingProgressPercentageChanged();
     void metaDataInitializedChanged();
+    void md5Ready();
 
 private slots:
 

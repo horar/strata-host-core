@@ -46,7 +46,6 @@ Rectangle {
     }
 
     property alias platformTabListView: platformTabListView
-    property var mainWindow
 
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
@@ -596,16 +595,30 @@ Rectangle {
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
         property bool notifyOnFirmwareUpdate: false
-
+        property bool notifyOnPlatformConnections: true
+        property bool notifyOnCollateralDocumentUpdate: true
         property int selectedDistributionPortal: 0
-
+        // updated this so we can mitigate undefined variables
         function loadSettings() {
             const settings = readFile("general-settings.json")
+
             if (settings.hasOwnProperty("autoOpenView")) {
                 autoOpenView = settings.autoOpenView
-                closeOnDisconnect = settings.closeOnDisconnect
+            }
+            if(settings.hasOwnProperty("notifyOnFirmwareUpdate")){
                 notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+            }
+            if (settings.hasOwnProperty("closeOnDisconnect")) {
+                closeOnDisconnect = settings.closeOnDisconnect
+            }
+            if (settings.hasOwnProperty("selectedDistributionPortal")) {
                 selectedDistributionPortal = settings.selectedDistributionPortal
+            }
+            if (settings.hasOwnProperty("notifyOnCollateralDocumentUpdate")) {
+                notifyOnCollateralDocumentUpdate = settings.notifyOnCollateralDocumentUpdate
+            }
+            if(settings.hasOwnProperty("notifyOnPlatformConnections")){
+                notifyOnPlatformConnections = settings.notifyOnPlatformConnections
             }
             NavigationControl.userSettings = userSettings
         }
@@ -615,7 +628,9 @@ Rectangle {
                 autoOpenView: autoOpenView,
                 closeOnDisconnect: closeOnDisconnect,
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
-                selectedDistributionPortal: selectedDistributionPortal
+                selectedDistributionPortal: selectedDistributionPortal,
+                notifyOnPlatformConnections: notifyOnPlatformConnections,
+                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate
             }
             userSettings.writeFile("general-settings.json", settings)
         }

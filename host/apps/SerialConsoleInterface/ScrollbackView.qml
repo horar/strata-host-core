@@ -52,6 +52,14 @@ Item {
         }
     }
 
+    Shortcut {
+        id: selectShortcut
+        sequence: StandardKey.SelectAll
+        onActivated: {
+            selectAllText()
+        }
+    }
+
     Timer {
         id: scrollbackViewAtEndTimer
         interval: 1
@@ -153,6 +161,53 @@ Item {
         color: "white"
     }
 
+    SGWidgets.SGAbstractContextMenu {
+        id: contextMenuPopup
+
+        Action {
+            id: undoAction
+            text: qsTr("Undo")
+            enabled: false
+        }
+        Action {
+            id: redoAction
+            text: qsTr("Redo")
+            enabled: false
+        }
+        MenuSeparator { }
+        Action {
+            id: cutAction
+            text: qsTr("Cut")
+            enabled: false
+        }
+        Action {
+            id: copyAction
+            text: qsTr("Copy")
+            enabled: (selectionStartPosition !== selectionEndPosition) || (selectionStartIndex !== selectionEndIndex)
+            onTriggered: {
+                copyToClipboard()
+            }
+        }
+        Action {
+            id: pasteAction
+            text: qsTr("Paste")
+            enabled: false
+        }
+        MenuSeparator { }
+        Action {
+            id: selectAction
+            text: qsTr("Select All")
+            enabled: listView.count > 0
+            onTriggered: {
+                selectAllText()
+            }
+        }
+
+        onClosed: {
+            listView.forceActiveFocus()
+        }
+    }
+
     ListView {
         id: listView
         anchors {
@@ -166,8 +221,27 @@ Item {
         boundsBehavior: Flickable.StopAtBounds
 
         onActiveFocusChanged: {
-            if (activeFocus === false) {
+            if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
                 clearSelection()
+            }
+        }
+
+        MouseArea {
+            id: menuPopupMouseArea
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton
+
+            /*this is to stop interaction with flickable while selecting text */
+            drag.target: Item {}
+
+            onPressed: {
+                listView.forceActiveFocus()
+            }
+
+            onReleased: {
+                if (menuPopupMouseArea.containsMouse) {
+                    contextMenuPopup.popup(null)
+                }
             }
         }
 
@@ -183,6 +257,7 @@ Item {
             }
 
             cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.LeftButton
 
             /*this is to stop interaction with flickable while selecting text */
             drag.target: Item {}
@@ -484,6 +559,10 @@ Item {
             function positionAtTextEdit(x,y) {
                 return cmdText.positionAt(x-cmdText.x , y)
             }
+
+            function positionAtTextEditEnd() {
+                return cmdText.length
+            }
         }
     }
 
@@ -519,5 +598,23 @@ Item {
         }
 
         CommonCpp.SGUtilsCpp.copyToClipboard(text)
+    }
+
+    function selectAllText() {
+        if (listView.count === 0) {
+            return
+        }
+
+        var delegateIndexEnd = listView.count -1
+        var delegatePositionEnd = 0
+        if (delegateIndexEnd === 0) {
+            var delegateItemEnd = listView.itemAt(0, 0)
+            delegatePositionEnd = delegateItemEnd.positionAtTextEditEnd()
+        }
+
+        selectionStartIndex = 0
+        selectionEndIndex = delegateIndexEnd
+        selectionStartPosition = 0
+        selectionEndPosition = delegatePositionEnd
     }
 }
