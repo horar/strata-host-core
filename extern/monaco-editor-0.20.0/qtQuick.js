@@ -2589,7 +2589,7 @@ function registerQmlAsLanguage() {
     monaco.languages.register({ id: 'qml' })
     monaco.languages.setMonarchTokensProvider('qml', {
         keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function"],
-        typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool'],
+        typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool','double'],
         operators: [
             '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=', '===', '<==', '>==', '!==',
             '&&', '||', '++', '--', '+', '-', '*', '/', '&', '|', '^', '%',
