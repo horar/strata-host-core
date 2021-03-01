@@ -2778,7 +2778,6 @@ function registerQmlAsLanguage() {
                         startColumn: prevMatch.range.startColumn,
                         endColumn: nextMatch.range.endColumn
                     }
-                    alert(JSON.stringify(propRange))
                     return retrieveType(model, propRange)
                 }
             }
