@@ -6,66 +6,25 @@ import tech.strata.sgwidgets 0.9 as Widget09
 
 import "qrc:/js/help_layout_manager.js" as Help
 
-Widget09.SGResponsiveScrollView {
-    id: root
+Item {
+    id: container
+    Layout.fillHeight: true
+    Layout.fillWidth: true
 
-    minimumHeight: 800
-    minimumWidth: 1000
+    Component.onCompleted: {
+        Help.registerTarget(name, "Place holder for Advanced control view help messages", 0, "AdvanceControlHelp")
+    }
 
-    Rectangle {
-        id: container
-        parent: root.contentItem
+    Text {
+        id: name
+        width: contentWidth
+        height: contentHeight
+        text: "Advanced view Control Tab or Other Supporting Tabs: \nShould be used for more detailed UI implementations such as register map tables or advanced functionality. \nTake the idea of walking the user into evaluating the board by ensuring the board is instantly functional \nwhen powered on and then dive into these advanced features."
+        font {
+            pixelSize: 20
+        }
         anchors {
-            fill: parent
-        }
-        color: "#ADD"
-
-        Text {
-            id: name
-            text: "Advanced Control View"
-            font {
-                pixelSize: 60
-            }
-            color:"white"
-            anchors {
-                centerIn: parent
-            }
-        }
-
-        SGAlignedLabel {
-            id: motorSwitchLabel
-            target: motorSwitch
-            text: "Motor On/Off"
-            anchors {
-                top: name.bottom
-                horizontalCenter: name.horizontalCenter
-            }
-            alignment: SGAlignedLabel.SideTopCenter
-
-            SGSwitch {
-                id: motorSwitch
-                width: 50
-
-                // 'checked' state is bound to and sets the
-                // _motor_running_control property in PlatformInterface
-                checked: platformInterface._motor_running_control
-                onCheckedChanged: platformInterface._motor_running_control = checked
-            }
-        }
-
-        SGCircularGauge {
-            id: speedGauge
-            anchors {
-                top: motorSwitchLabel.bottom
-                horizontalCenter: name.horizontalCenter
-            }
-            height: 200
-            width: 200
-
-            value: platformInterface._motor_speed
+            centerIn: parent
         }
     }
 }
-
-
-

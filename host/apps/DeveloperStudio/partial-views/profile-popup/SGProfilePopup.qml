@@ -27,7 +27,7 @@ SGStrataPopup {
     horizontalPadding: 20
     bottomPadding: 20
     x: container.width/2 - root.width/2
-    y: container.parent.windowHeight/2 - root.height/2
+    y: mainWindow.height/2 - root.height/2
 
     property string firstName: NavigationControl.context.first_name
     property string lastName: NavigationControl.context.last_name

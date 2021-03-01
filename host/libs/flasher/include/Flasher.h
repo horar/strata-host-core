@@ -7,6 +7,7 @@
 #include <memory>
 #include <functional>
 #include <vector>
+#include <chrono>
 
 #include <Device/Device.h>
 
@@ -195,7 +196,7 @@ class Flasher : public QObject
         void addFlashOperation(bool flashingFirmware);
         void addBackupFirmwareOperation();
         void addStartApplicationOperation();
-        void addIdentifyOperation(bool flashingFirmware);
+        void addIdentifyOperation(bool flashingFirmware, std::chrono::milliseconds delay = std::chrono::milliseconds(0));
 
         typedef std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> OperationPtr;
 
