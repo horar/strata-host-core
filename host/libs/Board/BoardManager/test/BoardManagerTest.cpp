@@ -1,5 +1,5 @@
 #include "BoardManagerTest.h"
-#include "DeviceMock.h"
+#include <Device/Mock/MockDevice.h>
 
 void BoardManagerTest::initTestCase()
 {
@@ -31,15 +31,15 @@ void BoardManagerTest::onBoardDisconnected(int deviceId)
     lastOnBoardDisconnectedDeviceId_ = deviceId;
 }
 
-std::shared_ptr<DeviceMock> BoardManagerTest::addMockDevice(const int deviceId,
-                                                            const QString deviceName)
+std::shared_ptr<strata::device::mock::MockDevice> BoardManagerTest::addMockDevice(const int deviceId,
+                                                                                  const QString deviceName)
 {
     auto devicesCount = boardManager_->activeDeviceIds().count();
-    boardManager_->mockAddNewDevice(deviceId, deviceName);
+    QVERIFY_(boardManager_->addNewMockDevice(deviceId, deviceName));
     QVERIFY_(boardManager_->activeDeviceIds().contains(deviceId));
     QCOMPARE_(boardManager_->activeDeviceIds().count(), ++devicesCount);
     auto device = boardManager_->device(deviceId);
-    auto mockDevice = std::dynamic_pointer_cast<DeviceMock>(boardManager_->device(deviceId));
+    auto mockDevice = std::dynamic_pointer_cast<strata::device::mock::MockDevice>(boardManager_->device(deviceId));
     QVERIFY_(mockDevice.get() != nullptr);
     QVERIFY_(mockDevice->mockIsOpened());
     return mockDevice;
@@ -49,9 +49,9 @@ void BoardManagerTest::removeMockDevice(const int deviceId)
 {
     auto devicesCount = boardManager_->activeDeviceIds().count();
     auto device = boardManager_->device(deviceId);
-    auto mockDevice = std::dynamic_pointer_cast<DeviceMock>(boardManager_->device(deviceId));
+    auto mockDevice = std::dynamic_pointer_cast<strata::device::mock::MockDevice>(boardManager_->device(deviceId));
     if (boardManager_->disconnectDevice(deviceId)) {
-        boardManager_->mockRemoveDevice(deviceId);
+        QVERIFY_(boardManager_->removeMockDevice(deviceId));
         QVERIFY(mockDevice.get() != nullptr);
         QCOMPARE_(boardManager_->activeDeviceIds().count(), --devicesCount);
         QVERIFY(!mockDevice->mockIsOpened());

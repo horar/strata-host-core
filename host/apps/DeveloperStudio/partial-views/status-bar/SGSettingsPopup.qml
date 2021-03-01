@@ -13,7 +13,7 @@ SGStrataPopup {
     focus: true
     width: 400
     x: container.width/2 - root.width/2
-    y: container.parent.windowHeight/2 - root.height/2
+    y: mainWindow.height/2 - root.height/2
 
     onClosed: {
         parent.active = false
