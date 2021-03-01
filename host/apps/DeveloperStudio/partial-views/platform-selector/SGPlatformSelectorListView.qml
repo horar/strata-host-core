@@ -22,10 +22,6 @@ Item {
     property alias model: filteredPlatformSelectorModel
     property alias filterText: filter.text
 
-    function setSegmentCategoryWidth(width) {
-        segmentFilterContainer.Layout.preferredWidth = width
-    }
-
     Component.onCompleted: {
         // Restore previously set filters
         if (Filters.keywordFilter !== "") {
@@ -310,6 +306,8 @@ Item {
                 Item {
                     id: textFilterContainer
                     Layout.fillHeight: true
+                    // Layout width settings must match infoColumn in SGPlatformSelectorDelegate
+                    Layout.preferredWidth: 300
                     Layout.fillWidth: true
                     clip: true
 
@@ -483,7 +481,11 @@ Item {
                 Rectangle {
                     id: segmentFilterContainer
                     Layout.fillHeight: true
-                    Layout.preferredWidth: 0 // set by setSegmentCategoryWidth()
+                    // Layout width settings must match categoryControlsRow in SGPlatformSelectorDelegate
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 200
+                    Layout.minimumWidth: 300
+
                     border {
                         width: 1
                         color: "#DDD"
