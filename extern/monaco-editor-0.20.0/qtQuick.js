@@ -2574,6 +2574,7 @@ function registerQmlAsLanguage() {
         tokenizer: {
             root: [
                 [/[{}]/, 'delimiter.bracket'],
+                [/^[A_Z0_9]{(.|\n)(?!})$/, 'delimiter.bracket.error'],
                 [/[a-z_$][\w$]*/, {
                     cases: {
                         '@typeKeywords': 'keyword',
@@ -2582,9 +2583,9 @@ function registerQmlAsLanguage() {
                     }
                 }
                 ],
-                [/[A-Z][\w\$]*/, 'type.identifier'],
+                [/[A-Z0_9][\w\$]*/, 'type.identifier'],
                 [/(?:^|\{|;)\s*[a-z][\w\.]*\s*(?=\:|\{)/, "property.defs"],
-                [/id:^[a_z0_9_]*$/, "type.id"],
+                [/^id:\t[a_z0_9_]*$/, "type.id"],
                 { include: '@whitespace' },
                 [/\/(?=([^\\\/]|\\.)+\/([gimsuy]*)(\s*)(\.|;|\/|,|\)|\]|\}|$))/, { token: 'regexp', bracket: '@open', next: '@regexp' }],
                 [/[()\[\]]/, '@brackets'],
@@ -2686,7 +2687,8 @@ function registerQmlAsLanguage() {
             { token: "regexp.invalid", foreground: "#FF0000", fontStyle: 'italic underline' },
             { token: "string.invalid", foreground: "#FF0000", fontStyle: 'italic underline' },
             { token: "regexp.escape.control", foreground: "#FF0000", fontStyle: 'italic' },
-            { token: "regexp", foreground: "#FF0000", fontStyle: 'italic' }
+            { token: "regexp", foreground: "#FF0000", fontStyle: 'italic' },
+            { token: "delimiter.bracket.error", foreground: "#FF0000"}
         ]
     })
 
@@ -2739,13 +2741,14 @@ function registerQmlAsLanguage() {
             }
             //Edge Case 4
             if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
-                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextBracketMatch.range.startLineNumber) {
+                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber < nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextnextMatch.range.startLineNumber) {
                     var propRange = {
                         startLineNumber: prevMatch.range.startLineNumber,
                         endLineNumber: nextMatch.range.startLineNumber,
                         startColumn: prevMatch.range.startColumn,
                         endColumn: nextMatch.range.endColumn
                     }
+                    alert(JSON.stringify(propRange))
                     return retrieveType(model, propRange)
                 }
             }
@@ -2898,8 +2901,7 @@ function registerQmlAsLanguage() {
         return parent
     }
 
-    function getTypeID(model) {
-
+    function getTypeID(model,position) {
         model.onDidChangeContent((event) => {
             var checkID = model.getLineContent(event.changes[0].range.startLineNumber)
             if (checkID.includes("id:")) {
