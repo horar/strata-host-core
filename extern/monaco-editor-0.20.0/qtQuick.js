@@ -2534,7 +2534,7 @@ function initializeQtQuick(flags) {
     }
 }
 // This is a register for when an Id of a type is read and/or created. Allowing us to instantiate from the id caller
-function addCustomIdAndTypes(idText, position,type = "Item") {
+function addCustomIdAndTypes(idText, position, type = "Item") {
     if (!qtIdPairs.hasOwnProperty(position)) {
         qtIdPairs[position.lineNumber] = {}
         qtIdPairs[position.lineNumber][idText] = type
@@ -2550,12 +2550,34 @@ function addCustomIdAndTypes(idText, position,type = "Item") {
             range: null,
         }
     } else {
-        if(!qtIdPairs[position.lineNumber].hasOwnProperty(idText)){
+        if (!qtIdPairs[position.lineNumber].hasOwnProperty(idText)) {
+            var keys = Object.keys(qtIdPairs[position.lineNumber])
+            delete suggestions[keys[0]]
+            delete qtObjectKeyValues[keys[0]]
             delete qtIdPairs[position.lineNumber]
             qtIdPairs[position.lineNumber] = {}
             qtIdPairs[position.lineNumber][idText] = type
-        } else if(qtIdPairs[position.lineNumber][idText] !== type){
+            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: false })
+            suggestions[idText] = {
+                label: qtObjectKeyValues[idText].label,
+                kind: monaco.languages.CompletionItemKind.Function,
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                insertText: qtObjectKeyValues[idText].insertText,
+                range: null,
+            }
+        } else if (qtIdPairs[position.lineNumber][idText] !== type) {
             qtIdPairs[position.lineNumber][idText] = type
+            var keys = Object.keys(qtIdPairs[position.lineNumber])
+            delete suggestions[keys[0]]
+            delete qtObjectKeyValues[keys[0]]
+            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: false })
+            suggestions[idText] = {
+                label: qtObjectKeyValues[idText].label,
+                kind: monaco.languages.CompletionItemKind.Function,
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                insertText: qtObjectKeyValues[idText].insertText,
+                range: null,
+            }
         }
     }
 }
@@ -2696,7 +2718,7 @@ function registerQmlAsLanguage() {
             { token: "string.invalid", foreground: "#FF0000", fontStyle: 'italic underline' },
             { token: "regexp.escape.control", foreground: "#FF0000", fontStyle: 'italic' },
             { token: "regexp", foreground: "#FF0000", fontStyle: 'italic' },
-            { token: "delimiter.bracket.error", foreground: "#FF0000"}
+            { token: "delimiter.bracket.error", foreground: "#FF0000" }
         ]
     })
 
@@ -2909,13 +2931,12 @@ function registerQmlAsLanguage() {
         return parent
     }
     // Searches and initializes all id types to the suggestions object as well as allow updates to each item
-    // TODO(after CS-1453): on update Item type ensure id is updated
-    function getTypeID(model,position) {
+    function getTypeID(model, position) {
         model.onDidChangeContent((event) => {
             var checkID = model.getLineContent(event.changes[0].range.startLineNumber)
             if (checkID.includes("id:")) {
                 typing = true
-                if(qtIdPairs.hasOwnProperty(event.changes[0].range.startLineNumber)){
+                if (qtIdPairs.hasOwnProperty(event.changes[0].range.startLineNumber)) {
                     const key = Object.keys(qtIdPairs[event.changes[0].range.startLineNumber])
                     delete suggestions[key[0]]
                     delete qtIdPairs[event.changes[0].range.startLineNumber]
@@ -2940,7 +2961,7 @@ function registerQmlAsLanguage() {
             position = { lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn }
             var content = model.getValueInRange({ startLineNumber: getIdType.range.startLineNumber, startColumn: 0, endLineNumber: getIdType.range.startLineNumber, endColumn: getIdType.range.endColumn })
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-            addCustomIdAndTypes(prevId,position,type)
+            addCustomIdAndTypes(prevId, position, type)
         }
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
