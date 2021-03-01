@@ -2771,7 +2771,7 @@ function registerQmlAsLanguage() {
             }
             //Edge Case 3: this is to ensure that editing the top of the file does not allow a child item to read in its parent data i.e Item and anchors dont mix
             if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
-                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber < nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber > nextnextMatch.range.startLineNumber)) {
+                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber < nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber >= nextnextMatch.range.startLineNumber)) {
                     var propRange = {
                         startLineNumber: prevMatch.range.startLineNumber,
                         endLineNumber: nextMatch.range.startLineNumber,
