@@ -2589,7 +2589,7 @@ function registerQmlAsLanguage() {
     monaco.languages.register({ id: 'qml' })
     monaco.languages.setMonarchTokensProvider('qml', {
         keywords: ['readonly', 'property', 'for', 'if', 'else', 'do', 'while', 'true', 'false', 'signal', 'const', 'switch', 'import', 'as', "on", 'async', 'console', "let", "default", "function"],
-        typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool','double'],
+        typeKeywords: ['int', 'real', 'var', 'string', 'color', 'url', 'alias', 'bool', 'double'],
         operators: [
             '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=', '===', '<==', '>==', '!==',
             '&&', '||', '++', '--', '+', '-', '*', '/', '&', '|', '^', '%',
@@ -2761,6 +2761,7 @@ function registerQmlAsLanguage() {
             var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
             //Edge Case 5: this is when there is only one QtItem, most common is when we create a new file
             if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
+                alert("Edge Case 5")
                 var propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
                     endLineNumber: nextMatch.range.startLineNumber,
@@ -2771,7 +2772,8 @@ function registerQmlAsLanguage() {
             }
             //Edge Case 4: this is to ensure that editing the top of the file does not allow a child item to read in its parent data i.e Item and anchors dont mix
             if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
-                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber < nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextnextMatch.range.startLineNumber) {
+                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber < nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber > nextnextMatch.range.startLineNumber)) {
+                    alert("Edge Case 4")
                     var propRange = {
                         startLineNumber: prevMatch.range.startLineNumber,
                         endLineNumber: nextMatch.range.startLineNumber,
@@ -2784,6 +2786,7 @@ function registerQmlAsLanguage() {
             //Edge Case 6: same as 5, just inveresed for the end of the file
             if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
                 if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
+                    alert("Edge Case 6")
                     var propRange = {
                         startLineNumber: prevMatch.range.startLineNumber,
                         endLineNumber: nextMatch.range.startLineNumber,
@@ -2805,21 +2808,27 @@ function registerQmlAsLanguage() {
                     return retrieveType(model, propRange)
                     // Edge Case 1: A rare case where if there is no first child of an item on loaded the properties will not propagate
                 } else if (nextMatch.range.startLineNumber > nextBracketMatch.range.startLineNumber) {
+                    alert("Edge Case 1")
                     var nextPosition = { lineNumber: nextBracketMatch.range.startLineNumber, column: nextBracketMatch.range.startColumn }
-                    var closePosition = model.findNextMatch("}", nextPosition, false, false)
-                    if (nextMatch.range.startLineNumber === closePosition.range.startLineNumber) {
+                    var prevParent = findPreviousBracketParent(model, nextPosition, nextPosition.column)
+                    if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
                         var propRange = {
-                            startLineNumber: prevMatch.range.startLineNumber,
+                            startLineNumber: nextMatch.range.startLineNumber,
                             endLineNumber: nextBracketMatch.range.startLineNumber,
-                            startColumn: prevMatch.range.startColumn,
-                            endColumn: nextBracketMatch.range.endColumn
+                            startColumn: nextMatch.range.startColumn,
+                            endColumn: nextBracketMatch.range.endColumn,
                         }
-
-                        return retrieveType(model, propRange)
+                        convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag)
+                        if (currentItems[prevParent] === undefined) {
+                            currentItems[prevParent] = {}
+                        }
+                        currentItems[prevParent][propRange] = qtObjectPropertyValues[prevParent]
+                        return currentItems[prevParent][propRange]
                     }
                 }
                 //Edge case 2 & 3: this is the most common edge case hit where the properties between sibling items are intermingled this determines what the parent item is
             } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
+                alert("Edge Case 2")
                 var prevParent = findPreviousBracketParent(model, { lineNumber: prevBracketMatch.range.startLineNumber, column: prevBracketMatch.range.endColumn }, prevBracketMatch.range.endColumn)
                 if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
                     var propRange = {
