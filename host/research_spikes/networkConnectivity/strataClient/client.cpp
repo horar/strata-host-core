@@ -52,7 +52,7 @@ void Client::startTcpServer()
         setLog("Unable to start TCP server.\n" + tcpSever_->errorString());
         return;
     }
-    setLog("TCP server has been started and listning at port: " + QString::number(TCP_PORT));
+    setLog("TCP server has been started and listening at port: " + QString::number(TCP_PORT));
 }
 
 QString Client::getHostAddress()
@@ -105,7 +105,7 @@ void Client::gotTcpConnection()
 
     // close server from listening to incoming connection
     tcpSever_->close();
-    setLog(tcpSever_->isListening() ? "TCP server is listening at port: " + QString::number(TCP_PORT) : "TCP server stoped listning at port: " + QString::number(TCP_PORT));
+    setLog(tcpSever_->isListening() ? "TCP server is listening at port: " + QString::number(TCP_PORT) : "TCP server stoped listening at port: " + QString::number(TCP_PORT));
 
 
     // ensure that the socket will be deleted after disconnecting
