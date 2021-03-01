@@ -2477,7 +2477,7 @@ const qtQuickBody = [
         "properties": ["bold", "capitalization", "family", "italic", "pixelSize", "pointSize", "spacing", "underline"]
     },
 ]
-
+// return an object from a string with definable properties
 function createDynamicProperty(property) {
     return {
         "label": property,
@@ -2487,12 +2487,13 @@ function createDynamicProperty(property) {
         "range": null
     }
 }
+// filter out duplicate lines
 function removeDuplicates(propertySuggestions) {
     return propertySuggestions.sort().filter(function (itm, idx, arr) {
         return !idx || itm.label !== arr[idx - 1].label;
     })
 }
-
+// This is the properties string array conversion to an object array, this has to be done in real time due to the limitations of the monaco editor suggestions
 function convertStrArrayToObjArray(key, properties, isProperty = false, isIdReference = false) {
     var propertySuggestions = []
     qtObjectPropertyValues[key] = []
@@ -2512,17 +2513,17 @@ function convertStrArrayToObjArray(key, properties, isProperty = false, isIdRefe
         qtObjectPropertyValues[key] = propertySuggestions.concat(Object.values(suggestions));
     }
 }
-
+// setting each key val pair for the object
 function createQtObjectValPairs(key, val) {
     qtObjectKeyValues[key] = val
 }
-
+// creating the qtObjectKeyValues array
 function convertQtQuickToObject(objArray, isProperty = false) {
     for (var i = 0; i < objArray.length; i++) {
         createQtObjectValPairs(objArray[i].prefix, { label: objArray[i].prefix, insertText: objArray[i].body, properties: objArray[i].properties, flag: isProperty })
     }
 }
-
+// Initializes the library to become an Object array to be feed into suggestions
 function initializeQtQuick(flags) {
     if (flags.qtQuickFlag) {
         convertQtQuickToObject(qtQuick)
@@ -2532,7 +2533,7 @@ function initializeQtQuick(flags) {
         convertQtQuickToObject(SGWidgets)
     }
 }
-
+// This is a register for when an Id of a type is read and/or created. Allowing us to instantiate from the id caller
 function addCustomIdAndTypes(idText, position,type = "Item") {
     if (!qtIdPairs.hasOwnProperty(position)) {
         qtIdPairs[position.lineNumber] = {}
@@ -2548,13 +2549,20 @@ function addCustomIdAndTypes(idText, position,type = "Item") {
             insertText: qtObjectKeyValues[idText].insertText,
             range: null,
         }
+    } else {
+        if(!qtIdPairs[position.lineNumber].hasOwnProperty(idText)){
+            delete qtIdPairs[position.lineNumber]
+            qtIdPairs[position.lineNumber] = {}
+            qtIdPairs[position.lineNumber][idText] = type
+        } else if(qtIdPairs[position.lineNumber][idText] !== type){
+            qtIdPairs[position.lineNumber][idText] = type
+        }
     }
 }
 
-function clearPropertySuggestions(key) {
-
-}
-
+/*
+    This the global registration for the monaco editor this creates the syntax and linguistics of the qml language, as well as defining the theme of the qml language
+*/
 function registerQmlAsLanguage() {
     monaco.languages.register({ id: 'qml' })
     monaco.languages.setMonarchTokensProvider('qml', {
@@ -2712,7 +2720,7 @@ function registerQmlAsLanguage() {
     }
 
     isInitialized = true
-
+    // This searches and determines where the position lies within each child Item, so that the correct Qt file class is returned
     function searchForChildBrackets(model, position) {
         var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
         var currWords = currText.replace("\t", "").split(" ");
@@ -2729,7 +2737,7 @@ function registerQmlAsLanguage() {
             var topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn }, false, false)
             var bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }, false, false)
             var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
-            //Edge Case 5
+            //Edge Case 5: this is when there is only one QtItem, most common is when we create a new file
             if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
                 var propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
@@ -2739,7 +2747,7 @@ function registerQmlAsLanguage() {
                 }
                 return retrieveType(model, propRange)
             }
-            //Edge Case 4
+            //Edge Case 4: this is to ensure that editing the top of the file does not allow a child item to read in its parent data i.e Item and anchors dont mix
             if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
                 if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber < nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextnextMatch.range.startLineNumber) {
                     var propRange = {
@@ -2752,7 +2760,7 @@ function registerQmlAsLanguage() {
                     return retrieveType(model, propRange)
                 }
             }
-            //Edge Case 6
+            //Edge Case 6: same as 5, just inveresed for the end of the file
             if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
                 if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
                     var propRange = {
@@ -2764,7 +2772,7 @@ function registerQmlAsLanguage() {
                     return retrieveType(model, propRange)
                 }
             }
-            //Normal case
+            //Normal case: the child is independent and returns the type
             if (position.lineNumber >= prevMatch.range.startLineNumber && (prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber)) {
                 if (position.lineNumber <= nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextBracketMatch.range.startLineNumber) {
                     var propRange = {
@@ -2774,7 +2782,7 @@ function registerQmlAsLanguage() {
                         endColumn: nextMatch.range.endColumn
                     }
                     return retrieveType(model, propRange)
-                    // Edge Case 1
+                    // Edge Case 1: A rare case where if there is no first child of an item on loaded the properties will not propagate
                 } else if (nextMatch.range.startLineNumber > nextBracketMatch.range.startLineNumber) {
                     var nextPosition = { lineNumber: nextBracketMatch.range.startLineNumber, column: nextBracketMatch.range.startColumn }
                     var closePosition = model.findNextMatch("}", nextPosition, false, false)
@@ -2789,7 +2797,7 @@ function registerQmlAsLanguage() {
                         return retrieveType(model, propRange)
                     }
                 }
-                //Edge case 2 & 3
+                //Edge case 2 & 3: this is the most common edge case hit where the properties between sibling items are intermingled this determines what the parent item is
             } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
                 var prevParent = findPreviousBracketParent(model, { lineNumber: prevBracketMatch.range.startLineNumber, column: prevBracketMatch.range.endColumn }, prevBracketMatch.range.endColumn)
                 if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
@@ -2809,7 +2817,7 @@ function registerQmlAsLanguage() {
             }
         }
     }
-
+    // This creates the suggestions widgets and suggestion items, returning the determined suggestions, reads the files ids, updates editor settings per initial conditions
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
             triggerCharacters: ['}', '.'],
@@ -2880,7 +2888,7 @@ function registerQmlAsLanguage() {
             }
         })
     }
-
+    // Searches for the parent Item based off of the end column of a sibling item, this searches up and checks for time where the currentColumn is in the parent
     function findPreviousBracketParent(model, position, column) {
         var currentPosition = position;
         var parent = null
@@ -2900,7 +2908,8 @@ function registerQmlAsLanguage() {
 
         return parent
     }
-
+    // Searches and initializes all id types to the suggestions object as well as allow updates to each item
+    // TODO(after CS-1453): on update Item type ensure id is updated
     function getTypeID(model,position) {
         model.onDidChangeContent((event) => {
             var checkID = model.getLineContent(event.changes[0].range.startLineNumber)
@@ -2934,7 +2943,7 @@ function registerQmlAsLanguage() {
             addCustomIdAndTypes(prevId,position,type)
         }
     }
-
+    // This grabs the Item type from the parent bracket and returns the suggestions
     function retrieveType(model, propRange) {
         var content = model.getLineContent(propRange.startLineNumber)
         var splitContent = content.replace("\t", "").split(/\{|\t/)
