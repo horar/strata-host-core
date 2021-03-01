@@ -67,6 +67,7 @@ add_library(${DEVICE_OPERATIONS}
     Device/Operations/Commands/src/CmdStartApplication.cpp
     Device/Operations/Commands/src/CmdSetPlatformId.cpp
     Device/Operations/Commands/src/CmdSetAssistedPlatformId.cpp
+    Device/Operations/Commands/src/CmdWait.cpp
 
     Device/Operations/BaseDeviceOperation.h
     Device/Operations/src/BaseDeviceOperation.cpp

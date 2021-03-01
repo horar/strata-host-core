@@ -4,6 +4,10 @@
 
 #include <Device/Operations/BaseDeviceOperation.h>
 
+namespace strata::device::command {
+    class CmdStartBackupFirmware;
+}
+
 namespace strata::device::operation {
 
 class Backup : public BaseDeviceOperation {
@@ -15,6 +19,7 @@ public:
     void backupNextChunk();
     QVector<quint8> recentBackupChunk() const;
 private:
+    command::CmdStartBackupFirmware* cmdStartBackup_;
     void setTotalChunks(command::CommandResult& result, int& status);
     int totalChunks_;
     QVector<quint8> chunk_;

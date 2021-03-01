@@ -12,5 +12,6 @@
 #include "Commands/src/CmdStartApplication.h"
 #include "Commands/src/CmdSetPlatformId.h"
 #include "Commands/src/CmdSetAssistedPlatformId.h"
+#include "Commands/src/CmdWait.h"
 
 #endif
