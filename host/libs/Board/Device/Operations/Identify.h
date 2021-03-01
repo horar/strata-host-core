@@ -14,6 +14,7 @@ public:
         Application,
         Bootloader
     };
+    Q_ENUM(BoardMode)
 
     /*!
      * Identify operation constructor
