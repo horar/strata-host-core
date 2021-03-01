@@ -79,13 +79,13 @@ public:
     ~InfoCommand() override;
     void process() override;
 
-protected slots:
+private slots:
     virtual void handleIdentifyOperationFinished(device::operation::Result result, int status, QString errStr);
 
 private:
     const int deviceNumber_;
     device::DevicePtr device_;
-    std::shared_ptr<device::operation::BaseDeviceOperation> identifyOperation_;
+    std::unique_ptr<device::operation::BaseDeviceOperation> identifyOperation_;
 };
 
 }  // namespace

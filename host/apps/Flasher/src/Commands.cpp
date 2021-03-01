@@ -116,10 +116,6 @@ void FlasherCommand::process() {
 
 // INFO command
 
-constexpr std::chrono::milliseconds IDENTIFY_LAUNCH_DELAY(500);
-constexpr unsigned int GET_FW_INFO_MAX_RETRIES(2);
-constexpr bool REQ_FW_INFO_RESP(false);
-
 InfoCommand::InfoCommand(int deviceNumber) :
     deviceNumber_(deviceNumber) { }
 
@@ -149,18 +145,13 @@ void InfoCommand::process() {
         return;
     }
 
-    identifyOperation_.reset(
-        // Some boards need time for booting. If board is rebooted it also takes some time to start.
-        new device::operation::Identify(device_, REQ_FW_INFO_RESP, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY),
-        [] (device::operation::BaseDeviceOperation *operation) { operation->deleteLater(); }
-    );
+    identifyOperation_ = std::make_unique<device::operation::Identify>(device_, false);
 
     connect(identifyOperation_.get(), &device::operation::BaseDeviceOperation::finished,
             this, &InfoCommand::handleIdentifyOperationFinished);
 
     identifyOperation_->run();
 }
-
 
 void InfoCommand::handleIdentifyOperationFinished(device::operation::Result result, int status, QString errStr) {
     Q_UNUSED(status)
@@ -191,38 +182,16 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
         message.append(QVariant::fromValue(device_->deviceType()).toString());
         message.append(QStringLiteral("\nBoard Mode: "));
         message.append(QVariant::fromValue(identifyOp->boardMode()).toString());
-
-        if (device_->applicationVer().isEmpty() == false) {
-            message.append(QStringLiteral("\nApplication version: "));
-            message.append(device_->applicationVer());
-        } else if (device_->bootloaderVer().isEmpty() == false) {
-            message.append(QStringLiteral("\nBootloader version: "));
-            message.append(device_->bootloaderVer());
-        } else {
-            message.append(QStringLiteral("\nUnknown version"));
-        }
+        message.append(QStringLiteral("\nApplication version: "));
+        message.append(device_->applicationVer());
+        message.append(QStringLiteral("\nBootloader version: "));
+        message.append(device_->bootloaderVer());
 
         qCInfo(logCategoryFlasherCli).noquote() << message;
         emit finished(EXIT_SUCCESS);
     } break;
-    case device::operation::Result::Reject: {
-        qCInfo(logCategoryFlasherCli) << "Identify operation was rejected: operation is not supported by device";
-        emit finished(EXIT_FAILURE);
-    } break;
-    case device::operation::Result::Cancel: {
-        qCInfo(logCategoryFlasherCli) << "Identify operation was cancelled";
-        emit finished(EXIT_SUCCESS);
-    } break;
-    case device::operation::Result::Timeout: {
-        qCInfo(logCategoryFlasherCli) << "Identify operation resulted in timeout: no response from device";
-        emit finished(EXIT_FAILURE);
-    } break;
-    case device::operation::Result::Failure: {
-        qCInfo(logCategoryFlasherCli) << "Identify operation resulted in failure: faulty response from device";
-        emit finished(EXIT_FAILURE);
-    } break;
-    case device::operation::Result::Error: {
-        qCInfo(logCategoryFlasherCli) << "Identify operation resulted in error:" << errStr;
+    default: {
+        qCInfo(logCategoryFlasherCli) << "Identify operation failed:" << errStr;
         emit finished(EXIT_FAILURE);
     } break;
     }
