@@ -14,7 +14,9 @@
 namespace strata::device::command {
 
 CmdFlash::CmdFlash(const device::DevicePtr& device, int chunkCount, bool flashFirmware) :
-    BaseDeviceCommand(device, (flashFirmware) ? QStringLiteral("flash_firmware") : QStringLiteral("flash_bootloader")),
+    BaseDeviceCommand(device,
+                      (flashFirmware) ? QStringLiteral("flash_firmware") : QStringLiteral("flash_bootloader"),
+                      (flashFirmware) ? CommandType::FlashFirmware : CommandType::FlashBootloader),
     flashFirmware_(flashFirmware), chunkNumber_(0), chunkCount_(chunkCount),
     maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0)
 { }

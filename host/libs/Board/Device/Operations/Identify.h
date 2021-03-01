@@ -20,20 +20,18 @@ public:
      * \param device device which will be used for operation
      * \param requireFwInfoResponse true if response to 'get_firmware_info' command is required
      * \param maxFwInfoRetries max number of retries for 'get_firmware_info' command
+     * \param delay number of milliseconds for waiting before sending first operation command
      * If maxFwInfoRetries is 2, 'get_firmware_info' command can be sent 3 times (1 regular + 2 retries).
      */
-    Identify(const device::DevicePtr& device, bool requireFwInfoResponse, uint maxFwInfoRetries = 1);
+    Identify(const device::DevicePtr& device,
+             bool requireFwInfoResponse,
+             uint maxFwInfoRetries = 1,
+             std::chrono::milliseconds delay = std::chrono::milliseconds(0));
 
     /*!
      * Identify operation destructor
      */
     ~Identify() = default;
-
-    /*!
-     * Run (start) operation with delay
-     * \param delay number of milliseconds before running operation
-     */
-    void runWithDelay(std::chrono::milliseconds delay);
 
     /*!
      * Checks if board is in bootloader or application mode.

@@ -15,7 +15,12 @@ ServerConnector::~ServerConnector()
 bool ServerConnector::initilizeConnector()
 {
     using Connector = strata::connector::Connector;
-    connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
+
+    if (connector_) {
+        qInfo(logCategoryStrataClientConnector) << "ZMQ connector already created.";
+    } else {
+        connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
+    }
 
     if (false == connector_->open(serverAddress_.toStdString())) {
         qCCritical(logCategoryStrataServerConnector) << "Failed to open ServerConnector.";
@@ -40,10 +45,10 @@ void ServerConnector::readNewMessages(/*int socket*/)
         }
         qCDebug(logCategoryStrataServerConnector).nospace().noquote()
             << "message received. Client ID: 0x"
-            << QByteArray::fromStdString(connector_->getDealerID()).toHex()
-            << ", Message: '" << QByteArray::fromStdString(message) << "'";
+            << QByteArray::fromStdString(connector_->getDealerID()).toHex() << ", Message: '"
+            << QByteArray::fromStdString(message) << "'";
         emit newMessageReceived(QByteArray::fromStdString(connector_->getDealerID()),
-                               QByteArray::fromStdString(message));
+                                QByteArray::fromStdString(message));
     }
     readSocketNotifier_->setEnabled(true);
 }

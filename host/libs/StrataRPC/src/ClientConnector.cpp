@@ -13,11 +13,17 @@ ClientConnector::~ClientConnector()
 bool ClientConnector::initializeConnector()
 {
     using Connector = strata::connector::Connector;
-    connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER);
-    connector_->setDealerID(dealerId_.toStdString());
 
+    if (connector_) {
+        qInfo(logCategoryStrataClientConnector) << "ZMQ connector already created.";
+    } else {
+        connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER);
+    }
+
+    connector_->setDealerID(dealerId_.toStdString());
     if (false == connectClient()) {
-        qCCritical(logCategoryStrataClientConnector) << "Failed to open ClientConnector.";
+        qCCritical(logCategoryStrataClientConnector)
+            << "Failed to open ClientConnector. Or Client already connected.";
         return false;
     }
 
@@ -43,8 +49,7 @@ bool ClientConnector::disconnectClient()
 
 bool ClientConnector::connectClient()
 {
-
-    if(!connector_) {
+    if (!connector_) {
         qCCritical(logCategoryStrataClientConnector) << "Uninitialized connector.";
         return false;
     }

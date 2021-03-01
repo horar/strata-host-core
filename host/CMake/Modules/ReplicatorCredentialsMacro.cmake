@@ -8,7 +8,7 @@
 macro(generate_replicator_credentials)
     set(credentials JSON_FILE)
     cmake_parse_arguments(local "" ${credentials} "" ${ARGN})
-
+ 
     string(JSON USERNAME ERROR_VARIABLE ERROR_PASSWORD GET ${local_JSON_FILE} username)
     string(JSON PASSWORD ERROR_VARIABLE ERROR_USERNAME GET ${local_JSON_FILE} password)
 
