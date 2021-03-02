@@ -177,6 +177,11 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
         message.append(QVariant::fromValue(device_->deviceType()).toString());
         message.append(QStringLiteral("\nController Type: "));
         message.append(QVariant::fromValue(device_->controllerType()).toString());
+        if (device_->controllerType() == device::Device::ControllerType::Assisted) {
+            message.append(QStringLiteral(" (Platform Connected: "));
+            message.append(QVariant(device_->isControllerConnectedToPlatform()).toString());
+            message.append(QStringLiteral(")"));
+        }
         message.append(QStringLiteral("\nBoard Mode: "));
         message.append(QVariant::fromValue(identifyOp->boardMode()).toString());
         message.append(QStringLiteral(" (API: "));
