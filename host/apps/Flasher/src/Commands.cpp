@@ -167,10 +167,12 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
     case device::operation::Result::Success: {
         QString message(QStringLiteral("List of available parameters for board:"));
 
+        message.append(QStringLiteral("\nDevice Verbose Name: "));
+        message.append(device_->name());
         message.append(QStringLiteral("\nDevice Name: "));
         message.append(device_->deviceName());
-        message.append(QStringLiteral("\nDevice Id: "));
-        message.append(QString::number(device_->deviceId()));
+        message.append(QStringLiteral("\nDevice Id: 0x"));
+        message.append(QString::number(static_cast<uint>(device_->deviceId()), 16).toUpper());
         message.append(QStringLiteral("\nDevice Type: "));
         message.append(QVariant::fromValue(device_->deviceType()).toString());
         message.append(QStringLiteral("\nBoard Mode: "));
@@ -179,12 +181,26 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
         message.append(device_->applicationVer());
         message.append(QStringLiteral("\nBootloader version: "));
         message.append(device_->bootloaderVer());
+        message.append(QStringLiteral("\nPlatform Id: "));
+        message.append(device_->platformId());
+        message.append(QStringLiteral("\nClass Id: "));
+        message.append(device_->classId());
+        message.append(QStringLiteral("\nController Platform Id: "));
+        message.append(device_->controllerPlatformId());
+        message.append(QStringLiteral("\nController Class Id: "));
+        message.append(device_->controllerClassId());
+        message.append(QStringLiteral("\nFirmware Class Id: "));
+        message.append(device_->firmwareClassId());
+        message.append(QStringLiteral("\nApi version: "));
+        message.append(QVariant::fromValue(device_->apiVersion()).toString());
+        message.append(QStringLiteral("\nController Type: "));
+        message.append(QVariant::fromValue(device_->controllerType()).toString());
 
         qCInfo(logCategoryFlasherCli).noquote() << message;
         emit finished(EXIT_SUCCESS);
     } break;
     default: {
-        qCInfo(logCategoryFlasherCli) << "Identify operation failed:" << errStr;
+        qCWarning(logCategoryFlasherCli) << "Identify operation failed:" << errStr;
         emit finished(EXIT_FAILURE);
     } break;
     }

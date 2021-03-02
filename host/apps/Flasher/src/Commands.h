@@ -1,7 +1,7 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include <Device/Operations/BaseDeviceOperation.h>
+#include <Device/Operations/Identify.h>
 #include <memory>
 #include <QObject>
 #include <QString>
@@ -85,7 +85,7 @@ private slots:
 private:
     const int deviceNumber_;
     device::DevicePtr device_;
-    std::unique_ptr<device::operation::BaseDeviceOperation> identifyOperation_;
+    std::unique_ptr<device::operation::Identify> identifyOperation_;
 };
 
 }  // namespace
