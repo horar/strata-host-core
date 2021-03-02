@@ -156,16 +156,9 @@ void InfoCommand::process() {
 void InfoCommand::handleIdentifyOperationFinished(device::operation::Result result, int status, QString errStr) {
     Q_UNUSED(status)
 
-    device::operation::BaseDeviceOperation *baseOp = qobject_cast<device::operation::BaseDeviceOperation*>(QObject::sender());
-    if ((baseOp == nullptr) || (baseOp != identifyOperation_.get())) {
-        qCCritical(logCategoryFlasherCli) << "Received corrupt operation pointer:" << baseOp;
-        emit finished(EXIT_FAILURE);
-        return;
-    }
-
-    device::operation::Identify *identifyOp = dynamic_cast<device::operation::Identify*>(baseOp);
-    if (identifyOp == nullptr) {
-        qCCritical(logCategoryFlasherCli) << "Received invalid operation pointer:" << baseOp;
+    device::operation::Identify *identifyOp = qobject_cast<device::operation::Identify*>(QObject::sender());
+    if ((identifyOp == nullptr) || (identifyOp != identifyOperation_.get())) {
+        qCCritical(logCategoryFlasherCli) << "Received corrupt operation pointer:" << identifyOp;
         emit finished(EXIT_FAILURE);
         return;
     }
