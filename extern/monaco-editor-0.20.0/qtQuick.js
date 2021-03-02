@@ -16,11 +16,18 @@ const qtObjectKeyValues = {}
 const qtIdPairs = {}
 const qtObjectPropertyValues = {}
 var isInitialized = false
+var searchedIds = false
 var flags = { sgwidgetsFlag: false, qtQuickFlag: false }
 const suggestions = {}
 const currentItems = {}
 var editor = null
-var typing = true
+
+var bottomOfFile = null;
+var topOfFile = null;
+var fullRange = null;
+
+var propRange = {};
+
 
 const qtQuick = [
     {
@@ -2535,7 +2542,7 @@ function initializeQtQuick(flags) {
 }
 // This is a register for when an Id of a type is read and/or created. Allowing us to instantiate from the id caller
 function addCustomIdAndTypes(idText, position, type = "Item") {
-    if (!qtIdPairs.hasOwnProperty(position)) {
+    if (!qtIdPairs.hasOwnProperty(position.lineNumber)) {
         qtIdPairs[position.lineNumber] = {}
         qtIdPairs[position.lineNumber][idText] = type
         if (!qtObjectKeyValues.hasOwnProperty(type)) {
@@ -2557,6 +2564,9 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             delete qtIdPairs[position.lineNumber]
             qtIdPairs[position.lineNumber] = {}
             qtIdPairs[position.lineNumber][idText] = type
+            if (!qtObjectKeyValues.hasOwnProperty(type)) {
+                type = "Item"
+            }
             createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: false })
             suggestions[idText] = {
                 label: qtObjectKeyValues[idText].label,
@@ -2570,6 +2580,9 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             var keys = Object.keys(qtIdPairs[position.lineNumber])
             delete suggestions[keys[0]]
             delete qtObjectKeyValues[keys[0]]
+            if (!qtObjectKeyValues.hasOwnProperty(type)) {
+                type = "Item"
+            }
             createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: false })
             suggestions[idText] = {
                 label: qtObjectKeyValues[idText].label,
@@ -2744,24 +2757,26 @@ function registerQmlAsLanguage() {
     isInitialized = true
     // This searches and determines where the position lies within each child Item, so that the correct Qt file class is returned
     function searchForChildBrackets(model, position) {
-        var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
-        var currWords = currText.replace("\t", "").split(" ");
-        var active = currWords[currWords.length - 1]
-        if (active.includes('.')) {
-            return []
-        } else {
-            var prevMatch = model.findPreviousMatch("{", position, false, false)
-            var nextBracketMatch = model.findNextMatch("{", position, false, false)
-            var prevBracketMatch = model.findPreviousMatch("}", position, false, false)
-            var nextMatch = model.findNextMatch("}", position, false, false)
-            var nextnextMatch = model.findNextMatch("}", { lineNumber: nextMatch.range.startLineNumber, column: nextMatch.range.endColumn }, false, false)
-            var fullRange = model.getFullModelRange()
-            var topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn }, false, false)
-            var bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }, false, false)
-            var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
-            //Edge Case 4: this is when there is only one QtItem, most common is when we create a new file
-            if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
-                var propRange = {
+        var prevMatch = model.findPreviousMatch("{", position, false, false)
+        var nextBracketMatch = model.findNextMatch("{", position, false, false)
+        var prevBracketMatch = model.findPreviousMatch("}", position, false, false)
+        var nextMatch = model.findNextMatch("}", position, false, false)
+        var nextnextMatch = model.findNextMatch("}", { lineNumber: nextMatch.range.startLineNumber, column: nextMatch.range.endColumn }, false, false)
+        var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
+        //Edge Case 4: this is when there is only one QtItem, most common is when we create a new file
+        if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
+            propRange = {
+                startLineNumber: prevMatch.range.startLineNumber,
+                endLineNumber: nextMatch.range.startLineNumber,
+                startColumn: prevMatch.range.startColumn,
+                endColumn: nextMatch.range.endColumn
+            }
+            return retrieveType(model, propRange)
+        }
+        //Edge Case 3: this is to ensure that editing the top of the file does not allow a child item to read in its parent data i.e Item and anchors dont mix
+        if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
+            if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber <= nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber >= nextnextMatch.range.startLineNumber)) {
+                propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
                     endLineNumber: nextMatch.range.startLineNumber,
                     startColumn: prevMatch.range.startColumn,
@@ -2769,68 +2784,39 @@ function registerQmlAsLanguage() {
                 }
                 return retrieveType(model, propRange)
             }
-            //Edge Case 3: this is to ensure that editing the top of the file does not allow a child item to read in its parent data i.e Item and anchors dont mix
-            if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
-                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber <= nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber >= nextnextMatch.range.startLineNumber)) {
-                    var propRange = {
-                        startLineNumber: prevMatch.range.startLineNumber,
-                        endLineNumber: nextMatch.range.startLineNumber,
-                        startColumn: prevMatch.range.startColumn,
-                        endColumn: nextMatch.range.endColumn
-                    }
-                    return retrieveType(model, propRange)
+        }
+        //Edge Case 5: same as 3, just inveresed for the end of the file
+        if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
+            if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
+                propRange = {
+                    startLineNumber: prevMatch.range.startLineNumber,
+                    endLineNumber: nextMatch.range.startLineNumber,
+                    startColumn: prevMatch.range.startColumn,
+                    endColumn: nextMatch.range.endColumn
                 }
+                return retrieveType(model, propRange)
             }
-            //Edge Case 5: same as 3, just inveresed for the end of the file
-            if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
-                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
-                    var propRange = {
-                        startLineNumber: prevMatch.range.startLineNumber,
-                        endLineNumber: nextMatch.range.startLineNumber,
-                        startColumn: prevMatch.range.startColumn,
-                        endColumn: nextMatch.range.endColumn
-                    }
-                    return retrieveType(model, propRange)
+        }
+        //Normal case: the child is independent and returns the type
+        if (position.lineNumber >= prevMatch.range.startLineNumber && (prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber)) {
+            if (position.lineNumber <= nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextBracketMatch.range.startLineNumber) {
+                propRange = {
+                    startLineNumber: prevMatch.range.startLineNumber,
+                    endLineNumber: nextMatch.range.startLineNumber,
+                    startColumn: prevMatch.range.startColumn,
+                    endColumn: nextMatch.range.endColumn
                 }
-            }
-            //Normal case: the child is independent and returns the type
-            if (position.lineNumber >= prevMatch.range.startLineNumber && (prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber)) {
-                if (position.lineNumber <= nextMatch.range.startLineNumber && nextMatch.range.startLineNumber < nextBracketMatch.range.startLineNumber) {
-                    var propRange = {
-                        startLineNumber: prevMatch.range.startLineNumber,
-                        endLineNumber: nextMatch.range.startLineNumber,
-                        startColumn: prevMatch.range.startColumn,
-                        endColumn: nextMatch.range.endColumn
-                    }
-                    return retrieveType(model, propRange)
-                    // Edge Case 1: A rare case where if there is no first child of an item on loaded the properties will not propagate
-                } else if (nextMatch.range.startLineNumber > nextBracketMatch.range.startLineNumber) {
-                    var nextPosition = { lineNumber: nextBracketMatch.range.startLineNumber, column: nextBracketMatch.range.startColumn }
-                    var prevParent = findPreviousBracketParent(model, nextPosition)
-                    if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
-                        var propRange = {
-                            startLineNumber: nextMatch.range.startLineNumber,
-                            endLineNumber: nextBracketMatch.range.startLineNumber,
-                            startColumn: nextMatch.range.startColumn,
-                            endColumn: nextBracketMatch.range.endColumn,
-                        }
-                        convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag)
-                        if (currentItems[prevParent] === undefined) {
-                            currentItems[prevParent] = {}
-                        }
-                        currentItems[prevParent][propRange] = qtObjectPropertyValues[prevParent]
-                        return currentItems[prevParent][propRange]
-                    }
-                }
-                //Edge case 2: this is the most common edge case hit where the properties between sibling items are intermingled this determines what the parent item is
-            } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
-                var prevParent = findPreviousBracketParent(model, position)
+                return retrieveType(model, propRange)
+                // Edge Case 1: A rare case where if there is no first child of an item on loaded the properties will not propagate
+            } else if (nextMatch.range.startLineNumber > nextBracketMatch.range.startLineNumber) {
+                var nextPosition = { lineNumber: nextBracketMatch.range.startLineNumber, column: nextBracketMatch.range.startColumn }
+                var prevParent = findPreviousBracketParent(model, nextPosition)
                 if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
-                    var propRange = {
-                        startLineNumber: prevMatch.range.startLineNumber,
-                        endLineNumber: prevBracketMatch.range.startLineNumber,
-                        startColumn: prevMatch.range.startColumn,
-                        endColumn: prevBracketMatch.range.endColumn,
+                    propRange = {
+                        startLineNumber: nextMatch.range.startLineNumber,
+                        endLineNumber: nextBracketMatch.range.startLineNumber,
+                        startColumn: nextMatch.range.startColumn,
+                        endColumn: nextBracketMatch.range.endColumn,
                     }
                     convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag)
                     if (currentItems[prevParent] === undefined) {
@@ -2839,6 +2825,23 @@ function registerQmlAsLanguage() {
                     currentItems[prevParent][propRange] = qtObjectPropertyValues[prevParent]
                     return currentItems[prevParent][propRange]
                 }
+            }
+            //Edge case 2: this is the most common edge case hit where the properties between sibling items are intermingled this determines what the parent item is
+        } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
+            var prevParent = findPreviousBracketParent(model, position)
+            if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
+                propRange = {
+                    startLineNumber: prevMatch.range.startLineNumber,
+                    endLineNumber: prevBracketMatch.range.startLineNumber,
+                    startColumn: prevMatch.range.startColumn,
+                    endColumn: prevBracketMatch.range.endColumn,
+                }
+                convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag)
+                if (currentItems[prevParent] === undefined) {
+                    currentItems[prevParent] = {}
+                }
+                currentItems[prevParent][propRange] = qtObjectPropertyValues[prevParent]
+                return currentItems[prevParent][propRange]
             }
         }
     }
@@ -2849,16 +2852,22 @@ function registerQmlAsLanguage() {
             provideCompletionItems: (model, position) => {
                 var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
                 var currWords = currText.replace("\t", "").split(" ");
-                var word = model.getWordUntilPosition(position);
                 var active = currWords[currWords.length - 1]
-                var fullModelRange = model.getFullModelRange()
-                var getFirstBracket = model.findNextMatch("{", { lineNumber: fullModelRange.startLineNumber, column: fullModelRange.startColumn })
-                var getLastBracket = model.findPreviousMatch("}", { lineNumber: fullModelRange.endLineNumber, column: fullModelRange.endColumn })
-                var getId = model.findNextMatch("id:", { lineNumber: fullModelRange.startLineNumber, column: fullModelRange.startColumn })
-                if (getFirstBracket === null && getLastBracket === null) {
+                fullRange = model.getFullModelRange()
+                topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
+                bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
+                var getId = model.findNextMatch("id:", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
+                if (getId !== null && getId !== undefined) {
+                    var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
+                    var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
+                    if (!(nextCheck.range.startLineNumber === bottomOfFile.range.startLineNumber && prevCheck.range.startLineNumber === topOfFile.range.startLineNumber)) {
+                        getTypeID(model)
+                    }
+                }
+                if (topOfFile === null && bottomOfFile === null) {
                     return { suggestions: suggestions }
                 }
-                if ((position.lineNumber < getFirstBracket.range.startLineNumber || position.lineNumber > getLastBracket.range.startLineNumber) || (getLastBracket === null && getFirstBracket === null)) {
+                if ((position.lineNumber < topOfFile.range.startLineNumber || position.lineNumber > bottomOfFile.range.startLineNumber) || (bottomOfFile === null && topOfFile === null)) {
                     editor.updateOptions({
                         suggest: {
                             showFunctions: false,
@@ -2877,13 +2886,6 @@ function registerQmlAsLanguage() {
                         }
                     })
                 }
-                if (getId !== null) {
-                    var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
-                    var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
-                    if (!(nextCheck.range.startLineNumber === getLastBracket.range.startLineNumber && prevCheck.range.startLineNumber === getFirstBracket.range.startLineNumber)) {
-                        getTypeID(model)
-                    }
-                }
                 if (active.includes(".")) {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
@@ -2900,7 +2902,7 @@ function registerQmlAsLanguage() {
     function findPreviousBracketParent(model, position) {
         var currentPosition = position;
         var parent = null
-        while (currentPosition.lineNumber <= position.lineNumber && currentPosition.column >= position.column -1) {
+        while (currentPosition.lineNumber <= position.lineNumber && currentPosition.column >= position.column - 1) {
             var newPosition = { lineNumber: currentPosition.lineNumber, column: currentPosition.column }
             var getPrev = model.findPreviousMatch("{", newPosition, false, false)
             if (currentPosition.lineNumber < getPrev.range.startLineNumber) {
@@ -2912,30 +2914,15 @@ function registerQmlAsLanguage() {
             parent = bracketWord
             var getPreviousWord = model.findPreviousMatch(parent, newPosition, false, false)
             currentPosition = { lineNumber: getPreviousWord.range.startLineNumber, column: getPreviousWord.range.startColumn }
-           
+
         }
 
         return parent
     }
     // Searches and initializes all id types to the suggestions object as well as allow updates to each item
     function getTypeID(model, position) {
-        model.onDidChangeContent((event) => {
-            var checkID = model.getLineContent(event.changes[0].range.startLineNumber)
-            if (checkID.includes("id:")) {
-                typing = true
-                if (qtIdPairs.hasOwnProperty(event.changes[0].range.startLineNumber)) {
-                    const key = Object.keys(qtIdPairs[event.changes[0].range.startLineNumber])
-                    delete suggestions[key[0]]
-                    delete qtIdPairs[event.changes[0].range.startLineNumber]
-                    delete qtObjectKeyValues[key[0]]
-                }
-            } else {
-                typing = false
-            }
-        })
-        var getFullRange = model.getFullModelRange()
-        var position = { lineNumber: getFullRange.endLineNumber, column: getFullRange.endColumn }
-        while (position.lineNumber > getFullRange.startLineNumber && !typing) {
+        var position = { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }
+        while (position.lineNumber > fullRange.startLineNumber && !searchedIds) {
             var getPrevIDPosition = model.findPreviousMatch("id:", position, false, false)
             if (position.lineNumber < getPrevIDPosition.range.startLineNumber) {
                 break;
@@ -2950,6 +2937,7 @@ function registerQmlAsLanguage() {
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(prevId, position, type)
         }
+        searchedIds = true
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
     function retrieveType(model, propRange) {
@@ -2967,4 +2955,16 @@ function registerQmlAsLanguage() {
             return Object.values(suggestions)
         }
     }
+
+    editor.getModel().onDidChangeContent((event) => {
+        var getId =  editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
+        var position = {lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn}
+        if (getId.includes("id:")) {
+            var word = getId.replace("\t", "").split(":")[1].trim()
+            var getIdType =  editor.getModel().findPreviousMatch("{", position, false, false)
+            var content =  editor.getModel().getLineContent({ lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn })
+            var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
+            addCustomIdAndTypes(word, position, type)
+        }
+    })
 }
