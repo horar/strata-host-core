@@ -2741,7 +2741,6 @@ function registerQmlAsLanguage() {
         language: 'qml',
         theme: "qmlTheme",
         insertSpaces: true,
-        autoIndent: true,
         detectIndentation: true,
         tabCompletion: "on",
         formatOnPaste: true,
