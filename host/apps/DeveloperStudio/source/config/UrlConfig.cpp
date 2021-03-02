@@ -7,17 +7,17 @@
 
 namespace strata::sds::config {
 
-UrlConfig::UrlConfig(QObject *parent) 
-: QObject(parent) {
+UrlConfig::UrlConfig(const QString &fileName, QObject *parent)
+: QObject(parent), fileName_{fileName} {
 }
 
 UrlConfig::~UrlConfig() {
 }
 
-bool UrlConfig::parseUrl(const QString &fileName)
+bool UrlConfig::parseUrl()
 {
 
-    ConfigFile cfgFile(fileName);
+    ConfigFile cfgFile(fileName_);
 
     QJsonDocument loadDoc;
      if (const auto [data, ok] = cfgFile.loadData(); ok) {
@@ -45,8 +45,7 @@ bool UrlConfig::parseUrl(const QString &fileName)
             return false;
     }
 
-    if (value[QLatin1String("test_auth_server")] != QJsonValue::Undefined)
-    {
+    if (value[QLatin1String("test_auth_server")] != QJsonValue::Undefined) {
         if (setUrlValue(value[QLatin1String("test_auth_server")], &testAuthServer_) == false) {
             qCCritical(logCategoryStrataDevStudioConfig) << " non-production server was not set";
                 return false;

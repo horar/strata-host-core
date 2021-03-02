@@ -7,13 +7,13 @@
 
 namespace strata::sds::config
 {
-AppConfig::AppConfig()
+AppConfig::AppConfig(const QString &fileName) : fileName_{fileName}
 {
 }
 
-bool AppConfig::parse(const QString &fileName)
+bool AppConfig::parse()
 {
-    ConfigFile cfgFile(fileName);
+    ConfigFile cfgFile(fileName_);
 
     QJsonDocument loadDoc;
     if (const auto [data, ok] = cfgFile.loadData(); ok) {

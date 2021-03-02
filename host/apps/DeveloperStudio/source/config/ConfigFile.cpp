@@ -17,12 +17,6 @@ strata::sds::config::ConfigFile::ConfigFile(const QString &name, QObject *parent
     }
 }
 
-strata::sds::config::ConfigFile::ConfigFile(QObject *parent)
-    : QFile(parent)
-{
-    this->setFileName(QDir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation)).filePath("sds.config"));
-}
-
 std::tuple<QByteArray, bool> strata::sds::config::ConfigFile::loadData()
 {
     qCInfo(logCategoryStrataDevStudioConfig) << "loading configuration from" << fileName();

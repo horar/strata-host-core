@@ -196,6 +196,13 @@ Item {
 
             Button {
                 id: serverChange
+                enabled: {
+                    if (urls.testAuthServer === "") {
+                        false
+                    } else {
+                        true
+                    }
+                }
                 onClicked: {
                     if (Rest.url !== urls.authServer) {
                         Rest.url = urls.authServer
