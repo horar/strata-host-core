@@ -2771,7 +2771,7 @@ function registerQmlAsLanguage() {
             }
             //Edge Case 3: this is to ensure that editing the top of the file does not allow a child item to read in its parent data i.e Item and anchors dont mix
             if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
-                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber < nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber >= nextnextMatch.range.startLineNumber)) {
+                if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber <= nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber >= nextnextMatch.range.startLineNumber)) {
                     var propRange = {
                         startLineNumber: prevMatch.range.startLineNumber,
                         endLineNumber: nextMatch.range.startLineNumber,
@@ -2781,7 +2781,7 @@ function registerQmlAsLanguage() {
                     return retrieveType(model, propRange)
                 }
             }
-            //Edge Case 5: same as 4, just inveresed for the end of the file
+            //Edge Case 5: same as 3, just inveresed for the end of the file
             if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
                 if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
                     var propRange = {
@@ -2806,7 +2806,7 @@ function registerQmlAsLanguage() {
                     // Edge Case 1: A rare case where if there is no first child of an item on loaded the properties will not propagate
                 } else if (nextMatch.range.startLineNumber > nextBracketMatch.range.startLineNumber) {
                     var nextPosition = { lineNumber: nextBracketMatch.range.startLineNumber, column: nextBracketMatch.range.startColumn }
-                    var prevParent = findPreviousBracketParent(model, nextPosition, nextPosition.column)
+                    var prevParent = findPreviousBracketParent(model, nextPosition)
                     if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
                         var propRange = {
                             startLineNumber: nextMatch.range.startLineNumber,
@@ -2824,7 +2824,7 @@ function registerQmlAsLanguage() {
                 }
                 //Edge case 2: this is the most common edge case hit where the properties between sibling items are intermingled this determines what the parent item is
             } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
-                var prevParent = findPreviousBracketParent(model, { lineNumber: prevBracketMatch.range.startLineNumber, column: prevBracketMatch.range.endColumn }, prevBracketMatch.range.endColumn)
+                var prevParent = findPreviousBracketParent(model, position)
                 if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
                     var propRange = {
                         startLineNumber: prevMatch.range.startLineNumber,
@@ -2845,7 +2845,7 @@ function registerQmlAsLanguage() {
     // This creates the suggestions widgets and suggestion items, returning the determined suggestions, reads the files ids, updates editor settings per initial conditions
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
-            triggerCharacters: ['}', '.'],
+            triggerCharacters: ['.'],
             provideCompletionItems: (model, position) => {
                 var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
                 var currWords = currText.replace("\t", "").split(" ");
@@ -2858,8 +2858,6 @@ function registerQmlAsLanguage() {
                 if (getFirstBracket === null && getLastBracket === null) {
                     return { suggestions: suggestions }
                 }
-                // check for range to see if position exists
-                // These are closing characters for the auto complete
                 if ((position.lineNumber < getFirstBracket.range.startLineNumber || position.lineNumber > getLastBracket.range.startLineNumber) || (getLastBracket === null && getFirstBracket === null)) {
                     editor.updateOptions({
                         suggest: {
@@ -2889,24 +2887,9 @@ function registerQmlAsLanguage() {
                 if (active.includes(".")) {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
-                        var propRange = {
-                            startLineNumber: position.lineNumber,
-                            endLineNumber: position.lineNumber,
-                            startColumn: word.startColumn,
-                            endColumn: word.endColumn,
-                        }
                         convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, !qtIdPairs.hasOwnProperty(activeWord), qtIdPairs.hasOwnProperty(activeWord))
                         return { suggestions: qtObjectPropertyValues[activeWord] }
                     }
-                } else if (active.includes("}")) {
-                    var prevMatch = model.findPreviousMatch("{", position, false, false)
-                    var propRange = {
-                        startLineNumber: prevMatch.range.startLineNumber,
-                        endLineNumber: position.lineNumber,
-                        startColumn: prevMatch.range.startColumn - 1,
-                        endColumn: position.column
-                    }
-                    return retrieveType(model, propRange)
                 }
                 var fetchedSuggestions = searchForChildBrackets(model, position)
                 return { suggestions: fetchedSuggestions === undefined || fetchedSuggestions === null ? Object.values(suggestions) : fetchedSuggestions }
@@ -2914,10 +2897,10 @@ function registerQmlAsLanguage() {
         })
     }
     // Searches for the parent Item based off of the end column of a sibling item, this searches up and checks for time where the currentColumn is in the parent
-    function findPreviousBracketParent(model, position, column) {
+    function findPreviousBracketParent(model, position) {
         var currentPosition = position;
         var parent = null
-        while (currentPosition.lineNumber <= position.lineNumber && currentPosition.column >= column - 1) {
+        while (currentPosition.lineNumber <= position.lineNumber && currentPosition.column >= position.column -1) {
             var newPosition = { lineNumber: currentPosition.lineNumber, column: currentPosition.column }
             var getPrev = model.findPreviousMatch("{", newPosition, false, false)
             if (currentPosition.lineNumber < getPrev.range.startLineNumber) {
@@ -2929,6 +2912,7 @@ function registerQmlAsLanguage() {
             parent = bracketWord
             var getPreviousWord = model.findPreviousMatch(parent, newPosition, false, false)
             currentPosition = { lineNumber: getPreviousWord.range.startLineNumber, column: getPreviousWord.range.startColumn }
+           
         }
 
         return parent
