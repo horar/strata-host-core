@@ -2527,7 +2527,7 @@ function createQtObjectValPairs(key, val) {
 // creating the qtObjectKeyValues array
 function convertQtQuickToObject(objArray, isProperty = false) {
     for (var i = 0; i < objArray.length; i++) {
-        createQtObjectValPairs(objArray[i].prefix, { label: objArray[i].prefix, insertText: objArray[i].body, properties: objArray[i].properties, flag: isProperty })
+        createQtObjectValPairs(objArray[i].prefix, { label: objArray[i].prefix, insertText: objArray[i].body, properties: objArray[i].properties, flag: isProperty, isId: false })
     }
 }
 // Initializes the library to become an Object array to be feed into suggestions
@@ -2548,7 +2548,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
         if (!qtObjectKeyValues.hasOwnProperty(type)) {
             type = "Item"
         }
-        createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: false })
+        createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true })
         suggestions[idText] = {
             label: qtObjectKeyValues[idText].label,
             kind: monaco.languages.CompletionItemKind.Function,
@@ -2567,7 +2567,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             if (!qtObjectKeyValues.hasOwnProperty(type)) {
                 type = "Item"
             }
-            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: false })
+            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true})
             suggestions[idText] = {
                 label: qtObjectKeyValues[idText].label,
                 kind: monaco.languages.CompletionItemKind.Function,
@@ -2583,7 +2583,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             if (!qtObjectKeyValues.hasOwnProperty(type)) {
                 type = "Item"
             }
-            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: false })
+            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true })
             suggestions[idText] = {
                 label: qtObjectKeyValues[idText].label,
                 kind: monaco.languages.CompletionItemKind.Function,
@@ -2890,7 +2890,7 @@ function registerQmlAsLanguage() {
                 if (active.includes(".")) {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
-                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, !qtIdPairs.hasOwnProperty(activeWord), qtIdPairs.hasOwnProperty(activeWord))
+                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, qtObjectKeyValues[activeWord].flag, qtObjectKeyValues[activeWord].isId)
                         return { suggestions: qtObjectPropertyValues[activeWord] }
                     }
                 }
@@ -2899,26 +2899,28 @@ function registerQmlAsLanguage() {
             }
         })
     }
-    // Searches for the parent Item based off of the end column of a sibling item, this searches up and checks for time where the currentColumn is in the parent
+    // Searches for the parent Item based off of the end column of a sibling item, this searches up and checks for time where the current line number is a child of the item
     function findPreviousBracketParent(model, position) {
         var currentPosition = position;
         var parent = null
-        while (currentPosition.lineNumber <= position.lineNumber && currentPosition.column >= position.column - 1) {
-            var newPosition = { lineNumber: currentPosition.lineNumber, column: currentPosition.column }
-            var getPrev = model.findPreviousMatch("{", newPosition, false, false)
+        while (currentPosition.lineNumber <= position.lineNumber) {
+            var getPrev = model.findPreviousMatch("{", currentPosition)
+            var getPrevNext = model.findNextMatch("}",{lineNumber: getPrev.range.startLineNumber, column: getPrev.range.startColumn})
             if (currentPosition.lineNumber < getPrev.range.startLineNumber) {
-                break
+                return suggestions
             }
-            var content = model.getValueInRange({ startLineNumber: getPrev.range.startLineNumber, startColumn: 1, endLineNumber: getPrev.range.startLineNumber, endColumn: getPrev.range.endColumn })
-            var splitContent = content.replace("\t", "").split(/\{|\t/)
-            var bracketWord = splitContent[0].trim()
-            parent = bracketWord
-            var getPreviousWord = model.findPreviousMatch(parent, newPosition, false, false)
-            currentPosition = { lineNumber: getPreviousWord.range.startLineNumber, column: getPreviousWord.range.startColumn }
+
+            if(currentPosition.lineNumber < getPrevNext.range.startLineNumber){
+                var content = model.getLineContent(getPrev.range.startLineNumber)
+                var splitContent = content.replace("\t", "").split(/\{|\t/)
+                var bracketWord = splitContent[0].trim()
+                parent = bracketWord
+                return parent
+            }
+
+            currentPosition = { lineNumber: getPrev.range.startLineNumber, column: getPrev.range.startColumn }
 
         }
-
-        return parent
     }
     // Searches and initializes all id types to the suggestions object as well as allow updates to each item
     function getTypeID(model, position) {
