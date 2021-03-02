@@ -14,3 +14,5 @@ const std::string_view AppInfo::versionPatch{"@VERSION_PATCH@"sv};
 const std::string_view AppInfo::buildId{"@BUILD_ID@"sv};
 const std::string_view AppInfo::gitRevision{"@GIT_REVISION@"sv};
 const std::string_view AppInfo::stageOfDevelopment{"@STAGE_OF_DEVELOPMENT@"sv};
+
+const std::string_view AppInfo::supportedPlugins_{"@SUPPORTED_PLUGINS@"sv};
