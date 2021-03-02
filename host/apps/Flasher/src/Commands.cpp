@@ -172,12 +172,16 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
         message.append(QStringLiteral("\nDevice Name: "));
         message.append(device_->deviceName());
         message.append(QStringLiteral("\nDevice Id: 0x"));
-        message.append(QString::number(static_cast<uint>(device_->deviceId()), 16).toUpper());
+        message.append(QString::number(static_cast<uint>(device_->deviceId()), 16));
         message.append(QStringLiteral("\nDevice Type: "));
         message.append(QVariant::fromValue(device_->deviceType()).toString());
+        message.append(QStringLiteral("\nController Type: "));
+        message.append(QVariant::fromValue(device_->controllerType()).toString());
         message.append(QStringLiteral("\nBoard Mode: "));
         message.append(QVariant::fromValue(identifyOp->boardMode()).toString());
-        message.append(QStringLiteral("\nApplication version: "));
+        message.append(QStringLiteral(" (API: "));
+        message.append(QVariant::fromValue(device_->apiVersion()).toString());
+        message.append(QStringLiteral(")\nApplication version: "));
         message.append(device_->applicationVer());
         message.append(QStringLiteral("\nBootloader version: "));
         message.append(device_->bootloaderVer());
@@ -191,10 +195,6 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
         message.append(device_->controllerClassId());
         message.append(QStringLiteral("\nFirmware Class Id: "));
         message.append(device_->firmwareClassId());
-        message.append(QStringLiteral("\nApi version: "));
-        message.append(QVariant::fromValue(device_->apiVersion()).toString());
-        message.append(QStringLiteral("\nController Type: "));
-        message.append(QVariant::fromValue(device_->controllerType()).toString());
 
         qCInfo(logCategoryFlasherCli).noquote() << message;
         emit finished(EXIT_SUCCESS);
