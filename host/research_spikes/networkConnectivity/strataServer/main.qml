@@ -116,8 +116,11 @@ Window {
                     anchors.leftMargin: -10
                     anchors.topMargin: -75
                     text: {
-                        clear(Server.udpBuffer)
-                        append(Server.udpBuffer.arg(logCount++))
+                        if(Server.udpBuffer !== "") {
+                            console.log(Server.udpBuffer)
+                            clear(Server.udpBuffer)
+                            append(Server.udpBuffer.arg(logCount++))
+                        }
                     }
                 }
             }
@@ -234,8 +237,10 @@ Window {
                         anchors.leftMargin: -10
                         anchors.topMargin: 5
                         text: {
-                            clear(Server.tcpBuffer)
-                            append(Server.tcpBuffer.arg(logCount++))
+                            if (Server.tcpBuffer) {
+                                clear(Server.tcpBuffer)
+                                append(Server.tcpBuffer.arg(logCount++))
+                            }
                         }
                     }
                 }
@@ -340,7 +345,8 @@ Window {
             id: clientAdressValueLabel
             anchors.left: clientAdressLabel.right
             y: clientAdressLabel.y
-            text: Server.clientAddreass
+            text: Server.getClientAddress(clientsBox.model[clientsBox.currentIndex])
+            enabled: Server.isConnected
         }
     }
 

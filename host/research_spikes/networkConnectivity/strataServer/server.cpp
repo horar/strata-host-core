@@ -5,8 +5,7 @@
 
 Server::Server(QObject *parent)
     : QObject(parent),
-      udpSocket_(new QUdpSocket(this)),
-      clientAddress_("")
+      udpSocket_(new QUdpSocket(this))
 {
     // UDP Socket set up
     if (false == udpSocket_->bind(port_, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint)) {
@@ -88,6 +87,7 @@ void Server::connectToStrataClient(QHostAddress clientAddress, qint16 port)
 
     if (false == tcpSocket->waitForConnected(5000)) {
         qDebug() << "tcp: failed to connect." << tcpSocket->error();
+        return;
     }
 
     sendTcpMessge("Strata Host!", clientNumber_);
@@ -131,14 +131,15 @@ QString Server::getTcpPort()
     return QString::number(TCP_PORT);
 }
 
-QString Server::getClientAddress()
-{
-    return clientAddress_;
-}
 
 QList<QVariant> Server::getAvailableClients() const
 {
     return availableClients_;
+}
+
+QString Server::getClientAddress(QVariant index)
+{
+    return clientsAddresses_[index.toUInt()];
 }
 
 QTcpSocket * Server::tcpSocketSetup()
@@ -149,19 +150,17 @@ QTcpSocket * Server::tcpSocketSetup()
 
     connect(tcpSocket, &QTcpSocket::connected, this, [this, tcpSocket, currentClient]() {
         qDebug() << "tcp: socket connected" << currentClient << ':' << tcpSockets_[currentClient];
-        clientAddress_ = tcpSocket->peerAddress().toString();
+        clientsAddresses_[currentClient] = tcpSocket->peerAddress().toString();
         availableClients_.append(currentClient);
         emit connectionStatusUpdated();
-        emit clientAddressUpdated();
         emit availableClientsUpdated();
     });
 
     connect(tcpSocket, &QTcpSocket::disconnected, this, [this,currentClient]() {
         qDebug() << "tcp: socket disconnected" << currentClient << ':' << tcpSockets_[currentClient];
-        clientAddress_ = "";
+        clientsAddresses_.remove(currentClient);
         availableClients_.removeAll(currentClient);
         emit connectionStatusUpdated();
-        emit clientAddressUpdated();
         emit availableClientsUpdated();
     });
 
