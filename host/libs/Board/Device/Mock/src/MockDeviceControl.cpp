@@ -125,6 +125,12 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
         if (0 == cmd.compare("start_application")) {
             recievedCommand = MockCommand::start_application;
         }
+        if (0 == cmd.compare("flash_firmware")) {
+            recievedCommand = MockCommand::flash_firmware;
+        }
+        if (0 == cmd.compare("flash_bootloader")) {
+            recievedCommand = MockCommand::flash_bootloader;
+        }
 
         retVal.push_back(test_commands::ack);
 
@@ -296,6 +302,34 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
                 retVal.push_back(test_commands::start_application_response);
             }
             break;
+
+        case MockCommand::flash_firmware:
+            if (customResponse) {
+                switch (response_) {
+                case MockResponse::flash_resend_chunk: {
+                    retVal.push_back(test_commands::flash_firmware_response_resend_chunk);
+                } break;
+                case MockResponse::flash_memory_error: {
+                    retVal.push_back(test_commands::flash_firmware_response_memory_error);
+                } break;
+                case MockResponse::flash_invalid_cmd_sequence: {
+                    retVal.push_back(test_commands::flash_firmware_response_invalid_cmd_sequence);
+                } break;
+                case MockResponse::flash_invalid_value: {
+                    retVal.push_back(test_commands::flash_firmware_invalid_value);
+                } break;
+                default: {
+                    retVal.push_back(test_commands::flash_firmware_response);
+                } break;
+                }
+            } else {
+                retVal.push_back(test_commands::flash_firmware_response);
+            }
+            break;
+        case MockCommand::flash_bootloader:
+            retVal.push_back(test_commands::flash_bootloader_response);
+            break;
+
         default: {
             retVal.pop_back();  // remove ack
             retVal.push_back(test_commands::nack_command_not_found);
