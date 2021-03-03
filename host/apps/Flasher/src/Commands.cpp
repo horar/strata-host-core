@@ -167,7 +167,7 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
     case device::operation::Result::Success: {
         QString message(QStringLiteral("List of available parameters for board:"));
 
-        message.append(QStringLiteral("\nDevice Verbose Name: "));
+        message.append(QStringLiteral("\nApplication Name: "));
         message.append(device_->name());
         message.append(QStringLiteral("\nDevice Name: "));
         message.append(device_->deviceName());
