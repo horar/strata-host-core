@@ -113,7 +113,9 @@ private slots:
     void recompileFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
-    void loadCoreResources();
+    static void loadCoreResources();
+    void loadPluginResources();
+
     QString getQResourcePrefix(const QString &class_id, const QString &version);
     /**
      * @brief getVersionJson Gets the version of the control view according to the version.json
