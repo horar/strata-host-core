@@ -50,7 +50,7 @@ ColumnLayout {
             checkForNewerVersion()
         }
 
-        onController_class_deviceChanged: {
+        onController_class_idChanged: {
             firmwareSortFilterModel.invalidate()
         }
     }
@@ -69,8 +69,9 @@ ColumnLayout {
         matchVersion()
         for (let i = 0; i < firmwareListModel.count; i++) {
 
-            if (platformStack.controller_class_device.length === 0
-                    || platformStack.controller_class_device !== firmwareListModel.device(i)) {
+            if (platformStack.is_assisted === true &&
+                    (platformStack.controller_class_id.length === 0 ||
+                     platformStack.controller_class_id !== firmwareListModel.controller_class_id(i))) {
                 continue
             }
 
@@ -170,14 +171,18 @@ ColumnLayout {
         sortEnabled: false
 
         function filterAcceptsRow(row) {
-            console.log(row, firmwareListModel.device(row), platformStack.controller_class_device)
+            console.log(row, firmwareListModel.controller_class_id(row), platformStack.controller_class_id)
 
-            if (platformStack.controller_class_device.length == 0) {
-                return false
+            if (platformStack.is_assisted === false) {
+                return true //embedded platform
             }
 
-            if (firmwareListModel.device(row) !== platformStack.controller_class_device) {
-                return false
+            if (platformStack.controller_class_id.length == 0) {
+                return false //unregistered assisted platform
+            }
+
+            if (firmwareListModel.controller_class_id(row) !== platformStack.controller_class_id) {
+                return false //firmware for a different controller
             }
 
             return true

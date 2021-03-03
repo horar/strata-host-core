@@ -53,21 +53,14 @@ public:
     QUrl getBaseUrl() const;
 
     /**
-     * Gets string which represnets device controller class
-     * @param device class id
-     * @return device controller class (RSL10, ...) or null string
-     */
-    QString getControllerClassDevice(const QString &classId);
-
-    /**
      * Gets MD5 of firmware
      * @param class ID of device
-     * @param device controller class
+     * @param controller class ID
      * @param version of firmware, if empty latest firmware will be returned
      * @return firmware URI and firmware MD5 as pair
      */
     QPair<QUrl,QString> getFirmwareUriMd5(const QString &classId,
-                                          const QString &controllerClassDevice,
+                                          const QString &controllerClassId,
                                           const QString &version = QString());
 
 public slots:

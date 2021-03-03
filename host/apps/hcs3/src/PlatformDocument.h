@@ -16,7 +16,7 @@ struct PlatformFileItem {
 
 struct FirmwareFileItem {
     QString partialUri;
-    QString controllerClassDevice;
+    QString controllerClassId;
     QString md5;
     QString timestamp;
     QString version;

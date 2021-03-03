@@ -173,7 +173,8 @@ function generatePlatform (platform) {
     platform.program_controller = false
     platform.program_controller_progress = 0.0
     platform.program_controller_error_string = ""
-    platform.controller_class_device = ""
+    platform.controller_class_id = ""
+    platform.is_assisted = false
     platform.coming_soon = !platform.available.documents && !platform.available.order
 
     // Create entry in classMap
@@ -287,7 +288,7 @@ function addConnectedPlatform(platform) {
             insertUnregisteredListing(platform)
         } else {
             if (classMap.hasOwnProperty(class_id_string)) {
-                connectListing(class_id_string, platform.device_id, platform.firmware_version, platform.controller_class_device)
+                connectListing(class_id_string, platform.device_id, platform.firmware_version, null)
             } else {
                 // connected platform class_id not listed in DP platform list
                 console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
@@ -312,7 +313,7 @@ function addConnectedPlatform(platform) {
             insertUnregisteredListing(platform)
         } else {
             if (platform.class_id === platform.fw_class_id) {
-                connectListing(platform.class_id, platform.device_id, platform.firmware_version, platform.controller_class_device)
+                connectListing(platform.class_id, platform.device_id, platform.firmware_version, platform.controller_class_id)
             } else {
                 //program controller
                 insertProgramControllerListing(platform)
@@ -336,7 +337,7 @@ function addConnectedPlatform(platform) {
     Update existing listing's 'connected' state
     OR add duplicate listing when 2 boards with same class_id connected
 */
-function connectListing(class_id_string, device_id, firmware_version, controller_class_device) {
+function connectListing(class_id_string, device_id, firmware_version, controller_class_id) {
     let found_visible = false
     let selector_listing
     let selector_index = -1
@@ -378,7 +379,9 @@ function connectListing(class_id_string, device_id, firmware_version, controller
     let available = copyObject(copyObject(selector_listing.available))
     available.unlisted = false // override unlisted to show hidden listing when physical board present
     selector_listing.available = available
-    selector_listing.controller_class_device = controller_class_device
+    selector_listing.controller_class_id = controller_class_id
+    selector_listing.is_assisted = (controller_class_id !== null)
+    // controller_class_id is automatically converted from null to "" here. So we need another flag is_assisted to remember whether there was controller_class_id.
 
     if (NavigationControl.userSettings.autoOpenView){
         if (selector_listing.available.control) {
@@ -391,7 +394,8 @@ function connectListing(class_id_string, device_id, firmware_version, controller
                 "index": selector_index,
                 "view": "control",
                 "connected": true,
-                "controller_class_device": selector_listing.controller_class_device,
+                "controller_class_id": selector_listing.controller_class_id,
+                "is_assisted": selector_listing.is_assisted,
             }
             openPlatformView(data)
         }
@@ -413,7 +417,8 @@ function openPlatformView(platform) {
         "connected": platform.connected,
         "available": platform.available,
         "firmware_version": platform.firmware_version,
-        "controller_class_device": platform.controller_class_device,
+        "controller_class_id": platform.controller_class_id,
+        "is_assisted": platform.is_assisted,
     }
 
     NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
@@ -600,7 +605,8 @@ function generateErrorListing (platform, verbose_name, class_id, opn, descriptio
         "program_controller": program_controller,
         "program_controller_progress": 0.0,
         "program_controller_error_string": "",
-        "controller_class_device": "",
+        "controller_class_id": "",
+        "is_assisted": false,
     }
     return error
 }

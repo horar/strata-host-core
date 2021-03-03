@@ -204,23 +204,21 @@ bool PlatformDocument::populateFirmwareObject(const QJsonObject &jsonObject, Fir
     uint flags = 0x00;
     bool success = false;
 
-    if (jsonObject.contains("file"))      { flags |= 0x01; }  // 00001
-    if (jsonObject.contains("device"))    { flags |= 0x02; }  // 00010
-    if (jsonObject.contains("md5"))       { flags |= 0x04; }  // 00100
-    if (jsonObject.contains("timestamp")) { flags |= 0x08; }  // 01000
-    if (jsonObject.contains("version"))   { flags |= 0x10; }  // 10000
+    if (jsonObject.contains("file"))                  { flags |= 0x01; }  // 00001
+    if (jsonObject.contains("controller_class_id"))   { flags |= 0x02; }  // 00010
+    if (jsonObject.contains("md5"))                   { flags |= 0x04; }  // 00100
+    if (jsonObject.contains("timestamp"))             { flags |= 0x08; }  // 01000
+    if (jsonObject.contains("version"))               { flags |= 0x10; }  // 10000
 
     switch (flags) {
     case 0x1F :
+        firmwareFile.controllerClassId = jsonObject.value("controller_class_id").toString();
+        //fallthrough
+    case 0x1D :
         firmwareFile.partialUri = jsonObject.value("file").toString();
-        firmwareFile.controllerClassDevice = jsonObject.value("device").toString();
         firmwareFile.md5 = jsonObject.value("md5").toString();
         firmwareFile.timestamp = jsonObject.value("timestamp").toString();
         firmwareFile.version = jsonObject.value("version").toString();
-        success = true;
-        break;
-    case 0x02 :
-        firmwareFile.controllerClassDevice = jsonObject.value("device").toString();
         success = true;
         break;
     default :

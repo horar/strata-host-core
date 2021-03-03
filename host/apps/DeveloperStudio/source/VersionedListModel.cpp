@@ -38,8 +38,8 @@ QVariant VersionedListModel::data(const QModelIndex &index, int role) const
         return item->uri;
     case NameRole:
         return item->name;
-    case DeviceRole:
-        return item->device;
+    case ControllerClassIdRole:
+        return item->controller_class_id;
     case Md5Role:
         return item->md5;
     case TimestampRole:
@@ -119,9 +119,9 @@ QString VersionedListModel::name(int index)
     return data(VersionedListModel::index(index, 0), NameRole).toString();
 }
 
-QString VersionedListModel::device(int index)
+QString VersionedListModel::controller_class_id(int index)
 {
-    return data(VersionedListModel::index(index, 0), DeviceRole).toString();
+    return data(VersionedListModel::index(index, 0), ControllerClassIdRole).toString();
 }
 
 QString VersionedListModel::timestamp(int index)
@@ -200,7 +200,7 @@ QHash<int, QByteArray> VersionedListModel::roleNames() const
     names[UriRole] = "uri";
     names[VersionRole] = "version";
     names[NameRole] = "name";
-    names[DeviceRole] = "device";
+    names[ControllerClassIdRole] = "controller_class_id";
     names[TimestampRole] = "timestamp";
     names[Md5Role] = "md5";
     names[InstalledRole] = "installed";
