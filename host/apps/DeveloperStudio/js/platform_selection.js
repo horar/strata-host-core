@@ -24,7 +24,7 @@ var localPlatformList = []
 function createPlatformActions() {
     for(var i = 0; i < 2; i++){
         notificationActions[i] = Qt.createQmlObject("import QtQuick.Controls 2.12; Action {}",Qt.application, `PlatformNotifications${i}`)
-    }   
+    }
     notificationActions[0].text = "Ok"
     notificationActions[0].triggered.connect(function(){})
     notificationActions[1].text = "Disable platform notifications"

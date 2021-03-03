@@ -17,10 +17,6 @@ Popup {
 
     property alias url: webview.url
 
-    onClosed: {
-        webPopup.destroy()
-    }
-
     DropShadow {
         width: webPopup.width
         height: webPopup.height

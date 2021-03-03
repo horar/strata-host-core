@@ -271,18 +271,16 @@ void BoardManager::startIdentifyOperation(const DevicePtr device) {
     // We need deleteLater() because DeviceOperations object is deleted
     // in slot connected to signal from it (BoardManager::handleOperationFinished).
     std::shared_ptr<operation::BaseDeviceOperation> operation (
-        new operation::Identify(device, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES),
+        // Some boards need time for booting. If board is rebooted it also takes some time to start.
+        new operation::Identify(device, reqFwInfoResp_, GET_FW_INFO_MAX_RETRIES, IDENTIFY_LAUNCH_DELAY),
         operationLaterDeleter
     );
 
     connect(operation.get(), &operation::BaseDeviceOperation::finished, this, &BoardManager::handleOperationFinished);
 
-    operation::Identify *identify = dynamic_cast<operation::Identify*>(operation.get());
-    // Some boards need time for booting.
-    // If board is rebooted it also takes some time to start.
-    identify->runWithDelay(IDENTIFY_LAUNCH_DELAY);
-
     identifyOperations_.insert(device->deviceId(), operation);
+
+    operation->run();
 }
 
 // mutex_ must be locked before calling this function (due to modification openedDevices_ and reconnectTimers_)
