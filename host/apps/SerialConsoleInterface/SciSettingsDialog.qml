@@ -176,40 +176,41 @@ SGWidgets.SGDialog {
                 Layout.alignment: Qt.AlignLeft
             }
 
-            SGWidgets.SGText {
-                text: "Restore all settings to their default values:"
+            Column {
+                Layout.columnSpan: 2
                 Layout.alignment: Qt.AlignRight
-            }
 
-            SGWidgets.SGButton {
-                text: "Reset"
-                onClicked: {
-                    SGWidgets.SGDialogJS.showConfirmationDialog(
-                                rootItem,
-                                "Reset settings to defaults",
-                                "Do you really want to reset all settings to their default values?",
-                                "Reset",
-                                function() {
-                                    SGWidgets.SGSettings.resetToDefaultValues()
-                                    Sci.Settings.resetToDefaultValues()
-                                },
-                                "Cancel",
-                                undefined,
-                                SGWidgets.SGMessageDialog.Warning
-                                )
+                SGWidgets.SGText {
+                    text: "Restore all settings to their default values"
                 }
-                Layout.alignment: Qt.AlignLeft
-            }
 
-            SGWidgets.SGText {
-                text: "Restore default window size:"
-                Layout.alignment: Qt.AlignRight
-            }
+                SGWidgets.SGButton {
+                    text: "Reset Settings"
+                    onClicked: {
+                        SGWidgets.SGDialogJS.showConfirmationDialog(
+                                    rootItem,
+                                    "Reset settings to defaults",
+                                    "Do you really want to reset all settings to their default values?",
+                                    "Reset",
+                                    function() {
+                                        SGWidgets.SGSettings.resetToDefaultValues()
+                                        Sci.Settings.resetToDefaultValues()
+                                    },
+                                    "Cancel",
+                                    undefined,
+                                    SGWidgets.SGMessageDialog.Warning
+                                    )
+                    }
+                }
 
-            SGWidgets.SGButton {
-                text: "Reset Window Size"
-                onClicked: rootItem.resetWindowSize()
-                Layout.alignment: Qt.AlignLeft
+                SGWidgets.SGText {
+                    text: "Restore default window size"
+                }
+
+                SGWidgets.SGButton {
+                    text: "Reset Window Size"
+                    onClicked: rootItem.resetWindowSize()
+                }
             }
         }
     }
