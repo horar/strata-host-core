@@ -9,8 +9,8 @@ SGWidgets.SGMainWindow {
     visible: true
     height: defaultWindowHeight
     width: defaultWindowWidth
-    minimumHeight: defaultWindowHeight
-    minimumWidth: defaultWindowWidth
+    minimumHeight: 600
+    minimumWidth: 800
 
     title: qsTr("Serial Console Interface")
 
