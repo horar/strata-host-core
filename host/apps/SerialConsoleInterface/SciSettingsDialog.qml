@@ -185,6 +185,7 @@ SGWidgets.SGDialog {
                 }
 
                 SGWidgets.SGButton {
+                    anchors.right: parent.right
                     text: "Reset Settings"
                     onClicked: {
                         SGWidgets.SGDialogJS.showConfirmationDialog(
@@ -208,6 +209,7 @@ SGWidgets.SGDialog {
                 }
 
                 SGWidgets.SGButton {
+                    anchors.right: parent.right
                     text: "Reset Window Size"
                     onClicked: rootItem.resetWindowSize()
                 }
