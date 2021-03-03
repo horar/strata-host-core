@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
         qDebug() << "Opened bucket";
     } else {
         qDebug() << "Failed to open bucket";
+        return -1;
     }
 
     db->startSessionReplicator(url.toStdString(), cookie.toStdString(), cookie_name.toStdString());

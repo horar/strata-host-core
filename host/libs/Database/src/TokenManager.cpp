@@ -46,13 +46,13 @@ QString TokenManager::getTokenID() {
 
     QJsonDocument networkReplyJsonDoc_OIDC = QJsonDocument::fromJson(networkReplyData_OIDC);
     if (networkReplyJsonDoc_OIDC.isNull() || networkReplyJsonDoc_OIDC.isEmpty() || !networkReplyJsonDoc_OIDC.isObject()) {
-        qDebug() <<"Error: received empty or invalid reply to password_grant request";
+        qDebug() << "Error: received empty or invalid reply to password_grant request";
         return "";
     }
 
     QJsonObject networkReplyJsonObj_OIDC = networkReplyJsonDoc_OIDC.object();
     if (networkReplyJsonObj_OIDC.isEmpty()) {
-        qDebug() <<"Error: received empty or invalid reply to password_grant request";
+        qDebug() << "Error: received empty or invalid reply to password_grant request";
         return "";
     }
 
@@ -61,7 +61,7 @@ QString TokenManager::getTokenID() {
 
     const QString cookie = createSessionCookie(idTokenStr, SG_SESSION_URL);
     if (cookie.isEmpty()) {
-        qDebug() <<"Error: received empty or invalid cookie";
+        qDebug() << "Error: received empty or invalid cookie";
         return "";
     }
 
@@ -88,7 +88,7 @@ QString TokenManager::createSessionCookie(const QString &idToken, const QString 
     loop.exec();
 
     if (!networkReply_SG->hasRawHeader("Set-Cookie")) {
-        qDebug() <<"Error: invalid Set-Cookie header from SG reply";
+        qDebug() << "Error: invalid Set-Cookie header from SG reply";
         return "";
     }
 
