@@ -164,7 +164,7 @@ SGWidgets.SGDialog {
                 Layout.alignment: Qt.AlignRight
             }
 
-            SciLogLevelSelector {
+            SGWidgets.SGLogLevelSelector {
                 Layout.alignment: Qt.AlignLeft
             }
 
