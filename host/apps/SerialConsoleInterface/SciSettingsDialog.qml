@@ -202,7 +202,7 @@ SGWidgets.SGDialog {
             }
 
             SGWidgets.SGText {
-                text: "Restore window size to its default value:"
+                text: "Restore default window size:"
                 Layout.alignment: Qt.AlignRight
             }
 
