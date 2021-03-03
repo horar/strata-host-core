@@ -179,8 +179,10 @@ SGWidgets.SGDialog {
             Column {
                 Layout.columnSpan: 2
                 Layout.alignment: Qt.AlignRight
+                spacing: gridRowSpacing
 
                 SGWidgets.SGText {
+                    anchors.right: parent.right
                     text: "Restore all settings to their default values"
                 }
 
@@ -205,6 +207,7 @@ SGWidgets.SGDialog {
                 }
 
                 SGWidgets.SGText {
+                    anchors.right: parent.right
                     text: "Restore default window size"
                 }
 
