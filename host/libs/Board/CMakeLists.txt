@@ -17,10 +17,15 @@ add_library(${DEVICE}
     Device/src/Device.cpp
     Device/src/logging/LoggingQtCategories.cpp
     Device/Serial/src/SerialDevice.cpp
+    Device/Mock/src/MockDevice.cpp
+    Device/Mock/src/MockDeviceControl.cpp
 
     #AUTOMOC wont find header if it is in different directory
     Device/Device.h
     Device/Serial/SerialDevice.h
+    Device/Mock/MockDevice.h
+    Device/Mock/MockDeviceControl.h
+    Device/Mock/MockDeviceConstants.h
 )
 add_library(strata::${DEVICE} ALIAS ${DEVICE})
 
@@ -28,11 +33,13 @@ target_include_directories(${DEVICE}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/src
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/Serial/src
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/Mock/src
 )
 
 target_link_libraries(${DEVICE}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
+    PUBLIC rapidjson::rapidjson
     PUBLIC strata::QtLogger
 )
 
@@ -60,8 +67,8 @@ add_library(${DEVICE_OPERATIONS}
     Device/Operations/Commands/src/CmdStartApplication.cpp
     Device/Operations/Commands/src/CmdSetPlatformId.cpp
     Device/Operations/Commands/src/CmdSetAssistedPlatformId.cpp
+    Device/Operations/Commands/src/CmdWait.cpp
 
-    Device/Operations/BaseDeviceOperation.h
     Device/Operations/src/BaseDeviceOperation.cpp
     Device/Operations/src/Identify.cpp
     Device/Operations/src/StartBootloader.cpp
@@ -70,6 +77,10 @@ add_library(${DEVICE_OPERATIONS}
     Device/Operations/src/StartApplication.cpp
     Device/Operations/src/SetPlatformId.cpp
     Device/Operations/src/SetAssistedPlatformId.cpp
+
+    #AUTOMOC wont find header if it is in different directory
+    Device/Operations/BaseDeviceOperation.h
+    Device/Operations/Identify.h
 )
 add_library(strata::${DEVICE_OPERATIONS} ALIAS ${DEVICE_OPERATIONS})
 

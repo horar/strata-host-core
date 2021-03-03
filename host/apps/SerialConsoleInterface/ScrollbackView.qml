@@ -227,39 +227,52 @@ Item {
         }
 
         MouseArea {
-            id: textSelectionMouseArea
+            id: menuPopupMouseArea
             anchors.fill: parent
-
-            cursorShape: mouseX > delegateTextX ? Qt.IBeamCursor : Qt.ArrowCursor
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-            hoverEnabled: true
+            acceptedButtons: Qt.RightButton
 
             /*this is to stop interaction with flickable while selecting text */
             drag.target: Item {}
 
-            property bool leftMouseButtonPressed
+            onPressed: {
+                listView.forceActiveFocus()
+            }
+
+            onReleased: {
+                if (menuPopupMouseArea.containsMouse) {
+                    contextMenuPopup.popup(null)
+                }
+            }
+        }
+
+        MouseArea {
+            id: textSelectionMouseArea
+            height: Math.min(listView.height, listView.contentHeight)
+            anchors {
+                top: listView.top
+                left: listView.left
+                leftMargin: delegateTextX
+                right: listView.right
+                rightMargin: delegateRightMargin
+            }
+
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.LeftButton
+
+            /*this is to stop interaction with flickable while selecting text */
+            drag.target: Item {}
+
             property int startIndex
             property int startPosition
 
             onPressed: {
                 listView.forceActiveFocus()
 
-                if (mouse.button === Qt.RightButton) {
-                    return
-                }
-
-                if (mouseX <= delegateTextX) {
-                    // we can add another functionality when licking on the left side
-                    mouse.accepted = false
-                    return
-                }
-
                 var position = resolvePosition(mouse.x, mouse.y)
                 if (position === undefined) {
                     return
                 }
 
-                leftMouseButtonPressed = true
                 startIndex = position.delegate_index
                 startPosition = position.cursor_pos
 
@@ -269,25 +282,7 @@ Item {
                 selectionEndPosition = startPosition
             }
 
-            onReleased: {
-                if (mouse.button === Qt.RightButton) {
-                    if (textSelectionMouseArea.containsMouse) {
-                        contextMenuPopup.popup(null)
-                    }
-                    return
-                }
-
-                leftMouseButtonPressed = false
-                if (mouseX <= delegateTextX) {
-                    mouse.accepted = false
-                }
-            }
-
             onPositionChanged: {
-                if (leftMouseButtonPressed === false) {
-                    return
-                }
-
                 //do not allow to select delegates outside of view
                 if (mouse.y < 0) {
                    var mouseY = 0

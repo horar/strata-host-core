@@ -18,6 +18,22 @@ class StrataClient : public QObject
 
 public:
     /**
+     * Enum to describe errors
+     */
+    enum class ClientError {
+        FailedToConnect,
+        FailedToDisconnect,
+        FailedToBuildServerMessage,
+        FailedToRegisterHandler,
+        FailedToUnregisterHandler,
+        FailedToAddReequest,
+        FailedToSendRequest,
+        PendingRequestNotFound,
+        RequestTimeout
+    };
+    Q_ENUM(ClientError);
+
+    /**
      * StrataClient constructor
      * @param [in] serverAddress Sets the server address.
      */
@@ -83,12 +99,26 @@ signals:
      */
     void newServerMessageParsed(const Message &serverMessage);
 
+    /**
+     * Emitted when an error has occurred.
+     * @param [in] errorType error category description.
+     * @param [in] errorMessage QString of the actual error.
+     */
+    void errorOccurred(StrataClient::ClientError errorType,
+                       const QString &errorMessage);
+
 private slots:
     /**
      * Slot to handle new incoming messages from StrataServer.
      * @param [in] jsonServerMessage QByteArray json of StrataServer's message.
      */
     void newServerMessage(const QByteArray &jsonServerMessage);
+
+    /**
+     * Handles timed out requests.
+     * @param [in] requestId request id of the timed out request.
+     */
+    void requestTimeoutHandler(int requestId);
 
 private:
     /**
