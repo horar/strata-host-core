@@ -194,7 +194,6 @@ Window {
             anchors.leftMargin: 9
             anchors.topMargin: 5
             boundsBehavior: Flickable.StopAtBounds
-            ScrollBar.vertical: ScrollBar {}
 
             TextArea.flickable: TextArea {
                 id: logTextArea
