@@ -463,7 +463,7 @@ FocusScope {
 
             function openFilterDialog() {
                 var dialog = SGWidgets.SGDialogJS.createDialog(
-                            root,
+                            ApplicationWindow.window,
                             "qrc:/FilterDialog.qml",
                             {
                                 "disableAllFiltering": disableAllFiltering,
