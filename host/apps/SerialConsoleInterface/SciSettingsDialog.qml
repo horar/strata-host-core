@@ -179,7 +179,6 @@ SGWidgets.SGDialog {
             Column {
                 Layout.columnSpan: 2
                 Layout.alignment: Qt.AlignRight
-                spacing: gridRowSpacing
 
                 SGWidgets.SGText {
                     anchors.right: parent.right
@@ -205,6 +204,11 @@ SGWidgets.SGDialog {
                                     )
                     }
                 }
+            }
+
+            Column {
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignRight
 
                 SGWidgets.SGText {
                     anchors.right: parent.right
