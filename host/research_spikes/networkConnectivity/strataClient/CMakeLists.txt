@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 3.5)
-
-project(strataClient LANGUAGES CXX)
+project(strataClient
+    DESCRIPTION "An application that acts as a physical Strata platform connected over the local network" 
+    LANGUAGES CXX
+)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
