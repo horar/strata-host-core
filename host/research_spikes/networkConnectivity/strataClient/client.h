@@ -30,8 +30,6 @@ public:
     QString getHostAddress();
     QString getTcpPort();
 
-
-
 public slots:
    void broadcastDatagram();
    void setPort(quint16 port);

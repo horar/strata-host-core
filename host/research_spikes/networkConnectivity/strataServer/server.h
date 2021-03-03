@@ -37,7 +37,6 @@ public slots:
     QList<QVariant> getAvailableClients() const;
     QString getClientAddress(QVariant index);
 
-
 signals:
     void udpBufferUpdated();
     void tcpBufferUpdated();
