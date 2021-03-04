@@ -5,11 +5,13 @@ import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import "utils/template_selection.js" as TemplateSelection
 import "components/"
 
 import "../general"
+import "../"
 
 Rectangle {
     id: createNewContainer
@@ -37,6 +39,31 @@ Rectangle {
             interval: 0
             z: 100
             color: "red"
+        }
+
+        SGText {
+            Layout.alignment: Qt.AlignLeft
+            text: "Enter a project name:"
+            color: "#666"
+            fontSizeMultiplier: 1.25
+        }
+
+        Rectangle {
+            Layout.preferredHeight: 35
+            Layout.fillWidth: true
+            color: "#eee"
+            border.color: "#444"
+            border.width: 0.5
+
+            TextInput {
+                id: projectName
+
+                anchors.fill: parent
+                color: "#333"
+                verticalAlignment: Text.AlignVCenter
+                selectByMouse: true
+                leftPadding: 10
+            }
         }
 
         SGText {
@@ -194,7 +221,7 @@ Rectangle {
             text: "Create Project"
 
             function onClicked() {
-                if (fileOutput.text !== "" && fileOutput.text !== "Select a folder for your project...") {
+                if (projectName.text !== "" && fileOutput.text !== "" && fileOutput.text !== "Select a folder for your project...") {
                     let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
                     if (unsavedFileCount > 0) {
                         if (!controlViewCreatorRoot.isConfirmCloseOpen) {
@@ -203,7 +230,8 @@ Rectangle {
                             controlViewCreatorRoot.isConfirmCloseOpen = true
                         }
                     } else {
-                        if (createControlView(fileOutput.text)) {
+                        if (createControlView(projectName.text, fileOutput.text)) {
+                            projectName.text = ""
                             fileOutput.text = "Select a folder for your project..."
                         }
                     }
@@ -250,34 +278,37 @@ Rectangle {
             controlViewCreatorRoot.isConfirmCloseOpen = false
 
             if (closeReason !== confirmClosePopup.cancelCloseReason) {
-                if (createControlView(fileOutput.text)) {
+                if (createControlView(projectName.text, fileOutput.text)) {
+                    projectName.text = ""
                     fileOutput.text = "Select a folder for your project..."
                 }
             }
         }
     }
 
-    OverwriteProjectPopup {
-        id: overwriteProjectPopup
+    SGConfirmationPopup {
+        id: projectExistsPopup
         parent: controlViewCreatorRoot
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
 
-        titleText: "A project already exists in the chosen location"
-        popupText: "The existing project in the chosen location will be overwritten if you proceed."
-        closeButtonText: "Overwrite existing project"
+        titleText: "This project already exists in the selected location"
+        popupText: "A non-empty project '" + projectName.text + "' already exists in the selected location"
 
-        onPopupClosed: {
-            if (closeReason === overwriteProjectPopup.overwriteReason) {
-                if (deleteProject(fileOutput.text)) {
-                    createControlView(fileOutput.text)
-                }
-            }
-        }
+        modal: true
+        padding: 0
+        closePolicy: Popup.NoAutoClose
+        buttons: [okButtonObject]
+
+        property var okButtonObject: ({
+            buttonText: "OK",
+            buttonColor: acceptButtonColor,
+            buttonHoverColor: acceptButtonHoverColor
+        });
     }
 
-    function createControlView(filepath) {
-        let path = filepath.trim();
+    function createControlView(projectName, filePath) {
+        let path = filePath.trim();
         if (path.startsWith("file:")) {
             // type is url
             path = SGUtilsCpp.urlToLocalFile(path);
@@ -290,23 +321,21 @@ Rectangle {
             }
             alertMessage.text = "Cannot create project. Destination folder does not exist"
             alertMessage.show()
-            return false;
+            return false
         }
 
-        const projectExists = sdsModel.newControlView.projectExists(SGUtilsCpp.pathToUrl(path));
+        const projectExists = sdsModel.newControlView.projectExists(projectName, SGUtilsCpp.pathToUrl(path))
         if (projectExists) {
-            overwriteProjectPopup.open()
+            projectExistsPopup.open()
+            return false
         } else {
-            const qrcUrl = sdsModel.newControlView.createNewProject(SGUtilsCpp.pathToUrl(path), TemplateSelection.selectedPath);
+            const qrcUrl = sdsModel.newControlView.createNewProject(projectName, SGUtilsCpp.pathToUrl(path), TemplateSelection.selectedPath)
             openProjectContainer.url = qrcUrl
             openProjectContainer.addToTheProjectList(qrcUrl.toString())
             controlViewCreatorRoot.rccInitialized = false
             toolBarListView.currentIndex = toolBarListView.editTab
-            return true;
         }
-    }
 
-    function deleteProject(filepath) {
-        return sdsModel.newControlView.deleteProject(filepath)
+        return true
     }
 }

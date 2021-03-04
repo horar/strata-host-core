@@ -20,7 +20,6 @@
         <file alias="Sidebar/FileContextMenu.qml">partial-views/control-view-creator/Sidebar/FileContextMenu.qml</file>
         <file alias="Sidebar/FolderContextMenu.qml">partial-views/control-view-creator/Sidebar/FolderContextMenu.qml</file>
         <file alias="ConfirmClosePopup.qml">partial-views/control-view-creator/ConfirmClosePopup.qml</file>
-        <file alias="OverwriteProjectPopup.qml">partial-views/control-view-creator/OverwriteProjectPopup.qml</file>
         <file alias="utils/template_selection.js">partial-views/control-view-creator/utils/template_selection.js</file>
         <file alias="Console/ConsoleLogger.qml">partial-views/control-view-creator/Console/ConsoleLogger.qml</file>
         <file alias="Console/ConsoleContainer.qml">partial-views/control-view-creator/Console/ConsoleContainer.qml</file>
