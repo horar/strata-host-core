@@ -20,6 +20,7 @@ FocusScope {
     property alias contextMenuEnabled: textEdit.contextMenuEnabled
     property alias isValid: textEdit.isValid
     property alias activeEditing: textEdit.activeEditing
+    property alias showValidationResultIcon: textEdit.showValidationResultIcon
 
 
     function inputValidationErrorMsg() {
