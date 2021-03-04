@@ -13,9 +13,8 @@ Item {
     id: platformTabRoot
     height: 40
     width: 250 // will be set by the listview
-
     property color menuColor: Theme.palette.green
-
+    state: parent.state
     property string view: model.view
     property string name: model.name
     property string class_id: model.class_id
@@ -33,10 +32,12 @@ Item {
         populateButtons()
         setControlIcon()
         setSelectedButton()
-        Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(0).toolItem, "Use this menu item to open the platform and control the board, documentation, or close the platform", 6, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(1).toolItem, "Use this menu item to open the documentation of the board", 7, "selectorHelp")
-        Help.registerTarget(repeater.itemAt(2).toolItem, "Use this menu item to close the platform", 8, "selectorHelp")
+        if(platformTabRoot.state === "help_tour"){
+            Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
+            for(var i = 0; i < repeater.count; i++){
+                Help.registerTarget(repeater.itemAt(i).toolItem, `Use this menu item to open the platform and control the board, documentation, or close the platform`, 6 + i, "selectorHelp")
+            }
+        }
     }
 
     onConnectedChanged: {
@@ -47,12 +48,13 @@ Item {
         target: Help.utility
         // if order is hardcoded, toggle help_tour popup after dropdown popup otherwise reset z height.
         onInternal_tour_indexChanged: {
-            if(Help.current_tour_targets[index]["target"] === menu || Help.current_tour_targets[index]["target"] === repeater.itemAt(0).toolItem ||
-                    Help.current_tour_targets[index]["target"] === repeater.itemAt(1).toolItem || Help.current_tour_targets[index]["target"] === repeater.itemAt(2).toolItem) {
-                dropDownPopup.open()
-                menu.state = "help_tour"
-            } else {
-                dropDownPopup.close()
+            if(platformTabRoot.state === "help_tour"){
+                if(Help.current_tour_targets[index]["target"] === menu) {
+                    dropDownPopup.open()
+                    menu.state = "help_tour"
+                } else if(Help.current_tour_targets[index]["target"] === currIcon) {
+                    dropDownPopup.close()
+                }
             }
         }
 

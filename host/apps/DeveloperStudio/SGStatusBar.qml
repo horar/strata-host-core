@@ -201,6 +201,7 @@ Rectangle {
                 "control": true
             }
             view: "control"
+            state: "help_tour"
             Layout.preferredWidth: 250
             Layout.fillHeight: true
             onXChanged: {
