@@ -19,6 +19,7 @@ FocusScope {
     property variant dialogNameFilters: []
     property alias contextMenuEnabled: textEdit.contextMenuEnabled
     property alias isValid: textEdit.isValid
+    property alias activeEditing: textEdit.activeEditing
 
 
     function inputValidationErrorMsg() {
