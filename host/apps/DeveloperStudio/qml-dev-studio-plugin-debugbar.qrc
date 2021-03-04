@@ -3,7 +3,6 @@
         <file alias="SGDebugBar.qml">partial-views/debug-bar/+debugbar/SGDebugBar.qml</file>
     </qresource>
     <qresource prefix="/partial-views/debug-bar">
-        <file alias="SGLogLevelSelector.qml">partial-views/debug-bar/SGLogLevelSelector.qml</file>
         <file alias="SGLocalPlatformListPopup.qml">partial-views/debug-bar/SGLocalPlatformListPopup.qml</file>
         <file alias="SGQmlErrorListPopUp.qml">partial-views/debug-bar/SGQmlErrorListPopUp.qml</file>
         <file alias="SGQmlErrorListView.qml">partial-views/debug-bar/SGQmlErrorListView.qml</file>
