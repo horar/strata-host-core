@@ -44,7 +44,7 @@ Item {
         id: delayWizardPushTimer
         interval: 500
         onTriggered: {
-            stackView.push(wizardComponent)
+            stackView.push(settingsComponent)
         }
     }
 
@@ -65,6 +65,33 @@ Item {
 
         LoginScreen {
             focus: true
+        }
+    }
+
+    Component {
+        id: settingsComponent
+
+        ProgramSettingsWizard {
+            focus: true
+            prtModel: prtMain.prtModel
+
+            onRegistrationEmbeddedRequested: {
+                console.log("not implemented yet")
+            }
+
+            onRegistrationAssistedAndControllerRequested: {
+                console.log("not implemented yet")
+            }
+
+            onRegistrationControllerRequested: {
+                console.log("not implemented yet")
+            }
+
+            function startRegistrationProcess() {
+                //TODO implement in future tickets
+
+                stackView.push(wizardComponent)
+            }
         }
     }
 

@@ -6,6 +6,12 @@
         <file>LoginScreen.qml</file>
         <file>PrtAboutWindow.qml</file>
         <file>ProgramDeviceWizard.qml</file>
+        <file>ProgramDeviceStateMachine.qml</file>
+        <file>ProgramSettingsWizard.qml</file>
+        <file>ProgramSettingsDelegate.qml</file>
+        <file>ProgramSettingsOpnDelegate.qml</file>
+        <file>ProgramSettingsQuestionDelegate.qml</file>
+        <file>ProgramSettingsJlinkPathDelegate.qml</file>
         <file>UserMenuButton.qml</file>
         <file>CanvasShapes.js</file>
         <file>FeedbackArrow.qml</file>
