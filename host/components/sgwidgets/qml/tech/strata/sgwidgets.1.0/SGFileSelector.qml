@@ -26,6 +26,18 @@ FocusScope {
         return ""
     }
 
+    function setStateIsUnknown() {
+        textEdit.setIsUnknown()
+    }
+
+    function setStateIsValid() {
+        textEdit.setIsValid()
+    }
+
+    function setStateIsInvalid(error) {
+        textEdit.setIsInvalid(error)
+    }
+
     SGWidgets.SGTextFieldEditor {
         id: textEdit
         anchors {
