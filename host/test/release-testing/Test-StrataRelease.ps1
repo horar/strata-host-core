@@ -55,8 +55,8 @@ Set-Variable "JLinkExePath"  "${Env:ProgramFiles(x86)}\SEGGER\JLink\JLink.exe"
 Set-Variable "RequirementsFile" "$TestRoot\requirements.txt"
 
 # Define variables for server authentication credentials needed to acquire login token
-Set-Variable "SDSServer"      "http://18.191.108.5/"      # "https://strata.onsemi.com"
-Set-Variable "SDSLoginServer" "http://18.191.108.5/login" # "https://strata.onsemi.com/login"
+Set-Variable "SDSServer"      "http://10.238.54.227/"      # "https://strata.onsemi.com"
+Set-Variable "SDSLoginServer" "http://10.238.54.227/login" # "https://strata.onsemi.com/login"
 Set-Variable "SDSLoginInfo"   '{"username":"test@test.com","password":"Strata12345"}'
 
 # Define paths for Python scripts ran by this script
