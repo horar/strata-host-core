@@ -116,3 +116,65 @@ var documentControllerSchema = {
     },
     "required": ["class_id", "controller_type", "mcu", "bootloader"]
 }
+
+/* fake data for testing until cloud service can provide proper data */
+
+var fakeEmbeddedData = {
+    "class_id": "ffe2f2c2-3ba8-45f4-b481-379b9d9b5622",
+    "controller_type": 1,
+    "mcu": {
+        "jlink_device": "EFM32GG380F1024",
+        "bootloader_start_address": 0
+    },
+    "firmware": [
+        {
+            "file": "ota/0bbcc07e14c0b711db1711e834c6268e.bin",
+            "filesize": 1000,
+            "md5": "0bbcc07e14c0b711db1711e834c6268e",
+            "timestamp": "2020-10-22T01:23:18.969Z",
+            "version": "1.1.2"
+        }
+    ],
+    "bootloader": [
+        {
+            "file": "ota/0bbcc07e14c0b711db1711e834c6268e.bin",
+            "filesize": 1000,
+            "md5": "0bbcc07e14c0b711db1711e834c6268e",
+            "timestamp": "2020-10-22T01:23:18.969Z",
+            "version": "1.1.2"
+        }
+    ]
+}
+
+var fakeAssistedData = {
+    "class_id": "aae2f2c2-3ba8-45f4-b481-379b9d9b56aa",
+    "controller_type": 2,
+    "firmware": [
+        {
+            "file": "ota/0bbcc07e14c0b711db1711e834c6268e.bin",
+            "filesize": 1000,
+            "md5": "0bbcc07e14c0b711db1711e834c6268e",
+            "timestamp": "2020-10-22T01:23:18.969Z",
+            "version": "1.1.2",
+            "controller_class_id": "cce2f2c2-3ba8-45f4-b481-379b9d9b56cc"
+        }
+    ]
+}
+
+var fakeControllerData = {
+    "class_id": "cce2f2c2-3ba8-45f4-b481-379b9d9b56cc",
+    "controller_type": 3,
+    "mcu": {
+        "jlink_device": "EFM32GG380F1024",
+        "bootloader_start_address": 0
+    },
+    "bootloader": [
+        {
+            "file": "ota/0bbcc07e14c0b711db1711e834c6268e.bin",
+            "filesize": 1000,
+            "md5": "0bbcc07e14c0b711db1711e834c6268e",
+            "timestamp": "2020-10-22T01:23:18.969Z",
+            "version": "1.0.0"
+        }
+    ]
+}
