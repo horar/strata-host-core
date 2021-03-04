@@ -89,12 +89,12 @@ Item {
         visible: stackView.depth > 1
     }
 
- Rectangle {
+    Rectangle {
         id: testServerWarningContainer
         anchors {
-            left: parent.left 
-            top: parent.top
-            margins: 10
+            right: userMenuButton.left
+            rightMargin: 10
+            verticalCenter: userMenuButton.verticalCenter
         }
         height: testServerWarningRow.height + 10
         width: testServerWarningRow.width + 16
