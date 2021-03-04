@@ -1,6 +1,8 @@
 #include "StrataServerTest.h"
 #include "ClientConnector.h"
 
+#include <QSignalSpy>
+
 void StrataServerTest::testValidApiVer2Message()
 {
     StrataServer server(address_, false);
@@ -695,6 +697,67 @@ void StrataServerTest::testdefaultHandlers()
 
     QVERIFY_(testExecuted_1);
     QVERIFY_(testExecuted_2);
+}
+
+void StrataServerTest::testErrorOccourredSignal()
+{
+    qRegisterMetaType<StrataServer::ServerError>("StrataServer::ServerError");
+
+    StrataServer server(address_, true, this);
+    strata::strataRPC::ClientConnector client(address_, "AA");
+    StrataServer::ServerError errorType;
+    QSignalSpy errorOccurred(&server, &StrataServer::errorOccurred);
+
+    server.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
+    server.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
+    qDebug() << errorOccurred;
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataServer::ServerError::FailedToRegisterHandler);
+    errorOccurred.clear();
+
+    server.unregisterHandler("handler_2");
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataServer::ServerError::FailedToUnregisterHandler);
+    errorOccurred.clear();
+
+    {
+        StrataServer tempServer(address_, false);
+        tempServer.initializeServer();
+        server.initializeServer();
+        QCOMPARE_(errorOccurred.count(), 1);
+        errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
+        QCOMPARE_(errorType, StrataServer::ServerError::FailedToInitializeServer);
+        errorOccurred.clear();
+    }
+
+    server.initializeServer();
+    server.initializeServer();
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataServer::ServerError::FailedToInitializeServer);
+    errorOccurred.clear();
+
+    client.initializeConnector();
+    client.sendMessage(
+        R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "10.0"},"id":1})");
+    waitForZmqMessages();
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataServer::ServerError::FailedToRegisterClient);
+    errorOccurred.clear();
+
+    client.sendMessage(R"(not a Json Message)");
+    client.sendMessage(R"({"cmd":"this-is-invalid-api})");
+    client.sendMessage(R"({"jsonrpc": "5.0","method":"test_method","params": {},"id":1})");
+    waitForZmqMessages();
+    QCOMPARE_(errorOccurred.count(), 3);
+    for (const auto &error : errorOccurred) {
+        errorType = qvariant_cast<StrataServer::ServerError>(error.at(0));
+        QCOMPARE_(errorType, StrataServer::ServerError::FailedToBuildClientMessage);
+    }
+    errorOccurred.clear();
 }
 
 void StrataServerTest::waitForZmqMessages(int delay)

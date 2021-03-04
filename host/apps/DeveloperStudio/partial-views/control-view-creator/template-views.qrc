@@ -5,14 +5,19 @@
         <file>template-views/basic/qml.qrc</file>
         <file>template-views/template/CMakeLists.txt</file>
         <file>template-views/template/Control.qml</file>
-        <file>template-views/template/qml-views-template.qrc</file>
+        <file>template-views/template/qml.qrc</file>
         <file>template-views/template/control-views/AdvancedControl.qml</file>
         <file>template-views/template/control-views/BasicControl.qml</file>
-        <file>template-views/template/control-views/DebugMenu.qml</file>
-        <file>template-views/template/control-views/PlatformInterface.qml</file>
-        <file>template-views/template/control-views/UserSettingsControl.qml</file>
         <file>template-views/images/basic.jpg</file>
         <file>template-views/images/template.jpg</file>
+        <file>template-views/template/control-views/images/StrataToBoard.png</file>
+        <file>template-views/template/control-views/images/BoardToStrata.png</file>
+        <file>template-views/template/control-views/PlatformInterface.qml</file>
+        <file>template-views/basic/DebugMenu.qml</file>
+        <file>template-views/basic/CMakeLists.txt</file>
+        <file>template-views/basic/platformInterface.json</file>
+        <file>template-views/template/control-views/DebugMenu.qml</file>
+        <file>template-views/template/control-views/platformInterface.json</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

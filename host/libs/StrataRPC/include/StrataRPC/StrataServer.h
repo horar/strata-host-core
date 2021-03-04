@@ -17,6 +17,19 @@ class StrataServer : public QObject
 
 public:
     /**
+     * Enum to describe errors
+     */
+    enum class ServerError {
+        FailedToInitializeServer,
+        FailedToRegisterHandler,
+        FailedToUnregisterHandler,
+        FailedToRegisterClient,
+        FailedToUnregisterClient,
+        FailedToBuildClientMessage
+    };
+    Q_ENUM(ServerError);
+
+    /**
      * StrataServer constructor
      * @param [in] address Sets the server address
      * @param [in] useDefaultHandlers boolean to use the built in handlers for register_client and
@@ -96,6 +109,13 @@ signals:
      * @param [in] clientMessage populated Message object with the command/notification metadata.
      */
     void newClientMessageParsed(const Message &clientMessage);
+
+    /**
+     * Emitted when an error has occurred.
+     * @param [in] errorType error category description.
+     * @param [in] errorMessage QString of the actual error.
+     */
+    void errorOccurred(StrataServer::ServerError errorType, const QString &errorMessage);
 
 private:
     /**

@@ -11,7 +11,7 @@
 namespace strata::device::command {
 
 CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(const DevicePtr &device)
-    : BaseDeviceCommand(device, QStringLiteral("set_assisted_platform_id"))
+    : BaseDeviceCommand(device, QStringLiteral("set_assisted_platform_id"), CommandType::SetAssistedPlatformId)
 {
 }
 
@@ -87,4 +87,4 @@ bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document &doc)
     return true;
 }
 
-}
+}  // namespace

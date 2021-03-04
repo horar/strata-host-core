@@ -12,7 +12,8 @@
 namespace strata::device::command {
 
 CmdStartBackupFirmware::CmdStartBackupFirmware(const device::DevicePtr& device) :
-    BaseDeviceCommand(device, QStringLiteral("start_backup_firmware")) { }
+    BaseDeviceCommand(device, QStringLiteral("start_backup_firmware"), CommandType::StartBackupFirmware)
+{ }
 
 QByteArray CmdStartBackupFirmware::message() {
     return QByteArray("{\"cmd\":\"start_backup_firmware\",\"payload\":{}}");

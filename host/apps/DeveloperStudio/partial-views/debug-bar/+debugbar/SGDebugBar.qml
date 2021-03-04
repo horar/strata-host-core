@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
@@ -227,7 +228,13 @@ Item {
                 }
             }
 
-            SGLogLevelSelector {
+            RowLayout {
+                Label {
+                    text: qsTr("Log level:")
+                }
+
+                SGWidgets.SGLogLevelSelector {
+                }
             }
         }
     }
