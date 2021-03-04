@@ -7,14 +7,21 @@ SGWidgets.SGMainWindow {
     id: root
 
     visible: true
-    height: 600
-    width: 800
+    height: defaultWindowHeight
+    width: defaultWindowWidth
     minimumHeight: 600
     minimumWidth: 800
 
     title: qsTr("Serial Console Interface")
 
     property variant settingsDialog: null
+    property int defaultWindowHeight: 600
+    property int defaultWindowWidth: 800
+
+    function resetWindowSize() {
+        root.height = defaultWindowHeight
+        root.width = defaultWindowWidth
+    }
 
     QtLabsPlatform.MenuBar {
         QtLabsPlatform.Menu {

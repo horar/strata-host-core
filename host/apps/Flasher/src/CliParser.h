@@ -32,6 +32,7 @@ private:
     const QCommandLineOption flashFirmwareOption_;
     const QCommandLineOption flashBootloaderOption_;
     const QCommandLineOption backupFirmwareOption_;
+    const QCommandLineOption deviceInfoOption_;
     const QCommandLineOption deviceOption_;
     QCommandLineParser parser_;
 };

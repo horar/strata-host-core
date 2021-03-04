@@ -72,11 +72,13 @@ namespace strata::device {
             v1_0,
             v2_0
         };
+        Q_ENUM(ApiVersion)
 
         enum class ControllerType {
             Embedded = 0x01,
             Assisted = 0x02
         };
+        Q_ENUM(ControllerType)
 
         /**
          * Device constructor
