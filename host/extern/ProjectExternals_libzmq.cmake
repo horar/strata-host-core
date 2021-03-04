@@ -13,6 +13,7 @@ function(ReadLibzmqSoVersion)
         message( FATAL_ERROR "Unable to detect LIBZMQ_SOVERSION, cmake will exit")
     endif()
     set(LIBZMQ_SOVERSION ${CMAKE_MATCH_1} PARENT_SCOPE)
+    mark_as_advanced(LIBZMQ_SOVERSION)
 endfunction()
 
 if(NOT LIB_INSTALLED)

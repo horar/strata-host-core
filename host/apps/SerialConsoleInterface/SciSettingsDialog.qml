@@ -160,6 +160,15 @@ SGWidgets.SGDialog {
             }
 
             SGWidgets.SGText {
+                text: "Log level:"
+                Layout.alignment: Qt.AlignRight
+            }
+
+            SGWidgets.SGLogLevelSelector {
+                Layout.alignment: Qt.AlignLeft
+            }
+
+            SGWidgets.SGText {
                 text: "Reset Settings"
                 fontSizeMultiplier: 1.1
                 font.bold: true
@@ -172,12 +181,13 @@ SGWidgets.SGDialog {
                 Layout.alignment: Qt.AlignRight
 
                 SGWidgets.SGText {
+                    anchors.right: parent.right
                     text: "Restore all settings to their default values"
                 }
 
                 SGWidgets.SGButton {
                     anchors.right: parent.right
-                    text: "Reset"
+                    text: "Reset Settings"
                     onClicked: {
                         SGWidgets.SGDialogJS.showConfirmationDialog(
                                     rootItem,
@@ -193,6 +203,22 @@ SGWidgets.SGDialog {
                                     SGWidgets.SGMessageDialog.Warning
                                     )
                     }
+                }
+            }
+
+            Column {
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignRight
+
+                SGWidgets.SGText {
+                    anchors.right: parent.right
+                    text: "Restore default window size"
+                }
+
+                SGWidgets.SGButton {
+                    anchors.right: parent.right
+                    text: "Reset Window Size"
+                    onClicked: rootItem.resetWindowSize()
                 }
             }
         }
