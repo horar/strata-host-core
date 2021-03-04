@@ -103,15 +103,6 @@ FocusScope {
         nodeDoneHighlight: stateMechine.stateLoopSucceedActive || stateMechine.stateLoopFailedActive || stateMechine.stateErrorActive
     }
 
-    UserMenuButton {
-        anchors {
-            top: parent.top
-            topMargin: 8
-            right: parent.right
-            rightMargin: 8
-        }
-    }
-
     CommonCpp.SGJLinkConnector {
         id: jLinkConnector
         eraseBeforeProgram: true

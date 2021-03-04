@@ -77,6 +77,18 @@ Item {
         }
     }
 
+    UserMenuButton {
+        id: userMenuButton
+        anchors {
+            top: parent.top
+            topMargin: 8
+            right: parent.right
+            rightMargin: 8
+        }
+
+        visible: stackView.depth > 1
+    }
+
  Rectangle {
         id: testServerWarningContainer
         anchors {
