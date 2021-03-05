@@ -17,6 +17,7 @@ SGWidgets.SGDialog {
     closePolicy: Popup.CloseOnEscape
 
     property bool disableAllFiltering
+    property variant suggestionFilterModel
 
     ListModel {
         id: conditionTypeModel
@@ -217,27 +218,26 @@ SGWidgets.SGDialog {
                                 }
                             }
 
-                            // CommonCpp.SGSortFilterProxyModel {
-                            //    id: sortFilterModel
-                            //    sourceModel: dataModel
-                            //    sortRole: "name"
-                            //    filterRole: "name"
-                            //    filterPatternSyntax: CommonCpp.SGSortFilterProxyModel.RegExp
-                            //    filterPattern: ".*" + filterStringTextField.text + ".*"
-                            // }
+                            CommonCpp.SGSortFilterProxyModel {
+                                id: sortFilterModel
+                                sourceModel: suggestionFilterModel
+                                sortRole: "name"
+                                filterRole: "name"
+                                filterPatternSyntax: CommonCpp.SGSortFilterProxyModel.RegExp
+                                filterPattern: ".*" + filterStringTextField.text + ".*"
+                            }
 
                             SGWidgets.SGTextField {
                                 id: filterStringTextField
                                 contextMenuEnabled: true
-                                suggestionListModel: model.platform.suggestionFilterModel
-                                suggestionModelTextRole: "name"
-                                // onSuggestionDelegateSelected: {
-                                //    var sourceIndex = sortFilterModel.mapIndexToSource(index)
-                                //    if (sourceIndex < 0) {
-                                //        return
-                                //    }
-                                //    text = dataModel.get(sourceIndex)["name"]
-                                // }
+                                suggestionListModel: sortFilterModel
+                                onSuggestionDelegateSelected: {
+                                   var sourceIndex = sortFilterModel.mapIndexToSource(index)
+                                   if (sourceIndex < 0) {
+                                        return
+                                    }
+                                    text = suggestionFilterModel.get(sourceIndex)["name"]
+                                }
 
                                 onTextChanged: {
                                     filterConditionModel.setProperty(index, "filter_string", text)

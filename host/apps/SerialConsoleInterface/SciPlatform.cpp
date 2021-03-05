@@ -214,6 +214,7 @@ QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
     if (result) {
         commandHistoryModel_->add(compactMsg, isJsonValid);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+        settings_->setSuggestionFilter(verboseName_, suggestionFilterModel()->getSuggestionList());
         retStatus["error"] = "no_error";
     } else {
         retStatus["error"] = "send_error";
@@ -273,6 +274,7 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
 void SciPlatform::messageFromDeviceHandler(QByteArray message)
 {
     scrollbackModel_->append(message, false);
+    suggestionFilterModel_->add(message);
 }
 
 void SciPlatform::messageToDeviceHandler(QByteArray message)

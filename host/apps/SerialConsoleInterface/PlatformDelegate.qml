@@ -440,6 +440,7 @@ FocusScope {
 
             function clearScrollback() {
                 scrollbackModel.clear()
+                suggestionFilterModel.clear()
             }
 
             function toggleFollow() {
@@ -468,6 +469,7 @@ FocusScope {
                             "qrc:/FilterDialog.qml",
                             {
                                 "disableAllFiltering": disableAllFiltering,
+                                "suggestionFilterModel": suggestionFilterModel,
                             })
 
                 var list = []
