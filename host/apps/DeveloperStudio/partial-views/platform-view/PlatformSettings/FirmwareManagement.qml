@@ -173,6 +173,10 @@ ColumnLayout {
         function filterAcceptsRow(row) {
             console.log(row, firmwareListModel.controller_class_id(row), platformStack.controller_class_id)
 
+            if (platformStack.connected === false) {
+                return false //platform not connected, no firmware displayed
+            }
+
             if (platformStack.is_assisted === false) {
                 return true //embedded platform
             }
