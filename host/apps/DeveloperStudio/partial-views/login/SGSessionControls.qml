@@ -47,6 +47,13 @@ Item {
         root.visible = false
     }
 
+    function loginSuccess (resultObject) {
+        Authenticator.settings.token = resultObject.jwt
+        Authenticator.settings.first_name = resultObject.first_name
+        Authenticator.settings.last_name = resultObject.last_name
+        Authenticator.settings.user = resultObject.user_id
+    }
+
     ConnectionStatus {
         id: connectionStatus
         headerText: "Renewing session..."
@@ -54,16 +61,6 @@ Item {
 
     Connections {
         target: Signals
-
-        onLoginResult: {
-            var resultObject = JSON.parse(result)
-            if (resultObject.response === "Connected") {
-                Authenticator.settings.token = resultObject.jwt
-                Authenticator.settings.first_name = resultObject.first_name
-                Authenticator.settings.last_name = resultObject.last_name
-                Authenticator.settings.user = resultObject.user_id
-            }
-        }
 
         onValidationResult: {
             if (result === "Current token is valid") {
