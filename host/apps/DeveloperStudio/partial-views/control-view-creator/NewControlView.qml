@@ -5,7 +5,6 @@ import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
-import tech.strata.theme 1.0
 
 import "utils/template_selection.js" as TemplateSelection
 import "components/"
