@@ -96,11 +96,12 @@ void Flasher::flashBootloader()
 
     operationList_.reserve(3);
 
-    addSwitchToBootloaderOperation();  // switch to bootloader
+    addSwitchToBootloaderOperation();                            // switch to bootloader
 
-    addFlashOperation(flashingFw);     // flash bootloader
+    addFlashOperation(flashingFw);                               // flash bootloader
 
-    addIdentifyOperation(flashingFw);  // identify board
+    // starting new bootloader takes some time
+    addIdentifyOperation(flashingFw, IDENTIFY_OPERATION_DELAY);  // identify board
 
     currentOperation_ = operationList_.begin();
 
@@ -259,18 +260,7 @@ void Flasher::runFlasherOperation()
 
     emit flasherState(currentOperation_->state, false);
 
-    if ((action_ == Action::FlashBootloader) &&
-        (currentOperation_->operation->type() == operation::Type::Identify))
-    {
-        operation::Identify *identifyOp = dynamic_cast<operation::Identify*>(currentOperation_->operation.get());
-        if (identifyOp != nullptr) {
-            identifyOp->runWithDelay(IDENTIFY_OPERATION_DELAY);  // starting new bootloader takes some time
-        } else {
-            operationCastError();
-        }
-    } else {
-        currentOperation_->operation->run();
-    }
+    currentOperation_->operation->run();
 }
 
 void Flasher::finish(Result result, QString errorString)
@@ -596,10 +586,10 @@ void Flasher::addStartApplicationOperation()
             this);
 }
 
-void Flasher::addIdentifyOperation(bool flashingFirmware)
+void Flasher::addIdentifyOperation(bool flashingFirmware, std::chrono::milliseconds delay)
 {
     operationList_.emplace_back(
-            OperationPtr(new operation::Identify(device_, true, MAX_GET_FW_INFO_RETRIES), operationDeleter),
+            OperationPtr(new operation::Identify(device_, true, MAX_GET_FW_INFO_RETRIES, delay), operationDeleter),
             State::IdentifyBoard,
             std::bind(&Flasher::identifyFinished, this, flashingFirmware, std::placeholders::_1),
             this);
