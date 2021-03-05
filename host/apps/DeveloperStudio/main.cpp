@@ -117,13 +117,13 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
     const QString configFilePath{parser.value(QStringLiteral("f"))};
-    strata::sds::config::AppConfig cfg;
-    if (cfg.parse(configFilePath) == false) {
+    strata::sds::config::AppConfig cfg(configFilePath);
+    if (cfg.parse() == false) {
         return EXIT_FAILURE;
     }
 
-    strata::sds::config::UrlConfig urlCfg;
-    if (urlCfg.parseUrl(configFilePath) == false) {
+    strata::sds::config::UrlConfig urlCfg(configFilePath);
+    if (urlCfg.parseUrl() == false) {
         return EXIT_FAILURE;
     }
 

@@ -20,7 +20,7 @@ class UrlConfig : public QObject{
     Q_PROPERTY(QString testAuthServer READ getTestAuthServer CONSTANT);
 
 public:
-    explicit UrlConfig(QObject *parent = nullptr);
+    explicit UrlConfig(const QString &fileName, QObject *parent = nullptr);
 
     QString getSalesPopupUrl() const;
     QString getLicenseUrl() const;
@@ -33,9 +33,11 @@ public:
     virtual ~UrlConfig();
 
 
-    bool parseUrl(const QString &fileName);
+    bool parseUrl();
 
 private:
+    QString fileName_;
+
     QString authServer_;
     QString testAuthServer_;
     QString salesPopupUrl_;

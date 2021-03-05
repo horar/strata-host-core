@@ -10,13 +10,14 @@ namespace strata::sds::config
 class AppConfig final
 {
 public:
-    explicit AppConfig();
+    explicit AppConfig(const QString &fileName);
 
-    bool parse(const QString &fileName);
+    bool parse();
 
     QUrl hcsDealerAddresss() const;
 
 private:
+    QString fileName_;
     Url hcsDealerAddresss_;
 };
 
