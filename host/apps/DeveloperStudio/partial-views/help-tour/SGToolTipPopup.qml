@@ -125,13 +125,19 @@ Popup{
 
     contentItem: Item {
         id: contentItems
-        implicitWidth: content.childrenRect.width + 20
-        implicitHeight: content.childrenRect.height + 30 // 30 because 10 padding*2 and 10 for pointer
+        implicitHeight: content.childrenRect.height
+        implicitWidth: 360
 
+        onWidthChanged: {
+            if(popupItem !== null){
+                popupItem.width = width
+                implicitWidth = popupItem.implicitWidth + 10
+            }
+        }
 
         MouseArea {
             // Blocks clickthroughs
-            anchors { fill: contentItems }
+            anchors.fill: parent
             hoverEnabled: true
             preventStealing: true
             propagateComposedEvents: false
@@ -139,9 +145,7 @@ Popup{
 
         Loader {
             id: content
-            anchors {
-                centerIn: contentItems
-            }
+            anchors.centerIn: parent
         }
     }
 }
