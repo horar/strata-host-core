@@ -97,11 +97,13 @@ Rectangle {
                     id: fileOutput
 
                     anchors.fill: parent
-                    text: "Select a folder for your project..."
                     color: "#333"
                     verticalAlignment: Text.AlignVCenter
                     selectByMouse: true
                     leftPadding: 10
+
+                    readonly property string defaultText: "Select a folder for your project..."
+                    text: defaultText
                 }
             }
         }
@@ -214,27 +216,62 @@ Rectangle {
             }
         }
 
-        SGControlViewButton {
-            id: createButton
+        Item {
+            id: buttonContainer
             Layout.fillWidth: true
             Layout.preferredHeight: 35
-            text: "Create Project"
 
-            function onClicked() {
-                if (projectName.text !== "" && fileOutput.text !== "" && fileOutput.text !== "Select a folder for your project...") {
-                    let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
-                    if (unsavedFileCount > 0) {
-                        if (!controlViewCreatorRoot.isConfirmCloseOpen) {
-                            confirmClosePopup.unsavedFileCount = unsavedFileCount
-                            confirmClosePopup.open()
-                            controlViewCreatorRoot.isConfirmCloseOpen = true
-                        }
-                    } else {
-                        if (createControlView(projectName.text, fileOutput.text)) {
-                            projectName.text = ""
-                            fileOutput.text = "Select a folder for your project..."
+            SGControlViewButton {
+                id: createButton
+                anchors.fill: parent
+                text: "Create Project"
+                enabled: projectName.text !== "" && projectNameValid && fileOutput.text !== "" && fileOutput.text !== fileOutput.defaultText
+
+                property bool projectNameValid: projectName.text.match(/^[a-zA-Z0-9_.-]*$/)
+
+                function onClicked() {
+                    if (enabled) {
+                        let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
+                        if (unsavedFileCount > 0) {
+                            if (!controlViewCreatorRoot.isConfirmCloseOpen) {
+                                confirmClosePopup.unsavedFileCount = unsavedFileCount
+                                confirmClosePopup.open()
+                                controlViewCreatorRoot.isConfirmCloseOpen = true
+                            }
+                        } else {
+                            if (createControlView(projectName.text, fileOutput.text)) {
+                                projectName.text = ""
+                                fileOutput.text = fileOutput.defaultText
+                            }
                         }
                     }
+                }
+            }
+
+            MouseArea {
+                id: createButtonToolTipShow
+                anchors.fill: parent
+                hoverEnabled: true
+                enabled: visible
+                visible: !createButton.enabled
+
+                ToolTip {
+                    text: {
+                        var result = ""
+                        if (projectName.text == "") {
+                            result += (result === "" ? "" : "<br>")
+                            result += "Project name is empty"
+                        } else if (!createButton.projectNameValid) {
+                            result += (result === "" ? "" : "<br>")
+                            result += "Project name is not valid"
+                        }
+                        if (fileOutput.text == "" || fileOutput.text == fileOutput.defaultText) {
+                            result += (result === "" ? "" : "<br>")
+                            result += "Project directory is empty"
+                        }
+                        return result
+                    }
+                    visible: createButtonToolTipShow.containsMouse && !createButton.enabled
                 }
             }
         }
@@ -280,7 +317,7 @@ Rectangle {
             if (closeReason !== confirmClosePopup.cancelCloseReason) {
                 if (createControlView(projectName.text, fileOutput.text)) {
                     projectName.text = ""
-                    fileOutput.text = "Select a folder for your project..."
+                    fileOutput.text = fileOutput.defaultText
                 }
             }
         }
