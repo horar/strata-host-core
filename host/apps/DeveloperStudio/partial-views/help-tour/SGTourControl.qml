@@ -10,7 +10,6 @@ ColumnLayout {
     id: root
     width: 360
     focus: true
-    readonly property int max_HEIGHT: 500
     property int index: 0
     property alias description: description.text
     property real fontSizeMultiplier: 1
@@ -18,22 +17,35 @@ ColumnLayout {
 
     signal close()
     onClose: Help.closeTour()
-    SGIcon {
-        id: closer
-        source: "qrc:/sgimages/times.svg"
-        Layout.alignment: Qt.AlignRight
-        iconColor: closerMouse.containsMouse ? "lightgrey" : "grey"
-        height: 18
-        width: height
 
-        MouseArea {
-            id: closerMouse
-            anchors {
-                fill: closer
+    RowLayout{
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignLeft
+        spacing: 0
+        Item {
+            Layout.fillWidth: true
+        }
+
+        SGIcon {
+            id: closer
+            source: "qrc:/sgimages/times.svg"
+            iconColor: closerMouse.containsMouse ? "lightgrey" : "grey"
+            Layout.preferredHeight: 18
+            Layout.preferredWidth: Layout.preferredHeight
+
+            MouseArea {
+                id: closerMouse
+                anchors {
+                    fill: closer
+                }
+                onClicked: root.close()
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
             }
-            onClicked: root.close()
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
+        }
+
+        Item {
+            Layout.preferredWidth: 10
         }
     }
 
@@ -58,7 +70,7 @@ ColumnLayout {
 
         Rectangle {
             Layout.fillWidth: false
-            Layout.preferredWidth: column.width - 40
+            Layout.preferredWidth: root.width - 40
             Layout.preferredHeight: 1
             color: "darkgrey"
             Layout.alignment: Qt.AlignHCenter
@@ -171,11 +183,5 @@ ColumnLayout {
                 }
             }
         }
-    }
-
-    TextMetrics {
-        id: textMetrics
-        text: description.text
-        font.pixelSize: 1.3 * root.fontSizeMultiplier
     }
 }

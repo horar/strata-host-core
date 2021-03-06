@@ -126,12 +126,14 @@ Popup{
     contentItem: Item {
         id: contentItems
         implicitHeight: content.childrenRect.height
-        implicitWidth: 360
+        implicitWidth: baseImplicitWidth
+
+        readonly property int baseImplicitWidth: 360
 
         onWidthChanged: {
             if(popupItem !== null){
                 popupItem.width = width
-                implicitWidth = popupItem.implicitWidth + 10
+                implicitWidth = popupItem.implicitWidth > baseImplicitWidth ? popupItem.implicitWidth : baseImplicitWidth
             }
         }
 
