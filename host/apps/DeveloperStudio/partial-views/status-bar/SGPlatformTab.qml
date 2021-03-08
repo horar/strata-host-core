@@ -35,7 +35,9 @@ Item {
         if(platformTabRoot.state === "help_tour"){
             Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
             for(var i = 0; i < repeater.count; i++){
-                Help.registerTarget(repeater.itemAt(i).toolItem, `Use this menu item to open the platform and control the board, documentation, or close the platform`, 6 + i, "selectorHelp")
+                Help.registerTarget(repeater.itemAt(i).toolItem, (6 + i === 6) ? "Use this menu item to open the platform and control a board" :
+                                                                 (i + 6 < repeater.count + 5) ? "Use this menu item to view documentation":
+                                                                 "Use this menu item to close the platform", 6 + i, "selectorHelp")
             }
         }
     }
