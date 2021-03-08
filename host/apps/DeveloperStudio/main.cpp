@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<SGQrcTreeModel>("tech.strata.SGQrcTreeModel", 1, 0, "SGQrcTreeModel");
     qmlRegisterUncreatableType<strata::sds::config::UrlConfig>("tech.strata.UrlConfig",1,0,"UrlConfig", "You can't instantiate UrlConfig in QML");
     qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");    qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
-    
+
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss())};
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
@@ -153,6 +153,12 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
+
+    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    if (supportedPLugins.empty() == false) {
+        qCDebug(logCategoryStrataDevStudio) << "Supportrd plugins:" << supportedPLugins.join(", ");
+        selector.setExtraSelectors(supportedPLugins);
+    }
 
     addImportPaths(&engine);
 

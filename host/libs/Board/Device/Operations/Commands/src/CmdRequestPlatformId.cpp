@@ -7,9 +7,9 @@
 
 namespace strata::device::command {
 
-
 CmdRequestPlatformId::CmdRequestPlatformId(const device::DevicePtr& device) :
-    BaseDeviceCommand(device, QStringLiteral("request_platform_id")) { }
+    BaseDeviceCommand(device, QStringLiteral("request_platform_id"), CommandType::RequestPlatformid)
+{ }
 
 QByteArray CmdRequestPlatformId::message() {
     return QByteArray("{\"cmd\":\"request_platform_id\",\"payload\":{}}");

@@ -3,6 +3,10 @@
 #include <Device/Operations/BaseDeviceOperation.h>
 #include <DeviceOperationsData.h>
 
+namespace strata::device::command {
+    class CmdSetAssistedPlatformId;
+}
+
 namespace strata::device::operation {
 
 class SetAssistedPlatformId : public BaseDeviceOperation {
@@ -15,6 +19,9 @@ public:
     void setBaseData(const command::CmdSetPlatformIdData &data);
     void setControllerData(const command::CmdSetPlatformIdData &controllerData);
     void setFwClassId(const QString &fwClassId);
+
+private:
+    command::CmdSetAssistedPlatformId* cmdSetAssistPlatfid_;
 };
 
 }  // namespace

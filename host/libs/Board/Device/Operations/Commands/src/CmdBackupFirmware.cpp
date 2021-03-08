@@ -13,7 +13,7 @@
 namespace strata::device::command {
 
 CmdBackupFirmware::CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk, int totalChunks) :
-    BaseDeviceCommand(device, QStringLiteral("backup_firmware")), chunk_(chunk),
+    BaseDeviceCommand(device, QStringLiteral("backup_firmware"), CommandType::BackupFirmware), chunk_(chunk),
     totalChunks_(totalChunks), firstBackupChunk_(true), maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
 
 QByteArray CmdBackupFirmware::message() {

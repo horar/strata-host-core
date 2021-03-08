@@ -2,6 +2,7 @@
 
 #include <StrataRPC/Message.h>
 #include <QObject>
+#include <QTimer>
 
 namespace strata::strataRPC
 {
@@ -53,6 +54,18 @@ signals:
      */
     void finishedWithError(const Message &message);
 
+    /**
+     * Signal emitted on timeout.
+     * @param [in] requestId request id.
+     */
+    void requestTimedout(int requestId);
+
+private slots:
+    /**
+     * Handles timeout signal from QTimer
+     */
+    void requestTimeoutHandler();
+
 private:
     friend class StrataClient;
 
@@ -68,6 +81,18 @@ private:
      */
     void callErrorCallback(const Message &message);
 
+    /**
+     * Starts timer for timeout.
+     */
+    void startTimer();
+
+    /**
+     * Stops timer for timeout.
+     */
+    void stopTimer();
+
     int id_;
+    QTimer timer_;
+    static constexpr std::chrono::milliseconds REQUEST_TIMEOUT{500};
 };
 }  // namespace strata::strataRPC
