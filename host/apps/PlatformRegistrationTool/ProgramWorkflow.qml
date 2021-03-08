@@ -8,53 +8,69 @@ Item {
     height: childrenRect.height
 
     property color baseNodeColor: "#303030"
-    property int arrowTailLength: Math.round(1.5*state4Label.width)
+    property int arrowTailLength: Math.round(1.7*labelDone.width)
+    property int arrowSpacing: 8
 
-    property alias nodeSettingsHighlight: nodeSettings.highlight
+    property bool showControllerNodes: true
+    property bool showAssistedNodes: true
+
     property alias nodeDownloadHighlight: nodeDownload.highlight
-    property alias nodeDeviceCheckHighlight: nodeDeviceCheck.highlight
-    property alias nodeProgramHighlight: nodeProgram.highlight
-    property alias nodeRegistrationHighlight: nodeRegistration.highlight
+    property alias nodeDeviceCheckHighlight: nodeControllerCheck.highlight
+    property alias nodeProgramHighlight: nodeRegisterController.highlight
+    property alias nodeRegistrationHighlight: nodeAssistedCheck.highlight
     property alias nodeDoneHighlight: nodeDone.highlight
 
     FeedbackArrow {
-        id: arrowLoop
-        width: nodeDone.x - nodeDeviceCheck.x + 2*padding + wingWidth + 4
+        id: controllerFeedbackArrow
+        width: {
+            var w = nodeDone.x - nodeControllerCheck.x + 2*padding + wingWidth + 4
+            if (showAssistedNodes) {
+                w += arrowSpacing/2
+            }
+
+            return w
+        }
         height: 40
-        x: nodeDeviceCheck.x - padding + Math.round(nodeDeviceCheck.width/2) - wingWidth - 2
+        x: nodeControllerCheck.x - padding + Math.round(nodeControllerCheck.width/2) - wingWidth - 2
 
         padding: 2
         color: baseNodeColor
+        visible: showControllerNodes
     }
 
-    WorkflowNode {
-        id: nodeSettings
-        anchors {
-            horizontalCenter: label1.horizontalCenter
-            top: arrowLoop.bottom
+    FeedbackArrow {
+        id: assistedFeedbackArrow
+        width: {
+            var w = nodeDone.x - nodeAssistedCheck.x + 2*padding + wingWidth + 4
+            if (showControllerNodes) {
+                w -= arrowSpacing/2
+            }
+
+            return w
         }
+        height: {
+            var h = 40
+            if(showControllerNodes) {
+                h -= arrowSpacing
+            }
 
-        source: "qrc:/sgimages/cog.svg"
-        color: baseNodeColor
-        iconColor: baseNodeColor
-    }
-
-    Arrow {
-        id: arrowDownload
-        anchors {
-            left: nodeSettings.right
-            verticalCenter: nodeSettings.verticalCenter
+            return h
         }
+        y: showControllerNodes ? arrowSpacing : 0
+        x: nodeAssistedCheck.x - padding + Math.round(nodeAssistedCheck.width/2) - wingWidth - 2
 
+
+        padding: 2
         color: baseNodeColor
-        tailLength: arrowTailLength
+        visible: showAssistedNodes
+
     }
 
     WorkflowNode {
         id: nodeDownload
         anchors {
-            verticalCenter: nodeSettings.verticalCenter
-            left: arrowDownload.right
+            horizontalCenter: labelDownload.horizontalCenter
+            top: controllerFeedbackArrow.bottom
         }
 
         source: "qrc:/images/download-shrinked.svg"
@@ -63,7 +79,7 @@ Item {
     }
 
     Arrow {
-        id: arrowDeviceCheck
+        id: arrowControllerCheck
         anchors {
             left: nodeDownload.right
             verticalCenter: nodeDownload.verticalCenter
@@ -71,71 +87,113 @@ Item {
 
         color: baseNodeColor
         tailLength: arrowTailLength
+        visible: showControllerNodes
     }
 
     WorkflowNode {
-        id: nodeDeviceCheck
+        id: nodeControllerCheck
         anchors {
-            verticalCenter: nodeSettings.verticalCenter
-            left: arrowDeviceCheck.right
+            verticalCenter: nodeDownload.verticalCenter
+            left: arrowControllerCheck.right
         }
 
         source: "qrc:/sgimages/plug.svg"
         color: baseNodeColor
         iconColor: baseNodeColor
+        visible: showControllerNodes
     }
 
     Arrow {
-        id: arrowProgram
+        id: arrowRegisterController
         anchors {
-            left: nodeDeviceCheck.right
-            verticalCenter: nodeSettings.verticalCenter
+            left: nodeControllerCheck.right
+            verticalCenter: nodeDownload.verticalCenter
         }
 
         color: baseNodeColor
         tailLength: arrowTailLength
+        visible: showControllerNodes
     }
 
     WorkflowNode {
-        id: nodeProgram
+        id: nodeRegisterController
         anchors {
-            verticalCenter: nodeSettings.verticalCenter
-            left: arrowProgram.right
+            verticalCenter: nodeDownload.verticalCenter
+            left: arrowRegisterController.right
         }
 
         source: "qrc:/sgimages/bolt.svg"
         color: baseNodeColor
         iconColor: baseNodeColor
+        visible: showControllerNodes
     }
 
     Arrow {
-        id: arrowRegistration
+        id: arrowAssistedCheck
         anchors {
-            left: nodeProgram.right
-            verticalCenter: nodeSettings.verticalCenter
+            left: showControllerNodes ? nodeRegisterController.right : nodeDownload.right
+            verticalCenter: nodeDownload.verticalCenter
         }
 
         color: baseNodeColor
         tailLength: arrowTailLength
+        visible: showAssistedNodes
     }
 
     WorkflowNode {
-        id: nodeRegistration
+        id: nodeAssistedCheck
         anchors {
-            verticalCenter: nodeSettings.verticalCenter
-            left: arrowRegistration.right
+            verticalCenter: nodeDownload.verticalCenter
+            left: arrowAssistedCheck.right
         }
 
-        source: "qrc:/images/letter-r.svg"
+        source: "qrc:/sgimages/plug.svg"
         color: baseNodeColor
         iconColor: baseNodeColor
+        visible: showAssistedNodes
+    }
+
+
+    Arrow {
+        id: arrowRegisterAssisted
+        anchors {
+            left: nodeAssistedCheck.right
+            verticalCenter: nodeDownload.verticalCenter
+        }
+
+        color: baseNodeColor
+        tailLength: arrowTailLength
+        visible: showAssistedNodes
+    }
+
+    WorkflowNode {
+        id: nodeRegisterAssisted
+        anchors {
+            verticalCenter: nodeDownload.verticalCenter
+            left: arrowRegisterAssisted.right
+        }
+
+        source: "qrc:/sgimages/bolt.svg"
+        color: baseNodeColor
+        iconColor: baseNodeColor
+        visible: showAssistedNodes
     }
 
     Arrow {
         id: arrowDone
         anchors {
-            left: nodeRegistration.right
-            verticalCenter: nodeSettings.verticalCenter
+            left: {
+                if (showAssistedNodes) {
+                    return nodeRegisterAssisted.right
+                }
+
+                if (showControllerNodes) {
+                    return nodeRegisterController.right
+                }
+
+                return nodeDownload.right
+            }
+            verticalCenter: nodeDownload.verticalCenter
         }
 
         color: baseNodeColor
@@ -146,7 +204,7 @@ Item {
         id: nodeDone
         anchors {
             left: arrowDone.right
-            verticalCenter: nodeSettings.verticalCenter
+            verticalCenter: nodeDownload.verticalCenter
         }
 
         source: "qrc:/sgimages/check.svg"
@@ -158,7 +216,7 @@ Item {
         id: arrowExit
         anchors {
             left: nodeDone.right
-            verticalCenter: nodeSettings.verticalCenter
+            verticalCenter: nodeDownload.verticalCenter
         }
 
         color: baseNodeColor
@@ -168,7 +226,7 @@ Item {
     WorkflowNodeText {
         anchors {
             left: arrowExit.right
-            verticalCenter: nodeSettings.verticalCenter
+            verticalCenter: nodeDownload.verticalCenter
         }
 
         color: baseNodeColor
@@ -177,21 +235,9 @@ Item {
     }
 
     WorkflowNodeText {
-        id: label1
-        anchors {
-            left: parent.left
-            top: nodeSettings.bottom
-        }
-
-        text: "Settings"
-        color: baseNodeColor
-        highlight: nodeSettings.highlight
-    }
-
-    WorkflowNodeText {
         id: labelDownload
         anchors {
-            horizontalCenter: nodeDownload.horizontalCenter
+            left: parent.left
             top: nodeDownload.bottom
         }
 
@@ -202,39 +248,64 @@ Item {
 
     WorkflowNodeText {
         anchors {
-            horizontalCenter: nodeDeviceCheck.horizontalCenter
-            top: nodeDeviceCheck.bottom
+            horizontalCenter: nodeControllerCheck.horizontalCenter
+            top: nodeControllerCheck.bottom
         }
 
-        text: "Connect New\nDevice"
+        text: "Connect New\nController"
         color: baseNodeColor
-        highlight: nodeDeviceCheck.highlight
+        highlight: nodeControllerCheck.highlight
+        visible: showControllerNodes
     }
 
     WorkflowNodeText {
         anchors {
-            horizontalCenter: nodeProgram.horizontalCenter
-            top: nodeProgram.bottom
+            horizontalCenter: nodeRegisterController.horizontalCenter
+            top: nodeRegisterController.bottom
         }
 
-        text: "Programming"
+        text: "Register\nController"
         color: baseNodeColor
-        highlight: nodeProgram.highlight
+        highlight: nodeRegisterController.highlight
+        visible: showControllerNodes
     }
 
     WorkflowNodeText {
         anchors {
-            horizontalCenter: nodeRegistration.horizontalCenter
-            top: nodeRegistration.bottom
+            horizontalCenter: nodeAssistedCheck.horizontalCenter
+            top: nodeAssistedCheck.bottom
         }
 
-        text: "Registration"
+        text: {
+            if (showControllerNodes) {
+                return "Connect New\nAssisted Device"
+            }
+            return"Connect New\n Device"
+        }
         color: baseNodeColor
-        highlight: nodeRegistration.highlight
+        highlight: nodeAssistedCheck.highlight
+        visible: showAssistedNodes
     }
 
     WorkflowNodeText {
-        id: state4Label
+        anchors {
+            horizontalCenter: nodeRegisterAssisted.horizontalCenter
+            top: nodeRegisterAssisted.bottom
+        }
+
+        text: {
+            if (showControllerNodes) {
+                return "Register\nAssisted Device"
+            }
+            return "Register\nDevice"
+        }
+        color: baseNodeColor
+        highlight: nodeAssistedCheck.highlight
+        visible: showAssistedNodes
+    }
+
+    WorkflowNodeText {
+        id: labelDone
         anchors {
             horizontalCenter: nodeDone.horizontalCenter
             top: nodeDone.bottom
