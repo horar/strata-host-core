@@ -224,7 +224,7 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray data)
 
                     const QByteArray status = CommandValidator::notificationStatus(doc);
                     if (status.isEmpty() == false) {
-                        qCInfo(logCategoryDeviceOperations) << device_ << "Command '" << command->name() << "' retruned '" << status << "'.";
+                        qCInfo(logCategoryDeviceOperations) << device_ << "Command '" << command->name() << "' returned '" << status << "'.";
                     }
                 }
 
