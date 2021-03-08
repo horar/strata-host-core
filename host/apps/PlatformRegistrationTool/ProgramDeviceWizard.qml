@@ -87,7 +87,7 @@ FocusScope {
         continueButton: continueBtn
     }
 
-    Workflow {
+    ProgramWorkflow {
         id: workflow
         anchors {
             top: parent.top
