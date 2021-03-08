@@ -616,7 +616,7 @@ Item {
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideTopCenter
 
-                                        SGInfoBox{
+                                        SGInfoBox {
                                             id: interval
                                             width: 100
                                             text: "2000"
@@ -627,6 +627,7 @@ Item {
                                                 top: 10000
                                             }
                                             placeholderText: "250-10000"
+                                            contextMenuEnabled: true
 
                                             onEditingFinished:{
                                                 if(interval.text) {
@@ -713,6 +714,7 @@ Item {
                                             readOnly: false
                                             enabled: (runStateSwitch.checked) ? false : true
                                             opacity: (runStateSwitch.checked) ? 0.5 : 1.0
+                                            contextMenuEnabled: true
 
                                             onEditingFinished:{
                                                 if(runCountInfoBox.text) {
