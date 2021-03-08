@@ -6,6 +6,7 @@
 #include <Device/Operations/Identify.h>
 #include <Device/Operations/StartBootloader.h>
 #include <Device/Operations/StartApplication.h>
+#include <Device/Operations/Flash.h>
 #include "DeviceOperationsV2Test.h"
 
 using strata::device::operation::BaseDeviceOperation;
@@ -590,10 +591,6 @@ void DeviceOperationsV2Test::noResponseAssistedTest()
 
 void DeviceOperationsV2Test::invalidValueV2Test()
 {
-    rapidjson::Document doc;
-    rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
-
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
@@ -609,4 +606,210 @@ void DeviceOperationsV2Test::invalidValueV2Test()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
     QCOMPARE(operationTimeoutCount_,1);
+}
+
+void DeviceOperationsV2Test::flashFirmwareTest()
+{
+    operation::Flash* flashFirmwareOperation = new operation::Flash(device_,256,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    deviceOperation_ = QSharedPointer<operation::Flash>(
+            flashFirmwareOperation, &QObject::deleteLater);
+    connectHandlers(deviceOperation_.data());
+
+    deviceOperation_->run();
+
+    flashFirmwareOperation->flashChunk(QVector<quint8>(),0);
+    flashFirmwareOperation->flashChunk(QVector<quint8>(),1);
+    flashFirmwareOperation->flashChunk(QVector<quint8>(),2);
+
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
+
+    QVERIFY(device_->name().isEmpty());
+    QVERIFY(device_->classId().isEmpty());
+    QVERIFY(device_->bootloaderVer().isEmpty());
+    QVERIFY(device_->applicationVer().isEmpty());
+
+    QCOMPARE(operationTimeoutCount_, 0);
+    QCOMPARE(operationFinishedCount_, 1);
+
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 4);
+    verifyMessage(recordedMessages[0], device_->mockGetDynamicRequest()[0]);
+    verifyMessage(recordedMessages[1], device_->mockGetDynamicRequest()[0]);
+    verifyMessage(recordedMessages[2], device_->mockGetDynamicRequest()[0]);
+    verifyMessage(recordedMessages[3], device_->mockGetDynamicRequest()[0]);
+}
+
+void DeviceOperationsV2Test::flashBootloaderTest()
+{
+    operation::Flash* flashBootloaderOperation = new operation::Flash(device_,256,4,"207fb5670e66e7d6ecd89b5f195c0b71",false);
+    deviceOperation_ = QSharedPointer<operation::Flash>(
+            flashBootloaderOperation, &QObject::deleteLater);
+    connectHandlers(deviceOperation_.data());
+
+    deviceOperation_->run();
+
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),0);
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),1);
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),2);
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),3);
+
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
+
+    QVERIFY(device_->name().isEmpty());
+    QVERIFY(device_->classId().isEmpty());
+    QVERIFY(device_->bootloaderVer().isEmpty());
+    QVERIFY(device_->applicationVer().isEmpty());
+
+    QCOMPARE(operationTimeoutCount_, 0);
+    QCOMPARE(operationFinishedCount_, 1);
+
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+
+    QCOMPARE(recordedMessages.size(), 5);
+    verifyMessage(recordedMessages[0], device_->mockGetDynamicRequest()[0]);
+    verifyMessage(recordedMessages[1], device_->mockGetDynamicRequest()[0]);
+    verifyMessage(recordedMessages[2], device_->mockGetDynamicRequest()[0]);
+    verifyMessage(recordedMessages[3], device_->mockGetDynamicRequest()[0]);
+    verifyMessage(recordedMessages[4], device_->mockGetDynamicRequest()[0]);
+}
+
+void DeviceOperationsV2Test::flashResendChunkTest()
+{
+    operation::Flash* flashBootloaderOperation = new operation::Flash(device_,256,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    deviceOperation_ = QSharedPointer<operation::Flash>(
+            flashBootloaderOperation, &QObject::deleteLater);
+    connectHandlers(deviceOperation_.data());
+
+    device_->mockSetResponse(MockResponse::flash_resend_chunk);
+
+    deviceOperation_->run();
+
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),0);
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),1);
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),2);
+
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
+
+    QVERIFY(device_->name().isEmpty());
+    QVERIFY(device_->classId().isEmpty());
+    QVERIFY(device_->bootloaderVer().isEmpty());
+    QVERIFY(device_->applicationVer().isEmpty());
+
+    QCOMPARE(operationTimeoutCount_, 0);
+    QCOMPARE(operationFinishedCount_, 1);
+
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 4);
+}
+
+void DeviceOperationsV2Test::flashMemoryErrorTest()
+{
+    operation::Flash* flashBootloaderOperation = new operation::Flash(device_,256,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    deviceOperation_ = QSharedPointer<operation::Flash>(
+            flashBootloaderOperation, &QObject::deleteLater);
+    connectHandlers(deviceOperation_.data());
+
+    device_->mockSetResponse(MockResponse::flash_memory_error);
+
+    deviceOperation_->run();
+
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),0);
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),1);
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),2);;
+
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
+
+    QVERIFY(device_->name().isEmpty());
+    QVERIFY(device_->classId().isEmpty());
+    QVERIFY(device_->bootloaderVer().isEmpty());
+    QVERIFY(device_->applicationVer().isEmpty());
+
+    QCOMPARE(operationTimeoutCount_, 0);
+    QCOMPARE(operationFinishedCount_, 1);
+
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 4);
+}
+
+void DeviceOperationsV2Test::flashInvalidCmdSequenceTest()
+{
+    operation::Flash* flashBootloaderOperation = new operation::Flash(device_,256,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    deviceOperation_ = QSharedPointer<operation::Flash>(
+            flashBootloaderOperation, &QObject::deleteLater);
+    connectHandlers(deviceOperation_.data());
+
+    device_->mockSetResponse(MockResponse::flash_invalid_cmd_sequence);
+
+    deviceOperation_->run();
+
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),0);
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),1);
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),2);
+
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
+
+    QVERIFY(device_->name().isEmpty());
+    QVERIFY(device_->classId().isEmpty());
+    QVERIFY(device_->bootloaderVer().isEmpty());
+    QVERIFY(device_->applicationVer().isEmpty());
+
+    QCOMPARE(operationTimeoutCount_, 0);
+    QCOMPARE(operationFinishedCount_, 1);
+
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 4);
+}
+
+void DeviceOperationsV2Test::flashInvalidValueTest()
+{
+    operation::Flash* flashBootloaderOperation = new operation::Flash(device_,256,1,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    deviceOperation_ = QSharedPointer<operation::Flash>(
+            flashBootloaderOperation, &QObject::deleteLater);
+    connectHandlers(deviceOperation_.data());
+    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
+
+    device_->mockSetResponse(MockResponse::flash_invalid_value);
+
+    deviceOperation_->run();
+
+    flashBootloaderOperation->flashChunk(QVector<quint8>(),0);
+
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isFinished(), true, 1000);
+
+    QVERIFY(device_->name().isEmpty());
+    QVERIFY(device_->classId().isEmpty());
+    QVERIFY(device_->platformId().isEmpty());
+    QVERIFY(device_->bootloaderVer().isEmpty());
+    QVERIFY(device_->applicationVer().isEmpty());
+
+    QCOMPARE(operationTimeoutCount_,1);
+}
+
+void DeviceOperationsV2Test::cancelFlashOperationTest()
+{
+    operation::Flash* flashFirmwareOperation = new operation::Flash(device_,256,2,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    deviceOperation_ = QSharedPointer<operation::Flash>(
+            flashFirmwareOperation, &QObject::deleteLater);
+    connectHandlers(deviceOperation_.data());
+    deviceOperation_->run();
+
+    flashFirmwareOperation->flashChunk(QVector<quint8>(),0);
+
+    deviceOperation_->cancelOperation();
+
+    flashFirmwareOperation->flashChunk(QVector<quint8>(),1);
+
+    QCOMPARE(deviceOperation_->hasStarted(), true);
+    QCOMPARE(deviceOperation_->isSuccessfullyFinished(), false);
+    QCOMPARE(deviceOperation_->isFinished(), true);
+
+    QVERIFY(device_->name().isEmpty());
+    QVERIFY(device_->classId().isEmpty());
+    QVERIFY(device_->bootloaderVer().isEmpty());
+    QVERIFY(device_->applicationVer().isEmpty());
+
+    QCOMPARE(operationTimeoutCount_, 0);
+    QCOMPARE(operationFinishedCount_, 2);
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 0);
 }

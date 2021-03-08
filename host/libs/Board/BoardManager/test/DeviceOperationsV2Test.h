@@ -41,6 +41,16 @@ private slots:
 
     void invalidValueV2Test();
 
+    void flashFirmwareTest();
+    void flashBootloaderTest();
+
+    void flashResendChunkTest();
+    void flashMemoryErrorTest();
+    void flashInvalidCmdSequenceTest();
+    void flashInvalidValueTest();
+
+    void cancelFlashOperationTest();
+
 protected slots:
     void handleOperationFinished(strata::device::operation::Result result, int, QString);
 

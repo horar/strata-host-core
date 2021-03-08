@@ -506,7 +506,7 @@ void DeviceOperationsTest::identifyLegacyTest()
 //   identify -> done
 //   switchToBootloader -> done
 //   startApplication -> done
-//   flashFirmware
+//   flashFirmware -> done
 //   backupFirmware
 //   cancelOperation -> done
 // device error handling -> done
