@@ -23,6 +23,7 @@
     <script src="./min/vs/editor/editor.main.nls.js"></script>
     <script src="./min/vs/editor/editor.main.js"></script>
     <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script src="./qtQuickTypes.js" type="text/javascript"></script>
     <script src="./qtQuick.js" type="text/javascript"></script>
     <script type="text/javascript">
         new QWebChannel(qt.webChannelTransport, function (channel) {
@@ -64,15 +65,6 @@
             flags.sgwidgetsFlag = true
             flags.qtQuickFlag = true
             initializeQtQuick(flags)
-            for (var i = 0; i < BasicItemProperties.length; i++) {
-                suggestions[BasicItemProperties[i]] = {
-                    label: BasicItemProperties[i],
-                    kind: monaco.languages.CompletionItemKind.Property,
-                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: BasicItemProperties[i],
-                    range: null,
-                }
-            }
             for (const [key] of Object.entries(qtObjectKeyValues)) {
                 suggestions[key] = {
                     label: qtObjectKeyValues[key].label,
