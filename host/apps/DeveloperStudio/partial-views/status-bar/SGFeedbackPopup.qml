@@ -246,6 +246,8 @@ SGStrataPopup {
                                 wrapMode: TextEdit.Wrap
                                 height: Math.max(scrollingText.height, contentHeight)
                                 enabled: !feedbackStatus.visible
+                                selectByMouse: true
+                                persistentSelection: true   // must deselect manually
                                 // Text Length Limiter
                                 readOnly: feedbackStatus.visible
                                 KeyNavigation.tab: submitButton
@@ -269,6 +271,33 @@ SGStrataPopup {
                                         }
                                     }
                                     previousText = text
+                                }
+
+                                onActiveFocusChanged: {
+                                    if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                                        textEdit.deselect()
+                                    }
+                                }
+
+                                MouseArea {
+                                    id: mouseArea
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.RightButton
+                                    cursorShape: Qt.IBeamCursor
+
+                                    onClicked: {
+                                        textEdit.forceActiveFocus()
+                                    }
+                                    onReleased: {
+                                        if (containsMouse) {
+                                            contextMenuPopup.popup(null)
+                                        }
+                                    }
+                                }
+
+                                SGContextMenuEditActions {
+                                    id: contextMenuPopup
+                                    textEditor: textEdit
                                 }
                             }
                         }
