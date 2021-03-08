@@ -19,6 +19,7 @@ TextField {
     }
     selectionColor:"lightgrey"
     rightPadding: hasRightIcons ? rightIcons.width + 5+5 : 5
+    persistentSelection: true   // must deselect manually
 
     echoMode: {
         if (passwordMode && revealPassword === false) {
@@ -28,6 +29,12 @@ TextField {
         return TextField.Normal
     }
 
+    onActiveFocusChanged: {
+        if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+            field.deselect()
+        }
+    }
+
     property bool valid: field.text !== ""
     property bool showIcon: true
     property bool passwordMode: false
@@ -35,6 +42,13 @@ TextField {
     /* private */
     property bool revealPassword: false
     property bool hasRightIcons: showIcon || revelPasswordLoader.status ===  Loader.Ready
+
+    SGContextMenuEditActions {
+        id: contextMenuPopup
+        textEditor: field
+        copyEnabled: field.echoMode !== TextField.Password
+        z: 1 // to appear above Password Requirements popup in Register screen
+    }
 
     background: Rectangle {
         id: backgroundContainer
@@ -58,6 +72,21 @@ TextField {
             samples: 10
             z: -1
             color: "#40000000"
+        }
+
+        MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+            cursorShape: Qt.IBeamCursor
+            acceptedButtons: Qt.RightButton
+            onClicked: {
+                field.forceActiveFocus()
+            }
+            onReleased: {
+                if (containsMouse) {
+                    contextMenuPopup.popup(null)
+                }
+            }
         }
 
         Row {
