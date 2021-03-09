@@ -167,13 +167,13 @@ StackLayout {
 
     Action {
         id: close
-        text: "Okay"
+        text: "Ok"
         onTriggered: {}
     }
 
     Action {
         id: disableNotifyOnFirmwareUpdate
-        text: "Disable notifications for firmware/software updates"
+        text: "Disable notifications for platform updates"
         onTriggered: {
             NavigationControl.userSettings.notifyOnFirmwareUpdate = false
             NavigationControl.userSettings.saveSettings()
@@ -192,14 +192,14 @@ StackLayout {
         if((controlViewOutOfDate || firmwareOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate && model.view !== "settings" && platformStack.visible){
             var description = ""
             if(firmwareOutOfDate && controlViewOutOfDate){
-                description = "Newer versions of firmware and software are available for this plaform."
+                description = "Newer versions of firmware and software are available."
             } else if(firmwareOutOfDate){
-                description = "A newer version of firmware is available for this plaform."
+                description = "A newer version of firmware is available."
             } else{
-                description = "A newer version of software is available for this plaform."
+                description = "A newer version of software is available."
             }
 
-            Notifications.createNotification("Firmware and software updates for this platform",
+            Notifications.createNotification("Firmware/Software Updates",
                                                 Notifications.Info,
                                                 "current",
                                                 {
