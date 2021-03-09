@@ -156,11 +156,9 @@ void SGNewControlView::replaceProjectNameInCMakeListsFile(const QString &cmakeLi
  * Check if projectPath + / + projectName exists and is not empty
  * @param projectName @param projectPath
  ***/
-bool SGNewControlView::projectExists(const QString &projectName, QString projectPath) {
-    projectPath.replace("file://", "");
-
-    // Check if projectPath + / + projectName exists
-    QString fullPath = projectPath + QDir::separator() + projectName;
+bool SGNewControlView::projectExists(const QString &projectName, const QUrl &projectPath) {
+    QString projectPathStr = SGUtilsCpp::urlToLocalFile(projectPath);
+    QString fullPath = projectPathStr + QDir::separator() + projectName;
     QDir projectDir(fullPath);
     return projectDir.exists() && !projectDir.isEmpty();
 }

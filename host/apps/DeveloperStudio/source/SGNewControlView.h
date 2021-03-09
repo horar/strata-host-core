@@ -12,7 +12,7 @@ public:
 
     Q_INVOKABLE QUrl createNewProject(const QString &projectName, const QUrl &newProjectPath, const QString &templatePath);
 
-    Q_INVOKABLE bool projectExists(const QString &projectName, QString projectPath);
+    Q_INVOKABLE bool projectExists(const QString &projectName, const QUrl &projectPath);
 
 private:
     QString qrcPath_ = "";
