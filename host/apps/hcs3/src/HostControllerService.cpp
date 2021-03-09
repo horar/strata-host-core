@@ -626,13 +626,7 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
             break;
         }
 
-        QString controllerClassDevice = storageManager_.getControllerClassDevice(controllerClassId);
-        if (controllerClassDevice.isEmpty()) {
-            errorString = "Cannot find controller detais in database";
-            break;
-        }
-
-        QPair<QUrl,QString> firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassDevice);
+        QPair<QUrl,QString> firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassId);
         if (firmware.first.isEmpty()) {
             errorString = "No compatible firmware for your combination of controller and platform";
             break;
@@ -642,7 +636,7 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
 
         QString currentMD5;
         if (device->applicationVer().isEmpty() == false) {
-            firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassDevice, device->applicationVer());
+            firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassId, device->applicationVer());
             currentMD5 = firmware.second;
         } else {
             qCInfo(logCategoryHcs) << device << "Device has probably no firmware.";
@@ -983,22 +977,6 @@ void HostControllerService::sendUpdateInfoMessage(const QByteArray &clientId, co
 void HostControllerService::broadcastConnectedPlatformListMessage()
 {
     QJsonArray connectedPlatformList = boardsController_.createPlatformsList();
-
-    for (QJsonValueRef value : connectedPlatformList) {
-        QString classId = value.toObject().value(JSON_CONTROLLER_CLASS_ID).toString();
-        if (classId.isEmpty()) {
-            classId = value.toObject().value(JSON_CLASS_ID).toString();
-            if (classId.isEmpty()) {
-                qCCritical(logCategoryHcsStorage) << "controller_class_id and class_id keys are missing";
-            }
-        }
-
-        QString device = storageManager_.getControllerClassDevice(classId);
-
-        QJsonObject modifiedObj = value.toObject();
-        modifiedObj.insert(CONTROLLER_CLASS_DEVICE, device);
-        value = modifiedObj;
-    }
 
     QJsonObject notification {
         { JSON_LIST, connectedPlatformList },

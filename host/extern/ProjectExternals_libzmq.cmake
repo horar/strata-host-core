@@ -59,9 +59,15 @@ else()
     # TODO: RS: File output build dependency for ExternalProject_Add in CMake
     # https://jira.onsemi.com/browse/CS-1442
     if(WIN32)
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq$<$<CONFIG:DEBUG>:d>${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
-        )
+        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+            execute_process(
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmqd${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
+            )
+        else()
+            execute_process(
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${EXTERN_INSTALL_DIR_PATH}/libzmq-${GIT_HASH}/bin/libzmq${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR}/bin
+            )
+        endif()
     else()
         # re-run the detection in case user keeps swapping branches with different libzmq libraries
         ReadLibzmqSoVersion()

@@ -35,7 +35,8 @@ StackLayout {
     property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
-    property string controller_class_device: model.controller_class_device
+    property string controller_class_id: model.controller_class_id
+    property bool is_assisted: model.is_assisted
     property bool fullyInitialized: platformStackInitialized &&
                                     userSettingsInitialized &&
                                     platformMetaDataInitialized

@@ -44,7 +44,7 @@ SGWidgets.SGMainWindow {
 
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
-        NavigationControl.init(statusBarContainer, stackContainer, sdsModel.resourceLoader, mainWindow)
+        NavigationControl.init(statusBarLoader, stackContainer, sdsModel.resourceLoader, mainWindow)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
             PlatformSelection.initialize(sdsModel)
@@ -65,11 +65,6 @@ SGWidgets.SGMainWindow {
 
         // End session with HCS
         sdsModel.coreInterface.unregisterClient();
-
-        // Destruct components dynamically created by NavigationControl
-        NavigationControl.removeView(statusBarContainer)
-        NavigationControl.removeView(mainContainer)
-        platformViewModel.clear()
 
         if (SessionUtils.settings.rememberMe === false) {
             SessionUtils.settings.clear()
@@ -137,12 +132,12 @@ SGWidgets.SGMainWindow {
         spacing: 0
         anchors.fill: parent
 
-        Item {
-            id: statusBarContainer
+        Loader {
+            id: statusBarLoader
+            active: false
             Layout.preferredHeight: 40
             Layout.fillWidth: true
-
-            property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
+            visible: active
         }
 
         StackLayout {
@@ -152,7 +147,7 @@ SGWidgets.SGMainWindow {
             property alias platformViewModel: platformViewModel
             property alias platformViewRepeater: platformViewRepeater
 
-            Item {
+            Loader {
                 id: mainContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -178,9 +173,9 @@ SGWidgets.SGMainWindow {
 
     NotificationsInbox {
         id: notificationsInbox
-        height: mainWindow.height - statusBarContainer.height
+        height: mainWindow.height - statusBarLoader.Layout.preferredHeight
         width: 400
-        y: statusBarContainer.height
+        y: statusBarLoader.Layout.preferredHeight
     }
 
     NotificationsContainer {
@@ -188,7 +183,7 @@ SGWidgets.SGMainWindow {
             right: parent.right
             bottom: parent.bottom
             top: parent.top
-            topMargin: statusBarContainer.height
+            topMargin: statusBarLoader.Layout.preferredHeight
             bottomMargin: 25
             rightMargin: 20
         }

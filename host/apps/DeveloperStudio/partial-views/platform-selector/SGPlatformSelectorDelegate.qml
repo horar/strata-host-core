@@ -350,7 +350,8 @@ Item {
                 function openView(view) {
                     let data = {
                         "device_id": model.device_id,
-                        "controller_class_device": model.controller_class_device,
+                        "controller_class_id": model.controller_class_id,
+                        "is_assisted": model.is_assisted,
                         "class_id": model.class_id,
                         "name": model.verbose_name,
                         "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
@@ -391,7 +392,7 @@ Item {
                     buttonEnabled: model.available.order
 
                     onClicked: {
-                        orderPopup.open()
+                        Qt.openUrlExternally(urls.salesPopupUrl)
                     }
                 }
             }

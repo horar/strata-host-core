@@ -31,7 +31,9 @@ StrataClient::~StrataClient()
 bool StrataClient::connectServer()
 {
     if (false == connector_->initializeConnector()) {
-        qCCritical(logCategoryStrataClient) << "Failed to connect to the server";
+        QString errorMessage(QStringLiteral("Failed to connect to the server."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToConnect, errorMessage);
         return false;
     }
 
@@ -52,7 +54,9 @@ bool StrataClient::disconnectServer()
                &StrataClient::newServerMessage);
 
     if (false == connector_->disconnectClient()) {
-        qCCritical(logCategoryStrataClient) << "Failed to disconnect client";
+        QString errorMessage(QStringLiteral("Failed to disconnect from the server."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToDisconnect, errorMessage);
         return false;
     }
 
@@ -67,12 +71,14 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
     DeferredRequest *deferredRequest = nullptr;
 
     if (false == buildServerMessage(jsonServerMessage, &serverMessage, &deferredRequest)) {
-        qCCritical(logCategoryStrataClient) << "Failed to build server message.";
+        QString errorMessage(QStringLiteral("Failed to build server message."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToBuildServerMessage, errorMessage);
         return;
     }
 
-    qCDebug(logCategoryStrataClient) << "def req address" << deferredRequest;
     if (deferredRequest != nullptr) {
+        deferredRequest->stopTimer();
         if (serverMessage.messageType == Message::MessageType::Error &&
             deferredRequest->hasErrorCallback()) {
             qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
@@ -87,6 +93,7 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
             deferredRequest->deleteLater();
             return;
         }
+        deferredRequest->deleteLater();
     }
     qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
     emit newServerMessageParsed(serverMessage);
@@ -96,7 +103,9 @@ bool StrataClient::registerHandler(const QString &handlerName, StrataHandler han
 {
     qCDebug(logCategoryStrataClient) << "Registering Handler:" << handlerName;
     if (false == dispatcher_->registerHandler(handlerName, handler)) {
-        qCCritical(logCategoryStrataClient) << "Failed to register handler.";
+        QString errorMessage(QStringLiteral("Failed to register handler."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToRegisterHandler, errorMessage);
         return false;
     }
     return true;
@@ -106,7 +115,9 @@ bool StrataClient::unregisterHandler(const QString &handlerName)
 {
     qCDebug(logCategoryStrataClient) << "Unregistering handler:" << handlerName;
     if (false == dispatcher_->unregisterHandler(handlerName)) {
-        qCCritical(logCategoryStrataClient) << "Failed to unregister handler.";
+        QString errorMessage(QStringLiteral("Failed to unregister handler."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToUnregisterHandler, errorMessage);
         return false;
     }
     return true;
@@ -117,14 +128,22 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
     const auto [deferredRequest, message] = requestController_->addNewRequest(method, payload);
 
     if (true == message.isEmpty()) {
-        qCCritical(logCategoryStrataClient) << "Failed to add request.";
+        QString errorMessage(QStringLiteral("Failed to add request."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToAddReequest, errorMessage);
         return nullptr;
     }
 
     if (false == connector_->sendMessage(message)) {
-        qCCritical(logCategoryStrataClient) << "Failed to send request.";
+        QString errorMessage(QStringLiteral("Failed to send request."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToSendRequest, errorMessage);
         return nullptr;
     }
+
+    connect(deferredRequest, &DeferredRequest::requestTimedout, this,
+            &StrataClient::requestTimeoutHandler);
+    deferredRequest->startTimer();
 
     return deferredRequest;
 }
@@ -139,7 +158,9 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
     serverMessage->messageID = 0;
 
     if (jsonParseError.error != QJsonParseError::NoError) {
-        qCCritical(logCategoryStrataServer) << "invalid JSON message.";
+        QString errorMessage(QStringLiteral("invalid JSON message."));
+        qCCritical(logCategoryStrataServer) << errorMessage;
+        emit errorOccurred(ClientError::FailedToBuildServerMessage, errorMessage);
         return false;
     }
     QJsonObject jsonObject = jsonDocument.object();
@@ -148,7 +169,9 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
         jsonObject.value("jsonrpc").toString() == "2.0") {
         qCDebug(logCategoryStrataClient) << "API v2.0";
     } else {
-        qCCritical(logCategoryStrataClient) << "Invalid API.";
+        QString errorMessage(QStringLiteral("Invalid API."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToBuildServerMessage, errorMessage);
         return false;
     }
 
@@ -188,7 +211,9 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
             requestController_->popPendingRequest(jsonObject.value("id").toDouble());
 
         if (false == requestFound || request.method_ == "") {
-            qCritical(logCategoryStrataClient) << "Failed to pop pending request.";
+            QString errorMessage(QStringLiteral("Pending Request not found."));
+            qCCritical(logCategoryStrataClient) << errorMessage;
+            emit errorOccurred(ClientError::PendingRequestNotFound, errorMessage);
             return false;
         }
 
@@ -220,9 +245,34 @@ bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Messa
         }
 
     } else {
-        qCritical(logCategoryStrataClient) << "Invalid API.";
+        QString errorMessage(QStringLiteral("Invalid API."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToBuildServerMessage, errorMessage);
         return false;
     }
 
     return true;
+}
+
+void StrataClient::requestTimeoutHandler(int requestId)
+{
+    QString timeoutErrorMessage("Request timed out. request ID: " + QString::number(requestId));
+    qCCritical(logCategoryStrataClient) << timeoutErrorMessage;
+    emit errorOccurred(ClientError::RequestTimeout, timeoutErrorMessage);
+
+    auto [requestFound, request] = requestController_->popPendingRequest(requestId);
+    if (false == requestFound && request.deferredRequest_ == nullptr) {
+        QString requestNotFoundErrorMessage(QStringLiteral("Failed to remove timed out request."));
+        qCCritical(logCategoryStrataClient) << requestNotFoundErrorMessage;
+        emit errorOccurred(ClientError::PendingRequestNotFound, requestNotFoundErrorMessage);
+        return;
+    }
+
+    qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
+    request.deferredRequest_->callErrorCallback(
+        {request.method_, QJsonObject({{"message", "Request timed out."}}), request.messageId_, "",
+         Message::MessageType::Error});
+
+    request.deferredRequest_->deleteLater();
+    qCDebug(logCategoryStrataClient) << "Timed out request removed successfully.";
 }

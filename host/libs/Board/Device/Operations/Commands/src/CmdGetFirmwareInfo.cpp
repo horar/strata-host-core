@@ -10,7 +10,7 @@
 namespace strata::device::command {
 
 CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse, uint maxRetries) :
-    BaseDeviceCommand(device, QStringLiteral("get_firmware_info")),
+    BaseDeviceCommand(device, QStringLiteral("get_firmware_info"), CommandType::GetFirmwareInfo),
     requireResponse_(requireResponse), maxRetries_(maxRetries), retriesCount_(0)
 { }
 

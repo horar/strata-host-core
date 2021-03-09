@@ -7,6 +7,7 @@
 namespace strata {
 
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT(1000);
+constexpr std::chrono::milliseconds BOOTLOADER_5_SEC_BOOT_TIME(5500);
 
 constexpr uint MAX_GET_FW_INFO_RETRIES(5);
 
