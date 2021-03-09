@@ -14,12 +14,18 @@ FocusScope {
     clip: true
 
     property QtObject prtModel
-    property string controllerClassId
-    property string controllerOpn
     property var latestData: ({})
+    property string latestOpn: ""
+
     property var embeddedData: ({})
     property var assistedData: ({})
     property var controllerData: ({})
+
+    //not sure whether opn is in data blob
+    property string embeddedOpn: ""
+    property string assistedOpn: ""
+    property string controllerOpn: ""
+
     property string jlinkExePath
 
     signal registrationEmbeddedRequested()
@@ -66,6 +72,10 @@ FocusScope {
                     wizard.embeddedData = {}
                     wizard.assistedData = {}
                     wizard.controllerData = {}
+
+                    wizard.embeddedOpn = ""
+                    wizard.assistedOpn = ""
+                    wizard.controllerOpn = ""
                 }
 
                 DSM.SignalTransition {
@@ -91,6 +101,7 @@ FocusScope {
                     guard: controllerType === 1
                     onTriggered: {
                         wizard.embeddedData = wizard.latestData
+                        wizard.embeddedOpn = wizard.latestOpn
                     }
                 }
 
@@ -100,6 +111,7 @@ FocusScope {
                     guard: controllerType === 2
                     onTriggered: {
                         wizard.assistedData = wizard.latestData
+                        wizard.assistedOpn = wizard.latestOpn
                     }
                 }
 
@@ -109,6 +121,7 @@ FocusScope {
                     guard: controllerType === 3
                     onTriggered: {
                         wizard.controllerData = wizard.latestData
+                        wizard.controllerOpn = wizard.latestOpn
                     }
                 }
 
@@ -214,6 +227,7 @@ FocusScope {
                     onTriggered: {
                         secondOpnDelegate.isSet = true
                         wizard.controllerData = wizard.latestData
+                        wizard.controllerOpn = wizard.latestOpn
                     }
                 }
 
@@ -244,7 +258,6 @@ FocusScope {
                     }
                 }
             }
-
         }
 
         DSM.State {
@@ -383,6 +396,7 @@ FocusScope {
                     onTriggered: {
                         secondOpnDelegate.isSet = true
                         wizard.assistedData = wizard.latestData
+                        wizard.assistedOpn = wizard.latestOpn
                     }
                 }
 
@@ -566,7 +580,7 @@ FocusScope {
             data = []
         }
 
-        processReplyData(JSON.stringify(data));
+        processReplyData(opnLowered, JSON.stringify(data));
     }
 
     function doFindPlatform(opn) {
@@ -581,7 +595,7 @@ FocusScope {
 
             console.log(Logger.prtCategory,"platform info:", status, data)
 
-            processReplyData(data);
+            processReplyData(opn.toLowerCase(), data);
         })
 
         deferred.finishedWithError.connect(function(status ,errorString) {
@@ -591,7 +605,7 @@ FocusScope {
         })
     }
 
-    function processReplyData(dataString) {
+    function processReplyData(opn, dataString) {
         console.log(dataString)
 
         try {
@@ -630,8 +644,10 @@ FocusScope {
             var isValid = CommonCpp.SGUtilsCpp.validateJson(dataString, JSON.stringify(validationSchema))
             if (isValid) {
                 wizard.latestData = dataObject
+                wizard.latestOpn = opn
                 stateMachine.findPlatformOpnValid(dataObject.controller_type)
                 wizard.latestData = {}
+                wizard.latestOpn = ""
             } else {
                 console.error(Logger.prtCategory, "Cannot validate OPN. Schema of reply not valid.")
                 stateMachine.findPlatformReplyNotValid()

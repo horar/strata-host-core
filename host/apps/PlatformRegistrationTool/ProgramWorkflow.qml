@@ -15,9 +15,12 @@ Item {
     property bool showAssistedNodes: true
 
     property alias nodeDownloadHighlight: nodeDownload.highlight
-    property alias nodeDeviceCheckHighlight: nodeControllerCheck.highlight
-    property alias nodeProgramHighlight: nodeRegisterController.highlight
-    property alias nodeRegistrationHighlight: nodeAssistedCheck.highlight
+
+    property alias nodeControllerCheckHighlight: nodeControllerCheck.highlight
+    property alias nodeControllerRegistrationHighlight: nodeControllerRegistration.highlight
+
+    property alias nodeAssistedCheckHighlight: nodeAssistedCheck.highlight
+    property alias nodeAssistedRegistrationHighlight: nodeAssistedRegistration.highlight
     property alias nodeDoneHighlight: nodeDone.highlight
 
     FeedbackArrow {
@@ -104,7 +107,7 @@ Item {
     }
 
     Arrow {
-        id: arrowRegisterController
+        id: arrowControllerRegistration
         anchors {
             left: nodeControllerCheck.right
             verticalCenter: nodeDownload.verticalCenter
@@ -116,10 +119,10 @@ Item {
     }
 
     WorkflowNode {
-        id: nodeRegisterController
+        id: nodeControllerRegistration
         anchors {
             verticalCenter: nodeDownload.verticalCenter
-            left: arrowRegisterController.right
+            left: arrowControllerRegistration.right
         }
 
         source: "qrc:/sgimages/bolt.svg"
@@ -131,7 +134,7 @@ Item {
     Arrow {
         id: arrowAssistedCheck
         anchors {
-            left: showControllerNodes ? nodeRegisterController.right : nodeDownload.right
+            left: showControllerNodes ? nodeControllerRegistration.right : nodeDownload.right
             verticalCenter: nodeDownload.verticalCenter
         }
 
@@ -155,7 +158,7 @@ Item {
 
 
     Arrow {
-        id: arrowRegisterAssisted
+        id: arrowAssistedRegistration
         anchors {
             left: nodeAssistedCheck.right
             verticalCenter: nodeDownload.verticalCenter
@@ -167,10 +170,10 @@ Item {
     }
 
     WorkflowNode {
-        id: nodeRegisterAssisted
+        id: nodeAssistedRegistration
         anchors {
             verticalCenter: nodeDownload.verticalCenter
-            left: arrowRegisterAssisted.right
+            left: arrowAssistedRegistration.right
         }
 
         source: "qrc:/sgimages/bolt.svg"
@@ -184,11 +187,11 @@ Item {
         anchors {
             left: {
                 if (showAssistedNodes) {
-                    return nodeRegisterAssisted.right
+                    return nodeAssistedRegistration.right
                 }
 
                 if (showControllerNodes) {
-                    return nodeRegisterController.right
+                    return nodeControllerRegistration.right
                 }
 
                 return nodeDownload.right
@@ -260,13 +263,13 @@ Item {
 
     WorkflowNodeText {
         anchors {
-            horizontalCenter: nodeRegisterController.horizontalCenter
-            top: nodeRegisterController.bottom
+            horizontalCenter: nodeControllerRegistration.horizontalCenter
+            top: nodeControllerRegistration.bottom
         }
 
         text: "Register\nController"
         color: baseNodeColor
-        highlight: nodeRegisterController.highlight
+        highlight: nodeControllerRegistration.highlight
         visible: showControllerNodes
     }
 
@@ -289,8 +292,8 @@ Item {
 
     WorkflowNodeText {
         anchors {
-            horizontalCenter: nodeRegisterAssisted.horizontalCenter
-            top: nodeRegisterAssisted.bottom
+            horizontalCenter: nodeAssistedRegistration.horizontalCenter
+            top: nodeAssistedRegistration.bottom
         }
 
         text: {
@@ -300,7 +303,7 @@ Item {
             return "Register\nDevice"
         }
         color: baseNodeColor
-        highlight: nodeAssistedCheck.highlight
+        highlight: nodeAssistedRegistration.highlight
         visible: showAssistedNodes
     }
 

@@ -6,6 +6,7 @@
         <file>LoginScreen.qml</file>
         <file>PrtAboutWindow.qml</file>
         <file>ProgramDeviceWizard.qml</file>
+        <file>AssistedModeStateMachine.qml</file>
         <file>ProgramDeviceStateMachine.qml</file>
         <file>ProgramSettingsWizard.qml</file>
         <file>ProgramSettingsDelegate.qml</file>
