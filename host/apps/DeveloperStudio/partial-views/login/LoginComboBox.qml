@@ -47,7 +47,7 @@ ComboBox {
         height: root.height/2
 
         MouseArea {
-            id: iconImageMouseArea
+            id: mouseArea
             anchors.fill: parent
             onPressed: mouse.accepted = false
             cursorShape: Qt.PointingHandCursor

@@ -182,15 +182,14 @@ Rectangle {
 
                                     }
 
-                                    TextField {
-                                        id: mainTextField
+                                    SGTextField {
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
                                         Layout.maximumWidth: 175
                                         placeholderText: generatePlaceholder(model.type, model.value)
                                         selectByMouse: true
                                         visible: model.type !== "array" && model.type !== "object" && model.type !== "bool"
-                                        persistentSelection: true   // must deselect manually
+                                        contextMenuEnabled: true
                                         validator: RegExpValidator {
                                             regExp: {
                                                 if (model.type === "int") {
@@ -205,31 +204,6 @@ Rectangle {
 
                                         onTextChanged: {
                                             model.value = text
-                                        }
-
-                                        onActiveFocusChanged: {
-                                            if ((activeFocus === false) && (mainContextMenuPopup.visible === false)) {
-                                                mainTextField.deselect()
-                                            }
-                                        }
-
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            cursorShape: Qt.IBeamCursor
-                                            acceptedButtons: Qt.RightButton
-                                            onClicked: {
-                                                mainTextField.forceActiveFocus()
-                                            }
-                                            onReleased: {
-                                                if (containsMouse) {
-                                                    mainContextMenuPopup.popup(null)
-                                                }
-                                            }
-                                        }
-
-                                        SGContextMenuEditActions {
-                                            id: mainContextMenuPopup
-                                            textEditor: mainTextField
                                         }
                                     }
 
@@ -355,15 +329,14 @@ Rectangle {
                     elide: Text.ElideRight
                 }
 
-                TextField {
-                    id: arrayTextField
+                SGTextField {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.maximumWidth: 175
                     placeholderText: generatePlaceholder(modelData.type, modelData.value)
                     selectByMouse: true
                     visible: modelData.type !== "array" && modelData.type !== "object" && modelData.type !== "bool"
-                    persistentSelection: true   // must deselect manually
+                    contextMenuEnabled: true
                     validator: RegExpValidator {
                         regExp: {
                             if (modelData.type === "int") {
@@ -378,31 +351,6 @@ Rectangle {
 
                     onTextChanged: {
                         modelData.value = text
-                    }
-
-                    onActiveFocusChanged: {
-                        if ((activeFocus === false) && (arrayContextMenuPopup.visible === false)) {
-                            arrayTextField.deselect()
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.IBeamCursor
-                        acceptedButtons: Qt.RightButton
-                        onClicked: {
-                            arrayTextField.forceActiveFocus()
-                        }
-                        onReleased: {
-                            if (containsMouse) {
-                                arrayContextMenuPopup.popup(null)
-                            }
-                        }
-                    }
-
-                    SGContextMenuEditActions {
-                        id: arrayContextMenuPopup
-                        textEditor: arrayTextField
                     }
                 }
 
@@ -483,15 +431,14 @@ Rectangle {
                     elide: Text.ElideRight
                 }
 
-                TextField {
-                    id: objectTextField
+                SGTextField {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.maximumWidth: 175
                     placeholderText: generatePlaceholder(modelData.type, modelData.value)
                     selectByMouse: true
                     visible: modelData.type !== "array" && modelData.type !== "object" && modelData.type !== "bool"
-                    persistentSelection: true   // must deselect manually
+                    contextMenuEnabled: true
                     validator: RegExpValidator {
                         regExp: {
                             if (modelData.type === "int") {
@@ -506,31 +453,6 @@ Rectangle {
 
                     onTextChanged: {
                         modelData.value = text
-                    }
-
-                    onActiveFocusChanged: {
-                        if ((activeFocus === false) && (objectContextMenuPopup.visible === false)) {
-                            objectTextField.deselect()
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.IBeamCursor
-                        acceptedButtons: Qt.RightButton
-                        onClicked: {
-                            objectTextField.forceActiveFocus()
-                        }
-                        onReleased: {
-                            if (containsMouse) {
-                                arrayContextMenuPopup.popup(null)
-                            }
-                        }
-                    }
-
-                    SGContextMenuEditActions {
-                        id: objectContextMenuPopup
-                        textEditor: objectTextField
                     }
                 }
 

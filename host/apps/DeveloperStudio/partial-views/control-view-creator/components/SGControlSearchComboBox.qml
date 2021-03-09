@@ -42,32 +42,7 @@ RowLayout {
             font.pixelSize: 14
             anchors.fill: searchFilter
             leftPadding: 5
-            persistentSelection: true   // must deselect manually
-
-            onActiveFocusChanged: {
-                if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
-                    textField.deselect()
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.IBeamCursor
-                acceptedButtons: Qt.RightButton
-                onClicked: {
-                    textField.forceActiveFocus()
-                }
-                onReleased: {
-                    if (containsMouse) {
-                        contextMenuPopup.popup(null)
-                    }
-                }
-            }
-
-            SGContextMenuEditActions {
-                id: contextMenuPopup
-                textEditor: textField
-            }
+            contextMenuEnabled: true
         }
     }
 
