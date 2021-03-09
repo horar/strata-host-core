@@ -235,7 +235,6 @@ Item {
                             }
 
                             MouseArea {
-                                id: delegateTextMouseArea1
                                 anchors.fill: parent
                                 cursorShape: Qt.IBeamCursor
                                 acceptedButtons: Qt.RightButton
@@ -562,7 +561,6 @@ Item {
                             }
 
                             MouseArea {
-                                id: delegateTextMouseArea
                                 anchors.fill: parent
                                 cursorShape: Qt.IBeamCursor
                                 acceptedButtons: Qt.RightButton
@@ -827,7 +825,6 @@ Item {
                             }
 
                             MouseArea {
-                                id: delegateTextMouseArea2
                                 anchors.fill: parent
                                 cursorShape: Qt.IBeamCursor
                                 acceptedButtons: Qt.RightButton

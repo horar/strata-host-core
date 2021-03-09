@@ -280,7 +280,6 @@ SGStrataPopup {
                                 }
 
                                 MouseArea {
-                                    id: mouseArea
                                     anchors.fill: parent
                                     acceptedButtons: Qt.RightButton
                                     cursorShape: Qt.IBeamCursor

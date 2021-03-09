@@ -113,7 +113,6 @@ Rectangle {
                     }
 
                     MouseArea {
-                        id: fileOutputMouseArea
                         anchors.fill: parent
                         cursorShape: Qt.IBeamCursor
                         acceptedButtons: Qt.RightButton

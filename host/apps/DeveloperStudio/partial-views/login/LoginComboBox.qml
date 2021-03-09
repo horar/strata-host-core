@@ -91,7 +91,6 @@ ComboBox {
         }
 
         MouseArea {
-            id: textFieldMouseArea
             anchors.fill: parent
             cursorShape: Qt.IBeamCursor
             acceptedButtons: Qt.RightButton
