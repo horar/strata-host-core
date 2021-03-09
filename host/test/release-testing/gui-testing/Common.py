@@ -77,7 +77,7 @@ RESET_PASSWORD_CLOSE_BUTTON = "ClosePopup"
 RESET_PASSWORD_EDIT = "example@onsemi.com"
 RESET_PASSWORD_SUBMIT_BUTTON = "Submit"
 
-PLATFORM_CONTROLS_BUTTON = "Open Platform Controls"
+PLATFORM_CONTROLS_BUTTON = "Open Hardware Controls"
 
 STRATA_PROCESS = "Strata Developer Studio.exe"
 LOGIC_GATE_CLASS_ID = "201"
