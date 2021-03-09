@@ -29,7 +29,7 @@ SGWidgets.SGAbstractContextMenu {
     Action {
         id: cutAction
         text: qsTr("Cut")
-        enabled: copyEnabled && (textEditor.selectedText.length > 0)
+        enabled: copyEnabled && (textEditor.readOnly === false) && (textEditor.selectedText.length > 0)
         onTriggered: {
             textEditor.cut()
         }
