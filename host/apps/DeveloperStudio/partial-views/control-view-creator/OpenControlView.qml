@@ -309,7 +309,7 @@ Rectangle {
                 border.color: "#444"
                 border.width: 0.5
 
-                TextInput {
+                SGTextInput {
                     id: fileOutput
 
                     anchors.fill: parent
@@ -318,32 +318,7 @@ Rectangle {
                     verticalAlignment: Text.AlignVCenter
                     selectByMouse: true
                     leftPadding: 10
-                    persistentSelection: true   // must deselect manually
-
-                    onActiveFocusChanged: {
-                        if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
-                            fileOutput.deselect()
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.IBeamCursor
-                        acceptedButtons: Qt.RightButton
-                        onClicked: {
-                            fileOutput.forceActiveFocus()
-                        }
-                        onReleased: {
-                            if (containsMouse) {
-                                contextMenuPopup.popup(null)
-                            }
-                        }
-                    }
-
-                    SGContextMenuEditActions {
-                        id: contextMenuPopup
-                        textEditor: fileOutput
-                    }
+                    contextMenuEnabled: true
                 }
             }
         }
