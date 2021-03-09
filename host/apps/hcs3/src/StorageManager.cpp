@@ -76,29 +76,14 @@ QUrl StorageManager::getBaseUrl() const
     return baseUrl_;
 }
 
-QString StorageManager::getControllerClassDevice(const QString &classId)
-{
-    qCDebug(logCategoryHcsStorage) << "Searching for controller class device of" << classId;
-
-    PlatformDocument *platfDoc = fetchPlatformDoc(classId);
-    if (platfDoc) {
-        QList<FirmwareFileItem> firmwareList = platfDoc->getFirmwareList();
-        if (firmwareList.isEmpty() == false) {
-            return firmwareList.first().controllerClassDevice;
-        }
-    }
-
-    return QString();
-}
-
-QPair<QUrl,QString> StorageManager::getFirmwareUriMd5(const QString &classId, const QString &controllerClassDevice, const QString &version)
+QPair<QUrl,QString> StorageManager::getFirmwareUriMd5(const QString &classId, const QString &controllerClassId, const QString &version)
 {
     const bool findLatest = version.isEmpty();
 
     if (findLatest) {
-        qCDebug(logCategoryHcsStorage) << "Searching for latest firmware URI and MD5 for" << classId << "and" << controllerClassDevice;
+        qCDebug(logCategoryHcsStorage) << "Searching for latest firmware URI and MD5 for" << classId << "and" << controllerClassId;
     } else {
-        qCDebug(logCategoryHcsStorage) << "Searching firmware" << version << "URI and MD5 for" << classId << "and" << controllerClassDevice;
+        qCDebug(logCategoryHcsStorage) << "Searching firmware" << version << "URI and MD5 for" << classId << "and" << controllerClassId;
     }
 
     QUrl uri;
@@ -110,7 +95,7 @@ QPair<QUrl,QString> StorageManager::getFirmwareUriMd5(const QString &classId, co
         if (findLatest) {  // find latest firmware
             QString currentVersion;
             for (const auto &item : firmwareList) {
-                if (item.controllerClassDevice == controllerClassDevice) {
+                if (item.controllerClassId == controllerClassId) {
                    if (currentVersion.isEmpty() || SGVersionUtils::lessThan(currentVersion, item.version)) {
                        currentVersion = item.version;
                        uri = item.partialUri;
@@ -120,7 +105,7 @@ QPair<QUrl,QString> StorageManager::getFirmwareUriMd5(const QString &classId, co
             }
         } else {
             for (const auto &item : firmwareList) {
-                if (item.controllerClassDevice == controllerClassDevice && item.version == version) {
+                if (item.controllerClassId == controllerClassId && item.version == version) {
                     uri = item.partialUri;
                     md5 = item.md5;
                     break;
@@ -424,11 +409,13 @@ void StorageManager::requestPlatformDocuments(
     for (const auto &item : firmwareItems) {
         QJsonObject object {
             {"uri", item.partialUri},
-            {"device", item.controllerClassDevice},
             {"md5", item.md5},
             {"timestamp", item.timestamp},
             {"version", item.version}
         };
+        if (item.controllerClassId.isNull() == false) {
+            object["controller_class_id"] = item.controllerClassId;
+        }
 
         firmwareList.append(object);
     }

@@ -1,7 +1,7 @@
 {
-    "_id": "2286e1e0-4035-46b9-b197-4d729653c101",
-    "_rev": "3-e6b88832badfe8791ff6e8824d4d7995",
+    "controller_type": 2,
     "channels": "2286e1e0-4035-46b9-b197-4d729653c101",
+    "name": "STR-PWRNCV896530-R0-GEVK",
     "documents": {
         "datasheets": [
             {
@@ -181,21 +181,22 @@
     },
     "firmware": [
         {
+            "name": "STR-PWRNCV-RSL10-FIRMWARE",
+            "controller_class_id": "cabc126d-e921-435a-b447-983d910ebf2c",
             "file": "strata_assisted_ecosystem_platform_100.bin",
-            "device": "RSL10-rev1",
             "md5": "7f408274a80b624f78b0a983739b4239",
             "timestamp": "2021-01-29 14:28:29",
             "version": "1.0.0"
         },
         {
+            "name": "STR-PWRNCV-RSL10-FIRMWARE",
+            "controller_class_id": "cabc126d-e921-435a-b447-983d910ebf2c",
             "file": "strata_assisted_ecosystem_platform_101.bin",
-            "device": "RSL10-rev1",
             "md5": "36476eff13bc3675b7c4cfda43660e96",
             "timestamp": "2021-02-02 15:06:03",
             "version": "1.0.1"
         }
     ],
-    "name": "STR-PWRNCV896530-R0-GEVK",
     "platform_selector": {
         "file": "2286e1e0-4035-46b9-b197-4d729653c101/platform_selector/7b2b7a8120af905307d22da2c46716ef.jpeg",
         "filename": "thumbnail",

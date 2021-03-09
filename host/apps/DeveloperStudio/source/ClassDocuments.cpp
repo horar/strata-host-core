@@ -206,7 +206,6 @@ void ClassDocuments::populateMetaData(QJsonObject data)
 
         if (documentObject.contains("uri") == false
                 || documentObject.contains("md5")  == false
-                || documentObject.contains("device") == false
                 || documentObject.contains("timestamp")  == false
                 || documentObject.contains("version")  == false) {
 
@@ -215,12 +214,12 @@ void ClassDocuments::populateMetaData(QJsonObject data)
         }
 
         QString uri = documentObject["uri"].toString();
-        QString device = documentObject["device"].toString();
+        QString controllerClassId = documentObject["controller_class_id"].toString();
         QString md5 = documentObject["md5"].toString();
         QString version = documentObject["version"].toString();
         QString timestamp = documentObject["timestamp"].toString();
 
-        VersionedItem *firmwareItem = new VersionedItem(uri, md5, "", device, timestamp, version);
+        VersionedItem *firmwareItem = new VersionedItem(uri, md5, "", controllerClassId, timestamp, version);
         firmwareList.append(firmwareItem);
     }
 
