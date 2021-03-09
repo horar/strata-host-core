@@ -204,11 +204,13 @@ bool PlatformDocument::populateFirmwareObject(const QJsonObject &jsonObject, Fir
     uint flags = 0x00;
     bool success = false;
 
+    // clang-format off
     if (jsonObject.contains("file"))                  { flags |= 0x01; }  // 00001
     if (jsonObject.contains("controller_class_id"))   { flags |= 0x02; }  // 00010
     if (jsonObject.contains("md5"))                   { flags |= 0x04; }  // 00100
     if (jsonObject.contains("timestamp"))             { flags |= 0x08; }  // 01000
     if (jsonObject.contains("version"))               { flags |= 0x10; }  // 10000
+    // clang-format on
 
     switch (flags) {
     case 0x1F :
