@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.12
 
 Component {
     id: root
-
     Row {
         id: wrapper
         width: parent.width
