@@ -14,12 +14,12 @@ StackLayout {
 
     currentIndex: {
         switch (model.view) {
-        case "collateral":
-            return 1
-        case "settings":
-            return 2
-        default: // case "control":
-            return 0
+            case "collateral":
+                return 1
+            case "settings":
+                return 2
+            default: // case "control":
+                return 0
         }
     }
 
