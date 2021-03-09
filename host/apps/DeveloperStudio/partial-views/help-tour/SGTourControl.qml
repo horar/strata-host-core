@@ -20,7 +20,6 @@ ColumnLayout {
 
     RowLayout{
         Layout.fillWidth: true
-        Layout.alignment: Qt.AlignLeft
         spacing: 0
         Item {
             Layout.fillWidth: true
@@ -80,8 +79,8 @@ ColumnLayout {
             id: description
             text: "Placeholder Text"
             color: "grey"
-            Layout.fillHeight: false
-            Layout.preferredWidth: root.width - 20
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             Layout.alignment: Qt.AlignHCenter
 
             readOnly: true
