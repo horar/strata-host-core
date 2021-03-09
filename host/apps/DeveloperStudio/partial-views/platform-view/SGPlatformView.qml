@@ -199,7 +199,7 @@ StackLayout {
                 description = "A newer version of software is available."
             }
 
-            Notifications.createNotification("Firmware/Software Updates",
+            Notifications.createNotification("Update available",
                                                 Notifications.Info,
                                                 "current",
                                                 {
