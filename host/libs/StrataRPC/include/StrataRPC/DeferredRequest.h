@@ -28,18 +28,6 @@ public:
      */
     int getId() const;
 
-    /**
-     * Check if the request has a connected slot/lambda to finishedSuccessfully signal.
-     * @return boolean if a signal/slot is connected to finishedSuccessfully signal.
-     */
-    bool hasSuccessCallback();
-
-    /**
-     * Check if the request has a connected slot/lambda to finishedWithError signal.
-     * @return boolean if a signal/slot is connected to finishedWithError signal.
-     */
-    bool hasErrorCallback();
-
 signals:
     /**
      * Signal Emitted when the server respond with a successful message.
