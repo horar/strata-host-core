@@ -126,6 +126,7 @@ private slots:
 
     /**
      * Slot to handle dispatching server notification handlers.
+     * @note This will emit errorOccurred signal if the handler is not registered.
      * @param [in] serverMessage parsed server message.
      * NOTE: This will emit errorOccurred signal if the handler is not registered.
      */

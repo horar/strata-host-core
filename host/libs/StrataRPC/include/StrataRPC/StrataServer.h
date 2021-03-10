@@ -108,8 +108,8 @@ public slots:
 private slots:
     /**
      * Slot to handle dispatching client notification/requests handlers.
+     * @note This will emit errorOccurred signal if the handler is not registered.
      * @param [in] clientMessage parsed server message.
-     * NOTE: This will emit errorOccurred signal if the handler is not registered.
      */
     void dispatchHandler(const Message &clientMessage);
 
