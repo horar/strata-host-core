@@ -9,9 +9,19 @@ cmake_dependent_option(APPS_CORESW_HCS "Build 'hcs' service" ON
 add_feature_info(APPS_CORESW_HCS APPS_CORESW_HCS "Host controller service")
 
 if(NOT MINGW)
-    cmake_dependent_option(APPS_CORESW_DEVSTUDIO "Build 'Strata Developer Studio' app" ON
+    cmake_dependent_option(APPS_CORESW_SDS "Build 'Strata Developer Studio' app" ON
                             "APPS_CORESW" OFF)
-    add_feature_info(APPS_CORESW_DEVSTUDIO APPS_CORESW_DEVSTUDIO "Strata Developer Studio")
+    add_feature_info(APPS_CORESW_SDS APPS_CORESW_SDS "Strata Developer Studio")
+
+    # DevStudio plugins
+    include(AddDevStudioPLugin)
+    cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_DEBUGBAR "Build DevStudio 'debugbar' plugin" ON
+        "APPS_CORESW_SDS" OFF)
+    add_feature_info(APPS_CORESW_SDS_PLUGIN_DEBUGBAR APPS_CORESW_SDS_PLUGIN_DEBUGBAR "DevStudio 'debugbar' plugin")
+
+    cmake_dependent_option(APPS_CORESW_SDS_PLUGIN_CVC "Build DevStudio 'CVC' plugin" ON
+        "APPS_CORESW_SDS" OFF)
+    add_feature_info(APPS_CORESW_SDS_PLUGIN_CVC APPS_CORESW_SDS_PLUGIN_CVC "DevStudio 'Control View Creator' plugin")
 else()
     message(WARNING "Strata Developer Studio is not supported in MinGW development environment!")
 endif()
@@ -53,8 +63,14 @@ if(APPS_CORESW_HCS)
     add_subdirectory(hcs3)
 endif()
 
-if(APPS_CORESW_DEVSTUDIO AND NOT MINGW)
+if(APPS_CORESW_SDS AND NOT MINGW)
     add_subdirectory(DeveloperStudio)
+else()
+    message(STATUS "Cleaning plugins (DevStudio is disabled)")
+    file(GLOB SDS_PLUGIN_LIST ${CMAKE_PLUGINS_OUTPUT_DIRECTORY}/sds-*.rcc)
+    if(SDS_PLUGIN_LIST)
+        file(REMOVE ${SDS_PLUGIN_LIST})
+    endif()
 endif()
 
 

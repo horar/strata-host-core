@@ -42,12 +42,13 @@ StackLayout {
                                     platformMetaDataInitialized
 
     property bool documentsHistoryDisplayed: false
+    property string documentNotificationUUID: ""
+    property string updateNotificationUUID: ""
     readonly property bool platformOutOfDate: controlViewIsOutOfDate || firmwareIsOutOfDate
 
     onPlatformOutOfDateChanged: {
         launchOutOfDateNotification(controlViewIsOutOfDate, firmwareIsOutOfDate)
     }
-
     onFullyInitializedChanged: {
         initialize()
     }
@@ -68,6 +69,12 @@ StackLayout {
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
+        if(documentNotificationUUID !== ""){
+            Notifications.destroyNotification(documentNotificationUUID)
+        }
+        if(updateNotificationUUID !== ""){
+            Notifications.destroyNotification(updateNotificationUUID)
+        }
     }
 
     function initialize () {
@@ -138,17 +145,17 @@ StackLayout {
             }
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed
-                Notifications.createNotification(
-                            "Document updates for this platform",
-                            Notifications.Info,
-                            "current",
-                            {
-                                "description": description,
-                                "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                                "actions": [documentsHistoryShowDocumentsView, ok, doNotNotifyOnCollateralDocumentUpdate],
-                                "timeout": 0
-                            }
-                            )
+              documentNotificationUUID = Notifications.createNotification(
+                    "Document updates for this platform",
+                    Notifications.Info,
+                    "current",
+                    {
+                        "description": description,
+                        "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                        "actions": [documentsHistoryShowDocumentsView, ok, doNotNotifyOnCollateralDocumentUpdate],
+                        "timeout": 0
+                    }
+                )
             }
         }
     }
@@ -199,7 +206,7 @@ StackLayout {
                 description = "A newer version of software is available."
             }
 
-            Notifications.createNotification("Update available",
+           updateNotificationUUID = Notifications.createNotification("Update available",
                                                 Notifications.Info,
                                                 "current",
                                                 {
