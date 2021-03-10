@@ -1,20 +1,21 @@
 #pragma once
 
-#include <StrataRPC/Message.h>
-#include <QObject>
+#include "logging/LoggingQtCategories.h"
+
+#include <functional>
 
 namespace strata::strataRPC
 {
-class Dispatcher : public QObject
+template <class HandlerArgument>
+class Dispatcher
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(Dispatcher);
-
 public:
+    typedef std::function<void(const HandlerArgument &)> Handler;
+
     /**
      * Dispatcher constructor.
      */
-    Dispatcher(QObject *parent = nullptr);
+    Dispatcher();
 
     /**
      * Dispatcher destructor.
@@ -23,21 +24,21 @@ public:
 
     /**
      * Dispatch the handler in message.handlerName
-     * @param [in] message Message object that contains meta data about the which handler to execute
-     * and it's arguments.
+     * @param handlerName The name of the registered handler.
+     * @param argument The argument to pass to the handler.
      * @return True if the handler was found and got executed, False if the handler is not
      * registered.
      */
-    bool dispatch(const Message &message);
+    bool dispatch(const QString &handlerName, const HandlerArgument &argument);
 
     /**
      * Register a new handler.
      * @param [in] handlerName the name of the handler.
-     * @param [in] handler function pointer to function of type StrataHandler.
+     * @param [in] handler function pointer to function of type Handler.
      * @return True if the handler was registered successfully, False if the handler wad not
      * registered successfully or handler already registered.
      */
-    bool registerHandler(const QString &handlerName, StrataHandler handler);
+    bool registerHandler(const QString &handlerName, Handler handler);
 
     /**
      * Unregister a handler.
@@ -47,24 +48,62 @@ public:
      */
     bool unregisterHandler(const QString &handlerName);
 
-public slots:
-
-    /**
-     * Slot to dispatch a handler.
-     * @param [in] message Message object that contains meta data about the which handler to execute
-     * and it's arguments.
-     */
-    void dispatchHandler(const Message &message);
-
 private:
-    /**
-     * Checks if a handler is registered or not.
-     * @param [in] handlerName The name of the handler to search for.
-     * @return True if the handler is registered, False otherwise.
-     */
-    bool isRegisteredHandler(const QString &handlerName);
-
-    std::map<QString, StrataHandler> handlersList_;
+    std::map<QString, Handler> handlersList_;
 };
+
+template <class HandlerArgument>
+Dispatcher<HandlerArgument>::Dispatcher()
+{
+}
+
+template <class HandlerArgument>
+Dispatcher<HandlerArgument>::~Dispatcher()
+{
+}
+
+template <class HandlerArgument>
+bool Dispatcher<HandlerArgument>::registerHandler(const QString &handlerName, Handler handler)
+{
+    qCDebug(logCategoryStrataDispatcher) << "registering " << handlerName << " handler.";
+
+    const auto [it, inserted] = handlersList_.insert(std::make_pair(handlerName, handler));
+    if (false == inserted) {
+        qCDebug(logCategoryStrataDispatcher()) << handlerName << " is already registered.";
+    }
+
+    return inserted;
+}
+
+template <class HandlerArgument>
+bool Dispatcher<HandlerArgument>::unregisterHandler(const QString &handlerName)
+{
+    qCDebug(logCategoryStrataDispatcher) << "unregistering " << handlerName << " handler.";
+
+    size_t removedCount = handlersList_.erase(handlerName);
+    if (removedCount == 0) {
+        qCCritical(logCategoryStrataDispatcher()) << "Handler not found" << handlerName;
+    }
+
+    return removedCount != 0;
+}
+
+template <class HandlerArgument>
+bool Dispatcher<HandlerArgument>::dispatch(const QString &handlerName,
+                                           const HandlerArgument &argument)
+{
+    qCDebug(logCategoryStrataDispatcher) << "Dispatching " << handlerName;
+
+    auto it = handlersList_.find(handlerName);
+
+    if (it == handlersList_.end()) {
+        qCCritical(logCategoryStrataDispatcher()) << "Handler not found " << handlerName;
+        return false;
+    }
+
+    it->second(argument);
+
+    return true;
+}
 
 }  // namespace strata::strataRPC

@@ -12,33 +12,6 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
-# StrataRPC-CommonLib
-# Added it to avoid duplicate symbols error when linking.
-add_library(${COMMON_LIB}
-    src/Dispatcher.cpp
-    src/logging/LoggingQtCategories.cpp
-)
-
-target_include_directories(${COMMON_LIB}
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
-
-target_link_libraries(${COMMON_LIB}
-    PUBLIC Qt5::Core
-    PUBLIC strata::QtLogger
-)
-
-set_target_properties(${COMMON_LIB} PROPERTIES
-    AUTOMOC ON
-)
-
-target_compile_definitions(${COMMON_LIB} PRIVATE
-    QT_DEPRECATED_WARNINGS
-    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
-)
-
-
 #
 # StrataRPC-Server
 #
@@ -60,7 +33,6 @@ target_include_directories(${SERVER}
 )
 
 target_link_libraries(${SERVER}
-    PRIVATE ${COMMON_LIB}
     PUBLIC Qt5::Core
     PUBLIC strata::QtLogger
     PUBLIC strata::connector
@@ -98,7 +70,6 @@ target_include_directories(${CLIENT}
 )
 
 target_link_libraries(${CLIENT}
-    PRIVATE ${COMMON_LIB}
     PUBLIC Qt5::Core
     PUBLIC strata::QtLogger
     PUBLIC strata::connector
