@@ -10,11 +10,11 @@ namespace strata::sds::config
 strata::sds::config::ConfigFile::ConfigFile(const QString &name, QObject *parent)
     : QFile(parent)
 {
-    if (name.isEmpty()) {
-        this->setFileName(QDir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation)).filePath("sds.config"));
-    } else {
+    #if WINDOWS_INSTALLER_BUILD
+        this->setFileName(QDir(QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation).at(1)).filePath("sds.config"));
+    #else
         this->setFileName(name);
-    }
+    #endif
 }
 
 std::tuple<QByteArray, bool> strata::sds::config::ConfigFile::loadData()

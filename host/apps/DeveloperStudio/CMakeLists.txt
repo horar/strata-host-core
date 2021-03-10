@@ -157,7 +157,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
-set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
+set_source_files_properties(main.cpp source/SDSModel.cpp source/config/ConfigFile.cpp PROPERTIES
     COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
 )
 
