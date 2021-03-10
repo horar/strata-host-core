@@ -227,7 +227,7 @@ Item {
                                         || model.platform.status === Sci.SciPlatform.Connected
                                         || model.platform.status === Sci.SciPlatform.NotRecognized) {
                                     SGWidgets.SGDialogJS.showConfirmationDialog(
-                                                root,
+                                                ApplicationWindow.window,
                                                 "Device is active",
                                                 "Do you really want to disconnect \"" + model.platform.verboseName + "\" board ?",
                                                 "Disconnect",
@@ -315,7 +315,7 @@ Item {
         }
 
         platformInfoWindow = SGWidgets.SGDialogJS.createDialog(
-                    root,
+                    ApplicationWindow.window,
                     "qrc:/PlatformInfoWindow.qml",
                     {
                         "platformClassId": classId,
