@@ -42,7 +42,23 @@ bool StrataClient::connectServer()
             &StrataClient::newServerMessage);
     connect(this, &StrataClient::newServerMessageParsed, this, &StrataClient::dispatchHandler);
 
-    sendRequest("register_client", {{"api_version", "2.0"}});
+    auto deferredRequest = sendRequest("register_client", {{"api_version", "2.0"}});
+
+    if (deferredRequest != nullptr) {
+        connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
+                [this](const QJsonObject &) {
+                    qCInfo(logCategoryStrataClient)
+                        << "Client connected successfully to the server.";
+                    emit clientConnected();
+                });
+
+        connect(deferredRequest, &DeferredRequest::finishedWithError, this,
+                [this](const QJsonObject &) {
+                    QString errorMessage(QStringLiteral("Failed to connect to the server."));
+                    qCCritical(logCategoryStrataClient) << errorMessage;
+                    emit errorOccurred(ClientError::FailedToConnect, errorMessage);
+                });
+    }
 
     return true;
 }
@@ -79,21 +95,15 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
 
     if (deferredRequest != nullptr) {
         deferredRequest->stopTimer();
-        if (serverMessage.messageType == Message::MessageType::Error &&
-            deferredRequest->hasErrorCallback()) {
+        if (serverMessage.messageType == Message::MessageType::Error) {
             qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
             deferredRequest->callErrorCallback(serverMessage.payload);
-            deferredRequest->deleteLater();
-            return;
-
-        } else if (serverMessage.messageType == Message::MessageType::Response &&
-                   deferredRequest->hasSuccessCallback()) {
+        } else if (serverMessage.messageType == Message::MessageType::Response) {
             qCDebug(logCategoryStrataClient) << "Dispatching success callback.";
             deferredRequest->callSuccessCallback(serverMessage.payload);
-            deferredRequest->deleteLater();
-            return;
         }
         deferredRequest->deleteLater();
+        return;
     }
 
     qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
@@ -147,6 +157,22 @@ DeferredRequest *StrataClient::sendRequest(const QString &method, const QJsonObj
     deferredRequest->startTimer();
 
     return deferredRequest;
+}
+
+bool StrataClient::sendNotification(const QString &method, const QJsonObject &payload)
+{
+    qCDebug(logCategoryStrataClient) << "Sending notification to the server";
+    QJsonObject jsonObject{{"jsonrpc", "2.0"}, {"method", method}, {"params", payload}, {"id", 0}};
+
+    if (false == connector_->sendMessage(
+                     QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact))) {
+        QString errorMessage(QStringLiteral("Failed notification to the server."));
+        qCCritical(logCategoryStrataClient) << errorMessage;
+        emit errorOccurred(ClientError::FailedToSendNotification, errorMessage);
+        return false;
+    }
+
+    return true;
 }
 
 bool StrataClient::buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,

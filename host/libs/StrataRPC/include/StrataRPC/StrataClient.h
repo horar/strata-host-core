@@ -32,6 +32,7 @@ public:
         FailedToUnregisterHandler,
         FailedToAddReequest,
         FailedToSendRequest,
+        FailedToSendNotification,
         PendingRequestNotFound,
         RequestTimeout,
         HandlerNotFound
@@ -88,8 +89,7 @@ public:
 
     /**
      * Sends a request to the server.
-     * @note callbacks are optional, if a callback is not provided, then the response is handled by
-     * the registered handlers in the dispatcher.
+     * @note If a callback is not provided the response will not be handled.
      * @param [in] method The handler name in StrataServer.
      * @param [in] payload QJsonObject of the request payload.
      * @return pointer to DeferredRequest to connect callbacks, on failure, this will return
@@ -97,12 +97,26 @@ public:
      */
     DeferredRequest *sendRequest(const QString &method, const QJsonObject &payload);
 
+    /**
+     * Sends a notification to the server.
+     * @note The response is handled by the registered handlers in the dispatcher.
+     * @param [in] method The handler name in StrataServer.
+     * @param [in] payload QJsonObject of the request payload.
+     * @return True if the notification was sent successfully, false otherwise.
+     */
+    bool sendNotification(const QString &method, const QJsonObject &payload);
+
 signals:
     /**
      * Emitted when a new server message is parsed and ready to be handled
      * @param [in] serverMessage populated Message object with the notification meta data.
      */
     void newServerMessageParsed(const Message &serverMessage);
+
+    /**
+     * Emitted when the client connects to the server successfully.
+     */
+    void clientConnected();
 
     /**
      * Emitted when an error has occurred.
