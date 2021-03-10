@@ -13,7 +13,7 @@ FocusScope {
     property variant rootItem
     property variant scrollbackModel
     property variant commandHistoryModel
-    property variant suggestionFilterModel
+    property variant filterSuggestionModel
 
     property bool disableAllFiltering: false
     property var filterList: []
@@ -440,7 +440,6 @@ FocusScope {
 
             function clearScrollback() {
                 scrollbackModel.clear()
-                suggestionFilterModel.clear()
             }
 
             function toggleFollow() {
@@ -469,7 +468,7 @@ FocusScope {
                             "qrc:/FilterDialog.qml",
                             {
                                 "disableAllFiltering": disableAllFiltering,
-                                "suggestionFilterModel": suggestionFilterModel,
+                                "filterSuggestionModel": filterSuggestionModel,
                             })
 
                 var list = []

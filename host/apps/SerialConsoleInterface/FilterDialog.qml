@@ -4,8 +4,6 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
-import tech.strata.logger 1.0
-import tech.strata.sci 1.0
 
 SGWidgets.SGDialog {
     id: dialog
@@ -17,7 +15,7 @@ SGWidgets.SGDialog {
     closePolicy: Popup.CloseOnEscape
 
     property bool disableAllFiltering
-    property variant suggestionFilterModel
+    property variant filterSuggestionModel
 
     ListModel {
         id: conditionTypeModel
@@ -220,9 +218,9 @@ SGWidgets.SGDialog {
 
                             CommonCpp.SGSortFilterProxyModel {
                                 id: sortFilterModel
-                                sourceModel: suggestionFilterModel
-                                sortRole: "name"
-                                filterRole: "name"
+                                sourceModel: filterSuggestionModel
+                                sortRole: "suggestion"
+                                filterRole: "suggestion"
                                 filterPatternSyntax: CommonCpp.SGSortFilterProxyModel.RegExp
                                 filterPattern: ".*" + filterStringTextField.text + ".*"
                             }
@@ -236,7 +234,7 @@ SGWidgets.SGDialog {
                                    if (sourceIndex < 0) {
                                         return
                                     }
-                                    text = suggestionFilterModel.get(sourceIndex)["name"]
+                                    text = filterSuggestionModel.get(sourceIndex)["suggestion"]
                                 }
 
                                 onTextChanged: {

@@ -21,14 +21,14 @@ SciPlatform::SciPlatform(
 
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
-    suggestionFilterModel_ = new SciSuggestionFilterModel(this);
+    filterSuggestionModel_ = new SciFilterSuggestionModel(this);
 }
 
 SciPlatform::~SciPlatform()
 {
     scrollbackModel_->deleteLater();
     commandHistoryModel_->deleteLater();
-    suggestionFilterModel_->deleteLater();
+    filterSuggestionModel_->deleteLater();
 }
 
 int SciPlatform::deviceId()
@@ -121,9 +121,9 @@ SciCommandHistoryModel *SciPlatform::commandHistoryModel()
     return commandHistoryModel_;
 }
 
-SciSuggestionFilterModel *SciPlatform::suggestionFilterModel()
+SciFilterSuggestionModel *SciPlatform::filterSuggestionModel()
 {
-    return suggestionFilterModel_;
+    return filterSuggestionModel_;
 }
 
 QString SciPlatform::errorString()
@@ -214,7 +214,6 @@ QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
     if (result) {
         commandHistoryModel_->add(compactMsg, isJsonValid);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
-        settings_->setSuggestionFilter(verboseName_, suggestionFilterModel()->getSuggestionList());
         retStatus["error"] = "no_error";
     } else {
         retStatus["error"] = "send_error";
@@ -256,11 +255,6 @@ void SciPlatform::storeCommandHistory(const QStringList &list)
     settings_->setCommandHistory(verboseName_, list);
 }
 
-void SciPlatform::storeSuggestionFilter(const QStringList &list)
-{
-    settings_->setSuggestionFilter(verboseName_, list);
-}
-
 void SciPlatform::storeExportPath(const QString &exportPath)
 {
     settings_->setExportPath(verboseName_, exportPath);
@@ -274,7 +268,7 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
 void SciPlatform::messageFromDeviceHandler(QByteArray message)
 {
     scrollbackModel_->append(message, false);
-    suggestionFilterModel_->add(message);
+    filterSuggestionModel_->add(message);
 }
 
 void SciPlatform::messageToDeviceHandler(QByteArray message)
