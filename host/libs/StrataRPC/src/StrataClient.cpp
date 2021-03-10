@@ -10,7 +10,7 @@ using namespace strata::strataRPC;
 
 StrataClient::StrataClient(QString serverAddress, QObject *parent)
     : QObject(parent),
-      dispatcher_(new Dispatcher(this)),
+      dispatcher_(new Dispatcher<const Message &>()),
       connector_(new ClientConnector(serverAddress)),
       requestController_(new RequestsController())
 {
@@ -18,7 +18,7 @@ StrataClient::StrataClient(QString serverAddress, QObject *parent)
 
 StrataClient::StrataClient(QString serverAddress, QByteArray dealerId, QObject *parent)
     : QObject(parent),
-      dispatcher_(new Dispatcher(this)),
+      dispatcher_(new Dispatcher<const Message &>()),
       connector_(new ClientConnector(serverAddress, dealerId)),
       requestController_(new RequestsController())
 {
@@ -39,8 +39,7 @@ bool StrataClient::connectServer()
 
     connect(connector_.get(), &ClientConnector::newMessageReceived, this,
             &StrataClient::newServerMessage);
-    connect(this, &StrataClient::newServerMessageParsed, dispatcher_.get(),
-            &Dispatcher::dispatchHandler);
+    connect(this, &StrataClient::newServerMessageParsed, this, &StrataClient::dispatchHandler);
 
     sendRequest("register_client", {{"api_version", "2.0"}});
 
@@ -95,6 +94,7 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
         }
         deferredRequest->deleteLater();
     }
+
     qCDebug(logCategoryStrataClient) << "Dispatching registered handler.";
     emit newServerMessageParsed(serverMessage);
 }
@@ -275,4 +275,15 @@ void StrataClient::requestTimeoutHandler(int requestId)
 
     request.deferredRequest_->deleteLater();
     qCDebug(logCategoryStrataClient) << "Timed out request removed successfully.";
+}
+
+void StrataClient::dispatchHandler(const Message &serverMessage)
+{
+    if (false == dispatcher_->dispatch(serverMessage.handlerName, serverMessage)) {
+        QString errorMessage(QStringLiteral("Handler not found."));
+        emit errorOccurred(ClientError::HandlerNotFound, errorMessage);
+        return;
+    }
+
+    qCDebug(logCategoryStrataClient) << "Handler executed.";
 }

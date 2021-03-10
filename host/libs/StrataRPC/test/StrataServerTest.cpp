@@ -177,23 +177,29 @@ void StrataServerTest::testBuildNotificationApiV2()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
-            [&testExecuted](const QByteArray &message) {
-                QJsonParseError jsonParseError;
-                QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
-                QJsonObject jsonObject = jsonDocument.object();
+    connect(
+        &client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
+        [&testExecuted](const QByteArray &message) {
+            // ignore the response to the unregistered handler
+            if (message == R"({"error":{"massage":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
+                return;
+            }
 
-                QVERIFY_(jsonObject.contains("jsonrpc"));
-                QVERIFY_(jsonObject.value("jsonrpc").isString());
+            QJsonParseError jsonParseError;
+            QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+            QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+            QJsonObject jsonObject = jsonDocument.object();
 
-                QVERIFY_(jsonObject.contains("method"));
-                QVERIFY_(jsonObject.value("method").isString());
+            QVERIFY_(jsonObject.contains("jsonrpc"));
+            QVERIFY_(jsonObject.value("jsonrpc").isString());
 
-                QVERIFY_(jsonObject.contains("params"));
-                QVERIFY_(jsonObject.value("params").isObject());
-                testExecuted = true;
-            });
+            QVERIFY_(jsonObject.contains("method"));
+            QVERIFY_(jsonObject.value("method").isString());
+
+            QVERIFY_(jsonObject.contains("params"));
+            QVERIFY_(jsonObject.value("params").isObject());
+            testExecuted = true;
+        });
 
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
@@ -219,23 +225,29 @@ void StrataServerTest::testBuildResponseApiV2()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
-            [&testExecuted](const QByteArray &message) {
-                QJsonParseError jsonParseError;
-                QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
-                QJsonObject jsonObject = jsonDocument.object();
+    connect(
+        &client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
+        [&testExecuted](const QByteArray &message) {
+            // ignore the response to the unregistered handler
+            if (message == R"({"error":{"massage":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
+                return;
+            }
 
-                QVERIFY_(jsonObject.contains("jsonrpc"));
-                QVERIFY_(jsonObject.value("jsonrpc").isString());
+            QJsonParseError jsonParseError;
+            QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+            QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+            QJsonObject jsonObject = jsonDocument.object();
 
-                QVERIFY_(jsonObject.contains("id"));
-                QVERIFY_(jsonObject.value("id").isDouble());
+            QVERIFY_(jsonObject.contains("jsonrpc"));
+            QVERIFY_(jsonObject.value("jsonrpc").isString());
 
-                QVERIFY_(jsonObject.contains("result"));
-                QVERIFY_(jsonObject.value("result").isObject());
-                testExecuted = true;
-            });
+            QVERIFY_(jsonObject.contains("id"));
+            QVERIFY_(jsonObject.value("id").isDouble());
+
+            QVERIFY_(jsonObject.contains("result"));
+            QVERIFY_(jsonObject.value("result").isObject());
+            testExecuted = true;
+        });
 
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
@@ -302,24 +314,30 @@ void StrataServerTest::testBuildPlatformMessageApiV2()
 
     strata::strataRPC::ClientConnector client(address_, "AA");
     client.initializeConnector();
-    connect(&client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
-            [&testExecuted](const QByteArray &message) {
-                QJsonParseError jsonParseError;
-                QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
-                QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
-                QJsonObject jsonObject = jsonDocument.object();
+    connect(
+        &client, &strata::strataRPC::ClientConnector::newMessageReceived, this,
+        [&testExecuted](const QByteArray &message) {
+            // ignore the response to the unregistered handler
+            if (message == R"({"error":{"massage":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
+                return;
+            }
 
-                QVERIFY_(jsonObject.contains("jsonrpc"));
-                QVERIFY_(jsonObject.value("jsonrpc").isString());
+            QJsonParseError jsonParseError;
+            QJsonDocument jsonDocument = QJsonDocument::fromJson(message, &jsonParseError);
+            QVERIFY_(jsonParseError.error == QJsonParseError::NoError);
+            QJsonObject jsonObject = jsonDocument.object();
 
-                QVERIFY_(jsonObject.contains("method"));
-                QVERIFY_(jsonObject.value("method").isString());
-                QVERIFY_(jsonObject.value("method") == "platform_notification");
+            QVERIFY_(jsonObject.contains("jsonrpc"));
+            QVERIFY_(jsonObject.value("jsonrpc").isString());
 
-                QVERIFY_(jsonObject.contains("params"));
-                QVERIFY_(jsonObject.value("params").isObject());
-                testExecuted = true;
-            });
+            QVERIFY_(jsonObject.contains("method"));
+            QVERIFY_(jsonObject.value("method").isString());
+            QVERIFY_(jsonObject.value("method") == "platform_notification");
+
+            QVERIFY_(jsonObject.contains("params"));
+            QVERIFY_(jsonObject.value("params").isObject());
+            testExecuted = true;
+        });
 
     client.sendMessage(
         R"({"jsonrpc": "2.0","method":"register_client","params": {"api_version": "1.0"},"id":1})");
@@ -497,6 +515,12 @@ void StrataServerTest::testNotifyAllClients()
         clientsList.back()->initializeConnector();
         connect(clientsList.back(), &strata::strataRPC::ClientConnector::newMessageReceived, this,
                 [&counter](const QByteArray &message) {
+                    // ignore the response to the unregistered handler
+                    if (message ==
+                        R"({"error":{"massage":"Handler not found."},"id":1,"jsonrpc":"2.0"})") {
+                        return;
+                    }
+
                     // validate for API v2
                     // expected response format:
                     // {
@@ -757,6 +781,13 @@ void StrataServerTest::testErrorOccourredSignal()
         errorType = qvariant_cast<StrataServer::ServerError>(error.at(0));
         QCOMPARE_(errorType, StrataServer::ServerError::FailedToBuildClientMessage);
     }
+    errorOccurred.clear();
+
+    client.sendMessage(R"({"jsonrpc": "2.0","method":"non_existing_handler","params": {},"id":1})");
+    waitForZmqMessages();
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataServer::ServerError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataServer::ServerError::HandlerNotFound);
     errorOccurred.clear();
 }
 

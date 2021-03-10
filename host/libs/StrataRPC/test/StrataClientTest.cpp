@@ -710,4 +710,15 @@ void StrataClientTest::testErrorOccourredSignal()
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.at(1).at(0));
     QCOMPARE_(errorType, StrataClient::ClientError::FailedToBuildServerMessage);
     errorOccurred.clear();
+
+    QByteArray noRegisteredHandler = QJsonDocument(QJsonObject({{"jsonrpc", "2.0"},
+                                                                {"method", "non_existing_handler"},
+                                                                {"params", QJsonObject()}}))
+                                         .toJson(QJsonDocument::JsonFormat::Compact);
+    server.sendMessage("StrataClient", noRegisteredHandler);
+    waitForZmqMessages();
+    QCOMPARE_(errorOccurred.count(), 1);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::HandlerNotFound);
+    errorOccurred.clear();
 }

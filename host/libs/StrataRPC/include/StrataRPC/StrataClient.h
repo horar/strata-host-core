@@ -7,6 +7,7 @@
 
 namespace strata::strataRPC
 {
+template <class HandlerArgument>
 class Dispatcher;
 class ClientConnector;
 class RequestsController;
@@ -29,7 +30,8 @@ public:
         FailedToAddReequest,
         FailedToSendRequest,
         PendingRequestNotFound,
-        RequestTimeout
+        RequestTimeout,
+        HandlerNotFound
     };
     Q_ENUM(ClientError);
 
@@ -104,8 +106,7 @@ signals:
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(StrataClient::ClientError errorType,
-                       const QString &errorMessage);
+    void errorOccurred(StrataClient::ClientError errorType, const QString &errorMessage);
 
 private slots:
     /**
@@ -120,6 +121,13 @@ private slots:
      */
     void requestTimeoutHandler(int requestId);
 
+    /**
+     * Slot to handle dispatching server notification handlers.
+     * @param [in] serverMessage parsed server message.
+     * NOTE: This will emit errorOccurred signal if the handler is not registered.
+     */
+    void dispatchHandler(const Message &serverMessage);
+
 private:
     /**
      * Parse the incoming json message from StrataServer into a Message object.
@@ -131,7 +139,7 @@ private:
     bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
                             DeferredRequest **deferredRequest);
 
-    std::unique_ptr<Dispatcher> dispatcher_;
+    std::unique_ptr<Dispatcher<const Message &>> dispatcher_;
     std::unique_ptr<ClientConnector> connector_;
     std::unique_ptr<RequestsController> requestController_;
 };
