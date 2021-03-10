@@ -3,7 +3,6 @@
 #include <QObject>
 
 #include "DeferredRequest.h"
-#include "Message.h"
 
 namespace strata::strataRPC
 {
@@ -11,6 +10,7 @@ template <class HandlerArgument>
 class Dispatcher;
 class ClientConnector;
 class RequestsController;
+struct Message;
 
 class StrataClient : public QObject
 {
@@ -18,6 +18,8 @@ class StrataClient : public QObject
     Q_DISABLE_COPY(StrataClient);
 
 public:
+    typedef std::function<void(const QJsonObject &)> ClientHandler;
+
     /**
      * Enum to describe errors
      */
@@ -69,10 +71,10 @@ public:
      * Register a command handler in the client's dispatcher.
      * @param [in] handlerName The name of the handlers associated with its commands, requests, or
      * notifications
-     * @param [in] handler function pointer to function of type StrataHandler.
+     * @param [in] handler function pointer to function of type ClientHandler.
      * @return True if the handler is added to the handlers list. False otherwise.
      */
-    bool registerHandler(const QString &handlerName, StrataHandler handler);
+    bool registerHandler(const QString &handlerName, ClientHandler handler);
 
     /**
      * Remove a handler from the registered handlers in the client's dispatcher.
@@ -139,7 +141,7 @@ private:
     bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
                             DeferredRequest **deferredRequest);
 
-    std::unique_ptr<Dispatcher<const Message &>> dispatcher_;
+    std::unique_ptr<Dispatcher<const QJsonObject &>> dispatcher_;
     std::unique_ptr<ClientConnector> connector_;
     std::unique_ptr<RequestsController> requestController_;
 };

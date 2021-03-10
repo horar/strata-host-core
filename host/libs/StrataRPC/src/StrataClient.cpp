@@ -3,6 +3,7 @@
 #include "RequestsController.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <StrataRPC/Message.h>
 #include <StrataRPC/StrataClient.h>
 #include <QJsonDocument>
 
@@ -10,7 +11,7 @@ using namespace strata::strataRPC;
 
 StrataClient::StrataClient(QString serverAddress, QObject *parent)
     : QObject(parent),
-      dispatcher_(new Dispatcher<const Message &>()),
+      dispatcher_(new Dispatcher<const QJsonObject &>()),
       connector_(new ClientConnector(serverAddress)),
       requestController_(new RequestsController())
 {
@@ -18,7 +19,7 @@ StrataClient::StrataClient(QString serverAddress, QObject *parent)
 
 StrataClient::StrataClient(QString serverAddress, QByteArray dealerId, QObject *parent)
     : QObject(parent),
-      dispatcher_(new Dispatcher<const Message &>()),
+      dispatcher_(new Dispatcher<const QJsonObject &>()),
       connector_(new ClientConnector(serverAddress, dealerId)),
       requestController_(new RequestsController())
 {
@@ -99,7 +100,7 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
     emit newServerMessageParsed(serverMessage);
 }
 
-bool StrataClient::registerHandler(const QString &handlerName, StrataHandler handler)
+bool StrataClient::registerHandler(const QString &handlerName, ClientHandler handler)
 {
     qCDebug(logCategoryStrataClient) << "Registering Handler:" << handlerName;
     if (false == dispatcher_->registerHandler(handlerName, handler)) {
@@ -277,7 +278,7 @@ void StrataClient::requestTimeoutHandler(int requestId)
 
 void StrataClient::dispatchHandler(const Message &serverMessage)
 {
-    if (false == dispatcher_->dispatch(serverMessage.handlerName, serverMessage)) {
+    if (false == dispatcher_->dispatch(serverMessage.handlerName, serverMessage.payload)) {
         QString errorMessage(QStringLiteral("Handler not found."));
         emit errorOccurred(ClientError::HandlerNotFound, errorMessage);
         return;

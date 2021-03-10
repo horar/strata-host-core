@@ -36,11 +36,12 @@ void StrataClientServerIntegrationTest::testSingleClient()
     StrataClient client(address_);
 
     // Server handlers
-    server.registerHandler(
-        "register_client", [&server, &serverRecviedRegisterClient](const Message &message) {
-            serverRecviedRegisterClient = true;
-            server.notifyClient(message, {}, strata::strataRPC::ResponseType::Response);
-        });
+    server.registerHandler("register_client",
+                           [&server, &serverRecviedRegisterClient](const Message &message) {
+                               serverRecviedRegisterClient = true;
+                               server.notifyClient(message, {{"handler_name", "register_client"}},
+                                                   strata::strataRPC::ResponseType::Response);
+                           });
 
     server.registerHandler(
         "unregister", [&server, &serverRecievedUnregisterClient](const Message &message) {
@@ -52,7 +53,9 @@ void StrataClientServerIntegrationTest::testSingleClient()
         "example_command_sends_response",
         [&server, &serverReceivedExampleCommand1](const Message &message) {
             serverReceivedExampleCommand1 = true;
-            server.notifyClient(message, {{"test", 1}}, strata::strataRPC::ResponseType::Response);
+            server.notifyClient(message,
+                                {{"handler_name", "example_command_sends_response"}, {"test", 1}},
+                                strata::strataRPC::ResponseType::Response);
         });
 
     server.registerHandler("example_command_sends_response_and_notification",
@@ -64,11 +67,12 @@ void StrataClientServerIntegrationTest::testSingleClient()
                                                    strata::strataRPC::ResponseType::Notification);
                            });
 
-    server.registerHandler("example_command_sends_error", [&server, &serverReceivedErrorCommand](
-                                                              const Message &message) {
-        serverReceivedErrorCommand = true;
-        server.notifyClient(message, {{"test", 1}}, strata::strataRPC::ResponseType::Error);
-    });
+    server.registerHandler("example_command_sends_error",
+                           [&server, &serverReceivedErrorCommand](const Message &message) {
+                               serverReceivedErrorCommand = true;
+                               server.notifyClient(message, {{"message_type", "error"}},
+                                                   strata::strataRPC::ResponseType::Error);
+                           });
 
     server.registerHandler(
         "platform_message", [&server, &serverReceivedPlatformMessage](const Message &message) {
@@ -80,67 +84,65 @@ void StrataClientServerIntegrationTest::testSingleClient()
         });
 
     // Client Handlers
-    client.registerHandler("register_client", [&clientRecviedRegisterClient](
-                                                  const Message &message) {
-        clientRecviedRegisterClient = true;
-        QCOMPARE_(message.handlerName, "register_client");
-        QCOMPARE_(message.messageType, strata::strataRPC::Message::Message::MessageType::Response);
-    });
+    client.registerHandler(
+        "register_client", [&clientRecviedRegisterClient](const QJsonObject &payload) {
+            clientRecviedRegisterClient = true;
+            QVERIFY_(true == payload.contains("handler_name"));
+            QVERIFY_(true == payload.value("handler_name").isString());
+            QCOMPARE_(payload.value("handler_name").toString(), "register_client");
+        });
 
-    client.registerHandler("unregister", [&clientRecievedUnregisterClient](const Message &) {
+    client.registerHandler("unregister", [&clientRecievedUnregisterClient](const QJsonObject &) {
         // This should not be called.
         clientRecievedUnregisterClient = true;
         QFAIL_("Client already disconnected.");
     });
 
-    client.registerHandler(
-        "example_command_sends_response", [&clientReceivedExampleCommand1](const Message &message) {
-            clientReceivedExampleCommand1 = true;
-            QCOMPARE_(message.handlerName, "example_command_sends_response");
-            QCOMPARE_(message.messageType, strata::strataRPC::Message::MessageType::Response);
-        });
+    client.registerHandler("example_command_sends_response", [&clientReceivedExampleCommand1](
+                                                                 const QJsonObject &payload) {
+        clientReceivedExampleCommand1 = true;
+        QVERIFY_(true == payload.contains("handler_name"));
+        QVERIFY_(true == payload.value("handler_name").isString());
+        QCOMPARE_(payload.value("handler_name").toString(), "example_command_sends_response");
+    });
 
-    client.registerHandler(
-        "example_command_sends_response_and_notification",
-        [&clientReceivedExampleCommand2Notification,
-         &clientReceivedExampleCommand2Response](const Message &message) {
-            // check once for the response and once for the notification
-            QVERIFY_(
-                (message.messageType == strata::strataRPC::Message::MessageType::Response) ||
-                (message.messageType == strata::strataRPC::Message::MessageType::Notification));
+    client.registerHandler("example_command_sends_response_and_notification",
+                           [&clientReceivedExampleCommand2Notification,
+                            &clientReceivedExampleCommand2Response](const QJsonObject &payload) {
+                               // check once for the response and once for the notification
+                               QVERIFY_((payload.value("message_type") == "notification") ||
+                                        (payload.value("message_type") == "response"));
 
-            if (message.messageType == strata::strataRPC::Message::MessageType::Response) {
-                clientReceivedExampleCommand2Response = true;
-            } else if (message.messageType ==
-                       strata::strataRPC::Message::MessageType::Notification) {
-                clientReceivedExampleCommand2Notification = true;
-            }
-        });
+                               if (payload.value("message_type") == "response") {
+                                   clientReceivedExampleCommand2Response = true;
+                               } else if (payload.value("message_type") == "notification") {
+                                   clientReceivedExampleCommand2Notification = true;
+                               }
+                           });
 
     // verify messageType
-    client.registerHandler(
-        "example_command_sends_error", [&clientReceivedErrorCommand](const Message &message) {
-            clientReceivedErrorCommand = true;
-            QCOMPARE_(message.messageType, strata::strataRPC::Message::MessageType::Error);
-        });
+    client.registerHandler("example_command_sends_error",
+                           [&clientReceivedErrorCommand](const QJsonObject &payload) {
+                               clientReceivedErrorCommand = true;
+                               QVERIFY_(true == payload.contains("message_type"));
+                               QVERIFY_(true == payload.value("message_type").isString());
+                               QCOMPARE_(payload.value("message_type").toString(), "error");
+                           });
 
-    client.registerHandler(
-        "platform_message", [&clientReceivedPlatformMessage](const Message &message) {
-            clientReceivedPlatformMessage = true;
-            QCOMPARE_(message.messageType, strata::strataRPC::Message::MessageType::Notification);
-        });
+    client.registerHandler("platform_message",
+                           [&clientReceivedPlatformMessage](const QJsonObject &) {
+                               clientReceivedPlatformMessage = true;
+                           });
 
-    client.registerHandler(
-        "platform_notification", [&clientReceivedPlatformNotification](const Message &message) {
-            clientReceivedPlatformNotification = true;
-            QCOMPARE_(message.messageType, strata::strataRPC::Message::MessageType::Notification);
-        });
+    client.registerHandler("platform_notification",
+                           [&clientReceivedPlatformNotification](const QJsonObject &) {
+                               clientReceivedPlatformNotification = true;
+                           });
 
-    client.registerHandler(
-        "server_notification", [&clientReceivedServerNotification](const Message &message) {
-            clientReceivedServerNotification = true;
-            QCOMPARE_(message.messageType, strata::strataRPC::Message::MessageType::Notification);
-        });
+    client.registerHandler("server_notification",
+                           [&clientReceivedServerNotification](const QJsonObject &) {
+                               clientReceivedServerNotification = true;
+                           });
 
     QVERIFY_(server.initializeServer());
     client.connectServer();
@@ -222,33 +224,31 @@ void StrataClientServerIntegrationTest::testMultipleClients()
                                }
                            });
 
-    client_1.registerHandler("register_client",
-                             [&client1ReceivedServerResponse](const Message &message) {
-                                 if (message.payload.contains("destination") &&
-                                     message.payload["destination"] == "client_1") {
-                                     client1ReceivedServerResponse = true;
-                                 } else {
-                                     QFAIL_("Server responded to the wrong client");
-                                 }
-                             });
+    client_1.registerHandler(
+        "register_client", [&client1ReceivedServerResponse](const QJsonObject &message) {
+            if (message.contains("destination") && message["destination"] == "client_1") {
+                client1ReceivedServerResponse = true;
+            } else {
+                QFAIL_("Server responded to the wrong client");
+            }
+        });
 
-    client_2.registerHandler("register_client",
-                             [&client2ReceivedServerResponse](const Message &message) {
-                                 if (message.payload.contains("destination") &&
-                                     message.payload["destination"] == "client_2") {
-                                     client2ReceivedServerResponse = true;
-                                 } else {
-                                     QFAIL_("Server responded to the wrong client");
-                                 }
-                             });
+    client_2.registerHandler(
+        "register_client", [&client2ReceivedServerResponse](const QJsonObject &message) {
+            if (message.contains("destination") && message["destination"] == "client_2") {
+                client2ReceivedServerResponse = true;
+            } else {
+                QFAIL_("Server responded to the wrong client");
+            }
+        });
 
     client_1.registerHandler("broadcasted_message",
-                             [&client1ReceivedServerBroadcast](const Message &) {
+                             [&client1ReceivedServerBroadcast](const QJsonObject &) {
                                  client1ReceivedServerBroadcast = true;
                              });
 
     client_2.registerHandler("broadcasted_message",
-                             [&client2ReceivedServerBroadcast](const Message &) {
+                             [&client2ReceivedServerBroadcast](const QJsonObject &) {
                                  client2ReceivedServerBroadcast = true;
                              });
 

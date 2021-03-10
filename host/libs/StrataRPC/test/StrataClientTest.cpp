@@ -18,12 +18,9 @@ void StrataClientTest::testRegisterAndUnregisterHandlers()
     StrataClient client(address_);
 
     // register new handler
-    QVERIFY_(
-        client.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; }));
-    QVERIFY_(
-        client.registerHandler("handler_2", [](const strata::strataRPC::Message &) { return; }));
-    QVERIFY_(false == client.registerHandler("handler_2",
-                                             [](const strata::strataRPC::Message &) { return; }));
+    QVERIFY_(client.registerHandler("handler_1", [](const QJsonObject &) { return; }));
+    QVERIFY_(client.registerHandler("handler_2", [](const QJsonObject &) { return; }));
+    QVERIFY_(false == client.registerHandler("handler_2", [](const QJsonObject &) { return; }));
 
     QVERIFY_(client.unregisterHandler("handler_1"));
     QVERIFY_(client.unregisterHandler("handler_2"));
@@ -174,8 +171,6 @@ void StrataClientTest::testNonDefaultDealerId()
 
 void StrataClientTest::testWithNoCallbacks()
 {
-    using Message = strata::strataRPC::Message;
-
     int zmqWaitTime = 50;
     bool noCallbackHandler = false;
 
@@ -219,7 +214,7 @@ void StrataClientTest::testWithNoCallbacks()
     StrataClient client(address_);
 
     client.registerHandler("test_no_callbacks",
-                           [&noCallbackHandler](const Message &) { noCallbackHandler = true; });
+                           [&noCallbackHandler](const QJsonObject &) { noCallbackHandler = true; });
 
     client.connectServer();
 
@@ -241,7 +236,6 @@ void StrataClientTest::testWithNoCallbacks()
 
 void StrataClientTest::testWithAllCallbacks()
 {
-    using Message = strata::strataRPC::Message;
     using DeferredRequest = strata::strataRPC::DeferredRequest;
 
     int zmqWaitTime = 50;
@@ -288,8 +282,9 @@ void StrataClientTest::testWithAllCallbacks()
 
     StrataClient client(address_);
 
-    client.registerHandler("test_all_callbacks",
-                           [&allCallbacksHandler](const Message &) { allCallbacksHandler = true; });
+    client.registerHandler("test_all_callbacks", [&allCallbacksHandler](const QJsonObject &) {
+        allCallbacksHandler = true;
+    });
 
     client.connectServer();
 
@@ -369,7 +364,6 @@ void StrataClientTest::testWithAllCallbacks()
 
 void StrataClientTest::testWithOnlyResultCallbacks()
 {
-    using Message = strata::strataRPC::Message;
     using DeferredRequest = strata::strataRPC::DeferredRequest;
 
     int zmqWaitTime = 50;
@@ -415,8 +409,9 @@ void StrataClientTest::testWithOnlyResultCallbacks()
 
     StrataClient client(address_);
 
-    client.registerHandler("test_res_callback",
-                           [&resCallbackHandler](const Message &) { resCallbackHandler = true; });
+    client.registerHandler("test_res_callback", [&resCallbackHandler](const QJsonObject &) {
+        resCallbackHandler = true;
+    });
 
     client.connectServer();
 
@@ -477,7 +472,6 @@ void StrataClientTest::testWithOnlyResultCallbacks()
 
 void StrataClientTest::testWithOnlyErrorCallbacks()
 {
-    using Message = strata::strataRPC::Message;
     using DeferredRequest = strata::strataRPC::DeferredRequest;
 
     int zmqWaitTime = 50;
@@ -523,8 +517,9 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
 
     StrataClient client(address_);
 
-    client.registerHandler("test_err_callback",
-                           [&errorCallbackHander](const Message &) { errorCallbackHander = true; });
+    client.registerHandler("test_err_callback", [&errorCallbackHander](const QJsonObject &) {
+        errorCallbackHander = true;
+    });
 
     client.connectServer();
 
@@ -657,8 +652,8 @@ void StrataClientTest::testErrorOccourredSignal()
     StrataClient::ClientError errorType;
     QSignalSpy errorOccurred(&client, &StrataClient::errorOccurred);
 
-    client.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
-    client.registerHandler("handler_1", [](const strata::strataRPC::Message &) { return; });
+    client.registerHandler("handler_1", [](const QJsonObject &) { return; });
+    client.registerHandler("handler_1", [](const QJsonObject &) { return; });
     QCOMPARE_(errorOccurred.count(), 1);
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
     QCOMPARE_(errorType, StrataClient::ClientError::FailedToRegisterHandler);
