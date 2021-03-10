@@ -103,7 +103,7 @@ def writeResults(totalFails, totalTests, path):
     with open(path, "r") as resultsFile:
         results = resultsFile.read()
         if results != "":
-            prevTotal, prevSuccesses = int(results.split(",")[0]), int(results.split(",")[1])
+            prevSuccesses, prevTotal = int(results.split(",")[0]), int(results.split(",")[1])
 
     newTotal = totalTests + prevTotal
     newSuccesses = (totalTests - totalFails) + prevSuccesses
