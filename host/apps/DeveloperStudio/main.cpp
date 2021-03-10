@@ -143,7 +143,8 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SGQrcTreeNode, 1>("tech.strata.SGQrcTreeModel",1,0,"SGTreeNode", "You can't instantiate SGTreeNode in QML");
     qmlRegisterType<SGQrcTreeModel>("tech.strata.SGQrcTreeModel", 1, 0, "SGQrcTreeModel");
     qmlRegisterUncreatableType<strata::sds::config::UrlConfig>("tech.strata.UrlConfig",1,0,"UrlConfig", "You can't instantiate UrlConfig in QML");
-    qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");    qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
+    qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
+    qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss())};
 
