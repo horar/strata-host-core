@@ -42,6 +42,7 @@ StackLayout {
                                     platformMetaDataInitialized
 
     property bool documentsHistoryDisplayed: false
+    property string notificationUUID: ""
 
     onFullyInitializedChanged: {
         initialize()
@@ -63,6 +64,9 @@ StackLayout {
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
+        if(notificationUUID !== ""){
+            Notifications.destroyNotification(notificationUUID)
+        }
     }
 
     function initialize () {
@@ -133,7 +137,7 @@ StackLayout {
             }
 
             if (platformStack.currentIndex == 0) { // check if control view is displayed
-                Notifications.createNotification(
+              notificationUUID = Notifications.createNotification(
                     "Document updates for this platform",
                     Notifications.Info,
                     "current",

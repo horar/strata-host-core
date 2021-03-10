@@ -140,6 +140,7 @@ Item {
         const singleton = additionalParameters.hasOwnProperty("singleton") ? additionalParameters["singleton"] : false;
         const iconSource = additionalParameters.hasOwnProperty("iconSource") ? additionalParameters["iconSource"] : (level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg");
         let timeout = additionalParameters.hasOwnProperty("timeout") ? additionalParameters["timeout"] : -1;
+        var uuid = create_UUID()
 
         if (timeout < 0) {
             if (level < 2) {
@@ -164,7 +165,8 @@ Item {
             "iconSource": iconSource,
             "saveToDisk": saveToDisk,
             "singleton": singleton,
-            "actions": actions
+            "actions": actions,
+            "uuid": uuid,
         };
 
         let foundEntry = false;
@@ -183,11 +185,11 @@ Item {
 
         if (singleton && foundEntry) {
             // If the entry being inserted has the singleton property set to true, and the title already exists, don't insert
-            return false;
+            return "";
         }
 
         model_.append(notification);
-        return true;
+        return uuid;
     }
 
     function saveNotifications() {
@@ -231,10 +233,31 @@ Item {
                 "iconSource": savedNotifications[i].iconSource,
                 "saveToDisk": true,
                 "singleton": false,
-                "actions": []
+                "actions": [],
+                "uuid": ""
             };
-
             model_.append(notification)
         }
+    }
+
+    function destroyNotification(uuid){
+        if(uuid !== null && uuid !== ""){
+            for(var i = 0;i < model_.count; i++){
+                if(model_.get(i).uuid === uuid){
+                    model_.remove(i)
+                    break
+                }
+            }
+        }
+    }
+
+    function create_UUID(){
+        var dt = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c =='x' ? r :(r&0x3|0x8)).toString(16);
+        });
+        return uuid;
     }
 }

@@ -162,6 +162,12 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
+    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    if (supportedPLugins.empty() == false) {
+        qCDebug(logCategoryStrataDevStudio) << "Supportrd plugins:" << supportedPLugins.join(", ");
+        selector.setExtraSelectors(supportedPLugins);
+    }
+
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty ("logger", &strata::loggers::QtLogger::instance());

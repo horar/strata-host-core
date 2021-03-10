@@ -4,6 +4,8 @@
 #include "logging/LoggingQtCategories.h"
 #include "SGVersionUtils.h"
 
+#include "Version.h"
+
 #include <QDirIterator>
 #include <QResource>
 #include <QFileInfo>
@@ -25,6 +27,7 @@ const QStringList ResourceLoader::coreResources_{
 ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
 {
     loadCoreResources();
+    loadPluginResources();
 }
 
 ResourceLoader::~ResourceLoader()
@@ -153,8 +156,29 @@ void ResourceLoader::loadCoreResources()
 }
 
 QUrl ResourceLoader::getStaticViewsPhysicalPathUrl() {
-
     return QUrl::fromLocalFile(ResourcePath::viewsPhysicalPath());
+}
+
+void ResourceLoader::loadPluginResources()
+{
+    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    if (supportedPLugins.empty()) {
+        qCDebug(logCategoryStrataDevStudio) << "No supported plugins";
+        return;
+    }
+
+    for (const auto& pluginName : qAsConst(supportedPLugins)) {
+        const QString resourceFile(
+            QStringLiteral("%1/plugins/sds-%2.rcc").arg(ResourcePath::coreResourcePath(), pluginName));
+
+        if (QFile::exists(resourceFile) == false) {
+            qCDebug(logCategoryStrataDevStudio(), "Skipping '%s' plugin resource file...",
+                    qUtf8Printable(pluginName));
+            continue;
+        }
+        qCDebug(logCategoryStrataDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
+                QResource::registerResource(resourceFile));
+    }
 }
 
 QString ResourceLoader::returnQrcPath(const QString &filePath){

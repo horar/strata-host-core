@@ -1,12 +1,13 @@
 #pragma once
 
 #include <chrono>
-
 #include <Device/Operations/BaseDeviceOperation.h>
 
 namespace strata::device::operation {
 
 class Identify : public BaseDeviceOperation {
+    Q_OBJECT
+    Q_DISABLE_COPY(Identify)
 
 public:
     enum class BoardMode {
@@ -14,6 +15,7 @@ public:
         Application,
         Bootloader
     };
+    Q_ENUM(BoardMode)
 
     /*!
      * Identify operation constructor
