@@ -4,20 +4,72 @@
     detailed in the properties
 
     If we need to add more QtQuick Objects the format will be
-    {
-        "body": "{\n //id:  \n}",
-        "description": "",
-        "prefix": "",
-        "scope": "source.qml",
-        "properties": [""]
-    }
+    "<QtType>": {
+        "properties":{
+            "property":{
+                "meta_propeties":[]
+            },
+        },
+        "functions": [],
+        "signals": [],
+        "inherits": "",
+        "source" : ""
+    },
 */
 
-const QtQuickTypeJson = {
+const QtTypeJson = {
+    "Abstract3DSeries": {
+        "properties": {
+            "property": {
+                "meta_propeties": []
+            },
+        },
+        "functions": [],
+        "signals": [],
+        "inherits": "",
+        "source": ""
+    },
+    "AbstractActionInput": {
+        "properties": {
+            "property": {
+                "meta_propeties": []
+            },
+        },
+        "functions": [],
+        "signals": [],
+        "inherits": "",
+        "source": ""
+    },
+    "AbstractAnimation": {
+        "properties": {
+            "property": {
+                "meta_propeties": []
+            },
+        },
+        "functions": [],
+        "signals": [],
+        "inherits": "",
+        "source": ""
+    },
+    "AbstractAxis": {
+        "properties": {
+            "property": {
+                "meta_propeties": []
+            },
+        },
+        "functions": [],
+        "signals": [],
+        "inherits": "",
+        "source": ""
+    },
     "Item": {
         "properties": {
-            "activeFocus": {},
-            "activeFocusOnTab": {},
+            "activeFocus": {
+                "meta_properties": []
+            },
+            "activeFocusOnTab": {
+                "meta_properties": []
+            },
             "anchors": {
                 "meta_properties": [
                     "alignWhenCentered: ",
@@ -39,41 +91,121 @@ const QtQuickTypeJson = {
                     "verticalCenter: ",
                     "verticalCenterOffset: ",
                 ]
-                
+
             },
             "antialiasing": {
-                "meta_properties":[]
+                "meta_properties": []
             },
-            "baselineOffset": {},
-            "children": {},
-            "childrenRect": {},
-            "clip": {},
-            "containmentMask": {},
-            "data": {},
-            "enabled": {},
-            "focus": {},
-            "height": {},
-            "id": {},
-            "implicitHeight": {},
-            "implicitWidth": {},
-            "opacity": {},
-            "parent": {},
-            "resources": {},
-            "rotation": {},
-            "scale": {},
-            "smooth": {},
-            "state": {},
-            "states": {},
-            "transform": {},
-            "transformOrigin": {},
-            "transitions": {},
-            "visible": {},
-            "visibleChildren": {},
-            "width": {},
-            "x": {},
-            "y": {},
-            "z": {},
-            "objectName": {},
+            "baselineOffset": {
+                "meta_properties": []
+            },
+            "children": {
+                "meta_properties": []
+            },
+            "childrenRect": {
+                "meta_properties": [
+                    "x:",
+                    "y:",
+                    "width:",
+                    "height"
+                ]
+            },
+            "clip": {
+                "meta_properties": []
+            },
+            "containmentMask": {
+                "meta_properties": []
+            },
+            "data": {
+                "meta_properties": []
+            },
+            "enabled": {
+                "meta_properties": []
+            },
+            "focus": {
+                "meta_properties": []
+            },
+            "height": {
+                "meta_properties": []
+            },
+            "id": {
+                "meta_properties": []
+            },
+            "implicitHeight": {
+                "meta_properties": []
+            },
+            "implicitWidth": {
+                "meta_properties": []
+            },
+            "layer": {
+                "meta_properties": [
+                    "effect: ",
+                    "enabled: ",
+                    "format: ",
+                    "mipmap: ",
+                    "sampleName: ",
+                    "samples: ",
+                    "smooth: ",
+                    "sourceRect: ",
+                    "textureMirroring: ",
+                    "textureSize: ",
+                    "wrapMode: ",
+                ]
+            },
+            "opacity": {
+                "meta_properties": []
+            },
+            "parent": {
+                "meta_properties": []
+            },
+            "resources": {
+                "meta_properties": []
+            },
+            "rotation": {
+                "meta_properties": []
+            },
+            "scale": {
+                "meta_properties": []
+            },
+            "smooth": {
+                "meta_properties": []
+            },
+            "state": {
+                "meta_properties": []
+            },
+            "states": {
+                "meta_properties": []
+            },
+            "transform": {
+                "meta_properties": []
+            },
+            "transformOrigin": {
+                "meta_properties": []
+            },
+            "transitions": {
+                "meta_properties": []
+            },
+            "visible": {
+                "meta_properties": []
+            },
+            "visibleChildren": {
+                "meta_properties": []
+            },
+            "width": {
+                "meta_properties": []
+            },
+            "x": {
+                "meta_properties": []
+            },
+            "y": {
+                "meta_properties": []
+            },
+            "z": {
+                "meta_properties": []
+            },
+            "objectName": {
+                "meta_properties": []
+            },
         },
         "functions": [
             "childAt(real x, real y)",
@@ -92,2450 +224,1184 @@ const QtQuickTypeJson = {
             "object mapToItem(Item item, real x, real y)",
             "object mapToItem(Item item, point p)",
             "nextItemInFocusChain(bool forward)",
-        ]
+        ],
+        "signals": [],
+        "inherits": null,
+        "source": "",
+    },
+    "TextEdit": {
+        "properties": {
+            "activeFocusOnPress": {
+                "meta_properties": []
+            },
+            "baseUrl": {
+                "meta_properties": []
+            },
+            "bottomPadding": {
+                "meta_properties": []
+            },
+            "canPaste": {
+                "meta_properties": []
+            },
+            "canRedo": {
+                "meta_properties": []
+            },
+            "canUndo": {
+                "meta_properties": []
+            },
+            "color": {
+                "meta_properties": []
+            },
+            "contentHeight": {
+                "meta_properties": []
+            },
+            "contentWidth": {
+                "meta_properties": []
+            },
+            "cursorDelegate": {
+                "meta_properties": []
+            },
+            "cursorPosition": {
+                "meta_properties": []
+            },
+            "cursorRectangle": {
+                "meta_properties": []
+            },
+            "cursorVisible": {
+                "meta_properties": []
+            },
+            "effectiveHorizontalAlignment": {
+                "meta_properties": []
+            },
+            "font": {
+                "meta_properties": [
+                    "bold: ",
+                    "capitalization: ",
+                    "family: ",
+                    "hintingPreference: ",
+                    "italic: ",
+                    "kerning: ",
+                    "letterSpacing: ",
+                    "pixelSize: ",
+                    "pointSize: ",
+                    "preferShaping: ",
+                    "strikeout: ",
+                    "styleName: ",
+                    "underline: ",
+                    "weight: ",
+                    "wordSpacing: ",
+                ]
+            },
+            "horizontalAlignment": {
+                "meta_properties": []
+            },
+            "hoveredLink": {
+                "meta_properties": []
+            },
+            "inputMethodComposing": {
+                "meta_properties": []
+            },
+            "inputMethodHints": {
+                "meta_properties": []
+            },
+            "leftPadding": {
+                "meta_properties": []
+            },
+            "length": {
+                "meta_properties": []
+            },
+            "lineCount": {
+                "meta_properties": []
+            },
+            "mouseSelectionMode": {
+                "meta_properties": []
+            },
+            "overwriteMode": {
+                "meta_properties": []
+            },
+            "padding": {
+                "meta_properties": []
+            },
+            "persistentSelection": {
+                "meta_properties": []
+            },
+            "preeditText": {
+                "meta_properties": []
+            },
+            "readOnly": {
+                "meta_properties": []
+            },
+            "renderType": {
+                "meta_properties": []
+            },
+            "rightPadding": {
+                "meta_properties": []
+            },
+            "selectByKeyboard": {
+                "meta_properties": []
+            },
+            "selectByMouse": {
+                "meta_properties": []
+            },
+            "selectedText": {
+                "meta_properties": []
+            },
+            "selectedTextColor": {
+                "meta_properties": []
+            },
+            "selectionColor": {
+                "meta_properties": []
+            },
+            "selectionEnd": {
+                "meta_properties": []
+            },
+            "selectionStart": {
+                "meta_properties": []
+            },
+            "tabStopDistance": {
+                "meta_properties": []
+            },
+            "text": {
+                "meta_properties": []
+            },
+            "textDocument": {
+                "meta_properties": []
+            },
+            "textFormat": {
+                "meta_properties": []
+            },
+            "textMargin": {
+                "meta_properties": []
+            },
+            "topPadding": {
+                "meta_properties": []
+            },
+            "verticalAlignment": {
+                "meta_properties": []
+            },
+            "wrapMode": {
+                "meta_properties": []
+            }
+        },
+        "functions": [
+            "append(string text)",
+            "clear()",
+            "copy()",
+            "cut()",
+            "deselect()",
+            "getFormattedText(int start, int end)",
+            "getText(int start, int end)",
+            "insert(int position, string text)",
+            "isRightToLeft(int start, int end)",
+            "linkAt(real x, real y)",
+            "moveCursorSelection(int position, SelectionMode mode = TextEdit.SelectCharacters)",
+            "paste()",
+            "positionAt(int x, int y)",
+            "positionToRectangle(position)",
+            "redo()",
+            "remove(int start, int end)",
+            "select(int start, int end)",
+            "selectAll()",
+            "selectWord()",
+            "undo()",
+        ],
+        "signals": [
+            "editingFinished()",
+            "linkActivated(string link)",
+            "linkHovered(string link)",
+        ],
+        "inherits": "Item",
+    },
+    "custom_properties": {
+        "JSON": [
+            "parse()",
+            "stringify()",
+        ],
+        "console": [
+            "log()",
+            "info()",
+            "warn()",
+            "error()",
+            "debug()",
+        ],
+        "Object": [
+            "freeze()",
+            "hasOwnProperty()",
+            "entries()",
+            "values()",
+            "keys()",
+        ],
+        "property": [
+            "alias",
+            "real",
+            "string",
+            "url",
+            "double",
+            "int",
+            "bool",
+            "color",
+            "var",
+            "coordinate",
+            "date",
+            "default",
+            "enumeration",
+            "size",
+            "point",
+            "list",
+            "vector2d",
+            "vector3d",
+            "rect",
+            "palette"
+        ],
+        "signal": []
     }
 }
 
-const qtQuick = [
-    {
-        "body": "Axis",
-        "description": "Axis",
-        "prefix": "Axis",
-        "scope": "source.qml",
-        "properties": { "buttons": {}, "inputs": {}, "scale": {}, "value": {}, "velocity": {} },
-        "type": ""
-    },
-    {
-        "body": "Binding",
-        "description": "Binding",
-        "prefix": "Binding",
-        "scope": "source.qml",
-        "properties": ["delayed: ", "property: ", "target: ", "value: ", "when: "],
-        "type": ""
-    },
-    {
-        "body": "BusyIndicator",
-        "description": "BusyIndicator",
-        "prefix": "BusyIndicator",
-        "scope": "source.qml",
-        "properties": [
-            "running: ",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ],
-        "type": ""
-    },
-    {
-        "body": "BusyIndicatorStyle",
-        "description": "BusyIndicatorStyle",
-        "prefix": "BusyIndicatorStyle",
-        "scope": "source.qml",
-        "properties": ["control: ", "indicator: "],
-        "type": ""
-    },
-    {
-        "body": "Button",
-        "description": "Button",
-        "prefix": "Button",
-        "scope": "source.qml",
-        "properties": [
-            "flat: ",
-            "highlighted: ",
-            "checkable: ",
-            "checked: ",
-            "display: ",
-            "down: ",
-            "icon.color: ",
-            "icon.height: ",
-            "icon.name: ",
-            "icon.source: ",
-            "icon.width: ",
-            "indicator: ",
-            "pressX: ",
-            "pressY: ",
-            "pressed: ",
-            "text: ",
-            "canceled()",
-            "clicked()",
-            "doubleClicked()",
-            "pressAndHold()",
-            "pressed()",
-            "released()",
-            "toggled()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ],
-        "type": ""
-    },
-    {
-        "body": "ButtonAxisInput",
-        "description": "ButtonAxisInput",
-        "prefix": "ButtonAxisInput",
-        "scope": "source.qml",
-        "properties": ["acceleration: ", "buttons: ", "deceleration: "], "type": ""
-    },
-    {
-        "body": "ButtonGroup",
-        "description": "ButtonGroup",
-        "prefix": "ButtonGroup",
-        "scope": "source.qml",
-        "properties": ["buttons: ", "checkState: ", "checkedButtons: ", "exclusive: ", "objectName: "], "type": ""
-    },
-    {
-        "body": "ButtonStyle",
-        "description": "ButtonStyle",
-        "prefix": "ButtonStyle",
-        "scope": "source.qml",
-        "properties": ["background: ", "control: ", "label: "], "type": ""
-    },
-    {
-        "body": "Canvas",
-        "description": "Canvas",
-        "prefix": "Canvas",
-        "scope": "source.qml",
-        "properties": [
-            "available: ",
-            "canvasSize: ",
-            "context: ",
-            "contextType: ",
-            "renderStrategy: ",
-            "renderTarget: ",
-        ], "type": "Item"
-    },
-    {
-        "body": "CheckBox",
-        "description": "CheckBox",
-        "prefix": "CheckBox",
-        "scope": "source.qml",
-        "properties": [
-            "checkState: ",
-            "nextCheckState: ",
-            "tristate: ",
-            "action: ",
-            "autoExclusive: ",
-            "autoRepeat: ",
-            "autoRepeatDelay: ",
-            "autoRepeatInterval: ",
-            "checkable: ",
-            "checked: ",
-            "display: ",
-            "down: ",
-            "icon.color: ",
-            "icon.height: ",
-            "icon.name: ",
-            "icon.source: ",
-            "icon.width: ",
-            "implicitIndicatorHeight: ",
-            "implicitIndicatorWidth: ",
-            "indicator: ",
-            "pressX: ",
-            "pressY: ",
-            "pressed: ",
-            "text: ",
-            "canceled()",
-            "clicked()",
-            "doubleClicked()",
-            "pressAndHold()",
-            "pressed()",
-            "released()",
-            "toggled()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "CheckBoxStyle",
-        "description": "CheckBoxStyle",
-        "prefix": "CheckBoxStyle",
-        "scope": "source.qml",
-        "properties": ["background: ", "control: ", "indicator: ", "label: ", "spacing: "], "type": ""
-    },
-    {
-        "body": "CheckDelegate",
-        "description": "CheckDelegate",
-        "prefix": "CheckDelegate",
-        "scope": "source.qml",
-        "properties": [
-            "checkState: ",
-            "nextCheckState: ",
-            "tristate: ",
-            "action: ",
-            "autoExclusive: ",
-            "autoRepeat: ",
-            "autoRepeatDelay: ",
-            "autoRepeatInterval: ",
-            "checkable: ",
-            "checked: ",
-            "display: ",
-            "down: ",
-            "icon.color: ",
-            "icon.height: ",
-            "icon.name: ",
-            "icon.source: ",
-            "icon.width: ",
-            "implicitIndicatorHeight: ",
-            "implicitIndicatorWidth: ",
-            "indicator: ",
-            "pressX: ",
-            "pressY: ",
-            "pressed: ",
-            "text: ",
-            "canceled()",
-            "clicked()",
-            "doubleClicked()",
-            "pressAndHold()",
-            "pressed()",
-            "released()",
-            "toggled()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "Column",
-        "description": "Column",
-        "prefix": "Column",
-        "scope": "source.qml",
-        "properties": [
-            "add: ",
-            "bottomPadding: ",
-            "leftPadding: ",
-            "move: ",
-            "padding: ",
-            "populate: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topPadding: ",
-            "forceLayout()",
-            "positioningComplete()",
-            "active: ",
-        ], "type": "Item"
-    },
-    {
-        "body": "ColumnLayout",
-        "description": "ColumnLayout",
-        "prefix": "ColumnLayout",
-        "scope": "source.qml",
-        "properties": [
-            "layoutDirection: ",
-            "spacing: ",
-        ], "type": "Item"
-    },
-    {
-        "body": "ComboBox",
-        "description": "ComboBox",
-        "prefix": "ComboBox",
-        "scope": "source.qml",
-        "properties": [
-            "acceptableInput: ",
-            "count: ",
-            "currentIndex: ",
-            "currentText: ",
-            "displayText: ",
-            "down: ",
-            "editText: ",
-            "editable: ",
-            "flat: ",
-            "highlightedIndex: ",
-            "indicator: ",
-            "inputMethodComposing: ",
-            "inputMethodHints: ",
-            "model: ",
-            "popup: ",
-            "pressed: ",
-            "textRole: ",
-            "validator: ",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "Component",
-        "description": "Component",
-        "prefix": "Component",
-        "scope": "source.qml",
-        "properties": ["progress: ", "status: ", "url: ", "onCompleted{}", "onDestruction{}"], "type": ""
-    },
-    {
-        "body": "Connections",
-        "description": "Connections",
-        "prefix": "Connections",
-        "scope": "source.qml",
-        "properties": ["enabled: ", "ignoreUnknownSignals: ", "target: "], "type": ""
-    },
-    {
-        "body": "Container",
-        "description": "Container",
-        "prefix": "Container",
-        "scope": "source.qml",
-        "properties": [
-            "contentChildren: ",
-            "contentData: ",
-            "contentHeight: ",
-            "contentModel: ",
-            "contentWidth: ",
-            "count: ",
-            "currentIndex: ",
-            "currentItem: ",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackGroundWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "Date",
-        "description": "Date",
-        "prefix": "Date",
-        "scope": "source.qml",
-        "properties": [], "type": ""
-    },
-    {
-        "body": "DropShadow",
-        "description": "DropShadow",
-        "prefix": "DropShadow",
-        "scope": "source.qml",
-        "properties": [
-            "cached: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackGroundWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "Grid",
-        "description": "Grid",
-        "prefix": "Grid",
-        "scope": "source.qml",
-        "properties": [
-            "columns: ",
-            "effectiveHorizontalItemAlignment: ",
-            "effectiveLayoutDirection: ",
-            "flow: ",
-            "horizontalItemAlignment: ",
-            "layoutDirection: ",
-            "leftPadding: ",
-            "move: ",
-            "padding: ",
-            "populate: ",
-            "rightPadding: ",
-            "rowSpacing: ",
-            "rows: ",
-            "spacing: ",
-            "topPadding: ",
-            "verticalItemAlignment: ",
-            "forceLayout()",
-            "positioningComplete()",
-            "active: ",
-        ], "type": "Item"
-    },
-    {
-        "body": "GridLayout",
-        "description": "GridLayout",
-        "prefix": "GridLayout",
-        "scope": "source.qml",
-        "properties": [
-            "columnSpacing: ",
-            "columns: ",
-            "flow: ",
-            "layoutDirection: ",
-            "rowSpacing: ",
-            "rows: ",
-        ], "type": "Item"
-    },
-    {
-        "body": "GridView",
-        "description": "GridView",
-        "prefix": "GridView",
-        "scope": "source.qml",
-        "properties": [
-            "add: ",
-            "addDisplaced: ",
-            "cacheBuffer: ",
-            "cellHeight: ",
-            "cellWidth: ",
-            "count: ",
-            "currentIndex: ",
-            "currentItem: ",
-            "onDelayremove: ",
-            "delegate: ",
-        ], "type": ""
-    },
-    {
-        "body": "Icon",
-        "description": "Icon",
-        "prefix": "Icon",
-        "scope": "source.qml",
-        "properties": ["icon: ", "parameters: ", "plugin: "], "type": ""
-    },
-    {
-        "body": "Image",
-        "description": "Image",
-        "prefix": "Image",
-        "scope": "source.qml",
-        "properties": [
-            "asynchronous: ",
-            "autoTransform: ",
-            "cache: ",
-            "fillMode: ",
-            "horizontalAlignment: ",
-            "mipmap: ",
-            "mirror: ",
-            "paintedHeight: ",
-            "paintedWidth: ",
-            "progress: ",
-            "smooth: ",
-            "source: ",
-            "sourceSize: ",
-            "status: ",
-            "verticalAlignment: ",
-        ], "type": "Item"
-    },
-    {
-        "body": "Item",
-        "description": "Item",
-        "prefix": "Item",
-        "scope": "source.qml",
-        "properties": [], "type": "Item",
-    },
-    {
-        "body": "Label",
-        "description": "Label",
-        "prefix": "Label",
-        "scope": "source.qml",
-        "properties": [
-            "background: ",
-            "bottomInset: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "leftInset: ",
-            "palette: ",
-            "rightInset: ",
-            "topInset: ",
-            "advance: ",
-            "baseUrl: ",
-            "bottomPadding: ",
-            "clip: ",
-            "color: ",
-            "contentHeight: ",
-            "contentWidth: ",
-            "effectiveHorizontalAlignment: ",
-            "elide: ",
-            "fontInfo.bold: ",
-            "fontInfo.family: ",
-            "fontInfo.italic: ",
-            "fontInfo.pixelSize: ",
-            "fontInfo.pointSize: ",
-            "fontInfo.styleName: ",
-            "fontInfo.weight: ",
-            "fontSizeMode: ",
-            "horizontalAlignment: ",
-            "hoveredLink: ",
-            "leftPadding: ",
-            "lineCount: ",
-            "lineHeight: ",
-            "lineHeightMode: ",
-            "linkColor: ",
-            "maximumLineCount: ",
-            "minimumPixelSize: ",
-            "minimumPointSize: ",
-            "padding: ",
-            "renderType: ",
-            "rightPadding: ",
-            "style: ",
-            "styleColor: ",
-            "text: ",
-            "textFormat: ",
-            "topPadding: ",
-            "truncated: ",
-            "verticalAlignment: ",
-            "wrapMode: ",
-            "forceLayout()",
-            "lineLaidOut()",
-            "linkActivated()",
-            "linkAt()",
-            "linkHovered()"
-        ], "type": ""
-    },
-    {
-        "body": "Layout",
-        "description": "Layout",
-        "prefix": "Layout",
-        "scope": "source.qml",
-        "properties": ["preferredHeight: ", "preferredWidth: ", "minimumWidth: ", "maximumWidth: ", "minimumHeight", "maximumHeight: ", "alignment: ", "fillWidth: ", "fillHeight: "], "type": "",
-    },
-    {
-        "body": "ListElement",
-        "description": "ListElement",
-        "prefix": "ListElement",
-        "scope": "source.qml",
-        "properties": [], "type": ""
-    },
-    {
-        "body": "ListModel",
-        "description": "ListModel",
-        "prefix": "ListModel",
-        "scope": "source.qml",
-        "properties": [
-            "count: ",
-            "dynamicRoles: ",
-            "append(jsobjectdict)",
-            "clear()",
-            "insert(intindex,jsobjectdict)",
-            "move(intfrom,intto,intn)",
-            "remove(intindex,intcount=1)",
-            "set(intindex,jsobjectdict)",
-            "setProperty(intindex,stringproperty,variantvalue)",
-            "sync()",
-        ], "type": ""
-    },
-    {
-        "body": "ListView",
-        "description": "ListView",
-        "prefix": "ListView",
-        "scope": "source.qml",
-        "properties": [
-            "add: ",
-            "addDisplaced: ",
-            "cacheBuffer: ",
-            "count: ",
-            "currentIndex: ",
-            "currentItem: ",
-            "currentSection: ",
-            "onDelayremove: ",
-            "delegate: ",
-            "displaced: ",
-            "displayMarginBeginning: ",
-            "displayMarginEnd: ",
-            "effectiveLayoutDirection: ",
-            "footer: ",
-            "footerItem: ",
-            "footerPositioning: ",
-            "header: ",
-            "headerItem: ",
-            "headerPositioning: ",
-            "highlight: ",
-            "highlightFollowsCurrentItem: ",
-            "highlightItem: ",
-            "highlightMoveDuration: ",
-            "highlightMoveVelocity: ",
-            "highlightRangeMode: ",
-            "highlightResizeDuration: ",
-            "highlightResizeVelocity: ",
-            "onIsCurrentItem: ",
-            "keyNavigationEnabled: ",
-            "keyNavigationWraps: ",
-            "layoutDirection: ",
-            "model: ",
-            "move: ",
-            "moveDisplaced: ",
-            "onNextSection: ",
-            "orientation: ",
-            "populate: ",
-            "preferredHighlightBegin: ",
-            "preferredHighlightEnd: ",
-            "onPrevioussection: ",
-            "remove: ",
-            "removeDisplaced: ",
-            "onSection: ",
-            "snapMode: ",
-            "spacing: ",
-            "verticalLayoutDirection: ",
-            "onView: ",
-            "onAdd: ",
-            "decrementCurrentIndex()",
-            "forceLayout()",
-            "incrementCurrentIndex()",
-            "positionViewAtBeginning()",
-            "positionViewAtEnd()",
-            "positionViewAtIndex(intindex,PositionModemode)",
-            "onRemove: ",
-            "atXBeginning: ",
-            "atXEnd: ",
-            "atYBeginning: ",
-            "atYEnd: ",
-            "bottomMargin: ",
-            "boundsBehavior: ",
-            "boundsMovement: ",
-            "contentHeight: ",
-            "contentItem: ",
-            "contentWidth: ",
-            "contentX: ",
-            "contentY: ",
-            "dragging: ",
-            "draggingHorizontally: ",
-            "draggingVertically: ",
-            "flickDeceleration: ",
-            "flickableDirection: ",
-            "flicking: ",
-            "flickingHorizontally: ",
-            "flickingVertically: ",
-            "horizontalOvershoot: ",
-            "horizontalVelocity: ",
-            "interactive: ",
-            "leftMargin: ",
-            "maximumFlickVelocity: ",
-            "moving: ",
-            "movingHorizontally: ",
-            "movingVertically: ",
-            "originX: ",
-            "originY: ",
-            "pixelAligned: ",
-            "pressDelay: ",
-            "rebound: ",
-            "rightMargin: ",
-            "synchronousDrag: ",
-            "topMargin: ",
-            "verticalOvershoot: ",
-            "verticalVelocity: ",
-            "visibleArea.heightRatio: ",
-            "visibleArea.widthRatio: ",
-            "visibleArea.xPosition: ",
-            "visibleArea.yPosition: ",
-            "cancelFlick()",
-            "flick(qrealxVelocity,qrealyVelocity)",
-            "flickEnded()",
-            "flickStarted()",
-            "movementEnded()",
-            "movementStarted()",
-            "resizeContent(realwidth,realheight,QPointFcenter)",
-            "returnToBounds()",
-        ], "type": ""
-    },
-    {
-        "body": "Loader {\n \n}",
-        "description": "Loader",
-        "prefix": "Loader",
-        "scope": "source.qml",
-        "properties": [
-            "active: ",
-            "asynchronous: ",
-            "item: ",
-            "progress: ",
-            "source: ",
-            "sourceComponent: ",
-            "status: ",
-            "loaded()",
-        ], "type": "Item"
-    },
-    {
-        "body": "Menu",
-        "description": "Menu",
-        "prefix": "Menu",
-        "scope": "source.qml",
-        "properties": [
-            "cascade: ",
-            "contentData: ",
-            "contentModel: ",
-            "count: ",
-            "currentIndex: ",
-            "delegate: ",
-            "overlap: ",
-            "title: ",
-        ], "type": ""
-    },
-    {
-        "body": "MenuBar",
-        "description": "MenuBar",
-        "prefix": "MenuBar",
-        "scope": "source.qml",
-        "properties": [
-            "contentHeight: ",
-            "contentWidth: ",
-            "delegate: ",
-            "menus: ",
-            "contentChildren: ",
-            "contentData: ",
-            "contentHeight: ",
-            "contentModel: ",
-            "contentWidth: ",
-            "count: ",
-            "currentIndex: ",
-            "currentItem: ",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "MenuBarItem",
-        "description": "MenuBarItem",
-        "prefix": "MenuBarItem",
-        "scope": "source.qml",
-        "properties": [
-            "highlighted: ",
-            "menu: ",
-            "menuBar: ",
-            "action: ",
-            "autoExclusive: ",
-            "autoRepeat: ",
-            "autoRepeatDelay: ",
-            "autoRepeatInterval: ",
-            "checkable: ",
-            "checked: ",
-            "display: ",
-            "down: ",
-            "icon.color: ",
-            "icon.height: ",
-            "icon.name: ",
-            "icon.source: ",
-            "icon.width: ",
-            "implicitIndicatorHeight: ",
-            "implicitIndicatorWidth: ",
-            "indicator: ",
-            "pressX: ",
-            "pressY: ",
-            "pressed: ",
-            "text: ",
-            "canceled()",
-            "clicked()",
-            "doubleClicked()",
-            "pressAndHold()",
-            "pressed()",
-            "released()",
-            "toggled()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "MenuItem",
-        "description": "MenuItem",
-        "prefix": "MenuItem",
-        "scope": "source.qml",
-        "properties": [
-            "arrow: ",
-            "highlighted: ",
-            "menu: ",
-            "subMenu: ",
-            "action: ",
-            "autoExclusive: ",
-            "autoRepeat: ",
-            "autoRepeatDelay: ",
-            "autoRepeatInterval: ",
-            "checkable: ",
-            "checked: ",
-            "display: ",
-            "down: ",
-            "icon.color: ",
-            "icon.height: ",
-            "icon.name: ",
-            "icon.source: ",
-            "icon.width: ",
-            "implicitIndicatorHeight: ",
-            "implicitIndicatorWidth: ",
-            "indicator: ",
-            "pressX: ",
-            "pressY: ",
-            "pressed: ",
-            "text: ",
-            "canceled()",
-            "clicked()",
-            "doubleClicked()",
-            "pressAndHold()",
-            "pressed()",
-            "released()",
-            "toggled()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled:",
-        ], "type": ""
-    },
-    {
-        "body": "MenuSeparator",
-        "description": "MenuSeparator",
-        "prefix": "MenuSeparator",
-        "scope": "source.qml",
-        "properties": [
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "MouseArea",
-        "description": "MouseArea",
-        "prefix": "MouseArea",
-        "scope": "source.qml",
-        "properties": [
-            "acceptedButtons: ",
-            "containsMouse: ",
-            "containsPress: ",
-            "cursorShape: ",
-            "drag.active: ",
-            "drag.axis: ",
-            "drag.filterChildren: ",
-            "drag.maximumX: ",
-            "drag.maximumY: ",
-            "drag.minimumX: ",
-            "drag.minimumY: ",
-            "drag.target: ",
-            "drag.threshold: ",
-            "enabled: ",
-            "hoverEnabled: ",
-            "mouseX: ",
-            "mouseY: ",
-            "pressAndHoldInterval: ",
-            "pressed: ",
-            "pressedButtons: ",
-            "preventStealing: ",
-            "propagateComposedEvents: ",
-            "scrollGestureEnabled: ",
-            "canceled()",
-            "clicked(MouseEventmouse)",
-            "doubleClicked(MouseEventmouse)",
-            "entered()",
-            "exited()",
-            "positionChanged(MouseEventmouse)",
-            "pressAndHold(MouseEventmouse)",
-            "pressed(MouseEventmouse)",
-            "released(MouseEventmouse)",
-            "wheel(WheelEventwheel)",
-        ], "type": "Item"
-    },
-    {
-        "body": "Number",
-        "description": "Number",
-        "prefix": "Number",
-        "scope": "source.qml",
-        "properties": [], "type": ""
-    },
-    {
-        "body": "Popup",
-        "description": "Popup",
-        "prefix": "Popup",
-        "scope": "source.qml",
-        "properties": [], "type": ""
-    },
-    {
-        "body": "Qt",
-        "description": "Qt",
-        "prefix": "Qt",
-        "scope": "source.qml",
-        "properties": [], "type": ""
-    },
-    {
-        "body": "QtObject",
-        "description": "QtObject",
-        "prefix": "QtObject",
-        "scope": "source.qml",
-        "properties": ["objectName: "], "type": ""
-    },
-    {
-        "body": "QtPositioning",
-        "description": "QtPositioning",
-        "prefix": "QtPositioning",
-        "scope": "source.qml",
-        "properties": [], "type": ""
-    },
-    {
-        "body": "RadioButton",
-        "description": "RadioButton",
-        "prefix": "RadioButton",
-        "scope": "source.qml",
-        "properties": [
-            "action: ",
-            "autoExclusive: ",
-            "autoRepeat: ",
-            "autoRepeatDelay: ",
-            "autoRepeatInterval: ",
-            "checkable: ",
-            "checked: ",
-            "display: ",
-            "down: ",
-            "icon.color: ",
-            "icon.height: ",
-            "icon.name: ",
-            "icon.source: ",
-            "icon.width: ",
-            "implicitIndicatorHeight: ",
-            "implicitIndicatorWidth: ",
-            "indicator: ",
-            "pressX: ",
-            "pressY: ",
-            "pressed: ",
-            "text: ",
-            "canceled()",
-            "clicked()",
-            "doubleClicked()",
-            "pressAndHold()",
-            "pressed()",
-            "released()",
-            "toggled()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "RangeSlider",
-        "description": "RangeSlider",
-        "prefix": "RangeSlider",
-        "scope": "source.qml",
-        "properties": [
-            "first.handle: ",
-            "first.hovered: ",
-            "first.implicitHandleHeight: ",
-            "first.implicitHandleWidth: ",
-            "first.position: ",
-            "first.pressed: ",
-            "first.value: ",
-            "first.visualPosition: ",
-            "from: ",
-            "horizontal: ",
-            "live: ",
-            "orientation: ",
-            "second.handle: ",
-            "second.hovered: ",
-            "second.implicitHandleHeight: ",
-            "second.implicitHandleWidth: ",
-            "second.position: ",
-            "second.pressed: ",
-            "second.value: ",
-            "second.visualPosition: ",
-            "snapMode: ",
-            "stepSize: ",
-            "to: ",
-            "touchDragThreshold: ",
-            "vertical: ",
-            "voidfirst.decrease()",
-            "voidfirst.increase()",
-            "voidsecond.decrease()",
-            "voidsecond.increase()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "Rectangle",
-        "description": "Rectangle",
-        "prefix": "Rectangle",
-        "scope": "source.qml",
-        "properties": ["color: "], "type": "Item"
-    },
-    {
-        "body": "RegExpValidator",
-        "description": "RegExpValidator",
-        "prefix": "RegExpValidator",
-        "scope": "source.qml",
-        "properties": ["regExp: "], "type": ""
-    },
-    {
-        "body": "Repeater",
-        "description": "Repeater",
-        "prefix": "Repeater",
-        "scope": "source.qml",
-        "properties": [
-            "count: ",
-            "delegate: ",
-            "model: ",
-            "itemAdded(intindex,Itemitem)",
-            "itemRemoved(intindex,Itemitem)",
-        ], "type": "Item"
-    },
-    {
-        "body": "Rotation",
-        "description": "Rotation",
-        "prefix": "Rotation",
-        "scope": "source.qml",
-        "properties": ["angle: ", "axis.x", "axis.y", "axis.z", "origin.x", "origin.y"], "type": ""
-    },
-    {
-        "body": "Row",
-        "description": "Row",
-        "prefix": "Row",
-        "scope": "source.qml",
-        "properties": [
-            "add: ",
-            "bottomPadding: ",
-            "leftPadding: ",
-            "move: ",
-            "padding: ",
-            "populate: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topPadding: ",
-            "forceLayout()",
-            "positioningComplete()",
-            "active: ",
-        ], "type": "Item"
-    },
-    {
-        "body": "RowLayout",
-        "description": "RowLayout",
-        "prefix": "RowLayout",
-        "scope": "source.qml",
-        "properties": [
-            "layoutDirection: ",
-            "spacing: ",
-        ], "type": "Item"
-    },
-    {
-        "body": "Scale",
-        "description": "Scale",
-        "prefix": "Scale",
-        "scope": "source.qml",
-        "properties": ["origin.x: ", "origin.y: ", "xScale: ", "yScale: "], "type": ""
-    },
-    {
-        "body": "ScrollBar",
-        "description": "ScrollBar",
-        "prefix": "ScrollBar",
-        "scope": "source.qml",
-        "properties": [
-            "active: ",
-            "onHorizontal: ",
-            "horizontal: ",
-            "interactive: ",
-            "minimumSize: ",
-            "orientation: ",
-            "policy: ",
-            "position: ",
-            "pressed: ",
-            "size: ",
-            "snapMode: ",
-            "stepSize: ",
-            "onVertical: ",
-            "vertical: ",
-            "visualPosition: ",
-            "visualSize: ",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: palette ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-            "layoutDirection: ",
-            "spacing: ",
-        ], "type": ""
-    },
-    {
-        "body": "ScrollIndicator",
-        "description": "ScrollIndicator",
-        "prefix": "ScrollIndicator",
-        "scope": "source.qml",
-        "properties": [
-            "active: ",
-            "onHorizontal: ",
-            "horizontal: ",
-            "minimumSize: ",
-            "orientation: ",
-            "position: ",
-            "size: ",
-            "onVertical: ",
-            "vertical: ",
-            "visualPosition: ",
-            "visualSize: ",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-            "layoutDirection: ",
-            "spacing: ",
-        ], "type": ""
-    },
-    {
-        "body": "ScrollView",
-        "description": "ScrollView",
-        "prefix": "ScrollView",
-        "scope": "source.qml",
-        "properties": [
-            "contentChildren: ",
-            "contentData: ",
-            "contentHeight: ",
-            "contentWidth: ",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-            "layoutDirection: ",
-            "spacing: ",
-        ], "type": ""
-    },
-    {
-        "body": "Settings",
-        "description": "Settings",
-        "prefix": "Settings",
-        "scope": "source.qml",
-        "properties": ["category: ", "fileName: ", "setValue(key,value)"], "type": ""
-    },
-    {
-        "body": "Slider",
-        "description": "Slider",
-        "prefix": "Slider",
-        "scope": "source.qml",
-        "properties": [
-            "from: ",
-            "handle: ",
-            "horizontal: ",
-            "implicitHandleHeight: ",
-            "implicitHandleWidth: ",
-            "live: ",
-            "orientation: ",
-            "position: ",
-            "pressed: ",
-            "snapMode: ",
-            "stepSize: ",
-            "to: ",
-            "touchDragThreshold: ",
-            "value: ",
-            "vertical: ",
-            "visualPosition: ",
-            "moved()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-            "layoutDirection: ",
-            "spacing: ",
-        ], "type": ""
-    },
-    {
-        "body": "SplitView",
-        "description": "SplitView",
-        "prefix": "SplitView",
-        "scope": "source.qml",
-        "properties": [
-            "handleDelegate: ",
-            "orientation: ",
-            "resizing: ",
-        ], "type": ""
-    },
-    {
-        "body": "Stack",
-        "description": "Stack",
-        "prefix": "Stack",
-        "scope": "source.qml",
-        "properties": [], "type": ""
-    },
-    {
-        "body": "StackLayout",
-        "description": "StackLayout",
-        "prefix": "StackLayout",
-        "scope": "source.qml",
-        "properties": [
-            "count: ",
-            "currentIndex: ",
-        ], "type": "Item"
-    },
-    {
-        "body": "StackView",
-        "description": "StackView",
-        "prefix": "StackView",
-        "scope": "source.qml",
-        "properties": [
-            "busy: ",
-            "currentItem: ",
-            "depth: ",
-            "empty: ",
-            "onIndex: ",
-            "initialItem: ",
-            "popEnter: ",
-            "popExit: ",
-            "pushEnter: ",
-            "pushExit: ",
-            "replaceEnter: ",
-            "replaceExit: ",
-            "onStatus: ",
-            "onView: ",
-            "onVisible: ",
-            "onActivated: ",
-            "onActivating: ",
-            "onDeactivated: ",
-            "onDeactivating: ",
-            "onRemoved: ",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "State",
-        "description": "State",
-        "prefix": "State",
-        "scope": "source.qml",
-        "properties": ["changes: ", "extend: ", "name: ", "when: "], "type": ""
-    },
-    {
-        "body": "String",
-        "description": "String",
-        "prefix": "String",
-        "scope": "source.qml",
-        "properties": [], "type": ""
-    },
-    {
-        "body": "Switch",
-        "description": "Switch",
-        "prefix": "Switch",
-        "scope": "source.qml",
-        "properties": [
-            "position: ",
-            "visualPosition: ",
-            "action: ",
-            "autoExclusive: ",
-            "autoRepeat: ",
-            "autoRepeatDelay: ",
-            "autoRepeatInterval: ",
-            "checkable: ",
-            "checked: ",
-            "display: ",
-            "down: ",
-            "icon.color: ",
-            "icon.height: ",
-            "icon.name: ",
-            "icon.source: ",
-            "icon.width: ",
-            "implicitIndicatorHeight: ",
-            "implicitIndicatorWidth: ",
-            "indicator: ",
-            "pressX: ",
-            "pressY: ",
-            "pressed: ",
-            "text: ",
-            "canceled()",
-            "clicked()",
-            "doubleClicked()",
-            "pressAndHold()",
-            "pressed()",
-            "released()",
-            "toggled()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: "
-        ], "type": ""
-    },
-    {
-        "body": "Tab",
-        "description": "Tab",
-        "prefix": "Tab",
-        "scope": "source.qml",
-        "properties": ["title: ", "active: ", "asynchronous: ", "item: ", "progress: ", "source: ", "sourceComponent: ", "status: ", "loaded()", "setSource()"], "type": ""
-    },
-    {
-        "body": "TabBar",
-        "description": "TabBar",
-        "prefix": "TabBar",
-        "scope": "source.qml",
-        "properties": [
-            "contentHeight: ",
-            "contentWidth: ",
-            "onIndex: ",
-            "onPosition: ",
-            "position: ",
-            "onTabBar: ",
-            "contentChildren: ",
-            "contentData: ",
-            "contentHeight: ",
-            "contentModel: ",
-            "contentWidth: ",
-            "count: ",
-            "currentIndex: ",
-            "currentItem: ",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: ",
-        ], "type": ""
-    },
-    {
-        "body": "TabButton",
-        "description": "TabButton",
-        "prefix": "TabButton",
-        "scope": "source.qml",
-        "properties": [
-            "action: ",
-            "autoExclusive: ",
-            "autoRepeat: ",
-            "autoRepeatDelay: ",
-            "autoRepeatInterval: ",
-            "checkable: ",
-            "checked: ",
-            "display: ",
-            "down: ",
-            "icon.color: ",
-            "icon.height: ",
-            "icon.name: ",
-            "icon.source: ",
-            "icon.width: ",
-            "implicitIndicatorHeight: ",
-            "implicitIndicatorWidth: ",
-            "indicator: ",
-            "pressX: ",
-            "pressY: ",
-            "pressed: ",
-            "text: ",
-            "canceled()",
-            "clicked()",
-            "doubleClicked()",
-            "pressAndHold()",
-            "pressed()",
-            "released()",
-            "toggled()",
-            "availableHeight: ",
-            "availableWidth: ",
-            "background: ",
-            "bottomInset: ",
-            "bottomPadding: ",
-            "contentItem: ",
-            "focusPolicy: ",
-            "focusReason: ",
-            "font: ",
-            "horizontalPadding: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "implicitContentHeight: ",
-            "implicitContentWidth: ",
-            "leftInset: ",
-            "leftPadding: ",
-            "locale: ",
-            "mirrored: ",
-            "padding: ",
-            "palette: ",
-            "rightInset: ",
-            "rightPadding: ",
-            "spacing: ",
-            "topInset: ",
-            "topPadding: ",
-            "verticalPadding: ",
-            "visualFocus: ",
-            "wheelEnabled: "
-        ], "type": ""
-    },
-    {
-        "body": "TabView",
-        "description": "TabView",
-        "prefix": "TabView",
-        "scope": "source.qml",
-        "properties": ["contentItem: ", "count: ", "currentIndex: ", "frameVisible: ", "tabPosition: ", "tabsVisible: "], "type": ""
-    },
-    {
-        "body": "TableView",
-        "description": "TableView",
-        "prefix": "TableView",
-        "scope": "source.qml",
-        "properties": [
-            "currentRow: ",
-            "itemDelegate: ",
-            "model: ",
-            "rowCount: ",
-            "section.criteria: ",
-            "section.delegate: ",
-            "section.labelPositioning: ",
-            "section.property: ",
-            "selection: ",
-            "activated(row)",
-            "clicked(row)",
-            "doubleClicked(row)",
-            "pressAndHold(row)",
-            "contentItem: ",
-            "flickableItem: ",
-            "frameVisible: ",
-            "highlightOnFocus: ",
-            "horizontalScrollBarPolicy: ",
-            "style: ",
-            "verticalScrollBarPolicy: ",
-            "viewport: "
-        ], "type": ""
-    },
-    {
-        "body": "Text",
-        "description": "Text",
-        "prefix": "Text",
-        "scope": "source.qml",
-        "properties": [
-            "advance: ",
-            "baseUrl: ",
-            "bottomPadding: ",
-            "clip: ",
-            "color: ",
-            "contentHeight: ",
-            "contentWidth: ",
-            "effectiveHorizontalAlignment: ",
-            "elide: ",
-            "fontInfo.bold: ",
-            "fontInfo.family: ",
-            "fontInfo.italic: ",
-            "fontInfo.pixelSize: ",
-            "fontInfo.pointSize: ",
-            "fontInfo.styleName: ",
-            "fontInfo.weight: ",
-            "fontSizeMode: ",
-            "horizontalAlignment: ",
-            "hoveredLink: ",
-            "leftPadding: ",
-            "lineCount: ",
-            "lineHeight: ",
-            "lineHeightMode: ",
-            "linkColor: ",
-            "maximumLineCount: ",
-            "minimumPixelSize: ",
-            "minimumPointSize: ",
-            "padding: ",
-            "renderType: ",
-            "rightPadding: ",
-            "style: ",
-            "styleColor: ",
-            "text: ",
-            "textFormat: ",
-            "topPadding: ",
-            "truncated: ",
-            "verticalAlignment: ",
-            "wrapMode: ",
-            "forceLayout()",
-            "lineLaidOut(line)",
-            "linkActivated(link)",
-            "linkAt(x,y)",
-            "linkHovered(link)"
-        ], "type": "Item"
-    },
-    {
-        "body": "TextArea",
-        "description": "TextArea",
-        "prefix": "TextArea",
-        "scope": "source.qml",
-        "properties": [
-            "background: ",
-            "bottomInset: ",
-            "onFlickable: ",
-            "focusReason: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "leftInset: ",
-            "palette: ",
-            "placeholderText: ",
-            "placeholderTextColor: ",
-            "rightInset: ",
-            "topInset: ",
-            "pressAndHold(event)",
-            "pressed(event)",
-            "released(event)",
-            "activeFocusOnPress: ",
-            "baseUrl: ",
-            "bottomPadding: ",
-            "canPaste: ",
-            "canRedo: ",
-            "canUndo: ",
-            "color: ",
-            "contentHeight: ",
-            "contentWidth: ",
-            "cursorDelegate: ",
-            "cursorPosition: ",
-            "cursorRectangle: ",
-            "cursorVisible: ",
-            "effectiveHorizontalAlignment: ",
-            "horizontalAlignment: ",
-            "hoveredLink: ",
-            "inputMethodComposing: ",
-            "inputMethodHints: ",
-            "leftPadding: ",
-            "length: ",
-            "lineCount: ",
-            "mouseSelectionMode: ",
-            "overwriteMode: ",
-            "padding: ",
-            "persistentSelection: ",
-            "preeditText: ",
-            "readOnly: ",
-            "renderType: ",
-            "rightPadding: ",
-            "selectByKeyboard: ",
-            "selectByMouse: ",
-            "selectedText: ",
-            "selectedTextColor: ",
-            "selectionColor: ",
-            "selectionEnd: ",
-            "selectionStart: ",
-            "tabStopDistance: ",
-            "text: ",
-            "textDocument: ",
-            "textFormat: ",
-            "textMargin: ",
-            "topPadding: ",
-            "verticalAlignment: ",
-            "wrapMode: ",
-            "append()",
-            "clear()",
-            "copy()",
-            "cut()",
-            "deselect()",
-            "editingFinished()",
-            "getFormattedText()",
-            "getText()",
-            "insert()",
-            "isRightToLeft()",
-            "linkActivated()",
-            "linkAt()",
-            "linkHovered()",
-            "moveCursorSelection()",
-            "paste()",
-            "positionAt()",
-            "positionToRectangle()",
-            "redo()",
-            "remove()",
-            "select()",
-            "selectAll()",
-            "selectWord()",
-            "undo()",
-        ], "type": ""
-    },
-    {
-        "body": "TextEdit",
-        "description": "TextEdit",
-        "prefix": "TextEdit",
-        "scope": "source.qml",
-        "properties": [
-            "activeFocusOnPress: ",
-            "baseUrl: ",
-            "bottomPadding: ",
-            "canPaste: ",
-            "canRedo: ",
-            "canUndo: ",
-            "color: ",
-            "contentHeight: ",
-            "contentWidth: ",
-            "cursorDelegate: ",
-            "cursorPosition: ",
-            "cursorRectangle: ",
-            "cursorVisible: ",
-            "effectiveHorizontalAlignment: ",
-            "horizontalAlignment: ",
-            "hoveredLink: ",
-            "inputMethodComposing: ",
-            "inputMethodHints: ",
-            "leftPadding: ",
-            "length: ",
-            "lineCount: ",
-            "mouseSelectionMode: ",
-            "overwriteMode: ",
-            "padding: ",
-            "persistentSelection: ",
-            "preeditText: ",
-            "readOnly: ",
-            "renderType: ",
-            "rightPadding: ",
-            "selectByKeyboard: ",
-            "selectByMouse: ",
-            "selectedText: ",
-            "selectedTextColor: ",
-            "selectionColor: ",
-            "selectionEnd: ",
-            "selectionStart: ",
-            "tabStopDistance: ",
-            "text: ",
-            "textDocument: ",
-            "textFormat: ",
-            "textMargin: ",
-            "topPadding: ",
-            "verticalAlignment: ",
-            "wrapMode: ",
-            "clear()",
-            "copy()",
-            "cut()",
-            "deselect()",
-            "editingFinished()",
-            "insert(position,text)",
-            "isRightToLeft(start,end)",
-            "linkActivated(link)",
-            "linkAt(x,y)",
-            "linkHovered(link)",
-            "moveCursorSelection(position,mode=TextEdit.SelectCharacters)",
-            "paste()",
-            "redo()",
-            "select(start,end)",
-            "selectAll()",
-            "selectWord()",
-            "undo()",
-        ], "type": "Item"
-    },
-    {
-        "body": "TextField",
-        "description": "TextField",
-        "prefix": "TextField",
-        "scope": "source.qml",
-        "properties": [
-            "background: ",
-            "bottomInset: ",
-            "focusReason: ",
-            "hoverEnabled: ",
-            "hovered: ",
-            "implicitBackgroundHeight: ",
-            "implicitBackgroundWidth: ",
-            "leftInset: ",
-            "palette: ",
-            "placeholderText: ",
-            "placeholderTextColor: ",
-            "rightInset: ",
-            "topInset: ",
-            "pressAndHold(event)",
-            "pressed(event)",
-            "released(event)",
-            "acceptableInput: ",
-            "activeFocusOnPress: ",
-            "autoScroll: ",
-            "bottomPadding: ",
-            "canPaste: ",
-            "canRedo: ",
-            "canUndo: ",
-            "color: ",
-            "contentHeight: ",
-            "contentWidth: ",
-            "cursorDelegate: ",
-            "cursorPosition: ",
-            "cursorRectangle: ",
-            "cursorVisible: ",
-            "displayText: ",
-            "echoMode: ",
-            "effectiveHorizontalAlignment: ",
-            "horizontalAlignment: ",
-            "inputMask: ",
-            "inputMethodComposing: ",
-            "inputMethodHints: ",
-            "leftPadding: ",
-            "length: ",
-            "maximumLength: ",
-            "mouseSelectionMode: ",
-            "overwriteMode: ",
-            "padding: ",
-            "passwordCharacter: ",
-            "passwordMaskDelay: ",
-            "persistentSelection: ",
-            "preeditText: ",
-            "readOnly: ",
-            "renderType: ",
-            "rightPadding: ",
-            "selectByMouse: ",
-            "selectedText: ",
-            "selectedTextColor: ",
-            "selectionColor: ",
-            "selectionEnd: ",
-            "selectionStart: ",
-            "text: ",
-            "topPadding: ",
-            "validator: ",
-            "verticalAlignment: ",
-            "wrapMode: ",
-            "accepted()",
-            "clear()",
-            "copy()",
-            "cut()",
-            "deselect()",
-            "editingFinished()",
-            "ensureVisible()",
-            "getText()",
-            "insert()",
-            "isRightToLeft()",
-            "moveCursorSelection()",
-            "paste()",
-            "positionAt()",
-            "positionToRectangle()",
-            "redo()",
-            "remove()",
-            "select()",
-            "selectAll()",
-            "selectWord()",
-            "textEdited()",
-            "undo()"
-        ], "type": ""
-    },
-    {
-        "body": "TextInput",
-        "description": "TextInput",
-        "prefix": "TextInput",
-        "scope": "source.qml",
-        "properties": [
-            "acceptableInput: ",
-            "activeFocusOnPress: ",
-            "autoScroll: ",
-            "bottomPadding: ",
-            "canPaste: ",
-            "canRedo: ",
-            "canUndo: ",
-            "color: ",
-            "contentHeight: ",
-            "contentWidth: ",
-            "cursorDelegate: ",
-            "cursorPosition: ",
-            "cursorRectangle: ",
-            "cursorVisible: ",
-            "displayText: ",
-            "echoMode: ",
-            "effectiveHorizontalAlignment: ",
-            "horizontalAlignment: ",
-            "inputMask: ",
-            "inputMethodComposing: ",
-            "inputMethodHints: ",
-            "leftPadding: ",
-            "length: ",
-            "maximumLength: ",
-            "mouseSelectionMode: ",
-            "overwriteMode: ",
-            "padding: ",
-            "passwordCharacter: ",
-            "passwordMaskDelay: ",
-            "persistentSelection: ",
-            "preeditText: ",
-            "readOnly: ",
-            "renderType: ",
-            "rightPadding: ",
-            "selectByMouse: ",
-            "selectedText: ",
-            "selectedTextColor: ",
-            "selectionColor: ",
-            "selectionEnd: ",
-            "selectionStart: ",
-            "text: ",
-            "topPadding: ",
-            "validator: ",
-            "verticalAlignment: ",
-            "wrapMode: ",
-            "accepted()",
-            "clear()",
-            "copy()",
-            "cut()",
-            "deselect()",
-            "editingFinished()",
-            "ensureVisible(position)",
-            "insert(position,text)",
-            "isRightToLeft(start,end)",
-            "moveCursorSelection(position,mode=TextInput.SelectCharacters)",
-            "paste()",
-            "redo()",
-            "remove(start,end)",
-            "select(start,end)",
-            "selectAll()",
-            "selectWord()",
-            "textEdited()",
-            "undo()"
-        ], "type": "Item"
-    },
-    {
-        "body": "TextMetrics",
-        "description": "TextMetrics",
-        "prefix": "TextMetrics",
-        "scope": "source.qml",
-        "properties": ["advanceWidth: ", "boundingRect: ", "elide: ", "elideWidth: ", "elidedText: ", "font: ", "height: ", "text: ", "tightBoundingRect: ", "width: "], "type": ""
-    },
-    {
-        "body": "Timer",
-        "description": "Timer",
-        "prefix": "Timer",
-        "scope": "source.qml",
-        "properties": ["interval: ", "repeat: ", "running: ", "triggeredOnStart: ", "restart()", "start()", "stop()", "triggered()"], "type": ""
-    },
-    {
-        "body": "ToggleButton",
-        "description": "ToggleButton",
-        "prefix": "ToggleButton",
-        "scope": "source.qml",
-        "properties": ["isDefault: ", "menu: "], "type": ""
-    },
-]
+const SGWidgetsTypeJson = {
 
-const SGWidgets = [
-    {
-        "body": "SGAccordion",
-        "description": "SGAccordion",
-        "prefix": "SGAccordion",
-        "scope": "tech.strata.sgwidgets",
-        "properties": ["accordionItems: ", "contentItem: ", "openCloseTime: ", "statusIcon: ", "exclusive: ", "contentsColor: ", "textOpenColor: ", "textClosedColor: ", "headerOpenColor: ", "headerClosedColor: ", "dividerColor: "], "type": ""
-    },
-    {
-        "body": "SGAlignedLabel",
-        "description": "SGAlignedLabel",
-        "prefix": "SGAlignedLabel",
-        "scope": "tech.strata.sgwidgets",
-        "properties": ["target: ", "alignment: ", "margin: ", "overrideLabelWidth: ", "text: ", "alternativeColorEnabled: ", "color: ", "implicitColor: ", "alternativeColor: ", "fontSizeMultiplier: ", "font: ", "horizontalAlignment: ", "contentHeight: ", "contentWidth: ", "clickable: ", "clicked()"], "type": ""
-    },
-    {
-        "body": "SGButton",
-        "description": "SGButton",
-        "prefix": "SGButton",
-        "scope": "source.qml",
-        "properties": ["alternativeColorEnabled: ", "fontSizeMultiplier: ", "minimumContentHeight: ", "minimumContentWidth: ", "preferredContentWidth: ", "preferredContentHeight: ", "contentHorizontalAlignment: ", "contentVerticalAlignment: ", "backgroundOnlyOnHovered: ", "scaleToFit: ", "hintText: ", "iconSize: ", "iconMirror: ", "iconColor", "implicitColor: ", "color: ", "pressedColor: ", "checkedColor: ", "roundedLeft: ", "roundedBottom: ", "roundedRight: ", "roundedTop: "], "type": ""
-    },
-    {
-        "body": "SGButtonStrip",
-        "description": "SGButtonStrip",
-        "prefix": "SGButtonStrip",
-        "scope": "source.qml",
-        "properties": ["model: ", "count: ", "exclusive: ", "orientation: ", "checkedIndices: ", "clicked(index)"], "type": ""
-    },
-    {
-        "body": "SGCircularGauge",
-        "description": "SGCircularGauge",
-        "prefix": "SGCircularGauge",
-        "scope": "source.qml",
-        "properties": ["real: ", "gaugeFillColor1: ", "gaugeFillColor2: ", "gaugeBackgroundColor: ", "centerTextColor: ", "outerTextColor: ", "unitTextFontSizeMultiplier: ", "outerTextFontSizeMultiplier: ", "valueDecimalPlaces: ", "tickmarkDecimalPlaces: ", "minimumValue: ", "maximumValue: ", "tickmarkStepSize: ", "unitText: "], "type": ""
-    },
-    {
-        "body": "SGComboBox",
-        "description": "SGComboBox",
-        "prefix": "SGComboBox",
-        "scope": "source.qml",
-        "properties": ["textColor: ", "indicatorColor: ", "borderColor: ", "borderColorFocused: ", "boxColor: ", "dividers: ", "popupHeight: ", "fontSizeMultiplier: ", "placeholderText: ", "modelWidth: ", "iconImage: ", "textField: ", "textFieldBackground: ", "backgroundItem: ", "popupItem: ", "popupBackground: "], "type": ""
-    },
-    {
-        "body": "SGGraph",
-        "description": "SGGraph",
-        "prefix": "SGGraph",
-        "scope": "source.qml",
-        "properties": ["panXEnabled: ", "panYEnabled: ", "zoomXEnabled: ", "zoomYEnabled: ", "fontSizeMultiplier: ", "mouseArea: "], "type": ""
-    },
-    {
-        "body": "SGHueSlider",
-        "description": "SGHueSlider",
-        "prefix": "SGHueSlider",
-        "scope": "source.qml",
-        "properties": ["color1: ", "color2: ", "color_value1: ", "color_value2: ", "rgbArray: ", "powerSave: "], "type": ""
-    },
-    {
-        "body": "SGInfoBox",
-        "description": "SGInfoBox",
-        "prefix": "SGInfoBox",
-        "scope": "source.qml",
-        "properties": ["textColor: ", "invalidTextColor: ", "fontSizeMultiplier: ", "boxBorderColor: ", "boxBorderWidth: ", "text: ", "horizontalAlignment: ", "placeholderText: ", "readOnly: ", "boxColor: ", "unit: ", "textPadding: ", "validator: ", "acceptableInput: ", "boxFont: ", "unitFont: ", "unitHorizontalAlignment: ", "unitOverrideWidth: ", "boxObject: ", "infoTextObject: ", "mouseAreaObject: ", "placeholderObject: ", "unitObject: ", "accepted(text)", "editingFinished(text)"], "type": ""
-    },
-    {
-        "body": "SGRadioButton",
-        "description": "SGRadioButton",
-        "prefix": "SGRadioButton",
-        "scope": "source.qml",
-        "properties": ["buttonContainer: ", "radioSize: ", "radioColor: ", "index: ", "fontSizeMultiplier: ", "color: ", "alignment: "], "type": ""
-    },
-    {
-        "body": "SGRGBSlider",
-        "description": "SGRGBSlide",
-        "prefix": "SGRGBSlide",
-        "scope": "source.qml",
-        "properties": ["rgbArray: ", "color: ", "color_value: "], "type": ""
-    },
-    {
-        "body": "SGSlider",
-        "description": "SGSlider",
-        "prefix": "SGSlider",
-        "scope": "source.qml",
-        "properties": ["fontSizeMultiplier: ", "textColor: ", "mirror: ", "handleSize: ", "orientation: ", "value: ", "from: ", "to: ", "horizontal: ", "vertical: ", "showTickmarks: ", "showLabels: ", "showInputBox: ", "showToolTip: ", " stepSize: ", "live: ", "visualPosition: ", "position: ", "snapMode: ", "pressed: ", "grooveColor: ", "fillColor: ", "slider: ", "inputBox: ", "fromText: ", "toText: ", "tickmarkRepeater: ", "inputBoxWidth: ", "toolTip: ", "toolTipText: ", "toolTipBackground: ", "validatorObject: ", "userSet(value)", "moved()"], "type": ""
-    },
-    {
-        "body": "SGSpinBox",
-        "description": "SGSpinBox",
-        "prefix": "SGSpinBox",
-        "scope": "source.qml",
-        "properties": [""], "type": ""
-    },
-    {
-        "body": "SGStatusLight",
-        "description": "SGStatusLight",
-        "prefix": "SGStatusLight",
-        "scope": "source.qml",
-        "properties": ["status: ", "customColor: ", "flatStyle: "], "type": ""
-    },
-    {
-        "body": "SGStatusLogBox",
-        "description": "SGStatusLogBox",
-        "prefix": "SGStatusLogBox",
-        "scope": "source.qml",
-        "properties": ["title: ", "titleTextColor: ", "titleBoxColor: ", "titleBoxBorderColor: ", "statusTextColor: ", "statusBoxColor: ", "statusBoxBorderColor: ", "showMessageIds: ", "model: ", "filterRole: ", "copyRole: ", "fontSizeMultiplier: ", "scrollToEnd: ", "listView: ", "listViewMouse: ", "delegate: ", "filterEnabled: ", "copyEnabled: ", "filterModel: ", "listElementTemplate: "], "type": ""
-    },
-    {
-        "body": "SGSubmitInfoBox",
-        "description": "SGSubmitInfoBo",
-        "prefix": "SGSubmitInfoBo",
-        "scope": "source.qml",
-        "properties": ["accepted(text)", "editingFinished(text)", "text: ", "infoBoxObject: ", "textColor: ", "textPadding: ", "invalidTextColor: ", "boxColor: ", "boxBorderColor: ", "boxBorderWidth: ", "unit: ", "readOnly: ", "validator: ", "placeholderText: ", "horizontalAlignment: ", "buttonText: ", "buttonImplicitWidth: ", "floatValue: ", "intValue: ", "fontSizeMultiplier: ", "appliedString", "infoBoxHeight: "], "type": ""
-    },
-    {
-        "body": "SGSwitch",
-        "description": "SGSwitch",
-        "prefix": "SGSwitch",
-        "scope": "source.qml",
-        "properties": ["released()", "canceled()", "clicked()", "toggled()", "press()", "pressAndHold()", "fontSizeMultiplier: ", "handleColor: ", "textColor: ", "labelsInside: ", "labelsInside: ", "pressed: ", "down: ", "checked: ", "checkedLabel: ", "uncheckedLabel: ", "grooveFillColor: ", "grooveColor: "], "type": ""
-    },
-    {
-        "body": "SGTextField",
-        "description": "SGTextField",
-        "prefix": "SGTextField",
-        "scope": "source.qml",
-        "properties": ["isValid: ", "activeEditing: ", "validationReady: ", "timerIsRunning: ", "isValidAffectsBackground: ", "leftIconColor: ", "leftIconSource: ", "darkMode: ", "showCursorPosition: ", "showClearButton: ", "passwordMode: ", "busyIndicatorRunning: ", "suggestionListModel: ", "suggestionListDelegate: ", "suggestionModelTextRole: ", "suggestionPosition: ", "suggestionEmptyModelText: ", "suggestionHeaderText: ", "suggestionCloseOnDown: ", "suggestionOpenWithAnyKey: ", "suggestionMaxHeight: ", "suggestionDelegateNumbering: ", "suggestionDelegateRemovable: ", "suggestionDelegateTextWrap: ", "suggestionPopup: ", "suggestionDelegateSelected(index)", "suggestionDelegateRemoveRequested(index)", "hasRightIcons: ", "revealPassword: "], "type": ""
-    },
-    {
-        "body": "SGText",
-        "description": "SGText",
-        "prefix": "SGText",
-        "scope": "source.qml",
-        "properties": ["alternativeEnabledColor: ", "implicitColor: ", "alternativeColor: ", "fontSizeMultiplier: ", "text: "], "type": ""
-    },
-    {
-        "body": "SGTextArea",
-        "description": "SGTextArea",
-        "prefix": "SGTextArea",
-        "scope": "source.qml",
-        "properties": ["text: ", "font: ", "placeholderText: ", "minimumLineCount: ", "maximumLineCount: ", "tabAllowed: ", "readOnly: ", "keepCursorAtEnd: ", "isValid: "], "type": ""
-    }
-]
+}
 
-const qtQuickBody = [
-    {
-        "body": "property",
-        "description": "QML property alias",
-        "prefix": "property",
-        "scope": "source.qml",
-        "properties": ["alias", "real", "string", "url", "double", "int", "bool", "color", "var", "coordinate", "date", "default", "enumeration", "size", "point", "list", "vector2d", "vector3d", "rect", "palette"]
-    },
-    {
-        "body": "anchors",
-        "description": "(all sides)",
-        "prefix": "anchors",
-        "scope": "source.qml",
-        "properties": [
-            "alignWhenCentered: ",
-            "baseline: ",
-            "baselineOffset: ",
-            "bottom: ",
-            "bottomMargin: ",
-            "centerIn: ",
-            "fill: ",
-            "horizontalCenter: ",
-            "horizontalCenterOffset: ",
-            "left: ",
-            "leftMargin: ",
-            "margins: ",
-            "right: ",
-            "rightMargin: ",
-            "top: ",
-            "topMargin: ",
-            "verticalCenter: ",
-            "verticalCenterOffset: ",
-        ]
-    },
-    {
-        "body": "console",
-        "description": "console",
-        "prefix": "console",
-        "scope": "source.js",
-        "properties": ["log(\"\")", "debug(\"\")", "info(\"\")", "warn(\"\")", "error(\"\")"]
-    },
-    {
-        "body": "font",
-        "description": "font",
-        "prefix": "font",
-        "scope": "source.qml",
-        "properties": ["bold", "capitalization", "family", "italic", "pixelSize", "pointSize", "spacing", "underline"]
-    },
-]
+
+/*
+    Abstract3DSeries
+    AbstractActionInput
+    AbstractAnimation
+    AbstractAxis
+    AbstractAxis3D
+    AbstractAxisInput
+    AbstractBarSeries
+    AbstractButton
+    AbstractClipAnimator
+    AbstractClipBlendNode
+    AbstractDataProxy
+    AbstractGraph3D
+    AbstractInputHandler3D
+    AbstractPhysicalDevice
+    AbstractRayCaster
+    AbstractSeries
+    AbstractSkeleton
+    AbstractTextureImage
+    Accelerometer
+    AccelerometerReading
+    Accessible
+    Action: QtQuickControls
+    Action: Qt3D
+    Action: QtQuickControls1
+    ActionGroup
+    ActionInput
+    AdditiveClipBlend
+    Address
+    Affector
+    Age
+    AlphaCoverage
+    AlphaTest
+    Altimeter
+    AltimeterReading
+    AmbientLightReading
+    AmbientLightSensor
+    AmbientTemperatureReading
+    AmbientTemperatureSensor
+    AnalogAxisInput
+    AnchorAnimation
+    AnchorChanges
+    AngleDirection
+    AnimatedImage
+    AnimatedSprite
+    Animation
+    AnimationController: QtQuick
+    AnimationController: Qt3D
+    AnimationGroup
+    Animator
+    ApplicationWindow: QtQuickControls
+    ApplicationWindow: QtQuickControls1
+    ApplicationWindowStyle
+    AreaSeries
+    Armature
+    AttenuationModelInverse
+    AttenuationModelLinear
+    Attractor
+    Attribute
+    Audio
+    AudioCategory
+    AudioEngine
+    AudioListener
+    AudioSample
+    AuthenticationDialogRequest
+    Axis
+    AxisAccumulator
+    AxisSetting
+
+B
+    BackspaceKey
+    Bar3DSeries
+    BarCategoryAxis
+    BarDataProxy
+    Bars3D
+    BarSeries
+    BarSet
+    BaseKey
+    Behavior
+    Binding
+    Blend
+    BlendedClipAnimator
+    BlendEquation
+    BlendEquationArguments
+    BlitFramebuffer
+    BluetoothDiscoveryModel
+    BluetoothService
+    BluetoothSocket
+    BorderImage
+    BorderImageMesh
+    BoxPlotSeries
+    BoxSet
+    BrightnessContrast
+    Buffer
+    BusyIndicator: QtQuickControls
+    BusyIndicator: QtQuickControls1
+    BusyIndicatorStyle
+    Button: QtQuickControls
+    Button: QtQuickControls1
+    ButtonAxisInput
+    ButtonGroup
+    ButtonStyle
+
+C
+    Calendar
+    CalendarStyle
+    Camera: QtMultimedia
+    Camera: Qt3D
+    Camera3D
+    CameraCapabilities
+    CameraCapture
+    CameraExposure
+    CameraFlash
+    CameraFocus
+    CameraImageProcessing
+    CameraLens
+    CameraRecorder
+    CameraSelector
+    CandlestickSeries
+    CandlestickSet
+    Canvas
+    Canvas3D
+    Canvas3DAbstractObject
+    Canvas3DActiveInfo
+    Canvas3DBuffer
+    Canvas3DContextAttributes
+    Canvas3DFrameBuffer
+    Canvas3DProgram
+    Canvas3DRenderBuffer
+    Canvas3DShader
+    Canvas3DShaderPrecisionFormat
+    Canvas3DTexture
+    Canvas3DTextureProvider
+    Canvas3DUniformLocation
+    CanvasGradient
+    CanvasImageData
+    CanvasPixelArray
+    Category
+    CategoryAxis
+    CategoryAxis3D
+    CategoryModel
+    CategoryRange
+    ChangeLanguageKey
+    ChartView
+    CheckBox: QtQuickControls
+    CheckBoxStyle
+    CheckDelegate
+    CircularGauge
+    CircularGaugeStyle
+    ClearBuffers
+    ClipAnimator
+    ClipBlendValue
+    ClipPlane
+    CloseEvent
+    ColorAnimation
+    ColorDialog
+    ColorDialogRequest
+    ColorGradient
+    ColorGradientStop
+    Colorize
+    ColorMask
+    ColorOverlay
+    Column
+    ColumnLayout
+    ComboBox: QtQuickControls
+    ComboBoxStyle
+    Compass
+    CompassReading
+    Component
+    Component3D
+    ComputeCommand
+    ConeGeometry
+    ConeMesh
+    ConicalGradient: QtGraphicalEffects
+    ConicalGradient: QtQuick
+    Connections
+    ContactDetail
+    ContactDetails
+    Container
+    Context2D
+    Context3D
+    ContextMenuRequest
+    Control
+    coordinate
+    CoordinateAnimation
+    CuboidGeometry
+    CuboidMesh
+    CullFace
+    CumulativeDirection
+    Custom3DItem
+    Custom3DLabel
+    Custom3DVolume
+    CustomParticle
+    CylinderGeometry
+    CylinderMesh
+
+D
+    Date
+    date
+    DateTimeAxis
+    DelayButton: QtQuickControls
+    DelayButton: QtQuickExtras
+    DelayButtonStyle
+    DelegateChoice
+    DelegateChooser
+    DelegateModel
+    DelegateModelGroup
+    DepthTest
+    Desaturate
+    Dial: QtQuickControls
+    Dial: QtQuickExtras
+    Dialog: QtQuickControls
+    Dialog: QtQuickDialogs
+    DialogButtonBox
+    DialStyle
+    DiffuseMapMaterial
+    DiffuseSpecularMapMaterial
+    DiffuseSpecularMaterial
+    Direction
+    DirectionalBlur
+    DirectionalLight
+    DispatchCompute
+    Displace
+    DistanceReading
+    DistanceSensor
+    Dithering
+    double
+    DoubleValidator
+    Drag
+    DragEvent
+    DragHandler
+    Drawer
+    DropArea
+    DropShadow
+    DwmFeatures
+    DynamicParameter
+
+E
+    EditorialModel
+    Effect
+    EllipseShape
+    Emitter
+    EnterKey: QtQuick
+    EnterKey: QtVirtualKeyboard
+    EnterKeyAction
+    Entity
+    EntityLoader
+    enumeration
+    EnvironmentLight
+    EventConnection
+    EventPoint
+    EventTouchPoint
+    ExclusiveGroup
+    ExtendedAttributes
+    ExtrudedTextGeometry
+    ExtrudedTextMesh
+
+F
+    FastBlur
+    FileDialog
+    FileDialogRequest
+    FillerKey
+    FilterKey
+    FinalState
+    FirstPersonCameraController
+    Flickable
+    Flipable
+    Flow
+    FocusScope
+    FolderListModel
+    font
+    FontDialog
+    FontLoader
+    FontMetrics
+    FormValidationMessageRequest
+    ForwardRenderer
+    Frame
+    FrameAction
+    FrameGraphNode
+    Friction
+    FrontFace
+    FrustumCulling
+    FullScreenRequest
+
+G
+    Gamepad
+    GamepadManager
+    GammaAdjust
+    Gauge
+    GaugeStyle
+    GaussianBlur
+    geocircle
+    GeocodeModel
+    Geometry
+    GeometryRenderer
+    geopath
+    geopolygon
+    georectangle
+    geoshape
+    GestureEvent
+    Glow
+    GLStateDumpExt
+    GoochMaterial
+    Gradient
+    GradientStop
+    GraphicsApiFilter
+    GraphicsInfo
+    Gravity
+    Grid
+    GridLayout
+    GridMesh
+    GridView
+    GroupBox: QtQuickControls
+    GroupBox: QtQuickControls1
+    GroupGoal
+    Gyroscope
+    GyroscopeReading
+
+H
+    HandlerPoint
+    HandwritingInputPanel
+    HandwritingModeKey
+    HBarModelMapper
+    HBoxPlotModelMapper
+    HCandlestickModelMapper
+    HeightMapSurfaceDataProxy
+    HideKeyboardKey
+    HistoryState
+    HolsterReading
+    HolsterSensor
+    HorizontalBarSeries
+    HorizontalPercentBarSeries
+    HorizontalStackedBarSeries
+    HoverHandler
+    HPieModelMapper
+    HueSaturation
+    HumidityReading
+    HumiditySensor
+    HXYModelMapper
+
+I
+    Icon
+    Image
+    ImageModel
+    ImageParticle
+    InnerShadow
+    InputChord
+    InputContext
+    InputEngine
+    InputHandler3D
+    InputMethod
+    InputModeKey
+    InputPanel
+    InputSequence
+    InputSettings
+    Instantiator
+    int
+    IntValidator
+    InvokedServices
+    IRProximityReading
+    IRProximitySensor
+    Item
+    ItemDelegate
+    ItemGrabResult
+    ItemModelBarDataProxy
+    ItemModelScatterDataProxy
+    ItemModelSurfaceDataProxy
+    ItemParticle
+    ItemSelectionModel
+    IviApplication
+    IviSurface
+
+J
+    JavaScriptDialogRequest
+    Joint
+    JumpList
+    JumpListCategory
+    JumpListDestination
+    JumpListLink
+    JumpListSeparator
+
+K
+    Key
+    KeyboardColumn
+    KeyboardDevice
+    KeyboardHandler
+    KeyboardLayout
+    KeyboardLayoutLoader
+    KeyboardRow
+    KeyboardStyle
+    KeyEvent: QtQuick
+    KeyEvent: Qt3D
+    KeyframeAnimation
+    KeyIcon
+    KeyNavigation
+    KeyPanel
+    Keys
+
+L
+    Label: QtQuickControls
+    Label: QtQuickControls1
+    Layer
+    LayerFilter
+    Layout
+    LayoutMirroring
+    Legend
+    LerpClipBlend
+    LevelAdjust
+    LevelOfDetail
+    LevelOfDetailBoundingSphere
+    LevelOfDetailLoader
+    LevelOfDetailSwitch
+    LidReading
+    LidSensor
+    Light
+    Light3D
+    LightReading
+    LightSensor
+    LinearGradient: QtGraphicalEffects
+    LinearGradient: QtQuick
+    LineSeries
+    LineShape
+    LineWidth
+    list
+    ListElement
+    ListModel
+    ListView
+    Loader
+    Locale
+    Location
+    LoggingCategory
+    LogicalDevice
+    LogValueAxis
+    LogValueAxis3DFormatter
+
+M
+    Magnetometer
+    MagnetometerReading
+    Map
+    MapCircle
+    MapCircleObject
+    MapCopyrightNotice
+    MapGestureArea
+    MapIconObject
+    MapItemGroup
+    MapItemView
+    MapObjectView
+    MapParameter
+    MapPinchEvent
+    MapPolygon
+    MapPolygonObject
+    MapPolyline
+    MapPolylineObject
+    MapQuickItem
+    MapRectangle
+    MapRoute
+    MapRouteObject
+    MapType
+    Margins
+    MaskedBlur
+    MaskShape
+    Material
+    Matrix4x4
+    MediaPlayer
+    mediaplayer-qml-dynamic
+    MemoryBarrier
+    Menu: QtQuickControls
+    Menu: QtQuickControls1
+    MenuBar: QtQuickControls
+    MenuBar: QtQuickControls1
+    MenuBarItem
+    MenuBarStyle
+    MenuItem: QtQuickControls
+    MenuItem: QtQuickControls1
+    MenuSeparator: QtQuickControls
+    MenuSeparator: QtQuickControls1
+    MenuStyle
+    Mesh
+    MessageDialog
+    MetalRoughMaterial
+    ModeKey
+    MorphingAnimation
+    MorphTarget
+    MouseArea
+    MouseDevice
+    MouseEvent: QtQuick
+    MouseEvent: Qt3D
+    MouseHandler
+    MultiPointHandler
+    MultiPointTouchArea
+    MultiSampleAntiAliasing
+
+N
+    Navigator
+    NdefFilter
+    NdefMimeRecord
+    NdefRecord
+    NdefTextRecord
+    NdefUriRecord
+    NearField
+    Node: Qt3D
+    Node: QtRemoteObjects
+    NodeInstantiator
+    NoDepthMask
+    NoDraw
+    NormalDiffuseMapAlphaMaterial
+    NormalDiffuseMapMaterial
+    NormalDiffuseSpecularMapMaterial
+    Number
+    NumberAnimation
+    NumberKey
+
+O
+    Object3D
+    ObjectModel
+    ObjectPicker
+    OpacityAnimator
+    OpacityMask
+    OpenGLInfo
+    OrbitCameraController
+    OrientationReading
+    OrientationSensor
+    Overlay
+
+P
+    Package
+    Page
+    PageIndicator
+    palette
+    Pane
+    ParallelAnimation
+    Parameter
+    ParentAnimation
+    ParentChange
+    Particle
+    ParticleGroup
+    ParticlePainter
+    ParticleSystem
+    Path
+    PathAngleArc
+    PathAnimation
+    PathArc
+    PathAttribute
+    PathCubic
+    PathCurve
+    PathElement
+    PathInterpolator
+    PathLine
+    PathMove
+    PathPercent
+    PathQuad
+    PathSvg
+    PathView
+    PauseAnimation
+    PercentBarSeries
+    PerVertexColorMaterial
+    PhongAlphaMaterial
+    PhongMaterial
+    PickEvent
+    PickingSettings
+    PickLineEvent
+    PickPointEvent
+    PickTriangleEvent
+    Picture
+    PieMenu
+    PieMenuStyle
+    PieSeries
+    PieSlice
+    PinchArea
+    PinchEvent
+    PinchHandler
+    Place
+    PlaceAttribute
+    PlaceSearchModel
+    PlaceSearchSuggestionModel
+    PlaneGeometry
+    PlaneMesh
+    Playlist
+    PlaylistItem
+    PlayVariation
+    Plugin
+    PluginParameter
+    point
+    PointDirection
+    PointerDevice
+    PointerDeviceHandler
+    PointerEvent
+    PointerHandler
+    PointHandler
+    PointLight
+    PointSize
+    PolarChartView
+    PolygonOffset
+    Popup
+    Position
+    Positioner
+    PositionSource
+    PressureReading
+    PressureSensor
+    Product
+    ProgressBar: QtQuickControls
+    ProgressBar: QtQuickControls1
+    ProgressBarStyle
+    PropertyAction
+    PropertyAnimation
+    PropertyChanges
+    ProximityFilter
+    ProximityReading
+    ProximitySensor
+
+Q
+    QAbstractState
+    QAbstractTransition
+    QmlSensors
+    QSignalTransition
+    Qt
+    QtMultimedia
+    QtObject
+    QtPositioning
+    quaternion
+    QuaternionAnimation
+    QuotaRequest
+
+R
+    RadialBlur
+    RadialGradient: QtGraphicalEffects
+    RadialGradient: QtQuick
+    Radio
+    RadioButton: QtQuickControls
+    RadioButton: QtQuickControls1
+    RadioButtonStyle
+    RadioData
+    RadioDelegate
+    RangeSlider
+    Ratings
+    RayCaster
+    Rectangle
+    RectangleShape
+    RectangularGlow
+    RecursiveBlur
+    RegExpValidator
+    RegisterProtocolHandlerRequest
+    RenderCapture
+    RenderCaptureReply
+    RenderPass
+    RenderPassFilter
+    RenderSettings
+    RenderState
+    RenderStateSet
+    RenderSurfaceSelector
+    RenderTarget
+    RenderTargetOutput
+    RenderTargetSelector
+    Repeater
+    ReviewModel
+    Rotation
+    RotationAnimation
+    RotationAnimator
+    RotationReading
+    RotationSensor
+    RoundButton
+    Route
+    RouteLeg
+    RouteManeuver
+    RouteModel
+    RouteQuery
+    RouteSegment
+    Row
+    RowLayout
+
+S
+    Scale
+    ScaleAnimator
+    Scatter3D
+    Scatter3DSeries
+    ScatterDataProxy
+    ScatterSeries
+    Scene2D
+    Scene3D: Qt3D
+    Scene3D: QtDataVisualization
+    SceneLoader
+    ScissorTest
+    Screen
+    ScreenRayCaster
+    ScriptAction
+    ScrollBar
+    ScrollIndicator
+    ScrollView: QtQuickControls
+    ScrollView: QtQuickControls1
+    ScrollViewStyle
+    ScxmlStateMachine
+    SeamlessCubemap
+    SelectionListItem
+    SelectionListModel
+    Sensor
+    SensorGesture
+    SensorReading
+    SequentialAnimation
+    Settings
+    SettingsStore
+    ShaderEffect
+    ShaderEffectSource
+    ShaderProgram
+    ShaderProgramBuilder
+    Shape: QtQuick
+    Shape: QtQuick
+    ShapeGradient
+    ShapePath
+    ShellSurface
+    ShellSurfaceItem
+    ShiftHandler
+    ShiftKey
+    Shortcut
+    SignalSpy
+    SignalTransition
+    SinglePointHandler
+    size
+    Skeleton
+    SkeletonLoader
+    SkyboxEntity
+    Slider: QtQuickControls
+    Slider: QtQuickControls1
+    SliderStyle
+    SmoothedAnimation
+    SortPolicy
+    Sound
+    SoundEffect
+    SoundInstance
+    SpaceKey
+    SphereGeometry
+    SphereMesh
+    SpinBox: QtQuickControls
+    SpinBox: QtQuickControls1
+    SpinBoxStyle
+    SplineSeries
+    SplitView
+    SpotLight
+    SpringAnimation
+    Sprite
+    SpriteGoal
+    SpriteSequence
+    Stack
+    StackedBarSeries
+    StackLayout
+    StackView: QtQuickControls
+    StackView: QtQuickControls1
+    StackViewDelegate
+    State: QtQml
+    State: QtQuick
+    StateChangeScript
+    StateGroup
+    StateMachine
+    StateMachineLoader
+    StatusBar
+    StatusBarStyle
+    StatusIndicator
+    StatusIndicatorStyle
+    StencilMask
+    StencilOperation
+    StencilOperationArguments
+    StencilTest
+    StencilTestArguments
+    Store
+    String
+    string
+    Supplier
+    Surface3D
+    Surface3DSeries
+    SurfaceDataProxy
+    SwipeDelegate
+    SwipeView
+    Switch: QtQuickControls
+    Switch: QtQuickControls1
+    SwitchDelegate
+    SwitchStyle
+    SymbolModeKey
+    SystemPalette
+
+T
+    Tab
+    TabBar
+    TabButton
+    TableView: QtQuick
+    TableView: QtQuickControls1
+    TableViewColumn
+    TableViewStyle
+    TabView
+    TabViewStyle
+    TapHandler
+    TapReading
+    TapSensor
+    TargetDirection
+    TaskbarButton
+    Technique
+    TechniqueFilter
+    TestCase
+    Text
+    Text2DEntity
+    TextArea: QtQuickControls
+    TextArea: QtQuickControls1
+    TextAreaStyle
+    TextEdit
+    TextField: QtQuickControls
+    TextField: QtQuickControls1
+    TextFieldStyle
+    TextInput
+    TextMetrics
+    TextureImage: Qt3D
+    TextureImage: QtCanvas3D
+    TextureImageFactory
+    TextureLoader
+    Theme3D
+    ThemeColor
+    ThresholdMask
+    ThumbnailToolBar
+    ThumbnailToolButton
+    TiltReading
+    TiltSensor
+    TimeoutTransition
+    Timer
+    ToggleButton
+    ToggleButtonStyle
+    ToolBar: QtQuickControls
+    ToolBar: QtQuickControls1
+    ToolBarStyle
+    ToolButton: QtQuickControls
+    ToolButton: QtQuickControls1
+    ToolSeparator
+    ToolTip
+    Torch
+    TorusGeometry
+    TorusMesh
+    TouchEventSequence
+    TouchInputHandler3D
+    TouchPoint
+    Trace
+    TraceCanvas
+    TraceInputArea
+    TraceInputKey
+    TraceInputKeyPanel
+    TrailEmitter
+    Transaction
+    Transform: QtQuick
+    Transform: Qt3D
+    Transition
+    Translate
+    TreeView
+    TreeViewStyle
+    Tumbler: QtQuickControls
+    Tumbler: QtQuickExtras
+    TumblerColumn
+    TumblerStyle
+    Turbulence
+
+U
+    UniformAnimator
+    url
+    User
+
+V
+    ValueAxis
+    ValueAxis3D
+    ValueAxis3DFormatter
+    var
+    variant
+    VBarModelMapper
+    VBoxPlotModelMapper
+    VCandlestickModelMapper
+    vector2d
+    vector3d
+    Vector3dAnimation
+    vector4d
+    VertexBlendAnimation
+    Video
+    VideoOutput
+    Viewport
+    ViewTransition
+    VirtualKeyboardSettings
+    VPieModelMapper
+    VXYModelMapper
+
+W
+    Wander
+    WavefrontMesh
+    WaylandClient
+    WaylandCompositor
+    WaylandHardwareLayer
+    WaylandOutput
+    WaylandQuickItem
+    WaylandSeat
+    WaylandSurface
+    WaylandView
+    Waypoint
+    WebChannel
+    WebEngine
+    WebEngineAction
+    WebEngineCertificateError
+    WebEngineDownloadItem
+    WebEngineHistory
+    WebEngineHistoryListModel
+    WebEngineLoadRequest
+    WebEngineNavigationRequest
+    WebEngineNewViewRequest
+    WebEngineProfile
+    WebEngineScript
+    WebEngineSettings
+    WebEngineView
+    WebSocket
+    WebSocketServer
+    WebView
+    WebViewLoadRequest
+    WheelEvent: QtQuick
+    WheelEvent: Qt3D
+    Window
+    WlShell
+    WlShellSurface
+    WorkerScript
+
+X
+    XAnimator
+    XdgDecorationManagerV1
+    XdgPopup
+    XdgPopupV5
+    XdgPopupV6
+    XdgShell
+    XdgShellV5
+    XdgShellV6
+    XdgSurface
+    XdgSurfaceV5
+    XdgSurfaceV6
+    XdgToplevel
+    XdgToplevelV6
+    XmlListModel
+    XmlRole
+    XYPoint
+    XYSeries
+
+Y
+    YAnimator
+
+Z
+    ZoomBlur
+*/
