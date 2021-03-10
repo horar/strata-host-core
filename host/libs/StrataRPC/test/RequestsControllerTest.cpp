@@ -90,7 +90,7 @@ void RequestsControllerTest::testPopRequest()
             rc.addNewRequest("test_handler", QJsonObject({{}}));
 
         connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
-                [](const Message &) {});
+                [](const QJsonObject &) {});
 
         QVERIFY(deferredRequest->getId() > 0);
         QVERIFY(requestJson != "");

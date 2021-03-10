@@ -81,14 +81,14 @@ void StrataClient::newServerMessage(const QByteArray &jsonServerMessage)
         if (serverMessage.messageType == Message::MessageType::Error &&
             deferredRequest->hasErrorCallback()) {
             qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
-            deferredRequest->callErrorCallback(serverMessage);
+            deferredRequest->callErrorCallback(serverMessage.payload);
             deferredRequest->deleteLater();
             return;
 
         } else if (serverMessage.messageType == Message::MessageType::Response &&
                    deferredRequest->hasSuccessCallback()) {
             qCDebug(logCategoryStrataClient) << "Dispatching success callback.";
-            deferredRequest->callSuccessCallback(serverMessage);
+            deferredRequest->callSuccessCallback(serverMessage.payload);
             deferredRequest->deleteLater();
             return;
         }
@@ -269,9 +269,7 @@ void StrataClient::requestTimeoutHandler(int requestId)
     }
 
     qCDebug(logCategoryStrataClient) << "Dispatching error callback.";
-    request.deferredRequest_->callErrorCallback(
-        {request.method_, QJsonObject({{"message", "Request timed out."}}), request.messageId_, "",
-         Message::MessageType::Error});
+    request.deferredRequest_->callErrorCallback(QJsonObject({{"message", "Request timed out."}}));
 
     request.deferredRequest_->deleteLater();
     qCDebug(logCategoryStrataClient) << "Timed out request removed successfully.";
