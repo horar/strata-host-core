@@ -4,14 +4,17 @@ import QtQuick.Layouts 1.12
 
 Component {
     id: root
+
     Row {
         id: wrapper
         width: parent.width
         spacing: 20
+
         Label {
             id: indexLabel
             text: qsTr("%1:").arg(index + 1)
         }
+
         TextInput {
             width: parent.width - indexLabel.contentWidth - 22
             text: modelData
