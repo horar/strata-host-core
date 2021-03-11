@@ -48,6 +48,10 @@ Item {
         logListView.positionViewAtEnd();
     }
 
+    function copyToClipboard(textElement) {
+        CommonCPP.SGUtilsCpp.copyToClipboard(textElement.text)
+    }
+
     //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
     TextMetrics {
         id: textMetricsTs
@@ -556,14 +560,38 @@ Item {
                     }
                 }
 
+                SGWidgets.SGAbstractContextMenu {
+                    id: contextMenuMarkPopup
+
+                    Action {
+                        id: copyAction
+                        text: qsTr("Copy")
+                        enabled: true
+                        onTriggered: {
+                            copyToClipboard(msg)
+                        }
+                    }
+
+                    onClosed: {
+                        logViewWrapper.forceActiveFocus()
+                    }
+                }
+
                 MouseArea {
                     id: cellMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                     onPressed: {
                         logViewWrapper.forceActiveFocus()
                         currentIndex = index
+                    }
+
+                    onReleased: {
+                        if (containsMouse && (mouse.button === Qt.RightButton)) {
+                            contextMenuMarkPopup.popup(null)
+                        }
                     }
 
                     SGWidgets.SGIcon {
@@ -610,8 +638,7 @@ Item {
                         var hackVariable = markedModel.sourceModel.count
                         if (showMarks) {
                             return markedModel.mapIndexToSource(model.index) + 1
-                        }
-                        else {
+                        } else {
                             if (searchingMode) {
                                 return searchResultModel.mapIndexToSource(model.index) + 1
                             }
