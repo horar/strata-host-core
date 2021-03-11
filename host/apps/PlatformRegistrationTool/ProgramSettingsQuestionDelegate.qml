@@ -34,7 +34,7 @@ ProgramSettingsDelegate {
             Behavior on opacity { OpacityAnimator {} }
 
             SGWidgets.SGButton {
-                text: "Register only controller"
+                text: "Controller"
                 onClicked: {
                     onlyController = true
                     userResponse(true)
@@ -42,7 +42,7 @@ ProgramSettingsDelegate {
             }
 
             SGWidgets.SGButton {
-                text: "Register assisted platform as well"
+                text: "Controller + Assisted Platform"
                 onClicked: {
                     onlyController = false
                     userResponse(false)
