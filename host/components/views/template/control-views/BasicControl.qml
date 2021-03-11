@@ -186,6 +186,7 @@ Item {
                                     stepSize: 0.01
                                     inputBox.validator: DoubleValidator { top: 1.00; bottom:0.00 }
                                     inputBox.text: dac.value.toFixed(2)
+                                    contextMenuEnabled: true
                                     onUserSet: {
                                         inputBox.text = parseFloat(value.toFixed(2))
                                         platformInterface.commands.my_cmd_simple.update( parseFloat(value.toFixed(2)),io.checked)
@@ -225,6 +226,32 @@ Item {
                             readOnly: true
                             selectByMouse: true
                             text: JSON.stringify(my_cmd_simple_obj,null,4)
+                            persistentSelection: true   // must deselect manually
+
+                            onActiveFocusChanged: {
+                                if ((activeFocus === false) && (delegateTextContextMenuPopup1.visible === false)) {
+                                    delegateText1.deselect()
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.IBeamCursor
+                                acceptedButtons: Qt.RightButton
+                                onClicked: {
+                                    delegateText1.forceActiveFocus()
+                                }
+                                onReleased: {
+                                    if (containsMouse) {
+                                        delegateTextContextMenuPopup1.popup(null)
+                                    }
+                                }
+                            }
+
+                            SGContextMenuEditActions {
+                                id: delegateTextContextMenuPopup1
+                                textEditor: delegateText1
+                            }
                         }
                         ScrollBar.vertical: ScrollBar { }
                     }
@@ -516,7 +543,14 @@ Item {
                             anchors.fill: parent
                             readOnly: true
                             selectByMouse: true
+                            persistentSelection: true   // must deselect manually
                             property var cmd_simple_periodicText: my_cmd_simple_periodic_text
+
+                            onActiveFocusChanged: {
+                                if ((activeFocus === false) && (delegateTextContextMenuPopup.visible === false)) {
+                                    delegateText.deselect()
+                                }
+                            }
 
                             onCmd_simple_periodicTextChanged: {
                                 //set a highlighted area from the start,end cursor position
@@ -524,6 +558,25 @@ Item {
                                 var start = selectionStart
                                 text = JSON.stringify(my_cmd_simple_periodic_text, null, 4)
                                 select(start,end)
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.IBeamCursor
+                                acceptedButtons: Qt.RightButton
+                                onClicked: {
+                                    delegateText.forceActiveFocus()
+                                }
+                                onReleased: {
+                                    if (containsMouse) {
+                                        delegateTextContextMenuPopup.popup(null)
+                                    }
+                                }
+                            }
+
+                            SGContextMenuEditActions {
+                                id: delegateTextContextMenuPopup
+                                textEditor: delegateText
                             }
                         }
                         ScrollBar.vertical: ScrollBar { }
@@ -616,7 +669,7 @@ Item {
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideTopCenter
 
-                                        SGInfoBox{
+                                        SGInfoBox {
                                             id: interval
                                             width: 100
                                             text: "2000"
@@ -627,6 +680,7 @@ Item {
                                                 top: 10000
                                             }
                                             placeholderText: "250-10000"
+                                            contextMenuEnabled: true
 
                                             onEditingFinished:{
                                                 if(interval.text) {
@@ -713,6 +767,7 @@ Item {
                                             readOnly: false
                                             enabled: (runStateSwitch.checked) ? false : true
                                             opacity: (runStateSwitch.checked) ? 0.5 : 1.0
+                                            contextMenuEnabled: true
 
                                             onEditingFinished:{
                                                 if(runCountInfoBox.text) {
@@ -761,6 +816,32 @@ Item {
                             readOnly: true
                             selectByMouse: true
                             text: JSON.stringify(my_cmd_simple_start_periodic_obj, null, 4)
+                            persistentSelection: true   // must deselect manually
+
+                            onActiveFocusChanged: {
+                                if ((activeFocus === false) && (delegateTextContextMenuPopup2.visible === false)) {
+                                    delegateText2.deselect()
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.IBeamCursor
+                                acceptedButtons: Qt.RightButton
+                                onClicked: {
+                                    delegateText2.forceActiveFocus()
+                                }
+                                onReleased: {
+                                    if (containsMouse) {
+                                        delegateTextContextMenuPopup2.popup(null)
+                                    }
+                                }
+                            }
+
+                            SGContextMenuEditActions {
+                                id: delegateTextContextMenuPopup2
+                                textEditor: delegateText2
+                            }
                         }
                         ScrollBar.vertical: ScrollBar { }
                     }
