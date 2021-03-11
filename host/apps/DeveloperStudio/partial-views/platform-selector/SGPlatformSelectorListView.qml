@@ -326,6 +326,7 @@ Item {
                         selectByMouse: true
                         clip: true
                         enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
+                        persistentSelection: true   // must deselect manually
 
                         property string lowerCaseText: text.toLowerCase()
 
@@ -340,6 +341,11 @@ Item {
                             filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
                         }
 
+                        onActiveFocusChanged: {
+                            if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                                filter.deselect()
+                            }
+                        }
 
                         Text {
                             id: placeholderText
@@ -364,10 +370,23 @@ Item {
                         }
 
                         MouseArea {
-                            id: mouseArea
                             anchors.fill: parent
-                            acceptedButtons: Qt.NoButton
+                            acceptedButtons: Qt.RightButton
                             cursorShape: Qt.IBeamCursor
+
+                            onClicked: {
+                                filter.forceActiveFocus()
+                            }
+                            onReleased: {
+                                if (containsMouse) {
+                                    contextMenuPopup.popup(null)
+                                }
+                            }
+                        }
+
+                        SGContextMenuEditActions {
+                            id: contextMenuPopup
+                            textEditor: filter
                         }
                     }
 

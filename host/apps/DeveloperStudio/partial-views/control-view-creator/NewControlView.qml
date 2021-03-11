@@ -92,7 +92,7 @@ Rectangle {
                 border.color: "#444"
                 border.width: 0.5
 
-                TextInput {
+                SGTextInput {
                     id: fileOutput
 
                     anchors.fill: parent
@@ -103,6 +103,7 @@ Rectangle {
 
                     readonly property string defaultText: "Select a folder for your project..."
                     text: defaultText
+                    contextMenuEnabled: true
                 }
             }
         }
