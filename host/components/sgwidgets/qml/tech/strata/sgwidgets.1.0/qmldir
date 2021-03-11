@@ -42,6 +42,7 @@ SGText 1.0 SGText.qml
 SGTextArea 1.0 SGTextArea.qml
 SGTextEdit 1.0 SGTextEdit.qml
 SGTextField 1.0 SGTextField.qml
+SGTextInput 1.0 SGTextInput.qml
 SGWindow 1.0 SGWindow.qml
 
 SGConfirmationDialog 1.0 dialogs/SGConfirmationDialog.qml

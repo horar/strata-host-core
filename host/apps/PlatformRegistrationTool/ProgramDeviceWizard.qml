@@ -16,7 +16,6 @@ FocusScope {
     property QtObject prtModel
     property int platformIndex: -1
     property string jlinkExePath
-    property string subtextNote
     property int spacing: 10
     property variant warningDialog: null
 
@@ -55,6 +54,7 @@ FocusScope {
 
     clip: true
 
+    property alias jLinkConnector: jLinkConnector
     Component.onCompleted: {
         if (jlinkExePath.length === 0) {
             jlinkExePath = searchJLinkExePath()
@@ -77,482 +77,14 @@ FocusScope {
         color: "#eeeeee"
     }
 
-    DSM.StateMachine {
+    ProgramDeviceStateMachine {
         id: stateMechine
 
-        signal settingsValid()
-        signal deviceCountValid()
-        signal deviceCountInvalid()
-        signal deviceFirmwareValid()
-        signal deviceFirmwareInvalid()
-        signal jlinkProcessFailed()
-
-        running: true
-        initialState: stateSettings
-
-        DSM.State {
-            id: stateSettings
-
-            onEntered: {
-                prtModel.clearBinaries();
-            }
-
-            DSM.SignalTransition {
-                targetState: stateDownload
-                signal: stateMechine.settingsValid
-            }
-        }
-
-        DSM.State {
-            id: stateDownload
-
-            property string bootloaderUrl
-            property string bootloaderMd5
-
-            initialState: stateGetBootloaderUrl
-
-            onEntered: {
-                stateDownload.bootloaderUrl = ""
-                stateDownload.bootloaderMd5 = ""
-            }
-
-            DSM.SignalTransition {
-                targetState: stateSettings
-                signal: breakBtn.clicked
-            }
-
-            DSM.State {
-                id: stateGetBootloaderUrl
-
-                onEntered: {
-                    prtModel.requestBootloaderUrl()
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateGetBinaries
-                    signal: prtModel.bootloaderUrlRequestFinished
-                    guard: errorString.length === 0
-                    onTriggered: {
-                        stateDownload.bootloaderUrl = url
-                        stateDownload.bootloaderMd5 = md5
-                    }
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateError
-                    signal: prtModel.bootloaderUrlRequestFinished
-                    guard: errorString.length > 0
-                    onTriggered: {
-                        wizard.subtextNote = errorString
-                    }
-                }
-            }
-
-            DSM.State {
-                id: stateGetBinaries
-
-                onEntered: {
-                    prtModel.downloadBinaries(
-                                stateDownload.bootloaderUrl,
-                                stateDownload.bootloaderMd5,
-                                wizard.currentFirmwareUrl,
-                                wizard.currentFirmwareMd5)
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateCheckDevice
-                    signal: prtModel.downloadFirmwareFinished
-                    guard: errorString.length === 0
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateError
-                    signal: prtModel.downloadFirmwareFinished
-                    guard: errorString.length > 0
-                    onTriggered: {
-                        wizard.subtextNote = errorString
-                    }
-                }
-            }
-        }
-
-        DSM.State {
-            id: stateCheckDevice
-
-            initialState: stateCheckDeviceCount
-
-            DSM.SignalTransition {
-                targetState: stateSettings
-                signal: breakBtn.clicked
-            }
-
-            DSM.SignalTransition {
-                targetState: stateWaitForDevice
-                signal: prtModel.deviceCountChanged
-                guard: prtModel.deviceCount !== 1
-            }
-
-            DSM.State {
-                id: stateCheckDeviceCount
-                onEntered: {
-                    if (prtModel.deviceCount === 1) {
-                        stateMechine.deviceCountValid()
-                    } else {
-                        stateMechine.deviceCountInvalid()
-                    }
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateCheckFirmware
-                    signal: stateMechine.deviceCountValid
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateWaitForDevice
-                    signal: stateMechine.deviceCountInvalid
-                }
-            }
-
-            DSM.State {
-                id: stateWaitForDevice
-
-                onEntered: {
-                    wizard.subtextNote = ""
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateCheckFirmware
-                    signal: prtModel.deviceCountChanged
-                    guard: prtModel.deviceCount === 1
-                }
-            }
-
-            DSM.State {
-                id: stateCheckFirmware
-
-                onEntered: {
-                    if (prtModel.deviceFirmwareVersion().length > 0) {
-                        //device already has firmware
-                        showFirmwareWarning(
-                                    prtModel.deviceFirmwareVersion(),
-                                    prtModel.deviceFirmwareVerboseName(),
-                                    function() {
-                                        stateMechine.deviceFirmwareValid()
-                                    },
-                                    function() {
-                                        stateMechine.deviceFirmwareInvalid()
-                                    })
-                    } else {
-                        stateMechine.deviceFirmwareValid()
-                    }
-                }
-
-                onExited: {
-                    if (warningDialog !== null) {
-                        warningDialog.reject()
-                    }
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateWaitForJLink
-                    signal: stateMechine.deviceFirmwareValid
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateWaitForDevice
-                    signal: stateMechine.deviceFirmwareInvalid
-                }
-            }
-
-            DSM.State {
-                id: stateWaitForJLink
-
-                initialState: stateCheckJLinkConnection
-
-                DSM.State {
-                    id: stateCheckJLinkConnection
-
-                    onEntered: {
-                        var run = jLinkConnector.checkConnectionRequested()
-                        if (run === false) {
-                            stateMechine.jlinkProcessFailed()
-                        }
-                    }
-
-                    DSM.SignalTransition {
-                        targetState: stateProgram
-                        signal: jLinkConnector.checkConnectionProcessFinished
-                        guard: exitedNormally && connected
-                    }
-
-                    DSM.SignalTransition {
-                        targetState: stateCallJlinkCheckWithDelay
-                        signal: stateMechine.jlinkProcessFailed
-                    }
-
-                    DSM.SignalTransition {
-                        targetState: stateCallJlinkCheckWithDelay
-                        signal: jLinkConnector.checkConnectionProcessFinished
-                        guard: exitedNormally === false || connected === false
-                    }
-                }
-
-                DSM.State {
-                    id: stateCallJlinkCheckWithDelay
-                    DSM.TimeoutTransition {
-                        targetState: stateCheckJLinkConnection
-                        timeout: 2000
-                    }
-                }
-            }
-        }
-
-        DSM.State {
-            id: stateProgram
-
-            initialState: stateProgramBootloader
-
-            DSM.State {
-                id: stateProgramBootloader
-
-                onEntered: {
-                    var run = jLinkConnector.programBoardRequested(wizard.prtModel.bootloaderFilepath)
-
-                    if (run === false) {
-                        stateMechine.jlinkProcessFailed()
-                    }
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLoopFailed
-                    signal: stateMechine.jlinkProcessFailed
-                    onTriggered: {
-                        wizard.subtextNote = "JLink process failed"
-                    }
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateProgramFirmware
-                    signal: jLinkConnector.programBoardProcessFinished
-                    guard: exitedNormally
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLoopFailed
-                    signal: jLinkConnector.programBoardProcessFinished
-                    guard: exitedNormally === false
-                    onTriggered: {
-                        wizard.subtextNote = "JLink process failed"
-                    }
-                }
-            }
-
-            DSM.State {
-                id: stateProgramFirmware
-
-                onEntered: {
-                    prtModel.programDevice();
-                }
-
-                /* Seems like DSM casts class enum arguments to simple int,
-                   so "===" doesnt work */
-                DSM.SignalTransition {
-                    signal: prtModel.flasherOperationStateChanged
-                    onTriggered: {
-                        if (operation == FlasherConnector.Preparation ) {
-                            if (state == FlasherConnector.Started) {
-                                wizard.subtextNote = "Preparations"
-                            } else if (state == FlasherConnector.Failed) {
-                                wizard.subtextNote = errorString
-                            }
-                        } else if (operation == FlasherConnector.Flash) {
-                            if (state == FlasherConnector.Started) {
-                                wizard.subtextNote = "Programming"
-                            } else if (state === FlasherConnector.Failed) {
-                                wizard.subtextNote = errorString
-                            }
-                        } else if (operation == FlasherConnector.BackupBeforeFlash
-                                   || operation == FlasherConnector.RestoreFromBackup) {
-                            console.warn(Logger.prtCategory, "unsupported operation", operation, state)
-                        } else {
-                            console.warn(Logger.prtCategory, "unknown operation", operation, state)
-                        }
-                    }
-                }
-
-                DSM.SignalTransition {
-                    signal: prtModel.flasherProgress
-                    onTriggered: {
-                        wizard.subtextNote = Math.floor((chunk / total) * 100) +"% completed"
-                    }
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateRegistration
-                    signal: prtModel.flasherFinished
-                    guard: result == FlasherConnector.Success
-
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLoopFailed
-                    signal: prtModel.flasherFinished
-                    guard: result == FlasherConnector.Unsuccess || result == FlasherConnector.Failure
-                }
-            }
-        }
-
-        DSM.State {
-            id: stateRegistration
-
-            property string currentPlatformId
-            property int currentBoardCount
-
-            initialState: stateNotifyCloudService
-
-            onEntered: {
-                stateRegistration.currentPlatformId = CommonCpp.SGUtilsCpp.generateUuid()
-                stateRegistration.currentBoardCount = -1
-            }
-
-            DSM.State {
-                id: stateNotifyCloudService
-
-                onEntered: {
-                    wizard.subtextNote = "contacting cloud service"
-                    prtModel.notifyServiceAboutRegistration(
-                                wizard.currentClassId,
-                                stateRegistration.currentPlatformId)
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateStartBootloader
-                    signal: prtModel.notifyServiceFinished
-                    guard: boardCount > 0 && errorString.length === 0
-                    onTriggered: {
-                        stateRegistration.currentBoardCount = boardCount
-                    }
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLoopFailed
-                    signal: prtModel.notifyServiceFinished
-                    guard: errorString.length > 0
-                    onTriggered: {
-                        wizard.subtextNote = errorString
-                    }
-                }
-            }
-
-            DSM.State {
-                id: stateStartBootloader
-
-                onEntered: {
-                    wizard.subtextNote = "starting bootloader"
-                    prtModel.startBootloader()
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateWriteRegistrationData
-                    signal: prtModel.startBootloaderFinished
-                    guard: errorString.length === 0
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLoopFailed
-                    signal: prtModel.startBootloaderFinished
-                    guard: errorString.length > 0
-                    onTriggered: {
-                        wizard.subtextNote = errorString
-                    }
-                }
-            }
-
-            DSM.State {
-                id: stateWriteRegistrationData
-
-                onEntered: {
-                    wizard.subtextNote = "writing to device"
-                    prtModel.setPlatformId(
-                                wizard.currentClassId,
-                                stateRegistration.currentPlatformId,
-                                stateRegistration.currentBoardCount)
-
-                    //TODO: or call setAssistedPlatformId based on platform type
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateStartApplication
-                    signal: prtModel.setPlatformIdFinished
-                    guard: errorString.length === 0
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLoopFailed
-                    signal: prtModel.setPlatformIdFinished
-                    guard: errorString.length > 0
-                    onTriggered: {
-                        wizard.subtextNote = errorString
-                    }
-                }
-            }
-
-            DSM.State {
-                id: stateStartApplication
-
-                onEntered: {
-                    wizard.subtextNote = "starting application firmware"
-                    prtModel.startApplication()
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLoopSucceed
-                    signal: prtModel.startApplicationFinished
-                    guard: errorString.length === 0
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLoopFailed
-                    signal: prtModel.startApplicationFinished
-                    guard: errorString.length > 0
-                    onTriggered: {
-                        wizard.subtextNote = errorString
-                    }
-                }
-            }
-        }
-
-        DSM.State {
-            id: stateError
-
-            DSM.SignalTransition {
-                targetState: stateSettings
-                signal: breakBtn.clicked
-            }
-        }
-
-        DSM.State {
-            id: stateLoopFailed
-
-            DSM.SignalTransition {
-                targetState: stateWaitForDevice
-                signal: continueBtn.clicked
-            }
-        }
-
-        DSM.State {
-            id: stateLoopSucceed
-
-            DSM.SignalTransition {
-                targetState: stateSettings
-                signal: breakBtn.clicked
-            }
-
-            DSM.SignalTransition {
-                targetState: stateCheckDevice
-                signal: prtModel.boardDisconnected
-            }
-        }
+        prtModel: wizard.prtModel
+        jLinkConnector: wizard.jLinkConnector
+
+        breakButton: breakBtn
+        continueButton: continueBtn
     }
 
     Workflow {
@@ -563,21 +95,12 @@ FocusScope {
             horizontalCenter: parent.horizontalCenter
         }
 
-        nodeSettingsHighlight: stateSettings.active
-        nodeDownloadHighlight: stateDownload.active
-        nodeDeviceCheckHighlight: stateCheckDevice.active
-        nodeProgramHighlight: stateProgram.active
-        nodeRegistrationHighlight: stateRegistration.active
-        nodeDoneHighlight: stateLoopSucceed.active || stateLoopFailed.active || stateError.active
-    }
-
-    UserMenuButton {
-        anchors {
-            top: parent.top
-            topMargin: 8
-            right: parent.right
-            rightMargin: 8
-        }
+        nodeSettingsHighlight: stateMechine.stateSettingsActive
+        nodeDownloadHighlight: stateMechine.stateDownloadActive
+        nodeDeviceCheckHighlight: stateMechine.stateCheckDeviceActive
+        nodeProgramHighlight: stateMechine.stateProgramActive
+        nodeRegistrationHighlight: stateMechine.stateRegistrationActive
+        nodeDoneHighlight: stateMechine.stateLoopSucceedActive || stateMechine.stateLoopFailedActive || stateMechine.stateErrorActive
     }
 
     CommonCpp.SGJLinkConnector {
@@ -607,8 +130,8 @@ FocusScope {
             id: settingsPage
             anchors.fill: parent
 
-            enabled: stateSettings.active
-            opacity: stateSettings.active ? 1 : 0
+            enabled: stateMechine.stateSettingsActive
+            opacity: stateMechine.stateSettingsActive ? 1 : 0
             Behavior on opacity { OpacityAnimator { duration: 200}}
 
             SGWidgets.SGText {
@@ -766,8 +289,8 @@ FocusScope {
 
             property int verticalSpacing: 8
 
-            enabled: stateSettings.active === false
-            opacity: stateSettings.active ? 0 : 1
+            enabled: stateMechine.stateSettingsActive === false
+            opacity: stateMechine.stateSettingsActive ? 0 : 1
             Behavior on opacity { OpacityAnimator { duration: 200}}
 
             SGWidgets.SGText {
@@ -780,21 +303,21 @@ FocusScope {
 
                 fontSizeMultiplier: 2.0
                 text: {
-                    if (stateDownload.active) {
+                    if (stateMechine.stateDownloadActive) {
                         return "Downloading..."
-                    } else if (stateWaitForDevice.active) {
+                    } else if (stateMechine.stateWaitForDeviceActive) {
                         return "Waiting for device to connect"
-                    } else if (stateWaitForJLink.active) {
+                    } else if (stateMechine.stateWaitForJLinkActive) {
                         return "Waiting for JLink connection"
-                    } else if (stateProgramBootloader.active) {
+                    } else if (stateMechine.stateProgramBootloaderActive) {
                         return "Programming bootloader..."
-                    } else if (stateProgramFirmware.active) {
+                    } else if (stateMechine.stateProgramFirmwareActive) {
                         return "Programming firmware..."
-                    } else if (stateRegistration.active) {
+                    } else if (stateMechine.stateRegistrationActive) {
                         return "Registering..."
-                    } else if (stateLoopSucceed.active) {
+                    } else if (stateMechine.stateLoopSucceedActive) {
                         return "Platfrom Registered Successfully"
-                    } else if (stateLoopFailed.active || stateError.active) {
+                    } else if (stateMechine.stateLoopFailedActive || stateMechine.stateErrorActive) {
                         return "Platform Registration Failed"
                     }
 
@@ -816,7 +339,7 @@ FocusScope {
 
                 /* QtBug-85860: When "running" property is changed too fast,
                     BusyIndicator stays hidden, even though "running" property is "true".*/
-                property bool runBusyIndicator: stateDownload.active ||  stateProgram.active  ||  stateRegistration.active
+                property bool runBusyIndicator: stateMechine.stateDownloadActive ||  stateMechine.stateProgramActive  ||  stateMechine.stateRegistrationActive
                 onRunBusyIndicatorChanged: fixRunIndicatorTimer.start()
 
                 Timer {
@@ -839,9 +362,9 @@ FocusScope {
                     height: width
 
                     source: {
-                        if (stateLoopSucceed.active) {
+                        if (stateMechine.stateLoopSucceedActive) {
                             return "qrc:/sgimages/check.svg"
-                        } else if (stateLoopFailed.active || stateError.active) {
+                        } else if (stateMechine.stateLoopFailedActive || stateMechine.stateErrorActive) {
                             return "qrc:/sgimages/times-circle.svg"
                         }
 
@@ -849,9 +372,9 @@ FocusScope {
                     }
 
                     iconColor: {
-                        if (stateLoopSucceed.active) {
+                        if (stateMechine.stateLoopSucceedActive) {
                             return Theme.palette.green
-                        } else if (stateLoopFailed.active || stateError.active) {
+                        } else if (stateMechine.stateLoopFailedActive || stateMechine.stateErrorActive) {
                             return TangoTheme.palette.scarletRed2
                         }
 
@@ -873,31 +396,31 @@ FocusScope {
                 fontSizeMultiplier: 1.2
                 font.italic: true
                 text: {
-                    if (stateCheckDevice.active) {
+                    if (stateMechine.stateCheckDeviceActive) {
                         var msg = "Only single device with MCU EFM32GG380F1024 can be connected while programming\n"
 
                         if (prtModel.deviceCount > 1) {
                             msg += "Multiple devices detected !"
                         }
                         return msg
-                    } else if (stateProgram.active || stateRegistration.active) {
-                        msg = wizard.subtextNote
+                    } else if (stateMechine.stateProgramActive || stateMechine.stateRegistrationActive) {
+                        msg = stateMechine.subtext
                         msg += "\n\n"
                         msg += "Do not unplug device"
                         return msg
-                    } else if (stateLoopSucceed.active) {
+                    } else if (stateMechine.stateLoopSucceedActive) {
                         msg = "You can unplug device now\n\n"
                         msg += "To program another device, simply plug it in and\n"
                         msg += "process will start automatically\n\n"
                         msg += "or press End."
                         return msg
-                    } else if (stateLoopFailed.active) {
-                        msg = wizard.subtextNote
+                    } else if (stateMechine.stateLoopFailedActive) {
+                        msg = stateMechine.subtext
                         msg += "\n\n"
                         msg += "Unplug device and press Continue"
                         return msg
-                    } else if (stateError.active) {
-                        msg = wizard.subtextNote
+                    } else if (stateMechine.stateErrorActive) {
+                        msg = stateMechine.subtext
                         return msg
                     }
 
@@ -917,7 +440,7 @@ FocusScope {
                 fillMode: Image.PreserveAspectFit
                 sourceSize: Qt.size(width, height)
                 smooth: true
-                visible: stateCheckDevice.active
+                visible: stateMechine.stateCheckDeviceActive
             }
         }
     }
@@ -935,7 +458,7 @@ FocusScope {
         SGWidgets.SGButton {
             text: "Begin"
             icon.source: "qrc:/sgimages/chip-flash.svg"
-            visible: stateSettings.active
+            visible: stateMechine.stateSettingsActive
             onClicked: {
                 validateSettings()
             }
@@ -944,13 +467,13 @@ FocusScope {
         SGWidgets.SGButton {
             id: breakBtn
             text: "End"
-            visible: stateDownload.active || stateCheckDevice.active || stateLoopSucceed.active || stateError.active
+            visible: stateMechine.stateDownloadActive || stateMechine.stateCheckDeviceActive || stateMechine.stateLoopSucceedActive || stateMechine.stateErrorActive
         }
 
         SGWidgets.SGButton {
             id: continueBtn
             text: "Continue"
-            visible: stateLoopFailed.active
+            visible: stateMechine.stateLoopFailedActive
         }
     }
 

@@ -235,9 +235,14 @@ SGWidgets.SGDialog {
                                 anchors.verticalCenter: parent.verticalCenter
                                 icon.source: "qrc:/sgimages/times-circle.svg"
                                 iconColor: TangoTheme.palette.error
+                                enabled: filterConditionModel.count > 1 || filterStringTextField.text.length > 0
 
                                 onClicked: {
-                                    filterConditionModel.remove(index)
+                                    if (filterConditionModel.count > 1) {
+                                        filterConditionModel.remove(index)
+                                    } else {
+                                        filterStringTextField.text = ""
+                                    }
                                 }
                             }
                         }

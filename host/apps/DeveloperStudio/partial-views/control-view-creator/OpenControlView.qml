@@ -309,7 +309,7 @@ Rectangle {
                 border.color: "#444"
                 border.width: 0.5
 
-                TextInput {
+                SGTextInput {
                     id: fileOutput
 
                     anchors.fill: parent
@@ -318,6 +318,7 @@ Rectangle {
                     verticalAlignment: Text.AlignVCenter
                     selectByMouse: true
                     leftPadding: 10
+                    contextMenuEnabled: true
                 }
             }
         }

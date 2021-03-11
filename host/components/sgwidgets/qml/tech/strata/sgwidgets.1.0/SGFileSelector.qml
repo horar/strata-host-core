@@ -18,10 +18,25 @@ FocusScope {
     property string dialogDefaultSuffix: ""
     property variant dialogNameFilters: []
     property alias contextMenuEnabled: textEdit.contextMenuEnabled
+    property alias isValid: textEdit.isValid
+    property alias activeEditing: textEdit.activeEditing
+    property alias showValidationResultIcon: textEdit.showValidationResultIcon
 
 
     function inputValidationErrorMsg() {
         return ""
+    }
+
+    function setStateIsUnknown() {
+        textEdit.setIsUnknown()
+    }
+
+    function setStateIsValid() {
+        textEdit.setIsValid()
+    }
+
+    function setStateIsInvalid(error) {
+        textEdit.setIsInvalid(error)
     }
 
     SGWidgets.SGTextFieldEditor {

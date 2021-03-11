@@ -240,12 +240,14 @@ SGStrataPopup {
                                 margins: 10
                             }
 
-                            TextEdit {
+                            SGTextEdit {
                                 id: textEdit
                                 width: scrollingText.width
                                 wrapMode: TextEdit.Wrap
                                 height: Math.max(scrollingText.height, contentHeight)
                                 enabled: !feedbackStatus.visible
+                                selectByMouse: true
+                                contextMenuEnabled: true
                                 // Text Length Limiter
                                 readOnly: feedbackStatus.visible
                                 KeyNavigation.tab: submitButton
