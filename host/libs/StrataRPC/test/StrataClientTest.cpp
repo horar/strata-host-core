@@ -30,10 +30,12 @@ void StrataClientTest::testRegisterAndUnregisterHandlers()
 
 void StrataClientTest::testConnectDisconnectToTheServer()
 {
+    bool serverRevicedMessage = false;
+    bool clientReceivedMessage = false;
+
     // serverConnector set up
     strata::strataRPC::ServerConnector server(address_);
     server.initilizeConnector();
-    bool serverRevicedMessage = false;
     connect(
         &server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
         [&server, &serverRevicedMessage](const QByteArray &clientId, const QByteArray &message) {
@@ -46,16 +48,17 @@ void StrataClientTest::testConnectDisconnectToTheServer()
     // StrataClient set up
     StrataClient client(address_);
 
-    bool clientReceivedMessage = false;
+    QSignalSpy signalSpy(&client, &StrataClient::clientConnected);
+
     connect(&client, &StrataClient::newServerMessageParsed, this,
             [&clientReceivedMessage] { clientReceivedMessage = true; });
 
     serverRevicedMessage = false;
-    clientReceivedMessage = false;
     QVERIFY_(client.connectServer());
     waitForZmqMessages();
     QVERIFY_(serverRevicedMessage);
-    QVERIFY_(clientReceivedMessage);
+    QCOMPARE_(signalSpy.count(), 1);
+    signalSpy.clear();
 
     serverRevicedMessage = false;
     clientReceivedMessage = false;
@@ -76,7 +79,8 @@ void StrataClientTest::testConnectDisconnectToTheServer()
     QVERIFY_(client.connectServer());
     waitForZmqMessages();
     QVERIFY_(serverRevicedMessage);
-    QVERIFY_(clientReceivedMessage);
+    QCOMPARE_(signalSpy.count(), 1);
+    signalSpy.clear();
 }
 
 void StrataClientTest::testBuildRequest()
@@ -226,12 +230,12 @@ void StrataClientTest::testWithNoCallbacks()
     noCallbackHandler = false;
     client.sendRequest("test_no_callbacks", QJsonObject({{"response_type", "error"}}));
     waitForZmqMessages(zmqWaitTime);
-    QVERIFY_(noCallbackHandler);
+    QVERIFY_(false == noCallbackHandler);
 
     noCallbackHandler = false;
     client.sendRequest("test_no_callbacks", QJsonObject({{"response_type", "result"}}));
     waitForZmqMessages(zmqWaitTime);
-    QVERIFY_(noCallbackHandler);
+    QVERIFY_(false == noCallbackHandler);
 }
 
 void StrataClientTest::testWithAllCallbacks()
@@ -448,7 +452,7 @@ void StrataClientTest::testWithOnlyResultCallbacks()
 
         waitForZmqMessages(zmqWaitTime);
         QVERIFY_(false == resCallback);
-        QVERIFY_(resCallbackHandler);
+        QVERIFY_(false == resCallbackHandler);
     }
 
     {
@@ -538,7 +542,7 @@ void StrataClientTest::testWithOnlyErrorCallbacks()
 
         waitForZmqMessages(zmqWaitTime);
         QVERIFY_(false == errorCallback);
-        QVERIFY_(errorCallbackHander);
+        QVERIFY_(false == errorCallbackHander);
     }
 
     {
@@ -673,6 +677,11 @@ void StrataClientTest::testErrorOccourredSignal()
     QCOMPARE_(errorType, StrataClient::ClientError::FailedToDisconnect);
     errorOccurred.clear();
 
+    client.sendNotification("test_notification", QJsonObject{{}});
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::FailedToSendNotification);
+    errorOccurred.clear();
+
     server.initilizeConnector();
     client.connectServer();
     client.connectServer();  // This should fail
@@ -682,9 +691,11 @@ void StrataClientTest::testErrorOccourredSignal()
     errorOccurred.clear();
 
     waitForZmqMessages(500);  // wait for the register_client messages to be timed out.
-    QCOMPARE_(errorOccurred.count(), 1);
-    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
+    QCOMPARE_(errorOccurred.count(), 2);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.at(0).at(0));
     QCOMPARE_(errorType, StrataClient::ClientError::RequestTimeout);
+    errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.at(1).at(0));
+    QCOMPARE_(errorType, StrataClient::ClientError::FailedToConnect);
     errorOccurred.clear();
 
     server.sendMessage("StrataClient", "not Json message");
@@ -721,4 +732,42 @@ void StrataClientTest::testErrorOccourredSignal()
     errorType = qvariant_cast<StrataClient::ClientError>(errorOccurred.takeFirst().at(0));
     QCOMPARE_(errorType, StrataClient::ClientError::HandlerNotFound);
     errorOccurred.clear();
+}
+
+void StrataClientTest::testSendNotification()
+{
+    bool serverGotNotification = false;
+
+    strata::strataRPC::ServerConnector server(address_);
+    server.initilizeConnector();
+
+    connect(&server, &strata::strataRPC::ServerConnector::newMessageReceived, this,
+            [&serverGotNotification](const QByteArray &, const QByteArray &message) {
+                QJsonObject jsonObject(QJsonDocument::fromJson(message).object());
+
+                if (jsonObject.value("method").toString() == "test_notification") {
+                    serverGotNotification = true;
+
+                    QVERIFY_(jsonObject.contains("jsonrpc"));
+                    QVERIFY_(jsonObject.value("jsonrpc").isString());
+
+                    QVERIFY_(jsonObject.contains("id"));
+                    QVERIFY_(jsonObject.value("id").isDouble());
+                    QCOMPARE_(jsonObject.value("id").toDouble(), 0);
+
+                    QVERIFY_(jsonObject.contains("method"));
+                    QVERIFY_(jsonObject.value("method").isString());
+                    QCOMPARE_(jsonObject.value("method").toString(), "test_notification");
+
+                    QVERIFY_(jsonObject.contains("params"));
+                    QVERIFY_(jsonObject.value("params").isObject());
+                }
+            });
+
+    StrataClient client(address_);
+    client.connectServer();
+    client.sendNotification("test_notification", QJsonObject{{"test_key", "test_value"}});
+
+    waitForZmqMessages(50);
+    QVERIFY_(serverGotNotification);
 }
