@@ -1,8 +1,8 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
+#include <Device/Operations/Identify.h>
 #include <memory>
-
 #include <QObject>
 #include <QString>
 
@@ -70,6 +70,22 @@ private:
     const QString fileName_;
     const int deviceNumber_;
     const CmdType command_;
+};
+
+class InfoCommand : public Command {
+    Q_OBJECT
+public:
+    InfoCommand(int deviceNumber);
+    ~InfoCommand() override;
+    void process() override;
+
+private slots:
+    virtual void handleIdentifyOperationFinished(device::operation::Result result, int status, QString errStr);
+
+private:
+    const int deviceNumber_;
+    device::DevicePtr device_;
+    std::unique_ptr<device::operation::Identify> identifyOperation_;
 };
 
 }  // namespace

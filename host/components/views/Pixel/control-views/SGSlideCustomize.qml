@@ -192,7 +192,7 @@ Item {
                 selectByMouse: true
                 readOnly: false
                 font {
-                    pixelSize: Theme.basePixelSize
+                    pixelSize: 10
                 }
                 horizontalAlignment: TextInput.AlignRight
                 validator: realNumberValidator

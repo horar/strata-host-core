@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include "BoardManagerDerivate.h"
-#include "DeviceMock.h"
+#include <Device/Mock/MockDevice.h>
 #include "QtTest.h"
 
 class BoardManagerTest : public QObject
@@ -54,7 +54,7 @@ private:
      * \param deviceName name of the added device
      * \return Created mock device.
      */
-    std::shared_ptr<DeviceMock> addMockDevice(const int deviceId, const QString deviceName);
+    std::shared_ptr<strata::device::mock::MockDevice> addMockDevice(const int deviceId, const QString deviceName);
     /*!
      * \brief Helper function, pretends a serial port was removed (only used for clean up after
      * disconnect) \param deviceId ID of the removed device

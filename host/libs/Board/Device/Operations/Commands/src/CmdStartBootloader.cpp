@@ -9,12 +9,8 @@
 namespace strata::device::command {
 
 CmdStartBootloader::CmdStartBootloader(const device::DevicePtr& device) :
-    BaseDeviceCommand(device, QStringLiteral("start_bootloader")) { }
-
-void CmdStartBootloader::setWaitTime(const std::chrono::milliseconds &waitTime)
-{
-    waitTime_ = waitTime;
-}
+    BaseDeviceCommand(device, QStringLiteral("start_bootloader"), CommandType::StartBootloader)
+{ }
 
 QByteArray CmdStartBootloader::message() {
     return QByteArray("{\"cmd\":\"start_bootloader\",\"payload\":{}}");
@@ -33,19 +29,6 @@ bool CmdStartBootloader::processNotification(rapidjson::Document& doc) {
     } else {
         return false;
     }
-}
-
-std::chrono::milliseconds CmdStartBootloader::waitBeforeNextCommand() const {
-    // Bootloader takes 5 seconds to start (known issue related to clock source).
-    // Platform and bootloader uses the same setting for clock source.
-    // Clock source for bootloader and application must match. Otherwise when application jumps to bootloader,
-    // it will have a hardware fault which requires board to be reset.
-    if (waitTime_ >= std::chrono::milliseconds(WAIT_TIME_IN_MS)) {
-        qCInfo(logCategoryDeviceOperations) << device_ << "Waiting " <<  waitTime_.count() << " miliseconds for bootloader to start.";
-    } else {
-        qCInfo(logCategoryDeviceOperations) << device_ << "Skipping wait-time-for-bootloader-to-start for test purposes. (" << waitTime_.count() << " ms)";
-    }
-    return waitTime_;
 }
 
 }  // namespace
