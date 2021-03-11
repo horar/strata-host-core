@@ -7,9 +7,6 @@ Item {
 
     // -------------------------------------------------------------------
     // UI Control States
-    //
-
-
     // -------------------------------------------------------------------
     // Incoming Notification Messages
     //
@@ -18,7 +15,6 @@ Item {
     // The property name *must* match the associated notification value.
     // Sets UI Control State when changed.
 
-    //
     property var control_states : {
         "buck_enabled": false,  //true or false (boolean)
         "ldo_enabled": false,   //true or false (boolean)

@@ -14,14 +14,8 @@ Item {
         fill: parent
     }
 
-    property var sgUserSettings
-
     PlatformInterface {
         id: platformInterface
-    }
-
-    Component.onCompleted: {
-        //Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
     }
 
     BasicControl{ }
@@ -49,5 +43,4 @@ Item {
             hoverEnabled: true
         }
     }
-
 }

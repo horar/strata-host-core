@@ -22,19 +22,18 @@ Item {
         Help.registerTarget(softStartLabel, "This dropdown selection allows the user to change the approximate soft start time for the buck converter.", 2, "100VcontrolHelp")
         Help.registerTarget(outputVolLabel, "The slider and the text box both allow the user to set the output voltage between 5V and 24V.",3, "100VcontrolHelp")
         Help.registerTarget(setoutputVoltAdjustmentLabel, "This switch will turn on/off the ability for the user to adjust the output voltage. The default fixed voltage if this feature is disabled is 17V. Disabling the output voltage adjustment feature allows for adjusting the output voltage of the board to voltages outside the recommended range by manually replacing the output voltage feedback divider resistors. See the User Guide for more details.",4, "100VcontrolHelp")
-        Help.registerTarget(enableVCCLDOLabel, "This switch turns on/off the LDO that provides power to the VCC rail of the NCP1034 controller by default. When enabled, VCC power is drawn from the input voltage supply. If this is disabled, the user would need to apply VCC power externally through the VCC_EXT header provided on the board. See the User Guide for more details.",5, "100VcontrolHelp")
-        Help.registerTarget(filterHelpContainer, "All measured voltages and currents on the board are shown here. Input/output voltages and currents are measured at the input and output to the evaluation board.",6, "100VcontrolHelp")
+        Help.registerTarget(enableVCCLDOLabel, "This switch turns on/off the LDO that provides power to the VCC rail of the NCP1034 controller by default. When enabled, VCC power is drawn from the input voltage supply. If this is disabled, the user would need to apply VCC power externally through the VCC_EXT header provided on the board. See the User Guide for more details. VCC voltage is recommended to be at least 10V. The LED status indicator below reflects this threshold.",5, "100VcontrolHelp")
+        Help.registerTarget(helpTelemetryContainer, "All measured voltages and currents on the board are shown here. Input/output voltages and currents are measured at the input and output to the evaluation board.",6, "100VcontrolHelp")
         Help.registerTarget(logFault, "This status list contains all the error messages, and will store them in the order received with the most recent error messages displayed on top.",7, "100VcontrolHelp")
-        Help.registerTarget(filterHelp2Container, "These gauges show the input and output power to the evaluation board. They are calculated from the measured voltages and currents at input and output. The current readings max out at 1.1A and 2.2A for input and output current, respectively, so if more current than that is being drawn, the numbers here will be inaccurate as the input/output current sense amps will be saturated.",8, "100VcontrolHelp")
+        Help.registerTarget(helpGaugeContainer, "These gauges show the input and output power to the evaluation board. They are calculated from the measured voltages and currents at input and output. The current readings max out at 1.1A and 2.2A for input and output current, respectively, so if more current than that is being drawn, the numbers here will be inaccurate as the input/output current sense amps will be saturated.",8, "100VcontrolHelp")
         Help.registerTarget(effGaugeLabel, "The buck converter efficiency is calculated by taking the buck regulator's measured output power divided by the buck regulator's measured input power. This reading does not include the power loss in the VCC LDO when enabled.",9, "100VcontrolHelp")
         Help.registerTarget(ldoTempLabel, "The temperature from the sensor closest to the LDO supplying the VCC rail is measured here. The LDO may have significant power loss at high input voltages. The temperature alert limit is set to 100˚C. The LDO will automatically be disabled during a temperature alert event and cannot be enabled again until the temperature reading decreases below 95˚C.",10, "100VcontrolHelp")
         Help.registerTarget(boardTempLabel, "The temperature from the sensor closest to the inductor of the buck converter is measured here to estimate the overall board temperature. The temperature alert limit is set to 80˚C. The buck regulator will automatically be disabled during a temperature alert event and cannot be enabled again until the temperature reading decreases below 75˚C.", 11, "100VcontrolHelp")
         Help.registerTarget(sgstatusHelpContainer, "Green or black indicates that the parameter is within specification and operating normally. Red indicates there is a problem. Check the Status list for more information on errors. ", 12, "100VcontrolHelp")
     }
 
-
     Item {
-        id: filterHelpContainer
+        id: helpTelemetryContainer
         property point topLeft
         property point bottomRight
         width:  telemetryContainer1.width + telemetryContainer2.width
@@ -48,7 +47,7 @@ Item {
     }
 
     Item {
-        id: filterHelp2Container
+        id: helpGaugeContainer
         property point topLeft
         property point bottomRight
         width:  inputpowerGaugeLabel.width + inputpowerGaugeLabel.width
@@ -64,34 +63,31 @@ Item {
     Connections {
         target: Help.utility
         onTour_runningChanged:{
-            filterHelpContainer.update()
-            filterHelp2Container.update()
+            helpTelemetryContainer.update()
+            helpGaugeContainer.update()
         }
     }
 
     onWidthChanged: {
-        filterHelpContainer.update()
-        filterHelp2Container.update()
+        helpTelemetryContainer.update()
+        helpGaugeContainer.update()
     }
     onHeightChanged: {
-        filterHelpContainer.update()
-        filterHelp2Container.update()
+        helpTelemetryContainer.update()
+        helpGaugeContainer.update()
+    }
+
+    function pushMessagesToLog (messageIs) {
+        for(var j = 0; j < logFault.model.count; j++){
+            logFault.model.get(j).color = "black"
+        }
+        logFault.insert(messageIs, 0, "red")
     }
 
     property var error_msg: platformInterface.error_msg.value
     onError_msgChanged: {
         if(error_msg !== "")
             pushMessagesToLog(error_msg)
-    }
-
-    function pushMessagesToLog (messageIs) {
-        // Change text color to black of the entire existing list of faults
-        for(var j = 0; j < logFault.model.count; j++){
-            logFault.model.get(j).color = "black"
-        }
-
-        logFault.insert(messageIs, 0, "red")
-
     }
 
     property var control_states: platformInterface.control_states
@@ -116,9 +112,7 @@ Item {
         if(control_states.ss_set === 3){
             softStart.currentIndex = 3
         }
-
         outputVolslider.value = control_states.vout_set.toFixed(2)
-
     }
 
     ColumnLayout {
@@ -138,11 +132,13 @@ Item {
             }
         }
 
-        Rectangle {
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
+
             RowLayout{
                 anchors.fill: parent
+
                 Item {
                     Layout.fillHeight: true
                     Layout.preferredWidth: parent.width/3
@@ -169,16 +165,18 @@ Item {
                         }
                         Item {
                             Layout.fillWidth: true
+
                             Layout.fillHeight: true
                             ColumnLayout{
                                 anchors.fill: parent
 
-
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     RowLayout {
                                         anchors.fill: parent
+
                                         Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
@@ -214,6 +212,7 @@ Item {
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     SGAlignedLabel {
                                         id: setSwitchFreqLabel
                                         target: setSwitchFreq
@@ -246,6 +245,7 @@ Item {
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     SGAlignedLabel {
                                         id: softStartLabel
                                         target: softStart
@@ -272,6 +272,7 @@ Item {
                                     id: outputVolContainer
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     SGAlignedLabel {
                                         id: outputVolLabel
                                         target: outputVolslider
@@ -292,7 +293,6 @@ Item {
                                             live: false
                                             inputBox.validator: DoubleValidator { }
                                             inputBox.text: outputVolslider.value.toFixed(2)
-
                                             fromText.text: "5V"
                                             toText.text: "24V"
                                             fromText.fontSizeMultiplier: 0.9
@@ -300,7 +300,6 @@ Item {
                                             onUserSet: {
                                                 platformInterface.set_vout.update(value.toFixed(2))
                                                 inputBox.text = value.toFixed(2)
-
                                             }
                                             onValueChanged: {
                                                 inputBox.text = value
@@ -312,6 +311,7 @@ Item {
                                     id: outputVoltAdjustmentContainer
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     SGAlignedLabel {
                                         id: setoutputVoltAdjustmentLabel
                                         target: outputVoltAdjustment
@@ -340,6 +340,7 @@ Item {
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     SGAlignedLabel {
                                         id: enableVCCLDOLabel
                                         target: enableVCCLDO
@@ -365,30 +366,32 @@ Item {
                                         }
                                     }
                                 }
-
-
                             }
                         }
-
                     }
                 }
 
-                Rectangle {
+                Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+
                     ColumnLayout{
                         anchors.fill: parent
 
-                        Rectangle{
+                        Item{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+
                             RowLayout{
                                 anchors.fill: parent
-                                Rectangle{
+
+                                Item{
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     ColumnLayout{
                                         anchors.fill: parent
+
                                         Text {
                                             id: telemetryText
                                             font.bold: true
@@ -411,18 +414,22 @@ Item {
                                         Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+
                                             RowLayout{
                                                 anchors.fill: parent
+
                                                 Item {
                                                     id:telemetryContainer1
                                                     Layout.fillWidth: true
                                                     Layout.fillHeight: true
+
                                                     ColumnLayout{
                                                         anchors.fill: parent
-                                                        Item {
 
+                                                        Item {
                                                             Layout.fillWidth: true
                                                             Layout.fillHeight: true
+
                                                             SGAlignedLabel {
                                                                 id: outputVoltageLabel
                                                                 target: outputVoltage
@@ -454,9 +461,9 @@ Item {
                                                         }
 
                                                         Item {
-
                                                             Layout.fillWidth: true
                                                             Layout.fillHeight: true
+
                                                             SGAlignedLabel {
                                                                 id: vccVoltageLabel
                                                                 target: vccVoltage
@@ -488,9 +495,9 @@ Item {
                                                         }
 
                                                         Item {
-
                                                             Layout.fillWidth: true
                                                             Layout.fillHeight: true
+
                                                             SGAlignedLabel {
                                                                 id: inputVoltageLabel
                                                                 target: inputVoltage
@@ -513,8 +520,6 @@ Item {
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
                                                                     text: "60.00"
-
-
                                                                     property var periodic_telemetry_vin: platformInterface.periodic_telemetry.vin
                                                                     onPeriodic_telemetry_vinChanged: {
                                                                         inputVoltage.text = periodic_telemetry_vin.toFixed(2)
@@ -529,11 +534,14 @@ Item {
                                                     id:telemetryContainer2
                                                     Layout.fillWidth: true
                                                     Layout.fillHeight: true
+
                                                     ColumnLayout{
                                                         anchors.fill: parent
+
                                                         Item {
                                                             Layout.fillWidth: true
                                                             Layout.fillHeight: true
+
                                                             SGAlignedLabel {
                                                                 id: outputCurrentLabel
                                                                 target: outputCurrent
@@ -567,6 +575,7 @@ Item {
                                                         Item {
                                                             Layout.fillWidth: true
                                                             Layout.fillHeight: true
+
                                                             SGAlignedLabel {
                                                                 id: vccCurrentLabel
                                                                 target: vccCurrent
@@ -600,6 +609,7 @@ Item {
                                                         Item {
                                                             Layout.fillWidth: true
                                                             Layout.fillHeight: true
+
                                                             SGAlignedLabel {
                                                                 id: inputCurrentLabel
                                                                 target: inputCurrent
@@ -636,11 +646,13 @@ Item {
                                     }
                                 }
 
-                                Rectangle{
+                                Item{
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     ColumnLayout{
                                         anchors.fill: parent
+
                                         Text {
                                             id: remoteWarningText
                                             font.bold: true
@@ -666,7 +678,6 @@ Item {
 
                                             SGStatusLogBox{
                                                 id: logFault
-                                                //anchors.fill: parent
                                                 width: parent.width - 20
                                                 height: parent.height - 50
                                                 title: "Status List"
@@ -717,11 +728,13 @@ Item {
                             }
                         }
 
-                        Rectangle{
+                        Item{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+
                             ColumnLayout{
                                 anchors.fill: parent
+
                                 Text {
                                     id: tempAndPowerText
                                     font.bold: true
@@ -744,12 +757,11 @@ Item {
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     RowLayout {
                                         anchors.fill: parent
-
                                         Item {
                                             id: inputpowerGaugeContainer
-                                            //color: "green"
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGAlignedLabel {
@@ -784,11 +796,11 @@ Item {
                                             }
                                         }
 
-                                        Rectangle {
+                                        Item {
                                             id: buckOutputPowerGaugeContainer
-
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+
                                             SGAlignedLabel {
                                                 id:  buckOutputPowerGaugeLabel
                                                 target:  buckOutputPowerGauge
@@ -821,11 +833,11 @@ Item {
                                             }
                                         }
 
-                                        Rectangle {
+                                        Item {
                                             id: effGaugeContainer
-
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+
                                             SGAlignedLabel {
                                                 id: effGaugeLabel
                                                 target: effGauge
@@ -842,10 +854,8 @@ Item {
                                                     minimumValue: 0
                                                     maximumValue: 100
                                                     value: 100
-
                                                     width: effGaugeContainer.width
                                                     height: effGaugeContainer.height - effGaugeLabel.contentHeight
-
                                                     gaugeFillColor1: "blue"
                                                     gaugeFillColor2: "red"
                                                     tickmarkStepSize: 10
@@ -860,9 +870,8 @@ Item {
                                             }
                                         }
 
-                                        Rectangle {
+                                        Item {
                                             id: ldoTempContainer
-
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGAlignedLabel {
@@ -897,9 +906,8 @@ Item {
                                             }
                                         }
 
-                                        Rectangle {
+                                        Item {
                                             id: boardTempContainer
-
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGAlignedLabel {
@@ -942,6 +950,7 @@ Item {
                         Item {
                             Layout.fillWidth: true
                             Layout.preferredHeight: parent.height/6
+
                             Item {
                                 id: sgstatusHelpContainer
                                 width:  statusLed.width - 50
@@ -952,10 +961,10 @@ Item {
                                 anchors.horizontalCenterOffset: 15
                             }
 
-
                             ColumnLayout{
                                 id: statusLed
                                 anchors.fill: parent
+
                                 Text {
                                     id: statusIndicator
                                     font.bold: true
@@ -1002,7 +1011,6 @@ Item {
 
                                                 property var pg_vin: platformInterface.pg_vin.value
                                                 onPg_vinChanged:  {
-                                                    //if(pg_vin === "false")
                                                     if(pg_vin)
                                                         vinLed.status = SGStatusLight.Green
                                                     else vinLed.status = SGStatusLight.Red
@@ -1013,6 +1021,7 @@ Item {
                                         Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+
                                             SGAlignedLabel {
                                                 id: voutLedLabel
                                                 target: voutLed
@@ -1029,7 +1038,6 @@ Item {
 
                                                 property var pg_vout: platformInterface.pg_vout.value
                                                 onPg_voutChanged:  {
-                                                    //if(pg_vout === "false")
                                                     if(pg_vout)
                                                         voutLed.status = SGStatusLight.Green
                                                     else voutLed.status = SGStatusLight.Red
@@ -1040,6 +1048,7 @@ Item {
                                         Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+
                                             SGAlignedLabel {
                                                 id: vccLedLabel
                                                 target: vccLed
@@ -1068,6 +1077,7 @@ Item {
                                             id: tempAlertContainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+
                                             SGAlignedLabel {
                                                 id: tempAlertLabel
                                                 target: tempAlertLed
@@ -1084,7 +1094,6 @@ Item {
 
                                                 property var temp_alert: platformInterface.temp_alert.value
                                                 onTemp_alertChanged:  {
-                                                    //if(temp_alert === "true")
                                                     if (temp_alert)
                                                         tempAlertLed.status = SGStatusLight.Red
                                                     else tempAlertLed.status = SGStatusLight.Off
