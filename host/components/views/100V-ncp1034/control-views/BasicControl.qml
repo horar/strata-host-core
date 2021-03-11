@@ -101,18 +101,7 @@ Item {
             setSwitchFreq.checked = true
         else   setSwitchFreq.checked = false
 
-        if(control_states.ss_set === 0){
-            softStart.currentIndex = 0
-        }
-        if(control_states.ss_set === 1){
-            softStart.currentIndex = 1
-        }
-        if(control_states.ss_set === 2){
-            softStart.currentIndex = 2
-        }
-        if(control_states.ss_set === 3){
-            softStart.currentIndex = 3
-        }
+        softStart.currentIndex = control_states.ss_set
         outputVolslider.value = control_states.vout_set.toFixed(2)
     }
 
