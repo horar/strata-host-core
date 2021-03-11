@@ -78,6 +78,7 @@ Item {
     }
 
     function pushMessagesToLog (messageIs) {
+        // Change text color to black of the entire existing list of faults
         for(var j = 0; j < logFault.model.count; j++){
             logFault.model.get(j).color = "black"
         }
