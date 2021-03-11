@@ -28,6 +28,8 @@ public:
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
 
+    std::vector<QByteArray> dynamicRequest;
+
 private:
     static std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
                                                        const rapidjson::Document &requestDoc);

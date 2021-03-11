@@ -427,10 +427,10 @@ R"({
     "cmd":"flash_firmware",
     "payload":{
         "chunk":{
-            "number":2,
-            "size":0,
-            "crc":0,
-            "data":""
+            "number":{$request.payload.chunk.number},
+            "size":{$request.payload.chunk.size},
+            "crc":{$request.payload.chunk.crc},
+            "data":"{$request.payload.chunk.data}"
         }
     }
 })";
@@ -440,10 +440,10 @@ R"({
     "cmd":"flash_bootloader",
     "payload":{
         "chunk":{
-            "number":3,
-            "size":0,
-            "crc":0,
-            "data":""
+            "number":{$request.payload.chunk.number},
+            "size":{$request.payload.chunk.size},
+            "crc":{$request.payload.chunk.crc},
+            "data":"{$request.payload.chunk.data}"
         }
     }
 })";

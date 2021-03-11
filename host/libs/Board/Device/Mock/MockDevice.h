@@ -66,6 +66,8 @@ public:
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
     bool mockSetVersion(MockVersion version);
 
+    std::vector<QByteArray> mockGetDynamicRequest() { return control_.dynamicRequest; }
+
 private:
     virtual bool sendMessage(const QByteArray msg, quintptr lockId) override;
 
