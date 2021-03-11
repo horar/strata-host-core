@@ -159,7 +159,7 @@ FocusScope {
 
                     SGWidgets.SGIconButton {
                         text: "Filter"
-                        hintText: qsTr("Filter messages")
+                        hintText: qsTr("Filter out messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: openFilterDialog()
