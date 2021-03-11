@@ -121,4 +121,6 @@ void DispatcherTest::testDispatchUsingSignals()
 
     emit disp({"test_handler_1", {}, 1, "mg", strata::strataRPC::Message::MessageType::Command});
     emit disp({"test_handler_2", {}, 1, "mg", strata::strataRPC::Message::MessageType::Command});
+
+    delete dispatcher;
 }
