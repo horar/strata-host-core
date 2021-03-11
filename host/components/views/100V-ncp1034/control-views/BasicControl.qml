@@ -1,10 +1,11 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import tech.strata.sgwidgets 1.0
 import QtQuick.Controls 2.12
-import QtQuick.Window 2.3
+
+import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
 import tech.strata.fonts 1.0
+
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
