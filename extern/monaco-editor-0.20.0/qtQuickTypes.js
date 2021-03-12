@@ -50,11 +50,11 @@ const qtTypeJson = {
                 },
                 "icon": {
                     "meta_properties": [
-                        "name",
-                        "source",
-                        "width",
-                        "height",
-                        "color",
+                        "name: ",
+                        "source: ",
+                        "width: ",
+                        "height: ",
+                        "color: ",
                     ]
                 },
                 "implicitIndicatorHeight": {
@@ -107,11 +107,11 @@ const qtTypeJson = {
                 },
                 "icon": {
                     "meta_properties": [
-                        "name",
-                        "source",
-                        "width",
-                        "height",
-                        "color",
+                        "name: ",
+                        "source: ",
+                        "width: ",
+                        "height: ",
+                        "color: ",
                     ]
                 },
                 "shortcut": {
@@ -798,10 +798,10 @@ const qtTypeJson = {
                 },
                 "visibleArea": {
                     "meta_properties": [
-                        "xPosition",
-                        "widthRatio",
-                        "yPosition",
-                        "heightRatio",
+                        "xPosition: ",
+                        "widthRatio: ",
+                        "yPosition: ",
+                        "heightRatio: ",
                     ]
                 }
             },
@@ -1026,24 +1026,24 @@ const qtTypeJson = {
                 },
                 "anchors": {
                     "meta_properties": [
-                        "alignWhenCentered",
-                        "baseline",
-                        "baselineOffset",
-                        "bottom",
-                        "bottomMargin",
-                        "centerIn",
-                        "fill",
-                        "horizontalCenter",
-                        "horizontalCenterOffset",
-                        "left",
-                        "leftMargin",
-                        "margins",
-                        "right",
-                        "rightMargin",
-                        "top",
-                        "topMargin",
-                        "verticalCenter",
-                        "verticalCenterOffset",
+                        "alignWhenCentered: ",
+                        "baseline: ",
+                        "baselineOffset: ",
+                        "bottom: ",
+                        "bottomMargin: ",
+                        "centerIn: ",
+                        "fill: ",
+                        "horizontalCenter: ",
+                        "horizontalCenterOffset: ",
+                        "left: ",
+                        "leftMargin: ",
+                        "margins: ",
+                        "right: ",
+                        "rightMargin: ",
+                        "top: ",
+                        "topMargin: ",
+                        "verticalCenter: ",
+                        "verticalCenterOffset: ",
                     ]
 
                 },
@@ -1058,9 +1058,9 @@ const qtTypeJson = {
                 },
                 "childrenRect": {
                     "meta_properties": [
-                        "x",
-                        "y",
-                        "width",
+                        "x:",
+                        "y:",
+                        "width:",
                         "height"
                     ]
                 },
@@ -1093,17 +1093,17 @@ const qtTypeJson = {
                 },
                 "layer": {
                     "meta_properties": [
-                        "effect",
-                        "enabled",
-                        "format",
-                        "mipmap",
-                        "sampleName",
-                        "samples",
-                        "smooth",
-                        "sourceRect",
-                        "textureMirroring",
-                        "textureSize",
-                        "wrapMode",
+                        "effect: ",
+                        "enabled: ",
+                        "format: ",
+                        "mipmap: ",
+                        "sampleName: ",
+                        "samples: ",
+                        "smooth: ",
+                        "sourceRect: ",
+                        "textureMirroring: ",
+                        "textureSize: ",
+                        "wrapMode: ",
                     ]
                 },
                 "opacity": {
@@ -1478,10 +1478,10 @@ const qtTypeJson = {
                 },
                 "section": {
                     "meta_properties": [
-                        "property",
-                        "criteria",
-                        "delegate",
-                        "labelPositioning",
+                        "property: ",
+                        "criteria: ",
+                        "delegate: ",
+                        "labelPositioning: ",
                     ]
                 },
                 "snapMode": {
@@ -1665,15 +1665,15 @@ const qtTypeJson = {
                 },
                 "drag": {
                     "meta_properties": [
-                        "target",
-                        "active",
-                        "axis",
-                        "minimumX",
-                        "maximumX",
-                        "minimumX",
-                        "minimumY",
-                        "filterChildren",
-                        "threshold",
+                        "target: ",
+                        "active: ",
+                        "axis: ",
+                        "minimumX: ",
+                        "maximumX: ",
+                        "minimumX: ",
+                        "minimumY: ",
+                        "filterChildren: ",
+                        "threshold: ",
                     ]
                 },
                 "enabled": {
@@ -1750,7 +1750,7 @@ const qtTypeJson = {
                 },
                 "anchors": {
                     "meta_properties": [
-                        "centerIn"
+                        "centerIn: "
                     ]
                 },
                 "availableHeight": {
@@ -2075,15 +2075,15 @@ const qtTypeJson = {
                 },
                 "axis": {
                     "meta_properties": [
-                        "x",
-                        "y",
-                        "z",
+                        "x: ",
+                        "y: ",
+                        "z: ",
                     ]
                 },
                 "origin": {
                     "meta_properties": [
-                        "x",
-                        "y",
+                        "x: ",
+                        "y: ",
                     ]
                 }
             },
@@ -2152,8 +2152,8 @@ const qtTypeJson = {
             "properties": {
                 "origin": {
                     "meta_properties": [
-                        "x",
-                        "y",
+                        "x: ",
+                        "y: ",
                     ]
                 },
                 "xScale": {
@@ -3662,21 +3662,21 @@ const qtTypeJson = {
                 },
                 "font": {
                     "meta_properties": [
-                        "bold",
-                        "capitalization",
-                        "family",
-                        "hintingPreference",
-                        "italic",
-                        "kerning",
-                        "letterSpacing",
-                        "pixelSize",
-                        "pointSize",
-                        "preferShaping",
-                        "strikeout",
-                        "styleName",
-                        "underline",
-                        "weight",
-                        "wordSpacing",
+                        "bold: ",
+                        "capitalization: ",
+                        "family: ",
+                        "hintingPreference: ",
+                        "italic: ",
+                        "kerning: ",
+                        "letterSpacing: ",
+                        "pixelSize: ",
+                        "pointSize: ",
+                        "preferShaping: ",
+                        "strikeout: ",
+                        "styleName: ",
+                        "underline: ",
+                        "weight: ",
+                        "wordSpacing: ",
                     ]
                 },
                 "fontSizeMode": {
@@ -3858,21 +3858,21 @@ const qtTypeJson = {
                 },
                 "font": {
                     "meta_properties": [
-                        "bold",
-                        "capitalization",
-                        "family",
-                        "hintingPreference",
-                        "italic",
-                        "kerning",
-                        "letterSpacing",
-                        "pixelSize",
-                        "pointSize",
-                        "preferShaping",
-                        "strikeout",
-                        "styleName",
-                        "underline",
-                        "weight",
-                        "wordSpacing",
+                        "bold: ",
+                        "capitalization: ",
+                        "family: ",
+                        "hintingPreference: ",
+                        "italic: ",
+                        "kerning: ",
+                        "letterSpacing: ",
+                        "pixelSize: ",
+                        "pointSize: ",
+                        "preferShaping: ",
+                        "strikeout: ",
+                        "styleName: ",
+                        "underline: ",
+                        "weight: ",
+                        "wordSpacing: ",
                     ]
                 },
                 "horizontalAlignment": {
@@ -4096,21 +4096,21 @@ const qtTypeJson = {
                 },
                 "font": {
                     "meta_properties": [
-                        "bold",
-                        "capitalization",
-                        "family",
-                        "hintingPreference",
-                        "italic",
-                        "kerning",
-                        "letterSpacing",
-                        "pixelSize",
-                        "pointSize",
-                        "preferShaping",
-                        "strikeout",
-                        "styleName",
-                        "underline",
-                        "weight",
-                        "wordSpacing",
+                        "bold: ",
+                        "capitalization: ",
+                        "family: ",
+                        "hintingPreference: ",
+                        "italic: ",
+                        "kerning: ",
+                        "letterSpacing: ",
+                        "pixelSize: ",
+                        "pointSize: ",
+                        "preferShaping: ",
+                        "strikeout: ",
+                        "styleName: ",
+                        "underline: ",
+                        "weight: ",
+                        "wordSpacing: ",
                     ]
                 },
                 "horizontalAlignment": {

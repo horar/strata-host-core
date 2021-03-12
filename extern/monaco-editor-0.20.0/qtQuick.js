@@ -19,7 +19,7 @@ const qtObjectPropertyValues = {}
 const qtObjectMetaPropertyValues = {}
 var isInitialized = false
 var searchedIds = false
-const suggestions = {}
+var suggestions = {}
 const currentItems = {}
 var editor = null
 
@@ -49,7 +49,7 @@ function removeDuplicates(propertySuggestions) {
 }
 
 // This is the properties string array conversion to an object array, this has to be done in real time due to the limitations of the monaco editor suggestions
-function convertStrArrayToObjArray(key, properties, isProperty = false, isIdReference = false, parent = null) {
+function convertStrArrayToObjArray(key, properties, isProperty = false, isIdReference = false, isMetaParent = false) {
     var propertySuggestions = []
     qtObjectPropertyValues[key] = []
     for (var i = 0; i < properties.length; i++) {
@@ -57,7 +57,11 @@ function convertStrArrayToObjArray(key, properties, isProperty = false, isIdRefe
             if (properties[i].includes("()")) {
                 propertySuggestions.push(createDynamicProperty(properties[i], true))
             } else {
-                propertySuggestions.push(createDynamicProperty(properties[i] + ": ", false))
+                if(isMetaParent){
+                    propertySuggestions.push(createDynamicProperty(properties[i], false))
+                } else {
+                    propertySuggestions.push(createDynamicProperty(properties[i] + ": ", false))
+                }
             }
         } else {
             if (properties[i].includes("()")) {
@@ -385,6 +389,7 @@ function registerQmlAsLanguage() {
 
     // Initializes the library to become an Object array to be feed into suggestions
     function initializeQtQuick(model) {
+        suggestions = {}
         qtObjectSuggestions = {}
         qtImports = []
         const firstLine = { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn }
@@ -533,10 +538,11 @@ function registerQmlAsLanguage() {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
                     const prevParent = findPreviousBracketParent(model, position)
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
-                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, true, qtObjectKeyValues[activeWord].isId)
+                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, true, qtObjectKeyValues[activeWord].isId,qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord))
                         return { suggestions: qtObjectPropertyValues[activeWord] }
                     } else if (qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord)) {
-                        convertStrArrayToObjArray(bracketWord, qtObjectMetaPropertyValues[prevParent][activeWord], true, qtObjectKeyValues[activeWord].isId)
+                        convertStrArrayToObjArray(activeWord, qtObjectMetaPropertyValues[prevParent][activeWord], true, true)
+                        return { suggestions: qtObjectPropertyValues[activeWord]}
                     }
                 }
                 var fetchedSuggestions = searchForChildBrackets(model, position)
@@ -589,20 +595,20 @@ function registerQmlAsLanguage() {
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
     function retrieveType(model, propRange) {
+        const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber, column: propRange.startColumn })
         var content = model.getLineContent(propRange.startLineNumber)
         var splitContent = content.replace("\t", "").split(/\{|\t/)
         var bracketWord = splitContent[0].trim()
         if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
-            convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag)
+            convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId,qtObjectMetaPropertyValues[prevParent].hasOwnProperty(bracketWord))
             if (currentItems[bracketWord] === undefined) {
                 currentItems[bracketWord] = {}
             }
             currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
             return currentItems[bracketWord][propRange]
         } else {
-            const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber, column: propRange.startColumn })
             if (qtObjectMetaPropertyValues[prevParent].hasOwnProperty(bracketWord)) {
-                convertStrArrayToObjArray(bracketWord, qtObjectMetaPropertyValues[prevParent][bracketWord], true, false)
+                convertStrArrayToObjArray(bracketWord, qtObjectMetaPropertyValues[prevParent][bracketWord], true, true)
                 if (currentItems[bracketWord] === undefined) {
                     currentItems[bracketWord] = {}
                 }
