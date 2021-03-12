@@ -3,8 +3,8 @@
 #include <QJsonDocument>
 #include "logging/LoggingQtCategories.h"
 
-SciFilterSuggestionModel::SciFilterSuggestionModel(SciPlatform *platform)
-    : QAbstractListModel(platform)
+SciFilterSuggestionModel::SciFilterSuggestionModel(QObject *parent)
+    : QAbstractListModel(parent)
 {
 }
 
