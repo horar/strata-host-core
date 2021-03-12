@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-
+import tech.strata.sgwidgets 1.0
 
 ColumnLayout {
     id: commandsColumn
@@ -49,8 +49,10 @@ ColumnLayout {
             id: cmdNotifName
             Layout.fillWidth: true
             Layout.preferredHeight: 30
-
+            selectByMouse: true
+            persistentSelection: true   // must deselect manually
             placeholderText: commandColumn.isCommand ? "Command name" : "Notification name"
+
             validator: RegExpValidator {
                 regExp: /^(?!default|function)[a-z_][a-zA-Z0-9_]+/
             }
@@ -84,6 +86,31 @@ ColumnLayout {
                 } else {
                     model.valid = false
                 }
+            }
+
+            onActiveFocusChanged: {
+                if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                    cmdNotifName.deselect()
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+                onClicked: {
+                    cmdNotifName.forceActiveFocus()
+                }
+                onReleased: {
+                    if (containsMouse) {
+                        contextMenuPopup.popup(null)
+                    }
+                }
+            }
+
+            SGContextMenuEditActions {
+                id: contextMenuPopup
+                textEditor: cmdNotifName
             }
         }
     }
