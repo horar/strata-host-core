@@ -57,7 +57,7 @@ function convertStrArrayToObjArray(key, properties, isProperty = false, isIdRefe
             if (properties[i].includes("()")) {
                 propertySuggestions.push(createDynamicProperty(properties[i], true))
             } else {
-                if(isMetaParent){
+                if (isMetaParent) {
                     propertySuggestions.push(createDynamicProperty(properties[i], false))
                 } else {
                     propertySuggestions.push(createDynamicProperty(properties[i] + ": ", false))
@@ -538,11 +538,11 @@ function registerQmlAsLanguage() {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
                     const prevParent = findPreviousBracketParent(model, position)
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
-                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, true, qtObjectKeyValues[activeWord].isId,qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord))
+                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, true, qtObjectKeyValues[activeWord].isId, qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord))
                         return { suggestions: qtObjectPropertyValues[activeWord] }
                     } else if (qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord)) {
-                        convertStrArrayToObjArray(activeWord, qtObjectMetaPropertyValues[prevParent][activeWord], true, true)
-                        return { suggestions: qtObjectPropertyValues[activeWord]}
+                        convertStrArrayToObjArray(activeWord, qtObjectMetaPropertyValues[prevParent][activeWord], true, false)
+                        return { suggestions: qtObjectPropertyValues[activeWord] }
                     }
                 }
                 var fetchedSuggestions = searchForChildBrackets(model, position)
@@ -552,27 +552,61 @@ function registerQmlAsLanguage() {
     }
     // Searches for the parent Item based off of the end column of a sibling item, this searches up and checks for time where the current line number is a child of the item
     function findPreviousBracketParent(model, position) {
-        var currentPosition = position;
+        var startPosition = { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn };
+        var endPosition = { lineNumber: fullRange.endLineNumber, column: fullRange.startColumn }
+        var startStopped = false
+        var endStopped = false
         var parent = null
-        while (currentPosition.lineNumber <= position.lineNumber) {
-            var getPrev = model.findPreviousMatch("{", currentPosition)
-            var getPrevNext = model.findNextMatch("}", { lineNumber: getPrev.range.startLineNumber, column: getPrev.range.startColumn })
-            if (currentPosition.lineNumber < getPrev.range.startLineNumber) {
-                return null
+        var nextBracket = model.findNextMatch("}",position)
+        var prevBracket = model.findPreviousMatch("{",position)
+        while (!startStopped && !endStopped) {
+            var next = getNext(model, startPosition)
+            var prev = getPrev(model, endPosition)
+           
+            var content = model.getLineContent(next.range.startLineNumber)
+            var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
+            
+            const checkColumn = model.findPreviousMatch(type,position)
+
+            if(checkColumn.range.startLineNumber === next.range.startLineNumber){
+                parent = type
             }
 
-            if (currentPosition.lineNumber < getPrevNext.range.startLineNumber) {
-                var content = model.getLineContent(getPrev.range.startLineNumber)
-                var splitContent = content.replace("\t", "").split(/\{|\t/)
-                var bracketWord = splitContent[0].trim()
-                parent = bracketWord
+            if (next.range.startLineNumber > prev.range.startLineNumber) {
                 return parent
+            } else {
+                if (checkNext(startPosition, prevBracket.range)) {
+                    startPosition = { lineNumber: next.range.startLineNumber, column: next.range.startLineNumber }
+                } else {
+                    startStopped = true
+                }
+                if (checkPrev(endPosition, nextBracket.range)) {
+                    endPosition = { lineNumber: prev.range.startLineNumber, column: prev.range.startLineNumber }
+                } else {
+                    endStopped = true
+                }
             }
-
-            currentPosition = { lineNumber: getPrev.range.startLineNumber, column: getPrev.range.startColumn }
-
         }
+        return parent
     }
+
+    function checkNext(currentPosition, position) {
+        return currentPosition.lineNumber < position.startLineNumber
+    }
+    function checkPrev(currentPosition, position) {
+        return currentPosition.lineNumber > position.startLineNumber
+    }
+
+    function getNext(model, position) {
+        return model.findNextMatch("{", position)
+    }
+
+    function getPrev(model, position) {
+        return model.findPreviousMatch("}", position)
+    }
+
+    function peek(model,position)
+
     // Searches and initializes all id types to the suggestions object as well as allow updates to each item
     function getTypeID(model, position) {
         var position = { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }
@@ -600,14 +634,14 @@ function registerQmlAsLanguage() {
         var splitContent = content.replace("\t", "").split(/\{|\t/)
         var bracketWord = splitContent[0].trim()
         if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
-            convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId,qtObjectMetaPropertyValues[prevParent].hasOwnProperty(bracketWord))
+            convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId)
             if (currentItems[bracketWord] === undefined) {
                 currentItems[bracketWord] = {}
             }
             currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
             return currentItems[bracketWord][propRange]
         } else {
-            if (qtObjectMetaPropertyValues[prevParent].hasOwnProperty(bracketWord)) {
+            if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent) && qtObjectMetaPropertyValues[prevParent].hasOwnProperty(bracketWord)) {
                 convertStrArrayToObjArray(bracketWord, qtObjectMetaPropertyValues[prevParent][bracketWord], true, true)
                 if (currentItems[bracketWord] === undefined) {
                     currentItems[bracketWord] = {}
