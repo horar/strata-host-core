@@ -44,7 +44,7 @@ Item {
         id: delayWizardPushTimer
         interval: 500
         onTriggered: {
-            stackView.push(wizardComponent)
+            stackView.push(settingsComponent)
         }
     }
 
@@ -69,6 +69,33 @@ Item {
     }
 
     Component {
+        id: settingsComponent
+
+        ProgramSettingsWizard {
+            focus: true
+            prtModel: prtMain.prtModel
+
+            onRegistrationEmbeddedRequested: {
+                console.log("not implemented yet")
+            }
+
+            onRegistrationAssistedAndControllerRequested: {
+                console.log("not implemented yet")
+            }
+
+            onRegistrationControllerRequested: {
+                console.log("not implemented yet")
+            }
+
+            function startRegistrationProcess() {
+                //TODO implement in future tickets
+
+                stackView.push(wizardComponent)
+            }
+        }
+    }
+
+    Component {
         id: wizardComponent
 
         ProgramDeviceWizard {
@@ -77,12 +104,24 @@ Item {
         }
     }
 
- Rectangle {
+    UserMenuButton {
+        id: userMenuButton
+        anchors {
+            top: parent.top
+            topMargin: 8
+            right: parent.right
+            rightMargin: 8
+        }
+
+        visible: stackView.depth > 1
+    }
+
+    Rectangle {
         id: testServerWarningContainer
         anchors {
-            left: parent.left 
-            top: parent.top
-            margins: 10
+            right: userMenuButton.left
+            rightMargin: 10
+            verticalCenter: userMenuButton.verticalCenter
         }
         height: testServerWarningRow.height + 10
         width: testServerWarningRow.width + 16

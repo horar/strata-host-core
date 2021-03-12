@@ -42,6 +42,7 @@ RowLayout {
             font.pixelSize: 14
             anchors.fill: searchFilter
             leftPadding: 5
+            contextMenuEnabled: true
         }
     }
 

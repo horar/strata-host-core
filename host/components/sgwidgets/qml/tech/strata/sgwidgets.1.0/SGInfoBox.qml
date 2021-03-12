@@ -14,6 +14,7 @@ FocusScope {
     property real fontSizeMultiplier: 1.0
     property color boxBorderColor: "#CCCCCC"
     property real boxBorderWidth: 1
+    property bool contextMenuEnabled: false
     property alias text: infoText.text
     property alias horizontalAlignment: infoText.horizontalAlignment
     property alias placeholderText: placeholder.text
@@ -75,13 +76,31 @@ FocusScope {
                 focus: true
                 onAccepted: root.accepted(infoText.text)
                 onEditingFinished: root.editingFinished(infoText.text)
+                persistentSelection: root.contextMenuEnabled
+                onActiveFocusChanged: {
+                    if ((root.contextMenuEnabled === true) && (activeFocus === false) && (contextMenuPopup.visible === false)) {
+                        infoText.deselect()
+                    }
+                }
+                SGContextMenuEditActions {
+                    id: contextMenuPopup
+                    textEditor: infoText
+                }
                 MouseArea {
                     id: mouseArea
                     anchors {
                         fill: infoText
                     }
                     cursorShape: Qt.IBeamCursor
-                    acceptedButtons: Qt.NoButton
+                    acceptedButtons: root.contextMenuEnabled ? Qt.RightButton : Qt.NoButton
+                    onReleased: {
+                        if (containsMouse) {
+                            contextMenuPopup.popup(null)
+                        }
+                    }
+                    onClicked: {
+                        infoText.forceActiveFocus()
+                    }
                 }
                 Text {
                     id: placeholder
