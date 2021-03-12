@@ -247,7 +247,7 @@ Item {
                         cursorShape: Qt.PointingHandCursor
 
                         onClicked:  {
-                            statePopup.open()
+                            statePopup.opened ? statePopup.close() : statePopup.open()
                         }
                     }
 
@@ -257,6 +257,7 @@ Item {
                         y: stateFilter.height -1
                         height: stateColumn.height + 20
                         padding: 0
+                        closePolicy: Popup.CloseOnReleaseOutsideParent
                         background: Rectangle {
                             border {
                                 width: 1
@@ -543,7 +544,7 @@ Item {
                             fill: segmentFilterContainer
                         }
                         onPressed: {
-                            segmentFilters.open()
+                            segmentFilters.opened ? segmentFilters.close() : segmentFilters.open()
                         }
                         enabled: Filters.filterModel.count > 0
                     }
@@ -555,6 +556,7 @@ Item {
                         height: Math.min(listview.height, filterColumn.height)
                         visible: false
                         padding: 0
+                        closePolicy: Popup.CloseOnReleaseOutsideParent
 
                         Rectangle {
                             anchors {
