@@ -8,6 +8,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(${PROJECT_NAME}
     main.cpp
     Client.cpp
+    logging/LoggingQtCategories.cpp
     qml.qrc
 )
 
@@ -19,6 +20,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE Qt5::Core
     PRIVATE Qt5::Quick
     PRIVATE StrataRPC-StrataClient
+    PUBLIC strata::QtLogger
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

@@ -1,5 +1,5 @@
 #include "Server.h"
-#include <QDebug>
+#include "logging/LoggingQtCategories.h"
 
 using namespace strata::strataRPC;
 
@@ -14,7 +14,7 @@ Server::~Server()
 
 bool Server::init()
 {
-    qDebug() << "in Server init";
+    qCDebug(logCategoryStrataServerSample) << "in Server init";
     if (false == strataServer_->initializeServer()) {
         return false;
     }
@@ -23,16 +23,14 @@ bool Server::init()
 
 void Server::start()
 {
-    qDebug() << "in Server start";
-    // connect signals.
+    qCDebug(logCategoryStrataServerSample) << "in Server start";
     connect(strataServer_.get(), &StrataServer::errorOccurred, this, &Server::serverErrorHandler);
 }
 
-void Server::serverErrorHandler(StrataServer::ServerError errorType,
-                                const QString &errorMessage)
+void Server::serverErrorHandler(StrataServer::ServerError errorType, const QString &errorMessage)
 {
-    qDebug() << "###############################################################";
-    qDebug() << "Error type:" << static_cast<int>(errorType);
-    qDebug() << "Error message:" << errorMessage;
-    qDebug() << "###############################################################";
+    qCDebug(logCategoryStrataServerSample) << "###############################################################";
+    qCDebug(logCategoryStrataServerSample) << "Error type:" << static_cast<int>(errorType);
+    qCDebug(logCategoryStrataServerSample) << "Error message:" << errorMessage;
+    qCDebug(logCategoryStrataServerSample) << "###############################################################";
 }

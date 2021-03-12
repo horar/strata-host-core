@@ -8,6 +8,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(${PROJECT_NAME}
     main.cpp
     Server.cpp
+    logging/LoggingQtCategories.cpp
 )
 
 find_package(Qt5 ${VERSION_QT5}
@@ -17,6 +18,7 @@ find_package(Qt5 ${VERSION_QT5}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE Qt5::Core
     PRIVATE StrataRPC-StrataServer
+    PUBLIC strata::QtLogger
 )
 
 set_target_properties(${PROJECT_NAME}

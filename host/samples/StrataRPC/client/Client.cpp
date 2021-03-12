@@ -1,5 +1,5 @@
 #include "Client.h"
-#include <QDebug>
+#include "logging/LoggingQtCategories.h"
 
 using namespace strata::strataRPC;
 
@@ -33,13 +33,13 @@ bool Client::getConnectionStatus()
 
 void Client::connectToServer()
 {
-    qDebug() << "gui connecting";
+    qCDebug(logCategoryStrataClientSample) << "gui connecting";
     strataClient_->connectServer();
 }
 
 void Client::disconnectServer()
 {
-    qDebug() << "gui disconnecting";
+    qCDebug(logCategoryStrataClientSample) << "gui disconnecting";
     if (true == strataClient_->disconnectServer()) {
         connectionStatus_ = false;
         emit connectionStatusUpdated();
