@@ -29,6 +29,8 @@ FocusScope {
     property string helperText: ""
     property string errorText
     property bool hasHelperText: true
+    readonly property bool isValid: validStatus === SGBaseEditor.Valid
+    property bool showValidationResultIcon: true
 
     /* Set this to True if you want input validation to be handled by editor. */
     property bool inputValidation: false
@@ -145,6 +147,10 @@ FocusScope {
         width: height
 
         sourceComponent: {
+            if (showValidationResultIcon === false) {
+                return null
+            }
+
             if (validStatus === SGBaseEditor.Invalid) {
                 return errorComponent
             } else if (validStatus === SGBaseEditor.Valid) {

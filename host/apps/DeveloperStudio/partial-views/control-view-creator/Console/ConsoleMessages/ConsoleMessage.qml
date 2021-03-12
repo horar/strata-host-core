@@ -22,6 +22,7 @@ Item {
         readOnly: true
         selectByMouse: true
         selectionColor: Theme.palette.highlight
+        contextMenuEnabled: true
     }
 
     TextMetrics {

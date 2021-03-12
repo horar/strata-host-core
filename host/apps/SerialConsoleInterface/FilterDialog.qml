@@ -5,7 +5,6 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
 
-
 SGWidgets.SGDialog {
     id: dialog
 
@@ -16,6 +15,7 @@ SGWidgets.SGDialog {
     closePolicy: Popup.CloseOnEscape
 
     property bool disableAllFiltering
+    property variant filterSuggestionModel
 
     ListModel {
         id: conditionTypeModel
@@ -216,9 +216,26 @@ SGWidgets.SGDialog {
                                 }
                             }
 
+                            CommonCpp.SGSortFilterProxyModel {
+                                id: sortFilterModel
+                                sourceModel: filterSuggestionModel
+                                sortRole: "suggestion"
+                                filterRole: "suggestion"
+                                filterPatternSyntax: CommonCpp.SGSortFilterProxyModel.RegExp
+                                filterPattern: ".*" + filterStringTextField.text + ".*"
+                            }
+
                             SGWidgets.SGTextField {
                                 id: filterStringTextField
                                 contextMenuEnabled: true
+                                suggestionListModel: sortFilterModel
+                                onSuggestionDelegateSelected: {
+                                   var sourceIndex = sortFilterModel.mapIndexToSource(index)
+                                   if (sourceIndex < 0) {
+                                        return
+                                    }
+                                    text = filterSuggestionModel.get(sourceIndex)["suggestion"]
+                                }
 
                                 onTextChanged: {
                                     filterConditionModel.setProperty(index, "filter_string", text)
@@ -235,9 +252,14 @@ SGWidgets.SGDialog {
                                 anchors.verticalCenter: parent.verticalCenter
                                 icon.source: "qrc:/sgimages/times-circle.svg"
                                 iconColor: TangoTheme.palette.error
+                                enabled: filterConditionModel.count > 1 || filterStringTextField.text.length > 0
 
                                 onClicked: {
-                                    filterConditionModel.remove(index)
+                                    if (filterConditionModel.count > 1) {
+                                        filterConditionModel.remove(index)
+                                    } else {
+                                        filterStringTextField.text = ""
+                                    }
                                 }
                             }
                         }

@@ -134,7 +134,11 @@ Item {
                                 let repeaterCount = platformViewRepeater.count
                                 PlatformSelection.openPlatformView(data)
                                 viewCombobox.currentIndex = index
-                                platformViewRepeater.itemAt(repeaterCount).platformMetaDataInitialized = true
+                                // new tab is always added to the end of the repeater
+                                // in case it was indeed added (did not existed yet), initialize it
+                                if (platformViewRepeater.count > repeaterCount) {
+                                    platformViewRepeater.itemAt(repeaterCount).platformMetaDataInitialized = true
+                                }
                             }
                         }
                     }
