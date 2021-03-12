@@ -1,9 +1,7 @@
 #include "SciFilterSuggestionModel.h"
-#include "logging/LoggingQtCategories.h"
 #include <QDebug>
 #include <QJsonDocument>
-
-#include "SciPlatform.h"
+#include "logging/LoggingQtCategories.h"
 
 SciFilterSuggestionModel::SciFilterSuggestionModel(SciPlatform *platform)
     : QAbstractListModel(platform)
@@ -16,18 +14,18 @@ SciFilterSuggestionModel::~SciFilterSuggestionModel()
 
 int SciFilterSuggestionModel::count() const
 {
-  return suggestionList_.length();
+    return suggestionList_.length();
 }
 
 int SciFilterSuggestionModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-   return suggestionList_.length();
+    return suggestionList_.length();
 }
 
 QVariant SciFilterSuggestionModel::data(const QModelIndex &index, int role) const
 {
-   int row = index.row();
+    int row = index.row();
     if (row < 0 || row >= suggestionList_.count()) {
         return QVariant();
     }
@@ -35,13 +33,12 @@ QVariant SciFilterSuggestionModel::data(const QModelIndex &index, int role) cons
     const SciFilterSuggestionModelItem &item = suggestionList_.at(row);
 
     switch (role) {
-    case SuggestionRole:
-        return item.suggestion;
+        case SuggestionRole:
+            return item.suggestion;
     }
 
     return QVariant();
 }
-    
 
 QVariantMap SciFilterSuggestionModel::get(int row)
 {
@@ -64,7 +61,7 @@ QHash<int, QByteArray> SciFilterSuggestionModel::roleNames() const
 }
 
 void SciFilterSuggestionModel::add(const QByteArray &message)
-{ 
+{
     QJsonParseError parseError;
     QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
     QJsonValue notification = doc["notification"];
@@ -78,17 +75,17 @@ void SciFilterSuggestionModel::add(const QByteArray &message)
                 break;
             }
         }
-        
+
         // if suggestion is not present add it
         if (index < 0) {
-          beginInsertRows(QModelIndex(), suggestionList_.length(), suggestionList_.length());
+            beginInsertRows(QModelIndex(), suggestionList_.length(), suggestionList_.length());
 
-          SciFilterSuggestionModelItem item;
-          item.suggestion = value;
-          suggestionList_.append(item);
+            SciFilterSuggestionModelItem item;
+            item.suggestion = value;
+            suggestionList_.append(item);
 
-          endInsertRows();
-          emit countChanged();
+            endInsertRows();
+            emit countChanged();
         }
-    } 
+    }
 }

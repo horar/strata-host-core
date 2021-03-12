@@ -1,8 +1,8 @@
 #pragma once
 
 #include <QAbstractListModel>
-#include <QStringList>
 #include <QHash>
+#include <QStringList>
 
 class SciPlatform;
 
@@ -10,7 +10,7 @@ struct SciFilterSuggestionModelItem {
     QString suggestion;
 };
 
-class SciFilterSuggestionModel: public QAbstractListModel
+class SciFilterSuggestionModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(SciFilterSuggestionModel)
@@ -20,7 +20,7 @@ class SciFilterSuggestionModel: public QAbstractListModel
 public:
     explicit SciFilterSuggestionModel(SciPlatform *platform);
     virtual ~SciFilterSuggestionModel() override;
-    
+
     enum ModelRole {
         SuggestionRole = Qt::UserRole,
     };
@@ -38,6 +38,6 @@ signals:
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
-private: 
+private:
     QList<SciFilterSuggestionModelItem> suggestionList_;
 };
