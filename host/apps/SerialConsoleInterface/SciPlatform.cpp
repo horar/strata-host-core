@@ -21,7 +21,7 @@ SciPlatform::SciPlatform(
 
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
-    filterSuggestionModel_ = new SciFilterSuggestionModel(this);
+    filterSuggestionModel_ = new SciFilterSuggestionModel();
 }
 
 SciPlatform::~SciPlatform()

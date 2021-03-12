@@ -18,7 +18,7 @@ class SciFilterSuggestionModel : public QAbstractListModel
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
-    explicit SciFilterSuggestionModel(SciPlatform *platform);
+    explicit SciFilterSuggestionModel(QObject *parent = nullptr);
     virtual ~SciFilterSuggestionModel() override;
 
     enum ModelRole {
