@@ -12,13 +12,13 @@
         "properties": [""]
     }
 */
-
+var qtObjectSuggestions = {}
 const qtObjectKeyValues = {}
 const qtIdPairs = {}
 const qtObjectPropertyValues = {}
+const qtObjectMetaPropertyValues = {}
 var isInitialized = false
 var searchedIds = false
-var flags = { sgwidgetsFlag: false, qtQuickFlag: false }
 const suggestions = {}
 const currentItems = {}
 var editor = null
@@ -27,13 +27,15 @@ var bottomOfFile = null;
 var topOfFile = null;
 var fullRange = null;
 
+var qtImports = [];
+
 var propRange = {};
 
 // return an object from a string with definable properties
-function createDynamicProperty(property) {
+function createDynamicProperty(property, isFunction = false) {
     return {
         "label": property,
-        "kind": monaco.languages.CompletionItemKind.KeyWord,
+        "kind": !isFunction ? monaco.languages.CompletionItemKind.KeyWord : monaco.languages.CompletionItemKind.Function,
         "insertTextRules": monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
         "insertText": property,
         "range": null
@@ -42,54 +44,40 @@ function createDynamicProperty(property) {
 // filter out duplicate lines
 function removeDuplicates(propertySuggestions) {
     return propertySuggestions.sort().filter(function (itm, idx, arr) {
-        return !idx || itm.label !== arr[idx - 1].label;
+        return !idx || itm !== arr[idx - 1];
     })
 }
+
 // This is the properties string array conversion to an object array, this has to be done in real time due to the limitations of the monaco editor suggestions
-function convertStrArrayToObjArray(key, properties, isProperty = false, isIdReference = false) {
+function convertStrArrayToObjArray(key, properties, isProperty = false, isIdReference = false, parent = null) {
     var propertySuggestions = []
     qtObjectPropertyValues[key] = []
     for (var i = 0; i < properties.length; i++) {
         if (!isIdReference) {
-            propertySuggestions.push(createDynamicProperty(properties[i]))
+            if (properties[i].includes("()")) {
+                propertySuggestions.push(createDynamicProperty(properties[i], true))
+            } else {
+                propertySuggestions.push(createDynamicProperty(properties[i] + ": ", false))
+            }
         } else {
-            propertySuggestions.push(createDynamicProperty(properties[i].split(":")[0]))
+            if (properties[i].includes("()")) {
+                propertySuggestions.push(createDynamicProperty(properties[i], true))
+            } else {
+                propertySuggestions.push(createDynamicProperty(properties[i], false))
+            }
         }
     }
-    if (propertySuggestions.length !== 0) {
-        propertySuggestions = removeDuplicates(propertySuggestions)
-    }
-    if (isProperty) {
-        qtObjectPropertyValues[key] = propertySuggestions
+    if (!isProperty) {
+        qtObjectPropertyValues[key] = propertySuggestions.concat(Object.values(suggestions))
     } else {
-        qtObjectPropertyValues[key] = propertySuggestions.concat(Object.values(suggestions));
+        qtObjectPropertyValues[key] = propertySuggestions
     }
 }
 // setting each key val pair for the object
 function createQtObjectValPairs(key, val) {
     qtObjectKeyValues[key] = val
 }
-// creating the qtObjectKeyValues array
-function convertQtQuickToObject(objArray, isProperty = false) {
 
-    for(var j = 0; j < objArray.length; j++){
-        if(!isProperty && QtQuickTypeJson.hasOwnProperty(objArray[j].type)){
-            objArray[j].properties = objArray[j].properties.concat(QtQuickTypeJson[objArray[j].type])
-        } 
-    }
-    for (var i = 0; i < objArray.length; i++) {
-        createQtObjectValPairs(objArray[i].prefix, { label: objArray[i].prefix, insertText: objArray[i].body, properties: objArray[i].properties, flag: isProperty, isId: false })
-    }
-}
-// Initializes the library to become an Object array to be feed into suggestions
-function initializeQtQuick(flags) {
-    if (flags.qtQuickFlag) {
-        convertQtQuickToObject(qtQuick)
-    }
-    if (flags.sgwidgetsFlag) {
-        convertQtQuickToObject(SGWidgets)
-    }
-}
 // This is a register for when an Id of a type is read and/or created. Allowing us to instantiate from the id caller
 function addCustomIdAndTypes(idText, position, type = "Item") {
     if (!qtIdPairs.hasOwnProperty(position.lineNumber)) {
@@ -117,7 +105,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             if (!qtObjectKeyValues.hasOwnProperty(type)) {
                 type = "Item"
             }
-            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true})
+            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true })
             suggestions[idText] = {
                 label: qtObjectKeyValues[idText].label,
                 kind: monaco.languages.CompletionItemKind.Function,
@@ -284,7 +272,6 @@ function registerQmlAsLanguage() {
             { token: "delimiter.bracket.error", foreground: "#FF0000" }
         ]
     })
-
     runQmlProvider()
     editor = monaco.editor.create(document.getElementById('container'), {
         value: "",
@@ -395,6 +382,111 @@ function registerQmlAsLanguage() {
             }
         }
     }
+
+    // Initializes the library to become an Object array to be feed into suggestions
+    function initializeQtQuick(model) {
+        qtObjectSuggestions = {}
+        qtImports = []
+        const firstLine = { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn }
+        var line = { lineNumber: firstLine.lineNumber, column: firstLine.startColumn }
+        while (line.lineNumber >= firstLine.lineNumber) {
+            var getNextPosition = model.findNextMatch("import", line)
+            if (getNextPosition.range.startLineNumber < line.lineNumber) {
+                break;
+            }
+            var lineContent = model.getLineContent(getNextPosition.range.startLineNumber)
+            var content = lineContent.replace("\t", "").split("import")[1].trim()
+            line = { lineNumber: getNextPosition.range.startLineNumber + 1, column: getNextPosition.range.startColumn }
+            qtImports.push(content)
+        }
+        createSuggestionsBasedOffImports()
+    }
+
+    function createSuggestionsBasedOffImports() {
+        for (const qtType in qtTypeJson["sources"]) {
+            var flag = false
+            const qtValues = qtTypeJson['sources'][qtType]
+            for (var i = 0; i < qtImports.length; i++) {
+                if (qtValues.source !== "" && qtImports[i].includes(qtValues.source)) {
+                    flag = true
+                } else if (qtValues.source === "") {
+                    flag = true
+                }
+            }
+            if (flag) {
+                appendInherited(qtType, qtValues)
+            }
+        }
+        updateObjectFormat()
+    }
+
+    function updateObjectFormat() {
+        for (const key in qtObjectSuggestions) {
+            for (const values in qtObjectSuggestions[key]["meta"]) {
+                if (qtObjectSuggestions[key]["meta"][values].length > 0) {
+                    if (qtObjectMetaPropertyValues[key] === undefined) {
+                        qtObjectMetaPropertyValues[key] = {}
+                    }
+
+                    qtObjectMetaPropertyValues[key][values] = qtObjectSuggestions[key]["meta"][values]
+                }
+            }
+            var arr = []
+            for (var i = 0; i < qtObjectSuggestions[key].functions.length; i++) {
+                arr.push(qtObjectSuggestions[key].functions[i])
+            }
+            for (var j = 0; j < qtObjectSuggestions[key].properties.length; j++) {
+                arr.push(qtObjectSuggestions[key].properties[j])
+            }
+            for (var n = 0; n < qtObjectSuggestions[key].signals.length; n++) {
+                arr.push(qtObjectSuggestions[key].signals[n])
+            }
+            arr = removeDuplicates(arr)
+            createQtObjectValPairs(key, { label: key, insertText: key, properties: arr, flag: false, isId: false })
+        }
+        createSuggestions()
+    }
+
+    function createSuggestions() {
+        for (const key in qtObjectKeyValues) {
+            suggestions[key] = {
+                label: qtObjectKeyValues[key].label.trim(),
+                kind: monaco.languages.CompletionItemKind.Class,
+                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                insertText: qtObjectKeyValues[key].insertText,
+                range: null,
+            }
+        }
+    }
+    // recursive traversal of Inherited Types
+    function appendInherited(masterItem, item) {
+        //does not inherit from other Items
+        if (qtObjectSuggestions[masterItem] === undefined) {
+            qtObjectSuggestions[masterItem] = {}
+            qtObjectSuggestions[masterItem]["functions"] = []
+            qtObjectSuggestions[masterItem]["signals"] = []
+            qtObjectSuggestions[masterItem]["properties"] = []
+            qtObjectSuggestions[masterItem]["meta"] = {}
+        }
+        if (item.inherits.length === 0) {
+            qtObjectSuggestions[masterItem].functions = qtObjectSuggestions[masterItem].functions.concat(item.functions)
+            qtObjectSuggestions[masterItem].signals = qtObjectSuggestions[masterItem].signals.concat(item.signals)
+            for (const key in item.properties) {
+                qtObjectSuggestions[masterItem].properties.push(key)
+                qtObjectSuggestions[masterItem].meta[key] = item.properties[key].meta_properties
+            }
+            return;
+        } else if (qtTypeJson["sources"].hasOwnProperty(item.inherits)) {
+            appendInherited(masterItem, qtTypeJson["sources"][item.inherits])
+            qtObjectSuggestions[masterItem].functions = qtObjectSuggestions[masterItem].functions.concat(item.functions)
+            qtObjectSuggestions[masterItem].signals = qtObjectSuggestions[masterItem].signals.concat(item.signals)
+            for (const key in item.properties) {
+                qtObjectSuggestions[masterItem].properties.push(key)
+                qtObjectSuggestions[masterItem].meta[key] = item.properties[key].meta_properties
+            }
+            return;
+        }
+    }
     // This creates the suggestions widgets and suggestion items, returning the determined suggestions, reads the files ids, updates editor settings per initial conditions
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
@@ -407,6 +499,7 @@ function registerQmlAsLanguage() {
                 topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
                 bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
                 var getId = model.findNextMatch("id:", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
+                initializeQtQuick(model)
                 if (getId !== null && getId !== undefined) {
                     var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
@@ -438,13 +531,16 @@ function registerQmlAsLanguage() {
                 }
                 if (active.includes(".")) {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
+                    const prevParent = findPreviousBracketParent(model, position)
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
-                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, qtObjectKeyValues[activeWord].flag, qtObjectKeyValues[activeWord].isId)
+                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, true, qtObjectKeyValues[activeWord].isId)
                         return { suggestions: qtObjectPropertyValues[activeWord] }
+                    } else if (qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord)) {
+                        convertStrArrayToObjArray(bracketWord, qtObjectMetaPropertyValues[prevParent][activeWord], true, qtObjectKeyValues[activeWord].isId)
                     }
                 }
                 var fetchedSuggestions = searchForChildBrackets(model, position)
-                return { suggestions: fetchedSuggestions === undefined || fetchedSuggestions === null ? Object.values(suggestions) : fetchedSuggestions }
+                return { suggestions: fetchedSuggestions }
             }
         })
     }
@@ -454,12 +550,12 @@ function registerQmlAsLanguage() {
         var parent = null
         while (currentPosition.lineNumber <= position.lineNumber) {
             var getPrev = model.findPreviousMatch("{", currentPosition)
-            var getPrevNext = model.findNextMatch("}",{lineNumber: getPrev.range.startLineNumber, column: getPrev.range.startColumn})
+            var getPrevNext = model.findNextMatch("}", { lineNumber: getPrev.range.startLineNumber, column: getPrev.range.startColumn })
             if (currentPosition.lineNumber < getPrev.range.startLineNumber) {
-                return suggestions
+                return null
             }
 
-            if(currentPosition.lineNumber < getPrevNext.range.startLineNumber){
+            if (currentPosition.lineNumber < getPrevNext.range.startLineNumber) {
                 var content = model.getLineContent(getPrev.range.startLineNumber)
                 var splitContent = content.replace("\t", "").split(/\{|\t/)
                 var bracketWord = splitContent[0].trim()
@@ -503,24 +599,32 @@ function registerQmlAsLanguage() {
             }
             currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
             return currentItems[bracketWord][propRange]
-        } else if(qtQuickBody.hasOwnProperty(bracketWord)){
-            convertStrArrayToObjArray(bracketWord, qtQuickBody[bracketWord].properties, true)
-            currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord];
-            return currentItems[bracketWord][propRange]
         } else {
-            return Object.values(suggestions)
+            const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber, column: propRange.startColumn })
+            if (qtObjectMetaPropertyValues[prevParent].hasOwnProperty(bracketWord)) {
+                convertStrArrayToObjArray(bracketWord, qtObjectMetaPropertyValues[prevParent][bracketWord], true, false)
+                if (currentItems[bracketWord] === undefined) {
+                    currentItems[bracketWord] = {}
+                }
+                currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
+                return currentItems[bracketWord][propRange]
+            } else {
+                return Object.values(suggestions)
+            }
         }
+
     }
 
     editor.getModel().onDidChangeContent((event) => {
-        var getId =  editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
-        var position = {lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn}
+        var getId = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
+        var position = { lineNumber: event.changes[0].range.startLineNumber, column: event.changes[0].range.startColumn }
         if (getId.includes("id:")) {
             var word = getId.replace("\t", "").split(":")[1].trim()
-            var getIdType =  editor.getModel().findPreviousMatch("{", position, false, false)
-            var content =  editor.getModel().getLineContent({ lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn })
+            var getIdType = editor.getModel().findPreviousMatch("{", position, false, false)
+            var content = editor.getModel().getLineContent({ lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn })
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(word, position, type)
         }
     })
 }
+

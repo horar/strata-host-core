@@ -62,18 +62,6 @@
     </script>
     <script>
         if(!isInitialized){
-            flags.sgwidgetsFlag = true
-            flags.qtQuickFlag = true
-            initializeQtQuick(flags)
-            for (const [key] of Object.entries(qtObjectKeyValues)) {
-                suggestions[key] = {
-                    label: qtObjectKeyValues[key].label,
-                    kind: monaco.languages.CompletionItemKind.Class,
-                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: qtObjectKeyValues[key].insertText,
-                    range: null,
-                }
-            }
             registerQmlAsLanguage()
         } else {
             editor.dispose()
