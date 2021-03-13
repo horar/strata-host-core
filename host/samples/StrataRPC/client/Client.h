@@ -10,7 +10,7 @@ class Client : public QObject
     Q_PROPERTY(bool connectionStatus READ getConnectionStatus NOTIFY connectionStatusUpdated);
 
 public:
-    Client(QObject *parent = nullptr);
+    Client(QString clientId, QObject *parent = nullptr);
     ~Client();
     
     bool init();
@@ -24,6 +24,10 @@ signals:
 public slots:
     void connectToServer();
     void disconnectServer();
+    void closeServer();
+    void requestServerStatus();
+    void serverDisconnectedHandler(const QJsonObject &);
+    void strataClientErrorHandler(strata::strataRPC::StrataClient::ClientError errorType, const QString &errorMessage);
 
 private:
     std::unique_ptr<strata::strataRPC::StrataClient> strataClient_;

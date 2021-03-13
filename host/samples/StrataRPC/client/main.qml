@@ -56,4 +56,30 @@ Window {
         }
     }
 
+    Button {
+        id: closeServerButton
+        x: 15
+        y: 119
+        width: 225
+        height: 40
+        text: qsTr("Close Server")
+        Connections {
+            target: closeServerButton
+            onClicked: Client.closeServer()
+        }
+    }
+
+    Button {
+        id: requestServerStatusButton
+        x: 15
+        y: 165
+        width: 225
+        height: 40
+        text: qsTr("Request Server Status")
+        Connections {
+            target: requestServerStatusButton
+            onClicked: Client.requestServerStatus()
+        }
+    }
+
 }

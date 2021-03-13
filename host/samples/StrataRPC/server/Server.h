@@ -22,6 +22,9 @@ public slots:
                             const QString &errorMessage);
 
 private:
+    void closeServerHandler(const strata::strataRPC::Message &message);
+    void serverStatusHandler(const strata::strataRPC::Message &message);
+
     std::unique_ptr<strata::strataRPC::StrataServer> strataServer_;
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
 };
