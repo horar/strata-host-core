@@ -20,6 +20,7 @@ const qtObjectMetaPropertyValues = {}
 var isInitialized = false
 var searchedIds = false
 var suggestions = {}
+var functionSuggestions = {}
 const currentItems = {}
 var editor = null
 
@@ -45,6 +46,12 @@ function createDynamicProperty(property, isFunction = false) {
 function removeDuplicates(propertySuggestions) {
     return propertySuggestions.sort().filter(function (itm, idx, arr) {
         return !idx || itm !== arr[idx - 1];
+    })
+}
+
+function removeOnCalls(properties) {
+    return properties.filter(function (itm) {
+        return !itm.includes("on" + /[A-Za-z]*$/)
     })
 }
 
@@ -90,8 +97,12 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
         if (!qtObjectKeyValues.hasOwnProperty(type)) {
             type = "Item"
         }
-        createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true })
-        suggestions[idText] = {
+        var arr = []
+        arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[type].properties)))
+        arr = arr.concat(qtObjectSuggestions[type].functions)
+        arr = arr.concat(qtObjectSuggestions[type].signals)
+        createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
+        functionSuggestions[idText] = {
             label: qtObjectKeyValues[idText].label,
             kind: monaco.languages.CompletionItemKind.Function,
             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
@@ -101,7 +112,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
     } else {
         if (!qtIdPairs[position.lineNumber].hasOwnProperty(idText)) {
             var keys = Object.keys(qtIdPairs[position.lineNumber])
-            delete suggestions[keys[0]]
+            delete functionSuggestions[keys[0]]
             delete qtObjectKeyValues[keys[0]]
             delete qtIdPairs[position.lineNumber]
             qtIdPairs[position.lineNumber] = {}
@@ -109,8 +120,12 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             if (!qtObjectKeyValues.hasOwnProperty(type)) {
                 type = "Item"
             }
-            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true })
-            suggestions[idText] = {
+            var arr = []
+            arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[type].properties)))
+            arr = arr.concat(qtObjectSuggestions[type].functions)
+            arr = arr.concat(qtObjectSuggestions[type].signals)
+            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
+            functionSuggestions[idText] = {
                 label: qtObjectKeyValues[idText].label,
                 kind: monaco.languages.CompletionItemKind.Function,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
@@ -120,13 +135,17 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
         } else if (qtIdPairs[position.lineNumber][idText] !== type) {
             qtIdPairs[position.lineNumber][idText] = type
             var keys = Object.keys(qtIdPairs[position.lineNumber])
-            delete suggestions[keys[0]]
+            delete functionSuggestions[keys[0]]
             delete qtObjectKeyValues[keys[0]]
             if (!qtObjectKeyValues.hasOwnProperty(type)) {
                 type = "Item"
             }
-            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: qtObjectKeyValues[type].properties, flag: true, isId: true })
-            suggestions[idText] = {
+            var arr = []
+            arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[type].properties)))
+            arr = arr.concat(qtObjectSuggestions[type].functions)
+            arr = arr.concat(qtObjectSuggestions[type].signals)
+            createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
+            functionSuggestions[idText] = {
                 label: qtObjectKeyValues[idText].label,
                 kind: monaco.languages.CompletionItemKind.Function,
                 insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
@@ -159,7 +178,7 @@ function registerQmlAsLanguage() {
         tokenizer: {
             root: [
                 [/[{}]/, 'delimiter.bracket'],
-                [/^[A_Z0_9]{(.|\n)(?!})$/, 'delimiter.bracket.error'],
+                [/^[A-Z0-9]{(.|\n)(?!})$/, 'delimiter.bracket.error'],
                 [/[a-z_$][\w$]*/, {
                     cases: {
                         '@typeKeywords': 'keyword',
@@ -437,14 +456,8 @@ function registerQmlAsLanguage() {
                 }
             }
             var arr = []
-            for (var i = 0; i < qtObjectSuggestions[key].functions.length; i++) {
-                arr.push(qtObjectSuggestions[key].functions[i])
-            }
             for (var j = 0; j < qtObjectSuggestions[key].properties.length; j++) {
                 arr.push(qtObjectSuggestions[key].properties[j])
-            }
-            for (var n = 0; n < qtObjectSuggestions[key].signals.length; n++) {
-                arr.push(qtObjectSuggestions[key].signals[n])
             }
             arr = removeDuplicates(arr)
             createQtObjectValPairs(key, { label: key, insertText: key, properties: arr, flag: false, isId: false })
@@ -454,12 +467,14 @@ function registerQmlAsLanguage() {
 
     function createSuggestions() {
         for (const key in qtObjectKeyValues) {
-            suggestions[key] = {
-                label: qtObjectKeyValues[key].label.trim(),
-                kind: monaco.languages.CompletionItemKind.Class,
-                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                insertText: qtObjectKeyValues[key].insertText,
-                range: null,
+            if (!qtObjectKeyValues[key].isId) {
+                suggestions[key] = {
+                    label: qtObjectKeyValues[key].label.trim(),
+                    kind: monaco.languages.CompletionItemKind.Class,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    insertText: qtObjectKeyValues[key].insertText,
+                    range: null,
+                }
             }
         }
     }
@@ -476,8 +491,17 @@ function registerQmlAsLanguage() {
         if (item.inherits.length === 0) {
             qtObjectSuggestions[masterItem].functions = qtObjectSuggestions[masterItem].functions.concat(item.functions)
             qtObjectSuggestions[masterItem].signals = qtObjectSuggestions[masterItem].signals.concat(item.signals)
+            if (item.signals.length > 0) {
+                for (var i = 0; i < item.signals.length; i++) {
+                    var signalCall = item.signals[i]
+                    var onCall = "on" + signalCall[0].toUpperCase() + signalCall.substring(1)
+                    qtObjectSuggestions[masterItem].properties.push(onCall)
+                }
+            }
             for (const key in item.properties) {
                 qtObjectSuggestions[masterItem].properties.push(key)
+                var onCall = "on" + key[0].toUpperCase() + key.substring(1) + "Changed"
+                qtObjectSuggestions[masterItem].properties.push(onCall)
                 qtObjectSuggestions[masterItem].meta[key] = item.properties[key].meta_properties
             }
             return;
@@ -485,8 +509,17 @@ function registerQmlAsLanguage() {
             appendInherited(masterItem, qtTypeJson["sources"][item.inherits])
             qtObjectSuggestions[masterItem].functions = qtObjectSuggestions[masterItem].functions.concat(item.functions)
             qtObjectSuggestions[masterItem].signals = qtObjectSuggestions[masterItem].signals.concat(item.signals)
+            if (item.signals.length > 0) {
+                for (var i = 0; i < item.signals.length; i++) {
+                    var signalCall = item.signals[i]
+                    var onCall = "on" + signalCall[0].toUpperCase() + signalCall.substring(1)
+                    qtObjectSuggestions[masterItem].properties.push(onCall)
+                }
+            }
             for (const key in item.properties) {
                 qtObjectSuggestions[masterItem].properties.push(key)
+                var onCall = "on" + key[0].toUpperCase() + key.substring(1) + "Changed"
+                qtObjectSuggestions[masterItem].properties.push(onCall)
                 qtObjectSuggestions[masterItem].meta[key] = item.properties[key].meta_properties
             }
             return;
@@ -495,7 +528,7 @@ function registerQmlAsLanguage() {
     // This creates the suggestions widgets and suggestion items, returning the determined suggestions, reads the files ids, updates editor settings per initial conditions
     function runQmlProvider() {
         monaco.languages.registerCompletionItemProvider('qml', {
-            triggerCharacters: ['.'],
+            triggerCharacters: ['.', ':'],
             provideCompletionItems: (model, position) => {
                 var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
                 var currWords = currText.replace("\t", "").split(" ");
@@ -538,12 +571,15 @@ function registerQmlAsLanguage() {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
                     const prevParent = findPreviousBracketParent(model, position)
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
-                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, true, qtObjectKeyValues[activeWord].isId, qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord))
+                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, true, qtObjectKeyValues[activeWord].isId)
                         return { suggestions: qtObjectPropertyValues[activeWord] }
                     } else if (qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord)) {
                         convertStrArrayToObjArray(activeWord, qtObjectMetaPropertyValues[prevParent][activeWord], true, false)
                         return { suggestions: qtObjectPropertyValues[activeWord] }
                     }
+                }
+                if (active.includes(":")) {
+                    return { suggestions: Object.values(functionSuggestions) }
                 }
                 var fetchedSuggestions = searchForChildBrackets(model, position)
                 return { suggestions: fetchedSuggestions }
@@ -552,60 +588,48 @@ function registerQmlAsLanguage() {
     }
     // Searches for the parent Item based off of the end column of a sibling item, this searches up and checks for time where the current line number is a child of the item
     function findPreviousBracketParent(model, position) {
-        var startPosition = { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn };
-        var endPosition = { lineNumber: fullRange.endLineNumber, column: fullRange.startColumn }
-        var startStopped = false
+        var startPosition = position
+        var endPosition = position
+
+        var stopped = false
         var endStopped = false
         var parent = null
-        var nextBracket = model.findNextMatch("}",position)
-        var prevBracket = model.findPreviousMatch("{",position)
-        while (!startStopped && !endStopped) {
-            var next = getNext(model, startPosition)
-            var prev = getPrev(model, endPosition)
-           
-            var content = model.getLineContent(next.range.startLineNumber)
-            var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-            
-            const checkColumn = model.findPreviousMatch(type,position)
+        var next = null
+        var prev = null
+        while (!stopped) {
+            prev = getPrev(model, startPosition)
+            startPosition = { lineNumber: prev.range.startLineNumber, column: prev.range.startColumn }
+            next = getNext(model, endPosition)
+            endPosition = { lineNumber: next.range.startLineNumber, column: next.range.endColumn }
 
-            if(checkColumn.range.startLineNumber === next.range.startLineNumber){
-                parent = type
+            var prevContent = model.getLineContent(prev.range.startLineNumber)
+            var content = prevContent.replace("\t", "").split(/\{|\t/)[0].trim()
+            var getPrevContent = model.findPreviousMatch(content, startPosition)
+            endPosition = { lineNumber: getPrevContent.range.startLineNumber, column: prev.range.endColumn }
+            next = getNext(model, endPosition)
+            while (!endStopped) {
+                next = getNext(model, endPosition)
+                endPosition = { lineNumber: next.range.startLineNumber, column: next.range.endColumn }
+                if (getPrevContent.range.startColumn === next.range.startColumn) {
+                    break;
+                }
+
             }
-
-            if (next.range.startLineNumber > prev.range.startLineNumber) {
-                return parent
-            } else {
-                if (checkNext(startPosition, prevBracket.range)) {
-                    startPosition = { lineNumber: next.range.startLineNumber, column: next.range.startLineNumber }
-                } else {
-                    startStopped = true
-                }
-                if (checkPrev(endPosition, nextBracket.range)) {
-                    endPosition = { lineNumber: prev.range.startLineNumber, column: prev.range.startLineNumber }
-                } else {
-                    endStopped = true
-                }
+            if (getPrevContent.range.startLineNumber < position.lineNumber && next.range.startLineNumber > position.lineNumber) {
+                parent = content
+                stopped = true
             }
         }
         return parent
     }
 
-    function checkNext(currentPosition, position) {
-        return currentPosition.lineNumber < position.startLineNumber
-    }
-    function checkPrev(currentPosition, position) {
-        return currentPosition.lineNumber > position.startLineNumber
-    }
-
     function getNext(model, position) {
-        return model.findNextMatch("{", position)
+        return model.findNextMatch("}", position)
     }
 
     function getPrev(model, position) {
-        return model.findPreviousMatch("}", position)
+        return model.findPreviousMatch("{", position)
     }
-
-    function peek(model,position)
 
     // Searches and initializes all id types to the suggestions object as well as allow updates to each item
     function getTypeID(model, position) {
@@ -629,7 +653,6 @@ function registerQmlAsLanguage() {
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
     function retrieveType(model, propRange) {
-        const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber, column: propRange.startColumn })
         var content = model.getLineContent(propRange.startLineNumber)
         var splitContent = content.replace("\t", "").split(/\{|\t/)
         var bracketWord = splitContent[0].trim()
@@ -640,7 +663,11 @@ function registerQmlAsLanguage() {
             }
             currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
             return currentItems[bracketWord][propRange]
+        } else if (bracketWord.includes("function") || bracketWord.includes("on" + /[A-Za-z]*$/)) {
+            //display signal Calls, function Calls, ids properties and function,signal, calls
+            return Object.values(functionSuggestions)
         } else {
+            const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber, column: propRange.startColumn })
             if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent) && qtObjectMetaPropertyValues[prevParent].hasOwnProperty(bracketWord)) {
                 convertStrArrayToObjArray(bracketWord, qtObjectMetaPropertyValues[prevParent][bracketWord], true, true)
                 if (currentItems[bracketWord] === undefined) {
@@ -652,7 +679,6 @@ function registerQmlAsLanguage() {
                 return Object.values(suggestions)
             }
         }
-
     }
 
     editor.getModel().onDidChangeContent((event) => {
