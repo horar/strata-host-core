@@ -165,7 +165,7 @@ DatabaseAccess* DatabaseManager::getUserAccessMap() {
 QString DatabaseManager::manageUserDir(const QString &path, const QString &name, const QStringList &channelAccess) {
     QDir databaseDir;
     if (path == "") {
-        databaseDir.setPath(QCoreApplication::applicationDirPath());
+        databaseDir.setPath(QDir::currentPath());
         #ifdef Q_OS_MACOS
             databaseDir.cdUp();
         #endif

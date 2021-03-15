@@ -2,6 +2,7 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 
 #include <QUrl>
 #include <QNetworkRequest>
@@ -24,11 +25,11 @@ OktaWebviewCpp::OktaWebviewCpp(QQmlApplicationEngine *engine, QObject *parent) :
     netmgr = new QNetworkAccessManager(this);
 
     clientId = "0oa8akdtteXGDfRz61d6";
-    scope = "openid+profile";
+    scope = "openid+profile+access";
     redirectUri = "www.onsemi.com";
     codeChallengeMethod = "S256";
     authServerVersion = "v1";
-    authorizationServerUrl = "https://onsemi.oktapreview.com/oauth2";
+    authorizationServerUrl = "https://onsemi.oktapreview.com/oauth2/ausewbtzprCgHxfYF1d6";
 
     tokenEndpoint = "/" + authServerVersion + "/token";
     userInfoEndpoint = "/" + authServerVersion + "/userinfo";
@@ -83,8 +84,38 @@ QString OktaWebviewCpp::authenticate(const QString &authorizationCode) {
     }
 
     const QJsonValue accessToken = networkReplyJsonObj.value("access_token");
+    auto decodedToken = accessToken.toString();
+    qDebug() << "\nToken:" << decodedToken;
 
-    return accessToken.toString();;
+    QStringList tokenSplit = decodedToken.split('.');
+    auto tokenPayload = tokenSplit[1].toUtf8();
+    auto decodedPayload = QByteArray::fromBase64(tokenPayload);
+    qDebug() << "\nPayload:" << decodedPayload;
+
+    QJsonDocument payloadJson = QJsonDocument::fromJson(decodedPayload);
+    if (payloadJson.isNull() || payloadJson.isEmpty() || !payloadJson.isObject()) {
+        qDebug() << "Error: received empty or invalid payload";
+        return "";
+    }
+
+    QJsonObject payloadJsonObj = payloadJson.object();
+    if (payloadJsonObj.isEmpty()) {
+        qDebug() << "Error: received empty or invalid payload";
+        return "";
+    }
+
+    const QJsonValue userAccess = payloadJsonObj.value("ua");
+    if (!userAccess.isArray() || userAccess.isNull()) {
+        qDebug() << "Error: received empty or invalid payload";
+        return "";
+    }
+
+    const QJsonArray userAccessArr = userAccess.toArray();
+    for (auto userAccessChannel : userAccessArr) {
+        qDebug() << "\nGranted access to channel" << userAccessChannel.toString();
+    }
+
+    return accessToken.toString();
 }
 
 QString OktaWebviewCpp::getUserInfo(const QString &accessToken) {
