@@ -325,6 +325,7 @@ function registerQmlAsLanguage() {
         var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
         //Edge Case 4: this is when there is only one QtItem, most common is when we create a new file
         if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
+            alert("case #4")
             propRange = {
                 startLineNumber: prevMatch.range.startLineNumber,
                 endLineNumber: nextMatch.range.startLineNumber,
@@ -336,6 +337,7 @@ function registerQmlAsLanguage() {
         //Edge Case 3: this is to ensure that editing the top of the file does not allow a child item to read in its parent data i.e Item and anchors dont mix
         if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
             if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber <= nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber >= nextnextMatch.range.startLineNumber)) {
+                alert("case #3")
                 propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
                     endLineNumber: nextMatch.range.startLineNumber,
@@ -348,6 +350,7 @@ function registerQmlAsLanguage() {
         //Edge Case 5: same as 3, just inveresed for the end of the file
         if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
             if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
+                alert("case #5")
                 propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
                     endLineNumber: nextMatch.range.startLineNumber,
@@ -369,25 +372,17 @@ function registerQmlAsLanguage() {
                 return retrieveType(model, propRange)
                 // Edge Case 1: A rare case where if there is no first child of an item on loaded the properties will not propagate
             } else if (nextMatch.range.startLineNumber > nextBracketMatch.range.startLineNumber) {
-                var nextPosition = { lineNumber: nextBracketMatch.range.startLineNumber, column: nextBracketMatch.range.startColumn }
-                var prevParent = findPreviousBracketParent(model, nextPosition)
-                if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
                     propRange = {
-                        startLineNumber: nextMatch.range.startLineNumber,
+                        startLineNumber: position.lineNumber,
                         endLineNumber: nextBracketMatch.range.startLineNumber,
-                        startColumn: nextMatch.range.startColumn,
+                        startColumn: position.column,
                         endColumn: nextBracketMatch.range.endColumn,
                     }
-                    convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag)
-                    if (currentItems[prevParent] === undefined) {
-                        currentItems[prevParent] = {}
-                    }
-                    currentItems[prevParent][propRange] = qtObjectPropertyValues[prevParent]
-                    return currentItems[prevParent][propRange]
-                }
+                    return retrieveType(model,propRange)              
             }
             //Edge case 2: this is the most common edge case hit where the properties between sibling items are intermingled this determines what the parent item is
         } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
+            alert("case #2")
             var prevParent = findPreviousBracketParent(model, position)
             if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
                 propRange = {
@@ -406,6 +401,8 @@ function registerQmlAsLanguage() {
                 return retrieveType(model,propRange)
             }
         }
+
+        return Object.values(suggestions)
     }
 
     // Initializes the library to become an Object array to be feed into suggestions
@@ -535,7 +532,8 @@ function registerQmlAsLanguage() {
         monaco.languages.registerCompletionItemProvider('qml', {
             triggerCharacters: ['.', ':'],
             provideCompletionItems: (model, position) => {
-                var currText = model.getValueInRange({ startLineNumber: position.lineNumber, startColumn: 0, endLineNumber: position.lineNumber, endColumn: position.column });
+                
+                var currText = model.getLineContent(position.lineNumber)
                 var currWords = currText.replace("\t", "").split(" ");
                 var active = currWords[currWords.length - 1]
                 fullRange = model.getFullModelRange()
@@ -661,6 +659,7 @@ function registerQmlAsLanguage() {
         var content = model.getLineContent(propRange.startLineNumber)
         var splitContent = content.replace("\t", "").split(/\{|\t/)
         var bracketWord = splitContent[0].trim()
+        
         if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
             convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId)
             if (currentItems[bracketWord] === undefined) {
@@ -681,7 +680,7 @@ function registerQmlAsLanguage() {
                 currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
                 return currentItems[bracketWord][propRange]
             } else {
-                return Object.values(suggestions)
+                return Object.values(functionSuggestions)
             }
         }
     }
