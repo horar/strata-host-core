@@ -65,7 +65,7 @@ FocusScope {
     property string statusText: embeddedStateMachine.statusText
     property string subtext: embeddedStateMachine.subtext
 
-    ProgramDeviceStateMachine {
+    EmbeddedModeStateMachine {
         id: embeddedStateMachine
 
         running: false
