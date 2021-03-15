@@ -128,7 +128,7 @@ Item {
 
         color: TangoTheme.palette.error
         radius: 5
-        visible: prtModel.serverType !== "production"
+        visible: prtModel.debugBuild ? prtModel.serverType === "production" : prtModel.serverType !== "production"
 
         Row {
             id: testServerWarningRow
@@ -149,7 +149,7 @@ Item {
                 
                 alternativeColorEnabled: true
                 font.bold: true
-                text: "Non-production server in use."
+                text: prtModel.debugBuild ? "Production server in use" : "Non-production server in use"
             }            
         }
     }

@@ -22,6 +22,7 @@ class PrtModel : public QObject
     Q_PROPERTY(RestClient* restClient READ restClient CONSTANT)
     Q_PROPERTY(QString bootloaderFilepath READ bootloaderFilepath NOTIFY bootloaderFilepathChanged)
     Q_PROPERTY(QString serverType READ serverType CONSTANT)
+    Q_PROPERTY(bool debugBuild READ debugBuild CONSTANT)
 
 public:
     explicit PrtModel(QObject *parent = nullptr);
@@ -32,6 +33,7 @@ public:
     RestClient* restClient();
     QString bootloaderFilepath();
     QString serverType() const;
+    bool debugBuild() const;
 
     Q_INVOKABLE QString deviceFirmwareVersion() const;
     Q_INVOKABLE QString deviceFirmwareVerboseName() const;

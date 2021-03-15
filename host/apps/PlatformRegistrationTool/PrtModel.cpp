@@ -27,7 +27,7 @@ PrtModel::PrtModel(QObject *parent)
     QSettings settings(configFilePath, QSettings::IniFormat);
 
     cloudServiceUrl_ = settings.value("cloud-service/url").toUrl();
-    serverType_ = settings.value("server-type/server").toString();
+    serverType_ = settings.value("cloud-service/server").toString();
 
     if (cloudServiceUrl_.isValid() == false) {
         qCCritical(logCategoryPrt) << "cloud service url is not valid:" << cloudServiceUrl_.toString();
@@ -519,4 +519,13 @@ QString PrtModel::resolveConfigFilePath()
 QString PrtModel::serverType() const
 {
     return serverType_;
+}
+
+bool PrtModel::debugBuild() const
+{
+#ifdef NDEBUG
+    return false;
+#else
+    return true;
+#endif
 }
