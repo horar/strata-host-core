@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import tech.strata.sgwidgets 1.0
 
 ColumnLayout {
     id: payloadContainer
@@ -75,7 +76,10 @@ ColumnLayout {
             id: propertyKey
             Layout.fillWidth: true
             Layout.preferredHeight: 30
+            selectByMouse: true
+            persistentSelection: true   // must deselect manually
             placeholderText: "Property key"
+
             validator: RegExpValidator {
                 regExp: /^(?!default)[a-z_][a-zA-Z0-9_]*/
             }
@@ -109,6 +113,31 @@ ColumnLayout {
                 } else {
                     model.valid = false
                 }
+            }
+
+            onActiveFocusChanged: {
+                if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                    propertyKey.deselect()
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+                onClicked: {
+                    propertyKey.forceActiveFocus()
+                }
+                onReleased: {
+                    if (containsMouse) {
+                        contextMenuPopup.popup(null)
+                    }
+                }
+            }
+
+            SGContextMenuEditActions {
+                id: contextMenuPopup
+                textEditor: propertyKey
             }
         }
 

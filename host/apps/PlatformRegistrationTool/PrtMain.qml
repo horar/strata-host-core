@@ -4,6 +4,8 @@ import tech.strata.prt 1.0 as PrtCommon
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 
+import "./jsonSchemas.js" as JsonSchemas
+
 Item {
     id: prtMain
 
@@ -72,11 +74,21 @@ Item {
         id: settingsComponent
 
         ProgramSettingsWizard {
+            id: settingsWizard
             focus: true
             prtModel: prtMain.prtModel
 
             onRegistrationEmbeddedRequested: {
-                console.log("not implemented yet")
+                console.log("EMBEDDED")
+                var properties = {
+                    "registrationMode": ProgramDeviceWizard.Embedded,
+                    "jlinkExePath": settingsWizard.jlinkExePath,
+                    "embeddedData": settingsWizard.embeddedData,
+                    "embeddedOpn": settingsWizard.embeddedOpn
+                }
+
+                console.log("jLinkExePath", properties.jLinkExePath)
+                startRegistrationProcess(properties)
             }
 
             onRegistrationAssistedAndControllerRequested: {
@@ -87,20 +99,25 @@ Item {
                 console.log("not implemented yet")
             }
 
-            function startRegistrationProcess() {
+            function startRegistrationProcess(properties) {
                 //TODO implement in future tickets
 
-                stackView.push(wizardComponent)
+                stackView.push(programWizardComponent, properties)
             }
         }
     }
 
     Component {
-        id: wizardComponent
+        id: programWizardComponent
 
         ProgramDeviceWizard {
             focus: true
             prtModel: prtMain.prtModel
+
+            //TEMPORARY just to skip settings step
+//            registrationMode: ProgramDeviceWizard.Embedded
+//            embeddedData: JsonSchemas.fakeEmbeddedData
+//            jlinkExePath: "/Applications/SEGGER/JLink/JLinkExe"
         }
     }
 
@@ -128,7 +145,7 @@ Item {
 
         color: TangoTheme.palette.error
         radius: 5
-        visible: prtModel.serverType !== "production"
+        visible: prtModel.debugBuild ? prtModel.serverType === "production" : prtModel.serverType !== "production"
 
         Row {
             id: testServerWarningRow
@@ -149,8 +166,24 @@ Item {
                 
                 alternativeColorEnabled: true
                 font.bold: true
-                text: "Non-production server in use."
+                text: prtModel.debugBuild ? "Production server in use" : "Non-production server in use"
             }            
         }
     }
+
+    function resolveFirmwareAndBootloader(registrationMode, embeddedData, assistedData, controllerData) {
+
+        if (registrationMode === ProgramDeviceWizard.Embedded) {
+            latestFirmwareIndex =
+
+            console.log("best firmware:", embeddedData.firmware[latestFirmwareIndex].version, embeddedData.firmware[latestFirmwareIndex].timestamp)
+
+        } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+
+        } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
+
+        }
+    }
+
+
 }

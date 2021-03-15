@@ -1,24 +1,51 @@
 import QtQml 2.12
 import QtQml.StateMachine 1.12 as DSM
+import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.flasherConnector 1.0
 
 DSM.StateMachine {
-    id: stateMechine
+    id: stateMachine
 
-    property bool stateSettingsActive: stateSettings.active
     property bool stateDownloadActive: stateDownload.active
     property bool stateCheckDeviceActive: stateCheckDevice.active
-    property bool stateProgramActive: stateProgram.active
     property bool stateRegistrationActive: stateRegistration.active
     property bool stateErrorActive: stateError.active
     property bool stateLoopFailedActive: stateLoopFailed.active
     property bool stateLoopSucceedActive: stateLoopSucceed.active
 
+    property string statusText
+    property string internalSubtext: ""
+    property string subtext: {
+        var t = ""
+        if (stateCheckDeviceCount.active || stateWaitForDevice.active) {
+            t = "Connect single device with MCU "+ jlinkDevice.toUpperCase()
 
-    signal updateTextRequested(string text);
-    signal updateSubtextRequested(string text);
+            if (prtModel.deviceCount > 1) {
+                t += "\n"
+                t += "Multiple devices detected !"
+            }
+        } else if (stateWaitForJLink.active) {
+            t = "Connect single JLink Base to program device"
+        } else if (stateRegistrationActive) {
+            t = internalSubtext
+            t += "\n\n"
+            t += "Do not unplug device or JLink Base"
+        } else if (stateLoopSucceedActive) {
+            t = "Device registered as platform " + opn.toUpperCase() + "\n\n"
+            t += "You can unplug device now\n\n"
+            t += "To program another device, simply plug it in and\n"
+            t += "process will start automatically\n\n"
+            t += "or press End to finish current session"
+        } else if (stateLoopFailedActive) {
+            t = internalSubtext
+            t += "\n\n"
+            t += "Unplug device and press Continue"
+        } else if (stateErrorActive) {
+            t = internalSubtext
+        }
 
-
-    property string subtext
+        return t
+    }
 
     property QtObject prtModel
     property QtObject jLinkConnector
@@ -26,102 +53,113 @@ DSM.StateMachine {
     property QtObject breakButton
     property QtObject continueButton
 
-    signal breakButtonClicked()
+    property int registrationMode: ProgramDeviceWizard.Unknown
+    property string jlinkExePath: ""
 
+    property var firmwareData: ({})
+    property var bootloaderData: ({})
+    property string classId: ""
+    property string opn: ""
+
+    property string jlinkDevice: ""
+    property int bootloaderStartAddress: -1
+
+    signal exitWizardRequested()
 
     //internal stuff
     signal settingsValid()
+    signal settingsInvalid(string errorString)
     signal deviceCountValid()
     signal deviceCountInvalid()
     signal deviceFirmwareValid()
     signal deviceFirmwareInvalid()
     signal jlinkProcessFailed()
 
-    running: true
-    initialState: stateSettings
+    running: false
+    initialState: validateInputState
+
 
     DSM.State {
-        id: stateSettings
+        id: validateInputState
 
         onEntered: {
             prtModel.clearBinaries();
+
+            var errorString = ""
+            if (registrationMode === ProgramDeviceWizard.Unknown) {
+                errorString = "Registration mode not set"
+            } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted
+                       || registrationMode === ProgramDeviceWizard.ControllerOnly) {
+                errorString = "Registration mode not supported"
+            } else if (jlinkExePath.length === 0) {
+                errorString = "Path to JLink.exe not set"
+            } else if (Object.keys(firmwareData).length === 0) {
+                errorString = "No valid firmware available"
+            } else if (Object.keys(bootloaderData).length === 0) {
+                errorString = "No valid bootloader available"
+            } else if (classId.length === 0) {
+                errorString = "Class id not set"
+            } else if (jlinkDevice.length === 0) {
+                errorString = "MCU device type not set"
+            } else if (bootloaderStartAddress < 0) {
+                errorString = "Bootloader start address not set"
+            } else if (opn.length === 0) {
+                errorString = "OPN not set"
+            }
+
+            console.log("errorString", errorString)
+
+            if (errorString.length > 0) {
+                stateMachine.settingsInvalid(errorString)
+            } else {
+                stateMachine.settingsValid()
+            }
         }
 
         DSM.SignalTransition {
             targetState: stateDownload
-            signal: stateMechine.settingsValid
+            signal: stateMachine.settingsValid
+        }
+
+        DSM.SignalTransition {
+            targetState: stateError
+            signal: stateMachine.settingsInvalid
+            onTriggered: {
+                stateMachine.internalSubtext = errorString
+            }
         }
     }
 
     DSM.State {
         id: stateDownload
 
-        property string bootloaderUrl
-        property string bootloaderMd5
-
-        initialState: stateGetBootloaderUrl
-
         onEntered: {
-            stateDownload.bootloaderUrl = ""
-            stateDownload.bootloaderMd5 = ""
+            stateMachine.statusText = "Downloading"
+
+            prtModel.downloadBinaries(
+                        stateMachine.bootloaderData.file,
+                        stateMachine.bootloaderData.md5,
+                        stateMachine.firmwareData.file,
+                        stateMachine.firmwareData.md5)
         }
 
         DSM.SignalTransition {
-            targetState: stateSettings
+            targetState: exitState
             signal: breakButton.clicked
         }
 
-        DSM.State {
-            id: stateGetBootloaderUrl
-
-            onEntered: {
-                prtModel.requestBootloaderUrl()
-            }
-
-            DSM.SignalTransition {
-                targetState: stateGetBinaries
-                signal: prtModel.bootloaderUrlRequestFinished
-                guard: errorString.length === 0
-                onTriggered: {
-                    stateDownload.bootloaderUrl = url
-                    stateDownload.bootloaderMd5 = md5
-                }
-            }
-
-            DSM.SignalTransition {
-                targetState: stateError
-                signal: prtModel.bootloaderUrlRequestFinished
-                guard: errorString.length > 0
-                onTriggered: {
-                    subtext = errorString
-                }
-            }
+        DSM.SignalTransition {
+            targetState: stateCheckDevice
+            signal: prtModel.downloadFirmwareFinished
+            guard: errorString.length === 0
         }
 
-        DSM.State {
-            id: stateGetBinaries
-
-            onEntered: {
-                prtModel.downloadBinaries(
-                            stateDownload.bootloaderUrl,
-                            stateDownload.bootloaderMd5,
-                            wizard.currentFirmwareUrl,
-                            wizard.currentFirmwareMd5)
-            }
-
-            DSM.SignalTransition {
-                targetState: stateCheckDevice
-                signal: prtModel.downloadFirmwareFinished
-                guard: errorString.length === 0
-            }
-
-            DSM.SignalTransition {
-                targetState: stateError
-                signal: prtModel.downloadFirmwareFinished
-                guard: errorString.length > 0
-                onTriggered: {
-                    subtext = errorString
-                }
+        DSM.SignalTransition {
+            targetState: stateError
+            signal: prtModel.downloadFirmwareFinished
+            guard: errorString.length > 0
+            onTriggered: {
+                stateMachine.internalSubtext = errorString
             }
         }
     }
@@ -132,7 +170,7 @@ DSM.StateMachine {
         initialState: stateCheckDeviceCount
 
         DSM.SignalTransition {
-            targetState: stateSettings
+            targetState: exitState
             signal: breakButton.clicked
         }
 
@@ -145,21 +183,25 @@ DSM.StateMachine {
         DSM.State {
             id: stateCheckDeviceCount
             onEntered: {
+                jLinkConnector.device = stateMachine.jlinkDevice
+                jLinkConnector.startAddress = stateMachine.bootloaderStartAddress
+                stateMachine.statusText = "Waiting for device to connect"
+
                 if (prtModel.deviceCount === 1) {
-                    stateMechine.deviceCountValid()
+                    stateMachine.deviceCountValid()
                 } else {
-                    stateMechine.deviceCountInvalid()
+                    stateMachine.deviceCountInvalid()
                 }
             }
 
             DSM.SignalTransition {
-                targetState: stateCheckFirmware
-                signal: stateMechine.deviceCountValid
+                targetState: stateWaitForJLink
+                signal: stateMachine.deviceCountValid
             }
 
             DSM.SignalTransition {
                 targetState: stateWaitForDevice
-                signal: stateMechine.deviceCountInvalid
+                signal: stateMachine.deviceCountInvalid
             }
         }
 
@@ -167,50 +209,13 @@ DSM.StateMachine {
             id: stateWaitForDevice
 
             onEntered: {
-                subtext = ""
-            }
-
-            DSM.SignalTransition {
-                targetState: stateCheckFirmware
-                signal: prtModel.deviceCountChanged
-                guard: prtModel.deviceCount === 1
-            }
-        }
-
-        DSM.State {
-            id: stateCheckFirmware
-
-            onEntered: {
-                if (prtModel.deviceFirmwareVersion().length > 0) {
-                    //device already has firmware
-                    showFirmwareWarning(
-                                prtModel.deviceFirmwareVersion(),
-                                prtModel.deviceFirmwareVerboseName(),
-                                function() {
-                                    stateMechine.deviceFirmwareValid()
-                                },
-                                function() {
-                                    stateMechine.deviceFirmwareInvalid()
-                                })
-                } else {
-                    stateMechine.deviceFirmwareValid()
-                }
-            }
-
-            onExited: {
-                if (warningDialog !== null) {
-                    warningDialog.reject()
-                }
+                stateMachine.statusText = "Waiting for device to connect"
             }
 
             DSM.SignalTransition {
                 targetState: stateWaitForJLink
-                signal: stateMechine.deviceFirmwareValid
-            }
-
-            DSM.SignalTransition {
-                targetState: stateWaitForDevice
-                signal: stateMechine.deviceFirmwareInvalid
+                signal: prtModel.deviceCountChanged
+                guard: prtModel.deviceCount === 1
             }
         }
 
@@ -219,25 +224,29 @@ DSM.StateMachine {
 
             initialState: stateCheckJLinkConnection
 
+            onEntered: {
+                stateMachine.statusText = "Waiting for JLink connection"
+            }
+
             DSM.State {
                 id: stateCheckJLinkConnection
 
                 onEntered: {
                     var run = jLinkConnector.checkConnectionRequested()
                     if (run === false) {
-                        stateMechine.jlinkProcessFailed()
+                        stateMachine.jlinkProcessFailed()
                     }
                 }
 
                 DSM.SignalTransition {
-                    targetState: stateProgram
+                    targetState: stateRegistration
                     signal: jLinkConnector.checkConnectionProcessFinished
                     guard: exitedNormally && connected
                 }
 
                 DSM.SignalTransition {
                     targetState: stateCallJlinkCheckWithDelay
-                    signal: stateMechine.jlinkProcessFailed
+                    signal: stateMachine.jlinkProcessFailed
                 }
 
                 DSM.SignalTransition {
@@ -258,26 +267,31 @@ DSM.StateMachine {
     }
 
     DSM.State {
-        id: stateProgram
+        id: stateRegistration
 
         initialState: stateProgramBootloader
+
+        property string currentPlatformId
+        property int currentBoardCount
 
         DSM.State {
             id: stateProgramBootloader
 
             onEntered: {
+                stateMachine.statusText = "Programming bootloader"
+                stateMachine.internalSubtext = ""
                 var run = jLinkConnector.programBoardRequested(prtModel.bootloaderFilepath)
 
                 if (run === false) {
-                    stateMechine.jlinkProcessFailed()
+                    stateMachine.jlinkProcessFailed()
                 }
             }
 
             DSM.SignalTransition {
                 targetState: stateLoopFailed
-                signal: stateMechine.jlinkProcessFailed
+                signal: stateMachine.jlinkProcessFailed
                 onTriggered: {
-                    subtext = "JLink process failed"
+                    stateMachine.internalSubtext = "JLink process failed"
                 }
             }
 
@@ -292,7 +306,7 @@ DSM.StateMachine {
                 signal: jLinkConnector.programBoardProcessFinished
                 guard: exitedNormally === false
                 onTriggered: {
-                    subtext = "JLink process failed"
+                    stateMachine.internalSubtext = "JLink process failed"
                 }
             }
         }
@@ -301,6 +315,7 @@ DSM.StateMachine {
             id: stateProgramFirmware
 
             onEntered: {
+                stateMachine.statusText = "Programming firmware"
                 prtModel.programDevice();
             }
 
@@ -311,15 +326,15 @@ DSM.StateMachine {
                 onTriggered: {
                     if (operation == FlasherConnector.Preparation ) {
                         if (state == FlasherConnector.Started) {
-                            subtext = "Preparations"
+                            stateMachine.internalSubtext = "Preparations"
                         } else if (state == FlasherConnector.Failed) {
-                            subtext = errorString
+                            stateMachine.internalSubtext = errorString
                         }
                     } else if (operation == FlasherConnector.Flash) {
                         if (state == FlasherConnector.Started) {
-                            subtext = "Programming"
+                            stateMachine.internalSubtext = "Programming"
                         } else if (state === FlasherConnector.Failed) {
-                            subtext = errorString
+                            stateMachine.internalSubtext = errorString
                         }
                     } else if (operation == FlasherConnector.BackupBeforeFlash
                                || operation == FlasherConnector.RestoreFromBackup) {
@@ -333,12 +348,12 @@ DSM.StateMachine {
             DSM.SignalTransition {
                 signal: prtModel.flasherProgress
                 onTriggered: {
-                    subtext = Math.floor((chunk / total) * 100) +"% completed"
+                    stateMachine.internalSubtext = (total < 1 ? 0 : Math.floor((chunk / total) * 100)) +"% completed"
                 }
             }
 
             DSM.SignalTransition {
-                targetState: stateRegistration
+                targetState: stateNotifyCloudService
                 signal: prtModel.flasherFinished
                 guard: result == FlasherConnector.Success
 
@@ -350,28 +365,18 @@ DSM.StateMachine {
                 guard: result == FlasherConnector.Unsuccess || result == FlasherConnector.Failure
             }
         }
-    }
-
-    DSM.State {
-        id: stateRegistration
-
-        property string currentPlatformId
-        property int currentBoardCount
-
-        initialState: stateNotifyCloudService
-
-        onEntered: {
-            stateRegistration.currentPlatformId = CommonCpp.SGUtilsCpp.generateUuid()
-            stateRegistration.currentBoardCount = -1
-        }
 
         DSM.State {
             id: stateNotifyCloudService
 
             onEntered: {
-                subtext = "contacting cloud service"
+                stateMachine.statusText = "Registering"
+                stateMachine.internalSubtext = "contacting cloud service"
+                stateRegistration.currentPlatformId = CommonCpp.SGUtilsCpp.generateUuid()
+                stateRegistration.currentBoardCount = -1
+
                 prtModel.notifyServiceAboutRegistration(
-                            wizard.currentClassId,
+                            stateMachine.classId,
                             stateRegistration.currentPlatformId)
             }
 
@@ -389,7 +394,7 @@ DSM.StateMachine {
                 signal: prtModel.notifyServiceFinished
                 guard: errorString.length > 0
                 onTriggered: {
-                    subtext = errorString
+                    stateMachine.internalSubtext = errorString
                 }
             }
         }
@@ -398,7 +403,7 @@ DSM.StateMachine {
             id: stateStartBootloader
 
             onEntered: {
-                subtext = "starting bootloader"
+                stateMachine.internalSubtext = "starting bootloader"
                 prtModel.startBootloader()
             }
 
@@ -413,7 +418,7 @@ DSM.StateMachine {
                 signal: prtModel.startBootloaderFinished
                 guard: errorString.length > 0
                 onTriggered: {
-                    subtext = errorString
+                    stateMachine.internalSubtext = errorString
                 }
             }
         }
@@ -422,13 +427,11 @@ DSM.StateMachine {
             id: stateWriteRegistrationData
 
             onEntered: {
-                subtext = "writing to device"
+                stateMachine.internalSubtext = "writing to device"
                 prtModel.setPlatformId(
-                            wizard.currentClassId,
+                            stateMachine.classId,
                             stateRegistration.currentPlatformId,
                             stateRegistration.currentBoardCount)
-
-                //TODO: or call setAssistedPlatformId based on platform type
             }
 
             DSM.SignalTransition {
@@ -442,7 +445,7 @@ DSM.StateMachine {
                 signal: prtModel.setPlatformIdFinished
                 guard: errorString.length > 0
                 onTriggered: {
-                    subtext = errorString
+                    stateMachine.internalSubtext = errorString
                 }
             }
         }
@@ -451,7 +454,7 @@ DSM.StateMachine {
             id: stateStartApplication
 
             onEntered: {
-                subtext = "starting application firmware"
+                stateMachine.internalSubtext = "starting application firmware"
                 prtModel.startApplication()
             }
 
@@ -466,7 +469,7 @@ DSM.StateMachine {
                 signal: prtModel.startApplicationFinished
                 guard: errorString.length > 0
                 onTriggered: {
-                    subtext = errorString
+                    stateMachine.internalSubtext = errorString
                 }
             }
         }
@@ -475,14 +478,22 @@ DSM.StateMachine {
     DSM.State {
         id: stateError
 
+        onEntered: {
+            stateMachine.statusText = "Platform Registration Failed"
+        }
+
         DSM.SignalTransition {
-            targetState: stateSettings
+            targetState: exitState
             signal: breakButton.clicked
         }
     }
 
     DSM.State {
         id: stateLoopFailed
+
+        onEntered: {
+            stateMachine.statusText = "Registration Failed"
+        }
 
         DSM.SignalTransition {
             targetState: stateWaitForDevice
@@ -493,8 +504,12 @@ DSM.StateMachine {
     DSM.State {
         id: stateLoopSucceed
 
+        onEntered: {
+            stateMachine.statusText = "Registration Successful"
+        }
+
         DSM.SignalTransition {
-            targetState: stateSettings
+            targetState: exitState
             signal: breakButton.clicked
         }
 
@@ -504,5 +519,10 @@ DSM.StateMachine {
         }
     }
 
-
+    DSM.FinalState {
+        id: exitState
+        onEntered: {
+            stateMachine.exitWizardRequested()
+        }
+    }
 }
