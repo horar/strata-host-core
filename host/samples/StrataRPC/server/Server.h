@@ -2,6 +2,7 @@
 
 #include <StrataRPC/StrataServer.h>
 #include <QObject>
+#include <QTimer>
 
 class Server : public QObject
 {
@@ -20,6 +21,7 @@ signals:
 public slots:
     void serverErrorHandler(strata::strataRPC::StrataServer::ServerError errorType,
                             const QString &errorMessage);
+    void serverTimeBroadcast();
 
 private:
     void closeServerHandler(const strata::strataRPC::Message &message);
@@ -27,4 +29,5 @@ private:
 
     std::unique_ptr<strata::strataRPC::StrataServer> strataServer_;
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
+    QTimer serverTimeBroadcastTimer_;
 };

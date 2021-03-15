@@ -82,4 +82,20 @@ Window {
         }
     }
 
+    Item {
+        id: serverTimeItem
+        x: 475
+        y: 323
+        width: 173
+        height: 17
+        Label {
+            id: serverTimeLabel
+            text: "Server Time: "
+        }
+        Label {
+            id: serverTimeValue
+            text: Client.serverTime
+            anchors.left: serverTimeLabel.right
+        }
+    }
 }
