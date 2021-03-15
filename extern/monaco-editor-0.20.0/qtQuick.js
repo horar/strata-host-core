@@ -51,7 +51,7 @@ function removeDuplicates(propertySuggestions) {
 
 function removeOnCalls(properties) {
     return properties.filter(function (itm) {
-        return !itm.includes("on" + /[A-Za-z]*$/)
+        return !itm.includes("on")
     })
 }
 
@@ -99,7 +99,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
         }
         var arr = []
         arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[type].properties)))
-        arr = arr.concat(qtObjectSuggestions[type].functions)
+        arr = arr.concat(removeDuplicates(qtObjectSuggestions[type].functions))
         arr = arr.concat(qtObjectSuggestions[type].signals)
         createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
         functionSuggestions[idText] = {
@@ -122,7 +122,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             }
             var arr = []
             arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[type].properties)))
-            arr = arr.concat(qtObjectSuggestions[type].functions)
+            arr = arr.concat(removeDuplicates(qtObjectSuggestions[type].functions))
             arr = arr.concat(qtObjectSuggestions[type].signals)
             createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
             functionSuggestions[idText] = {
@@ -142,7 +142,7 @@ function addCustomIdAndTypes(idText, position, type = "Item") {
             }
             var arr = []
             arr = arr.concat(removeDuplicates(removeOnCalls(qtObjectKeyValues[type].properties)))
-            arr = arr.concat(qtObjectSuggestions[type].functions)
+            arr = arr.concat(removeDuplicates(qtObjectSuggestions[type].functions))
             arr = arr.concat(qtObjectSuggestions[type].signals)
             createQtObjectValPairs(idText, { label: idText, insertText: idText, properties: arr, flag: true, isId: true })
             functionSuggestions[idText] = {
@@ -663,7 +663,7 @@ function registerQmlAsLanguage() {
             }
             currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
             return currentItems[bracketWord][propRange]
-        } else if (bracketWord.includes("function") || bracketWord.includes("on" + /[A-Za-z]*$/)) {
+        } else if (bracketWord.includes("function") || bracketWord.includes("on")) {
             //display signal Calls, function Calls, ids properties and function,signal, calls
             return Object.values(functionSuggestions)
         } else {

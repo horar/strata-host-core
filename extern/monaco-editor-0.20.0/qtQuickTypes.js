@@ -2663,6 +2663,59 @@ const qtTypeJson = {
             "inherits": "Slider",
             "source": "tech.strata.sgwidgets 1.0"
         },
+        "SGIcon": {
+            "properties": {
+                "aynchronous": {
+                    "meta_properties": []
+                },
+                "autoTransform": {
+                    "meta_properties": []
+                },
+                "cache": {
+                    "meta_properties": []
+                },
+                "fillMode": {
+                    "meta_properties": []
+                },
+                "horizontalAlignment": {
+                    "meta_properties": []
+                },
+                "mipmap": {
+                    "meta_properties": []
+                },
+                "mirror": {
+                    "meta_properties": []
+                },
+                "paintedHeight": {
+                    "meta_properties": []
+                },
+                "paintedWidth": {
+                    "meta_properties": []
+                },
+                "progress": {
+                    "meta_properties": []
+                },
+                "smooth": {
+                    "meta_properties": []
+                },
+                "source": {
+                    "meta_properties": []
+                },
+                "sourceSize": {
+                    "meta_properties": []
+                },
+                "status": {
+                    "meta_properties": []
+                },
+                "verticalAlignment": {
+                    "meta_properties": []
+                },
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "Item",
+            "source": "tech.strata.sgwidgets 1.0"
+        },
         "SGInfoBox": {
             "properties": {
                 "textColor": {
