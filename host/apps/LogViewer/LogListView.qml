@@ -566,7 +566,6 @@ Item {
                     Action {
                         id: copyAction
                         text: qsTr("Copy")
-                        enabled: true
                         onTriggered: {
                             copyToClipboard(msg)
                         }
