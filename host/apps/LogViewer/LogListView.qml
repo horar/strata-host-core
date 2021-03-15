@@ -39,6 +39,10 @@ Item {
     property bool markIconVisible
     property bool showMarks: false
     property bool searchingMode: false
+    property bool errorLogLevel: false
+    property bool warningLogLevel: false
+    property bool infoLogLevel: false
+    property bool debugLogLevel: false
 
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)
@@ -619,7 +623,8 @@ Item {
 
                         onClicked: {
                             logViewWrapper.forceActiveFocus()
-                            delegate.isHovered ? logModel.toggleIsMarked(index) : logModel.toggleIsMarked(currentIndex)
+                            var sourceIndex = logSortFilterModel.mapIndexToSource(index)
+                            delegate.isHovered ? logModel.toggleIsMarked(sourceIndex) : logModel.toggleIsMarked(currentIndex)
                         }
                     }
                 }
@@ -630,13 +635,14 @@ Item {
                     text: {
                         //hackVariable is re-calculated once the sourceModel's count changes so it catches the changes for model.index
                         var hackVariable = markedModel.sourceModel.count
+                        var sourceIndex = logSortFilterModel.mapIndexToSource(model.index)
                         if (showMarks) {
-                            return markedModel.mapIndexToSource(model.index) + 1
+                            return markedModel.mapIndexToSource(sourceIndex) + 1
                         } else {
                             if (searchingMode) {
-                                return searchResultModel.mapIndexToSource(model.index) + 1
+                                return searchResultModel.mapIndexToSource(sourceIndex) + 1
                             }
-                            return model.index + 1
+                            return sourceIndex + 1
                         }
                     }
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
@@ -804,7 +810,8 @@ Item {
             logListView.positionViewAtEnd()
         }
         else if ((event.key === Qt.Key_M) && markIconVisible) {
-            logModel.toggleIsMarked(currentIndex)
+            var sourceIndex = logSortFilterModel.mapIndexToSource(currentIndex)
+            logModel.toggleIsMarked(sourceIndex)
         }
     }
 }

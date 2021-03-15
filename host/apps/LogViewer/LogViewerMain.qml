@@ -44,6 +44,11 @@ FocusScope {
     property bool showDropAreaIndicator: false
     property bool showMarks: false
     property string markColor: TangoTheme.palette.chameleon3
+    property bool errorLogLevel: true
+    property bool warningLogLevel: true
+    property bool infoLogLevel: true
+    property bool debugLogLevel: true
+    property bool unknownLogLevel: true
 
     LogViewModels.LogModel {
         id: logModel
@@ -172,7 +177,7 @@ FocusScope {
 
     CommonCPP.SGSortFilterProxyModel {
         id: searchResultModel
-        sourceModel: logModel
+        sourceModel: logSortFilterModel
         filterPattern: searchInput.text
         filterPatternSyntax: regExpButton.checked ? CommonCPP.SGSortFilterProxyModel.RegExp : CommonCPP.SGSortFilterProxyModel.FixedString
         caseSensitive: caseSensButton.checked ? true : false
@@ -181,8 +186,13 @@ FocusScope {
         sortEnabled: false
 
         function filterAcceptsRow(row) {
-            var isMarked = logModel.data(row, "isMarked")
-            var message = logModel.data(row, "message")
+            var sourceIndex = logSortFilterModel.mapIndexToSource(row)
+            var isMarked = logModel.data(sourceIndex, "isMarked")
+            if (showMarksButton.checked && isMarked === false) {
+                return false
+            }
+
+            var message = logModel.data(sourceIndex, "message")
             var matches = searchResultModel.matches(message)
 
             if (matches) {
@@ -197,9 +207,35 @@ FocusScope {
         }
     }
 
+    CommonCPP.SGSortFilterProxyModel {
+        id: logSortFilterModel
+        sourceModel: logModel
+        filterRole: "level"
+        sortEnabled: false
+        invokeCustomFilter: true
+
+        function filterAcceptsRow(row) {
+            var logLevelMsg = logModel.data(row, "level")
+
+            if (checkBoxInfo.checked && logLevelMsg === LogViewModels.LogModel.LevelInfo) {
+                return true
+            } else if (checkBoxWarning.checked && logLevelMsg === LogViewModels.LogModel.LevelWarning) {
+                return true
+            } else if (checkBoxError.checked && logLevelMsg === LogViewModels.LogModel.LevelError) {
+                return true
+            } else if (checkBoxDebug.checked && logLevelMsg === LogViewModels.LogModel.LevelDebug) {
+                return true
+            } else if (checkBoxUnknown.checked && logLevelMsg === LogViewModels.LogModel.LevelUnknown) {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+
     CommonCPP.SGSortFilterProxyModel{
         id: markedModel
-        sourceModel: logModel
+        sourceModel: logSortFilterModel
         filterRole: "isMarked"
         filterPattern: "true"
         sortEnabled: false
@@ -517,7 +553,7 @@ FocusScope {
                         SGWidgets.SGText {
                             id: label
                             anchors.verticalCenter: parent.verticalCenter
-                            text: qsTr("Column Filter")
+                            text: qsTr("Columns")
                         }
                     }
                 }
@@ -567,6 +603,114 @@ FocusScope {
                         font.family: "monospace"
                         checked: true
                         enabled: !checked
+                    }
+                }
+
+                Item {
+                    id: logLevelButton
+                    width: parent.width + 10
+                    height: logLevelLabel.height
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "black"
+                        opacity: 0.4
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            logLevelMenu.visible = !logLevelMenu.visible
+                        }
+                    }
+
+                    Row {
+                        id: logLevelLabel
+                        spacing: 6
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+
+                        SGWidgets.SGIcon {
+                            width: height - 6
+                            height: logLabel.contentHeight + cellHeightSpacer
+                            source: logLevelMenu.visible ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
+                        }
+
+                        SGWidgets.SGText {
+                            id: logLabel
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: qsTr("Log Levels")
+                        }
+                    }
+                }
+
+                Column {
+                    id: logLevelMenu
+                    padding: 5
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxDebug
+                        text: qsTr("Debug")
+                        font.family: "monospace"
+                        checked: debugLogLevel
+                        onCheckedChanged: {
+                            logSortFilterModel.invalidate()
+                            if (showMarksButton.checked || searchingMode) {
+                                searchResultModel.invalidate()
+                            }
+                        }
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxInfo
+                        text: qsTr("Info")
+                        font.family: "monospace"
+                        checked: infoLogLevel
+                        onCheckedChanged: {
+                            logSortFilterModel.invalidate()
+                            if (showMarksButton.checked || searchingMode) {
+                                searchResultModel.invalidate()
+                            }
+                        }
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxWarning
+                        text: qsTr("Warning")
+                        font.family: "monospace"
+                        checked: warningLogLevel
+                        onCheckedChanged: {
+                            logSortFilterModel.invalidate()
+                            if (showMarksButton.checked || searchingMode) {
+                                searchResultModel.invalidate()
+                            }
+                        }
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxError
+                        text: qsTr("Error")
+                        font.family: "monospace"
+                        checked: errorLogLevel
+                        onCheckedChanged: {
+                            logSortFilterModel.invalidate()
+                            if (showMarksButton.checked || searchingMode) {
+                                searchResultModel.invalidate()
+                            }
+                        }
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxUnknown
+                        text: qsTr("Unknown")
+                        font.family: "monospace"
+                        checked: unknownLogLevel
+                        onCheckedChanged: {
+                            logSortFilterModel.invalidate()
+                            if (showMarksButton.checked || searchingMode) {
+                                searchResultModel.invalidate()
+                            }
+                        }
                     }
                 }
 
@@ -905,7 +1049,7 @@ FocusScope {
                     anchors.right: parent.right
                     Layout.minimumHeight: parent.height/2
                     Layout.fillHeight: true
-                    model: logModel
+                    model: logSortFilterModel
                     visible: fileLoaded && showMarks === false
                     focus: true
 
@@ -966,8 +1110,10 @@ FocusScope {
 
                         onCurrentIndexChanged: {
                             if (currentIndex >= 0 && secondaryLogView.activeFocus) {
-                                if (showMarks) {
-                                    var sourceIndex = markedModel.mapIndexToSource(currentIndex)
+                                if (showMarks && searchingMode) {
+                                    var sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
+                                } else if (showMarks) {
+                                    sourceIndex = markedModel.mapIndexToSource(currentIndex)
                                 } else {
                                     sourceIndex = searchResultModel.mapIndexToSource(currentIndex)
                                 }
