@@ -208,7 +208,7 @@ Item {
                         SGWidgets.SGIconButton {
                             id: releasePortButton
 
-                            enabled: model.platform.programInProgress === false && model.platform.status === Sci.SciPlatform.Ready
+                            enabled: model.platform.programInProgress === false && model.platform.status !== Sci.SciPlatform.Disconnected
                             icon.source: "qrc:/sgimages/disconnected.svg"
                             hintText: "Release port for "+releasePortDurationInSec+"s"
                             onClicked: {
