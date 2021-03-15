@@ -70,6 +70,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::DownloadManager
     strata::QtLogger
     strata::SGUtilsCpp
+    strata::SGVersionUtils
 )
 
 target_include_directories(${PROJECT_NAME}

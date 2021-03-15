@@ -319,6 +319,7 @@ Item {
                     rightMargin: 4
                 }
 
+                contextMenuEnabled: true
                 darkMode: true
                 text: savePath
                 onTextChanged: {

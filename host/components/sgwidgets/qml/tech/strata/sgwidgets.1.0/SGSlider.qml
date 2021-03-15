@@ -49,6 +49,7 @@ GridLayout {
     property alias toolTipBackground: toolTipBackground
     property alias validatorObject: inputValidator
     property alias handleObject: handle
+    property alias contextMenuEnabled: inputBox.contextMenuEnabled
 
     signal userSet(real value)
     signal moved()

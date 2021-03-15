@@ -30,6 +30,7 @@ RowLayout {
     property alias horizontalAlignment: infoText.horizontalAlignment
     property alias buttonText: applyButton.text
     property alias buttonImplicitWidth: applyButton.implicitWidth
+    property alias contextMenuEnabled: infoText.contextMenuEnabled
 
     property real floatValue: { return parseFloat(infoText.text) }
     property int intValue: { return parseInt(infoText.text) }

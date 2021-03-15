@@ -19,6 +19,7 @@ SGHueSlider 1.0 SGHueSlider.qml
 SGIcon 1.0 SGIcon.qml
 SGIconButton 1.0 SGIconButton.qml
 SGInfoBox 1.0 SGInfoBox.qml
+SGLogLevelSelector 1.0 SGLogLevelSelector.qml
 SGMainWindow 1.0 SGMainWindow.qml
 SGMarkdownViewer 1.0 SGMarkdownViewer/SGMarkdownViewer.qml
 SGPage 1.0 SGPage.qml
@@ -41,6 +42,7 @@ SGText 1.0 SGText.qml
 SGTextArea 1.0 SGTextArea.qml
 SGTextEdit 1.0 SGTextEdit.qml
 SGTextField 1.0 SGTextField.qml
+SGTextInput 1.0 SGTextInput.qml
 SGWindow 1.0 SGWindow.qml
 
 SGConfirmationDialog 1.0 dialogs/SGConfirmationDialog.qml

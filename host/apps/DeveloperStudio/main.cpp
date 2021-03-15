@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     parser.addOption({{QStringLiteral("f")},
                       QObject::tr("Optional configuration <filename>"),
                       QObject::tr("filename"),
-                      QStringLiteral(":/assets/sds.config")});
+                      QDir(QCoreApplication::applicationDirPath()).filePath("sds.config")});
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
@@ -117,13 +117,13 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
     const QString configFilePath{parser.value(QStringLiteral("f"))};
-    strata::sds::config::AppConfig cfg{configFilePath};
+    strata::sds::config::AppConfig cfg(configFilePath);
     if (cfg.parse() == false) {
         return EXIT_FAILURE;
     }
 
-    strata::sds::config::UrlConfig urlCfg;
-    if (urlCfg.parseUrl(configFilePath) == false) {
+    strata::sds::config::UrlConfig urlCfg(configFilePath);
+    if (urlCfg.parseUrl() == false) {
         return EXIT_FAILURE;
     }
 
@@ -143,7 +143,8 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SGQrcTreeNode, 1>("tech.strata.SGQrcTreeModel",1,0,"SGTreeNode", "You can't instantiate SGTreeNode in QML");
     qmlRegisterType<SGQrcTreeModel>("tech.strata.SGQrcTreeModel", 1, 0, "SGQrcTreeModel");
     qmlRegisterUncreatableType<strata::sds::config::UrlConfig>("tech.strata.UrlConfig",1,0,"UrlConfig", "You can't instantiate UrlConfig in QML");
-    qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");    qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
+    qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
+    qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>(cfg.hcsDealerAddresss())};
 
