@@ -58,7 +58,6 @@ public:
     Q_INVOKABLE void startApplication();
 
     Q_INVOKABLE void clearBinaries();
-    Q_INVOKABLE void requestBootloaderUrl();
 
 signals:
     void boardReady(int deviceId);
@@ -75,7 +74,6 @@ signals:
     void flasherFinished(strata::FlasherConnector::Result result);
     void notifyServiceFinished(int boardCount, QString errorString);
     void setPlatformIdFinished(QString errorString);
-    void bootloaderUrlRequestFinished(QString url, QString md5, QString errorString);
     void startBootloaderFinished(QString errorString);
     void startApplicationFinished(QString errorString);
 
