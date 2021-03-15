@@ -16,6 +16,7 @@ SGWidgets.SGBaseEditor {
     property string textFieldLeftIconSource
     property bool textFieldBusyIndicatorRunning: false
     property bool contextMenuEnabled: false
+    property bool activeEditing: false
 
     editor: SGWidgets.SGTextField {
         id: editorItem
@@ -39,5 +40,7 @@ SGWidgets.SGBaseEditor {
             property: "text"
             value: editorItem.text
         }
+
+        onActiveEditingChanged: root.activeEditing = activeEditing
     }
 }

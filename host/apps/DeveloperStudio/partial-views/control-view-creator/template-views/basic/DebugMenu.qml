@@ -178,13 +178,14 @@ Rectangle {
 
                                     }
 
-                                    TextField {
+                                    SGTextField {
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
                                         Layout.maximumWidth: 175
                                         placeholderText: generatePlaceholder(model.type, model.value)
                                         selectByMouse: true
                                         visible: model.type !== "array" && model.type !== "object" && model.type !== "bool"
+                                        contextMenuEnabled: true
                                         validator: RegExpValidator {
                                             regExp: {
                                                 if (model.type === "int") {
@@ -324,13 +325,14 @@ Rectangle {
                     elide: Text.ElideRight
                 }
 
-                TextField {
+                SGTextField {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.maximumWidth: 175
                     placeholderText: generatePlaceholder(modelData.type, modelData.value)
                     selectByMouse: true
                     visible: modelData.type !== "array" && modelData.type !== "object" && modelData.type !== "bool"
+                    contextMenuEnabled: true
                     validator: RegExpValidator {
                         regExp: {
                             if (modelData.type === "int") {
@@ -425,13 +427,14 @@ Rectangle {
                     elide: Text.ElideRight
                 }
 
-                TextField {
+                SGTextField {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.maximumWidth: 175
                     placeholderText: generatePlaceholder(modelData.type, modelData.value)
                     selectByMouse: true
                     visible: modelData.type !== "array" && modelData.type !== "object" && modelData.type !== "bool"
+                    contextMenuEnabled: true
                     validator: RegExpValidator {
                         regExp: {
                             if (modelData.type === "int") {
