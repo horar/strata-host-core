@@ -92,7 +92,8 @@ const qtTypeJson = {
                 "toggled()",
             ],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": true,
         },
         "Action": {
             "properties": {
@@ -131,7 +132,8 @@ const qtTypeJson = {
                 "triggered()",
             ],
             "inherits": "",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "ApplicationWindow": {
             "properties": {
@@ -172,7 +174,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Window",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Behavior": {
             "properties": {
@@ -186,7 +189,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Binding": {
             "properties": {
@@ -220,7 +224,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Button": {
             "properties": {
@@ -234,7 +239,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "AbstractButton",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Canvas": {
             "properties": {
@@ -277,7 +283,8 @@ const qtTypeJson = {
                 "painted()",
             ],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "CheckBox": {
             "properties": {
@@ -294,7 +301,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "AbstractButton",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "CircularGauge": {
             "properties": {
@@ -317,7 +325,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": "Extra"
+            "source": "Extra",
+            "nonInstantiable": false,
         },
         "Column": {
             "properties": {
@@ -356,7 +365,8 @@ const qtTypeJson = {
                 "positioningComplete()",
             ],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "ColumnLayout": {
             "properties": {
@@ -370,7 +380,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": "Layouts"
+            "source": "Layouts",
+            "nonInstantiable": false,
         },
         "ComboBox": {
             "properties": {
@@ -442,7 +453,8 @@ const qtTypeJson = {
                 "highlighted()",
             ],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Component": {
             "properties": {
@@ -466,7 +478,8 @@ const qtTypeJson = {
                 "destruction()",
             ],
             "inherits": "",
-            "source": "QtQml"
+            "source": "QtQml",
+            "nonInstantiable": false,
         },
         "Connections": {
             "properties": {
@@ -483,7 +496,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": "QtQml"
+            "source": "QtQml",
+            "nonInstantiable": false,
         },
         "Control": {
             "properties": {
@@ -581,7 +595,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Dialog": {
             "properties": {
@@ -628,7 +643,8 @@ const qtTypeJson = {
                 "reset()",
             ],
             "inherits": "Popup",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "FileDialog": {
             "properties": {
@@ -678,7 +694,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "",
-            "source": "Dialogs"
+            "source": "Dialogs",
+            "nonInstantiable": false,
         },
         "Flickable": {
             "properties": {
@@ -818,7 +835,8 @@ const qtTypeJson = {
                 "movementStarted()",
             ],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Flow": {
             "properties": {
@@ -866,7 +884,8 @@ const qtTypeJson = {
                 "positioningComplete()"
             ],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Grid": {
             "properties": {
@@ -935,7 +954,8 @@ const qtTypeJson = {
                 "positioningComplete()"
             ],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "GridLayout": {
             "properties": {
@@ -961,7 +981,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": "Layouts"
+            "source": "Layouts",
+            "nonInstantiable": false,
         },
         "Image": {
             "properties": {
@@ -1014,7 +1035,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Item": {
             "properties": {
@@ -1182,6 +1204,7 @@ const qtTypeJson = {
             "signals": [],
             "inherits": "",
             "source": "",
+            "nonInstantiable": false,
         },
         "Keys": {
             "properties": {
@@ -1240,7 +1263,8 @@ const qtTypeJson = {
 
             ],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": true,
         },
         "Label": {
             "properties": {
@@ -1272,7 +1296,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Text",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Layout": {
             "properties": {
@@ -1334,7 +1359,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": "Layouts"
+            "source": "Layouts",
+            "nonInstantiable": true,
         },
         "ListModel": {
             "properties": {
@@ -1358,7 +1384,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "",
-            "source": "Models"
+            "source": "Models",
+            "nonInstantiable": false,
         },
         "ListView": {
             "properties": {
@@ -1527,7 +1554,8 @@ const qtTypeJson = {
                 "remove()"
             ],
             "inherits": "Flickable",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Loader": {
             "properties": {
@@ -1560,7 +1588,8 @@ const qtTypeJson = {
                 "loaded()"
             ],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Menu": {
             "properties": {
@@ -1614,7 +1643,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "Popup",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "MenuItem": {
             "properties": {
@@ -1636,7 +1666,8 @@ const qtTypeJson = {
                 "triggered()"
             ],
             "inherits": "AbstractButton",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "MenuSeparator": {
             "properties": {
@@ -1647,7 +1678,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "MouseArea": {
             "properties": {
@@ -1721,7 +1753,8 @@ const qtTypeJson = {
                 "wheel()"
             ],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Overlay": {
             "properties": {
@@ -1741,7 +1774,8 @@ const qtTypeJson = {
                 "released()",
             ],
             "inherits": "Item",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Popup": {
             "properties": {
@@ -1925,7 +1959,8 @@ const qtTypeJson = {
                 "opened()",
             ],
             "inherits": "QtObject",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Qt": {
             "properties": {
@@ -1985,7 +2020,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": true,
         },
         "QtObject": {
             "properties": {
@@ -1996,7 +2032,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "RadioButton": {
             "properties": {
@@ -2007,7 +2044,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "AbstractButton",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Rectangle": {
             "properties": {
@@ -2033,7 +2071,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "RegExpValidator": {
             "properties": {
@@ -2044,7 +2083,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Repeater": {
             "properties": {
@@ -2066,7 +2106,8 @@ const qtTypeJson = {
                 "itemRemoved()",
             ],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Rotation": {
             "properties": {
@@ -2090,7 +2131,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Row": {
             "properties": {
@@ -2146,7 +2188,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "item",
-            "source": "Layouts"
+            "source": "Layouts",
+            "nonInstantiable": false,
         },
         "Scale": {
             "properties": {
@@ -2166,7 +2209,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "ScrollBar": {
             "properties": {
@@ -2219,7 +2263,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "ScrollIndicator": {
             "properties": {
@@ -2269,7 +2314,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "ScrollView": {
             "properties": {
@@ -2283,7 +2329,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Settings": {
             "properties": {
@@ -2300,7 +2347,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "",
-            "source": "labs.settings"
+            "source": "labs.settings",
+            "nonInstantiable": false,
         },
         "SGAccordion": {
             "properties": {
@@ -2341,7 +2389,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": "tech.strata.sgwidgets 0.9"
+            "source": "tech.strata.sgwidgets 0.9",
+            "nonInstantiable": false,
         },
         "SGAlignedLabel": {
             "properties": {
@@ -2396,7 +2445,8 @@ const qtTypeJson = {
                 "clicked()"
             ],
             "inherits": "Item",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGButton": {
             "properties": {
@@ -2470,7 +2520,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Button",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGButtonStrip": {
             "properties": {
@@ -2497,7 +2548,8 @@ const qtTypeJson = {
                 "clicked()"
             ],
             "inherits": "Item",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGCircularGauge": {
             "properties": {
@@ -2547,7 +2599,8 @@ const qtTypeJson = {
             "functions": ["lerpColor()"],
             "signals": [],
             "inherits": "Item",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGComboBox": {
             "properties": {
@@ -2606,7 +2659,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "ComboBox",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGGraph": {
             "properties": {
@@ -2632,7 +2686,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGHueSlider": {
             "properties": {
@@ -2661,7 +2716,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "Slider",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGIcon": {
             "properties": {
@@ -2714,7 +2770,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGInfoBox": {
             "properties": {
@@ -2796,7 +2853,8 @@ const qtTypeJson = {
                 "editingFinished()"
             ],
             "inherits": "Item",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGRadioButton": {
             "properties": {
@@ -2825,7 +2883,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "RadioButton",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGRGBSlider": {
             "properties": {
@@ -2842,7 +2901,8 @@ const qtTypeJson = {
             "functions": ["hToRgb()"],
             "signals": [],
             "inherits": "Slider",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGSlider": {
             "properties": {
@@ -2957,7 +3017,8 @@ const qtTypeJson = {
                 "moved()"
             ],
             "inherits": "GridLayout",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGSpinBox": {
             "properties": {
@@ -2968,7 +3029,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "SpinBox",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGStatusLight": {
             "properties": {
@@ -2985,7 +3047,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGStatusLogBox": {
             "properties": {
@@ -3057,7 +3120,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "Rectangle",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGSubmitInfoBox": {
             "properties": {
@@ -3132,7 +3196,8 @@ const qtTypeJson = {
                 "editingFinished()",
             ],
             "inherits": "RowLayout",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGSwitch": {
             "properties": {
@@ -3182,7 +3247,8 @@ const qtTypeJson = {
                 "pressAndHold()",
             ],
             "inherits": "RowLayout",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGTextField": {
             "properties": {
@@ -3271,7 +3337,8 @@ const qtTypeJson = {
                 "suggestionDelegateRemoveRequested()",
             ],
             "inherits": "TextField",
-            "source": "tech.strata.sgwidgets 1.0"
+            "source": "tech.strata.sgwidgets 1.0",
+            "nonInstantiable": false,
         },
         "SGUserSettings": {
             "properties": {
@@ -3294,7 +3361,8 @@ const qtTypeJson = {
                 "userChanged()"
             ],
             "inherits": "QtObject",
-            "source": "tech.strata.commoncpp 1.0"
+            "source": "tech.strata.commoncpp 1.0",
+            "nonInstantiable": false,
         },
         "Slider": {
             "properties": {
@@ -3356,7 +3424,8 @@ const qtTypeJson = {
                 "moved()"
             ],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "SpinBox": {
             "properties": {
@@ -3423,7 +3492,8 @@ const qtTypeJson = {
                 "valueModified()"
             ],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "SplitView": {
             "properties": {
@@ -3443,7 +3513,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "Item",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Stack": {
             "properties": {
@@ -3460,7 +3531,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": "Source"
+            "source": "Source",
+            "nonInstantiable": false,
         },
         "StackLayout": {
             "properties": {
@@ -3474,7 +3546,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": "Layouts"
+            "source": "Layouts",
+            "nonInstantiable": false,
         },
         "StackView": {
             "properties": {
@@ -3540,7 +3613,8 @@ const qtTypeJson = {
                 "removed()",
             ],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "State": {
             "properties": {
@@ -3560,7 +3634,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "StatusBar": {
             "properties": {
@@ -3574,7 +3649,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Item",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "StatusIndicator": {
             "properties": {
@@ -3588,7 +3664,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": "Extras"
+            "source": "Extras",
+            "nonInstantiable": false,
         },
         "Switch": {
             "properties": {
@@ -3602,7 +3679,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "AbstractButton",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Tab": {
             "properties": {
@@ -3613,7 +3691,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Loader",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "TabBar": {
             "properties": {
@@ -3639,7 +3718,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "TabButton": {
             "properties": {
@@ -3650,7 +3730,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "AbstractButton",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "TabView": {
             "properties": {
@@ -3682,7 +3763,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "Item",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Text": {
             "properties": {
@@ -3809,7 +3891,8 @@ const qtTypeJson = {
                 "linkHovered()",
             ],
             "inherits": "Item",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "TextArea": {
             "properties": {
@@ -3863,7 +3946,8 @@ const qtTypeJson = {
                 "released()",
             ],
             "inherits": "TextEdit",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "TextEdit": {
             "properties": {
@@ -4048,6 +4132,7 @@ const qtTypeJson = {
             ],
             "inherits": "Item",
             "source": "",
+            "nonInstantiable": false,
         },
         "TextField": {
             "properties": {
@@ -4098,7 +4183,8 @@ const qtTypeJson = {
                 "released()",
             ],
             "inherits": "TextInputs",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "TextInput": {
             "properties": {
@@ -4276,7 +4362,8 @@ const qtTypeJson = {
                 "textEdited()"
             ],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "TextMetrics": {
             "properties": {
@@ -4314,7 +4401,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Timer": {
             "properties": {
@@ -4340,7 +4428,8 @@ const qtTypeJson = {
                 "triggered()"
             ],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "ToggleButton": {
             "properties": {
@@ -4351,7 +4440,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Button",
-            "source": "Extras"
+            "source": "Extras",
+            "nonInstantiable": false,
         },
         "ToolBar": {
             "properties": {
@@ -4362,7 +4452,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "ToolButton": {
             "properties": {
@@ -4373,7 +4464,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Button",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "ToolSeparator": {
             "properties": {
@@ -4390,7 +4482,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "Control",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "ToolTip": {
             "properties": {
@@ -4416,7 +4509,8 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "Popup",
-            "source": "Controls"
+            "source": "Controls",
+            "nonInstantiable": false,
         },
         "Transition": {
             "properties": {
@@ -4442,7 +4536,8 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": ""
+            "source": "",
+            "nonInstantiable": false,
         },
         "Window": {
             "properties": {
@@ -4524,7 +4619,8 @@ const qtTypeJson = {
                 "closing()"
             ],
             "inherits": "",
-            "source": "Window"
+            "source": "Window",
+            "nonInstantiable": false,
         },
     },
     "custom_properties": {

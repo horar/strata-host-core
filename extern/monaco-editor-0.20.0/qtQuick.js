@@ -457,7 +457,7 @@ function registerQmlAsLanguage() {
 
     function createSuggestions() {
         for (const key in qtObjectKeyValues) {
-            if (!qtObjectKeyValues[key].isId) {
+            if (!qtObjectKeyValues[key].isId && !qtTypeJson["sources"][key].nonInstantiable) {
                 suggestions[key] = {
                     label: qtObjectKeyValues[key].label.trim(),
                     kind: monaco.languages.CompletionItemKind.Class,
@@ -481,7 +481,7 @@ function registerQmlAsLanguage() {
         if (item.inherits.length === 0) {
             qtObjectSuggestions[masterItem].functions = qtObjectSuggestions[masterItem].functions.concat(item.functions)
             qtObjectSuggestions[masterItem].signals = qtObjectSuggestions[masterItem].signals.concat(item.signals)
-            if (item.signals.length > 0) {
+            if (item.signals.length > 0 && !qtTypeJson["sources"][masterItem].nonInstantiable) {
                 for (var i = 0; i < item.signals.length; i++) {
                     var signalCall = item.signals[i]
                     var onCall = "on" + signalCall[0].toUpperCase() + signalCall.substring(1)
@@ -490,10 +490,12 @@ function registerQmlAsLanguage() {
                 }
             }
             for (const key in item.properties) {
+            
                 qtObjectSuggestions[masterItem].properties.push(key)
-                var onCall = "on" + key[0].toUpperCase() + key.substring(1) + "Changed"
-                onCall = onCall.split("()")[0]
-                qtObjectSuggestions[masterItem].properties.push(onCall)
+                if(!qtTypeJson["sources"][masterItem].nonInstantiable){
+                    var onCall = "on" + key[0].toUpperCase() + key.substring(1) + "Changed"
+                    qtObjectSuggestions[masterItem].properties.push(onCall)
+                }   
                 qtObjectSuggestions[masterItem].meta[key] = item.properties[key].meta_properties
             }
             return;
@@ -501,7 +503,7 @@ function registerQmlAsLanguage() {
             appendInherited(masterItem, qtTypeJson["sources"][item.inherits])
             qtObjectSuggestions[masterItem].functions = qtObjectSuggestions[masterItem].functions.concat(item.functions)
             qtObjectSuggestions[masterItem].signals = qtObjectSuggestions[masterItem].signals.concat(item.signals)
-            if (item.signals.length > 0) {
+            if (item.signals.length > 0 && !qtTypeJson["sources"][masterItem].nonInstantiable) {
                 for (var i = 0; i < item.signals.length; i++) {
                     var signalCall = item.signals[i]
                     var onCall = "on" + signalCall[0].toUpperCase() + signalCall.substring(1)
@@ -511,8 +513,10 @@ function registerQmlAsLanguage() {
             }
             for (const key in item.properties) {
                 qtObjectSuggestions[masterItem].properties.push(key)
-                var onCall = "on" + key[0].toUpperCase() + key.substring(1) + "Changed"
-                qtObjectSuggestions[masterItem].properties.push(onCall)
+                if(!qtTypeJson["sources"][masterItem].nonInstantiable){
+                    var onCall = "on" + key[0].toUpperCase() + key.substring(1) + "Changed"
+                    qtObjectSuggestions[masterItem].properties.push(onCall)
+                }
                 qtObjectSuggestions[masterItem].meta[key] = item.properties[key].meta_properties
             }
             return;
