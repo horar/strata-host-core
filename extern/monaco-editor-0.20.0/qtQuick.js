@@ -1,16 +1,6 @@
 /* 
-    This File contains portions of snippets.json that exists in https://github.com/ThomasVogelpohl/vsc-qml-snippets/blob/master/snippets/snippets.json
     This File is the base for mapping the auto complete, For CVC purposes this files auto complete will be limited in the number of QtQuick Objects but 
     detailed in the properties
-
-    If we need to add more QtQuick Objects the format will be
-    {
-        "body": "{\n //id:  \n}",
-        "description": "",
-        "prefix": "",
-        "scope": "source.qml",
-        "properties": [""]
-    }
 */
 var qtObjectSuggestions = {}
 const qtObjectKeyValues = {}

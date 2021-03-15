@@ -13,7 +13,8 @@
         "functions": [],
         "signals": [],
         "inherits": "",
-        "source" : ""
+        "source" : "",
+        "nonInstantiable": false
     },
 */
 
@@ -91,7 +92,7 @@ const qtTypeJson = {
                 "released()",
                 "toggled()",
             ],
-            "inherits": "",
+            "inherits": "Control",
             "source": "",
             "nonInstantiable": true,
         },
