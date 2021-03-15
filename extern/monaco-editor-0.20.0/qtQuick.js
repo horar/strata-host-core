@@ -56,25 +56,17 @@ function removeOnCalls(properties) {
 }
 
 // This is the properties string array conversion to an object array, this has to be done in real time due to the limitations of the monaco editor suggestions
-function convertStrArrayToObjArray(key, properties, isProperty = false, isIdReference = false, isMetaParent = false) {
+function convertStrArrayToObjArray(key, properties, isProperty = false, isIdReference = false, metaParent = "") {
     var propertySuggestions = []
     qtObjectPropertyValues[key] = []
     for (var i = 0; i < properties.length; i++) {
-        if (!isIdReference) {
-            if (properties[i].includes("()")) {
-                propertySuggestions.push(createDynamicProperty(properties[i], true))
-            } else {
-                if (isMetaParent) {
-                    propertySuggestions.push(createDynamicProperty(properties[i], false))
-                } else {
-                    propertySuggestions.push(createDynamicProperty(properties[i] + ": ", false))
-                }
-            }
+        if (properties[i].includes("()")) {
+            propertySuggestions.push(createDynamicProperty(properties[i], true))
         } else {
-            if (properties[i].includes("()")) {
-                propertySuggestions.push(createDynamicProperty(properties[i], true))
-            } else {
+            if (isIdReference || (qtObjectMetaPropertyValues.hasOwnProperty(metaParent) && qtObjectMetaPropertyValues[metaParent].hasOwnProperty(properties[i]) && qtObjectMetaPropertyValues[metaParent][properties[i]].length > 0)) {
                 propertySuggestions.push(createDynamicProperty(properties[i], false))
+            } else {
+                propertySuggestions.push(createDynamicProperty(properties[i] + ": ", false))
             }
         }
     }
@@ -325,7 +317,7 @@ function registerQmlAsLanguage() {
         var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
         //Edge Case 4: this is when there is only one QtItem, most common is when we create a new file
         if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
-            alert("case #4")
+
             propRange = {
                 startLineNumber: prevMatch.range.startLineNumber,
                 endLineNumber: nextMatch.range.startLineNumber,
@@ -337,7 +329,7 @@ function registerQmlAsLanguage() {
         //Edge Case 3: this is to ensure that editing the top of the file does not allow a child item to read in its parent data i.e Item and anchors dont mix
         if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
             if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber <= nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber >= nextnextMatch.range.startLineNumber)) {
-                alert("case #3")
+
                 propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
                     endLineNumber: nextMatch.range.startLineNumber,
@@ -350,7 +342,7 @@ function registerQmlAsLanguage() {
         //Edge Case 5: same as 3, just inveresed for the end of the file
         if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
             if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
-                alert("case #5")
+
                 propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
                     endLineNumber: nextMatch.range.startLineNumber,
@@ -372,17 +364,16 @@ function registerQmlAsLanguage() {
                 return retrieveType(model, propRange)
                 // Edge Case 1: A rare case where if there is no first child of an item on loaded the properties will not propagate
             } else if (nextMatch.range.startLineNumber > nextBracketMatch.range.startLineNumber) {
-                    propRange = {
-                        startLineNumber: position.lineNumber,
-                        endLineNumber: nextBracketMatch.range.startLineNumber,
-                        startColumn: position.column,
-                        endColumn: nextBracketMatch.range.endColumn,
-                    }
-                    return retrieveType(model,propRange)              
+                propRange = {
+                    startLineNumber: position.lineNumber,
+                    endLineNumber: nextBracketMatch.range.startLineNumber,
+                    startColumn: position.column,
+                    endColumn: nextBracketMatch.range.endColumn,
+                }
+                return retrieveType(model, propRange)
             }
             //Edge case 2: this is the most common edge case hit where the properties between sibling items are intermingled this determines what the parent item is
         } else if (prevMatch.range.startLineNumber < prevBracketMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber) {
-            alert("case #2")
             var prevParent = findPreviousBracketParent(model, position)
             if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
                 propRange = {
@@ -391,14 +382,14 @@ function registerQmlAsLanguage() {
                     startColumn: prevMatch.range.startColumn,
                     endColumn: prevBracketMatch.range.endColumn,
                 }
-                convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag,false,)
+                convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag, false, prevParent)
                 if (currentItems[prevParent] === undefined) {
                     currentItems[prevParent] = {}
                 }
                 currentItems[prevParent][propRange] = qtObjectPropertyValues[prevParent]
                 return currentItems[prevParent][propRange]
-            } else if(qtObjectMetaPropertyValues.hasOwnProperty(prevParent)){
-                return retrieveType(model,propRange)
+            } else if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent)) {
+                return retrieveType(model, propRange)
             }
         }
 
@@ -532,7 +523,7 @@ function registerQmlAsLanguage() {
         monaco.languages.registerCompletionItemProvider('qml', {
             triggerCharacters: ['.', ':'],
             provideCompletionItems: (model, position) => {
-                
+
                 var currText = model.getLineContent(position.lineNumber)
                 var currWords = currText.replace("\t", "").split(" ");
                 var active = currWords[currWords.length - 1]
@@ -576,8 +567,8 @@ function registerQmlAsLanguage() {
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
                         convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, true, qtObjectKeyValues[activeWord].isId)
                         return { suggestions: qtObjectPropertyValues[activeWord] }
-                    } else if (qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord)) {
-                        convertStrArrayToObjArray(activeWord, qtObjectMetaPropertyValues[prevParent][activeWord], true, false)
+                    } else if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent) && qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord)) {
+                        convertStrArrayToObjArray(activeWord, qtObjectMetaPropertyValues[prevParent][activeWord], true, true, null)
                         return { suggestions: qtObjectPropertyValues[activeWord] }
                     }
                 }
@@ -659,9 +650,8 @@ function registerQmlAsLanguage() {
         var content = model.getLineContent(propRange.startLineNumber)
         var splitContent = content.replace("\t", "").split(/\{|\t/)
         var bracketWord = splitContent[0].trim()
-        
         if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
-            convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId)
+            convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId, bracketWord)
             if (currentItems[bracketWord] === undefined) {
                 currentItems[bracketWord] = {}
             }
