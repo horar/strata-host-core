@@ -166,7 +166,7 @@ Item {
                             left: statusLight.right
                             leftMargin: 2
                             top: statusLight.top
-                            right: buttonRow.shown ? buttonRow.left : parent.right
+                            right: buttonRow.visible ? buttonRow.left : parent.right
                             rightMargin: 2
                         }
 
