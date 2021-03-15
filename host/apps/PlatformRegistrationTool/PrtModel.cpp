@@ -134,24 +134,24 @@ void PrtModel::downloadBinaries(
         const QString firmwareMd5)
 {
 
-//    //use this to fake it
-//    QTimer::singleShot(2500, this, [this](){
-//        bool ok = fakeDownloadBinaries(
-//                    "/Users/zbh6nr/dev/strata firmware/with_assisted/bootloader-release.bin",
-//                    "/Users/zbh6nr/dev/strata firmware/with_assisted/str-level-shifters-gevb-v002.bin");
+    //use this to fake it
+    QTimer::singleShot(2500, this, [this](){
+        bool ok = fakeDownloadBinaries(
+                    "/Users/zbh6nr/dev/strata firmware/with_assisted/bootloader-release.bin",
+                    "/Users/zbh6nr/dev/strata firmware/with_assisted/str-level-shifters-gevb-v002.bin");
 
 
-//        if (ok == false) {
-//            emit downloadFirmwareFinished("Fake download failed");
-//        } else {
-//            qDebug() << "bootloader" << bootloaderFile_->fileName();
-//            qDebug() << "firmware" << firmwareFile_->fileName();
+        if (ok == false) {
+            emit downloadFirmwareFinished("Fake download failed");
+        } else {
+            qDebug() << "bootloader" << bootloaderFile_->fileName();
+            qDebug() << "firmware" << firmwareFile_->fileName();
 
-//            emit downloadFirmwareFinished("");
-//        }
-//    });
+            emit downloadFirmwareFinished("");
+        }
+    });
 
-//    return;
+    return;
 
     if (downloadJobId_.isEmpty() == false) {
         return;
