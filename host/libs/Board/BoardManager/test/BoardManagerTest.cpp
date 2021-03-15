@@ -1,7 +1,5 @@
 #include "BoardManagerTest.h"
-#include "DeviceMock.h"
-
-using strata::device::DeviceProperties;
+#include <Device/Mock/MockDevice.h>
 
 void BoardManagerTest::initTestCase()
 {
@@ -18,7 +16,7 @@ void BoardManagerTest::init()
     boardManager_ = std::make_shared<BoardManagerDerivate>();
     connect(boardManager_.get(), &strata::BoardManager::boardDisconnected, this,
             &BoardManagerTest::onBoardDisconnected);
-    boardManager_->init();
+    boardManager_->init(true, false);
 }
 
 void BoardManagerTest::cleanup()
@@ -33,15 +31,15 @@ void BoardManagerTest::onBoardDisconnected(int deviceId)
     lastOnBoardDisconnectedDeviceId_ = deviceId;
 }
 
-std::shared_ptr<DeviceMock> BoardManagerTest::addMockDevice(const int deviceId,
-                                                            const QString deviceName)
+std::shared_ptr<strata::device::mock::MockDevice> BoardManagerTest::addMockDevice(const int deviceId,
+                                                                                  const QString deviceName)
 {
-    auto devicesCount = boardManager_->readyDeviceIds().count();
-    boardManager_->mockAddNewDevice(deviceId, deviceName);
-    QVERIFY_(boardManager_->readyDeviceIds().contains(deviceId));
-    QCOMPARE_(boardManager_->readyDeviceIds().count(), ++devicesCount);
+    auto devicesCount = boardManager_->activeDeviceIds().count();
+    QVERIFY_(boardManager_->addNewMockDevice(deviceId, deviceName));
+    QVERIFY_(boardManager_->activeDeviceIds().contains(deviceId));
+    QCOMPARE_(boardManager_->activeDeviceIds().count(), ++devicesCount);
     auto device = boardManager_->device(deviceId);
-    auto mockDevice = std::dynamic_pointer_cast<DeviceMock>(boardManager_->device(deviceId));
+    auto mockDevice = std::dynamic_pointer_cast<strata::device::mock::MockDevice>(boardManager_->device(deviceId));
     QVERIFY_(mockDevice.get() != nullptr);
     QVERIFY_(mockDevice->mockIsOpened());
     return mockDevice;
@@ -49,13 +47,13 @@ std::shared_ptr<DeviceMock> BoardManagerTest::addMockDevice(const int deviceId,
 
 void BoardManagerTest::removeMockDevice(const int deviceId)
 {
-    auto devicesCount = boardManager_->readyDeviceIds().count();
+    auto devicesCount = boardManager_->activeDeviceIds().count();
     auto device = boardManager_->device(deviceId);
-    auto mockDevice = std::dynamic_pointer_cast<DeviceMock>(boardManager_->device(deviceId));
-    if (boardManager_->disconnect(deviceId)) {
-        boardManager_->mockRemoveDevice(deviceId);
+    auto mockDevice = std::dynamic_pointer_cast<strata::device::mock::MockDevice>(boardManager_->device(deviceId));
+    if (boardManager_->disconnectDevice(deviceId)) {
+        QVERIFY_(boardManager_->removeMockDevice(deviceId));
         QVERIFY(mockDevice.get() != nullptr);
-        QCOMPARE_(boardManager_->readyDeviceIds().count(), --devicesCount);
+        QCOMPARE_(boardManager_->activeDeviceIds().count(), --devicesCount);
         QVERIFY(!mockDevice->mockIsOpened());
     } else {
         QVERIFY(device.get() == nullptr);
@@ -98,11 +96,11 @@ void BoardManagerTest::connectMultipleTest()
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
-    QCOMPARE(boardManager_->device(1)->property(DeviceProperties::deviceName), "Mock device 1");
-    QCOMPARE(boardManager_->device(2)->property(DeviceProperties::deviceName), "Mock device 2");
-    QCOMPARE(boardManager_->device(3)->property(DeviceProperties::deviceName), "Mock device 3");
-    QCOMPARE(boardManager_->device(4)->property(DeviceProperties::deviceName), "Mock device 4");
-    QCOMPARE(boardManager_->device(5)->property(DeviceProperties::deviceName), "Mock device 5");
+    QCOMPARE(boardManager_->device(1)->deviceName(), "Mock device 1");
+    QCOMPARE(boardManager_->device(2)->deviceName(), "Mock device 2");
+    QCOMPARE(boardManager_->device(3)->deviceName(), "Mock device 3");
+    QCOMPARE(boardManager_->device(4)->deviceName(), "Mock device 4");
+    QCOMPARE(boardManager_->device(5)->deviceName(), "Mock device 5");
 
     QCOMPARE(onBoardDisconnectedCalls_, 0);
     removeMockDevice(1);
@@ -127,10 +125,10 @@ void BoardManagerTest::connectMultipleTest()
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
-    QCOMPARE(boardManager_->device(1)->property(DeviceProperties::deviceName), "Mock device 1");
-    QCOMPARE(boardManager_->device(2)->property(DeviceProperties::deviceName), "Mock device 2");
-    QCOMPARE(boardManager_->device(4)->property(DeviceProperties::deviceName), "Mock device 4");
-    QCOMPARE(boardManager_->device(6)->property(DeviceProperties::deviceName), "Mock device 6");
+    QCOMPARE(boardManager_->device(1)->deviceName(), "Mock device 1");
+    QCOMPARE(boardManager_->device(2)->deviceName(), "Mock device 2");
+    QCOMPARE(boardManager_->device(4)->deviceName(), "Mock device 4");
+    QCOMPARE(boardManager_->device(6)->deviceName(), "Mock device 6");
 }
 
 // TODO tests for BoardManager signals:

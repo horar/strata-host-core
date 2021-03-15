@@ -2,12 +2,12 @@
 
 #include <rapidjson/document.h>
 #include <QObject>
-#include "DeviceMock.h"
+#include <Device/Mock/MockDevice.h>
 #include "QtTest.h"
 
 namespace strata::device::operation {
 class BaseDeviceOperation;
-enum class Type : int;
+enum class Result : int;
 }
 
 class DeviceOperationsTest : public QObject
@@ -24,12 +24,17 @@ private slots:
     // tests
     void connectTest();
     void identifyTest();
+    void noResponseTest();
+    void notJSONTest();
+    void JSONWithoutPayloadTest();
+    void nackTest();
+    void invalidValueTest();
     void switchToBootloaderAndBackTest();
     void cancelOperationTest();
+    void identifyLegacyTest();
 
 protected slots:
-    void handleOperationFinished(strata::device::operation::Type opType, int data);
-    void handleOperationError(QString message);
+    void handleOperationFinished(strata::device::operation::Result result, int, QString);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
@@ -37,8 +42,9 @@ private:
 
     void connectHandlers(strata::device::operation::BaseDeviceOperation* operation);
 
-    std::shared_ptr<DeviceMock> device_;
+    std::shared_ptr<strata::device::mock::MockDevice> device_;
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;
+    int operationTimeoutCount_ = 0;
 };

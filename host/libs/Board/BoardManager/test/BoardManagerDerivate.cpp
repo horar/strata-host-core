@@ -1,5 +1,5 @@
 #include "BoardManagerDerivate.h"
-#include "DeviceMock.h"
+#include <Device/Mock/MockDevice.h>
 #include "QtTest.h"
 
 using strata::BoardManager;
@@ -10,13 +10,15 @@ BoardManagerDerivate::BoardManagerDerivate() : BoardManager()
 {
 }
 
-void BoardManagerDerivate::init(bool requireFwInfoResponse)
+void BoardManagerDerivate::init(bool requireFwInfoResponse, bool keepDevicesOpen)
 {
     reqFwInfoResp_ = requireFwInfoResponse;
+    keepDevicesOpen_ = keepDevicesOpen;
 }
 
-void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString deviceName)
+bool BoardManagerDerivate::addNewMockDevice(const int deviceId, const QString deviceName)
 {
+    qDebug().nospace() << "Adding new mock device (0x" << hex << static_cast<uint>(deviceId) << "): " << deviceName;
     std::set<int> ports(serialPortsList_);
     QHash<int, QString> idToName(serialIdToName_);
 
@@ -25,7 +27,9 @@ void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString de
         auto [iter, success] = ports.emplace(deviceId);
         if (success == false) {
             // Error: hash already exists!
-            QFAIL("deviceId already exists");
+            qCritical().nospace() << "Cannot add device (hash conflict: 0x" << hex << static_cast<uint>(deviceId) << "): " << deviceName;
+            QFAIL_("deviceId already exists");
+            return false;
         } else {
             idToName.insert(deviceId, deviceName);
         }
@@ -40,40 +44,59 @@ void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString de
 
         serialIdToName_ = std::move(idToName);
 
-        computeListDiff(ports, added,
-                        removed);  // uses serialPortsList_ (needs old value from previous run)
+        computeListDiff(ports, added, removed); // uses serialPortsList_ (needs old value from previous run)
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
         for (auto removedDeviceId : removed) {
-            if (closeDevice(removedDeviceId)) {  // modifies openedDevices_
+            if (removeDevice(removedDeviceId)) {        // modifies openedDevices_ and reconnectTimers_
                 deleted.emplace_back(removedDeviceId);
             }
         }
 
         for (auto addedDeviceId : added) {
-            if (addDevice(addedDeviceId, false)) {  // modifies openedDevices_, uses serialIdToName_
+            if (addMockPort(addedDeviceId, false)) {    // modifies openedDevices_, uses serialIdToName_
                 opened.emplace_back(addedDeviceId);
+            } else {
+                // If mock port cannot be opened remove it from list of known ports.
+                ports.erase(addedDeviceId);
             }
         }
 
         serialPortsList_ = std::move(ports);
     }
 
-    if (deleted.empty() == false || opened.empty() == false) {
-        for (auto deletedDeviceId : deleted) {
-            emit boardDisconnected(deletedDeviceId);
-        }
-        for (auto openedDeviceId : opened) {
-            emit boardConnected(openedDeviceId);
-        }
-        emit readyDeviceIdsChanged();
+    for (auto deletedDeviceId : deleted) {
+        emit boardDisconnected(deletedDeviceId);
     }
+    for (auto openedDeviceId : opened) {
+        emit boardConnected(openedDeviceId);
+    }
+    return true;
 }
 
-void BoardManagerDerivate::mockRemoveDevice(const int deviceId)
+bool BoardManagerDerivate::removeMockDevice(const int deviceId)
 {
-    serialPortsList_.erase(deviceId);
-    serialIdToName_.remove(deviceId);
+    bool res = true;
+    // call after disconnecting
+    auto serialPortsListIt = serialPortsList_.find(deviceId);
+    if (serialPortsListIt != serialPortsList_.end()) {
+        serialPortsList_.erase(serialPortsListIt);
+    } else {
+        qWarning().nospace() << "Unable to locate serialPortsList_ entry for 0x"
+                             << hex << static_cast<uint>(deviceId);
+        res = false;
+    }
+
+    auto serialIdToNameIt = serialIdToName_.find(deviceId);
+    if (serialIdToNameIt != serialIdToName_.end()) {
+        serialIdToName_.erase(serialIdToNameIt);
+    } else {
+        qWarning().nospace() << "Unable to locate serialIdToName_ entry for 0x"
+                             << hex << static_cast<uint>(deviceId);
+        res = false;
+    }
+
+    return res;
 }
 
 void BoardManagerDerivate::checkNewSerialDevices()
@@ -81,38 +104,35 @@ void BoardManagerDerivate::checkNewSerialDevices()
     // empty, disable the BoardManager functionality working with serial ports
 }
 
-void BoardManagerDerivate::handleOperationFinished(strata::device::operation::Type opType,
-                                                   int data)
+void BoardManagerDerivate::handleOperationFinished(strata::device::operation::Result result, int status, QString errStr)
 {
-    BoardManager::handleOperationFinished(opType, data);
+    BoardManager::handleOperationFinished(result, status, errStr);
 }
 
-void BoardManagerDerivate::handleOperationError(QString message)
-{
-    BoardManager::handleOperationError(message);
-}
-
-void BoardManagerDerivate::handleDeviceError(strata::device::Device::ErrorCode errCode,
-                                             QString errStr)
+void BoardManagerDerivate::handleDeviceError(strata::device::Device::ErrorCode errCode, QString errStr)
 {
     BoardManager::handleDeviceError(errCode, errStr);
 }
 
-// mutex_ must be locked before calling this function (due to modification openedDevices_ and using
-// serialIdToName_)
-bool BoardManagerDerivate::addDevice(const int deviceId, bool startOperations)
+// mutex_ must be locked before calling this function (due to modification openedDevices_ and using mockIdToName_)
+bool BoardManagerDerivate::addMockPort(const int deviceId, bool startOperations)
 {
+    // 1. construct the mock device
+    // 2. open the device
+    // 3. attach DeviceOperations object
+
     const QString name = serialIdToName_.value(deviceId);
 
-    DevicePtr device = std::make_shared<DeviceMock>(deviceId, name);
+    DevicePtr device = std::make_shared<strata::device::mock::MockDevice>(deviceId, name, true);
 
-    if (openDevice(deviceId, device)) {
-        if (startOperations) {
-            startDeviceOperations(deviceId, device);
-        }
-        return true;
-    } else {
+    if (openDevice(device) == false) {
+        qWarning().nospace() << "Cannot open device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
         QFAIL_("Cannot open device");
         return false;
     }
+    qInfo().nospace() << "Added new mock device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
+    if (startOperations) {
+        startDeviceOperations(device);
+    }
+    return true;
 }

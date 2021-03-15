@@ -1,6 +1,6 @@
 .import tech.strata.logger 1.0 as LoggerModule
 .import "qrc:/js/navigation_control.js" as NavigationControl
-
+.import QtQml 2.12 as QtQml
 // Use caution when updating this file; older platform control_views rely on the original API
 
 var device_id
@@ -31,7 +31,38 @@ function data_source_handler (payload) {
                 let notification = message.notification
                 if (notification.hasOwnProperty("value") && notification.hasOwnProperty("payload")) {
                     var notification_key = notification.value
-                    platformInterface[notification_key] = Object.create(notification["payload"]);
+                    if (platformInterface.apiVersion && platformInterface.apiVersion > 1) {
+
+                        if (!platformInterface["notifications"].hasOwnProperty(notification_key)) {
+                            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "This platform interface doesn't support the notification '" + notification_key + "'. Ignoring...")
+                            return;
+                        }
+
+                        // loop through payload keys and set platformInterface[notification_key][payload_key] = payload_value
+                        for (const key of Object.keys(notification["payload"])) {
+
+                            if (!platformInterface["notifications"][notification_key].hasOwnProperty(key)) {
+                                console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid property '", key, "' to platform interface notification '" + notification_key + "'")
+                                continue;
+                            }
+
+                            const payloadObj = notification["payload"][key]
+                            let platformInterfaceObj = platformInterface["notifications"][notification_key][key]
+
+                            if (typeof payloadObj === "object" && isQtObject(platformInterfaceObj)) {
+                                // if payload is an object or array, and platform interface object is a QtObject, recurse
+                                setNotification(platformInterfaceObj, payloadObj);
+                            } else {
+                                // directly assign value; either basic types or JS objects/arrays
+                                platformInterface["notifications"][notification_key][key] = payloadObj;
+                            }
+                        }
+
+                        // Emit the notificationFinished signal
+                        platformInterface["notifications"][notification_key].notificationFinished()
+                    } else {
+                        platformInterface[notification_key] = Object.create(notification["payload"]);
+                    }
                     //console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "data_source_handler: signalling -> notification key:", notification_key);
                 } else {
                     console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Notification is malformed:", JSON.stringify(notification));
@@ -86,6 +117,59 @@ function injectDebugNotification(notification) {
         "message": JSON.stringify(message)
     }
     data_source_handler(JSON.stringify(wrapper))
+}
+
+/*
+  Recursively set the notification property for QtObjects
+ */
+function setNotification(platformInterfaceObject, payloadValue) {
+    let type
+    let iterable
+
+    if (Array.isArray(payloadValue)) {
+        type = "array"
+        iterable = payloadValue
+    } else if (typeof payloadValue === "object") {
+        type = "object"
+        iterable = Object.keys(payloadValue)
+    } else {
+        platformInterfaceObject = payloadValue
+        return
+    }
+
+    for (let i = 0; i < iterable.length; i++) {
+        let key
+        let index
+
+        if (type === "array") {
+            key = `index_${i}`;
+            index = i
+        } else {
+            key = iterable[i];
+            index = key
+        }
+
+        if (!platformInterfaceObject.hasOwnProperty(key)) {
+            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Attempted to assign invalid index:", index, "to array: '" + key + "'")
+            continue;
+        }
+
+        if (isQtObject(platformInterfaceObject[key])) {
+            setNotification(platformInterfaceObject[key], payloadValue[index])
+        } else {
+            platformInterfaceObject[key] = payloadValue[index]
+        }
+    }
+
+}
+
+function isQtObject(obj) {
+    try {
+        let result = (obj instanceof QtQml.QtObject);
+        return result;
+    } catch (e) {
+        return false;
+    }
 }
 
 init()

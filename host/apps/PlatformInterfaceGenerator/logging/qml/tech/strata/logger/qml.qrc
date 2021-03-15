@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/tech/strata/logger">
+        <file>Logger.qml</file>
+        <file>plugins.qmltypes</file>
+        <file>qmldir</file>
+    </qresource>
+</RCC>

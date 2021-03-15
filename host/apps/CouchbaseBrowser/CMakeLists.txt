@@ -6,7 +6,7 @@ project(CouchbaseBrowser
 set(PROJECT_WIN32_ICO resources/icons/app/app.ico)
 set(PROJECT_MACOS_ICNS app.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.cbb)
-set(PROJECT_COPYRIGHT "Copyright (C) 2019-2020 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2019-2021 ${PROJECT_COMPANY}")
 
 
 find_package(Qt5 ${VERSION_QT5}
@@ -67,6 +67,11 @@ set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}Library PROPERTIES
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
 
 if(BUILD_TESTING)

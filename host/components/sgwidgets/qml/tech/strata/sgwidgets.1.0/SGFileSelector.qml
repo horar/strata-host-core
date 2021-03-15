@@ -17,6 +17,7 @@ FocusScope {
     property bool dialogSelectExisting: true
     property string dialogDefaultSuffix: ""
     property variant dialogNameFilters: []
+    property alias contextMenuEnabled: textEdit.contextMenuEnabled
 
 
     function inputValidationErrorMsg() {
@@ -90,6 +91,6 @@ FocusScope {
 
     function resolveAbsoluteFileUrl(path) {
         return CommonCpp.SGUtilsCpp.pathToUrl(
-            CommonCpp.SGUtilsCpp.fileAbsolutePath(path))
+            CommonCpp.SGUtilsCpp.parentDirectoryPath(path))
     }
 }

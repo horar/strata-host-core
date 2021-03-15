@@ -6,7 +6,7 @@ SciPlatformModel::SciPlatformModel(strata::BoardManager *boardManager, QObject *
       boardManager_(boardManager)
 {
     connect(boardManager_, &strata::BoardManager::boardConnected, this, &SciPlatformModel::boardConnectedHandler);
-    connect(boardManager_, &strata::BoardManager::boardReady, this, &SciPlatformModel::boardReadyHandler);
+    connect(boardManager_, &strata::BoardManager::boardInfoChanged, this, &SciPlatformModel::boardReadyHandler);
     connect(boardManager_, &strata::BoardManager::boardDisconnected, this, &SciPlatformModel::boardDisconnectedHandler);
 }
 
@@ -79,7 +79,20 @@ void SciPlatformModel::setMaxCmdInHistoryCount(int maxCmdInHistoryCount)
     }
 }
 
-void SciPlatformModel::disconnectPlatformFromSci(int index)
+void SciPlatformModel::setCondensedAtStartup(bool condensedAtStartup)
+{
+    if (condensedAtStartup_ != condensedAtStartup) {
+        condensedAtStartup_ = condensedAtStartup;
+        emit condensedAtStartupChanged();
+    }
+}
+
+bool SciPlatformModel::condensedAtStartup() const
+{
+    return condensedAtStartup_;
+}
+
+void SciPlatformModel::releasePort(int index, int disconnectDuration)
 {
     if (index < 0 || index >= platformList_.count()) {
         qCCritical(logCategorySci) << "index out of range";
@@ -90,9 +103,9 @@ void SciPlatformModel::disconnectPlatformFromSci(int index)
         return;
     }
 
-    boardManager_->disconnect(platformList_.at(index)->deviceId());
-
-    platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Disconnected);
+    boardManager_->disconnectDevice(
+                platformList_.at(index)->deviceId(),
+                std::chrono::milliseconds(disconnectDuration));
 }
 
 void SciPlatformModel::removePlatform(int index)
@@ -120,7 +133,7 @@ void SciPlatformModel::reconnect(int index)
         qCCritical(logCategorySci) << "index out of range";
     }
 
-    boardManager_->reconnect(platformList_.at(index)->deviceId());
+    boardManager_->reconnectDevice(platformList_.at(index)->deviceId());
 }
 
 QHash<int, QByteArray> SciPlatformModel::roleNames() const
@@ -140,6 +153,7 @@ void SciPlatformModel::boardConnectedHandler(int deviceId)
         platformList_.at(index)->setErrorString("");
         platformList_.at(index)->setDevice(boardManager_->device(deviceId));
         platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Connected);
+        platformList_.at(index)->resetPropertiesFromDevice();
 
         emit platformConnected(index);
     }
@@ -155,9 +169,9 @@ void SciPlatformModel::boardReadyHandler(int deviceId, bool recognized)
 
     SciPlatform *platform = platformList_[index];
 
-    if (recognized) {
-        platform->resetPropertiesFromDevice();
+    platform->resetPropertiesFromDevice();
 
+    if (recognized) {
         SciPlatformSettingsItem *settingsItem = sciSettings_.getBoardData(platform->verboseName());
         if (settingsItem != nullptr) {
             platform->commandHistoryModel()->populate(settingsItem->commandHistoryList);
@@ -199,7 +213,7 @@ void SciPlatformModel::appendNewPlatform(int deviceId)
 {
     strata::device::DevicePtr device = boardManager_->device(deviceId);
     if (device == nullptr) {
-        qCCritical(logCategorySci()) << "device not found by its id";
+        qCCritical(logCategorySci) << "device not found by its id";
         return;
     }
 
@@ -210,6 +224,8 @@ void SciPlatformModel::appendNewPlatform(int deviceId)
     item->setStatus(SciPlatform::PlatformStatus::Connected);
     item->scrollbackModel()->setMaximumCount(maxScrollbackCount_);
     item->commandHistoryModel()->setMaximumCount(maxCmdInHistoryCount_);
+    item->scrollbackModel()->setCondensedMode(condensedAtStartup_);
+    item->setDeviceName(device->deviceName());
     platformList_.append(item);
 
     endInsertRows();

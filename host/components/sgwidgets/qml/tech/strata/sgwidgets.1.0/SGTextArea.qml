@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 FocusScope {
     id: control
@@ -16,6 +17,7 @@ FocusScope {
     property alias readOnly: edit.readOnly
     property bool keepCursorAtEnd: false
     property bool isValid: true
+    property bool contextMenuEnabled: false
 
     // This is to match look and feel of other controls
     Control {
@@ -35,10 +37,15 @@ FocusScope {
                 } else if (isValid) {
                     return dummyControl.palette.mid
                 } else {
-                    return Colors.ERROR_COLOR
+                    return TangoTheme.palette.error
                 }
             }
         }
+    }
+
+    SGWidgets.SGContextMenuEditActions {
+        id: contextMenuPopup
+        textEditor: edit
     }
 
     Flickable {
@@ -75,9 +82,15 @@ FocusScope {
             height: flick.height
 
             cursorShape: Qt.IBeamCursor
+            acceptedButtons: (contextMenuEnabled === true) ? (Qt.LeftButton | Qt.RightButton) : Qt.LeftButton
             onClicked: {
                 edit.forceActiveFocus()
                 edit.cursorPosition = edit.text.length
+            }
+            onReleased: {
+                if ((contextMenuEnabled === true) && containsMouse && (mouse.button === Qt.RightButton)) {
+                    contextMenuPopup.popup(null)
+                }
             }
         }
 
@@ -94,6 +107,7 @@ FocusScope {
             selectByMouse: true
             selectByKeyboard: true
             activeFocusOnTab: true
+            persistentSelection: contextMenuEnabled
             focus: true
 
             Keys.onPressed: {
@@ -113,6 +127,12 @@ FocusScope {
 
             onCursorRectangleChanged: {
                 flick.ensureVisible(cursorRectangle)
+            }
+
+            onActiveFocusChanged: {
+                if ((contextMenuEnabled === true) && (activeFocus === false) && (contextMenuPopup.visible === false)) {
+                    edit.deselect()
+                }
             }
 
             Text {

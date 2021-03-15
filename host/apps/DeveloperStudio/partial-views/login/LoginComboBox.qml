@@ -3,7 +3,6 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
-import tech.strata.sgwidgets 1.0 as SGWidgets
 
 ComboBox {
     id: root
@@ -78,6 +77,8 @@ ComboBox {
         background: Rectangle {
             visible: root.enabled && root.editable && !root.flat
             color: root.boxColor
+            border.width: root.activeFocus ? 1 : 0
+            border.color:  root.activeFocus ? Theme.palette.green : "#40000000"
         }
         onAccepted: parent.focus = false
         Keys.forwardTo: root

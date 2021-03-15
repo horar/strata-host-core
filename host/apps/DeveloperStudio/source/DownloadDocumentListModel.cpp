@@ -47,6 +47,8 @@ QVariant DownloadDocumentListModel::data(const QModelIndex &index, int role) con
         return item->dirname;
     case PreviousDirnameRole:
         return data(DownloadDocumentListModel::index(row - 1, 0), DirnameRole);
+    case HistoryStateRole:
+        return item->historyState;
     case ProgressRole:
         return item->progress;
     case StatusRole:
@@ -206,6 +208,7 @@ QHash<int, QByteArray> DownloadDocumentListModel::roleNames() const
     names[DownloadFilenameRole] = "downloadFilename";
     names[DirnameRole] = "dirname";
     names[PreviousDirnameRole] = "previousDirname";
+    names[HistoryStateRole] = "historyState";
     names[ProgressRole] = "progress";
     names[StatusRole] = "status";
     names[ErrorStringRole] = "errorString";
@@ -346,4 +349,60 @@ void DownloadDocumentListModel::groupDownloadFinishedHandler(const QJsonObject &
     downloadingData_.clear();
 
     emit downloadInProgressChanged();
+}
+
+QString DownloadDocumentListModel::getMD5()
+{
+    QJsonObject jsonObj;
+    for (const auto &item : data_) {
+        jsonObj.insert(item->dirname + "_" + item->prettyName, item->md5);
+    }
+    QJsonDocument doc(jsonObj);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    return strJson;
+}
+
+void DownloadDocumentListModel::setHistoryState(const QString &doc, const QString &state)
+{
+    for (int i = 0; i < data_.length(); ++i) {
+        DownloadDocumentItem* item = data_.at(i);
+        if (item == nullptr) {
+            qCCritical(logCategoryDocumentManager) << "item is empty" << i;
+            continue;
+        }
+
+        if (item->dirname + "_" + item->prettyName == doc) {
+            item->historyState = state;
+            emit dataChanged(createIndex(i, 0), createIndex(i, 0));
+            return;
+        }
+    }
+}
+
+void DownloadDocumentListModel::setAllHistoryStateToSeen()
+{
+    for (const auto &item : data_) {
+        item->historyState = "seen";
+    }
+}
+
+bool DownloadDocumentListModel::anyItemsUnseen()
+{
+    for (const auto &item : data_) {
+        if (item->historyState != "seen") {
+            return true;
+        }
+    }
+    return false;
+}
+
+QStringList DownloadDocumentListModel::getItemsUnseen()
+{
+    QStringList ls;
+    for (const auto &item : data_) {
+        if (item->historyState != "seen") {
+            ls << item->prettyName;
+        }
+    }
+    return ls;
 }

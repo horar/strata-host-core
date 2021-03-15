@@ -11,6 +11,8 @@ using command::CmdGetFirmwareInfo;
 StartApplication::StartApplication(const device::DevicePtr& device) :
     BaseDeviceOperation(device, Type::StartApplication)
 {
+    commandList_.reserve(3);
+
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<CmdStartApplication>(device_));
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true, MAX_GET_FW_INFO_RETRIES));

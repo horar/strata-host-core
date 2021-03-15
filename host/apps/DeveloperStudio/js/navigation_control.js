@@ -65,6 +65,7 @@ var main_container_ = null
 var status_bar_container_ = null
 var platform_view_repeater_ = null
 var platform_view_model_ = null
+var platform_tab_list_view_ = null
 var stack_container_ = null
 var resource_loader_ = null
 var main_qml_object_ = null
@@ -110,21 +111,9 @@ function getQMLFile(filename, class_id, version = "") {
 function createView(name, parent)
 {
     //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "createView: name =", name, ", parameters =", JSON.stringify(context))
-
-    try {
-        // Remove children from container before creating another instance
-        removeView(parent)
-    }
-    catch(err){
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
-    }
-        var object = Utility.createObject(name,parent,context);
-    if (object === null) {
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
-    } else {
-        context.error_message = ""
-    }
-    return object;
+    // parent must be a Loader
+    parent.setSource(name, context)
+    parent.active = true
 }
 
 /*
@@ -132,12 +121,7 @@ function createView(name, parent)
 */
 function removeView(parent)
 {
-    if (parent.children.length > 0){
-        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Destroying view")
-        for (var x in parent.children){
-            parent.children[x].destroy()
-        }
-    }
+    parent.active = false
 }
 
 /*
@@ -155,7 +139,6 @@ function globalEventHandler(event,data)
 
         // Remove StatusBar
         removeView(status_bar_container_)
-        status_bar_container_.visible = false
 
         break;
     case events.PROMPT_LOGIN_EVENT:
@@ -167,7 +150,6 @@ function globalEventHandler(event,data)
 
         // Remove StatusBar at Login
         removeView(status_bar_container_)
-        status_bar_container_.visible = false
         break;
 
     case events.LOGOUT_EVENT:
@@ -186,6 +168,7 @@ function globalEventHandler(event,data)
 
         // Show Login Screen
         navigation_state_ = states.LOGIN_STATE
+
         updateState(events.PROMPT_LOGIN_EVENT)
         break;
 
@@ -256,16 +239,16 @@ function updateState(event, data)
                 context.last_name = data.last_name
 
                 // Update StatusBar
-                status_bar_container_.visible = true
-                let statusBar = createView(screens.STATUS_BAR, status_bar_container_)
+                createView(screens.STATUS_BAR, status_bar_container_)
+                platform_tab_list_view_ = status_bar_container_.item.platformTabListView
 
                 createView(screens.PLATFORM_SELECTOR, main_container_)
 
                 // Progress to next state
                 navigation_state_ = states.CONTROL_STATE
 
-                 // Populate platforms only after all UI components are complete
-                statusBar.loginSuccessful()
+                // Populate platforms only after all UI components are complete
+                status_bar_container_.item.loginSuccessful()
             break;
 
             default:
@@ -285,6 +268,7 @@ function updateState(event, data)
                     let open_view = platform_view_model_.get(i)
                     if (open_view.class_id === data.class_id && open_view.device_id === data.device_id) {
                         updateState(events.SWITCH_VIEW_EVENT, {"index": i+1})
+                        open_view.view = data.view
                         return
                     }
                 }
@@ -367,6 +351,14 @@ function updateState(event, data)
                 if (stack_container_.currentIndex !== data.index) {
                     stack_container_.currentIndex = data.index
                 }
+
+                if ((platform_tab_list_view_.count > 0) && (stack_container_.currentIndex > 0) &&
+                    (platform_tab_list_view_.count >= stack_container_.currentIndex)) {
+                    platform_tab_list_view_.currentIndex = stack_container_.currentIndex -1
+                } else {
+                     platform_tab_list_view_.currentIndex =  -1
+                }
+
                 break;
 
             default:

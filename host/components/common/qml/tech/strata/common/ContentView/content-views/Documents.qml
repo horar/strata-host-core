@@ -1,5 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.12
+
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Item {
@@ -8,6 +10,8 @@ Item {
     height: wrapper.height + 20
 
     property alias model: repeater.model
+    property var documentCurrentIndex: 0
+    property bool historySeen: false
 
     Column {
         id: wrapper
@@ -25,14 +29,46 @@ Item {
                 id: delegate
                 width: wrapper.width
 
-                bottomPadding: 2
+                onCategorySelected: {
+                    if (helpIcon.class_id != "help_docs_demo") {
+                        documentCurrentIndex = index
+                        categoryOpened = "platform documents"
+                    }
+                    documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
+                    root.historySeen = true
+                }
 
-                property string effectiveUri: "file://localhost/" + model.uri
+                property string effectiveUri: {
+                    if(helpIcon.class_id === "help_docs_demo") {
+                        return "qrc:/tech/strata/common/ContentView/images/" + model.uri
+                    }
+                    else {
+                        return "file://localhost/" + model.uri
+                    }
+                }
+
+                property var currentDocumentCategory: view.currentDocumentCategory
+                onCurrentDocumentCategoryChanged: {
+                    if(categoryOpened === "platform documents") {
+                        if(currentDocumentCategory) {
+                            for (var i = 0; i < repeater.count ; ++i) {
+                                if(i === documentCurrentIndex) {
+                                    if(repeater.itemAt(documentCurrentIndex)) {
+                                        repeater.itemAt(documentCurrentIndex).checked  = true
+                                    }
+                                    return
+                                }
+                            }
+                        }
+                    }
+                }
 
                 Binding {
                     target: delegate
                     property: "checked"
-                    value: pdfViewer.url.toString() === effectiveUri
+                    value: {
+                        pdfViewer.url.toString() === effectiveUri
+                    }
                 }
 
                 onCheckedChanged: {
@@ -41,67 +77,54 @@ Item {
                     }
                 }
 
-                contentSourceComponent: Item {
-                     height: textItem.contentHeight + 20
+                contentSourceComponent: RowLayout {
+                    height: textItem.contentHeight + 8
+                    spacing: 0
 
-                     SGWidgets.SGText {
-                         id: textItem
-
-                         anchors {
-                             verticalCenter: parent.verticalCenter
-                             left: parent.left
-                             leftMargin: chevronImage.width + chevronImage.anchors.rightMargin
-                             right: parent.right
-                             rightMargin: textItem.anchors.leftMargin
-                         }
-
-                         font.bold: delegate.checked ? false : true
-                         horizontalAlignment: Text.AlignHCenter
-                         text: {
-                             /*
+                    SGWidgets.SGText {
+                        id: textItem
+                        Layout.leftMargin: 6
+                        Layout.rightMargin: 2
+                        Layout.fillWidth: true
+                        font.bold: delegate.checked
+                        alternativeColorEnabled: delegate.checked === false
+                        wrapMode: Text.Wrap
+                        textFormat: Text.PlainText
+                        maximumLineCount: 3
+                        elide: Text.ElideRight
+                        text: {
+                            /*
                                  the first regexp is looking for HTML RichText
                                  the second regexp is looking for spaces after string
                                  the third regexp is looking for spaces before string
                                  the fourth regexp is looking for tabs throughout the string
                              */
-                             const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
-                             return model.dirname.replace(htmlTags,"");
-                         }
-                         alternativeColorEnabled: delegate.checked === false
-                         fontSizeMultiplier: 1.1
-                         wrapMode: Text.Wrap
-                         textFormat: Text.PlainText
-                     }
+                            const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
+                            return model.dirname.replace(htmlTags,"");
+                        }
+                    }
 
-                     Rectangle {
-                         id: underline
-                         width: textItem.contentWidth
-                         height: 1
-                         anchors {
-                             top: textItem.bottom
-                             topMargin: 2
-                             horizontalCenter: textItem.horizontalCenter
-                         }
+                    HistoryStatus {
+                        id: historyUpdate
+                        Layout.rightMargin: 2
+                    }
 
-                         color: "#33b13b"
-                         visible: delegate.checked
-                     }
-
-                     SGWidgets.SGIcon {
-                         id: chevronImage
-                         height: 20
-                         width: height
-                         anchors {
-                             right: parent.right
-                             rightMargin: 2
-                             verticalCenter: parent.verticalCenter
-                         }
-
-                         source: "qrc:/sgimages/chevron-right.svg"
-                         visible: delegate.checked
-                     }
+                    SGWidgets.SGIcon {
+                        id: chevronImage
+                        height: 12
+                        width: height
+                        Layout.rightMargin: 2
+                        source: "qrc:/sgimages/chevron-right.svg"
+                        visible: delegate.checked
+                    }
                 }
             }
+        }
+    }
+
+    Component.onDestruction: {
+        if (platformStack.documentsHistoryDisplayed || root.historySeen) {
+            documentsHistory.markAllDocumentsAsSeen()
         }
     }
 }

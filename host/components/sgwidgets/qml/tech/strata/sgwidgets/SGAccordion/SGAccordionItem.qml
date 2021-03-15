@@ -1,5 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.3
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 // SGAccordionItem is a clickable title bar that drops down an area that can be filled with items
 
@@ -27,6 +29,8 @@ Rectangle {
     property alias dividerColor: divider.color
     property alias closeContent: closeContent
     property alias openContent: openContent
+
+    signal animationCompleted
 
     onOpenChanged: {
         if (open && exclusive && root.parent) {
@@ -63,7 +67,7 @@ Rectangle {
             width: titleBar.height
             height: width
             anchors {
-               right: titleBar.right
+                right: titleBar.right
             }
 
             Text {
@@ -136,6 +140,7 @@ Rectangle {
         duration: openCloseTime
         onStopped: {
             contentContainer.height = 0  // Bind height to 0 so any content resizing while closed doesn't resize the accordionItem
+            animationCompleted()
         }
     }
 
@@ -148,6 +153,7 @@ Rectangle {
         duration: openCloseTime
         onStopped: {
             bindHeight()  // Rebind to contents.height while open so contents can dynamically resize the accordionItem
+            animationCompleted()
         }
     }
 

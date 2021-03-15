@@ -1,5 +1,4 @@
-#ifndef SCI_PLATFORM_MODEL_H
-#define SCI_PLATFORM_MODEL_H
+#pragma once
 
 #include <BoardManager.h>
 
@@ -27,6 +26,11 @@ class SciPlatformModel: public QAbstractListModel
                WRITE setMaxCmdInHistoryCount
                NOTIFY maxCmdInHistoryCountChanged)
 
+    Q_PROPERTY(bool condensedAtStartup
+               READ condensedAtStartup
+               WRITE setCondensedAtStartup
+               NOTIFY condensedAtStartupChanged)
+
 public:
     SciPlatformModel(strata::BoardManager *boardManager, QObject *parent = nullptr);
     virtual ~SciPlatformModel() override;
@@ -50,7 +54,10 @@ public:
     int maxCmdInHistoryCount() const;
     void setMaxCmdInHistoryCount(int maxCmdInHistoryCount);
 
-    Q_INVOKABLE void disconnectPlatformFromSci(int index);
+    bool condensedAtStartup() const;
+    void setCondensedAtStartup(bool condensedAtStartup);
+
+    Q_INVOKABLE void releasePort(int index, int disconnectDuration=0);
     Q_INVOKABLE void removePlatform(int index);
     Q_INVOKABLE void reconnect(int index);
 
@@ -58,6 +65,7 @@ signals:
     void countChanged();
     void maxScrollbackCountChanged();
     void maxCmdInHistoryCountChanged();
+    void condensedAtStartupChanged();
     void platformConnected(int index);
     void platformReady(int index);
 
@@ -79,13 +87,10 @@ private:
 
     int maxScrollbackCount_ = 99;
     int maxCmdInHistoryCount_ = 99;
+    bool condensedAtStartup_ = false;
 
     void setModelRoles();
     int findPlatform(int deviceId) const;
 
     void appendNewPlatform(int deviceId);
 };
-
-
-
-#endif //SCI_PLATFORM_MODEL_H

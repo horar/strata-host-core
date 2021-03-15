@@ -11,5 +11,9 @@
         <file>images/docLoading.gif</file>
         <file>images/angle-right-solid.svg</file>
         <file>content-views/EmptyDocuments.qml</file>
+        <file>HelpButton.qml</file>
+        <file>images/HelpTourDocument.pdf</file>
+        <file>DocumentsHistory.qml</file>
+        <file>content-views/HistoryStatus.qml</file>
     </qresource>
 </RCC>

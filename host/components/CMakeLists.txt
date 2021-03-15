@@ -4,7 +4,7 @@ add_feature_info(APPS_CORECOMPONENTS APPS_CORECOMPONENTS "Build Strata applicati
 if(APPS_CORECOMPONENTS)
     if (CMAKE_BUILD_TYPE STREQUAL "OTA")
         project(components
-            DESCRIPTION "Strata components"
+            DESCRIPTION "Strata Components"
             LANGUAGES NONE
         )
 
@@ -13,15 +13,15 @@ if(APPS_CORECOMPONENTS)
         add_custom_target(${PROJECT_NAME})
         generate_ifw_version(GITTAG_PREFIX "components_")
 
-        if(WIN32)
-            add_subdirectory(qt)
-        endif()
+        add_subdirectory(qt)
     endif()
 
     add_subdirectory(theme)
     add_subdirectory(fonts)
     add_subdirectory(pdfjs)
-
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_subdirectory(monaco)
+    endif()
     add_subdirectory(sgwidgets)
     add_subdirectory(common)
     add_subdirectory(commoncpp)

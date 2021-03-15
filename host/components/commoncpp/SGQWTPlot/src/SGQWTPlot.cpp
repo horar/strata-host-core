@@ -527,26 +527,11 @@ void SGQWTPlot::setForegroundColor(QColor newColor)
         title.setColor(foregroundColor_);
         qwtPlot->setTitle(title);
 
-        QwtScaleWidget *qwtsw = qwtPlot->axisWidget(qwtPlot->yLeft);
-        QPalette palette = qwtsw->palette();
-        palette.setColor( QPalette::WindowText, foregroundColor_);	// for ticks
-        palette.setColor( QPalette::Text, foregroundColor_);	    // for ticks' labels
-        qwtsw->setPalette( palette );
-
-        qwtsw = qwtPlot->axisWidget(qwtPlot->yRight);
-        palette = qwtsw->palette();
-        palette.setColor( QPalette::WindowText, foregroundColor_);	// for ticks
-        palette.setColor( QPalette::Text, foregroundColor_);	    // for ticks' labels
-        qwtsw->setPalette( palette );
-
-        qwtsw = qwtPlot->axisWidget(qwtPlot->xBottom);
-        palette = qwtsw->palette();
-        palette.setColor( QPalette::WindowText, foregroundColor_);	// for ticks
-        palette.setColor( QPalette::Text, foregroundColor_);	    // for ticks' labels
-        qwtsw->setPalette( palette );
+        setYLeftAxisColor(foregroundColor_);
+        setXAxisColor(foregroundColor_);
+        setYRightAxisColor(foregroundColor_);
 
         emit foregroundColorChanged();
-
         if (autoUpdate_) {
             update();
         }
@@ -593,6 +578,81 @@ void SGQWTPlot::setYLogarithmic(bool logarithmic)
             update();
         }
     }
+}
+
+void SGQWTPlot :: setYRightAxisColor(QColor newColor)
+{
+    if (yRightAxisColor_ != newColor) {
+        yRightAxisColor_ = newColor;
+        QwtScaleWidget * qwtsw_ = qwtPlot->axisWidget(QwtPlot::yRight);
+        QPalette palette = qwtsw_->palette();
+        palette.setColor(QPalette::WindowText, yRightAxisColor_);	// for ticks
+        palette.setColor(QPalette::Text, yRightAxisColor_);           //for  ticks' labels
+        qwtsw_->setPalette(palette);
+
+        emit yRightAxisColorChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+void SGQWTPlot :: setYLeftAxisColor(QColor newColor)
+{
+
+    if (yLeftAxisColor_ != newColor) {
+        yLeftAxisColor_ = newColor;
+        QwtScaleWidget * qwtsw_ = qwtPlot->axisWidget(QwtPlot::yLeft);
+        QPalette palette = qwtsw_->palette();
+        palette.setColor(QPalette::WindowText, yLeftAxisColor_);	// for ticks
+        palette.setColor(QPalette::Text, yLeftAxisColor_);           //for  ticks' labels
+        qwtsw_->setPalette(palette);
+
+        emit yLeftAxisColorChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+void SGQWTPlot :: setXAxisColor(QColor newColor)
+{
+    if (xAxisColor_ != newColor) {
+        xAxisColor_ = newColor;
+        QwtScaleWidget * qwtsw_ = qwtPlot->axisWidget(QwtPlot::xBottom);
+        QPalette palette = qwtsw_->palette();
+        palette.setColor(QPalette::WindowText, xAxisColor_);	// for ticks
+        palette.setColor(QPalette::Text, xAxisColor_);           //for  ticks' labels
+        qwtsw_->setPalette(palette);
+
+        emit xAxisColorChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+void SGQWTPlot :: insertLegend(bool legend)
+{
+    if(legend_ != legend) {
+        legend_ = legend;
+        if(legend) {
+            qwtPlot->insertLegend(new QwtLegend(),QwtPlot::BottomLegend);
+        }
+        else {
+            qwtPlot->insertLegend(0);
+        }
+
+        emit legendChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+bool SGQWTPlot :: legend()
+{
+    return legend_;
 }
 
 void SGQWTPlot::updatePlotSize()
@@ -660,7 +720,6 @@ QPointF SGQWTPlot::mapToPositionYRight(QPointF point)
 SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
 {
     curve_ = new QwtPlotCurve(name);
-
     curve_->setStyle(QwtPlotCurve::Lines);
     curve_->setRenderHint(QwtPlotItem::RenderAntialiased);
     curve_->setData(new SGQWTPlotCurveData(&curveData_));
@@ -729,7 +788,11 @@ QString SGQWTPlotCurve::name()
 void SGQWTPlotCurve::setColor(QColor color)
 {
     if (color != this->color()){
+        QwtText title = curve_->title().text();
+        title.setColor(color);
+        curve_->setTitle(title);
         curve_->setPen(QPen(color));
+
         if (autoUpdate_) {
             update();
         }
@@ -830,6 +893,15 @@ void SGQWTPlotCurve::shiftPoints(double offsetX, double offsetY)
     }
 }
 
+void SGQWTPlotCurve::setSymbol(int newStyle , QColor color , int penStyle , int size)
+{
+    curve_->setSymbol(new QwtSymbol(QwtSymbol::Style(newStyle),QBrush(color),QPen(penStyle),QSize(size,size)));
+
+    if (autoUpdate_) {
+        update();
+    }
+    return;
+}
 
 /*-----------------------
     SGQWTPlotCurveData Class

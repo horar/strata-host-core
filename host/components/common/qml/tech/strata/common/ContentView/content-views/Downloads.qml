@@ -7,6 +7,7 @@ import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.DownloadDocumentListModel 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: downloadSection
@@ -19,6 +20,8 @@ Item {
     property string defaultSavePath: CommonCpp.SGUtilsCpp.urlToLocalFile(
                                          QtLabsPlatform.StandardPaths.writableLocation(
                                              QtLabsPlatform.StandardPaths.DocumentsLocation))
+
+    property bool historySeen: false
 
     QtLabsSettings.Settings {
         category: "Strata.Download"
@@ -79,6 +82,8 @@ Item {
 
                     onCheckedChanged: {
                         repeater.model.setSelected(index, checked)
+                        documentsHistory.markDocumentAsSeen(model.dirname + "_" + model.prettyName)
+                        downloadSection.historySeen = true
                     }
 
                     Binding {
@@ -91,11 +96,10 @@ Item {
 
                     contentSourceComponent: Item {
                         id: contentComponent
-
                         height: Math.ceil(textMetrics.boundingRect.height) + progressBar.height + infoItem.contentHeight + 4*spacing
 
-
                         property int spacing: 2
+
                         TextMetrics {
                             id: textMetrics
                             font: textItem.font
@@ -189,6 +193,15 @@ Item {
                             maximumLineCount: 2
                         }
 
+                        HistoryStatus {
+                            id: historyUpdate
+                            anchors {
+                                right: textItem.right
+                                rightMargin: 2
+                                verticalCenter: parent.verticalCenter
+                            }
+                        }
+
                         Rectangle {
                             id: progressBar
                             height: 6
@@ -213,7 +226,7 @@ Item {
                                     bottom: parent.bottom
                                 }
 
-                                color: SGWidgets.SGColorsJS.STRATA_GREEN
+                                color: Theme.palette.green
                             }
                         }
 
@@ -228,7 +241,7 @@ Item {
                             height: infoItem.contentHeight + 2
 
                             radius: 2
-                            color: SGWidgets.SGColorsJS.ERROR_COLOR
+                            color: Theme.palette.error
                             visible: model.status === DownloadDocumentListModel.FinishedWithError
                         }
 
@@ -354,6 +367,38 @@ Item {
         }
 
         Button {
+            width: Math.min(implicitWidth, parent.width)
+            anchors.horizontalCenter: wrapper.horizontalCenter
+            opacity: enabled ? 1 : 0.2
+            enabled: savePath !== ""
+            text: "Open Selected Save Folder"
+
+            background: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 40
+                color: Theme.palette.lightGray
+            }
+
+            onClicked: {
+                if(!fileDialog.visible){
+                   Qt.openUrlExternally(CommonCpp.SGUtilsCpp.pathToUrl(savePath))
+                }
+            }
+
+            MouseArea {
+                id: buttonCursor2
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
+
+        Item {
+            width: 1
+            height: 10
+        }
+
+        Button {
             anchors {
                 horizontalCenter: wrapper.horizontalCenter
             }
@@ -402,6 +447,12 @@ Item {
         title: qsTr("Please choose a file")
         onAccepted: {
             savePath = CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.folder)
+        }
+    }
+
+    Component.onDestruction: {
+        if (platformStack.documentsHistoryDisplayed || downloadSection.historySeen) {
+            documentsHistory.markAllDocumentsAsSeen()
         }
     }
 }

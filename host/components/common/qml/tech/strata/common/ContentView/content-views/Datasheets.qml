@@ -4,10 +4,12 @@ import tech.strata.commoncpp 1.0
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Item {
+    id: datasheet
     height: wrapper.height + 20
     width: parent.width
 
     property alias model: sortModel.sourceModel
+    property var datasheetCurrentIndex: 0
 
     Column {
         id: wrapper
@@ -41,12 +43,34 @@ Item {
 
         Repeater {
             id: repeater
-
             model: sortModel
 
             delegate: BaseDocDelegate {
                 id: delegate
                 width: wrapper.width
+
+                onCategorySelected: {
+                    if(helpIcon.class_id != "help_docs_demo") {
+                        datasheetCurrentIndex = index
+                        categoryOpened = "platform datasheets"
+                    }
+                }
+
+                property var currentDocumentCategory: view.currentDocumentCategory
+                onCurrentDocumentCategoryChanged: {
+                    if(categoryOpened === "platform datasheets") {
+                        if(currentDocumentCategory) {
+                            for (var i = 0; i < repeater.count ; ++i) {
+                                if(i === datasheetCurrentIndex) {
+                                    if(repeater.itemAt(datasheetCurrentIndex)) {
+                                        repeater.itemAt(datasheetCurrentIndex).checked  = true
+                                    }
+                                    return
+                                }
+                            }
+                        }
+                    }
+                }
 
                 Binding {
                     target: delegate
@@ -71,7 +95,12 @@ Item {
                             leftMargin: 6
                             right: chevronImage.left
                         }
-
+                        font.bold: delegate.checked
+                        alternativeColorEnabled: delegate.checked === false
+                        wrapMode: Text.Wrap
+                        textFormat: Text.PlainText
+                        maximumLineCount: 3
+                        elide: Text.ElideRight
                         text: {
                             /*
                                 the first regexp is looking for HTML RichText
@@ -82,10 +111,6 @@ Item {
                             const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
                             return model.prettyName.replace(htmlTags,"");
                         }
-                        textFormat: Text.PlainText
-                        alternativeColorEnabled: delegate.checked === false
-                        wrapMode: Text.Wrap
-                        font.bold: delegate.checked ? false : true
                     }
 
                     SGWidgets.SGIcon {

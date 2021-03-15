@@ -3,6 +3,7 @@
 
 #include <set>
 #include <memory>
+#include <chrono>
 
 #include <QObject>
 #include <QString>
@@ -16,7 +17,7 @@
 
 namespace strata::device::operation {
     class BaseDeviceOperation;
-    enum class Type: int;
+    enum class Result: int;
 }
 
 namespace strata {
@@ -26,8 +27,6 @@ namespace strata {
         Q_OBJECT
         Q_DISABLE_COPY(BoardManager)
 
-        Q_PROPERTY(QVector<int> readyDeviceIds READ readyDeviceIds NOTIFY readyDeviceIdsChanged)
-
     public:
         BoardManager();
         ~BoardManager();
@@ -35,22 +34,25 @@ namespace strata {
         /**
          * Initialize BoardManager (start managing connected devices).
          * @param requireFwInfoResponse if true require response to get_firmware_info command during device identification
+         * @param keepDevicesOpen if true communication channel is not released (closed) if device is not recognized
          */
-        virtual void init(bool requireFwInfoResponse = true);
+        virtual void init(bool requireFwInfoResponse, bool keepDevicesOpen);
 
         /**
          * Disconnect from the device.
          * @param deviceId device ID
+         * @param disconnectDuration if more than 0, the device will be connected again after the given milliseconds at the earliest;
+         *                           if 0 or less, there will be no attempt to reconnect device
          * @return true if device was disconnected, otherwise false
          */
-        Q_INVOKABLE bool disconnect(const int deviceId);
+        bool disconnectDevice(const int deviceId, std::chrono::milliseconds disconnectDuration = std::chrono::milliseconds(0));
 
         /**
          * Reconnect the device.
          * @param deviceId device ID
          * @return true if device was reconnected (and identification process has started), otherwise false
          */
-        Q_INVOKABLE bool reconnect(const int deviceId);
+        bool reconnectDevice(const int deviceId);
 
         /**
          * Get smart pointer to the device.
@@ -59,10 +61,11 @@ namespace strata {
         device::DevicePtr device(const int deviceId);
 
         /**
-         * Get list of available device IDs.
-         * @return list of available device IDs (those, which have serial port opened)
+         * Get list of active device IDs.
+         * @return list of active device IDs (those, which have
+         *         communication channel (serial port) opened)
          */
-        QVector<int> readyDeviceIds();
+        QVector<int> activeDeviceIds();
 
     signals:
         /**
@@ -78,11 +81,11 @@ namespace strata {
         void boardDisconnected(int deviceId);
 
         /**
-         * Emitted when board is ready for communication.
+         * Emitted when board properties has changed (and board is ready for communication).
          * @param deviceId device ID
          * @param recognized true when board was recognized (identified), otherwise false
          */
-        void boardReady(int deviceId, bool recognized);
+        void boardInfoChanged(int deviceId, bool recognized);
 
         /**
          * Emitted when error occures during communication with the board.
@@ -92,28 +95,26 @@ namespace strata {
         void boardError(int deviceId, QString message);
 
         /**
-         * Emitted when there is available new message from the connected board.
-         * @param deviceId device ID
-         * @param message message from board
+         * Emitted when platform_id_changed notification was received (signal only for internal use).
+         * @param deviceId devide ID
          */
-
-        /**
-         * Emitted when device IDs has changed (available device ID list has changed).
-         */
-        void readyDeviceIdsChanged();
+        void platformIdChanged(const int deviceId, QPrivateSignal);
 
     protected slots:
         virtual void checkNewSerialDevices();
-        virtual void handleOperationFinished(device::operation::Type opType, int);
-        virtual void handleOperationError(QString message);
+        virtual void handleOperationFinished(device::operation::Result result, int status, QString errStr);
         virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+
+    private slots:
+        virtual void checkNotification(QByteArray message);
+        virtual void handlePlatformIdChanged(const int deviceId);
 
     protected:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
         bool addSerialPort(const int deviceId);
-        bool openDevice(const int deviceId, const device::DevicePtr newDevice);
-        void startDeviceOperations(const int deviceId, const device::DevicePtr device);
-        bool closeDevice(const int deviceId);
+        bool openDevice(const device::DevicePtr newDevice);
+        void startDeviceOperations(const device::DevicePtr device);
+        bool removeDevice(const int deviceId);
 
         void logInvalidDeviceId(const QString& message, const int deviceId) const;
 
@@ -121,17 +122,25 @@ namespace strata {
 
         QMutex mutex_;
 
-        // Access to next 3 members should be protected by mutex (one mutex for all) in case of multithread usage.
+        // Access to next 4 members should be protected by mutex (one mutex for all) in case of multithread usage.
         // Do not emit signals in block of locked code (because their slots are executed immediately in QML
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
         QHash<int, device::DevicePtr> openedDevices_;
+        QHash<int, QTimer*> reconnectTimers_;
 
-        QHash<int, std::shared_ptr<device::operation::BaseDeviceOperation>> deviceOperations_;
+        QHash<int, std::shared_ptr<device::operation::BaseDeviceOperation>> identifyOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;
+        // flag if communication channel should stay open if device is not recognized
+        bool keepDevicesOpen_;
+
+    private:
+        void startIdentifyOperation(const device::DevicePtr device);
+        static void operationLaterDeleter(device::operation::BaseDeviceOperation* operation);
+
     };
 
 }

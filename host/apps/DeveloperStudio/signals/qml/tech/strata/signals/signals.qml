@@ -17,6 +17,7 @@ QtObject {
     // [TODO][prasanth]: jwt should be created/stored in the HCS.
     // For now, jwt will be obtained in the UI and then sent to HCS.
     signal loginResult(string result)
+    signal logout();
 
     /*
       Registration signals
@@ -62,4 +63,11 @@ QtObject {
       Feedback result signals
     */
     signal feedbackResult(string result)
+
+    /*
+      Misc Signal for CVC
+    */
+    signal loadCVC()
+    signal requestCVCClose()
+    signal closeCVC()
 }

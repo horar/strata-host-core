@@ -60,7 +60,7 @@ public:
     QString createPlatformsList();
 
 signals:
-    void boardConnected(int deviceId, QString classId);
+    void boardConnected(int deviceId);
     void boardDisconnected(int deviceId);
     void boardMessage(QString platformId, QString message);
 

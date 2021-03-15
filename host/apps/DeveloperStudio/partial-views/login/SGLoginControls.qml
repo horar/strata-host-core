@@ -114,11 +114,11 @@ Item {
             id: passwordField
             Layout.fillWidth: true
             activeFocusOnTab: true
-            echoMode: TextInput.Password
             selectByMouse: true
-            KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
+            KeyNavigation.tab: rememberCheckBox
             placeholderText: qsTr("Password")
             showIcon: false
+            passwordMode: true
 
             Keys.onPressed: {
                 loginErrorRect.hide()
@@ -142,6 +142,7 @@ Item {
                 id: rememberCheckBox
                 text: qsTr("Remember Me")
                 checked: Authenticator.settings.rememberMe
+                KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
                 onCheckedChanged: {
                     Authenticator.settings.rememberMe = checked
                 }
@@ -289,9 +290,10 @@ Item {
             //console.log(Logger.devStudioCategory, "Login result received")
             if (resultObject.response === "Connected") {
                 connectionStatus.text = "Connected, Loading UI..."
-                var data = { "user_id": resultObject.user_id, "first_name":resultObject.first_name, "last_name": resultObject.last_name }
-                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
                 usernameField.updateModel()
+                sessionControls.loginSuccess(resultObject)
+                let data = { "user_id": resultObject.user_id, "first_name":resultObject.first_name, "last_name": resultObject.last_name }
+                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
             } else {
                 loginControls.visible = true
                 connectionStatus.text = ""

@@ -11,7 +11,6 @@
         <file>js/restclient.js</file>
         <file>main.qml</file>
         <file>SplashScreen.qml</file>
-        <file>partial-views/SGPrivacyPolicyPopUp.qml</file>
         <file>partial-views/help-tour/SGPeekThroughOverlay.qml</file>
         <file>partial-views/help-tour/SGTourControl.qml</file>
         <file>partial-views/help-tour/images/corner-fade.png</file>
@@ -50,9 +49,7 @@
         <file>partial-views/platform-selector/images/icons/filter-icons/motor_drivers.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/sensors.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/usb.svg</file>
-        <file>partial-views/platform-selector/CategoryFilterDelegate.qml</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/offline_controllers.svg</file>
-        <file>partial-views/platform-selector/FilterColumn.qml</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-automotive.svg</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-industrial-cloud-power.svg</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg</file>
@@ -92,12 +89,21 @@
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
         <file>partial-views/general/SGNotificationToast.qml</file>
+        <file>js/template_data.js</file>
         <file>partial-views/general/SGWebPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsPopup.qml</file>
         <file>partial-views/status-bar/SGSettingsCheckbox.qml</file>
-        <file>partial-views/platform-selector/RecentlyReleased.qml</file>
         <file>partial-views/platform-selector/PlatformImage.qml</file>
         <file>partial-views/general/WebPopup/SGWebControls.qml</file>
         <file>partial-views/general/WebPopup/SGWebView.qml</file>
+        <file>partial-views/notifications/NotificationDelegate.qml</file>
+        <file>partial-views/platform-selector/images/platform-images/recentlyReleased.png</file>
+        <file>partial-views/platform-selector/PlatformControlButton.qml</file>
+        <file>partial-views/platform-selector/PlatformFilterButton.qml</file>
+        <file>partial-views/notifications/NotificationsContainer.qml</file>
+        <file>partial-views/notifications/NotificationsInbox.qml</file>
+        <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
+        <file>partial-views/notifications/NotificationContent.qml</file>
+        <file>partial-views/control-view-creator/CVCLoader.qml</file>
     </qresource>
 </RCC>

@@ -10,5 +10,8 @@
 #include "Commands/src/CmdStartBackupFirmware.h"
 #include "Commands/src/CmdBackupFirmware.h"
 #include "Commands/src/CmdStartApplication.h"
+#include "Commands/src/CmdSetPlatformId.h"
+#include "Commands/src/CmdSetAssistedPlatformId.h"
+#include "Commands/src/CmdWait.h"
 
 #endif

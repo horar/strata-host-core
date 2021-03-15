@@ -1,10 +1,10 @@
 #include "SciPlatform.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <SGUtilsCpp.h>
+#include <SGJsonFormatter.h>
+
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonValue>
 #include <QStandardPaths>
 #include <QDir>
 #include <QSaveFile>
@@ -137,15 +137,28 @@ bool SciPlatform::programInProgress() const
     return programInProgress_;
 }
 
+QString SciPlatform::deviceName() const
+{
+    return deviceName_;
+}
+
+void SciPlatform::setDeviceName(const QString &deviceName)
+{
+    if (deviceName_ != deviceName) {
+        deviceName_ = deviceName;
+        emit deviceNameChanged();
+    }
+}
+
 void SciPlatform::resetPropertiesFromDevice()
 {
     if (device_ == nullptr) {
         return;
     }
 
-    QString verboseName = device_->property(strata::device::DeviceProperties::verboseName);
-    QString appVersion = device_->property(strata::device::DeviceProperties::applicationVer);
-    QString bootloaderVersion = device_->property(strata::device::DeviceProperties::bootloaderVer);
+    QString verboseName = device_->name();
+    QString appVersion = device_->applicationVer();
+    QString bootloaderVersion = device_->bootloaderVer();
 
     if (verboseName.isEmpty()) {
         if (appVersion.isEmpty() == false) {
@@ -160,38 +173,46 @@ void SciPlatform::resetPropertiesFromDevice()
     setVerboseName(verboseName);
     setAppVersion(appVersion);
     setBootloaderVersion(bootloaderVersion);
+    setDeviceName(device_->deviceName());
 }
 
-bool SciPlatform::sendMessage(const QByteArray &message)
+QVariantMap SciPlatform::sendMessage(const QString &message, bool onlyValidJson)
 {
+    QVariantMap retStatus;
+
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
 
-        setErrorString("Platform not connected");
-        return false;
+        retStatus["error"] = "not_connected";
+        return retStatus;
     }
 
     QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
+    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+    bool isJsonValid = parseError.error == QJsonParseError::NoError;
 
-    if (parseError.error != QJsonParseError::NoError) {
-        QString error = QString("JSON error at position %1 - %2")
-                .arg(parseError.offset)
-                .arg(parseError.errorString());
-
-        setErrorString(error);
-        return false;
+    if (onlyValidJson) {
+        if (isJsonValid == false) {
+            retStatus["error"] = "json_error";
+            retStatus["offset"] = parseError.offset;
+            retStatus["message"] = parseError.errorString();
+            return retStatus;
+        }
     }
 
-    QByteArray compactMessage = doc.toJson(QJsonDocument::Compact);
+    //compact format as line break is end of input for serial library
+    QString compactMsg = SGJsonFormatter::minifyJson(message);
 
-    bool result = device_->sendMessage(compactMessage);
+    bool result = device_->sendMessage(compactMsg.toUtf8());
     if (result) {
-        commandHistoryModel_->add(compactMessage);
+        commandHistoryModel_->add(compactMsg, isJsonValid);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+        retStatus["error"] = "no_error";
+    } else {
+        retStatus["error"] = "send_error";
     }
 
-    return result;
+    return retStatus;
 }
 
 bool SciPlatform::programDevice(QString filePath, bool doBackup)
@@ -239,12 +260,12 @@ void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
 
 void SciPlatform::messageFromDeviceHandler(QByteArray message)
 {
-    scrollbackModel_->append(message, SciScrollbackModel::MessageType::Response);
+    scrollbackModel_->append(message, false);
 }
 
 void SciPlatform::messageToDeviceHandler(QByteArray message)
 {
-    scrollbackModel_->append(message, SciScrollbackModel::MessageType::Request);
+    scrollbackModel_->append(message, true);
 }
 
 void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)

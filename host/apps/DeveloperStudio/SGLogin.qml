@@ -7,7 +7,6 @@ import "qrc:/partial-views/"
 import "qrc:/js/utilities.js" as Utility
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
-import "qrc:/js/constants.js" as Constants
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
@@ -187,8 +186,6 @@ Item {
                                     SGRegistrationControls {
                                         id: registerControls
                                         visible: false
-
-                                        property alias privacyPolicy: privacyPolicy
                                     }
                                 }
                             }
@@ -205,19 +202,6 @@ Item {
         y: root.height/2 - height/2
     }
 
-    Item {
-        id: privacyPolicy
-
-        function open() {
-            var privacyPolicyPopup = Utility.createObject("qrc:/partial-views/SGPrivacyPolicyPopUp.qml", privacyPolicy)
-            privacyPolicyPopup.width = root.width * .8
-            privacyPolicyPopup.webContainerHeight = root.height *.75
-            privacyPolicyPopup.x = root.width/2 - privacyPolicyPopup.width/2
-            privacyPolicyPopup.y = root.height/2 - privacyPolicyPopup.height/2
-            privacyPolicyPopup.open()
-        }
-    }
-
     Rectangle {
         id: testServerWarningContainer
         color: "red"
@@ -228,12 +212,12 @@ Item {
             margins: 30
         }
         height: testServerWarning.height + 30
-        visible: Rest.url !== Constants.PRODUCTION_AUTH_SERVER
+        visible: Rest.url !== urls.authServer
 
         Connections {
             target: Signals
             onServerChanged: {
-                testServerWarningContainer.visible = ( Rest.url !== Constants.PRODUCTION_AUTH_SERVER )
+                testServerWarningContainer.visible = ( Rest.url !== urls.authServer )
             }
         }
 
@@ -244,7 +228,7 @@ Item {
             anchors {
                 centerIn: parent
             }
-            text: "NON-DEFAULT / TEST AUTHENTICATION SERVER ENABLED, POTENTIALLY UNSECURED, ONLY USE TEST CREDENTIALS"
+            text: "NON-DEFAULT / TEST AUTHENTICATION SERVER ENABLED, POTENTIALLY UNSECURED, ONLY USE TEST CREDENTIALS.\nTEST AUTH SERVER REQUIRES VPN"
         }
 
         SGIcon {

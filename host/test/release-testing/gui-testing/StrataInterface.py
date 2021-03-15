@@ -82,7 +82,9 @@ def openPlatform(classId):
                 {
                     "class_id": classId,
                     "device_id": -1089402724,
-                    "firmware_version": "1.0.0"
+                    "controller_type": 1,
+                    "firmware_version": "1.0.0",
+                    "bootloader_version": "1.0.0"
                 }
             ]
         }

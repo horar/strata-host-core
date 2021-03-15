@@ -1,6 +1,7 @@
 import QtQuick.Controls 2.12
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 TextField {
     id: control
@@ -14,11 +15,14 @@ TextField {
     property alias leftIconSource: leftIconItem.source
     property bool darkMode: false
     property bool showCursorPosition: false
+    property bool showClearButton: false
     property bool passwordMode: false
     property bool busyIndicatorRunning: false
+    property bool contextMenuEnabled: false
 
     /* properties for suggestion list */
     property variant suggestionListModel
+    property Component suggestionListDelegate
     property string suggestionModelTextRole
     property int suggestionPosition: Item.Bottom
     property string suggestionEmptyModelText: "No Suggestion"
@@ -28,20 +32,22 @@ TextField {
     property int suggestionMaxHeight: 120
     property bool suggestionDelegateNumbering: false
     property bool suggestionDelegateRemovable: false
+    property bool suggestionDelegateTextWrap: false
     property alias suggestionPopup: suggestionPopupLoader.item
 
     signal suggestionDelegateSelected(int index)
     signal suggestionDelegateRemoveRequested(int index)
 
     /*private*/
-    property bool hasRightIcons: cursorInfoLoader.status === Loader.Ready
-                                 || revelPasswordLoader.status ===  Loader.Ready
+    property bool hasRightIcons: (cursorInfoLoader !== null && cursorInfoLoader.status === Loader.Ready)
+                                 || (revelPasswordLoader !== null && revelPasswordLoader.status ===  Loader.Ready)
 
     property bool revealPassword: false
 
     placeholderText: "Input..."
     selectByMouse: true
     focus: true
+    persistentSelection: contextMenuEnabled
     Keys.forwardTo: suggestionPopupLoader.status === Loader.Ready ? suggestionPopupLoader.item.contentItem : []
     Keys.priority: Keys.BeforeItem
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize
@@ -72,6 +78,12 @@ TextField {
         activeEditingTimer.restart()
     }
 
+    onActiveFocusChanged: {
+        if ((contextMenuEnabled === true) && (activeFocus === false) && (contextMenuPopupLoader.item.contextMenuPopupVisible === false)) {
+            control.deselect()
+        }
+    }
+
     Timer {
         id: activeEditingTimer
         interval: 1000
@@ -85,7 +97,7 @@ TextField {
         implicitHeight: 40
         color: {
             if (isValidAffectsBackground && !isValid) {
-                return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 1.9)
+                return Qt.lighter(Theme.palette.error, 1.9)
             }
 
             return darkMode ? "#5e5e5e" : control.palette.base
@@ -97,7 +109,7 @@ TextField {
             } else if (isValid) {
                 return darkMode ? "black" : control.palette.mid
             } else {
-                return SGWidgets.SGColorsJS.ERROR_COLOR
+                return Theme.palette.error
             }
         }
 
@@ -133,6 +145,12 @@ TextField {
             spacing: 4
 
             Loader {
+                id: clearButtonLoader
+                anchors.verticalCenter: parent.verticalCenter
+                sourceComponent: showClearButton && control.text.length > 0 ? clearButtonComponent : undefined
+            }
+
+            Loader {
                 id: cursorInfoLoader
                 anchors.verticalCenter: parent.verticalCenter
                 sourceComponent: showCursorPosition ? cursorInfoComponent : undefined
@@ -157,6 +175,7 @@ TextField {
         SGWidgets.SGSuggestionPopup {
             textEditor: control
             model: suggestionListModel
+            delegate: control.suggestionListDelegate ? control.suggestionListDelegate : implicitDelegate
             textRole: suggestionModelTextRole
             controlWithSpace: false
             position: suggestionPosition
@@ -166,13 +185,14 @@ TextField {
             maxHeight: suggestionMaxHeight
             delegateNumbering: suggestionDelegateNumbering
             delegateRemovable: suggestionDelegateRemovable
+            delegateTextWrap: suggestionDelegateTextWrap
 
             onDelegateSelected: {
                 control.suggestionDelegateSelected(index)
             }
 
             onRemoveRequested: {
-                suggestionDelegateRemoveRequested(index)
+                control.suggestionDelegateRemoveRequested(index)
             }
         }
     }
@@ -182,7 +202,7 @@ TextField {
 
         SGWidgets.SGTag {
             text: control.cursorPosition
-            color: Qt.rgba(0, 0, 0, 0.3)
+            color: "#b2b2b2"
             textColor: "white"
             horizontalPadding: 2
             verticalPadding: 2
@@ -202,6 +222,53 @@ TextField {
             onClicked: control.forceActiveFocus()
             onPressedChanged: {
                 revealPassword = pressed
+            }
+        }
+    }
+
+    Component {
+        id: clearButtonComponent
+
+        SGWidgets.SGIconButton {
+            iconColor: pressed ? "#828282" : "#b2b2b2"
+            backgroundOnlyOnHovered: false
+            highlightImplicitColor: "transparent"
+            iconSize: control.background.height - 16
+            icon.source: "qrc:/sgimages/times-circle.svg"
+            onClicked: {
+                control.forceActiveFocus()
+                control.clear()
+            }
+        }
+    }
+
+    Loader {
+        id: contextMenuPopupLoader
+        active: contextMenuEnabled
+        anchors.fill: parent
+
+        sourceComponent: Item {
+            property alias contextMenuPopupVisible: contextMenuPopup.visible
+
+            SGWidgets.SGContextMenuEditActions {
+                id: contextMenuPopup
+                textEditor: control
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+
+                onReleased: {
+                    if (containsMouse) {
+                        contextMenuPopup.popup(null)
+                    }
+                }
+
+                onClicked: {
+                    control.forceActiveFocus()
+                }
             }
         }
     }

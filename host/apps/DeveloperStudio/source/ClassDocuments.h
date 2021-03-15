@@ -46,7 +46,7 @@ public:
     Q_INVOKABLE void clearDocuments();
 
     void updateLoadingProgress(QJsonObject data);
-    void populateModels(QJsonObject data);
+    Q_INVOKABLE void populateModels(QJsonObject data);
     void populateMetaData(QJsonObject data);
 
 signals:
@@ -54,6 +54,7 @@ signals:
     void loadingChanged();
     void loadingProgressPercentageChanged();
     void metaDataInitializedChanged();
+    void md5Ready();
 
 private slots:
 

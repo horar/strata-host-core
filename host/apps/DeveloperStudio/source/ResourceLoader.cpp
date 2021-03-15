@@ -16,7 +16,10 @@
 const QStringList ResourceLoader::coreResources_{
     QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
     QStringLiteral("component-pdfjs.rcc"), QStringLiteral("component-common.rcc"),
-    QStringLiteral("component-sgwidgets.rcc")
+    QStringLiteral("component-sgwidgets.rcc"),
+    #ifdef QT_RCC_EXECUTABLE
+        QStringLiteral("component-monaco.rcc"),
+    #endif
 };
 
 ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
@@ -178,48 +181,6 @@ bool ResourceLoader::isViewRegistered(const QString &class_id) {
         return true;
     }
     return false;
-}
-
-QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *parent, QVariantMap initialProperties) {
-    QQmlEngine *e = qmlEngine(parent);
-    if (e) {
-        QQmlComponent component = QQmlComponent(e, path, QQmlComponent::CompilationMode::PreferSynchronous, parent);
-        clearLastLoggedError();
-        if (component.errors().count() > 0) {
-            qCCritical(logCategoryResourceLoader) << component.errors();
-            QString error_str;
-            for (const auto &this_error : component.errors()) {
-                error_str += this_error.toString() + "\n";
-            }
-            setLastLoggedError(error_str);
-            return NULL;
-        }
-        QQmlContext *context = qmlContext(parent);
-
-        // From the Qt Docs:
-        /*
-         * When QQmlComponent constructs an instance, it occurs in three steps:
-         *  1. The object hierarchy is created, and constant values are assigned.
-         *  2. Property bindings are evaluated for the first time.
-         *  3. If applicable, QQmlParserStatus::componentComplete() is called on objects.
-         *
-         * QQmlComponent::beginCreate() differs from QQmlComponent::create() in that it only performs step 1.
-         * QQmlComponent::completeCreate() must be called to complete steps 2 and 3.
-         */
-        QObject* object = component.beginCreate(context);
-        for (QString key : initialProperties.keys()) {
-            object->setProperty(key.toLocal8Bit().data(), initialProperties.value(key));
-        }
-        component.completeCreate();
-
-        QQuickItem* item = qobject_cast<QQuickItem*>( object );
-        QQmlEngine::setObjectOwnership(item, QQmlEngine::JavaScriptOwnership);
-
-        item->setParentItem(parent);
-        return item;
-    } else {
-        return NULL;
-    }
 }
 
 QString ResourceLoader::getVersionRegistered(const QString &class_id) {

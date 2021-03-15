@@ -1,13 +1,25 @@
 import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
-Item {
+import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0
+
+import "qrc:/js/platform_filters.js" as Filters
+
+Rectangle {
     id: root
-    height: column.height
-    width: column.width
+    implicitHeight: row.implicitHeight
+    Layout.fillWidth: true
+    color: mouseArea.containsMouse ? "#f2f2f2" : "white"
 
     property bool checked: false
 
-    signal selected(string filter)
+    signal selected()
+
+    function onClicked() {
+        Filters.setFilterActive(model.filterName, true)
+        selected()
+    }
 
     MouseArea {
         id: mouseArea
@@ -17,51 +29,33 @@ Item {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            root.selected(model.filterName)
+            root.onClicked()
         }
     }
 
-    Column {
-        id: column
-        spacing: 5
-
-        Rectangle {
-            id: iconBackground
-            color: root.checked ? "#33b13b" : "black"
-            width: 75
-            height: 75
-            radius: width/2
-
-            Image {
-                id: icon
-                anchors {
-                    fill: parent
-                }
-                source: model.iconSource
-                mipmap: true
-            }
+    RowLayout {
+        id: row
+        spacing: 0
+        anchors {
+            fill: parent
         }
 
-        Text {
+        SGIcon {
+            id: icon
+            implicitWidth: 25
+            implicitHeight: 25
+            source: model.iconSource
+            mipmap: true
+            iconColor: "black"
+            Layout.leftMargin: 20
+            visible: model.iconSource !== ""
+        }
+
+        SGText {
             text: model.text
-            anchors {
-                horizontalCenter: iconBackground.horizontalCenter
-            }
-            horizontalAlignment: Text.AlignHCenter
-            color: "#666"
-        }
-    }
-
-    Connections {
-        target: segmentFilterRow
-        onSelected: {
-            if (model.filterName !== filter) {
-                root.checked = false
-            } else if (root.checked) {
-                root.checked = false
-            } else {
-                root.checked = true
-            }
+            Layout.fillWidth: true
+            Layout.margins: 5
+            elide: Text.ElideRight
         }
     }
 }

@@ -5,6 +5,13 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/error/en.h>
 
+namespace strata {
+
+constexpr const char* const JSON_NOTIFICATION = "notification";
+constexpr const char* const JSON_PAYLOAD = "payload";
+constexpr const char* const JSON_VALUE = "value";
+constexpr const char* const JSON_STATUS = "status";
+
 // define the schemas
 
 const rapidjson::SchemaDocument CommandValidator::cmdSchema_(
@@ -291,12 +298,47 @@ const rapidjson::SchemaDocument CommandValidator::strataCommandSchema_(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::setPlatformId_nps_(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": ["ok", "failed", "already_initialized"]
+                }
+            },
+            "required": [ "status" ]
+        })"
+    )
+);
+
+const rapidjson::SchemaDocument CommandValidator::setAssistedPlatformId_nps_(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": ["ok", "failed", "already_initialized", "board_not_connected"]
+                }
+            },
+            "required": [ "status" ]
+        })"
+    )
+);
+
 const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument&> CommandValidator::schemas_ = {
     {JsonType::cmd, cmdSchema_},
     {JsonType::ack, ackSchema_},
     {JsonType::notification, notificationSchema_},
     {JsonType::reqPlatformIdNotif, reqPlatformId_nps_},
-    {JsonType::setPlatformIdNotif, notifPayloadStatusSchema_},
+    {JsonType::setPlatformIdNotif, setPlatformId_nps_},
+    {JsonType::setAssistedPlatformIdNotif, setAssistedPlatformId_nps_},
     {JsonType::getFirmwareInfoNotif, getFirmwareInfo_nps_},
     {JsonType::startBootloaderNotif, notifPayloadStatusSchema_},
     {JsonType::startApplicationNotif, notifPayloadStatusSchema_},
@@ -312,6 +354,7 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
 const std::map<const CommandValidator::JsonType, const char*> CommandValidator::notifications_ = {
     {JsonType::reqPlatformIdNotif, "platform_id"},
     {JsonType::setPlatformIdNotif, "set_platform_id"},
+    {JsonType::setAssistedPlatformIdNotif, "set_assisted_platform_id"},
     {JsonType::getFirmwareInfoNotif, "get_firmware_info"},
     {JsonType::startBootloaderNotif, "start_bootloader"},
     {JsonType::startApplicationNotif, "start_application"},
@@ -326,7 +369,7 @@ const std::map<const CommandValidator::JsonType, const char*> CommandValidator::
 rapidjson::SchemaDocument CommandValidator::parseSchema(const QByteArray &schema, bool *isOk) {
     bool ok = true;
     rapidjson::Document sd;
-    rapidjson::ParseResult result = sd.Parse(schema.data());
+    rapidjson::ParseResult result = sd.Parse(schema.data(), schema.size());
     if (result.IsError()) {
         qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
             << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON schema: '" << schema << "'";
@@ -339,7 +382,7 @@ rapidjson::SchemaDocument CommandValidator::parseSchema(const QByteArray &schema
     return rapidjson::SchemaDocument(sd);
 }
 
-bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json) {
+bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json, bool quiet) {
     rapidjson::SchemaValidator validator(schema);
 
     if (json.Accept(validator) == false) {
@@ -354,7 +397,10 @@ bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &s
 
         validator.GetError().Accept(writer);
 
-        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
+        if (quiet == false) {
+            qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
+        }
+
         return false;
     }
 
@@ -405,9 +451,9 @@ bool CommandValidator::validateNotification(const JsonType type, const rapidjson
         return false;
     }
 
-    const rapidjson::Value& notification = doc["notification"];
-    const rapidjson::Value& value = notification["value"];
-    const rapidjson::Value& payload = notification["payload"];
+    const rapidjson::Value& notification = doc[JSON_NOTIFICATION];
+    const rapidjson::Value& value = notification[JSON_VALUE];
+    const rapidjson::Value& payload = notification[JSON_PAYLOAD];
     if (notifIt->second != value) {
         return false;
     }
@@ -416,21 +462,46 @@ bool CommandValidator::validateNotification(const JsonType type, const rapidjson
 }
 
 bool CommandValidator::isValidJson(const QByteArray &command) {
-    return (rapidjson::Document().Parse(command.data()).HasParseError() == false);
+    return (rapidjson::Document().Parse(command.data(), command.size()).HasParseError() == false);
 }
 
-bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Document &doc) {
-    rapidjson::ParseResult result = doc.Parse(command.data());
+bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Document &doc, bool quiet) {
+    rapidjson::ParseResult result = doc.Parse(command.data(), command.size());
     if (result.IsError()) {
-        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
-            << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON: '" << command << "'";
+        if (quiet == false) {
+            qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
+                << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON: '" << command << "'";
+        }
         return false;
     }
     if (doc.IsObject() == false) {
         // JSON can contain only a value (e.g. "abc").
         // We require object as a JSON content (Strata JSON commands starts with '{' and ends with '}')
-        qCCritical(logCategoryCommandValidator).nospace().noquote() << "Content of JSON is not an object: '" << command << "'.";
+        if (quiet == false) {
+            qCCritical(logCategoryCommandValidator).nospace().noquote() << "Content of JSON is not an object: '" << command << "'.";
+        }
         return false;
     }
     return true;
 }
+
+QByteArray CommandValidator::notificationStatus(const rapidjson::Document &doc) {
+    if (doc.HasMember(JSON_NOTIFICATION) == false) {
+        return QByteArray();
+    }
+    const rapidjson::Value& notification = doc[JSON_NOTIFICATION];
+    if (notification.HasMember(JSON_PAYLOAD) == false) {
+        return QByteArray();
+    }
+    const rapidjson::Value& payload = notification[JSON_PAYLOAD];
+    if (payload.HasMember(JSON_STATUS) == false) {
+        return QByteArray();
+    }
+    const rapidjson::Value& status = payload[JSON_STATUS];
+    if (status.IsString()) {
+        return QByteArray(status.GetString(), status.GetStringLength());
+    }
+    return QByteArray();
+}
+
+}  // namespace

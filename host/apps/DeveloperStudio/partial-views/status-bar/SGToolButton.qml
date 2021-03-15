@@ -5,6 +5,7 @@ import "qrc:/partial-views"
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: buttonRoot
@@ -12,11 +13,11 @@ Rectangle {
     implicitWidth: parent.width
     color: {
         if (delegateMouse.containsMouse) {
-            return "#2fc238"
+            return Qt.lighter(Theme.palette.green, 1.15)
         } else if (model.selected) {
-            return "#34993b"
+            return Qt.darker(Theme.palette.green, 1.15)
         } else {
-            return "#33b13b"
+            return Theme.palette.green
         }
     }
     clip: true
@@ -67,9 +68,9 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         enabled: true
-        onClicked: {
-            menu.clicked(index)
-        }
         cursorShape: Qt.PointingHandCursor
+        onClicked: {
+            platformTabRoot.menuClicked(index)
+        }
     }
 }

@@ -190,6 +190,7 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
         updStatus = FirmwareUpdateController::UpdateStatus::Unsuccess;
         break;
     case FlasherConnector::State::Failed :
+    case FlasherConnector::State::NoFirmware :
         updStatus = FirmwareUpdateController::UpdateStatus::Failure;
         break;
     }
@@ -210,6 +211,9 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
     case FlasherConnector::Operation::RestoreFromBackup :
         updOperation = FirmwareUpdateController::UpdateOperation::Restore;
         break;
+    default :
+        // other cases are related to OTA and they are handled in develop-ota branch
+        return;
     }
 
     emit updateProgress(deviceId_, updOperation, updStatus, -1, -1, errorString);

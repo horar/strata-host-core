@@ -1,5 +1,5 @@
 #
-# Strta applications
+# Strata applications
 #
 option(APPS_CORESW "Build Strata applications" ON)
 add_feature_info(APPS_CORESW APPS_CORESW "Build Strata applications")
@@ -18,7 +18,7 @@ endif()
 
 
 #
-# Strta toolbox/development utilities
+# Strata toolbox/development utilities
 #
 option(APPS_TOOLBOX "Build Strata Toolbox/utilities" ON)
 add_feature_info(APPS_TOOLBOX APPS_TOOLBOX "Build Strata Toolbox/utilities")
@@ -44,6 +44,10 @@ add_feature_info(APPS_TOOLBOX_LV APPS_TOOLBOX_LV "LogViewer")
 cmake_dependent_option(APPS_TOOLBOX_WG "Build 'Widget Gallery'" ON
                         "APPS_TOOLBOX" OFF)
 add_feature_info(APPS_TOOLBOX_WG APPS_TOOLBOX_WG "Widget Gallery")
+
+add_feature_info(APPS_TOOLBOX_PIG APPS_TOOLBOX_PIG "Platform Interface Generator")
+cmake_dependent_option(APPS_TOOLBOX_PIG "Build 'Platform Interface Generator'" ON
+                        "APPS_TOOLBOX" OFF)
 
 if(APPS_CORESW_HCS)
     add_subdirectory(hcs3)
@@ -80,4 +84,8 @@ endif()
 
 if (APPS_TOOLBOX_WG)
     add_subdirectory(WidgetGallery)
+endif()
+
+if (APPS_TOOLBOX_PIG)
+    add_subdirectory(PlatformInterfaceGenerator)
 endif()

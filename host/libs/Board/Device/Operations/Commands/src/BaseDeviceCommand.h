@@ -1,8 +1,6 @@
 #ifndef BASE_DEVICE_COMMAND_H
 #define BASE_DEVICE_COMMAND_H
 
-#include <chrono>
-
 #include <QByteArray>
 #include <QString>
 
@@ -17,8 +15,25 @@ enum class CommandResult : int {
     Done,              // successfully done (received device response is OK)
     Partial,           // successfully done (received device response is OK), another command is expected to follow
     Retry,             // retry - send command again with same data
+    Reject,            // command was rejected (is unsupported)
     Failure,           // response to command is not successful
     FinaliseOperation  // finish operation (there is no point in continuing)
+};
+
+enum class CommandType : int {
+    BackupFirmware,
+    FlashBootloader,
+    FlashFirmware,
+    GetFirmwareInfo,
+    RequestPlatformid,
+    SetAssistedPlatformId,
+    SetPlatformId,
+    StartApplication,
+    StartBackupFirmware,
+    StartBootloader,
+    StartFlashBootloader,
+    StartFlashFirmware,
+    Wait
 };
 
 class BaseDeviceCommand {
@@ -28,7 +43,7 @@ public:
      * \param name command name
      * \param device the device on which the operation is performed
      */
-    BaseDeviceCommand(const device::DevicePtr& device, const QString& name);
+    BaseDeviceCommand(const DevicePtr& device, const QString& name, CommandType cmdType);
 
     /*!
      * BaseDeviceCommand destructor.
@@ -55,15 +70,20 @@ public:
     virtual bool processNotification(rapidjson::Document& doc) = 0;
 
     /*!
-     * Sets ACK received flag.
+     * Sets ACK OK flag.
      */
-    virtual void setAckReceived() final;
+    virtual void commandAcknowledged() final;
 
     /*!
-     * Checks if ACK received flag is set.
-     * \return true if ACK received flag is set, otherwise false
+     * Checks if ACK OK flag is set.
+     * \return true if ACK OK flag is set, otherwise false
      */
-    virtual bool ackReceived() const final;
+    virtual bool isCommandAcknowledged() const final;
+
+    /*!
+     * Sets command result to CommandResult::Reject.
+     */
+    virtual void commandRejected();
 
     /*!
      * This method is called when expires timeout for sent command.
@@ -77,22 +97,16 @@ public:
     virtual bool logSendMessage() const;
 
     /*!
-     * Returns how long to wait before sending next command.
-     * \return number of milliseconds
-     */
-    virtual std::chrono::milliseconds waitBeforeNextCommand() const;
-
-    /*!
-     * Returns specific data for finished() signal (e.g. chunk number).
-     * \return data for finished() signal or INT_MIN if not used (by default)
-     */
-    virtual int dataForFinish() const;
-
-    /*!
      * Command name.
      * \return name of command
      */
     virtual const QString name() const final;
+
+    /*!
+     * Command type.
+     * \return type of command (value from CommandType enum)
+     */
+    virtual CommandType type() const final;
 
     /*!
      * Command result.
@@ -100,14 +114,24 @@ public:
      */
     virtual CommandResult result() const final;
 
+    /*!
+     * Command status.
+     * \return status specific for command (chunk number, defined constant, ...)
+     */
+    virtual int status() const final;
+
 protected:
-    virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) final;
+    virtual void setDeviceVersions(const char* bootloaderVer, const char* applicationVer) final;
+    virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, Device::ControllerType type) final;
+    virtual void setDeviceAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) final;
     virtual void setDeviceBootloaderMode(bool inBootloaderMode) final;
-    virtual void setDeviceApiVersion(device::Device::ApiVersion apiVersion) final;
+    virtual void setDeviceApiVersion(Device::ApiVersion apiVersion) final;
     const QString cmdName_;
-    const device::DevicePtr& device_;
-    bool ackReceived_;
+    const CommandType cmdType_;
+    const DevicePtr& device_;
+    bool ackOk_;
     CommandResult result_;
+    int status_;
 };
 
 }  // namespace

@@ -1,8 +1,8 @@
 #include <Device/Operations/BaseDeviceOperation.h>
+#include <DeviceOperationsStatus.h>
 
 #include "Commands/include/DeviceCommands.h"
 #include "DeviceOperationsConstants.h"
-
 #include <CommandValidator.h>
 
 #include "logging/LoggingQtCategories.h"
@@ -14,19 +14,18 @@ namespace strata::device::operation {
 using command::BaseDeviceCommand;
 using command::CommandResult;
 
-
 BaseDeviceOperation::BaseDeviceOperation(const device::DevicePtr& device, Type type):
-    type_(type), responseTimer_(this), device_(device), run_(false), finished_(false)
+    type_(type), responseTimer_(this), started_(false), succeeded_(false),
+    finished_(false), device_(device), status_(DEFAULT_STATUS)
 {
     responseTimer_.setSingleShot(true);
     responseTimer_.setInterval(RESPONSE_TIMEOUT);
 
     connect(this, &BaseDeviceOperation::sendCommand, this, &BaseDeviceOperation::handleSendCommand, Qt::QueuedConnection);
-    connect(device_.get(), &Device::msgFromDevice, this, &BaseDeviceOperation::handleDeviceResponse);
-    connect(device_.get(), &Device::deviceError, this, &BaseDeviceOperation::handleDeviceError);
+    connect(this, &BaseDeviceOperation::processCmdResult, this, &BaseDeviceOperation::handleProcessCmdResult, Qt::QueuedConnection);
     connect(&responseTimer_, &QTimer::timeout, this, &BaseDeviceOperation::handleResponseTimeout);
 
-    //qCDebug(logCategoryDeviceOperations) << device_ << "Created new device operation (" << static_cast<int>(type_) << ")." ;
+    //qCDebug(logCategoryDeviceOperations) << device_ << "Created new device operation (" << static_cast<int>(type_) << ").";
 }
 
 BaseDeviceOperation::~BaseDeviceOperation() {
@@ -36,26 +35,35 @@ BaseDeviceOperation::~BaseDeviceOperation() {
 
 void BaseDeviceOperation::run()
 {
-    if (run_) {
-        QString errMsg(QStringLiteral("The operation has already run."));
-        qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
-        emit error(errMsg);
-        emit finished(Type::Failure);
+    if (started_) {
+        QString errStr(QStringLiteral("The operation has already run."));
+        qCWarning(logCategoryDeviceOperations) << device_ << errStr;
+        finishOperation(Result::Error, errStr);
         return;
     }
 
     if (device_->lockDeviceForOperation(reinterpret_cast<quintptr>(this)) == false) {
-        QString errMsg(QStringLiteral("Cannot get access to device (another operation is running)."));
-        qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
-        emit error(errMsg);
-        emit finished(Type::Failure);
+        QString errStr(QStringLiteral("Cannot get access to device (another operation is running)."));
+        qCWarning(logCategoryDeviceOperations) << device_ << errStr;
+        finishOperation(Result::Error, errStr);
         return;
     }
 
+    connect(device_.get(), &Device::msgFromDevice, this, &BaseDeviceOperation::handleDeviceResponse);
+    connect(device_.get(), &Device::deviceError, this, &BaseDeviceOperation::handleDeviceError);
+
     currentCommand_ = commandList_.begin();
-    run_ = true;
+    started_ = true;
 
     emit sendCommand(QPrivateSignal());
+}
+
+bool BaseDeviceOperation::hasStarted() const {
+    return started_;
+}
+
+bool BaseDeviceOperation::isSuccessfullyFinished() const {
+    return succeeded_;
 }
 
 bool BaseDeviceOperation::isFinished() const {
@@ -64,14 +72,42 @@ bool BaseDeviceOperation::isFinished() const {
 
 void BaseDeviceOperation::cancelOperation()
 {
+    qCDebug(logCategoryDeviceOperations) << device_ << "Cancelling currently running operation.";
     responseTimer_.stop();
-    finishOperation(Type::Cancel);
+    finishOperation(Result::Cancel);
 }
 
 int BaseDeviceOperation::deviceId() const {
     return device_->deviceId();
 }
 
+Type BaseDeviceOperation::type() const {
+    return type_;
+}
+
+QString BaseDeviceOperation::resolveErrorString(Result result)
+{
+    switch (result) {
+    case Result::Success: return QString();
+    case Result::Reject: return QStringLiteral("Command rejected");
+    case Result::Cancel: return QStringLiteral("Operation cancelled");
+    case Result::Timeout: return QStringLiteral("No response from device");
+    case Result::Failure: return QStringLiteral("Faulty response from device");
+    case Result::Error: return QStringLiteral("Error during operation");
+    }
+
+    qCCritical(logCategoryDeviceOperations) << "Unsupported result value";
+    return QStringLiteral("Unknown error");
+}
+
+void BaseDeviceOperation::setResponseTimeout(std::chrono::milliseconds responseInterval)
+{
+    responseTimer_.setInterval(responseInterval);
+}
+
+bool BaseDeviceOperation::bootloaderMode() {
+    return device_->bootloaderMode();
+}
 
 void BaseDeviceOperation::handleSendCommand()
 {
@@ -80,6 +116,34 @@ void BaseDeviceOperation::handleSendCommand()
     }
 
     BaseDeviceCommand *command = currentCommand_->get();
+
+    if (command->type() == command::CommandType::Wait) {
+        command::CmdWait* cmdWait = dynamic_cast<command::CmdWait*>(command);
+        if (cmdWait != nullptr) {
+            std::chrono::milliseconds waitTime = cmdWait->waitTime();
+            if (waitTime > std::chrono::milliseconds(0)) {
+                QString description = cmdWait->description();
+                if (description.isEmpty() == false) {
+                    qCInfo(logCategoryDeviceOperations) << device_ << description;
+                }
+                qCInfo(logCategoryDeviceOperations) << device_ << "Waiting " << waitTime.count()
+                    << " milliseconds before sending next command.";
+                QTimer::singleShot(waitTime, this, [this](){
+                    handleProcessCmdResult();
+                });
+            } else {
+                qCDebug(logCategoryDeviceOperations) << device_ << "Skip waiting before the next command.";
+                emit processCmdResult(QPrivateSignal());
+            }
+        } else {
+            QString errStr(QStringLiteral("Unexpected 'wait' command error."));
+            qCCritical(logCategoryDeviceOperations) << device_ << errStr;
+            finishOperation(Result::Error, errStr);
+        }
+
+        return;
+    }
+
     QString logMsg(QStringLiteral("Sending '") + command->name() + QStringLiteral("' command."));
     if (command->logSendMessage()) {
         qCInfo(logCategoryDeviceOperations) << device_ << logMsg;
@@ -90,15 +154,13 @@ void BaseDeviceOperation::handleSendCommand()
     if (device_->sendMessage(command->message(), reinterpret_cast<quintptr>(this))) {
         responseTimer_.start();
     } else {
-        QString errMsg(QStringLiteral("Cannot send '") + command->name() + QStringLiteral("' command."));
-        qCCritical(logCategoryDeviceOperations) << device_ << errMsg;
-        reset();
-        emit error(errMsg);
-        emit finished(Type::Failure);
+        QString errStr(QStringLiteral("Cannot send '") + command->name() + QStringLiteral("' command."));
+        qCCritical(logCategoryDeviceOperations) << device_ << errStr;
+        finishOperation(Result::Error, errStr);
     }
 }
 
-void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
+void BaseDeviceOperation::handleDeviceResponse(const QByteArray data)
 {
     if (currentCommand_ == commandList_.end()) {
         qCDebug(logCategoryDeviceOperations) << device_ << "No command is being processed, message from device is ignored.";
@@ -116,6 +178,8 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
 
     if (doc.HasMember(JSON_ACK)) {
         if (CommandValidator::validate(CommandValidator::JsonType::ack, doc)) {
+            ok = true;
+
             const QString ackStr = doc[JSON_ACK].GetString();
             qCDebug(logCategoryDeviceOperations) << device_ << "Received '" << ackStr << "' ACK.";
             const rapidjson::Value& payload = doc[JSON_PAYLOAD];
@@ -124,10 +188,13 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
             BaseDeviceCommand *command = currentCommand_->get();
             if (ackStr == command->name()) {
                 if (ackOk) {
-                    command->setAckReceived();
+                    command->commandAcknowledged();
                 } else {
                     const QString ackError = payload[JSON_RETURN_STRING].GetString();
                     qCWarning(logCategoryDeviceOperations) << device_ << "ACK for '" << command->name() << "' command is not OK: '" << ackError << "'.";
+                    command->commandRejected();
+
+                    emit processCmdResult(QPrivateSignal());
                 }
             } else {
                 qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong ACK. Expected '" << command->name() << "', got '" << ackStr << "'.";
@@ -135,7 +202,6 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
                     qCWarning(logCategoryDeviceOperations) << device_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
                 }
             }
-            ok = true;
         }
     } else {
         if (doc.HasMember(JSON_NOTIFICATION)) {
@@ -143,22 +209,31 @@ void BaseDeviceOperation::handleDeviceResponse(const QByteArray& data)
             if (command->processNotification(doc)) {
                 responseTimer_.stop();
                 ok = true;
-                if (command->ackReceived() == false) {
+
+                if (command->isCommandAcknowledged() == false) {
                     qCWarning(logCategoryDeviceOperations) << device_ << "Received notification without previous ACK.";
                 }
                 qCDebug(logCategoryDeviceOperations) << device_ << "Processed '" << command->name() << "' notification.";
 
-                if (command->result() == CommandResult::Failure) {
-                    qCWarning(logCategoryDeviceOperations) << device_ << "Received faulty notification: '" << data << "'.";
+                CommandResult result = command->result();
+                if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
+                    if (result == CommandResult::Failure) {
+                        qCWarning(logCategoryDeviceOperations) << device_ << "Received faulty notification: '" << data << "'.";
+                    }
+
+                    const QByteArray status = CommandValidator::notificationStatus(doc);
+                    if (status.isEmpty() == false) {
+                        qCInfo(logCategoryDeviceOperations) << device_ << "Command '" << command->name() << "' retruned '" << status << "'.";
+                    }
                 }
 
-                QTimer::singleShot(command->waitBeforeNextCommand(), this, [this](){ nextCommand(); });
+                emit processCmdResult(QPrivateSignal());
             }
         }
     }
 
     if (ok == false) {
-        qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong or malformed response: '" << data << "'.";
+        qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong, unexpected or malformed response: '" << data << "'.";
     }
 }
 
@@ -172,31 +247,22 @@ void BaseDeviceOperation::handleResponseTimeout()
     command->onTimeout();  // This can change command result.
     // Some commands can timeout - result is other than 'InProgress' then.
     if (command->result() == CommandResult::InProgress) {
-        finishOperation(Type::Timeout);
+        finishOperation(Result::Timeout);
     } else {
         // In this case we move to next command (or do retry).
-        QTimer::singleShot(0, this, [this](){ nextCommand(); });
+        emit processCmdResult(QPrivateSignal());
     }
 }
 
-void BaseDeviceOperation::handleDeviceError(device::Device::ErrorCode errCode, QString msg)
+void BaseDeviceOperation::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
 {
     Q_UNUSED(errCode)
     responseTimer_.stop();
-    reset();
-    qCCritical(logCategoryDeviceOperations) << device_ << "Error: " << msg;
-    emit error(msg);
-    emit finished(Type::Failure);
+    qCCritical(logCategoryDeviceOperations) << device_ << "Error: " << errStr;
+    finishOperation(Result::Error, errStr);
 }
 
-void BaseDeviceOperation::resume()
-{
-    if (run_) {
-        emit sendCommand(QPrivateSignal());
-    }
-}
-
-void BaseDeviceOperation::nextCommand()
+void BaseDeviceOperation::handleProcessCmdResult()
 {
     if (currentCommand_ == commandList_.end()) {
         return;
@@ -204,10 +270,10 @@ void BaseDeviceOperation::nextCommand()
 
     BaseDeviceCommand *command = currentCommand_->get();
     CommandResult result = command->result();
-    int data = command->dataForFinish();
+    status_ = command->status();
 
     if (postCommandHandler_) {
-        postCommandHandler_(result, data);  // this can modify result and data
+        postCommandHandler_(result, status_);  // this can modify result and status_
     }
 
     switch (result) {
@@ -217,32 +283,53 @@ void BaseDeviceOperation::nextCommand()
     case CommandResult::Done :
         ++currentCommand_;  // move to next command
         if (currentCommand_ == commandList_.end()) {  // end of command list - finish operation
-            finishOperation(type_, data);
+            finishOperation(Result::Success);
         } else {
-            emit sendCommand(QPrivateSignal());  // send next command
+            emit sendCommand(QPrivateSignal());  // send (next) command
         }
         break;
     case CommandResult::Partial :
         // Operation is not finished yet, so emit only signal and do not call function finishOperation().
         // Do not increment currentCommand_, move to next command should be managed by logic in concrete operatrion.
-        emit finished(type_, data);
+        emit finished(Result::Success, status_);
         break;
     case CommandResult::Retry :
         emit sendCommand(QPrivateSignal());  // send same command again
         break;
+    case CommandResult::Reject :
+        finishOperation(Result::Reject);
+        break;
     case CommandResult::Failure :
-        finishOperation(Type::Failure);
+        finishOperation(Result::Failure);
         break;
     case CommandResult::FinaliseOperation :
-        finishOperation(type_, data);
+        finishOperation(Result::Success);
         break;
     }
 }
 
-void BaseDeviceOperation::finishOperation(Type operation, int data) {
+void BaseDeviceOperation::finishOperation(Result result, const QString &errorString) {
     reset();
     finished_ = true;
-    emit finished(operation, data);
+
+    disconnect(device_.get(), &Device::msgFromDevice, this, &BaseDeviceOperation::handleDeviceResponse);
+    disconnect(device_.get(), &Device::deviceError, this, &BaseDeviceOperation::handleDeviceError);
+
+    QString effectiveErrorString = errorString;
+    if (result == Result::Success) {
+        succeeded_ = true;
+    } else if (effectiveErrorString.isEmpty()) {
+        effectiveErrorString = resolveErrorString(result);
+    }
+
+    emit finished(result, status_, effectiveErrorString);
+}
+
+void BaseDeviceOperation::resume()
+{
+    if (started_) {
+        emit sendCommand(QPrivateSignal());
+    }
 }
 
 void BaseDeviceOperation::reset() {
@@ -250,7 +337,5 @@ void BaseDeviceOperation::reset() {
     currentCommand_ = commandList_.end();
     device_->unlockDevice(reinterpret_cast<quintptr>(this));
 }
-
-
 
 }  // namespace

@@ -26,6 +26,7 @@ var uuid_map = {
     "TEST.2018.002.0.0": "motor-vortex",
     "entice_rgb" : "entice_rgb",
     "template": "template",
+    "core-test-ui":"core-test-ui",
 
     /*****
         CES HACK or temporary Class ID for development purposes(class_id)
@@ -73,6 +74,7 @@ var uuid_map = {
     "245": "bldcMotorControl",
     "246": "meshNetwork",
     "265": "zigbee",
+    "9b8fb506-dd43-40a5-b762-2ec8b70cbb78":"template",
 
     /*****
         Real UUID generated from interaction with Deployment Portal (class_id)
@@ -81,6 +83,10 @@ var uuid_map = {
     "87054646-955d-42ed-aa82-8927b6a70286": "motorController",
     "b8a53467-4155-4104-905e-8d23bb5664a3": "Adj-LDO",
     "8da4158e-caa7-469d-8e4c-949d7a7e9858": "Adj-LDO",
+    "043683ef-537b-49e6-a090-30e314a73265": "fan6500xx", //4B
+    "101d15b0-3aa9-40b5-a1ae-b0e0b87f4f5b": "fan6500xx", //4C
+    "f81d23a7-3c93-40c6-ac5f-e836e936728b": "fan6500xx", //5A
+    "a3359627-3938-4a84-9a9c-fb57ff22deed": "fan6500xx", //8B
     "d0cc3eb2-f822-4955-afa4-b975957aed38": "Adj-LDO",
     "0570d932-6a3f-4a34-8442-cd9914518241": "current-sense",
     "76a518b4-37bc-4fee-ad5b-92c381dea0c2": "zigbee",
@@ -102,6 +108,6 @@ var uuid_map = {
     "2286e1e0-4035-46b9-b197-4d729653c101": "rsl10-dcdc",
     "4aad7090-eac3-470e-a304-00988c8c006d": "rsl10-dcdc",
     "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-dcdc",
-    "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators"
-
+    "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators",
+    "8a757b79-ba44-4830-864b-2bb965552209" : "pixel"
 }

@@ -4,6 +4,8 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
 import QtQuick.Dialogs 1.3
 import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 FocusScope {
     id: exportView
@@ -37,6 +39,7 @@ FocusScope {
 
             SGWidgets.SGFileSelector {
                 id: exportPathSelector
+                contextMenuEnabled: true
                 width: content.width
                 hasHelperText: false
                 filePath: model.platform.scrollbackModel.exportFilePath
@@ -52,7 +55,7 @@ FocusScope {
 
                 font.bold: true
                 textColor: "white"
-                color: SGWidgets.SGColorsJS.ERROR_COLOR
+                color: TangoTheme.palette.error
             }
 
             SGWidgets.SGButton {
@@ -115,7 +118,7 @@ FocusScope {
                 text: "ACTIVE"
                 font.bold: true
                 textColor: "white"
-                color: SGWidgets.SGColorsJS.TANGO_PLUM1
+                color: TangoTheme.palette.plum1
                 visible: model.platform.scrollbackModel.autoExportIsActive
             }
 
@@ -131,6 +134,7 @@ FocusScope {
 
             SGWidgets.SGFileSelector {
                 id: autoExportPathSelector
+                contextMenuEnabled: true
                 width: content.width
                 anchors {
                     top: autoExportSubTitle.bottom
@@ -157,7 +161,7 @@ FocusScope {
                 text: model.platform.scrollbackModel.autoExportErrorString
                 font.bold: true
                 textColor: "white"
-                color: SGWidgets.SGColorsJS.ERROR_COLOR
+                color: TangoTheme.palette.error
             }
 
             SGWidgets.SGButton {

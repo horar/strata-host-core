@@ -1,5 +1,4 @@
 #pragma once
-
 #include <QStringList>
 #include <QObject>
 #include <QString>
@@ -69,14 +68,6 @@ public:
      * @return True if registered, false if not registered into qrc.
      */
     Q_INVOKABLE bool isViewRegistered(const QString &class_id);
-
-    /**
-     * @brief createViewObject Creates a QML object and attaches it to parent
-     * @param path The path to the QML file
-     * @param parent The parent to append this object to
-     * @return The created QQuickItem*
-     */
-    Q_INVOKABLE QQuickItem* createViewObject(const QString &path, QQuickItem *parent, QVariantMap initialProperties = QVariantMap());
 
     /**
      * @brief getVersionRegistered Gets the version of the class_id registered

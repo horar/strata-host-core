@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Button {
     id: itemRoot
@@ -20,15 +21,15 @@ Button {
             family: Fonts.franklinGothicBold
         }
 
-        fontSizeMultiplier: 1.25
+        fontSizeMultiplier: 1
     }
 
     background: Rectangle {
         id: itemBackground
         opacity: enabled ? 1 : 0.3
         color: !itemRoot.hovered ?
-                   "#007a1f" : itemRoot.pressed ?
-                       Qt.lighter(SGColorsJS.STRATA_GREEN, 1.1) : SGColorsJS.STRATA_GREEN
+                   Qt.darker(Theme.palette.green, 1.15) : itemRoot.pressed ?
+                       Qt.lighter(Theme.palette.green, 1.15) : Theme.palette.green
         clip: true
     }
 

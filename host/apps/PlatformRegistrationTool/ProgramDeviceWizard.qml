@@ -7,6 +7,7 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
 import tech.strata.flasherConnector 1.0
+import tech.strata.theme 1.0
 import QtQml.StateMachine 1.12 as DSM
 
 FocusScope {
@@ -57,6 +58,10 @@ FocusScope {
     Component.onCompleted: {
         if (jlinkExePath.length === 0) {
             jlinkExePath = searchJLinkExePath()
+        }
+
+        if (jlinkExePath.length > 0) {
+            searchEdit.forceActiveFocus()
         }
     }
 
@@ -421,7 +426,7 @@ FocusScope {
                 }
 
                 DSM.SignalTransition {
-                    targetState: stateWriteRegistrationData
+                    targetState: stateStartBootloader
                     signal: prtModel.notifyServiceFinished
                     guard: boardCount > 0 && errorString.length === 0
                     onTriggered: {
@@ -440,25 +445,75 @@ FocusScope {
             }
 
             DSM.State {
-                id: stateWriteRegistrationData
+                id: stateStartBootloader
 
                 onEntered: {
-                    wizard.subtextNote = "writing to device"
-                    prtModel.writeRegistrationData(
-                                wizard.currentClassId,
-                                stateRegistration.currentPlatformId,
-                                stateRegistration.currentBoardCount)
+                    wizard.subtextNote = "starting bootloader"
+                    prtModel.startBootloader()
                 }
 
                 DSM.SignalTransition {
-                    targetState: stateLoopSucceed
-                    signal: prtModel.writeRegistrationDataFinished
+                    targetState: stateWriteRegistrationData
+                    signal: prtModel.startBootloaderFinished
                     guard: errorString.length === 0
                 }
 
                 DSM.SignalTransition {
                     targetState: stateLoopFailed
-                    signal: prtModel.writeRegistrationDataFinished
+                    signal: prtModel.startBootloaderFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
+            }
+
+            DSM.State {
+                id: stateWriteRegistrationData
+
+                onEntered: {
+                    wizard.subtextNote = "writing to device"
+                    prtModel.setPlatformId(
+                                wizard.currentClassId,
+                                stateRegistration.currentPlatformId,
+                                stateRegistration.currentBoardCount)
+
+                    //TODO: or call setAssistedPlatformId based on platform type
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateStartApplication
+                    signal: prtModel.setPlatformIdFinished
+                    guard: errorString.length === 0
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: prtModel.setPlatformIdFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
+            }
+
+            DSM.State {
+                id: stateStartApplication
+
+                onEntered: {
+                    wizard.subtextNote = "starting application firmware"
+                    prtModel.startApplication()
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopSucceed
+                    signal: prtModel.startApplicationFinished
+                    guard: errorString.length === 0
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: prtModel.startApplicationFinished
                     guard: errorString.length > 0
                     onTriggered: {
                         wizard.subtextNote = errorString
@@ -528,6 +583,12 @@ FocusScope {
     CommonCpp.SGJLinkConnector {
         id: jLinkConnector
         eraseBeforeProgram: true
+
+//TODO this should be set based on info from cloud service
+//        device: "RSL10"
+//        speed: 1000
+//        startAddress: parseInt("00100000",16)
+
         device: "EFM32GG380F1024"
         speed: 4000
     }
@@ -789,9 +850,9 @@ FocusScope {
 
                     iconColor: {
                         if (stateLoopSucceed.active) {
-                            return SGWidgets.SGColorsJS.STRATA_GREEN
+                            return Theme.palette.green
                         } else if (stateLoopFailed.active || stateError.active) {
-                            return SGWidgets.SGColorsJS.TANGO_SCARLETRED2
+                            return TangoTheme.palette.scarletRed2
                         }
 
                         return "black"
@@ -822,10 +883,10 @@ FocusScope {
                     } else if (stateProgram.active || stateRegistration.active) {
                         msg = wizard.subtextNote
                         msg += "\n\n"
-                        msg += "Do not unplug the device"
+                        msg += "Do not unplug device"
                         return msg
                     } else if (stateLoopSucceed.active) {
-                        msg = "You can unplug the device now\n\n"
+                        msg = "You can unplug device now\n\n"
                         msg += "To program another device, simply plug it in and\n"
                         msg += "process will start automatically\n\n"
                         msg += "or press End."
@@ -833,7 +894,7 @@ FocusScope {
                     } else if (stateLoopFailed.active) {
                         msg = wizard.subtextNote
                         msg += "\n\n"
-                        msg += "Unplug the device and press Continue"
+                        msg += "Unplug device and press Continue"
                         return msg
                     } else if (stateError.active) {
                         msg = wizard.subtextNote
@@ -952,7 +1013,7 @@ FocusScope {
 
     function resolveAbsoluteFileUrl(path) {
         return CommonCpp.SGUtilsCpp.pathToUrl(
-            CommonCpp.SGUtilsCpp.fileAbsolutePath(path))
+            CommonCpp.SGUtilsCpp.parentDirectoryPath(path))
     }
 
     function searchJLinkExePath() {
