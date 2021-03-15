@@ -203,7 +203,10 @@ Item {
 
                         spacing: 4
 
-                        visible: bgMouseArea.containsMouse || releasePortButton.hovered || deleteButton.hovered
+                        visible: tabDelegate.isCurrent
+                                 && ( bgMouseArea.containsMouse
+                                     || releasePortButton.hovered
+                                     || deleteButton.hovered)
 
                         SGWidgets.SGIconButton {
                             id: releasePortButton
