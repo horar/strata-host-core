@@ -383,11 +383,12 @@ Rectangle {
                 }
             }
 
-            TextField {
+            SGTextField {
                 id: outputFileText
                 Layout.fillWidth: true
                 Layout.preferredHeight: 30
                 placeholderText: "Output Folder Location"
+                contextMenuEnabled: true
             }
         }
 
