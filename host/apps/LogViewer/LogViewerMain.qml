@@ -360,6 +360,7 @@ FocusScope {
             activeFocusOnTab: false
             focus: false
             leftIconSource: "qrc:/sgimages/zoom.svg"
+            contextMenuEnabled: true
 
             onTextChanged: {
                 searchingMode = true

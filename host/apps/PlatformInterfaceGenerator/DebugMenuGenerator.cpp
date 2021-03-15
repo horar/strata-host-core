@@ -385,7 +385,7 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine();
 
     // Generate the textfield for the value of the payload property
-    text += writeLine("TextField {");
+    text += writeLine("SGTextField {");
     indentLevel++;
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("Layout.fillWidth: true");
@@ -393,6 +393,7 @@ QString DebugMenuGenerator::generateMainListView()
     text += writeLine("placeholderText: generatePlaceholder(model.type, model.value)");
     text += writeLine("selectByMouse: true");
     text += writeLine("visible: model.type !== \"array\" && model.type !== \"object\" && model.type !== \"bool\"");
+    text += writeLine("contextMenuEnabled: true");
     text += writeLine("validator: RegExpValidator {");
     indentLevel++;
     text += writeLine("regExp: {");
@@ -797,7 +798,7 @@ QString DebugMenuGenerator::generateArrayComponent()
     indentLevel--;
     text += writeLine("}");
     text += writeLine();
-    text += writeLine("TextField {");
+    text += writeLine("SGTextField {");
     indentLevel++;
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("Layout.fillWidth: true");
@@ -805,6 +806,7 @@ QString DebugMenuGenerator::generateArrayComponent()
     text += writeLine("placeholderText: generatePlaceholder(modelData.type, modelData.value)");
     text += writeLine("selectByMouse: true");
     text += writeLine("visible: modelData.type !== \"array\" && modelData.type !== \"object\" && modelData.type !== \"bool\"");
+    text += writeLine("contextMenuEnabled: true");
     text += writeLine("validator: RegExpValidator {");
     indentLevel++;
     text += writeLine("regExp: {");
@@ -942,7 +944,7 @@ QString DebugMenuGenerator::generateObjectComponent()
     text += writeLine();
 
     // Generate the textfield for editing strings, ints, and doubles
-    text += writeLine("TextField {");
+    text += writeLine("SGTextField {");
     indentLevel++;
     text += writeLine("Layout.fillHeight: true");
     text += writeLine("Layout.fillWidth: true");
@@ -950,6 +952,7 @@ QString DebugMenuGenerator::generateObjectComponent()
     text += writeLine("placeholderText: generatePlaceholder(modelData.type, modelData.value)");
     text += writeLine("selectByMouse: true");
     text += writeLine("visible: modelData.type !== \"array\" && modelData.type !== \"object\" && modelData.type !== \"bool\"");
+    text += writeLine("contextMenuEnabled: true");
     text += writeLine("validator: RegExpValidator {");
     indentLevel++;
     text += writeLine("regExp: {");

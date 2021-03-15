@@ -7,6 +7,7 @@ SGWidgets.SGAbstractContextMenu {
 
     property var textEditor: null
     property bool forceFocus: true
+    property bool copyEnabled: true // for passwords, they cannot be cut/copied
 
     Action {
         id: undoAction
@@ -28,7 +29,7 @@ SGWidgets.SGAbstractContextMenu {
     Action {
         id: cutAction
         text: qsTr("Cut")
-        enabled: textEditor.selectedText.length > 0
+        enabled: copyEnabled && (textEditor.readOnly === false) && (textEditor.selectedText.length > 0)
         onTriggered: {
             textEditor.cut()
         }
@@ -36,7 +37,7 @@ SGWidgets.SGAbstractContextMenu {
     Action {
         id: copyAction
         text: qsTr("Copy")
-        enabled: textEditor.selectedText.length > 0
+        enabled: copyEnabled && (textEditor.selectedText.length > 0)
         onTriggered: {
             textEditor.copy()
         }

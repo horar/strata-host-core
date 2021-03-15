@@ -4,6 +4,8 @@ import tech.strata.prt 1.0 as PrtCommon
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 
+import "./jsonSchemas.js" as JsonSchemas
+
 Item {
     id: prtMain
 
@@ -44,7 +46,7 @@ Item {
         id: delayWizardPushTimer
         interval: 500
         onTriggered: {
-            stackView.push(wizardComponent)
+            stackView.push(settingsComponent)
         }
     }
 
@@ -69,27 +71,81 @@ Item {
     }
 
     Component {
-        id: wizardComponent
+        id: settingsComponent
+
+        ProgramSettingsWizard {
+            id: settingsWizard
+            focus: true
+            prtModel: prtMain.prtModel
+
+            onRegistrationEmbeddedRequested: {
+                console.log("EMBEDDED")
+                var properties = {
+                    "registrationMode": ProgramDeviceWizard.Embedded,
+                    "jlinkExePath": settingsWizard.jlinkExePath,
+                    "embeddedData": settingsWizard.embeddedData,
+                    "embeddedOpn": settingsWizard.embeddedOpn
+                }
+
+                console.log("jLinkExePath", properties.jLinkExePath)
+                startRegistrationProcess(properties)
+            }
+
+            onRegistrationAssistedAndControllerRequested: {
+                console.log("not implemented yet")
+            }
+
+            onRegistrationControllerRequested: {
+                console.log("not implemented yet")
+            }
+
+            function startRegistrationProcess(properties) {
+                //TODO implement in future tickets
+
+                stackView.push(programWizardComponent, properties)
+            }
+        }
+    }
+
+    Component {
+        id: programWizardComponent
 
         ProgramDeviceWizard {
             focus: true
             prtModel: prtMain.prtModel
+
+            //TEMPORARY just to skip settings step
+//            registrationMode: ProgramDeviceWizard.Embedded
+//            embeddedData: JsonSchemas.fakeEmbeddedData
+//            jlinkExePath: "/Applications/SEGGER/JLink/JLinkExe"
         }
     }
 
- Rectangle {
+    UserMenuButton {
+        id: userMenuButton
+        anchors {
+            top: parent.top
+            topMargin: 8
+            right: parent.right
+            rightMargin: 8
+        }
+
+        visible: stackView.depth > 1
+    }
+
+    Rectangle {
         id: testServerWarningContainer
         anchors {
-            left: parent.left 
-            top: parent.top
-            margins: 10
+            right: userMenuButton.left
+            rightMargin: 10
+            verticalCenter: userMenuButton.verticalCenter
         }
         height: testServerWarningRow.height + 10
         width: testServerWarningRow.width + 16
 
         color: TangoTheme.palette.error
         radius: 5
-        visible: prtModel.serverType !== "production"
+        visible: prtModel.debugBuild ? prtModel.serverType === "production" : prtModel.serverType !== "production"
 
         Row {
             id: testServerWarningRow
@@ -110,8 +166,24 @@ Item {
                 
                 alternativeColorEnabled: true
                 font.bold: true
-                text: "Non-production server in use."
+                text: prtModel.debugBuild ? "Production server in use" : "Non-production server in use"
             }            
         }
     }
+
+    function resolveFirmwareAndBootloader(registrationMode, embeddedData, assistedData, controllerData) {
+
+        if (registrationMode === ProgramDeviceWizard.Embedded) {
+            latestFirmwareIndex =
+
+            console.log("best firmware:", embeddedData.firmware[latestFirmwareIndex].version, embeddedData.firmware[latestFirmwareIndex].timestamp)
+
+        } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+
+        } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
+
+        }
+    }
+
+
 }

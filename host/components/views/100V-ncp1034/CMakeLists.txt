@@ -1,0 +1,8 @@
+project(100V-ncp1034
+    LANGUAGES NONE
+)
+
+add_view(
+    NAME ${PROJECT_NAME}
+    VERSION ${PROJECT_VERSION}
+)
