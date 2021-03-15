@@ -396,12 +396,14 @@ function registerQmlAsLanguage() {
                     startColumn: prevMatch.range.startColumn,
                     endColumn: prevBracketMatch.range.endColumn,
                 }
-                convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag)
+                convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag,false,)
                 if (currentItems[prevParent] === undefined) {
                     currentItems[prevParent] = {}
                 }
                 currentItems[prevParent][propRange] = qtObjectPropertyValues[prevParent]
                 return currentItems[prevParent][propRange]
+            } else if(qtObjectMetaPropertyValues.hasOwnProperty(prevParent)){
+                return retrieveType(model,propRange)
             }
         }
     }
@@ -549,7 +551,7 @@ function registerQmlAsLanguage() {
                     }
                 }
                 if (topOfFile === null && bottomOfFile === null) {
-                    return { suggestions: suggestions }
+                    return { suggestions: Object.values(suggestions) }
                 }
                 if ((position.lineNumber < topOfFile.range.startLineNumber || position.lineNumber > bottomOfFile.range.startLineNumber) || (bottomOfFile === null && topOfFile === null)) {
                     editor.updateOptions({
@@ -666,7 +668,7 @@ function registerQmlAsLanguage() {
             }
             currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
             return currentItems[bracketWord][propRange]
-        } else if (bracketWord.includes("function") || bracketWord.includes("on")) {
+        } else if (bracketWord.includes("function") || bracketWord.includes("on") || bracketWord.includes("if")) {
             //display signal Calls, function Calls, ids properties and function,signal, calls
             return Object.values(functionSuggestions)
         } else {
