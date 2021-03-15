@@ -321,12 +321,27 @@ void ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     QDir qrcDevControlView(compiledRccFile);
 
     if (qrcDevControlView.exists()) {
-        if (!qrcDevControlView.removeRecursively()) {
-            QString error_str = "Could not delete directory at " + compiledRccFile;
-            qCWarning(logCategoryStrataDevStudio) << error_str;
-            setLastLoggedError(error_str);
-            emit finishedRecompiling(QString());
-            return;
+        qrcDevControlView.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+        foreach (QString dirItem, qrcDevControlView.entryList()) {
+            if (!qrcDevControlView.remove(dirItem)) {
+                QString error_str = "Error: could not delete " + dirItem;
+                qCWarning(logCategoryStrataDevStudio) << error_str;
+                setLastLoggedError(error_str);
+                emit finishedRecompiling(QString());
+                return;
+            }
+        }
+
+        qrcDevControlView.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
+        foreach (QString dirItem, qrcDevControlView.entryList()) {
+            QDir subDir(qrcDevControlView.absoluteFilePath(dirItem));
+            if (!subDir.removeRecursively()) {
+                QString error_str = "Error: could not delete " + dirItem;
+                qCWarning(logCategoryStrataDevStudio) << error_str;
+                setLastLoggedError(error_str);
+                emit finishedRecompiling(QString());
+                return;
+            }
         }
     }
 

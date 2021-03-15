@@ -247,7 +247,7 @@ Item {
                         cursorShape: Qt.PointingHandCursor
 
                         onClicked:  {
-                            statePopup.open()
+                            statePopup.opened ? statePopup.close() : statePopup.open()
                         }
                     }
 
@@ -257,6 +257,7 @@ Item {
                         y: stateFilter.height -1
                         height: stateColumn.height + 20
                         padding: 0
+                        closePolicy: Popup.CloseOnReleaseOutsideParent
                         background: Rectangle {
                             border {
                                 width: 1
@@ -326,6 +327,7 @@ Item {
                         selectByMouse: true
                         clip: true
                         enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
+                        persistentSelection: true   // must deselect manually
 
                         property string lowerCaseText: text.toLowerCase()
 
@@ -340,6 +342,11 @@ Item {
                             filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
                         }
 
+                        onActiveFocusChanged: {
+                            if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                                filter.deselect()
+                            }
+                        }
 
                         Text {
                             id: placeholderText
@@ -364,10 +371,23 @@ Item {
                         }
 
                         MouseArea {
-                            id: mouseArea
                             anchors.fill: parent
-                            acceptedButtons: Qt.NoButton
+                            acceptedButtons: Qt.RightButton
                             cursorShape: Qt.IBeamCursor
+
+                            onClicked: {
+                                filter.forceActiveFocus()
+                            }
+                            onReleased: {
+                                if (containsMouse) {
+                                    contextMenuPopup.popup(null)
+                                }
+                            }
+                        }
+
+                        SGContextMenuEditActions {
+                            id: contextMenuPopup
+                            textEditor: filter
                         }
                     }
 
@@ -524,7 +544,7 @@ Item {
                             fill: segmentFilterContainer
                         }
                         onPressed: {
-                            segmentFilters.open()
+                            segmentFilters.opened ? segmentFilters.close() : segmentFilters.open()
                         }
                         enabled: Filters.filterModel.count > 0
                     }
@@ -536,6 +556,7 @@ Item {
                         height: Math.min(listview.height, filterColumn.height)
                         visible: false
                         padding: 0
+                        closePolicy: Popup.CloseOnReleaseOutsideParent
 
                         Rectangle {
                             anchors {

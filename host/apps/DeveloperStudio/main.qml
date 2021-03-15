@@ -59,6 +59,9 @@ SGWidgets.SGMainWindow {
         if (controlViewCreatorLoader.active && controlViewCreatorLoader.item.blockWindowClose()) {
             close.accepted = false
             return
+        } else {
+            // Halts CVC logging which can cause issues on destruction
+            controlViewCreatorLoader.visible = false
         }
 
         SessionUtils.close_session()

@@ -13,6 +13,7 @@ FocusScope {
     property variant rootItem
     property variant scrollbackModel
     property variant commandHistoryModel
+    property variant filterSuggestionModel
 
     property bool disableAllFiltering: false
     property var filterList: []
@@ -159,7 +160,7 @@ FocusScope {
 
                     SGWidgets.SGIconButton {
                         text: "Filter"
-                        hintText: qsTr("Filter messages")
+                        hintText: qsTr("Filter out messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: openFilterDialog()
@@ -467,6 +468,7 @@ FocusScope {
                             "qrc:/FilterDialog.qml",
                             {
                                 "disableAllFiltering": disableAllFiltering,
+                                "filterSuggestionModel": filterSuggestionModel,
                             })
 
                 var list = []
