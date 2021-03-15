@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     parser.addOption({{QStringLiteral("f")},
                       QObject::tr("Optional configuration <filename>"),
                       QObject::tr("filename"),
-                      QStringLiteral(":/assets/sds.config")});
+                      QDir(QCoreApplication::applicationDirPath()).filePath("sds.config")});
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
@@ -117,13 +117,13 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
     const QString configFilePath{parser.value(QStringLiteral("f"))};
-    strata::sds::config::AppConfig cfg{configFilePath};
+    strata::sds::config::AppConfig cfg(configFilePath);
     if (cfg.parse() == false) {
         return EXIT_FAILURE;
     }
 
-    strata::sds::config::UrlConfig urlCfg;
-    if (urlCfg.parseUrl(configFilePath) == false) {
+    strata::sds::config::UrlConfig urlCfg(configFilePath);
+    if (urlCfg.parseUrl() == false) {
         return EXIT_FAILURE;
     }
 

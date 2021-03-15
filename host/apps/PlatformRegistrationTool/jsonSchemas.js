@@ -131,8 +131,22 @@ var fakeEmbeddedData = {
             "file": "ota/0bbcc07e14c0b711db1711e834c6268e.bin",
             "filesize": 1000,
             "md5": "0bbcc07e14c0b711db1711e834c6268e",
-            "timestamp": "2020-10-22T01:23:18.969Z",
-            "version": "1.1.2"
+            "timestamp": "2020-10-21T01:10:10.000Z",
+            "version": "1.0.0"
+        },
+        {
+            "file": "ota/0bbcc07e14c0b711db1711e834c6268e.bin",
+            "filesize": 1000,
+            "md5": "0bbcc07e14c0b711db1711e834c6268e",
+            "timestamp": "2020-10-25T01:23:18.969Z",
+            "version": "1.1.0"
+        },
+        {
+            "file": "ota/0bbcc07e14c0b711db1711e834c6268e.bin",
+            "filesize": 1000,
+            "md5": "0bbcc07e14c0b711db1711e834c6268e",
+            "timestamp": "2020-10-28T02:10:10.000Z",
+            "version": "1.0.1"
         }
     ],
     "bootloader": [
@@ -141,7 +155,14 @@ var fakeEmbeddedData = {
             "filesize": 1000,
             "md5": "0bbcc07e14c0b711db1711e834c6268e",
             "timestamp": "2020-10-22T01:23:18.969Z",
-            "version": "1.1.2"
+            "version": "1.0.0"
+        },
+        {
+            "file": "ota/0bbcc07e14c0b711db1711e834c6268e.bin",
+            "filesize": 1000,
+            "md5": "0bbcc07e14c0b711db1711e834c6268e",
+            "timestamp": "2021-02-22T01:10:10.969Z",
+            "version": "1.0.2"
         }
     ]
 }

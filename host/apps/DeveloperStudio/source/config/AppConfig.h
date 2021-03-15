@@ -10,7 +10,7 @@ namespace strata::sds::config
 class AppConfig final
 {
 public:
-    explicit AppConfig(const QString& fileName);
+    explicit AppConfig(const QString &fileName);
 
     bool parse();
 
