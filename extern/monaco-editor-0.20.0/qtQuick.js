@@ -495,12 +495,14 @@ function registerQmlAsLanguage() {
                 for (var i = 0; i < item.signals.length; i++) {
                     var signalCall = item.signals[i]
                     var onCall = "on" + signalCall[0].toUpperCase() + signalCall.substring(1)
+                    onCall = onCall.split("()")[0]
                     qtObjectSuggestions[masterItem].properties.push(onCall)
                 }
             }
             for (const key in item.properties) {
                 qtObjectSuggestions[masterItem].properties.push(key)
                 var onCall = "on" + key[0].toUpperCase() + key.substring(1) + "Changed"
+                onCall = onCall.split("()")[0]
                 qtObjectSuggestions[masterItem].properties.push(onCall)
                 qtObjectSuggestions[masterItem].meta[key] = item.properties[key].meta_properties
             }
@@ -513,6 +515,7 @@ function registerQmlAsLanguage() {
                 for (var i = 0; i < item.signals.length; i++) {
                     var signalCall = item.signals[i]
                     var onCall = "on" + signalCall[0].toUpperCase() + signalCall.substring(1)
+                    onCall = onCall.split("()")[0]
                     qtObjectSuggestions[masterItem].properties.push(onCall)
                 }
             }
