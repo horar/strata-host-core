@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QTimer>
 
+#include "RandomGraph.h"
+
 class Server : public QObject
 {
     Q_OBJECT;
@@ -27,7 +29,8 @@ private:
     void closeServerHandler(const strata::strataRPC::Message &message);
     void serverStatusHandler(const strata::strataRPC::Message &message);
 
-    std::unique_ptr<strata::strataRPC::StrataServer> strataServer_;
+    std::shared_ptr<strata::strataRPC::StrataServer> strataServer_;
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
     QTimer serverTimeBroadcastTimer_;
+    std::unique_ptr<RandomGraph> randomGraph_;
 };

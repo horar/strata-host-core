@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QObject>
 #include <StrataRPC/StrataClient.h>
+#include <QObject>
 
 class Client : public QObject
 {
@@ -13,7 +13,7 @@ class Client : public QObject
 public:
     Client(QString clientId, QObject *parent = nullptr);
     ~Client();
-    
+
     bool init();
     void start();
 
@@ -23,15 +23,19 @@ public:
 signals:
     void connectionStatusUpdated();
     void serverTimeUpdated();
+    void randomGraphUpdated(QList<int> randomNumbersList);
 
 public slots:
     void connectToServer();
     void disconnectServer();
     void closeServer();
+    void requestRandomGraph();
     void requestServerStatus();
     void serverDisconnectedHandler(const QJsonObject &);
-    void strataClientErrorHandler(strata::strataRPC::StrataClient::ClientError errorType, const QString &errorMessage);
+    void strataClientErrorHandler(strata::strataRPC::StrataClient::ClientError errorType,
+                                  const QString &errorMessage);
     void serverTimeHandler(const QJsonObject &payload);
+    void randomGraphHandler(const QJsonObject &payload);
 
 private:
     std::unique_ptr<strata::strataRPC::StrataClient> strataClient_;

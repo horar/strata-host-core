@@ -7,8 +7,9 @@ using namespace strata::strataRPC;
 
 Server::Server(QObject *parent)
     : QObject(parent),
-      strataServer_(new StrataServer(address_, true, this)),
-      serverTimeBroadcastTimer_(this)
+      strataServer_(std::make_shared<StrataServer>(address_, true, this)),
+      serverTimeBroadcastTimer_(this),
+      randomGraph_(new RandomGraph(strataServer_, this))
 {
     strataServer_->registerHandler(
         "close_server", std::bind(&Server::closeServerHandler, this, std::placeholders::_1));

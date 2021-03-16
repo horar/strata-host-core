@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Extras 1.4
+import QtCharts 2.3
 
 Window {
     id: window
@@ -96,6 +97,70 @@ Window {
             id: serverTimeValue
             text: Client.serverTime
             anchors.left: serverTimeLabel.right
+        }
+    }
+
+    Item {
+        id: randomGraphItem
+        x: 255
+        y: 7
+        width: 375
+        height: 299
+
+        Button {
+            id: requestRandomGraphButton
+            anchors.left: randomGraphItem.left
+            anchors.right: randomGraphItem.right
+            anchors.bottom: randomGraphItem.bottom
+
+            text: qsTr("Request Random Graph")
+            Connections {
+                target: requestRandomGraphButton
+                onClicked: Client.requestRandomGraph()
+            }
+
+        }
+        ChartView {
+            title: "Random Graph"
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: requestRandomGraphButton.top
+            antialiasing: true
+            legend.visible: false
+
+            ValueAxis {
+                id: axisX
+                min: 0
+                max: 5
+                tickCount: 6
+                tickInterval: 1
+            }
+
+            ValueAxis {
+                id: axisY
+                min: 0
+                max: 10
+                tickCount: 6
+                tickInterval: 1
+            }
+
+            LineSeries {
+                id: randomLineSeries
+
+                axisX: axisX
+                axisY: axisY
+            }
+
+            Connections {
+                target: Client
+                onRandomGraphUpdated: {
+                    randomLineSeries.clear()
+                    for(let i=0; i < randomNumbersList.length; i++) {
+                        randomLineSeries.append(i,randomNumbersList[i])
+                    }
+                }
+            }
         }
     }
 }
