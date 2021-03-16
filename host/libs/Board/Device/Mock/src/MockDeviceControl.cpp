@@ -100,7 +100,6 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
     rapidjson::Document requestDoc;
     rapidjson::ParseResult parseResult = requestDoc.Parse(request.toStdString().c_str());
     std::vector<QByteArray> retVal;
-    std::vector<QByteArray> reqVal;
 
     if (parseResult.IsError()) {
         return std::vector<QByteArray>({test_commands::nack_badly_formatted_json});
@@ -306,7 +305,6 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
             break;
 
         case MockCommand::flash_firmware:
-            reqVal.push_back(test_commands::flash_firmware_request);
             if (customResponse) {
                 switch (response_) {
                 case MockResponse::flash_resend_chunk: {
@@ -322,18 +320,17 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
                     retVal.push_back(test_commands::flash_firmware_invalid_value);
                 } break;
                 default: {
-                    dynamicRequest = replacePlaceholders(reqVal, requestDoc);
+                    dynamicRequest = replacePlaceholders({test_commands::flash_firmware_request}, requestDoc);
                     retVal.push_back(test_commands::flash_firmware_response);
                 } break;
                 }
             } else {
-                replacePlaceholders(reqVal, requestDoc);
+                dynamicRequest = replacePlaceholders({test_commands::flash_firmware_request}, requestDoc);
                 retVal.push_back(test_commands::flash_firmware_response);
             }
             break;
         case MockCommand::flash_bootloader:
-            reqVal.push_back(test_commands::flash_bootloader_request);
-            dynamicRequest = replacePlaceholders(reqVal, requestDoc);
+            dynamicRequest = replacePlaceholders({test_commands::flash_bootloader_request}, requestDoc);
             retVal.push_back(test_commands::flash_bootloader_response);
             break;
 
