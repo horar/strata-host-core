@@ -290,9 +290,10 @@ Item {
             //console.log(Logger.devStudioCategory, "Login result received")
             if (resultObject.response === "Connected") {
                 connectionStatus.text = "Connected, Loading UI..."
-                var data = { "user_id": resultObject.user_id, "first_name":resultObject.first_name, "last_name": resultObject.last_name }
-                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
                 usernameField.updateModel()
+                sessionControls.loginSuccess(resultObject)
+                let data = { "user_id": resultObject.user_id, "first_name":resultObject.first_name, "last_name": resultObject.last_name }
+                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
             } else {
                 loginControls.visible = true
                 connectionStatus.text = ""
