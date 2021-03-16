@@ -92,9 +92,9 @@ public:
     int getReplicatorError(const QString &bucket = "");
 
 private:
-    QString name_ = "";
+    QString name_;
 
-    QString user_directory_ = "";
+    QString user_directory_;
 
     QStringList channelAccess_;
 

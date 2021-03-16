@@ -87,6 +87,7 @@ public:
     void stopReplicator();
 
     QString getReplicatorStatus();
+
     int getReplicatorError();
 
 private:

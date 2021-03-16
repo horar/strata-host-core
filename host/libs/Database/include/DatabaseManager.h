@@ -38,11 +38,11 @@ public:
 private:
     const QString dbDirName_ = "databases";
 
-    QString path_ = "";
+    QString path_;
 
-    QString endpointURL_ = "";
+    QString endpointURL_;
 
-    QString loggedUsername_ = "";
+    QString loggedUsername_;
 
     QStringList channelsAccessGranted_;
 

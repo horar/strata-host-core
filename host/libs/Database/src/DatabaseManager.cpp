@@ -3,8 +3,6 @@
 #include "DatabaseAccess.h"
 
 #include <QDir>
-#include <QDebug>
-#include <QCoreApplication>
 
 #include <thread>
 
@@ -16,12 +14,12 @@ DatabaseManager::DatabaseManager(const QString &path, const QString &endpointURL
 
     // Object valid if database open successful
     if (userAccessDb_ == nullptr) {
-        qDebug() << "Error: Failed to open user_access_map.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to open user_access_map.";
         return;
     }
 
-    if (!userAccessDb_->startBasicReplicator(endpointURL, "", "", "pushandpull", changeListener, documentListener, true)) {
-        qDebug() << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid.";
+    if (userAccessDb_->startBasicReplicator(endpointURL, "", "", "pushandpull", changeListener, documentListener, true) == false) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid.";
     }
 }
 
@@ -87,15 +85,15 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
         dbAccess_->database_map_.push_back(std::move(db));
 
         if (dbAccess_->database_map_.back()->open()) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Opened bucket " << bucket;
+            qCInfo(logCategoryCouchbaseDatabase) << "Opened bucket" << bucket;
         } else {
-            qCCritical(logCategoryCouchbaseDatabase) << "Failed to open bucket " << bucket;
+            qCCritical(logCategoryCouchbaseDatabase) << "Failed to open bucket" << bucket;
         }
     }
 
     // Start replicator (pull only for user DBs)
-    if (!dbAccess_->startBasicReplicator(endpointURL_, "", "", "pull", changeListener, documentListener, true)) {
-        qDebug() << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid.";
+    if (dbAccess_->startBasicReplicator(endpointURL_, "", "", "pull", changeListener, documentListener, true) == false) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid.";
     }
 
     return dbAccess_;
@@ -122,8 +120,8 @@ bool DatabaseManager::authenticate(const QString &name) {
     bool ok = true;
     foreach (const QString& key, userAccessObj.keys()) {
         auto value = userAccessObj.value(key);
-        if (!value.isArray()) {
-            qDebug() << "Error: user access map channel field must be array";
+        if (value.isArray() == false) {
+            qCCritical(logCategoryCouchbaseDatabase) << "Error: user access map channel field must be array";
             ok = false;
             continue;
         }
@@ -154,7 +152,7 @@ DatabaseAccess* DatabaseManager::getUserAccessMap() {
 
     auto db = std::make_unique<CouchbaseDatabase>(userAccessDb_->name_.toStdString(), userDir.toStdString());
     userAccessDb_->database_map_.push_back(std::move(db));
-    if (!userAccessDb_->database_map_.back()->open()) {
+    if (userAccessDb_->database_map_.back()->open() == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to open bucket" << userAccessDb_->name_;
         return nullptr;
     }
@@ -196,9 +194,9 @@ QString DatabaseManager::manageUserDir(const QString &path, const QString &name,
         if (channelAccess.indexOf(subDir) < 0) {
             auto dir = QDir(userDir + QDir::separator() + subDir + ".cblite2");
             if (dir.removeRecursively()) {
-                qInfo() << "Channel/directory " << subDir << "found locally but not in access list, deleted: " << dir.path();
+                qCInfo(logCategoryCouchbaseDatabase) << "Channel/directory" << subDir << "found locally but not in access list, deleted:" << dir.path();
             } else {
-                qInfo() << "Error: channel/directory " << subDir<< "found locally but not in access list, failed to delete: " << dir.path();
+                qCCritical(logCategoryCouchbaseDatabase) << "Error: channel/directory" << subDir<< "found locally but not in access list, failed to delete:" << dir.path();
             }
         }
     }
@@ -235,8 +233,8 @@ QStringList DatabaseManager::readChannelsAccessGrantedOfUser(const QString &logi
 
     foreach (const QString& key, userAccessObj.keys()) {
         auto value = userAccessObj.value(key);
-        if (!value.isArray()) {
-            qDebug() << "Error: user access map channel field must be array";
+        if (value.isArray() == false) {
+            qCCritical(logCategoryCouchbaseDatabase) << "Error: user access map channel field must be array";
             continue;
         }
         auto userArray = value.toArray();
@@ -258,12 +256,12 @@ QStringList DatabaseManager::readChannelsAccessDeniedOfUser(const QString &login
 
     foreach (const QString& key, userAccessObj.keys()) {
         auto value = userAccessObj.value(key);
-        if (!value.isArray()) {
-            qDebug() << "Error: user access map channel field must be array";
+        if (value.isArray() == false) {
+            qCCritical(logCategoryCouchbaseDatabase) << "Error: user access map channel field must be array";
             continue;
         }
         auto userArray = value.toArray();
-        if (!userArray.contains(loginUsername)) {
+        if (userArray.contains(loginUsername) == false) {
             retChannelsDenied.append(key);
         }
     }
