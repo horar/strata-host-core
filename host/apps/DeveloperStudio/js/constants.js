@@ -12,9 +12,7 @@ const GUEST_FIRST_NAME = "First";
 const GUEST_LAST_NAME = "Last";
 
 /* Controller type designation */
-const ASSISTED_CONTROLLER_TYPES = {
-    NA: 0x0000,
-    EMBEDDED: 0x0001,
-    ASSISTED: 0x0002,
-    CONTROLLER: 0x0003,
+const DEVICE_CONTROLLER_TYPES = {
+    EMBEDDED: 0x01,
+    ASSISTED: 0x02,
 }

@@ -773,7 +773,7 @@ Window {
 
                     onClicked: {
                         if(enabled){
-                            platformModel.append({class_id: "", opn: "", device_id: platformModel.count, firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.ASSISTED_CONTROLLER_TYPES.NA,connected: false})
+                            platformModel.append({class_id: "", opn: "", device_id: platformModel.count, firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED,connected: false})
                         }
                     }
                 }
@@ -838,18 +838,18 @@ Window {
 
             controllerClassIdModel.append({controller: "cabc126d-e921-435a-b447-983d910ebf2c"})
             for (var i = 0; i < 5; i++){
-                controllerClassIdModel.append({controller: uuidv4()})
+                controllerClassIdModel.append({controller: SGUtilsCpp.generateUuid()})
             }
             
-            const platformTypes = Object.keys(Constants.ASSISTED_CONTROLLER_TYPES)
+            const platformTypes = Object.keys(Constants.DEVICE_CONTROLLER_TYPES)
             for(var i = 0; i < platformTypes.length; i++){
-                controllerTypeModel.append({type: platformTypes[i], value: Constants.ASSISTED_CONTROLLER_TYPES[platformTypes[i]]})
+                controllerTypeModel.append({type: platformTypes[i], value: Constants.DEVICE_CONTROLLER_TYPES[platformTypes[i]]})
             }
 
             readState()
 
             if (platformModel.count === 0) {
-                platformModel.append({class_id: "", opn: "---", device_id: 0, firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.ASSISTED_CONTROLLER_TYPES.NA,connected: false})
+                platformModel.append({class_id: "", opn: "---", device_id: 0, firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED,connected: false})
             }
 
             platformModel.initialized = true
@@ -866,7 +866,7 @@ Window {
 
         for (var i = 0; i < platformModel.count; i++) {
             const updatedPlatform = platformModel.get(i)
-            const isAssisted = updatedPlatform.controller_type === Constants.ASSISTED_CONTROLLER_TYPES.ASSISTED
+            const isAssisted = updatedPlatform.controller_type === Constants.DEVICE_CONTROLLER_TYPES.ASSISTED
             if (updatedPlatform.connected) {
                 injectList.list.push({
                                          "class_id": updatedPlatform.class_id,
@@ -938,13 +938,6 @@ Window {
             }
         }
         localPlatformSettings.setValue("last-state", JSON.stringify(platformState))
-    }
-
-    function uuidv4() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
     }
 
 }
