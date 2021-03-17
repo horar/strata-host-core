@@ -1,8 +1,11 @@
 #include "BoardManager.h"
 #include "BoardManagerConstants.h"
+
 #include "logging/LoggingQtCategories.h"
+
 #include <Device/Serial/SerialDevice.h>
 #include <Device/Operations/Identify.h>
+
 #include <CommandValidator.h>
 
 #include <QSerialPortInfo>
@@ -156,7 +159,7 @@ void BoardManager::checkNewSerialDevices() {
         }
 #endif
         // device ID must be int because of integration with QML
-        QByteArray deviceId = "s" + QByteArray::number(qHash(name), 16);
+        const QByteArray deviceId = SerialDevice::createDeviceId(name);
         auto [iter, success] = ports.emplace(deviceId);
         if (success == false) {
             // Error: hash already exists!

@@ -3,6 +3,8 @@
 
 #include "logging/LoggingQtCategories.h"
 
+#include <QHash>
+
 #include <QMutexLocker>
 #include <QReadLocker>
 #include <QWriteLocker>
@@ -98,6 +100,11 @@ SerialDevice::SerialPortPtr SerialDevice::establishPort(const QString& portName)
     }
 
     return nullptr;
+}
+
+QByteArray SerialDevice::createDeviceId(const QString& portName)
+{
+    return QByteArray('s' + QByteArray::number(qHash(portName), 16));
 }
 
 void SerialDevice::readMessage() {
