@@ -7,12 +7,16 @@ import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
 
 Item {
+    id: msgRoot
     height: msgMetric.height * msgText.lineCount
     width: root.width
 
     property alias msg: msgText.text
-    property alias current: msgText.enabled
+    property alias current: msgText.contextMenuEnabled
     property alias msgText: msgText
+    property string selection: msgText.selectedText
+    property int selectionStart: msgText.selectionStart
+    property int selectionEnd: msgText.selectionEnd
 
     SGTextEdit {
         id: msgText
@@ -24,6 +28,9 @@ Item {
         selectByMouse: true
         selectionColor: Theme.palette.highlight
         contextMenuEnabled: true
+        onSelectedTextChanged: msgRoot.selection = selectedText
+        onSelectionStartChanged: msgRoot.selectionStart = selectionStart
+        onSelectionEndChanged: msgRoot.selectionEnd = selectionEnd
     }
 
     TextMetrics {

@@ -47,12 +47,12 @@ Item {
         onSelectInBetween: {
             var start
             var end
-            if (indexDragEnded > consoleLogs.indexDragStarted) {
-                start = consoleLogs.indexDragStarted + 1
+            if (indexDragEnded > indexDragStarted) {
+                start = indexDragStarted + 1
                 end = indexDragEnded
             } else {
                 start = indexDragEnded + 1
-                end = consoleLogs.indexDragStarted
+                end = indexDragStarted
             }
 
             for (var i = 0; i < consoleLogs.model.count; i++) {
@@ -78,78 +78,11 @@ Item {
 
         delegate: ConsoleDelegate {
             id: consoleDelegate
-            state: "noneSelected"
-
-            function startSelection(mouse) {
-                consoleLogs.indexDragStarted = index
-                consoleDelegate.state = "someSelected"
-                var composedY = (consoleDelegate.y - mouse.y - delegateText.y)
-                var composedX = (consoleDelegate.x - mouse.x - delegateText.x)
-                dropArea.start = delegateText.positionAt(composedX, composedY)
-            }
-
-            states: [
-                State {
-                    name: "noneSelected"
-                    StateChangeScript {
-                        script: {
-                            delegateText.deselect()
-                            dropArea.start = -1
-                        }
-                    }
-                },
-                State {
-                    name: "someSelected"
-                    StateChangeScript {
-                        script: {
-                            if (consoleDelegate.selectionStart !== delegateText.selectionStart || consoleDelegate.selectionEnd !== delegateText.selectionEnd) {
-                                delegateText.select(consoleDelegate.selectionStart, consoleDelegate.selectionEnd);
-                            }
-                        }
-                    }
-                },
-                State {
-                    name: "allSelected"
-                    StateChangeScript {
-                        script: {
-                            delegateText.selectAll()
-                        }
-                    }
-                }
-
-            ]
-
-
-            DropArea {
-                id: dropArea
-                anchors {
-                    fill: parent
-                }
-                property int start:-1
-                property int end:-1
-
-                onEntered: {
-                    if (index > consoleLogs.indexDragStarted) {
-                        start = 0
-                    } else if (index < consoleLogs.indexDragStarted){
-                        start = delegateText.length
-                    }
-
-                    consoleDelegate.state = "someSelected"
-                    consoleLogs.selectInBetween(index)
-                }
-
-                onPositionChanged: {
-                    end = delegateText.positionAt(drag.x, drag.y)
-                    delegateText.select(start, end)
-                }
-            }
         }
 
         MouseArea {
             id: consoleMouseArea
             anchors.fill: consoleLogs
-            propagateComposedEvents: true
             drag.target: dragitem
             cursorShape: Qt.IBeamCursor
 
@@ -179,7 +112,6 @@ Item {
             Component.onCompleted: dragitem.parent = consoleMouseArea
         }
     }
-
     SGSortFilterProxyModel {
         id: consoleItems
         sourceModel: consoleModel
@@ -227,7 +159,7 @@ Item {
                     }
                 }
 
-                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg, current: true})
+                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg, current: true,state: "noneSelected",selection: "",selectionStart: 0, selectionEnd: 0})
                 consoleLogs.logAdded()
 
                 if(type === 1){
