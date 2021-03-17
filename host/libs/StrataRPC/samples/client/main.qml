@@ -45,7 +45,7 @@ Window {
         }
 
         Button {
-            id: disconnectButtons
+            id: disconnectButton
             anchors.left: connectionItem.left
             anchors.right: connectionItem.right
             anchors.top: connectButton.bottom

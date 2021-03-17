@@ -26,6 +26,9 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine;
+    std::unique_ptr<Client> client_(new Client(clientId));
+    engine.rootContext()->setContextProperty("Client", client_.get());
+
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreated, &app,
@@ -34,9 +37,6 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
     engine.load(url);
-
-    std::unique_ptr<Client> client_(new Client(clientId));
-    engine.rootContext()->setContextProperty("Client", client_.get());
 
     client_->init();
     client_->start();
