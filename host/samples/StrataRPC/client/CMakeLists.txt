@@ -1,4 +1,4 @@
-project(strataClientSample
+project(strataRPC-ClientSample
     VERSION 0.0.1
     LANGUAGES CXX
 )
@@ -13,13 +13,12 @@ add_executable(${PROJECT_NAME}
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick Charts Widgets
+    COMPONENTS Core Quick Widgets
 )
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE Qt5::Core
     PRIVATE Qt5::Quick
-    PRIVATE Qt5::Charts
     PRIVATE Qt5::Widgets
     PRIVATE StrataRPC-StrataClient
     PUBLIC strata::QtLogger

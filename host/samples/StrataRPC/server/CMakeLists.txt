@@ -1,4 +1,4 @@
-project(strataServerSample
+project(strataRPC-ServerSample
     VERSION 0.0.1
     LANGUAGES CXX
 )
