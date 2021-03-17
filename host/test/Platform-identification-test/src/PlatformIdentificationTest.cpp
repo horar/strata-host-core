@@ -5,7 +5,7 @@ using strata::device::DevicePtr;
 
 PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     : QObject(parent),
-      testDeviceId_{0},
+      testDeviceId_(),
       testTimeout_(this),
       currentBinaryFileIndex_{0},
       binaryFileNameList_(),
@@ -93,17 +93,17 @@ bool PlatformIdentificationTest::parseBinaryFileList(const QString& binariesPath
     return true;
 }
 
-void PlatformIdentificationTest::newConnectionHandler(int deviceId, bool recognized) {
+void PlatformIdentificationTest::newConnectionHandler(const QByteArray& deviceId, bool recognized) {
     testTimeout_.stop();
-    std::cout << "new board connected deviceId = 0x" << std::hex << static_cast<unsigned>(deviceId) << std::endl;
+    std::cout << "new board connected deviceId = " << deviceId.toStdString() << std::endl;
     std::cout << "board identified = " << recognized << std::endl;  // This flag is not enough!
     testDeviceId_ = deviceId;
     enableBoardManagerSignals(false);
     identifyPlatform(recognized);
 }
 
-void PlatformIdentificationTest::closeConnectionHandler(int deviceId) {
-    std::cout << "board disconnected deviceId = 0x" << std::hex << static_cast<unsigned>(deviceId) << std::endl;
+void PlatformIdentificationTest::closeConnectionHandler(const QByteArray& deviceId) {
+    std::cout << "board disconnected deviceId = " << deviceId.toStdString() << std::endl;
 }
 
 void PlatformIdentificationTest::flashCompletedHandler(bool exitedNormally) {
@@ -174,7 +174,7 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
 
 void PlatformIdentificationTest::connectToPlatform() {
     std::cout << "Connecting to platform" << std::endl;
-    if (testDeviceId_ == 0) {
+    if (testDeviceId_.isEmpty()) {
         // get the connected devices and set testDeviceId_
         auto connectedDevicesList = boardManager_.activeDeviceIds();
         if (connectedDevicesList.empty()) {

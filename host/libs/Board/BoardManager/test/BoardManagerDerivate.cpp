@@ -16,18 +16,17 @@ void BoardManagerDerivate::init(bool requireFwInfoResponse, bool keepDevicesOpen
     keepDevicesOpen_ = keepDevicesOpen;
 }
 
-bool BoardManagerDerivate::addNewMockDevice(const int deviceId, const QString deviceName)
+bool BoardManagerDerivate::addNewMockDevice(const QByteArray& deviceId, const QString deviceName)
 {
-    qDebug().nospace() << "Adding new mock device (0x" << hex << static_cast<uint>(deviceId) << "): " << deviceName;
-    std::set<int> ports(serialPortsList_);
-    QHash<int, QString> idToName(serialIdToName_);
+    qDebug().nospace().noquote() << "Adding new mock device (" << deviceId << "): '" << deviceName << "'";
+    std::set<QByteArray> ports(serialPortsList_);
+    QHash<QByteArray, QString> idToName(serialIdToName_);
 
     {
-        // device ID must be int because of integration with QML
         auto [iter, success] = ports.emplace(deviceId);
         if (success == false) {
             // Error: hash already exists!
-            qCritical().nospace() << "Cannot add device (hash conflict: 0x" << hex << static_cast<uint>(deviceId) << "): " << deviceName;
+            qCritical().nospace().noquote() << "Cannot add device (hash conflict: " << deviceId << "): '" << deviceName << "'";
             QFAIL_("deviceId already exists");
             return false;
         } else {
@@ -35,8 +34,8 @@ bool BoardManagerDerivate::addNewMockDevice(const int deviceId, const QString de
         }
     }
 
-    std::set<int> added, removed;
-    std::vector<int> opened, deleted;
+    std::set<QByteArray> added, removed;
+    std::vector<QByteArray> opened, deleted;
     opened.reserve(added.size());
 
     {  // this block of code modifies serialPortsList_, openedDevices_, serialIdToName_
@@ -74,7 +73,7 @@ bool BoardManagerDerivate::addNewMockDevice(const int deviceId, const QString de
     return true;
 }
 
-bool BoardManagerDerivate::removeMockDevice(const int deviceId)
+bool BoardManagerDerivate::removeMockDevice(const QByteArray& deviceId)
 {
     bool res = true;
     // call after disconnecting
@@ -82,8 +81,7 @@ bool BoardManagerDerivate::removeMockDevice(const int deviceId)
     if (serialPortsListIt != serialPortsList_.end()) {
         serialPortsList_.erase(serialPortsListIt);
     } else {
-        qWarning().nospace() << "Unable to locate serialPortsList_ entry for 0x"
-                             << hex << static_cast<uint>(deviceId);
+        qWarning().noquote() << "Unable to locate serialPortsList_ entry for" << deviceId;
         res = false;
     }
 
@@ -91,8 +89,7 @@ bool BoardManagerDerivate::removeMockDevice(const int deviceId)
     if (serialIdToNameIt != serialIdToName_.end()) {
         serialIdToName_.erase(serialIdToNameIt);
     } else {
-        qWarning().nospace() << "Unable to locate serialIdToName_ entry for 0x"
-                             << hex << static_cast<uint>(deviceId);
+        qWarning().noquote() << "Unable to locate serialIdToName_ entry for " << deviceId;
         res = false;
     }
 
@@ -115,7 +112,7 @@ void BoardManagerDerivate::handleDeviceError(strata::device::Device::ErrorCode e
 }
 
 // mutex_ must be locked before calling this function (due to modification openedDevices_ and using mockIdToName_)
-bool BoardManagerDerivate::addMockPort(const int deviceId, bool startOperations)
+bool BoardManagerDerivate::addMockPort(const QByteArray& deviceId, bool startOperations)
 {
     // 1. construct the mock device
     // 2. open the device
@@ -126,11 +123,11 @@ bool BoardManagerDerivate::addMockPort(const int deviceId, bool startOperations)
     DevicePtr device = std::make_shared<strata::device::mock::MockDevice>(deviceId, name, true);
 
     if (openDevice(device) == false) {
-        qWarning().nospace() << "Cannot open device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
+        qWarning().nospace().noquote() << "Cannot open device: ID: " << deviceId << ", name: '" << name << "'";
         QFAIL_("Cannot open device");
         return false;
     }
-    qInfo().nospace() << "Added new mock device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
+    qInfo().nospace().noquote() << "Added new mock device: ID: " << deviceId << ", name: '" << name << "'";
     if (startOperations) {
         startDeviceOperations(device);
     }

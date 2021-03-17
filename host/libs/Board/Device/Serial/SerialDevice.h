@@ -23,7 +23,7 @@ public:
      * @param deviceId device ID
      * @param name device name
      */
-    SerialDevice(const int deviceId, const QString& name);
+    SerialDevice(const QByteArray& deviceId, const QString& name);
 
     /**
      * SerialDevice constructor
@@ -31,7 +31,7 @@ public:
      * @param name device name
      * @param port already existing serial port
      */
-    SerialDevice(const int deviceId, const QString& name, SerialPortPtr&& port);
+    SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port);
 
     /**
      * SerialDevice destructor

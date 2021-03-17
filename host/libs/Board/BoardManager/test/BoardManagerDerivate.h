@@ -22,14 +22,14 @@ public:
      * @param deviceName device Name
      * @return true if device was added, otherwise false
      */
-    bool addNewMockDevice(const int deviceId, const QString deviceName);
+    bool addNewMockDevice(const QByteArray& deviceId, const QString deviceName);
 
     /**
      * Remove MockDevice
      * @param deviceId device ID
      * @return true if device was removed, otherwise false
      */
-    bool removeMockDevice(const int deviceId);
+    bool removeMockDevice(const QByteArray& deviceId);
 
 private slots:
     virtual void checkNewSerialDevices() override;
@@ -37,5 +37,5 @@ private slots:
     virtual void handleDeviceError(strata::device::Device::ErrorCode errCode, QString errStr) override;
 
 private:
-    bool addMockPort(const int deviceId, bool startOperations);
+    bool addMockPort(const QByteArray& deviceId, bool startOperations);
 };

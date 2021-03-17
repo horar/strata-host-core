@@ -9,20 +9,22 @@
 
 namespace strata::device::serial {
 
-SerialDevice::SerialDevice(const int deviceId, const QString& name) : Device(deviceId, name, Type::SerialDevice)
+SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name)
+    : Device(deviceId, name, Type::SerialDevice)
 {
     serialPort_ = std::make_unique<QSerialPort>(name);
 
     initSerialDevice();
 }
 
-SerialDevice::SerialDevice(const int deviceId, const QString& name, SerialPortPtr&& port) : Device(deviceId, name, Type::SerialDevice)
+SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port)
+    : Device(deviceId, name, Type::SerialDevice)
 {
     if ((port != nullptr) && (port->portName() == name)) {
         serialPort_ = std::move(port);
     } else {
-        qCWarning(logCategorySerialDevice).nospace()
-            << "Provided port will not be used, is not compatible with device 0x" << hex << static_cast<uint>(deviceId_);
+        qCWarning(logCategorySerialDevice).noquote()
+            << "Provided port will not be used, is not compatible with device " << deviceId_;
         serialPort_ = std::make_unique<QSerialPort>(name);
     }
 
@@ -32,8 +34,9 @@ SerialDevice::SerialDevice(const int deviceId, const QString& name, SerialPortPt
 SerialDevice::~SerialDevice() {
     close();
     serialPort_.reset();
-    qCDebug(logCategorySerialDevice).nospace() << "Deleted serial device 0x" << hex << static_cast<uint>(deviceId_)
-                                               << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
+    qCDebug(logCategorySerialDevice).nospace().noquote()
+        << "Deleted serial device, ID: " <<  deviceId_
+        << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
 void SerialDevice::initSerialDevice() {
@@ -49,8 +52,9 @@ void SerialDevice::initSerialDevice() {
     connect(serialPort_.get(), &QSerialPort::readyRead, this, &SerialDevice::readMessage);
     connect(this, &SerialDevice::writeToPort, this, &SerialDevice::handleWriteToPort);
 
-    qCDebug(logCategorySerialDevice).nospace() << "Created new serial device 0x" << hex << static_cast<uint>(deviceId_)
-                                               << ", name: " << deviceName_ << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
+    qCDebug(logCategorySerialDevice).nospace().noquote()
+        << "Created new serial device, ID: " << deviceId_ << ", name: '" << deviceName_
+        << "', unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
 bool SerialDevice::open() {

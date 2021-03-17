@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QByteArray>
 #include <QTimer>
 #include <QHash>
 #include <QVariantMap>
@@ -45,60 +46,60 @@ namespace strata {
          *                           if 0 or less, there will be no attempt to reconnect device
          * @return true if device was disconnected, otherwise false
          */
-        bool disconnectDevice(const int deviceId, std::chrono::milliseconds disconnectDuration = std::chrono::milliseconds(0));
+        bool disconnectDevice(const QByteArray& deviceId, std::chrono::milliseconds disconnectDuration = std::chrono::milliseconds(0));
 
         /**
          * Reconnect the device.
          * @param deviceId device ID
          * @return true if device was reconnected (and identification process has started), otherwise false
          */
-        bool reconnectDevice(const int deviceId);
+        bool reconnectDevice(const QByteArray& deviceId);
 
         /**
          * Get smart pointer to the device.
          * @param deviceId device ID
          */
-        device::DevicePtr device(const int deviceId);
+        device::DevicePtr device(const QByteArray& deviceId);
 
         /**
          * Get list of active device IDs.
          * @return list of active device IDs (those, which have
          *         communication channel (serial port) opened)
          */
-        QVector<int> activeDeviceIds();
+        QVector<QByteArray> activeDeviceIds();
 
     signals:
         /**
          * Emitted when new board is connected to computer.
          * @param deviceId device ID
          */
-        void boardConnected(int deviceId);
+        void boardConnected(QByteArray deviceId);
 
         /**
          * Emitted when board is disconnected.
          * @param deviceId device ID
          */
-        void boardDisconnected(int deviceId);
+        void boardDisconnected(QByteArray deviceId);
 
         /**
          * Emitted when board properties has changed (and board is ready for communication).
          * @param deviceId device ID
          * @param recognized true when board was recognized (identified), otherwise false
          */
-        void boardInfoChanged(int deviceId, bool recognized);
+        void boardInfoChanged(QByteArray deviceId, bool recognized);
 
         /**
          * Emitted when error occures during communication with the board.
          * @param deviceId device ID
          * @param message error description
          */
-        void boardError(int deviceId, QString message);
+        void boardError(QByteArray deviceId, QString message);
 
         /**
          * Emitted when platform_id_changed notification was received (signal only for internal use).
          * @param deviceId devide ID
          */
-        void platformIdChanged(const int deviceId, QPrivateSignal);
+        void platformIdChanged(QByteArray deviceId, QPrivateSignal);
 
     protected slots:
         virtual void checkNewSerialDevices();
@@ -107,16 +108,16 @@ namespace strata {
 
     private slots:
         virtual void checkNotification(QByteArray message);
-        virtual void handlePlatformIdChanged(const int deviceId);
+        virtual void handlePlatformIdChanged(const QByteArray& deviceId);
 
     protected:
-        void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
-        bool addSerialPort(const int deviceId);
+        void computeListDiff(std::set<QByteArray>& list, std::set<QByteArray>& added_ports, std::set<QByteArray>& removed_ports);
+        bool addSerialPort(const QByteArray& deviceId);
         bool openDevice(const device::DevicePtr newDevice);
         void startDeviceOperations(const device::DevicePtr device);
-        bool removeDevice(const int deviceId);
+        bool removeDevice(const QByteArray& deviceId);
 
-        void logInvalidDeviceId(const QString& message, const int deviceId) const;
+        void logInvalidDeviceId(const QString& message, const QByteArray& deviceId) const;
 
         QTimer timer_;
 
@@ -125,12 +126,12 @@ namespace strata {
         // Access to next 4 members should be protected by mutex (one mutex for all) in case of multithread usage.
         // Do not emit signals in block of locked code (because their slots are executed immediately in QML
         // and deadlock can occur if from QML is called another function which uses same mutex).
-        std::set<int> serialPortsList_;
-        QHash<int, QString> serialIdToName_;
-        QHash<int, device::DevicePtr> openedDevices_;
-        QHash<int, QTimer*> reconnectTimers_;
+        std::set<QByteArray> serialPortsList_;
+        QHash<QByteArray, QString> serialIdToName_;
+        QHash<QByteArray, device::DevicePtr> openedDevices_;
+        QHash<QByteArray, QTimer*> reconnectTimers_;
 
-        QHash<int, std::shared_ptr<device::operation::BaseDeviceOperation>> identifyOperations_;
+        QHash<QByteArray, std::shared_ptr<device::operation::BaseDeviceOperation>> identifyOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;
