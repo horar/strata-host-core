@@ -19,8 +19,6 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 Item {
     id: root
 
-    property string testAuthServer: "http://10.238.54.227/"
-
     Rectangle {
         id: commandBar
         visible: false
@@ -134,7 +132,11 @@ Item {
                                 let repeaterCount = platformViewRepeater.count
                                 PlatformSelection.openPlatformView(data)
                                 viewCombobox.currentIndex = index
-                                platformViewRepeater.itemAt(repeaterCount).platformMetaDataInitialized = true
+                                // new tab is always added to the end of the repeater
+                                // in case it was indeed added (did not existed yet), initialize it
+                                if (platformViewRepeater.count > repeaterCount) {
+                                    platformViewRepeater.itemAt(repeaterCount).platformMetaDataInitialized = true
+                                }
                             }
                         }
                     }
@@ -199,11 +201,12 @@ Item {
 
             Button {
                 id: serverChange
+                enabled: urls.testAuthServer !== ""
                 onClicked: {
                     if (Rest.url !== urls.authServer) {
                         Rest.url = urls.authServer
                     } else {
-                        Rest.url = root.testAuthServer
+                        Rest.url = urls.testAuthServer
                     }
                     Signals.serverChanged()
                 }

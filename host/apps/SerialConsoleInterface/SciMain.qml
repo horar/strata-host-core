@@ -166,7 +166,7 @@ Item {
                             left: statusLight.right
                             leftMargin: 2
                             top: statusLight.top
-                            right: buttonRow.shown ? buttonRow.left : parent.right
+                            right: buttonRow.visible ? buttonRow.left : parent.right
                             rightMargin: 2
                         }
 
@@ -203,12 +203,15 @@ Item {
 
                         spacing: 4
 
-                        visible: bgMouseArea.containsMouse || releasePortButton.hovered || deleteButton.hovered
+                        visible: tabDelegate.isCurrent
+                                 && ( bgMouseArea.containsMouse
+                                     || releasePortButton.hovered
+                                     || deleteButton.hovered)
 
                         SGWidgets.SGIconButton {
                             id: releasePortButton
 
-                            enabled: model.platform.programInProgress === false && model.platform.status === Sci.SciPlatform.Ready
+                            enabled: model.platform.programInProgress === false && model.platform.status !== Sci.SciPlatform.Disconnected
                             icon.source: "qrc:/sgimages/disconnected.svg"
                             hintText: "Release port for "+releasePortDurationInSec+"s"
                             onClicked: {
@@ -275,6 +278,7 @@ Item {
                 rootItem: sciMain
                 scrollbackModel: model.platform.scrollbackModel
                 commandHistoryModel: model.platform.commandHistoryModel
+                filterSuggestionModel: model.platform.filterSuggestionModel
             }
         }
     }

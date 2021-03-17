@@ -13,6 +13,7 @@ FocusScope {
     property variant rootItem
     property variant scrollbackModel
     property variant commandHistoryModel
+    property variant filterSuggestionModel
 
     property bool disableAllFiltering: false
     property var filterList: []
@@ -467,6 +468,7 @@ FocusScope {
                             "qrc:/FilterDialog.qml",
                             {
                                 "disableAllFiltering": disableAllFiltering,
+                                "filterSuggestionModel": filterSuggestionModel,
                             })
 
                 var list = []
