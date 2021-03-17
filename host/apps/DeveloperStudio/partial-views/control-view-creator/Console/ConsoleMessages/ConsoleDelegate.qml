@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQml 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
 
@@ -10,6 +11,8 @@ Item{
     height: consoleMessage.height
     width: consoleLogs.width
     anchors.bottomMargin: 5
+
+    property alias delegateText: consoleMessage.msgText
 
     ConsoleTime {
         id: consoleTime

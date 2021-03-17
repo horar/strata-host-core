@@ -33,6 +33,37 @@ Item {
         model: consoleItems
         clip: true
         spacing: 0
+        signal deselectAll()
+        property int indexDragStarted: -1
+        property bool selecting: false
+        signal selectInBetween(int indexDragEnded)
+
+        onDeselectAll: {
+            for (var i = 0; i < consoleLogs.model.count; i++) {
+                consoleLogs.model.get(i).state = "noneSelected"
+            }
+        }
+
+        onSelectInBetween: {
+            var start
+            var end
+            if (indexDragEnded > consoleLogs.indexDragStarted) {
+                start = consoleLogs.indexDragStarted + 1
+                end = indexDragEnded
+            } else {
+                start = indexDragEnded + 1
+                end = consoleLogs.indexDragStarted
+            }
+
+            for (var i = 0; i < consoleLogs.model.count; i++) {
+                var listElement = consoleLogs.model.get(consoleLogs.model.mapIndexToSource(i));
+                if (i >= start && i < end) {
+                    listElement.state = "allSelected"
+                } else if (i < start - 1 || i > end) {
+                    listElement.state = "noneSelected"
+                }
+            }
+        }
 
         function logAdded() {
             // if user is at end of list +/- 10px, scroll to end of list to focus on new logs
@@ -47,6 +78,105 @@ Item {
 
         delegate: ConsoleDelegate {
             id: consoleDelegate
+            state: "noneSelected"
+
+            function startSelection(mouse) {
+                consoleLogs.indexDragStarted = index
+                consoleDelegate.state = "someSelected"
+                var composedY = (consoleDelegate.y - mouse.y - delegateText.y)
+                var composedX = (consoleDelegate.x - mouse.x - delegateText.x)
+                dropArea.start = delegateText.positionAt(composedX, composedY)
+            }
+
+            states: [
+                State {
+                    name: "noneSelected"
+                    StateChangeScript {
+                        script: {
+                            delegateText.deselect()
+                            dropArea.start = -1
+                        }
+                    }
+                },
+                State {
+                    name: "someSelected"
+                    StateChangeScript {
+                        script: {
+                            if (consoleDelegate.selectionStart !== delegateText.selectionStart || consoleDelegate.selectionEnd !== delegateText.selectionEnd) {
+                                delegateText.select(consoleDelegate.selectionStart, consoleDelegate.selectionEnd);
+                            }
+                        }
+                    }
+                },
+                State {
+                    name: "allSelected"
+                    StateChangeScript {
+                        script: {
+                            delegateText.selectAll()
+                        }
+                    }
+                }
+
+            ]
+
+
+            DropArea {
+                id: dropArea
+                anchors {
+                    fill: parent
+                }
+                property int start:-1
+                property int end:-1
+
+                onEntered: {
+                    if (index > consoleLogs.indexDragStarted) {
+                        start = 0
+                    } else if (index < consoleLogs.indexDragStarted){
+                        start = delegateText.length
+                    }
+
+                    consoleDelegate.state = "someSelected"
+                    consoleLogs.selectInBetween(index)
+                }
+
+                onPositionChanged: {
+                    end = delegateText.positionAt(drag.x, drag.y)
+                    delegateText.select(start, end)
+                }
+            }
+        }
+
+        MouseArea {
+            id: consoleMouseArea
+            anchors.fill: consoleLogs
+            propagateComposedEvents: true
+            drag.target: dragitem
+            cursorShape: Qt.IBeamCursor
+
+            onPressed:{
+                consoleLogs.deselectAll()
+                var clickedDelegate = consoleLogs.itemAt(mouse.x+consoleLogs.contentX, mouse.y+consoleLogs.contentY)
+                if (clickedDelegate) {
+                    clickedDelegate.startSelection(mouse)
+                } else {
+                    consoleLogs.indexDragStarted = consoleLogs.model.count
+                }
+                consoleLogs.forceActiveFocus()
+            }
+
+            onClicked: {
+                consoleLogs.deselectAll()
+            }
+        }
+
+        Item {
+            id: dragitem
+            x: consoleMouseArea.mouseX
+            y: consoleMouseArea.mouseY
+            width: 1
+            height: 1
+            Drag.active: consoleMouseArea.drag.active
+            Component.onCompleted: dragitem.parent = consoleMouseArea
         }
     }
 

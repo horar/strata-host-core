@@ -12,6 +12,7 @@ Item {
 
     property alias msg: msgText.text
     property alias current: msgText.enabled
+    property alias msgText: msgText
 
     SGTextEdit {
         id: msgText
