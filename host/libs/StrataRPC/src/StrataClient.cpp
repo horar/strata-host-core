@@ -68,6 +68,7 @@ bool StrataClient::disconnectServer()
     sendRequest("unregister", {});
     disconnect(connector_.get(), &ClientConnector::newMessageReceived, this,
                &StrataClient::newServerMessage);
+    disconnect(this, &StrataClient::newServerMessageParsed, this, &StrataClient::dispatchHandler);
 
     if (false == connector_->disconnectClient()) {
         QString errorMessage(QStringLiteral("Failed to disconnect from the server."));
