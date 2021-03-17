@@ -27,11 +27,13 @@ Window {
             anchors.margins: 5
             text: "Connect"
             enabled: (Client.connectionStatus === false)
+
             Connections {
                 target: connectButton
                 onClicked: Client.connectToServer()
             }
         }
+
         StatusIndicator {
             id: connectionStatusIndicator
             anchors.right: connectionItem.right
@@ -50,6 +52,7 @@ Window {
             anchors.margins: 5
             text: "Disconnect"
             enabled: (Client.connectionStatus === true)
+
             Connections {
                 target: disconnectButton
                 onClicked: Client.disconnectServer()
@@ -64,6 +67,7 @@ Window {
         width: 225
         height: 40
         text: qsTr("Close Server")
+
         Connections {
             target: closeServerButton
             onClicked: Client.closeServer()
@@ -77,6 +81,7 @@ Window {
         width: 225
         height: 40
         text: qsTr("Request Server Status")
+
         Connections {
             target: requestServerStatusButton
             onClicked: Client.requestServerStatus()
@@ -89,10 +94,12 @@ Window {
         y: 323
         width: 173
         height: 17
+
         Label {
             id: serverTimeLabel
             text: "Server Time: "
         }
+
         Label {
             id: serverTimeValue
             text: Client.serverTime
@@ -112,14 +119,14 @@ Window {
             anchors.left: randomGraphItem.left
             anchors.right: randomGraphItem.right
             anchors.bottom: randomGraphItem.bottom
-
             text: qsTr("Request Random Graph")
+
             Connections {
                 target: requestRandomGraphButton
                 onClicked: Client.requestRandomGraph()
             }
-
         }
+
         ChartView {
             title: "Random Graph"
             anchors.right: parent.right
@@ -147,7 +154,6 @@ Window {
 
             LineSeries {
                 id: randomLineSeries
-
                 axisX: axisX
                 axisY: axisY
             }

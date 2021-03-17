@@ -87,4 +87,5 @@ target_compile_definitions(${CLIENT} PRIVATE
 # StrataRPC tests
 if(BUILD_TESTING)
     add_subdirectory(test)
+    add_subdirectory(samples)
 endif()
