@@ -425,7 +425,7 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
     }
 }
 
-void HostControllerService::platformConnected(const int deviceId)
+void HostControllerService::platformConnected(const QByteArray& deviceId)
 {
     Q_UNUSED(deviceId)
 
@@ -433,7 +433,7 @@ void HostControllerService::platformConnected(const int deviceId)
     broadcastMessage(boardsController_.createPlatformsList());
 }
 
-void HostControllerService::platformDisconnected(const int deviceId)
+void HostControllerService::platformDisconnected(const QByteArray& deviceId)
 {
     Q_UNUSED(deviceId)
 
@@ -548,20 +548,22 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
     QByteArray clientId = getSenderClient()->getClientId();
 
     const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
-    if (deviceIdValue.IsInt() == false) {
+    if (deviceIdValue.IsString() == false) {
         qCWarning(logCategoryHcs) << "device_id attribute has bad format";
         return;
     }
-    int deviceId = deviceIdValue.GetInt();
+    const QByteArray deviceId(deviceIdValue.GetString(), deviceIdValue.GetStringLength());
 
-    QString path = QString::fromStdString((*payload)["path"].GetString());
+    const rapidjson::Value& pathValue = (*payload)["path"];
+    QString path = QString::fromUtf8(pathValue.GetString(), pathValue.GetStringLength());
     if (path.isEmpty()) {
         qCWarning(logCategoryHcs) << "path attribute is empty";
         return;
     }
     QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
 
-    QString firmwareMD5 = QString::fromStdString((*payload)["md5"].GetString());
+    const rapidjson::Value& md5Value = (*payload)["md5"];
+    QString firmwareMD5 = QString::fromUtf8(md5Value.GetString(), md5Value.GetStringLength());
     if (firmwareMD5.isEmpty()) {
         // If 'md5' attribute is empty firmware will be downloaded, but checksum will not be verified.
         qCWarning(logCategoryHcs) << "md5 attribute is empty";
@@ -574,37 +576,40 @@ void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* pay
 {
     QByteArray clientId = getSenderClient()->getClientId();
 
-    QString partialUri = QString::fromStdString((*payload)["url"].GetString());
+    const rapidjson::Value& urlValue = (*payload)["url"];
+    QString partialUri = QString::fromUtf8(urlValue.GetString(), urlValue.GetStringLength());
     if (partialUri.isEmpty()) {
         qCWarning(logCategoryHcs) << "url attribute is empty";
         return;
     }
 
-    QString md5 = QString::fromStdString((*payload)["md5"].GetString());
+    const rapidjson::Value& md5Value = (*payload)["md5"];
+    QString md5 = QString::fromUtf8(md5Value.GetString(), md5Value.GetStringLength());
     if (md5.isEmpty()) {
         qCWarning(logCategoryHcs) << "md5 attribute is empty";
         return;
     }
 
-    QString class_id = QString::fromStdString((*payload)["class_id"].GetString());
-    if (class_id.isEmpty()) {
+    const rapidjson::Value& classIdValue = (*payload)["class_id"];
+    QString classId = QString::fromUtf8(classIdValue.GetString(), classIdValue.GetStringLength());
+    if (classId.isEmpty()) {
         qCWarning(logCategoryHcs) << "class_id attribute is empty";
     }
 
-    emit downloadControlViewRequested(clientId, partialUri, md5, class_id);
+    emit downloadControlViewRequested(clientId, partialUri, md5, classId);
 }
 
-Client* HostControllerService::getClientById(const QByteArray& client_id)
+Client* HostControllerService::getClientById(const QByteArray& clientId)
 {
     auto findIt = std::find_if(clientList_.begin(), clientList_.end(),
-                               [&](Client* val) { return client_id == val->getClientId(); }  );
+                               [&](Client* val) { return clientId == val->getClientId(); }  );
 
     return (findIt != clientList_.end()) ? *findIt : nullptr;
 }
 
 void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 {
-    QByteArray clientId = msg.from_client;
+    const QByteArray& clientId = msg.from_client;
 
     //check the client's ID (dealer_id) is in list
     Client* client = getClientById(clientId);
@@ -632,12 +637,13 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     }
 
     if (service_command.HasMember("device_id")) {
-        if (service_command["device_id"].IsInt() == false) {
-            qCCritical(logCategoryHcs) << "device_id is not integer";
+        const rapidjson::Value& devId = service_command["device_id"];
+        if (devId.IsString() == false) {
+            qCCritical(logCategoryHcs) << "bad format of device_id";
             return;
         }
 
-        boardsController_.sendMessage(service_command["device_id"].GetInt(), msg.message);
+        boardsController_.sendMessage(QByteArray(devId.GetString(), devId.GetStringLength()), msg.message);
         return;
     }
 
@@ -686,7 +692,7 @@ bool HostControllerService::broadcastMessage(const QString& message)
     return false;
 }
 
-void HostControllerService::handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress)
+void HostControllerService::handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress)
 {
     QString operation;
     switch (progress.operation) {
@@ -728,7 +734,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
 
     QJsonObject payload;
     payload.insert("type", "firmware_update");
-    payload.insert("device_id", deviceId);
+    payload.insert("device_id", QLatin1String(deviceId));
     payload.insert("operation", operation);
     payload.insert("status", status);
     payload.insert("complete", progress.complete);
