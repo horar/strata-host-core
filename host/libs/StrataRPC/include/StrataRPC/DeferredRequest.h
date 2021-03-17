@@ -1,6 +1,5 @@
 #pragma once
 
-#include <StrataRPC/Message.h>
 #include <QObject>
 #include <QTimer>
 
@@ -29,30 +28,18 @@ public:
      */
     int getId() const;
 
-    /**
-     * Check if the request has a connected slot/lambda to finishedSuccessfully signal.
-     * @return boolean if a signal/slot is connected to finishedSuccessfully signal.
-     */
-    bool hasSuccessCallback();
-
-    /**
-     * Check if the request has a connected slot/lambda to finishedWithError signal.
-     * @return boolean if a signal/slot is connected to finishedWithError signal.
-     */
-    bool hasErrorCallback();
-
 signals:
     /**
      * Signal Emitted when the server respond with a successful message.
-     * @param [in] message parsed server message.
+     * @param [in] jsonPayload QJsonObject of the payload.
      */
-    void finishedSuccessfully(const Message &message);
+    void finishedSuccessfully(const QJsonObject &jsonPayload);
 
     /**
      * Signal Emitted when the server respond with a Error message.
-     * @param [in] message parsed server message.
+     * @param [in] jsonPayload QJsonObject of the payload.
      */
-    void finishedWithError(const Message &message);
+    void finishedWithError(const QJsonObject &jsonPayload);
 
     /**
      * Signal emitted on timeout.
@@ -71,15 +58,15 @@ private:
 
     /**
      * Emits finishedSuccessfully signal.
-     * @param [in] message parsed server message.
+     * @param [in] jsonPayload QJsonObject of the payload.
      */
-    void callSuccessCallback(const Message &message);
+    void callSuccessCallback(const QJsonObject &jsonPayload);
 
     /**
      * Emits finishedWithError signal.
-     * @param [in] message parsed server message.
+     * @param [in] jsonPayload QJsonObject of the payload.
      */
-    void callErrorCallback(const Message &message);
+    void callErrorCallback(const QJsonObject &jsonPayload);
 
     /**
      * Starts timer for timeout.

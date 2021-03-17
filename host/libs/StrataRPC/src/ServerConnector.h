@@ -58,7 +58,7 @@ signals:
 private slots:
     /**
      * Slot to handle QSocketNotifier::activated signal.
-     * Note: the QSocketNotifier::activated signal only emitted if the buffer is empty and new
+     * @note the QSocketNotifier::activated signal only emitted if the buffer is empty and new
      * messages are received. If the buffer is not empty, the socket notifier won't emit anymore
      * signals. As a result, when handling this signal the buffer must be emptied by reading all
      * it's content, otherwise we will not be notified for new messages.

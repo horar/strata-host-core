@@ -20,12 +20,9 @@ private slots:
     void testRegisteringHandlers();
     void testUregisterHandlers();
     void testDispatchHandlers();
-    void testDispatchHandlersUsingSignal();
-    void testDispatchHandlersInDispatcherThread();
-    void testDispatchHandlersLocalMessage();
     void testLargeNumberOfHandlers();
-    void testLargeNumberOfHandlersUsingDispatcherThread();
-
+    void testDifferentArgumentType();
+    void testDispatchUsingSignals();
 private:
     TestHandlers th_;
     QVector<Message> messageList_;
