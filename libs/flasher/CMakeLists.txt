@@ -65,3 +65,7 @@ target_compile_definitions(${PROJECT_NAME}${CONNECTOR_SUFFIX} PRIVATE
 set_target_properties(${PROJECT_NAME}${CONNECTOR_SUFFIX} PROPERTIES
     AUTOMOC ON
 )
+
+if(BUILD_TESTING)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
+endif()
