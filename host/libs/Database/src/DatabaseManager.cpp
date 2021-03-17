@@ -1,12 +1,22 @@
 #include "logging/LoggingQtCategories.h"
-#include "DatabaseManager.h"
-#include "DatabaseAccess.h"
+#include "Database/DatabaseManager.h"
+#include "Database/DatabaseAccess.h"
 
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 #include <thread>
 
-DatabaseManager::DatabaseManager(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {
+DatabaseManager::DatabaseManager() {
+
+}
+
+DatabaseManager::~DatabaseManager() {
+    delete userAccessDb_;
+}
+
+bool DatabaseManager::init(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {
     path_ = path;
     endpointURL_ = endpointURL;
 
@@ -15,16 +25,15 @@ DatabaseManager::DatabaseManager(const QString &path, const QString &endpointURL
     // Object valid if database open successful
     if (userAccessDb_ == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to open user_access_map.";
-        return;
+        return false;
     }
 
     if (userAccessDb_->startBasicReplicator(endpointURL, "", "", "pushandpull", changeListener, documentListener, true) == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid.";
+        return false;
     }
-}
 
-DatabaseManager::~DatabaseManager() {
-    delete userAccessDb_;
+    return true;
 }
 
 DatabaseAccess* DatabaseManager::login(const QString &name, const QString &channelsRequested, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {

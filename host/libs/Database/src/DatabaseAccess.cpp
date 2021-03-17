@@ -1,6 +1,6 @@
 #include "logging/LoggingQtCategories.h"
-#include "DatabaseManager.h"
-#include "DatabaseAccess.h"
+#include "Database/DatabaseManager.h"
+#include "Database/DatabaseAccess.h"
 
 #include <QDir>
 #include <QCoreApplication>

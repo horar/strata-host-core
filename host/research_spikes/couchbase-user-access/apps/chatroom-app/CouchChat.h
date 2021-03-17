@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 
-#include "DatabaseManager.h"
+#include "Database/DatabaseManager.h"
 
 class CouchChat: public QObject {
     Q_OBJECT

@@ -7,13 +7,15 @@ class DatabaseAccess;
 class DatabaseManager
 {
 public:
-    DatabaseManager(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
+    DatabaseManager();
 
     ~DatabaseManager();
 
     DatabaseManager& operator=(const DatabaseManager&) = delete;
 
     DatabaseManager(const DatabaseManager&) = delete;
+
+    bool init(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
 
     DatabaseAccess* login(const QString &name, const QString &channelsRequested, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
 

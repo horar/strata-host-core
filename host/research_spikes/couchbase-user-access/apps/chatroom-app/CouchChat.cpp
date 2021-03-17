@@ -1,6 +1,6 @@
 #include "CouchChat.h"
-#include "DatabaseManager.h"
-#include "DatabaseAccess.h"
+#include "Database/DatabaseManager.h"
+#include "Database/DatabaseAccess.h"
 
 #include <QDebug>
 #include <thread>
@@ -8,7 +8,11 @@
 CouchChat::CouchChat(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
     auto documentListenerCallback = std::bind(&CouchChat::documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    databaseManager_ = std::make_unique<DatabaseManager>("", endpointURL_, nullptr, documentListenerCallback);
+
+    databaseManager_ = std::make_unique<DatabaseManager>();
+    if (databaseManager_->init("", endpointURL_, nullptr, documentListenerCallback) == false) {
+        qDebug() << "Error with initialization of database manager. Verify endpoint URL" << endpointURL_ << "is valid.";
+    }
 }
 
 void CouchChat::login(const QString &loginUsername, const QString &desiredChatroom) {

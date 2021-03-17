@@ -1,6 +1,6 @@
 #include "couchbase-database-test.h"
 
-#include "DatabaseLib.h"
+#include "Database/DatabaseLib.h"
 
 #include <QDir>
 #include <QObject>

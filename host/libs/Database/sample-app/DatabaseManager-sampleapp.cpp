@@ -17,7 +17,12 @@ int main() {
     auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
         qDebug() << "DatabaseManager-sampleapp changeListener -> replication status changed!";
     };
-    auto databaseManager = std::make_unique<DatabaseManager>("", endpointURL, changeListener);
+
+    auto databaseManager = std::make_unique<DatabaseManager>();
+    if (databaseManager->init("", endpointURL, changeListener) == false) {
+        qDebug() << "Error with initialization of database manager. Verify endpoint URL" << endpointURL << "is valid.";
+        return -1;
+    }
 
     // Wait until user_access_map replication is finished
     unsigned int retries = 0;

@@ -5,12 +5,10 @@
 
 #include <QObject>
 #include <QJsonObject>
-#include <QJsonDocument>
-#include <QJsonArray>
 
 #include <couchbase-lite-C/CouchbaseLite.hh>
-#include "CouchbaseDocument.h"
-#include "DatabaseLib.h"
+#include "Database/CouchbaseDocument.h"
+#include "Database/DatabaseLib.h"
 
 class DatabaseLib;
 

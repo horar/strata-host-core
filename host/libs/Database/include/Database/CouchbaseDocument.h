@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "DatabaseLib.h"
+#include "Database/DatabaseLib.h"
 #include "CouchbaseDatabase.h"
 
 class CouchbaseDatabase;

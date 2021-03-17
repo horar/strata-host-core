@@ -1,14 +1,18 @@
 #include "UserAccessBrowser.h"
-#include "DatabaseManager.h"
-#include "DatabaseAccess.h"
-#include "CouchbaseDocument.h"
+#include "Database/DatabaseManager.h"
+#include "Database/DatabaseAccess.h"
+#include "Database/CouchbaseDocument.h"
 
 #include <QDebug>
 
 UserAccessBrowser::UserAccessBrowser(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
     auto changeListenerCallback = std::bind(&UserAccessBrowser::changeListener, this, std::placeholders::_1, std::placeholders::_2);
-    databaseManager_ = std::make_unique<DatabaseManager>("", endpointURL_, changeListenerCallback);
+
+    databaseManager_ = std::make_unique<DatabaseManager>();
+    if (databaseManager_->init("", endpointURL_, changeListenerCallback) == false) {
+        qDebug() << "Error with initialization of database manager. Verify endpoint URL" << endpointURL_ << "is valid.";
+    }
 }
 
 void UserAccessBrowser::login(const QString &loginUsername) {
