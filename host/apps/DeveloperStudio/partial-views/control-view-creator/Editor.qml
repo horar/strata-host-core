@@ -353,7 +353,6 @@ Item {
                 currentIndex: openFilesModel.currentIndex
                 visible: !parsingErrorRect.visible
 
-
                 Repeater {
                     id: fileEditorRepeater
                     model: openFilesModel
@@ -387,7 +386,6 @@ Item {
                     id: noActiveFile
                 }
             }
-
         }
     }
 }

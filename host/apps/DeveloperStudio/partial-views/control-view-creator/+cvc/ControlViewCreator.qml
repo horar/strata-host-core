@@ -246,7 +246,6 @@ Rectangle {
                     Layout.minimumHeight: footer.implicitHeight
                     Layout.fillWidth: true
                 }
-
             }
         }
 

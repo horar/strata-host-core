@@ -31,5 +31,11 @@
         <file alias="components/SGControlViewIconButton.qml">partial-views/control-view-creator/components/SGControlViewIconButton.qml</file>
         <file alias="components/SGControlSearchComboBox.qml">partial-views/control-view-creator/components/SGControlSearchComboBox.qml</file>
         <file alias="DebugPanel.qml">partial-views/control-view-creator/DebugPanel.qml</file>
+        <file alias="Editor/LayoutBuilder.qml">partial-views/control-view-creator/Editor/LayoutBuilder.qml</file>
+        <file alias="Editor/LayoutOverlay/ContextMenu.qml">partial-views/control-view-creator/Editor/LayoutOverlay/ContextMenu.qml</file>
+        <file alias="Editor/LayoutOverlay/ContextMenuButton.qml">partial-views/control-view-creator/Editor/LayoutOverlay/ContextMenuButton.qml</file>
+        <file alias="Editor/LayoutOverlay/LayoutOverlay.qml">partial-views/control-view-creator/Editor/LayoutOverlay/LayoutOverlay.qml</file>
+        <file alias="Editor/LayoutOverlay/RenamePopup.qml">partial-views/control-view-creator/Editor/LayoutOverlay/RenamePopup.qml</file>
+        <file alias="Editor/LayoutOverlay/resize.svg">partial-views/control-view-creator/Editor/LayoutOverlay/resize.svg</file>
     </qresource>
 </RCC>

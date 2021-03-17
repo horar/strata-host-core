@@ -53,6 +53,16 @@ SGDialogJS 1.0 dialogs/SGDialog.js
 SGBaseEditor 1.0 editors/SGBaseEditor.qml
 SGTextFieldEditor 1.0 editors/SGTextFieldEditor.qml
 
+UIBase 1.0 cvc-layout/UIBase.qml
+LayoutInfo 1.0 cvc-layout/LayoutInfo.qml
+LayoutContainer 1.0 cvc-layout/LayoutContainer.qml
+LayoutButton 1.0 cvc-layout/widgets/Button/LayoutButton.qml
+DefaultButton 1.0 cvc-layout/widgets/Button/DefaultButton.qml
+LayoutDivider 1.0 cvc-layout/widgets/Divider/LayoutDivider.qml
+DefaultDivider 1.0 cvc-layout/widgets/Divider/DefaultDivider.qml
+LayoutText 1.0 cvc-layout/widgets/Text/LayoutText.qml
+DefaultText 1.0 cvc-layout/widgets/Text/DefaultText.qml
+
 singleton SGSettings 1.0 SGSettings.qml
 
 depends tech.strata.theme 1.0

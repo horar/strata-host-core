@@ -13,10 +13,8 @@ import tech.strata.commoncpp 1.0
 import "../../general"
 import "../"
 
-Item {
+ColumnLayout {
     id: fileContainerRoot
-    Layout.fillHeight: true
-    Layout.fillWidth: true
 
     property int modelIndex: index
     property string file: model.filename
@@ -198,17 +196,37 @@ Item {
         }
     }
 
+    SGNotificationToast {
+        id: alertToast
+        Layout.fillWidth: true
+        interval: 0
+        z: 100
+        color: "red"
+    }
+
     RowLayout {
-        id: alertRow
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width * 0.7
-        SGNotificationToast {
-            id: alertToast
-            Layout.fillWidth: true
-            interval: 0
-            z: 100
-            color: "red"
+        id: tabRow
+
+        Button {
+            text: "Text Editor"
+            checkable: true
+            checked: viewStack.currentIndex === 0
+            onCheckedChanged: {
+                if (checked) {
+                    viewStack.currentIndex = 0
+                }
+            }
+        }
+
+        Button {
+            text: "Visual Editor"
+            checkable: true
+            checked: viewStack.currentIndex === 1
+            onCheckedChanged: {
+                if (checked) {
+                    viewStack.currentIndex = 1
+                }
+            }
         }
     }
 
@@ -256,76 +274,78 @@ Item {
         }
     }
 
-    WebEngineView {
-        id: webEngine
-        webChannel: channel
-        settings.localContentCanAccessRemoteUrls: false
-        settings.localContentCanAccessFileUrls: true
-        settings.localStorageEnabled: true
+    StackLayout {
+        id: viewStack
+        Layout.fillHeight: true
+        Layout.fillWidth: true
 
-        settings.errorPageEnabled: false
-        settings.javascriptCanOpenWindows: false
-        settings.javascriptEnabled: true
-        settings.javascriptCanAccessClipboard: true
-        settings.pluginsEnabled: true
-        settings.showScrollBars: false
+        WebEngineView {
+            id: webEngine
+            webChannel: channel
+            settings.localContentCanAccessRemoteUrls: false
+            settings.localContentCanAccessFileUrls: true
+            settings.localStorageEnabled: true
 
-        anchors {
-            top: alertRow.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
+            settings.errorPageEnabled: false
+            settings.javascriptCanOpenWindows: false
+            settings.javascriptEnabled: true
+            settings.javascriptCanAccessClipboard: true
+            settings.pluginsEnabled: true
+            settings.showScrollBars: false
 
-        onHeightChanged: {
-            channelObject.setContainerHeight(height.toString())
-        }
-
-        onWidthChanged: {
-            channelObject.setContainerWidth(width.toString())
-        }
-
-        onLoadingChanged: {
-            if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
+            onHeightChanged: {
                 channelObject.setContainerHeight(height.toString())
-                let fileText = openFile(model.filepath)
-                channelObject.setHtml(fileText)
-                channelObject.fileText = fileText
             }
 
-        }
-
-        url: "qrc:///tech/strata/monaco/minified/editor.html"
-
-        Rectangle {
-            id: barContainer
-            color: "white"
-            anchors {
-                fill: webEngine
+            onWidthChanged: {
+                channelObject.setContainerWidth(width.toString())
             }
-            visible: progressBar.value !== 100
 
-            ProgressBar {
-                id: progressBar
-                anchors {
-                    centerIn: barContainer
-                    verticalCenterOffset: 10
+            onLoadingChanged: {
+                if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
+                    channelObject.setContainerHeight(height.toString())
+                    let fileText = openFile(model.filepath)
+                    channelObject.setHtml(fileText)
+                    channelObject.fileText = fileText
                 }
-                height: 10
-                width: webEngine.width/2
-                from: 0
-                to: 100
-                value: webEngine.loadProgress
+            }
 
-                Text {
-                    text: qsTr("Loading...")
+            url: "qrc:///tech/strata/monaco/minified/editor.html"
+
+            Rectangle {
+                id: barContainer
+                color: "white"
+                anchors {
+                    fill: webEngine
+                }
+                visible: progressBar.value !== 100
+
+                ProgressBar {
+                    id: progressBar
                     anchors {
-                        bottom: progressBar.top
-                        bottomMargin: 10
-                        horizontalCenter: progressBar.horizontalCenter
+                        centerIn: barContainer
+                        verticalCenterOffset: 10
+                    }
+                    height: 10
+                    width: webEngine.width/2
+                    from: 0
+                    to: 100
+                    value: webEngine.loadProgress
+
+                    Text {
+                        text: qsTr("Loading...")
+                        anchors {
+                            bottom: progressBar.top
+                            bottomMargin: 10
+                            horizontalCenter: progressBar.horizontalCenter
+                        }
                     }
                 }
             }
+        }
+
+        LayoutBuilder {
+            file: model.filepath
         }
     }
 }

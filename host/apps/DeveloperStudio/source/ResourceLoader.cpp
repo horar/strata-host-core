@@ -39,6 +39,13 @@ ResourceLoader::~ResourceLoader()
     }
 }
 
+void ResourceLoader::cleanUp(QObject *parent) {
+    QQmlEngine *eng = qmlEngine(parent);
+//    eng->collectGarbage();
+//    eng->trimComponentCache();
+    eng->clearComponentCache();
+}
+
 void ResourceLoader::requestUnregisterDeleteViewResource(const QString class_id, const QString rccPath, const QString version, QObject *parent, const bool removeFromSystem) {
     if (removeFromSystem) {
         qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;

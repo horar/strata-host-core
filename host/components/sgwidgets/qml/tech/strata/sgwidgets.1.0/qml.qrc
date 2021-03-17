@@ -55,5 +55,14 @@
         <file>dialogs/SGDialog.qml</file>
         <file>dialogs/SGConfirmationDialog.qml</file>
         <file>dialogs/SGMessageDialog.qml</file>
+        <file>cvc-layout/UIBase.qml</file>
+        <file>cvc-layout/LayoutInfo.qml</file>
+        <file>cvc-layout/LayoutContainer.qml</file>
+        <file>cvc-layout/widgets/Button/LayoutButton.qml</file>
+        <file>cvc-layout/widgets/Button/DefaultButton.qml</file>
+        <file>cvc-layout/widgets/Divider/LayoutDivider.qml</file>
+        <file>cvc-layout/widgets/Divider/DefaultDivider.qml</file>
+        <file>cvc-layout/widgets/Text/LayoutText.qml</file>
+        <file>cvc-layout/widgets/Text/DefaultText.qml</file>
     </qresource>
 </RCC>

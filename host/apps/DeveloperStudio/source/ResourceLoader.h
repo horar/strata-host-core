@@ -62,6 +62,8 @@ public:
      */
     Q_INVOKABLE bool registerControlViewResource(const QString &rccPath, const QString &class_id, const QString &version);
 
+    Q_INVOKABLE void cleanUp(QObject *parent);
+
     /**
      * @brief isViewRegistered Checks if a view is registed in viewsRegistered_.
      * @param class_id The class id of the platform.
