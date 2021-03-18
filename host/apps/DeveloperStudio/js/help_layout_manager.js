@@ -207,7 +207,7 @@ function registerWindow(windowTarget, stackContainerTarget) {
 
 function refreshView (i) {
     // set the target sizing on load
-    current_tour_targets[i]["helpObject"].setTarget(current_tour_targets[i]["target"], window);
+    current_tour_targets[i]["helpObject"].setTarget(current_tour_targets[i]["target"]);
 }
 
 function liveResize() {
@@ -246,7 +246,7 @@ function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
 }
 
 function createHelpObject(tourTarget) {
-    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml", window)
     tourStop.index = tourTarget.index
     tourStop.description = tourTarget.description
     tourTarget.helpObject = tourStop

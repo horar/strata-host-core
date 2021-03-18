@@ -4,31 +4,15 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
 import "qrc:/js/help_layout_manager.js" as Help
 
-Popup{
+Popup {
     id: root
-    property alias content: content.sourceComponent
-    property alias popupItem: content.item
+    closePolicy: Popup.NoAutoClose
+    z: 50
+
     property bool arrowOnTop: false
     property string horizontalAlignment: "center"
     property real radius: 5
     property color color: "#00ccee"
-    closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnPressOutside
-    opacity: 0
-    z: 50
-
-    enter: Transition {
-        PropertyAnimation{
-            onStarted: root.open()
-            target: root; properties: "opacity"; from: root.opacity; to: 1; duration: 200
-        }
-    }
-
-    exit: Transition {
-        PropertyAnimation {
-            onStopped: root.close()
-            target: root; properties: "opacity"; from: root.opacity; to: 0; duration: 100
-        }
-    }
 
     function updateAlignment (){
         triangleArrow.anchors.left = undefined
@@ -39,7 +23,6 @@ Popup{
 
         colorRect.anchors.bottom = undefined
         colorRect.anchors.top = undefined
-
 
         if (arrowOnTop) {
             colorRect.anchors.bottom = container.bottom
@@ -80,7 +63,7 @@ Popup{
 
     background:  Item {
         id: container
-        anchors.fill: parent
+
         Rectangle {
             id: colorRect
             color: root.color
@@ -89,21 +72,27 @@ Popup{
         }
 
         DropShadow {
-                anchors.fill: colorRect
-                horizontalOffset: 1.5
-                verticalOffset: 1.5
-                radius: 6.0
-                samples: 13
-                color: "#88000000"
-                source: colorRect
-                visible: root.visible
-                opacity: root.opacity
-                z: -1
-            }
+            anchors.fill: colorRect
+            horizontalOffset: 1.5
+            verticalOffset: 1.5
+            radius: 6.0
+            samples: 13
+            color: "#88000000"
+            source: colorRect
+            visible: root.visible
+            z: -1
+        }
+
+        MouseArea {
+            // Blocks clickthroughs
+            anchors.fill: parent
+            hoverEnabled: true
+            preventStealing: true
+            propagateComposedEvents: false
+        }
 
         Canvas {
             id: triangleArrow
-
             width: 10
             height: 10
             contextType: "2d"
@@ -120,34 +109,6 @@ Popup{
                 context.fillStyle = root.color;
                 context.fill();
             }
-        }
-    }
-
-    contentItem: Item {
-        id: contentItems
-        implicitHeight: content.childrenRect.height + 20
-        implicitWidth: baseImplicitWidth
-
-        readonly property int baseImplicitWidth: 360
-
-        onWidthChanged: {
-            if(popupItem !== null){
-                popupItem.width = width
-                implicitWidth = popupItem.width
-            }
-        }
-
-        MouseArea {
-            // Blocks clickthroughs
-            anchors.fill: parent
-            hoverEnabled: true
-            preventStealing: true
-            propagateComposedEvents: false
-        }
-
-        Loader {
-            id: content
-            anchors.centerIn: parent
         }
     }
 }

@@ -7,14 +7,23 @@ Item {
      z: 50
      anchors.fill: parent
 
+     property alias index: toolTipPopup.index
+     property alias description: toolTipPopup.description
+     property alias fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
+     property alias toolTipPopup: toolTipPopup
+     property real globalOpacity: .5
 
-     function setTarget(target, fill) {
-         var remappedTarget = target.mapToItem(fill, 0, 0)
+     function setTarget(target) {
+         var remappedTarget = target.mapToItem(root.parent, 0, 0)
          mockTarget.x = remappedTarget.x
          mockTarget.y = remappedTarget.y
          mockTarget.width = target.width
          mockTarget.height = target.height
 
+         updateAlignment()
+     }
+
+     function updateAlignment() {
          // apply default alignment settings:
          toolTipBackgroundItem.anchors.bottom = undefined
          toolTipBackgroundItem.anchors.right = undefined
@@ -29,12 +38,12 @@ Item {
              toolTipBackgroundItem.anchors.horizontalCenter = undefined
              toolTipBackgroundItem.anchors.left = bottomFade.horizontalCenter
              toolTipPopup.horizontalAlignment = "left"
-         } else if ( toolTipBackgroundItem.x + toolTipBackgroundItem.width >= fill.width ) {
+         } else if ( toolTipBackgroundItem.x + toolTipBackgroundItem.width >= root.parent.width ) {
              toolTipBackgroundItem.anchors.horizontalCenter = undefined
              toolTipBackgroundItem.anchors.right = bottomFade.horizontalCenter
              toolTipPopup.horizontalAlignment = "right"
          }
-         if ( toolTipBackgroundItem.y + toolTipBackgroundItem.height >= fill.height ) {
+         if ( toolTipBackgroundItem.y + toolTipBackgroundItem.height >= root.parent.height ) {
              toolTipBackgroundItem.anchors.top = undefined
              toolTipBackgroundItem.anchors.bottom = topFade.top
              toolTipPopup.arrowOnTop = false
@@ -42,20 +51,14 @@ Item {
      }
 
      function restoreFocus(){
-        toolTipBackgroundItem.forceActiveFocus()
+        tourControl.forceActiveFocus()
      }
-
-     property alias index: toolTipPopup.index
-     property alias description: toolTipPopup.description
-     property alias fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
-     property alias toolTipPopup: toolTipPopup
-     property real globalOpacity: .5
 
      MouseArea {
          anchors {
              fill: root
          }
-         onClicked: toolTipPopup.popupItem.close()
+         onClicked: tourControl.close()
          onWheel: {} // Prevent views behind from scrolling, which will misalign the peekthrough
      }
 
@@ -212,53 +215,37 @@ Item {
          rotation: 180
          opacity: root.globalOpacity
      }
-    // This is a rectangle only because the dropshadow was clipping to the Item radius or lack thereof. This fixes the issue
-     Rectangle{
+
+     Item {
          id: toolTipBackgroundItem
          width: toolTipPopup.width
          height: toolTipPopup.height
-         color: "transparent"
-         radius: 15
          focus: true
+         // anchors set dynamically in setTarget
 
-         onVisibleChanged: {
+         onHeightChanged: {
              if (visible) {
-                 forceActiveFocus(); // focus on this to catch Keys below
-             } else if(focus){
-                 focus = false
+                updateAlignment()
              }
          }
-        // Originally this was three different keys.pressed events I combined into one, so that a user couldnt hold left and right and constantly toggle <- ->
-         Keys.onPressed: {
-             if(event.key === Qt.Key_Escape){
-                 toolTipPopup.popupItem.close()
-                 Help.closeTour()
-             } else if(event.key === Qt.Key_Left){
-                 if (toolTipPopup.index > 0) {
-                     Help.prev(root.index)
-                 }
-             } else if(event.key === Qt.Key_Right){
-                 Help.next(toolTipPopup.index)
-             }
-         }
-
-         Keys.onTabPressed: {}
-         Keys.onBacktabPressed: {}
-
 
          SGToolTipPopup {
              id: toolTipPopup
-             // anchors and arrow alignment dynamically in setTarget
              color: "white"
+             visible: root.visible
+             width: 360
+             height: tourControl.implicitHeight + (padding * 2)
+
              property int index
              property string description
              property real fontSizeMultiplier: 1
-             visible: root.visible
-             content: SGTourControl {
+
+             SGTourControl {
                  id: tourControl
                  index: toolTipPopup.index
                  description: toolTipPopup.description
                  fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
+                 width: parent.width
              }
          }
      }

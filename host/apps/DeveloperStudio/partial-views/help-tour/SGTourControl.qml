@@ -1,65 +1,81 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.3
+import QtQuick.Controls 2.3
 import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
-ColumnLayout {
+Item {
     id: root
+    implicitHeight: root.childrenRect.height
     width: 360
-    focus: true
+
     property int index: 0
     property alias description: description.text
     property real fontSizeMultiplier: 1
-    spacing: 0
 
     signal close()
     onClose: Help.closeTour()
 
-    RowLayout{
-        Layout.fillWidth: true
-        spacing: 0
-        Item {
-            Layout.fillWidth: true
-        }
-
-        SGIcon {
-            id: closer
-            source: "qrc:/sgimages/times.svg"
-            iconColor: closerMouse.containsMouse ? "lightgrey" : "grey"
-            Layout.preferredHeight: 18
-            Layout.preferredWidth: Layout.preferredHeight
-
-            MouseArea {
-                id: closerMouse
-                anchors {
-                    fill: closer
-                }
-                onClicked: root.close()
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-            }
-        }
-
-        Item {
-            Layout.preferredWidth: 10
+    onVisibleChanged: {
+        if (visible) {
+            forceActiveFocus(); // focus on this to catch Keys below
+        } else if(focus){
+            focus = false
         }
     }
 
-    ColumnLayout {
+    Keys.onPressed: {
+        if(event.key === Qt.Key_Escape){
+            close()
+            Help.closeTour()
+        } else if(event.key === Qt.Key_Left){
+            if (root.index > 0) {
+                Help.prev(root.index)
+            }
+        } else if(event.key === Qt.Key_Right){
+            Help.next(root.index)
+        }
+    }
+
+    Keys.onTabPressed: {}
+    Keys.onBacktabPressed: {}
+
+    SGIcon {
+        id: closer
+        source: "qrc:/sgimages/times.svg"
+        anchors {
+            top: root.top
+            right: root.right
+            rightMargin: 2
+        }
+        iconColor: closerMouse.containsMouse ? "lightgrey" : "grey"
+        height: 18
+        width: height
+
+        MouseArea {
+            id: closerMouse
+            anchors {
+                fill: closer
+            }
+            onClicked: root.close()
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+        }
+    }
+
+    Column {
         id: column
-        Layout.fillWidth: true
-        Layout.alignment: Qt.AlignHCenter
-        spacing: 15
+        width: root.width
 
         SGText {
             id: helpText
             color:"grey"
             fontSizeMultiplier: 1.25 //* root.fontSizeMultiplier
             text: " "
-            Layout.alignment: Qt.AlignHCenter
+            anchors {
+                horizontalCenter: column.horizontalCenter
+            }
             onVisibleChanged: {
                 if (visible) {
                     text = (root.index + 1) + "/" + Help.tour_count
@@ -67,40 +83,51 @@ ColumnLayout {
             }
         }
 
+        Item {
+            height: 15
+            width: 15
+        }
+
         Rectangle {
-            Layout.fillWidth: false
-            Layout.preferredWidth: root.width - 40
-            Layout.preferredHeight: 1
+            width: root.width - 40
+            height: 1
             color: "darkgrey"
-            Layout.alignment: Qt.AlignHCenter
+            anchors {
+                horizontalCenter: column.horizontalCenter
+            }
+        }
+
+        Item {
+            height: 15
+            width: 15
         }
 
         SGTextEdit {
             id: description
             text: "Placeholder Text"
+            width: root.width - 20
             color: "grey"
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.alignment: Qt.AlignHCenter
-
+            anchors {
+                horizontalCenter: column.horizontalCenter
+            }
             readOnly: true
             wrapMode: TextEdit.Wrap
             fontSizeMultiplier: root.fontSizeMultiplier
         }
 
-        RowLayout {
-            id: row
-            Layout.fillWidth: true
-            Layout.minimumHeight: prevButton.height
-            Layout.maximumHeight: prevButton.height
-            Layout.fillHeight: false
-            Layout.alignment: Qt.AlignHCenter
-            spacing: 15
+        Item {
+            height: 15
+            width: 15
+        }
+
+        Row {
+            anchors {
+                horizontalCenter: column.horizontalCenter
+            }
 
             Button {
                 id: prevButton
                 text: "Prev"
-                Layout.alignment: Qt.AlignLeft
                 onClicked: {
                     Help.prev(root.index)
                 }
@@ -127,7 +154,6 @@ ColumnLayout {
                 ToolTip {
                     text: "Hotkey: ←"
                     visible: prevButton.showToolTip
-                    z: 67
                 }
 
                 MouseArea {
@@ -138,10 +164,15 @@ ColumnLayout {
                 }
             }
 
+            Item {
+                height: 15
+                width: 15
+            }
+
             Button {
                 id: nextButton
                 text: "Next"
-                Layout.alignment: Qt.AlignRight
+
                 property bool showToolTip: false
 
                 onVisibleChanged: {
@@ -171,7 +202,6 @@ ColumnLayout {
                 ToolTip {
                     text: "Hotkey: →"
                     visible: nextButton.showToolTip
-                    z: 67
                 }
 
                 MouseArea {
