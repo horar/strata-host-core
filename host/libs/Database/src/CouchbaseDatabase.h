@@ -107,7 +107,7 @@ public:
                          const std::string &token = "",
                          const std::string &cookie_name = "",
                          const std::vector<std::string> &channels = std::vector<std::string>(),
-                         const ReplicatorType &replicator_type = ReplicatorType::kPull,
+                         const ReplicatorType &replicatorType = ReplicatorType::kPull,
                          std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr,
                          std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr,
                          bool continuous = false
@@ -128,7 +128,7 @@ public:
                          const std::string &username = "",
                          const std::string &password = "",
                          const std::vector<std::string> &channels = std::vector<std::string>(),
-                         const ReplicatorType &replicator_type = ReplicatorType::kPull,
+                         const ReplicatorType &replicatorType = ReplicatorType::kPull,
                          std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr,
                          std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr,
                          bool continuous = false
@@ -152,7 +152,7 @@ private:
         std::string username;
         std::string password;
         std::vector<std::string> channels;
-        ReplicatorType replicator_type;
+        ReplicatorType replicatorType;
         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback;
         std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback;
         bool continuous;
@@ -162,7 +162,7 @@ private:
             username = "";
             password = "";
             channels.clear();
-            replicator_type = ReplicatorType::kPull;
+            replicatorType = ReplicatorType::kPull;
             change_listener_callback = nullptr;
             document_listener_callback = nullptr;
             continuous = false;

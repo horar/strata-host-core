@@ -28,7 +28,7 @@ bool DatabaseManager::init(const QString &path, const QString &endpointURL, std:
         return false;
     }
 
-    if (userAccessDb_->startBasicReplicator(endpointURL, "", "", "pushandpull", changeListener, documentListener, true) == false) {
+    if (userAccessDb_->startBasicReplicator(endpointURL, "", "", DatabaseAccess::ReplicatorType::PushAndPull, changeListener, documentListener, true) == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid.";
         return false;
     }
@@ -101,7 +101,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
     }
 
     // Start replicator (pull only for user DBs)
-    if (dbAccess_->startBasicReplicator(endpointURL_, "", "", "pull", changeListener, documentListener, true) == false) {
+    if (dbAccess_->startBasicReplicator(endpointURL_, "", "", DatabaseAccess::ReplicatorType::Pull, changeListener, documentListener, true) == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid.";
     }
 

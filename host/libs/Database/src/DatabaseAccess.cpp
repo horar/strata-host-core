@@ -14,21 +14,26 @@ DatabaseAccess::~DatabaseAccess() {
 }
 
 bool DatabaseAccess::close() {
+    bool ok = true;
     for (const auto& bucket : database_map_) {
         if (bucket == nullptr) {
             qCCritical(logCategoryCouchbaseDatabase) << "Failed to close bucket" << QString::fromStdString(bucket->getDatabaseName());
             return false;
         }
         bucket->stopReplicator();
-        bucket->close();
+
+        if (bucket->close() == false) {
+            qCCritical(logCategoryCouchbaseDatabase) << "Failed to close bucket" << QString::fromStdString(bucket->getDatabaseName());
+            ok = false;
+        }
     }
 
-    return true;
+    return ok;
 }
 
 bool DatabaseAccess::write(CouchbaseDocument *doc, const QString &bucket) {
     if (doc == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: invalid document received";
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- invalid document received";
         return false;
     }
 
@@ -65,6 +70,11 @@ bool DatabaseAccess::write(CouchbaseDocument *doc, const QString &bucket) {
 }
 
 bool DatabaseAccess::write(CouchbaseDocument *doc, const QStringList &buckets) {
+    if (doc == nullptr) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- invalid document received";
+        return false;
+    }
+
     // Array of buckets is empty - do not accept
     if (buckets.isEmpty()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: failed write operation -- a valid array of buckets is required";
@@ -73,7 +83,7 @@ bool DatabaseAccess::write(CouchbaseDocument *doc, const QStringList &buckets) {
     // A valid array of buckets was provided
     bool ok = true;
     for (const auto& bucket : buckets) {
-        if (!write(doc, bucket)) {
+        if (write(doc, bucket) == false) {
             ok = false;
         }
     }
@@ -81,34 +91,49 @@ bool DatabaseAccess::write(CouchbaseDocument *doc, const QStringList &buckets) {
 }
 
 bool DatabaseAccess::deleteDoc(const QString &id, const QString &bucket) {
-    if (!bucket.isEmpty()) {
-        auto bucketObj = getBucket(bucket);
-        if (bucketObj == nullptr) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
-            return false;
-        }
-        return bucketObj->deleteDoc(id.toStdString());
+    if (id.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to delete document -- a valid id is required";
+        return false;
     }
 
-    qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
-    return false;
+    if (bucket.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to delete document -- a valid bucket must be provided";
+        return false;
+    }
+
+    auto bucketObj = getBucket(bucket);
+    if (bucketObj == nullptr) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to delete document -- a valid bucket must be provided";
+        return false;
+    }
+    return bucketObj->deleteDoc(id.toStdString());
 }
 
 QString DatabaseAccess::getDocumentAsStr(const QString &id, const QString &bucket) {
-    if (!bucket.isEmpty()) {
-        auto bucketObj = getBucket(bucket);
-        if (bucketObj == nullptr) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
-            return QString();
-        }
-        return QString::fromStdString(bucketObj->getDocumentAsStr(id.toStdString()));
+    if (id.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to get document contents -- a valid id is required";
+        return QString();
     }
 
-    qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
-    return QString();
+    if (bucket.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to get document contents -- a valid bucket must be provided";
+        return QString();
+    }
+
+    auto bucketObj = getBucket(bucket);
+    if (bucketObj == nullptr) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to get document contents -- a valid bucket must be provided";
+        return QString();
+    }
+    return QString::fromStdString(bucketObj->getDocumentAsStr(id.toStdString()));
 }
 
 QJsonObject DatabaseAccess::getDocumentAsJsonObj(const QString &id, const QString &bucket) {
+    if (id.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to get document contents -- a valid id is required";
+        return QJsonObject();
+    }
+
     QString bucketName;
     if (bucket.isEmpty()) {
         bucketName = channelAccess_.at(0);
@@ -137,9 +162,9 @@ QJsonObject DatabaseAccess::getDatabaseAsJsonObj(const QString &bucket) {
 
     QJsonObject combinedObj;
     for (const auto& _bucket : database_map_) {
-        auto this_obj = _bucket->getDatabaseAsJsonObj();
-        for (auto it = this_obj.constBegin(); it != this_obj.constEnd(); it++) {
-            combinedObj.insert(it.key(), it.value());
+        auto dbPartialObject = _bucket->getDatabaseAsJsonObj();
+        for (auto dbElement = dbPartialObject.constBegin(); dbElement != dbPartialObject.constEnd(); dbElement++) {
+            combinedObj.insert(dbElement.key(), dbElement.value());
         }
     }
 
@@ -147,106 +172,128 @@ QJsonObject DatabaseAccess::getDatabaseAsJsonObj(const QString &bucket) {
 }
 
 QStringList DatabaseAccess::getAllDocumentKeys(const QString &bucket) {
-    if (bucket.isEmpty() == false) {
-        auto bucketObj = getBucket(bucket);
-        if (!bucketObj) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
-            return QStringList();
-        }
-
-        auto key_vector = bucketObj->getAllDocumentKeys();
-        QStringList list;
-        for (const auto key : key_vector) {
-            list << QString::fromStdString(key);
-        }
-        return list;
+    if (bucket.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
+        return QStringList();
     }
 
-    qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
-    return QStringList();
+    auto bucketObj = getBucket(bucket);
+    if (bucketObj == nullptr) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
+        return QStringList();
+    }
+
+    auto keyList = bucketObj->getAllDocumentKeys();
+    QStringList keyStrList;
+    for (const auto key : keyList) {
+        keyStrList << QString::fromStdString(key);
+    }
+    return keyStrList;
 }
 
-bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &token, const QString cookie_name, const QString &replicator_type,
+bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &token, const QString &cookieName, const ReplicatorType &replicatorType,
                                std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener,
                                std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener,
                                bool continuous) {
 
-    CouchbaseDatabase::ReplicatorType _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
-    if (replicator_type.isEmpty() || replicator_type == "pull") {
-        _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
-    } else if (replicator_type == "push") {
-        _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
-    } else if (replicator_type == "pushandpull") {
-        _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
-    } else {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: empty or invalid replicator type provided, defaulting to Pull.";
+    if (url.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error starting replicator: url may not be empty";
+        return false;
+    }
+
+    if (token.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error starting replicator: token may not be empty";
+        return false;
+    }
+
+    if (cookieName.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error starting replicator: cookie name may not be empty";
+        return false;
+    }
+
+    CouchbaseDatabase::ReplicatorType _replicator_type;
+    switch (replicatorType) {
+        case ReplicatorType::Pull:
+            _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
+        case ReplicatorType::Push:
+            _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
+        default:
+            _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
     }
 
     if (changeListener) {
-        change_listener_callback = changeListener;
+        change_listener_callback_ = changeListener;
     } else {
-        change_listener_callback = std::bind(&DatabaseAccess::default_changeListener, this, std::placeholders::_1, std::placeholders::_2);
+        change_listener_callback_ = std::bind(&DatabaseAccess::default_changeListener, this, std::placeholders::_1, std::placeholders::_2);
     }
 
     if (documentListener) {
-        document_listener_callback = documentListener;
+        document_listener_callback_ = documentListener;
     } else {
-        document_listener_callback = std::bind(&DatabaseAccess::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+        document_listener_callback_ = std::bind(&DatabaseAccess::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     }
 
+    bool ok = true;
     for (const auto& bucket : database_map_) {
         std::vector<std::string> single_DB_channel;
         single_DB_channel.push_back(bucket->getDatabaseName());
-        if (bucket->startSessionReplicator(url.toStdString(), token.toStdString(), cookie_name.toStdString(), single_DB_channel, _replicator_type, nullptr, nullptr, continuous) == false) {
+        if (bucket->startSessionReplicator(url.toStdString(), token.toStdString(), cookieName.toStdString(), single_DB_channel, _replicator_type, change_listener_callback_, document_listener_callback_, continuous) == false) {
             qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator on bucket/channel" << QString::fromStdString(bucket->getDatabaseName());
+            ok = false;
         }
     }
 
-    return true;
+    return ok;
 }
 
-bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &username, const QString &password, const QString &replicator_type,
+bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &username, const QString &password, const ReplicatorType &replicatorType,
                                std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener,
                                std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener,
                                bool continuous) {
+
+    if (url.isEmpty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error starting replicator: url may not be empty";
+        return false;
+    }
 
     std::vector<std::string> channels;
     for (const auto& channel : channelAccess_) {
         channels.push_back(channel.toStdString());
     }
 
-    CouchbaseDatabase::ReplicatorType _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
-    if (replicator_type.isEmpty() || replicator_type == "pull") {
-        _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
-    } else if (replicator_type == "push") {
-        _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
-    } else if (replicator_type == "pushandpull") {
-        _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
-    } else {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: empty or invalid replicator type provided, defaulting to Pull.";
+    CouchbaseDatabase::ReplicatorType _replicator_type;
+    switch (replicatorType) {
+        case ReplicatorType::Pull:
+            _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
+        case ReplicatorType::Push:
+            _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
+        default:
+            _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
     }
 
     if (changeListener) {
-        change_listener_callback = changeListener;
+        change_listener_callback_ = changeListener;
     } else {
-        change_listener_callback = std::bind(&DatabaseAccess::default_changeListener, this, std::placeholders::_1, std::placeholders::_2);
+        change_listener_callback_ = std::bind(&DatabaseAccess::default_changeListener, this, std::placeholders::_1, std::placeholders::_2);
     }
 
     if (documentListener) {
-        document_listener_callback = documentListener;
+        document_listener_callback_ = documentListener;
     } else {
-        document_listener_callback = std::bind(&DatabaseAccess::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+        document_listener_callback_ = std::bind(&DatabaseAccess::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     }
 
+    bool ok = true;
     for (const auto& bucket : database_map_) {
         std::vector<std::string> single_DB_channel;
         single_DB_channel.push_back(bucket->getDatabaseName());
-        if (!bucket->startBasicReplicator(url.toStdString(), username.toStdString(), password.toStdString(), single_DB_channel, _replicator_type, change_listener_callback, document_listener_callback, continuous)) {
+        if (!bucket->startBasicReplicator(url.toStdString(), username.toStdString(), password.toStdString(), single_DB_channel, _replicator_type, change_listener_callback_, document_listener_callback_, continuous)) {
             qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator on bucket/channel" << QString::fromStdString(bucket->getDatabaseName());
+            ok = false;
         }
     }
 
-    return true;
+    return ok;
 }
 
 void DatabaseAccess::stopReplicator() {

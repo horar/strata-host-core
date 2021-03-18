@@ -3,7 +3,7 @@
 #include <string>
 
 #include "Database/DatabaseLib.h"
-#include "CouchbaseDatabase.h"
+#include "../src/CouchbaseDatabase.h"
 
 class CouchbaseDatabase;
 

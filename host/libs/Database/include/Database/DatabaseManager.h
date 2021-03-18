@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CouchbaseDatabase.h"
+#include "../src/CouchbaseDatabase.h"
 
 class DatabaseAccess;
 

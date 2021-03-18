@@ -15,9 +15,9 @@ add_library(${PROJECT_NAME}
     include/Database/DatabaseLib.h
     include/Database/DatabaseManager.h
     include/Database/DatabaseAccess.h
-    include/Database/CouchbaseDatabase.h
     include/Database/CouchbaseDocument.h
 
+    src/CouchbaseDatabase.h
     src/DatabaseLib.cpp
     src/CouchbaseDatabase.cpp
     src/CouchbaseDocument.cpp
