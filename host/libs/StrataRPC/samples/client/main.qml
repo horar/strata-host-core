@@ -9,89 +9,109 @@ Window {
     visible: true
     width: 640
     height: 340
-    title: qsTr("Strata Client")
+    title: qsTr("StrataRPC Client Sample")
 
     Item {
-        id: connectionItem
-        x: 15
-        y: 18
-        width: 225
-        height: 95
+        id: controlsItem
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.margins: 5
+        width: 240
+        height: parent.height - (2 * anchors.margins)
 
-        Button {
-            id: connectButton
-            height: 40
-            anchors.left: connectionItem.left
-            anchors.right: connectionStatusIndicator.left
-            anchors.top: connectionItem.top
+        Item {
+            id: connectionItem
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
             anchors.margins: 5
-            text: "Connect"
-            enabled: (Client.connectionStatus === false)
+            width: parent.width
+            height: 95
 
-            Connections {
-                target: connectButton
-                onClicked: Client.connectToServer()
+            Button {
+                id: connectButton
+                height: 40
+                anchors.left: connectionItem.left
+                anchors.right: connectionStatusIndicator.left
+                anchors.top: connectionItem.top
+                anchors.margins: 5
+                text: "Connect"
+                enabled: (Client.connectionStatus === false)
+
+                Connections {
+                    target: connectButton
+                    onClicked: Client.connectToServer()
+                }
+            }
+
+            StatusIndicator {
+                id: connectionStatusIndicator
+                anchors.right: connectionItem.right
+                anchors.margins: 5
+                height: connectButton.height
+                anchors.verticalCenter: connectButton.verticalCenter
+                color: "#00ff00"
+                active: (Client.connectionStatus === true)
+            }
+
+            Button {
+                id: disconnectButton
+                anchors.left: connectionItem.left
+                anchors.right: connectionItem.right
+                anchors.top: connectButton.bottom
+                anchors.margins: 5
+                text: "Disconnect"
+                enabled: (Client.connectionStatus === true)
+
+                Connections {
+                    target: disconnectButton
+                    onClicked: Client.disconnectServer()
+                }
             }
         }
 
-        StatusIndicator {
-            id: connectionStatusIndicator
-            anchors.right: connectionItem.right
+        Item {
+            id: serverCommandsItem
+            anchors.top: connectionItem.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.margins: 5
-            height: connectButton.height
-            anchors.verticalCenter: connectButton.verticalCenter
-            color: "#00ff00"
-            active: (Client.connectionStatus === true)
-        }
+            height: 95
 
-        Button {
-            id: disconnectButton
-            anchors.left: connectionItem.left
-            anchors.right: connectionItem.right
-            anchors.top: connectButton.bottom
-            anchors.margins: 5
-            text: "Disconnect"
-            enabled: (Client.connectionStatus === true)
+            Button {
+                id: closeServerButton
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 5
+                text: qsTr("Close Server")
 
-            Connections {
-                target: disconnectButton
-                onClicked: Client.disconnectServer()
+                Connections {
+                    target: closeServerButton
+                    onClicked: Client.closeServer()
+                }
             }
-        }
-    }
 
-    Button {
-        id: closeServerButton
-        x: 15
-        y: 119
-        width: 225
-        height: 40
-        text: qsTr("Close Server")
+            Button {
+                id: requestServerStatusButton
+                anchors.top: closeServerButton.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 5
+                text: qsTr("Request Server Status")
 
-        Connections {
-            target: closeServerButton
-            onClicked: Client.closeServer()
-        }
-    }
-
-    Button {
-        id: requestServerStatusButton
-        x: 15
-        y: 165
-        width: 225
-        height: 40
-        text: qsTr("Request Server Status")
-
-        Connections {
-            target: requestServerStatusButton
-            onClicked: Client.requestServerStatus()
+                Connections {
+                    target: requestServerStatusButton
+                    onClicked: Client.requestServerStatus()
+                }
+            }
         }
     }
 
     Item {
         id: serverTimeItem
-        x: 475
-        y: 323
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
         width: 173
         height: 17
 
@@ -109,10 +129,11 @@ Window {
 
     Item {
         id: randomGraphItem
-        x: 255
-        y: 7
-        width: 375
-        height: 299
+        anchors.top: parent.top
+        anchors.left: controlsItem.right
+        anchors.right: parent.right
+        anchors.bottom: serverTimeItem.top
+        anchors.margins: 5
 
         Button {
             id: requestRandomGraphButton
