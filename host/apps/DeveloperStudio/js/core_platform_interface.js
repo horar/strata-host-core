@@ -16,7 +16,7 @@ function init() {
 //
 // Payload example:
 // {
-//     "device_id": -1088988335,
+//     "device_id": "s01234567",
 //     "message":"{\"notification\":{\"value\":\"sensor_value\",\"payload\":{\"value\":\"touch\"}}}"
 // }
 
