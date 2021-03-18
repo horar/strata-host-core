@@ -14,6 +14,14 @@ Item{
     anchors.bottomMargin: 5
     property alias delegateText: consoleMessage.msgText
     state: model.state
+    signal deselect()
+
+
+    onDeselect: {
+        console.log("hit")
+        delegateText.deselect()
+        dropArea.start = -1
+    }
 
     function startSelection(mouse) {
         consoleLogs.indexDragStarted = index
@@ -26,8 +34,7 @@ Item{
     onStateChanged: {
         switch(state){
             case "noneSelected":
-                delegateText.deselect()
-                dropArea.start = -1
+                deselect()
             break;
             case "someSelected":
                 if (model.selectionStart !== delegateText.selectionStart || model.selectionEnd !== delegateText.selectionEnd) {
