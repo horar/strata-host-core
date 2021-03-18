@@ -313,7 +313,13 @@ function addConnectedPlatform(platform) {
             insertUnregisteredListing(platform)
         } else {
             if (platform.class_id === platform.fw_class_id) {
-                connectListing(platform.class_id, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                if (classMap.hasOwnProperty(class_id_string)) {
+                    connectListing(platform.class_id, platform.device_id, platform.firmware_version, platform.controller_class_id)
+                } else {
+                    // connected platform class_id not listed in DP platform list
+                    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", platform.class_id);
+                    insertUnknownListing(platform)
+                }
             } else {
                 //program controller
                 insertProgramControllerListing(platform)
