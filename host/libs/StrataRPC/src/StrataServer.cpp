@@ -10,7 +10,7 @@ using namespace strata::strataRPC;
 
 StrataServer::StrataServer(QString address, bool useDefaultHandlers, QObject *parent)
     : QObject(parent),
-      dispatcher_(new Dispatcher(this)),
+      dispatcher_(new Dispatcher<const Message &>()),
       clientsController_(new ClientsController(this)),
       connector_(new ServerConnector(address, this))
 {
@@ -33,8 +33,8 @@ bool StrataServer::initializeServer()
         qCInfo(logCategoryStrataServer) << "Strata Server initialized successfully.";
         connect(connector_.get(), &ServerConnector::newMessageReceived, this,
                 &StrataServer::newClientMessage);
-        connect(this, &StrataServer::newClientMessageParsed, dispatcher_.get(),
-                &Dispatcher::dispatchHandler);
+        connect(this, &StrataServer::newClientMessageParsed, this, &StrataServer::dispatchHandler);
+
         return true;
     } else {
         QString errorMessage(QStringLiteral("Failed to initialize Strata Server."));
@@ -435,4 +435,17 @@ QByteArray StrataServer::buildServerMessageAPIv1(const Message &clientMessage,
     QByteArray jsonByteArray = jsonDocument.toJson(QJsonDocument::JsonFormat::Compact);
 
     return jsonByteArray;
+}
+
+void StrataServer::dispatchHandler(const Message &clientMessage)
+{
+    if (false == dispatcher_->dispatch(clientMessage.handlerName, clientMessage)) {
+        QString errorMessage(QStringLiteral("Handler not found."));
+        qCCritical(logCategoryStrataServer) << errorMessage;
+        emit errorOccurred(ServerError::HandlerNotFound, errorMessage);
+        notifyClient(clientMessage, {{"massage", errorMessage}}, ResponseType::Error);
+        return;
+    }
+
+    qCDebug(logCategoryStrataServer) << "Handler executed.";
 }
