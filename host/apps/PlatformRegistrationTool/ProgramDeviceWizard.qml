@@ -16,12 +16,8 @@ FocusScope {
     property var assistedData: ({})
     property var controllerData: ({})
 
-    //not sure whether opn is part of data blob
-    property string embeddedOpn: ""
-    property string controllerOpn: ""
-    property string assistedOpn: ""
-
     property string platformClassId: ""
+    property string platformOpn: ""
     property string mcuJlinkDevice: ""
     property int mcuBootloaderStartAddress: 0
     property var firmware: ({})
@@ -77,7 +73,7 @@ FocusScope {
         classId: wizard.platformClassId
         jlinkDevice: wizard.mcuJlinkDevice
         bootloaderStartAddress: wizard.mcuBootloaderStartAddress
-        opn: wizard.embeddedOpn
+        opn: wizard.platformOpn
 
         registrationMode: wizard.registrationMode
         jlinkExePath: wizard.jlinkExePath
@@ -302,7 +298,7 @@ FocusScope {
 
         if (registrationMode === ProgramDeviceWizard.Embedded) {
             wizard.platformClassId = wizard.embeddedData.class_id
-            //wizard.platformOpn = wizard.embeddedData.name
+            wizard.platformOpn = wizard.embeddedData.opn
             wizard.mcuJlinkDevice = wizard.embeddedData.mcu.jlink_device
             wizard.mcuBootloaderStartAddress = wizard.embeddedData.mcu.bootloader_start_address
 

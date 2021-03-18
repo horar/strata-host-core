@@ -84,7 +84,6 @@ Item {
                     "registrationMode": ProgramDeviceWizard.Embedded,
                     "jlinkExePath": settingsWizard.jlinkExePath,
                     "embeddedData": settingsWizard.embeddedData,
-                    "embeddedOpn": settingsWizard.embeddedOpn
                 }
 
                 console.log("jLinkExePath", properties.jLinkExePath)
