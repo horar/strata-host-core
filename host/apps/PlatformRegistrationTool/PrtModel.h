@@ -60,8 +60,8 @@ public:
     Q_INVOKABLE void clearBinaries();
 
 signals:
-    void boardReady(int deviceId);
-    void boardDisconnected(int deviceId);
+    void boardReady(QByteArray deviceId);
+    void boardDisconnected(QByteArray deviceId);
     void deviceCountChanged();
     void bootloaderFilepathChanged();
     void downloadFirmwareFinished(QString errorString);
@@ -78,8 +78,8 @@ signals:
     void startApplicationFinished(QString errorString);
 
 private slots:
-    void boardReadyHandler(int deviceId, bool recognized);
-    void boardDisconnectedHandler(int deviceId);
+    void boardReadyHandler(const QByteArray& deviceId, bool recognized);
+    void boardDisconnectedHandler(const QByteArray& deviceId);
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
     void downloadFinishedHandler(QString groupId, QString errorString);
 
