@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
+import QtQml 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
@@ -37,10 +38,11 @@ Item {
         property int indexDragStarted: -1
         property bool selecting: false
         signal selectInBetween(int indexDragEnded)
+        property bool isActiveSelecting: false
 
         onDeselectAll: {
             for (var i = 0; i < consoleLogs.model.count; i++) {
-                consoleLogs.model.get(i).state = "noneSelected"
+                consoleLogs.model.get(consoleLogs.model.mapIndexToSource(i)).state = "noneSelected"
             }
         }
 
@@ -76,8 +78,135 @@ Item {
             active: true
         }
 
-        delegate: ConsoleDelegate {
+        delegate: Item  {
             id: consoleDelegate
+            height: consoleMessage.height
+            width: consoleLogs.width
+            anchors.bottomMargin: 5
+            property alias delegateText: consoleMessage.msgText
+            state: model.state
+            signal deselectText()
+            signal someSelected()
+
+            Component.onCompleted: {
+                state = Qt.binding(function() { return model.state })
+            }
+
+            onDeselectText: {
+                delegateText.deselect()
+                dropArea.start = -1
+            }
+
+            onSomeSelected: {
+                if (model.selectionStart !== delegateText.selectionStart || model.selectionEnd !== delegateText.selectionEnd) {
+                    delegateText.select(model.selectionStart, model.selectionEnd);
+                }
+            }
+
+            function startSelection(mouse) {
+                consoleLogs.indexDragStarted = index
+                model.state = "someSelected"
+                var composedY = -(consoleDelegate.y - mouse.y - consoleDelegate.ListView.view.contentY) - delegateText.y
+                var composedX = mouse.x - delegateText.x
+                dropArea.start = delegateText.positionAt(composedX, composedY)
+            }
+
+            onStateChanged: {
+                if(state === "noneSelected"){
+                    deselectText()
+                } else if(state === "someSelected"){
+                    someSelected()
+                } else if(state === "allSelected"){
+                    delegateText.selectAll()
+                }
+            }
+
+
+            states: [
+                State {
+                    name: "noneSelected"
+                },
+                State {
+                    name: "someSelected"
+                },
+                State {
+                    name: "allSelected"
+                }
+
+            ]
+
+            ConsoleTime {
+                id: consoleTime
+                time: model.time
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.leftMargin: 5
+                current: model.current
+            }
+
+            ConsoleTypes {
+                id: consoleTypes
+                type: model.type
+                anchors.left: consoleTime.right
+                anchors.top: parent.top
+                anchors.leftMargin: 5
+                current: model.current
+            }
+
+            ConsoleMessage {
+                id: consoleMessage
+                msg: model.msg
+                anchors.top: parent.top
+                anchors.left: consoleTypes.right
+                anchors.right: parent.right
+                anchors.leftMargin: 10
+                current: model.current
+                selection: model.selection
+                selectionStart: model.selectionStart
+                selectionEnd: model.selectionEnd
+            }
+
+            DropArea {
+                id: dropArea
+                anchors {
+                    fill: parent
+                }
+                property int start:-1
+                property int end:-1
+
+                onEntered: {
+                    if (index > consoleLogs.indexDragStarted) {
+                        start = delegateText.positionAt(drag.x - (consoleTime.width + consoleTypes.width + 20), drag.y)
+                    } else if (index < consoleLogs.indexDragStarted){
+                        start = delegateText.length
+                    }
+
+                    root.state = "someSelected"
+                    consoleLogs.selectInBetween(index)
+                }
+
+                onPositionChanged: {
+                    end = delegateText.positionAt(drag.x - (consoleTime.width + consoleTypes.width + 20), drag.y)
+
+                    delegateText.select(start, end)
+                }
+            }
+
+            Connections {
+                target: consoleLogs
+                onSelectInBetween:{
+                    // covers case where drag hasn't triggered before leaving first delegate
+                    if (index === root.indexDragStarted) {
+                        if (indexDragEnded > indexDragStarted) {
+                            dropArea.end = delegateText.length
+                            delegateText.select(dropArea.start, dropArea.end)
+                        } else if (indexDragEnded < indexDragStarted) {
+                            dropArea.end = 0
+                            delegateText.select(dropArea.start, dropArea.end)
+                        }
+                    }
+                }
+            }
         }
 
         MouseArea {
@@ -85,9 +214,13 @@ Item {
             anchors.fill: consoleLogs
             drag.target: dragitem
             cursorShape: Qt.IBeamCursor
+            propagateComposedEvents: true
+        }
+
+        Connections {
+            target: consoleMouseArea
 
             onPressed:{
-                consoleLogs.deselectAll()
                 var clickedDelegate = consoleLogs.itemAt(mouse.x+consoleLogs.contentX, mouse.y+consoleLogs.contentY)
                 if (clickedDelegate) {
                     clickedDelegate.startSelection(mouse)
@@ -100,6 +233,7 @@ Item {
             onClicked: {
                 consoleLogs.deselectAll()
             }
+
         }
 
         Item {

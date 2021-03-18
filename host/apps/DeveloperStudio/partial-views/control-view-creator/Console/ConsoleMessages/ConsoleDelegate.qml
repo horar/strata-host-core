@@ -14,13 +14,22 @@ Item{
     anchors.bottomMargin: 5
     property alias delegateText: consoleMessage.msgText
     state: model.state
-    signal deselect()
+    signal deselectText()
+    signal someSelected()
 
+    Component.onCompleted: {
+        state = Qt.binding(function() { return model.state })
+    }
 
-    onDeselect: {
-        console.log("hit")
+    onDeselectText: {
         delegateText.deselect()
         dropArea.start = -1
+    }
+
+    onSomeSelected: {
+        if (model.selectionStart !== delegateText.selectionStart || model.selectionEnd !== delegateText.selectionEnd) {
+            delegateText.select(model.selectionStart, model.selectionEnd);
+        }
     }
 
     function startSelection(mouse) {
@@ -32,17 +41,13 @@ Item{
     }
 
     onStateChanged: {
-        switch(state){
-            case "noneSelected":
-                deselect()
-            break;
-            case "someSelected":
-                if (model.selectionStart !== delegateText.selectionStart || model.selectionEnd !== delegateText.selectionEnd) {
-                    delegateText.select(model.selectionStart, model.selectionEnd);
-                }
-            break;
-            case "allSelected": delegateText.selectAll()
-            break;
+            console.log(state)
+        if(state === "noneSelected"){
+            deselectText()
+        } else if(state === "someSelected"){
+            someSelected()
+        } else if(state === "allSelected"){
+            delegateText.selectAll()
         }
     }
 
