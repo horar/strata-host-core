@@ -5,6 +5,7 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 Item{
     id: root
@@ -18,7 +19,7 @@ Item{
         consoleLogs.indexDragStarted = index
         model.state = "someSelected"
         var composedY = -(consoleDelegate.y - mouse.y - consoleDelegate.ListView.view.contentY) - delegateText.y
-        var composedX = mouse.x - delegateText.x + (consoleTime.width + consoleTypes.width)
+        var composedX = -(consoleDelegate.x - mouse.x - consoleDelegate.ListView.view.contentX) - delegateText.x
         dropArea.start = delegateText.positionAt(composedX, composedY)
     }
 
@@ -51,7 +52,6 @@ Item{
         }
 
     ]
-
 
     ConsoleTime {
         id: consoleTime
@@ -104,7 +104,7 @@ Item{
         }
 
         onPositionChanged: {
-            end = delegateText.positionAt(drag.x, drag.y)
+            end = delegateText.positionAt(drag.x - (consoleTime.width + consoleTypes.width + 20), drag.y)
 
             delegateText.select(start, end)
         }
