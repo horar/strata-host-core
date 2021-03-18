@@ -16,13 +16,6 @@ FocusScope {
     property var assistedData: ({})
     property var controllerData: ({})
 
-    property string platformClassId: ""
-    property string platformOpn: ""
-    property string mcuJlinkDevice: ""
-    property int mcuBootloaderStartAddress: 0
-    property var firmware: ({})
-    property var bootloader: ({})
-
     property QtObject prtModel
 
     property int spacing: 10
@@ -297,10 +290,11 @@ FocusScope {
     function resolveDataForStateMachine() {
 
         if (registrationMode === ProgramDeviceWizard.Embedded) {
-            wizard.platformClassId = wizard.embeddedData.class_id
-            wizard.platformOpn = wizard.embeddedData.opn
-            wizard.mcuJlinkDevice = wizard.embeddedData.mcu.jlink_device
-            wizard.mcuBootloaderStartAddress = wizard.embeddedData.mcu.bootloader_start_address
+
+            embeddedStateMachine.classId = wizard.embeddedData.class_id
+            embeddedStateMachine.opn = wizard.embeddedData.opn
+            embeddedStateMachine.jlinkDevice = wizard.embeddedData.mcu.jlink_device
+            embeddedStateMachine.bootloaderStartAddress = wizard.embeddedData.mcu.bootloader_start_address
 
 
             var latestFirmwareIndex = findHighestBinary(wizard.embeddedData.firmware)
@@ -309,7 +303,7 @@ FocusScope {
                 return
             }
 
-            wizard.firmware = embeddedData.firmware[latestFirmwareIndex]
+            embeddedStateMachine.firmwareData = embeddedData.firmware[latestFirmwareIndex]
 
             var latestBootloaderIndex = findHighestBinary(wizard.embeddedData.bootloader)
             if (latestFirmwareIndex < 0) {
@@ -317,7 +311,7 @@ FocusScope {
                 return
             }
 
-            wizard.bootloader = wizard.embeddedData.bootloader[latestFirmwareIndex]
+            embeddedStateMachine.bootloaderData = wizard.embeddedData.bootloader[latestFirmwareIndex]
 
 
         } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
@@ -326,11 +320,12 @@ FocusScope {
 
         }
 
-        console.log(Logger.prtCategory, "classId", wizard.platformClassId)
-        console.log(Logger.prtCategory, "mcuJlinkDevice", wizard.mcuJlinkDevice)
-        console.log(Logger.prtCategory, "mcuBootloaderStartAddress", wizard.mcuBootloaderStartAddress)
-        console.log(Logger.prtCategory, "firmware", wizard.firmware.version, wizard.firmware.file, wizard.firmware.timestamp)
-        console.log(Logger.prtCategory, "bootloader", wizard.bootloader.version, wizard.bootloader.file, wizard.bootloader.timestamp)
+        console.log(Logger.prtCategory, "classId", embeddedStateMachine.classId)
+        console.log(Logger.prtCategory, "opn", embeddedStateMachine.opn)
+        console.log(Logger.prtCategory, "mcuJlinkDevice", embeddedStateMachine.jlinkDevice)
+        console.log(Logger.prtCategory, "mcuBootloaderStartAddress", embeddedStateMachine.bootloaderStartAddress)
+        console.log(Logger.prtCategory, "firmware", embeddedStateMachine.firmwareData.version, embeddedStateMachine.firmwareData.file, embeddedStateMachine.firmwareData.timestamp)
+        console.log(Logger.prtCategory, "bootloader", embeddedStateMachine.bootloaderData.version, embeddedStateMachine.bootloaderData.file, embeddedStateMachine.bootloaderData.timestamp)
     }
 
     function findHighestBinary(binaryList) {
