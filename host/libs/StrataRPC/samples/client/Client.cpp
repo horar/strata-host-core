@@ -106,9 +106,12 @@ void Client::requestServerStatus()
         return;
     }
 
-    connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this, [](const QJsonObject &) {
-        qCInfo(logCategoryStrataClientSample) << "Server is alive.";
-    });
+    connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
+            [this](const QJsonObject &) {
+                qCInfo(logCategoryStrataClientSample) << "Server is alive.";
+                connectionStatus_ = true;
+                emit connectionStatusUpdated();
+            });
 
     connect(deferredRequest, &DeferredRequest::finishedWithError, this,
             &Client::serverDisconnectedHandler);
