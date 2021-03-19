@@ -381,9 +381,9 @@ function registerQmlAsLanguage() {
             } else if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent)) {
                 return retrieveType(model, propRange)
             }
-        }
+        } 
 
-        return Object.values(suggestions)
+        return Object.values(functionSuggestions)
     }
 
     // Initializes the library to become an Object array to be feed into suggestions
@@ -664,7 +664,7 @@ function registerQmlAsLanguage() {
                 currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
                 return currentItems[bracketWord][propRange]
             } else {
-                return Object.values(functionSuggestions)
+                return Object.values(suggestions)
             }
         }
     }
