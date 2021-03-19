@@ -128,7 +128,7 @@ function startHelpTour(tourName, device_id) {
     // tour_count initializes the x/y tour counter
     tour_count = current_tour_targets.length
 
-    for (let i = 0; i < tour_count; i++){
+	for (let i = 0; i < tour_count; i++){
         let tour_target = current_tour_targets[i]
         if (tour_target.index === 0) {
             tour_running = true
@@ -207,7 +207,7 @@ function registerWindow(windowTarget, stackContainerTarget) {
 
 function refreshView (i) {
     // set the target sizing on load
-    current_tour_targets[i]["helpObject"].setTarget(current_tour_targets[i]["target"], window);
+    current_tour_targets[i]["helpObject"].setTarget(current_tour_targets[i]["target"]);
 }
 
 function liveResize() {
@@ -246,7 +246,7 @@ function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
 }
 
 function createHelpObject(tourTarget) {
-    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
+    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml", window)
     tourStop.index = tourTarget.index
     tourStop.description = tourTarget.description
     tourTarget.helpObject = tourStop

@@ -10,6 +10,8 @@
 
 namespace strata {
 
+using device::serial::SerialDevice;
+
 Command::~Command() { }
 
 // WRONG command
@@ -81,14 +83,15 @@ void FlasherCommand::process() {
         return;
     }
 
-    QString name = serialPorts.name(deviceNumber_ - 1);
+    const QString name = serialPorts.name(deviceNumber_ - 1);
     if (name.isEmpty()) {
         qCCritical(logCategoryFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
         emit finished(EXIT_FAILURE);
         return;
     }
 
-    device::DevicePtr device = std::make_shared<device::serial::SerialDevice>(static_cast<int>(qHash(name)), name);
+    const QByteArray deviceId = SerialDevice::createDeviceId(name);
+    device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
     if (device->open() == false) {
         qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
         emit finished(EXIT_FAILURE);
@@ -131,14 +134,15 @@ void InfoCommand::process() {
         return;
     }
 
-    QString name = serialPorts.name(deviceNumber_ - 1);
+    const QString name = serialPorts.name(deviceNumber_ - 1);
     if (name.isEmpty()) {
         qCCritical(logCategoryFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
         emit finished(EXIT_FAILURE);
         return;
     }
 
-    device_ = std::make_shared<device::serial::SerialDevice>(static_cast<int>(qHash(name)), name);
+    const QByteArray deviceId = SerialDevice::createDeviceId(name);
+    device_ = std::make_shared<SerialDevice>(deviceId, name);
     if (device_->open() == false) {
         qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
         emit finished(EXIT_FAILURE);
@@ -171,8 +175,8 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
         message.append(device_->name());
         message.append(QStringLiteral("\nDevice Name: "));
         message.append(device_->deviceName());
-        message.append(QStringLiteral("\nDevice Id: 0x"));
-        message.append(QString::number(static_cast<uint>(device_->deviceId()), 16));
+        message.append(QStringLiteral("\nDevice Id: "));
+        message.append(device_->deviceId());
         message.append(QStringLiteral("\nDevice Type: "));
         message.append(QVariant::fromValue(device_->deviceType()).toString());
         message.append(QStringLiteral("\nController Type: "));

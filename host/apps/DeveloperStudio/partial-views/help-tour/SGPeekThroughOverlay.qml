@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import tech.strata.sgwidgets 0.9
+import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
      id: root
@@ -7,55 +7,58 @@ Item {
      z: 50
      anchors.fill: parent
 
-     function setTarget(target, fill) {
-         var remappedTarget = target.mapToItem(fill, 0, 0)
+     property alias index: toolTipPopup.index
+     property alias description: toolTipPopup.description
+     property alias fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
+     property alias toolTipPopup: toolTipPopup
+     property real globalOpacity: .5
+
+     function setTarget(target) {
+         var remappedTarget = target.mapToItem(root.parent, 0, 0)
          mockTarget.x = remappedTarget.x
          mockTarget.y = remappedTarget.y
          mockTarget.width = target.width
          mockTarget.height = target.height
 
+         updateAlignment()
+     }
+
+     function updateAlignment() {
          // apply default alignment settings:
-         toolTipPopup.anchors.bottom = undefined
-         toolTipPopup.anchors.right = undefined
-         toolTipPopup.anchors.left = undefined
-         toolTipPopup.anchors.horizontalCenter = bottomFade.horizontalCenter
-         toolTipPopup.anchors.top = bottomFade.bottom
+         toolTipBackgroundItem.anchors.bottom = undefined
+         toolTipBackgroundItem.anchors.right = undefined
+         toolTipBackgroundItem.anchors.left = undefined
+         toolTipBackgroundItem.anchors.horizontalCenter = bottomFade.horizontalCenter
+         toolTipBackgroundItem.anchors.top = bottomFade.bottom
          toolTipPopup.horizontalAlignment = "center"
          toolTipPopup.arrowOnTop = true
 
          // change alignment if default alignment extends beyond window edges
-         if ( toolTipPopup.x < 0 ) {
-             toolTipPopup.anchors.horizontalCenter = undefined
-             toolTipPopup.anchors.left = bottomFade.horizontalCenter
+         if ( toolTipBackgroundItem.x < 0 ) {
+             toolTipBackgroundItem.anchors.horizontalCenter = undefined
+             toolTipBackgroundItem.anchors.left = bottomFade.horizontalCenter
              toolTipPopup.horizontalAlignment = "left"
-         } else if ( toolTipPopup.x + toolTipPopup.width > fill.width ) {
-             toolTipPopup.anchors.horizontalCenter = undefined
-             toolTipPopup.anchors.right = bottomFade.horizontalCenter
+         } else if ( toolTipBackgroundItem.x + toolTipBackgroundItem.width >= root.parent.width ) {
+             toolTipBackgroundItem.anchors.horizontalCenter = undefined
+             toolTipBackgroundItem.anchors.right = bottomFade.horizontalCenter
              toolTipPopup.horizontalAlignment = "right"
          }
-         if ( toolTipPopup.y + toolTipPopup.height > fill.height ) {
-             toolTipPopup.anchors.top = undefined
-             toolTipPopup.anchors.bottom = topFade.top
+         if ( toolTipBackgroundItem.y + toolTipBackgroundItem.height >= root.parent.height ) {
+             toolTipBackgroundItem.anchors.top = undefined
+             toolTipBackgroundItem.anchors.bottom = topFade.top
              toolTipPopup.arrowOnTop = false
          }
      }
 
      function restoreFocus(){
-        toolTipPopup.contentItem.forceActiveFocus()
+        tourControl.forceActiveFocus()
      }
-
-     property alias index: toolTipPopup.index
-     property alias description: toolTipPopup.description
-     property alias fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
-     property alias toolTipPopup: toolTipPopup
-
-     property real globalOpacity: .5
 
      MouseArea {
          anchors {
              fill: root
          }
-         onClicked: toolTipPopup.contentItem.close()
+         onClicked: tourControl.close()
          onWheel: {} // Prevent views behind from scrolling, which will misalign the peekthrough
      }
 
@@ -213,20 +216,37 @@ Item {
          opacity: root.globalOpacity
      }
 
-     SGToolTipPopup {
-         id: toolTipPopup
-         showOn: true
-         // anchors and arrow alignment dynamically in setTarget
-         color: "white"
-         property int index
-         property string description
-         property real fontSizeMultiplier: 1
+     Item {
+         id: toolTipBackgroundItem
+         width: toolTipPopup.width
+         height: toolTipPopup.height
+         focus: true
+         // anchors set dynamically in setTarget
 
-         content: SGTourControl {
-             id: tourControl
-             index: toolTipPopup.index
-             description: toolTipPopup.description
-             fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
+         onHeightChanged: {
+             if (visible) {
+                updateAlignment()
+             }
+         }
+
+         SGToolTipPopup {
+             id: toolTipPopup
+             color: "white"
+             visible: root.visible
+             width: 360
+             height: tourControl.implicitHeight + (padding * 2)
+
+             property int index
+             property string description
+             property real fontSizeMultiplier: 1
+
+             SGTourControl {
+                 id: tourControl
+                 index: toolTipPopup.index
+                 description: toolTipPopup.description
+                 fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
+                 width: parent.width
+             }
          }
      }
  }

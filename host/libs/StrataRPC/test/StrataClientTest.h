@@ -23,6 +23,7 @@ private slots:
     void testTimedoutRequest();
     void testNoTimedoutRequest();
     void testErrorOccourredSignal();
+    void testSendNotification();
 
 private:
     void waitForZmqMessages(int delay = 100);

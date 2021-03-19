@@ -1,15 +1,17 @@
 #pragma once
 
 #include <QObject>
+#include <functional>
 
 #include "DeferredRequest.h"
-#include "Message.h"
 
 namespace strata::strataRPC
 {
+template <class HandlerArgument>
 class Dispatcher;
 class ClientConnector;
 class RequestsController;
+struct Message;
 
 class StrataClient : public QObject
 {
@@ -17,6 +19,8 @@ class StrataClient : public QObject
     Q_DISABLE_COPY(StrataClient);
 
 public:
+    typedef std::function<void(const QJsonObject &)> ClientHandler;
+
     /**
      * Enum to describe errors
      */
@@ -28,8 +32,10 @@ public:
         FailedToUnregisterHandler,
         FailedToAddReequest,
         FailedToSendRequest,
+        FailedToSendNotification,
         PendingRequestNotFound,
-        RequestTimeout
+        RequestTimeout,
+        HandlerNotFound
     };
     Q_ENUM(ClientError);
 
@@ -67,10 +73,10 @@ public:
      * Register a command handler in the client's dispatcher.
      * @param [in] handlerName The name of the handlers associated with its commands, requests, or
      * notifications
-     * @param [in] handler function pointer to function of type StrataHandler.
+     * @param [in] handler function pointer to function of type ClientHandler.
      * @return True if the handler is added to the handlers list. False otherwise.
      */
-    bool registerHandler(const QString &handlerName, StrataHandler handler);
+    bool registerHandler(const QString &handlerName, ClientHandler handler);
 
     /**
      * Remove a handler from the registered handlers in the client's dispatcher.
@@ -83,14 +89,22 @@ public:
 
     /**
      * Sends a request to the server.
-     * @note callbacks are optional, if a callback is not provided, then the response is handled by
-     * the registered handlers in the dispatcher.
+     * @note If a callback is not provided the response will not be handled.
      * @param [in] method The handler name in StrataServer.
      * @param [in] payload QJsonObject of the request payload.
      * @return pointer to DeferredRequest to connect callbacks, on failure, this will return
      * nullptr
      */
     DeferredRequest *sendRequest(const QString &method, const QJsonObject &payload);
+
+    /**
+     * Sends a notification to the server.
+     * @note The response is handled by the registered handlers in the dispatcher.
+     * @param [in] method The handler name in StrataServer.
+     * @param [in] payload QJsonObject of the request payload.
+     * @return True if the notification was sent successfully, false otherwise.
+     */
+    bool sendNotification(const QString &method, const QJsonObject &payload);
 
 signals:
     /**
@@ -100,12 +114,16 @@ signals:
     void newServerMessageParsed(const Message &serverMessage);
 
     /**
+     * Emitted when the client connects to the server successfully.
+     */
+    void clientConnected();
+
+    /**
      * Emitted when an error has occurred.
      * @param [in] errorType error category description.
      * @param [in] errorMessage QString of the actual error.
      */
-    void errorOccurred(StrataClient::ClientError errorType,
-                       const QString &errorMessage);
+    void errorOccurred(StrataClient::ClientError errorType, const QString &errorMessage);
 
 private slots:
     /**
@@ -120,6 +138,14 @@ private slots:
      */
     void requestTimeoutHandler(int requestId);
 
+    /**
+     * Slot to handle dispatching server notification handlers.
+     * @note This will emit errorOccurred signal if the handler is not registered.
+     * @param [in] serverMessage parsed server message.
+     * NOTE: This will emit errorOccurred signal if the handler is not registered.
+     */
+    void dispatchHandler(const Message &serverMessage);
+
 private:
     /**
      * Parse the incoming json message from StrataServer into a Message object.
@@ -131,7 +157,7 @@ private:
     bool buildServerMessage(const QByteArray &jsonServerMessage, Message *serverMessage,
                             DeferredRequest **deferredRequest);
 
-    std::unique_ptr<Dispatcher> dispatcher_;
+    std::unique_ptr<Dispatcher<const QJsonObject &>> dispatcher_;
     std::unique_ptr<ClientConnector> connector_;
     std::unique_ptr<RequestsController> requestController_;
 };
