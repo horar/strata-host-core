@@ -176,7 +176,7 @@ Item {
 
                 onEntered: {
                     if (index > consoleLogs.indexDragStarted) {
-                        start = delegateText.positionAt(drag.x - (consoleTime.width + consoleTypes.width + 20), drag.y)
+                        start = delegateText.positionAt(drag.x, drag.y)
                     } else if (index < consoleLogs.indexDragStarted){
                         start = delegateText.length
                     }
@@ -186,7 +186,7 @@ Item {
                 }
 
                 onPositionChanged: {
-                    end = delegateText.positionAt(drag.x - (consoleTime.width + consoleTypes.width + 20), drag.y)
+                    end = delegateText.positionAt(drag.x - (consoleTime.x + consoleTypes.x + 20), drag.y)
 
                     delegateText.select(start, end)
                 }
