@@ -42,7 +42,7 @@ Item {
 
         onDeselectAll: {
             for (var i = 0; i < consoleLogs.model.count; i++) {
-                consoleLogs.model.get(consoleLogs.model.mapIndexToSource(i)).state = "noneSelected"
+                consoleLogs.model.get(i).state = "noneSelected"
             }
         }
 
@@ -84,15 +84,15 @@ Item {
             width: consoleLogs.width
             anchors.bottomMargin: 5
             property alias delegateText: consoleMessage.msgText
-            state: model.state
-            signal deselectText()
+            signal noneSelected()
             signal someSelected()
+            signal allSelected()
 
             Component.onCompleted: {
                 state = Qt.binding(function() { return model.state })
             }
 
-            onDeselectText: {
+            onNoneSelected: {
                 delegateText.deselect()
                 dropArea.start = -1
             }
@@ -103,34 +103,36 @@ Item {
                 }
             }
 
+            onAllSelected: {
+                delegateText.selectAll()
+            }
+
             function startSelection(mouse) {
                 consoleLogs.indexDragStarted = index
                 model.state = "someSelected"
                 var composedY = -(consoleDelegate.y - mouse.y - consoleDelegate.ListView.view.contentY) - delegateText.y
-                var composedX = mouse.x - delegateText.x
+                var composedX = -(consoleMessage.x-mouse.x) - delegateText.x
                 dropArea.start = delegateText.positionAt(composedX, composedY)
             }
-
-            onStateChanged: {
-                if(state === "noneSelected"){
-                    deselectText()
-                } else if(state === "someSelected"){
-                    someSelected()
-                } else if(state === "allSelected"){
-                    delegateText.selectAll()
-                }
-            }
-
 
             states: [
                 State {
                     name: "noneSelected"
+                    StateChangeScript {
+                        script: consoleDelegate.noneSelected()
+                    }
                 },
                 State {
                     name: "someSelected"
+                    StateChangeScript {
+                        script: consoleDelegate.someSelected()
+                    }
                 },
                 State {
                     name: "allSelected"
+                    StateChangeScript {
+                        script: consoleDelegate.allSelected()
+                    }
                 }
 
             ]
@@ -169,14 +171,14 @@ Item {
             DropArea {
                 id: dropArea
                 anchors {
-                    fill: parent
+                    fill: consoleMessage
                 }
                 property int start:-1
                 property int end:-1
 
                 onEntered: {
                     if (index > consoleLogs.indexDragStarted) {
-                        start = delegateText.positionAt(drag.x, drag.y)
+                        start = 0
                     } else if (index < consoleLogs.indexDragStarted){
                         start = delegateText.length
                     }
@@ -186,8 +188,7 @@ Item {
                 }
 
                 onPositionChanged: {
-                    end = delegateText.positionAt(drag.x - (consoleTime.x + consoleTypes.x + 20), drag.y)
-
+                    end = delegateText.positionAt(drag.x, drag.y)
                     delegateText.select(start, end)
                 }
             }
@@ -221,6 +222,7 @@ Item {
             target: consoleMouseArea
 
             onPressed:{
+                consoleLogs.deselectAll()
                 var clickedDelegate = consoleLogs.itemAt(mouse.x+consoleLogs.contentX, mouse.y+consoleLogs.contentY)
                 if (clickedDelegate) {
                     clickedDelegate.startSelection(mouse)
@@ -230,7 +232,7 @@ Item {
                 consoleLogs.forceActiveFocus()
             }
 
-            onClicked: {
+            onDoubleClicked: {
                 consoleLogs.deselectAll()
             }
 
