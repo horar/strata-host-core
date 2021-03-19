@@ -23,7 +23,7 @@ public:
      * @param deviceId device ID
      * @param name device name
      */
-    SerialDevice(const int deviceId, const QString& name);
+    SerialDevice(const QByteArray& deviceId, const QString& name);
 
     /**
      * SerialDevice constructor
@@ -31,7 +31,7 @@ public:
      * @param name device name
      * @param port already existing serial port
      */
-    SerialDevice(const int deviceId, const QString& name, SerialPortPtr&& port);
+    SerialDevice(const QByteArray& deviceId, const QString& name, SerialPortPtr&& port);
 
     /**
      * SerialDevice destructor
@@ -55,6 +55,13 @@ public:
      * @return SerialPortPtr if connection was established and port is open, nullptr otherwise
      */
     static SerialPortPtr establishPort(const QString& portName);
+
+    /**
+     * Create ID for serial device
+     * @param portName system name of serial port
+     * @return ID for serial device
+     */
+    static QByteArray createDeviceId(const QString& portName);
 
     /**
      * Send message to serial device. Emits deviceError in case of failure.

@@ -623,7 +623,7 @@ Window {
                         Switch {
                             id: connectSwitch
                             checked: model.connected
-                            enabled: model.connected || (platformRow.class_id !== "" && platformRow.device_id !== -1 && platformRow.firmware_version !== "")
+                            enabled: model.connected || (platformRow.class_id !== "" && platformRow.device_id !== "dev_-1" && platformRow.firmware_version !== "")
 
                             onCheckedChanged: {
                                 model.connected = checked
@@ -643,7 +643,7 @@ Window {
 
                     onClicked: {
                         if(enabled){
-                            platformModel.append({class_id: "", opn: "", device_id: platformModel.count, firmware_version: "0.0.0", connected: false})
+                            platformModel.append({class_id: "", opn: "", device_id: `dev_${platformModel.count}`, firmware_version: "0.0.0", connected: false})
                         }
                     }
                 }
@@ -695,13 +695,13 @@ Window {
     function initialModelLoad() {
         if (platformModel.initialized === false) {
             for (var j = 0; j < 10; j++) {
-                deviceModel.append({name: `device_id ${j}`, device_id: j})
+                deviceModel.append({name: `device_id ${j}`, device_id: `dev_${j}`})
             }
 
             readState()
 
             if (platformModel.count === 0) {
-                platformModel.append({class_id: "", opn: "---", device_id: 0, firmware_version: "0.0.0", connected: false})
+                platformModel.append({class_id: "", opn: "---", device_id: "dev_0", firmware_version: "0.0.0", connected: false})
             }
 
             platformModel.initialized = true
@@ -766,7 +766,7 @@ Window {
         if (localPlatformSettings.value("last-state") !== undefined) {
             const lastPlatforms = JSON.parse(localPlatformSettings.value("last-state"))
             for (var i = 0; i < lastPlatforms.length; i++) {
-                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: i, firmware_version: "0.0.0", connected: false})
+                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: `dev_${i}`, firmware_version: "0.0.0", connected: false})
             }
         }
     }

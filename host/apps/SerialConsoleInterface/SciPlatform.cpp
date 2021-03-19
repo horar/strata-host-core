@@ -31,7 +31,7 @@ SciPlatform::~SciPlatform()
     filterSuggestionModel_->deleteLater();
 }
 
-int SciPlatform::deviceId()
+QByteArray SciPlatform::deviceId()
 {
     return deviceId_;
 }

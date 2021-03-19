@@ -87,7 +87,7 @@ public:
      * Get ID of device used by device operation.
      * \return device ID
      */
-    virtual int deviceId() const final;
+    virtual QByteArray deviceId() const final;
 
     /*!
      * Get type of operation.

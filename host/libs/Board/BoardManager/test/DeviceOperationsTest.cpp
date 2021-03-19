@@ -33,7 +33,7 @@ void DeviceOperationsTest::init()
     operationErrorCount_ = 0;
     operationFinishedCount_ = 0;
     operationTimeoutCount_ = 0;
-    device_ = std::make_shared<strata::device::mock::MockDevice>(1234, "Mock device", true);
+    device_ = std::make_shared<strata::device::mock::MockDevice>("mock1234", "Mock device", true);
     QVERIFY(!device_->mockIsOpened());
     QVERIFY(device_->open());
 }
@@ -110,7 +110,7 @@ void DeviceOperationsTest::identifyTest()
         new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
     deviceOperation_->run();
-    QCOMPARE(deviceOperation_->deviceId(), 1234);
+    QCOMPARE(deviceOperation_->deviceId(), "mock1234");
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
@@ -480,7 +480,7 @@ void DeviceOperationsTest::identifyLegacyTest()
         new operation::Identify(device_, false), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
     deviceOperation_->run();
-    QCOMPARE(deviceOperation_->deviceId(), 1234);
+    QCOMPARE(deviceOperation_->deviceId(), "mock1234");
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();

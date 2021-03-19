@@ -144,7 +144,7 @@ QHash<int, QByteArray> SciPlatformModel::roleNames() const
     return roles;
 }
 
-void SciPlatformModel::boardConnectedHandler(int deviceId)
+void SciPlatformModel::boardConnectedHandler(const QByteArray& deviceId)
 {
     int index = findPlatform(deviceId);
     if (index < 0) {
@@ -159,7 +159,7 @@ void SciPlatformModel::boardConnectedHandler(int deviceId)
     }
 }
 
-void SciPlatformModel::boardReadyHandler(int deviceId, bool recognized)
+void SciPlatformModel::boardReadyHandler(const QByteArray& deviceId, bool recognized)
 {
     int index = findPlatform(deviceId);
     if (index < 0) {
@@ -187,7 +187,7 @@ void SciPlatformModel::boardReadyHandler(int deviceId, bool recognized)
     emit platformReady(index);
 }
 
-void SciPlatformModel::boardDisconnectedHandler(int deviceId)
+void SciPlatformModel::boardDisconnectedHandler(const QByteArray& deviceId)
 {
     int index = findPlatform(deviceId);
     if (index < 0) {
@@ -198,7 +198,7 @@ void SciPlatformModel::boardDisconnectedHandler(int deviceId)
     platformList_.at(index)->setDevice(nullptr);
 }
 
-int SciPlatformModel::findPlatform(int deviceId) const
+int SciPlatformModel::findPlatform(const QByteArray& deviceId) const
 {
     for (int i = 0; i < platformList_.length(); ++i) {
         if (platformList_.at(i)->deviceId() == deviceId) {
@@ -209,7 +209,7 @@ int SciPlatformModel::findPlatform(int deviceId) const
     return -1;
 }
 
-void SciPlatformModel::appendNewPlatform(int deviceId)
+void SciPlatformModel::appendNewPlatform(const QByteArray& deviceId)
 {
     strata::device::DevicePtr device = boardManager_->device(deviceId);
     if (device == nullptr) {

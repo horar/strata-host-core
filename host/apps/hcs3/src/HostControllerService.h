@@ -61,7 +61,7 @@ signals:
     void platformDocumentsRequested(QByteArray clientId, QString classId);
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
-    void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
+    void firmwareUpdateRequested(QByteArray clientId, QByteArray deviceId, QUrl firmwareUrl, QString firmwareMD5);
     void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5, QString class_id);
 
 public slots:
@@ -133,7 +133,7 @@ private:
 
     bool broadcastMessage(const QString& message);
 
-    void handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress);
+    void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
     ///////
     //handlers for client (UI)
@@ -148,8 +148,8 @@ private:
     void onCmdUpdateFirmware(const rapidjson::Value* );
     void onCmdDownloadControlView(const rapidjson::Value* );
 
-    void platformConnected(const int deviceId);
-    void platformDisconnected(const int deviceId);
+    void platformConnected(const QByteArray& deviceId);
+    void platformDisconnected(const QByteArray& deviceId);
 
     Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 

@@ -33,8 +33,8 @@ signals:
     void testDone(int exitStatus);
 
 private slots:
-    void newConnectionHandler(int deviceId, bool recognized);
-    void closeConnectionHandler(int deviceId);
+    void newConnectionHandler(const QByteArray& deviceId, bool recognized);
+    void closeConnectionHandler(const QByteArray& deviceId);
     void stateChangedHandler(PlatfortestState_ newState);
     void checkJLinkDeviceConnectionHandler(bool exitedNormally, bool connected);
     void flashCompletedHandler(bool exitedNormally);
@@ -62,7 +62,7 @@ private:
 
     strata::BoardManager boardManager_;
     PlatfortestState_ testState_;
-    int testDeviceId_;
+    QByteArray testDeviceId_;
     SGJLinkConnector jlinkConnector_;
 
     const int TEST_TIMEOUT = 15000;

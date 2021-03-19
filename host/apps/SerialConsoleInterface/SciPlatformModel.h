@@ -73,9 +73,9 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void boardConnectedHandler(int deviceId);
-    void boardReadyHandler(int deviceId, bool recognized);
-    void boardDisconnectedHandler(int deviceId);
+    void boardConnectedHandler(const QByteArray& deviceId);
+    void boardReadyHandler(const QByteArray& deviceId, bool recognized);
+    void boardDisconnectedHandler(const QByteArray& deviceId);
 
 private:
     QHash<int, QByteArray> roleByEnumHash_;
@@ -90,7 +90,7 @@ private:
     bool condensedAtStartup_ = false;
 
     void setModelRoles();
-    int findPlatform(int deviceId) const;
+    int findPlatform(const QByteArray& deviceId) const;
 
-    void appendNewPlatform(int deviceId);
+    void appendNewPlatform(const QByteArray& deviceId);
 };
