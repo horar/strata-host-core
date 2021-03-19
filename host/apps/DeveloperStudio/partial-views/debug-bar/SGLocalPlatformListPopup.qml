@@ -386,14 +386,9 @@ Window {
                         property bool connected: model.connected
                         property int deviceCurrentIndex: parseInt(device_id.split("_")[1])
 
-                       Component.onCompleted: {
-                            deviceCurrentIndex = parseInt(device_id.split("_")[1])
-                       }
-
-                       onDeviceCurrentIndexChanged: {
+                        onDeviceCurrentIndexChanged: {
                             deviceIdComboBox.currentIndex = deviceCurrentIndex
-                       }
-
+                        }
 
                         function setDevice_id(device_id) {
                             model.device_id = device_id
