@@ -1,6 +1,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QLatin1String>
 
 #include "BoardController.h"
 #include "Dispatcher.h"
@@ -20,17 +21,17 @@ void BoardController::initialize() {
     boardManager_.init(false, false);
 }
 
-bool BoardController::sendMessage(const int deviceId, const QByteArray& message) {
+bool BoardController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
     auto it = boards_.constFind(deviceId);
     if (it == boards_.constEnd()) {
-        qCWarning(logCategoryHcsBoard).noquote() << "Cannot send message, board was not found." << logDeviceId(deviceId);
+        qCWarning(logCategoryHcsBoard).noquote() << "Cannot send message, board" << deviceId << "was not found.";
         return false;
     }
-    qCDebug(logCategoryHcsBoard).noquote() << "Sending message to board." << logDeviceId(deviceId);
+    qCDebug(logCategoryHcsBoard).noquote() << "Sending message to board" << deviceId;
     return it.value().device->sendMessage(message);
 }
 
-DevicePtr BoardController::getDevice(const int deviceId) const {
+DevicePtr BoardController::getDevice(const QByteArray& deviceId) const {
     auto it = boards_.constFind(deviceId);
     if (it != boards_.constEnd()) {
         return it.value().device;
@@ -38,7 +39,7 @@ DevicePtr BoardController::getDevice(const int deviceId) const {
     return nullptr;
 }
 
-void BoardController::newConnection(int deviceId, bool recognized) {
+void BoardController::newConnection(const QByteArray& deviceId, bool recognized) {
     if (recognized) {
         DevicePtr device = boardManager_.device(deviceId);
         if (device == nullptr) {
@@ -48,11 +49,11 @@ void BoardController::newConnection(int deviceId, bool recognized) {
         connect(device.get(), &Device::msgFromDevice, this, &BoardController::messageFromBoard);
         boards_.insert(deviceId, Board(device));
 
-        qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
+        qCInfo(logCategoryHcsBoard).noquote() << "Connected new board" << deviceId;
 
         emit boardConnected(deviceId);
     } else {
-        qCWarning(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logDeviceId(deviceId);
+        qCWarning(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board" << deviceId;
         // Remove board if it was previously connected.
         if (boards_.contains(deviceId)) {
             boards_.remove(deviceId);
@@ -61,17 +62,17 @@ void BoardController::newConnection(int deviceId, bool recognized) {
     }
 }
 
-void BoardController::closeConnection(int deviceId)
+void BoardController::closeConnection(const QByteArray& deviceId)
 {
     if (boards_.contains(deviceId) == false) {
         // This situation can occur if unrecognized board is disconnected.
-        qCInfo(logCategoryHcsBoard).noquote() << "Disconnected unknown board." << logDeviceId(deviceId);
+        qCInfo(logCategoryHcsBoard).noquote() << "Disconnected unknown board" << deviceId;
         return;
     }
 
     boards_.remove(deviceId);
 
-    qCInfo(logCategoryHcsBoard).noquote() << "Disconnected board." << logDeviceId(deviceId);
+    qCInfo(logCategoryHcsBoard).noquote() << "Disconnected board" << deviceId;
 
     emit boardDisconnected(deviceId);
 }
@@ -83,10 +84,10 @@ void BoardController::messageFromBoard(QString message)
         return;
     }
 
-    int deviceId = device->deviceId();
+    const QByteArray deviceId = device->deviceId();
     QJsonObject wrapper {
         { JSON_MESSAGE, message },
-        { JSON_DEVICE_ID, deviceId }
+        { JSON_DEVICE_ID, QLatin1String(deviceId) }
     };
 
     QJsonObject notification {
@@ -97,7 +98,7 @@ void BoardController::messageFromBoard(QString message)
 
     QString platformId = device->platformId();
 
-    qCDebug(logCategoryHcsBoard).noquote() << "New board message." << logDeviceId(deviceId);
+    qCDebug(logCategoryHcsBoard).noquote() << "New board message from device" << deviceId;
 
     emit boardMessage(platformId, wrapperStrJson);
 }
@@ -107,7 +108,7 @@ QString BoardController::createPlatformsList() {
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
         Device::ControllerType controllerType = it.value().device->controllerType();
         QJsonObject item {
-            { JSON_DEVICE_ID, it.value().device->deviceId() },
+            { JSON_DEVICE_ID, QLatin1String(it.value().device->deviceId()) },
             { JSON_CONTROLLER_TYPE, static_cast<int>(controllerType) },
             { JSON_FW_VERSION, it.value().device->applicationVer() },
             { JSON_BL_VERSION, it.value().device->bootloaderVer() }
@@ -131,10 +132,6 @@ QString BoardController::createPlatformsList() {
     QJsonDocument doc(msg);
 
     return doc.toJson(QJsonDocument::Compact);
-}
-
-QString BoardController::logDeviceId(const int deviceId) const {
-    return "Device Id: 0x" + QString::number(static_cast<uint>(deviceId), 16);
 }
 
 BoardController::Board::Board(const DevicePtr& devPtr) : device(devPtr) { }

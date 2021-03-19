@@ -55,11 +55,7 @@ Item {
         }
         onInternal_tour_indexChanged: {
             if(Help.current_tour_targets[index]["target"] === vedInputVoltageType) {
-                Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 800
-                Help.current_tour_targets[index]["helpObject"].toolTipPopup.onHeightChanged.connect(function () {
-                    Help.refreshView(index)
-                })
-
+                Help.current_tour_targets[index]["helpObject"].toolTipPopup.width = 800
             }
         }
     }

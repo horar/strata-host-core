@@ -378,19 +378,22 @@ Window {
 
                         property var class_id: model.class_id
                         property var opn: model.opn
-                        property int device_id: model.device_id
+                        property string device_id: model.device_id
                         property string firmware_version: model.firmware_version
                         property string bootloader_version: model.bootloader_version
                         property string controller_class_id: model.controller_class_id
                         property int controller_type: model.controller_type
                         property bool connected: model.connected
+                        property int deviceCurrentIndex: parseInt(device_id.split("_")[1])
 
+                       Component.onCompleted: {
+                            deviceCurrentIndex = parseInt(device_id.split("_")[1])
+                       }
 
-                        onDevice_idChanged: {
-                            if(platformModel.initialized){
-                                deviceIdComboBox.currentIndex = device_id
-                            }
-                        }
+                       onDeviceCurrentIndexChanged: {
+                            deviceIdComboBox.currentIndex = deviceCurrentIndex
+                       }
+
 
                         function setDevice_id(device_id) {
                             model.device_id = device_id
@@ -753,7 +756,7 @@ Window {
                         Switch {
                             id: connectSwitch
                             checked: model.connected
-                            enabled: model.connected || (platformRow.class_id !== "" && platformRow.device_id !== -1 && platformRow.firmware_version !== "")
+                            enabled: model.connected || (platformRow.class_id !== "" && platformRow.device_id !== "dev_-1" && platformRow.firmware_version !== "")
 
                             onCheckedChanged: {
                                 model.connected = checked
@@ -773,7 +776,7 @@ Window {
 
                     onClicked: {
                         if(enabled){
-                            platformModel.append({class_id: "", opn: "", device_id: platformModel.count, firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED,connected: false})
+                            platformModel.append({class_id: "", opn: "", device_id: `dev_${platformModel.count}`, firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED,connected: false})
                         }
                     }
                 }
@@ -833,7 +836,7 @@ Window {
     function initialModelLoad() {
         if (platformModel.initialized === false) {
             for (var j = 0; j < 10; j++) {
-                deviceModel.append({name: `device_id ${j}`, device_id: j})
+                deviceModel.append({name: `device_id ${j}`, device_id: `dev_${j}`})
             }
 
             controllerClassIdModel.append({controller: "cabc126d-e921-435a-b447-983d910ebf2c"})
@@ -849,7 +852,7 @@ Window {
             readState()
 
             if (platformModel.count === 0) {
-                platformModel.append({class_id: "", opn: "---", device_id: 0, firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED,connected: false})
+                platformModel.append({class_id: "", opn: "---", device_id: "dev_0", firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED,connected: false})
             }
 
             platformModel.initialized = true
@@ -916,7 +919,7 @@ Window {
         if (localPlatformSettings.value("last-state") !== undefined) {
             const lastPlatforms = JSON.parse(localPlatformSettings.value("last-state"))
             for (var i = 0; i < lastPlatforms.length; i++) {
-                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: i, firmware_version: "0.0.0", bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.ASSISTED,connected: false})
+                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: `dev_${i}`, firmware_version: "0.0.0", bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED, connected: false})
             }
         }
     }

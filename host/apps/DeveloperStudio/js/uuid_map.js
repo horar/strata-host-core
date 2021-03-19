@@ -54,7 +54,6 @@ var uuid_map = {
     "221": "usb-pd-pps",
     "222": "subGHz",
     "225": "smart-speaker",
-    "224": "pixel",
     "226": "hello-strata",
     "227" : "eFuse",
     "228" : "eFuse",
@@ -110,5 +109,6 @@ var uuid_map = {
     "4aad7090-eac3-470e-a304-00988c8c006d": "rsl10-dcdc",
     "057ec75e-e48f-42db-bea9-3d191ed8a736": "rsl10-dcdc",
     "7bdcea96-0fb8-41de-9822-dec20ae1032a":"level-translators",
-    "fda98159-37f0-4e07-9ffe-28f46f80f7b5": "100V-ncp1034"
+    "fda98159-37f0-4e07-9ffe-28f46f80f7b5": "100V-ncp1034",
+    "8a757b79-ba44-4830-864b-2bb965552209" : "pixel"
 }

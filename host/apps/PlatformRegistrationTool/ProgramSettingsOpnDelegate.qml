@@ -46,6 +46,7 @@ ProgramSettingsDelegate {
             }
 
             placeholderText: "OPN..."
+            contextMenuEnabled: true
             leftIconSource: "qrc:/sgimages/zoom.svg"
             opacity: delegate.isSet ? 0 : 1
             enabled: delegate.isSearching === false && delegate.isSet === false

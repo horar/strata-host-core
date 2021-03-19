@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QByteArray>
 #include <QUrl>
 #include <QHash>
 #include <QPointer>
@@ -77,8 +78,8 @@ public:
     };
 
 signals:
-    void progressOfUpdate(int deviceId, QByteArray clientId, UpdateProgress progress);
-    void updaterError(int deviceId, QString errorString);
+    void progressOfUpdate(QByteArray deviceId, QByteArray clientId, UpdateProgress progress);
+    void updaterError(QByteArray deviceId, QString errorString);
 
 public slots:
     /**
@@ -88,10 +89,10 @@ public slots:
      * @param firmwareUrl
      * @param firmwareMD5
      */
-    void updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5);
+    void updateFirmware(const QByteArray& clientId, const QByteArray& deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5);
 
 private slots:
-    void handleUpdateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation,
+    void handleUpdateProgress(const QByteArray& deviceId, FirmwareUpdateController::UpdateOperation operation,
                               FirmwareUpdateController::UpdateStatus status, int complete, int total, QString errorString);
 
 private:
@@ -105,7 +106,8 @@ private:
         UpdateProgress updateProgress;
     };
 
-    QHash<int, struct UpdateData*> updates_;
+    // deviceId <-> UpdateData
+    QHash<QByteArray, struct UpdateData*> updates_;
 };
 
 Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateOperation)

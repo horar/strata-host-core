@@ -9,14 +9,14 @@
 namespace strata::device {
 
 QDebug operator<<(QDebug dbg, const Device* d) {
-    return dbg.nospace().noquote() << "Device 0x" << hex << static_cast<uint>(d->deviceId_) << ": " << dec;
+    return dbg.nospace().noquote() << "Device " << d->deviceId_ << ": ";
 }
 
 QDebug operator<<(QDebug dbg, const DevicePtr& d) {
     return dbg << d.get();
 }
 
-Device::Device(const int deviceId, const QString& name, const Type type) :
+Device::Device(const QByteArray& deviceId, const QString& name, const Type type) :
     deviceId_(deviceId), deviceName_(name), deviceType_(type), operationLock_(0),
     bootloaderMode_(false), apiVersion_(ApiVersion::Unknown), controllerType_(ControllerType::Embedded)
 { }
@@ -78,7 +78,7 @@ Device::ControllerType Device::controllerType() {
     return controllerType_;
 }
 
-int Device::deviceId() const {
+QByteArray Device::deviceId() const {
     return deviceId_;
 }
 
