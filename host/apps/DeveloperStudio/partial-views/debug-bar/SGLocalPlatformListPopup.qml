@@ -690,7 +690,6 @@ Window {
                                 }
                                 textChanged = false
                             }
-
                         }
 
                         SGComboBox {
@@ -709,7 +708,6 @@ Window {
                                     platformRow.setController_class_id(newControllerId.controller)
                                 }
                             }
-
                         }
 
                         SGComboBox {
