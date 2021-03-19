@@ -700,7 +700,7 @@ Window {
                             Layout.preferredWidth: controllerDeviceFiller.width
                             Layout.preferredHeight: 40
                             model: controllerClassIdModel
-                            enabled: !platformRow.connected && platformRow.controller_type === Constants.ASSISTED_CONTROLLER_TYPES.ASSISTED
+                            enabled: !platformRow.connected && platformRow.controller_type === Constants.DEVICE_CONTROLLER_TYPES.ASSISTED
                             textRole: "controller"
                             popupHeight: 100
 
@@ -916,7 +916,7 @@ Window {
         if (localPlatformSettings.value("last-state") !== undefined) {
             const lastPlatforms = JSON.parse(localPlatformSettings.value("last-state"))
             for (var i = 0; i < lastPlatforms.length; i++) {
-                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: i, firmware_version: "0.0.0", bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.ASSISTED_CONTROLLER_TYPES.NA,connected: false})
+                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: i, firmware_version: "0.0.0", bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.ASSISTED,connected: false})
             }
         }
     }
