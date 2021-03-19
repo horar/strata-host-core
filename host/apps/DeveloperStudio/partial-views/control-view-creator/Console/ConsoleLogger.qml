@@ -215,16 +215,16 @@ Item {
             anchors.fill: consoleLogs
             drag.target: dragitem
             cursorShape: Qt.IBeamCursor
-            propagateComposedEvents: true
+            propagateComposedEvents: false
         }
 
         Connections {
             target: consoleMouseArea
 
             onPressed:{
-                consoleLogs.deselectAll()
                 var clickedDelegate = consoleLogs.itemAt(mouse.x+consoleLogs.contentX, mouse.y+consoleLogs.contentY)
                 if (clickedDelegate) {
+                    consoleLogs.deselectAll()
                     clickedDelegate.startSelection(mouse)
                 } else {
                     consoleLogs.indexDragStarted = consoleLogs.model.count
