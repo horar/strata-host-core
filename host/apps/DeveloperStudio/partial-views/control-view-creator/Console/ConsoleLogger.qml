@@ -41,9 +41,7 @@ Item {
         property bool isActiveSelecting: false
 
         onDeselectAll: {
-            for (var i = 0; i < consoleLogs.model.count; i++) {
-                consoleLogs.model.get(i).state = "noneSelected"
-            }
+          consoleItems.invalidate()
         }
 
         onSelectInBetween: {
@@ -200,7 +198,11 @@ Item {
                     if (index === root.indexDragStarted) {
                         if (indexDragEnded > indexDragStarted) {
                             dropArea.end = delegateText.length
-                            delegateText.select(dropArea.start, dropArea.end)
+                            if(dropArea.start > 0){
+                                delegateText.selectAll()
+                            } else {
+                                delegateText.select(dropArea.start, dropArea.end)
+                            }
                         } else if (indexDragEnded < indexDragStarted) {
                             dropArea.end = 0
                             delegateText.select(dropArea.start, dropArea.end)
@@ -222,9 +224,9 @@ Item {
             target: consoleMouseArea
 
             onPressed:{
+                consoleLogs.deselectAll()
                 var clickedDelegate = consoleLogs.itemAt(mouse.x+consoleLogs.contentX, mouse.y+consoleLogs.contentY)
                 if (clickedDelegate) {
-                    consoleLogs.deselectAll()
                     clickedDelegate.startSelection(mouse)
                 } else {
                     consoleLogs.indexDragStarted = consoleLogs.model.count
@@ -235,6 +237,13 @@ Item {
             onClicked: {
                 consoleLogs.deselectAll()
             }
+
+           onDoubleClicked: {
+               var clickedDelegate = consoleLogs.itemAt(mouse.x+consoleLogs.contentX, mouse.y+consoleLogs.contentY)
+               if(clickedDelegate) {
+                   clickedDelegate.allSelected()
+               }
+           }
 
         }
 
