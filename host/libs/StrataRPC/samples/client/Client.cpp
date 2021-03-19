@@ -56,13 +56,13 @@ QString Client::getServerTime()
 
 void Client::connectToServer()
 {
-    qCDebug(logCategoryStrataClientSample) << "gui connecting";
+    qCDebug(logCategoryStrataClientSample) << "Connecting to the server.";
     strataClient_->connectServer();
 }
 
 void Client::disconnectServer()
 {
-    qCDebug(logCategoryStrataClientSample) << "gui disconnecting";
+    qCDebug(logCategoryStrataClientSample) << "Disconnecting from the server.";
     if (true == strataClient_->disconnectServer()) {
         connectionStatus_ = false;
         emit connectionStatusUpdated();
@@ -78,21 +78,22 @@ void Client::closeServer()
         return;
     }
 
-    connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
-            [](const QJsonObject &) { qCInfo(logCategoryStrataClientSample) << "server closed"; });
+    connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this, [](const QJsonObject &) {
+        qCInfo(logCategoryStrataClientSample) << "Server closed successfully.";
+    });
 }
 
 void Client::requestRandomGraph()
 {
-    qCInfo(logCategoryStrataClientSample) << "Requesting random graph from the server";
+    qCInfo(logCategoryStrataClientSample) << "Requesting random graph from the server.";
     auto deferrefRequest = strataClient_->sendRequest("generate_graph", QJsonObject{{"size", 6}});
 
     connect(deferrefRequest, &DeferredRequest::finishedSuccessfully, this, [](const QJsonObject &) {
-        qCInfo(logCategoryStrataClientSample) << "Server is generating graph";
+        qCInfo(logCategoryStrataClientSample) << "Server is generating graph.";
     });
 
     connect(deferrefRequest, &DeferredRequest::finishedWithError, this, [](const QJsonObject &) {
-        qCCritical(logCategoryStrataClientSample) << "Failed to request graph from the server";
+        qCCritical(logCategoryStrataClientSample) << "Failed to request graph from the server.";
     });
 }
 

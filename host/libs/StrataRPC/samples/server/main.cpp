@@ -1,7 +1,7 @@
+#include "Server.h"
+
 #include <QCoreApplication>
 #include <QtCore>
-
-#include "Server.h"
 
 int main(int argc, char* argv[])
 {

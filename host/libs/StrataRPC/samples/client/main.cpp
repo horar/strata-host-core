@@ -1,7 +1,6 @@
 #include "Client.h"
 
 #include <QCommandLineParser>
-#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QtWidgets/QApplication>

@@ -24,7 +24,7 @@ Server::~Server()
 
 bool Server::init()
 {
-    qCDebug(logCategoryStrataServerSample) << "in Server init";
+    qCDebug(logCategoryStrataServerSample) << "Initializing Strata Server.";
     if (false == strataServer_->initializeServer()) {
         return false;
     }
@@ -33,7 +33,6 @@ bool Server::init()
 
 void Server::start()
 {
-    qCDebug(logCategoryStrataServerSample) << "in Server start";
     connect(strataServer_.get(), &StrataServer::errorOccurred, this, &Server::serverErrorHandler);
 
     serverTimeBroadcastTimer_.setInterval(std::chrono::seconds(10));

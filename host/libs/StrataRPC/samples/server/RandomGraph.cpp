@@ -4,8 +4,9 @@
 #include <QList>
 #include <QRandomGenerator>
 
-RandomGraph::RandomGraph(std::shared_ptr<strata::strataRPC::StrataServer> strataServer,
-                         QObject *parent)
+using namespace strata::strataRPC;
+
+RandomGraph::RandomGraph(std::shared_ptr<StrataServer> strataServer, QObject *parent)
     : QObject(parent), strataServer_(strataServer)
 {
     strataServer_->registerHandler(
@@ -16,17 +17,17 @@ RandomGraph::~RandomGraph()
 {
 }
 
-void RandomGraph::generateGraph(const strata::strataRPC::Message &message)
+void RandomGraph::generateGraph(const Message &message)
 {
     if (false == message.payload.contains("size")) {
         strataServer_->notifyClient(
             message, QJsonObject{{"status", "Failed"}, {"message", "Invalid command."}},
-            strata::strataRPC::ResponseType::Error);
+            ResponseType::Error);
         return;
     }
 
     strataServer_->notifyClient(message, QJsonObject{{"status", "processing"}},
-                                strata::strataRPC::ResponseType::Response);
+                                ResponseType::Response);
 
     QJsonArray randomList;
 
@@ -35,5 +36,5 @@ void RandomGraph::generateGraph(const strata::strataRPC::Message &message)
     }
 
     strataServer_->notifyClient(message, QJsonObject{{"status", "done"}, {"list", randomList}},
-                                strata::strataRPC::ResponseType::Notification);
+                                ResponseType::Notification);
 }
