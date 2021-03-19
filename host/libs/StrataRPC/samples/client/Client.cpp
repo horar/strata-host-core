@@ -71,7 +71,7 @@ void Client::disconnectServer()
 
 void Client::closeServer()
 {
-    auto deferredRequest = strataClient_->sendRequest("close_server", QJsonObject{{}});
+    auto deferredRequest = strataClient_->sendRequest("close_server", QJsonObject());
 
     if (deferredRequest == nullptr) {
         qCCritical(logCategoryStrataClientSample) << "Failed To send unregister_client request.";
@@ -99,7 +99,7 @@ void Client::requestRandomGraph()
 
 void Client::requestServerStatus()
 {
-    auto deferredRequest = strataClient_->sendRequest("server_status", QJsonObject{{}});
+    auto deferredRequest = strataClient_->sendRequest("server_status", QJsonObject());
 
     if (deferredRequest == nullptr) {
         qCCritical(logCategoryStrataClientSample) << "Failed To send server_status request.";
