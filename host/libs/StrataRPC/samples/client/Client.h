@@ -24,6 +24,7 @@ signals:
     void connectionStatusUpdated();
     void serverTimeUpdated();
     void randomGraphUpdated(QList<int> randomNumbersList);
+    void errorOccured(const QString &errorMessage);
 
 public slots:
     void connectToServer();

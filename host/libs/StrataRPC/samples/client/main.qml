@@ -106,6 +106,54 @@ Window {
                 }
             }
         }
+
+        Item {
+            id: errorsItem
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: serverCommandsItem.bottom
+            anchors.bottom: parent.bottom
+            anchors.margins: 5
+
+            Label {
+                id: errorsLabel
+                text: qsTr("Errors:")
+                anchors.top: parent.top
+                anchors.left: parent.left
+            }
+
+            ScrollView {
+                id: errorsScrollView
+                anchors.top: errorsLabel.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+
+                Flickable {
+                    id: errorsFlickable
+                    anchors.fill: parent
+                    boundsBehavior: Flickable.StopAtBounds
+                    ScrollBar.vertical: ScrollBar {}
+
+                    TextArea.flickable: TextArea {
+                        id: errorsTextArea
+                        property int msgCount: 0
+                        anchors.fill: parent
+                        font.pointSize: 13
+                        readOnly: true
+                        wrapMode: Text.Wrap
+                    }
+                }
+            }
+
+            Connections {
+                target: Client
+                onErrorOccured: {
+                    errorsTextArea.append(errorMessage);
+                    errorsTextArea.msgCount++;
+                }
+            }
+        }
     }
 
     Item {
