@@ -31,7 +31,7 @@ Popup {
         ContextMenuButton {
             text: "Delete"
             onClicked: {
-                root.removeControl(layoutOverlayRoot.layoutInfo.uuid)
+                layoutBuilderRoot.removeControl(layoutOverlayRoot.layoutInfo.uuid)
             }
         }
     }

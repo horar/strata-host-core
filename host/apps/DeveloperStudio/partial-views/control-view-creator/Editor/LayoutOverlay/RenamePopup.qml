@@ -57,8 +57,8 @@ Popup {
                 enabled: textField.text !== ""
                 onClicked: {
                     renamePopup.close()
-                    root.fileContents = root.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, "id:",  renamePopup.text)
-                    root.saveFile()
+                    layoutBuilderRoot.fileContents = layoutBuilderRoot.replaceObjectPropertyValueInString(layoutOverlayRoot.layoutInfo.uuid, "id:",  renamePopup.text)
+                    layoutBuilderRoot.saveFile()
                 }
             }
 

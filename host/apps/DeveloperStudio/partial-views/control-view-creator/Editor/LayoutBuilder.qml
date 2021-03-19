@@ -19,8 +19,6 @@ ColumnLayout {
 
     Component.onCompleted: {
         reload()
-        //        let uiTest = openFile("file:///Users/zbgzzh/Desktop/QtDesignTest/DesignTest/UITest_base.qml")
-        //        saveFile(file, uiTest)
     }
 
     function openFile(fileUrl) {
@@ -35,14 +33,6 @@ ColumnLayout {
     }
 
     function saveFile(fileUrl = file, text = fileContents) {
-//        var request = new XMLHttpRequest();
-//        request.onreadystatechange = function() {
-//            if (request.readyState === 4) {
-//                timer.start() // todo: fileIO that actually synchronously finishes
-//            }
-//        };
-//        request.open("PUT", fileUrl, false);
-//        request.send(text);
         SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text)
         reload()
     }
@@ -52,13 +42,19 @@ ColumnLayout {
             overlayObjects[i].destroy()
         }
         overlayObjects = []
-        sdsModel.resourceLoader.cleanUp(layoutBuilderRoot)
-//        resourceTest.cleanUp(layoutBuilderRoot.contentItem)
+        sdsModel.resourceLoader.clearComponentCache(layoutBuilderRoot)
         fileContents = openFile(file)
         loader.setSource(layoutBuilderRoot.file)
-        overlayContainer.rowCount = loader.children[0].rowCount
-        overlayContainer.columnCount = loader.children[0].columnCount
-        allChildren(loader.children[0])
+        if (loader.children[0] && loader.children[0].objectName === "ControlViewRoot") {
+            overlayContainer.rowCount = loader.children[0].rowCount
+            overlayContainer.columnCount = loader.children[0].columnCount
+            allChildren(loader.children[0])
+        } else {
+            console.log("Visual Editor error: file does not derive from UIBase")
+            loader.setSource("qrc:/partial-views/SGLoadError.qml") // todo: modify primary text in SGLoadError as well as error message, allow more specific message here than "platform user interface"
+            loader.item.error_message = "File does not derive from UIBase"
+            // todo: disable visual editor controls
+        }
     }
 
     function allChildren(item){
@@ -83,11 +79,9 @@ ColumnLayout {
     }
 
     function addControl(controlPath){
-        console.log("addControl:", controlPath)
+//        console.log("addControl:", controlPath)
         let testComponent = openFile(controlPath)
-        console.log("FALLER:", testComponent)
         testComponent = testComponent.arg(create_UUID()) // replace all instances of %1 with uuid
-        console.log("FALLER:", testComponent)
 
         let regex = new RegExp("([\\s\\S]*)(\})","gm")  // insert testComponent before ending '}' in file
         fileContents = fileContents.replace(regex, "$1\n" + testComponent + "$2");
@@ -137,13 +131,6 @@ ColumnLayout {
 
         RowLayout {
             id: controls
-
-            //        Button {
-            //            text: "load"
-            //            onClicked: {
-            //               fileDialog.visible = true // todo: load file instead of hardcoded "file" above
-            //            }
-            //        }
 
             Button {
                 text: "Reload"

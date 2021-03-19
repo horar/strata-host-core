@@ -74,12 +74,6 @@ ColumnLayout {
         }
     }
 
-    Keys.onPressed: {
-        if (event.matches(StandardKey.Save)) {
-            saveFile()
-        }
-    }
-
     Connections {
         target: treeModel
 
@@ -214,6 +208,7 @@ ColumnLayout {
             onCheckedChanged: {
                 if (checked) {
                     viewStack.currentIndex = 0
+                    webEngine.forceActiveFocus()
                 }
             }
         }
@@ -278,6 +273,12 @@ ColumnLayout {
         id: viewStack
         Layout.fillHeight: true
         Layout.fillWidth: true
+
+        Keys.onPressed: {
+            if (event.matches(StandardKey.Save)) {
+                saveFile()
+            }
+        }
 
         WebEngineView {
             id: webEngine
