@@ -500,7 +500,7 @@ void HostControllerService::onCmdLoadDocuments(const rapidjson::Value* payload)
         return;
     }
 
-    QByteArray clientId = client->getClientId();
+    const QByteArray clientId = client->getClientId();
     emit platformDocumentsRequested(clientId, classId);
 }
 
@@ -509,7 +509,7 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
     Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    QByteArray clientId = client->getClientId();
+    const QByteArray clientId = client->getClientId();
 
     emit cancelPlatformDocumentRequested(clientId);
 
@@ -521,7 +521,7 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 
 void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* payload)
 {
-    QByteArray clientId = getSenderClient()->getClientId();
+    const QByteArray clientId = getSenderClient()->getClientId();
     QStringList partialUriList;
 
     QString destinationDir = QString::fromStdString((*payload)["destination_dir"].GetString());
@@ -545,7 +545,7 @@ void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* paylo
 
 void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
 {
-    QByteArray clientId = getSenderClient()->getClientId();
+    const QByteArray clientId = getSenderClient()->getClientId();
 
     const rapidjson::Value& deviceIdValue = (*payload)["device_id"];
     if (deviceIdValue.IsString() == false) {
@@ -574,7 +574,7 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
 
 void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)
 {
-    QByteArray clientId = getSenderClient()->getClientId();
+    const QByteArray clientId = getSenderClient()->getClientId();
 
     const rapidjson::Value& urlValue = (*payload)["url"];
     QString partialUri = QString::fromUtf8(urlValue.GetString(), urlValue.GetStringLength());
@@ -609,7 +609,7 @@ Client* HostControllerService::getClientById(const QByteArray& clientId)
 
 void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 {
-    const QByteArray& clientId = msg.from_client;
+    const QByteArray clientId = msg.from_client;
 
     //check the client's ID (dealer_id) is in list
     Client* client = getClientById(clientId);
@@ -685,7 +685,7 @@ bool HostControllerService::broadcastMessage(const QString& message)
 {
     qCInfo(logCategoryHcs).noquote().nospace() << "broadcast msg: '" << message << "'";
     for(auto item : clientList_) {
-        QByteArray clientId = item->getClientId();
+        const QByteArray clientId = item->getClientId();
         clients_.sendMessage(clientId, message);
     }
 
