@@ -232,7 +232,7 @@ Item {
                 consoleLogs.forceActiveFocus()
             }
 
-            onDoubleClicked: {
+            onClicked: {
                 consoleLogs.deselectAll()
             }
 
