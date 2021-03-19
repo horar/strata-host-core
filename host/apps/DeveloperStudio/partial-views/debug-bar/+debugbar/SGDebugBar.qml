@@ -18,8 +18,6 @@ import "qrc:/js/platform_selection.js" as PlatformSelection
 Item {
     id: root
 
-    property string testAuthServer: "http://10.238.54.227/"
-
     Rectangle {
         id: commandBar
         visible: false
@@ -164,11 +162,12 @@ Item {
 
             Button {
                 id: serverChange
+                enabled: urls.testAuthServer !== ""
                 onClicked: {
                     if (Rest.url !== urls.authServer) {
                         Rest.url = urls.authServer
                     } else {
-                        Rest.url = root.testAuthServer
+                        Rest.url = urls.testAuthServer
                     }
                     Signals.serverChanged()
                 }

@@ -41,7 +41,7 @@ FirmwareUpdateController::UpdateProgress::UpdateProgress(const QString& jobUuid,
 }
 
 void FirmwareUpdateController::updateFirmware(UpdateFirmwareData data)
-{   
+{
     FlashData flashData(data.deviceId, data.clientId, data.jobUuid, data.firmwareUrl, data.firmwareMD5);
 
     runUpdate(flashData);
@@ -72,7 +72,7 @@ void FirmwareUpdateController::setControllerFwClassId(ProgramControllerData data
 }
 
 // FlashData constructror for update firmware action
-FirmwareUpdateController::FlashData::FlashData(int deviceId,
+FirmwareUpdateController::FlashData::FlashData(const QByteArray& deviceId,
                                                const QByteArray& clientId,
                                                const QString& jobUuid,
                                                const QUrl& firmwareUrl,
@@ -86,7 +86,7 @@ FirmwareUpdateController::FlashData::FlashData(int deviceId,
 { }
 
 // FlashData constructror for program controller action
-FirmwareUpdateController::FlashData::FlashData(int deviceId,
+FirmwareUpdateController::FlashData::FlashData(const QByteArray& deviceId,
                                                const QByteArray& clientId,
                                                const QString& jobUuid,
                                                const QUrl& firmwareUrl,
@@ -102,7 +102,7 @@ FirmwareUpdateController::FlashData::FlashData(int deviceId,
 { }
 
 // FlashData constructror for set controller fw_class_id action
-FirmwareUpdateController::FlashData::FlashData(int deviceId,
+FirmwareUpdateController::FlashData::FlashData(const QByteArray& deviceId,
                                                const QByteArray& clientId,
                                                const QString& jobUuid,
                                                const QString& firmwareClassId)
@@ -166,7 +166,7 @@ void FirmwareUpdateController::runUpdate(const FlashData& data)
     }
 }
 
-void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperation operation, UpdateStatus status, int complete, int total, QString errorString)
+void FirmwareUpdateController::handleUpdateProgress(const QByteArray& deviceId, UpdateOperation operation, UpdateStatus status, int complete, int total, QString errorString)
 {
     if (updates_.contains(deviceId) == false) {
         return;
@@ -199,7 +199,7 @@ void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperatio
     }
 }
 
-void FirmwareUpdateController::logAndEmitError(int deviceId, const QString& errorString)
+void FirmwareUpdateController::logAndEmitError(const QByteArray& deviceId, const QString& errorString)
 {
     qCCritical(logCategoryHcsFwUpdater).noquote() << errorString;
     emit updaterError(deviceId, errorString);

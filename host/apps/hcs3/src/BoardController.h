@@ -44,14 +44,14 @@ public:
      * @param message
      * @return true if massage can be sent
      */
-    bool sendMessage(const int deviceId, const QByteArray& message);
+    bool sendMessage(const QByteArray& deviceId, const QByteArray& message);
 
     /**
      * Gets device specified by device ID
      * @param deviceId
      * @return device or nullptr if such device with device ID is not available
      */
-    strata::device::DevicePtr getDevice(const int deviceId) const;
+    strata::device::DevicePtr getDevice(const QByteArray& deviceId) const;
 
     /**
      * Creates JSON with list of platforms
@@ -60,20 +60,16 @@ public:
     QJsonArray createPlatformsList();
 
 signals:
-    void boardConnected(int deviceId);
-    void boardDisconnected(int deviceId);
+    void boardConnected(QByteArray deviceId);
+    void boardDisconnected(QByteArray deviceId);
     void boardMessage(QString platformId, QString message);
 
 private slots:  // slots for signals from BoardManager
-
-    void newConnection(int deviceId, bool recognized);
-    void closeConnection(int deviceId);
+    void newConnection(const QByteArray& deviceId, bool recognized);
+    void closeConnection(const QByteArray& deviceId);
     void messageFromBoard(QString message);
 
 private:
-    // Auxiliary function for writing log messages.
-    inline QString logDeviceId(const int deviceId) const;
-
     struct Board {
         Board(const strata::device::DevicePtr& devPtr);
         strata::device::DevicePtr device;
@@ -82,7 +78,7 @@ private:
     strata::BoardManager boardManager_;
 
     // map: deviceID <-> Board
-    QHash<int, Board> boards_;
+    QHash<QByteArray, Board> boards_;
     // access to boards_ should be protected by mutex in case of multithread usage
 };
 

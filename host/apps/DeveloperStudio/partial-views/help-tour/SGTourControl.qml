@@ -7,7 +7,7 @@ import tech.strata.sgwidgets 1.0
 
 Item {
     id: root
-    height: root.childrenRect.height
+    implicitHeight: root.childrenRect.height
     width: 360
 
     property int index: 0
@@ -20,26 +20,24 @@ Item {
     onVisibleChanged: {
         if (visible) {
             forceActiveFocus(); // focus on this to catch Keys below
-        } else if (focus){
+        } else if(focus){
             focus = false
         }
     }
 
-    Keys.onLeftPressed: {
-        if (root.index > 0) {
-            Help.prev(root.index)
+    Keys.onPressed: {
+        if(event.key === Qt.Key_Escape){
+            close()
+            Help.closeTour()
+        } else if(event.key === Qt.Key_Left){
+            if (root.index > 0) {
+                Help.prev(root.index)
+            }
+        } else if(event.key === Qt.Key_Right){
+            Help.next(root.index)
         }
     }
 
-    Keys.onRightPressed: {
-        Help.next(root.index)
-    }
-
-    Keys.onEscapePressed: {
-        root.close()
-    }
-
-    // Capture tab/backtab to retain focus
     Keys.onTabPressed: {}
     Keys.onBacktabPressed: {}
 

@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QByteArray>
 #include <QUrl>
 #include <QHash>
 #include <QPointer>
@@ -83,7 +84,7 @@ public:
      */
     struct UpdateFirmwareData {
         QByteArray clientId;
-        int deviceId;
+        QByteArray deviceId;
         QUrl firmwareUrl;
         QString firmwareMD5;
         QString jobUuid;
@@ -94,7 +95,7 @@ public:
      */
     struct ProgramControllerData {
         QByteArray clientId;
-        int deviceId;
+        QByteArray deviceId;
         QUrl firmwareUrl;
         QString firmwareMD5;
         QString firmwareClassId;
@@ -102,8 +103,8 @@ public:
     };
 
 signals:
-    void progressOfUpdate(int deviceId, QByteArray clientId, UpdateProgress progress);
-    void updaterError(int deviceId, QString errorString);
+    void progressOfUpdate(QByteArray deviceId, QByteArray clientId, UpdateProgress progress);
+    void updaterError(QByteArray deviceId, QString errorString);
 
 public slots:
     /**
@@ -126,11 +127,11 @@ public slots:
 
 
 private slots:
-    void handleUpdateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation,
+    void handleUpdateProgress(const QByteArray& deviceId, FirmwareUpdateController::UpdateOperation operation,
                               FirmwareUpdateController::UpdateStatus status, int complete, int total, QString errorString);
 
 private:
-    void logAndEmitError(int deviceId, const QString& errorString);
+    void logAndEmitError(const QByteArray& deviceId, const QString& errorString);
 
     enum class Action {
         UpdateFirmware,
@@ -140,26 +141,26 @@ private:
 
     struct FlashData {
         // constructror for update firmware action
-        FlashData(int deviceId,
+        FlashData(const QByteArray& deviceId,
                   const QByteArray& clientId,
                   const QString& jobUuid,
                   const QUrl& firmwareUrl,
                   const QString& firmwareMD5);
         // constructor for program controller action
-        FlashData(int deviceId,
+        FlashData(const QByteArray& deviceId,
                   const QByteArray& clientId,
                   const QString& jobUuid,
                   const QUrl& firmwareUrl,
                   const QString& firmwareMD5,
                   const QString& firmwareClassId);
         // constructor for set controller fw_class_id action
-        FlashData(int deviceId,
+        FlashData(const QByteArray& deviceId,
                   const QByteArray& clientId,
                   const QString& jobUuid,
                   const QString& firmwareClassId);
 
         Action action;
-        int deviceId;
+        QByteArray deviceId;
         QByteArray clientId;
         QString jobUuid;
         QUrl firmwareUrl;
@@ -179,7 +180,8 @@ private:
         UpdateProgress updateProgress;
     };
 
-    QHash<int, struct UpdateInfo*> updates_;
+    // deviceId <-> UpdateInfo
+    QHash<QByteArray, struct UpdateInfo*> updates_;
 };
 
 Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateOperation)

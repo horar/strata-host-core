@@ -7,14 +7,14 @@ import tech.strata.theme 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: platformTabRoot
     height: 40
     width: 250 // will be set by the listview
-
     property color menuColor: Theme.palette.green
-
+    state: parent.state
     property string view: model.view
     property string name: model.name
     property string class_id: model.class_id
@@ -25,14 +25,47 @@ Item {
     property bool inView: NavigationControl.stack_container_.currentIndex === index + 1
     property string selectedButtonIcon: ""
 
+    property alias currIcon: currentIcon
+    property alias platformName: platformName
+
     Component.onCompleted: {
         populateButtons()
         setControlIcon()
         setSelectedButton()
+        if(platformTabRoot.state === "help_tour"){
+            Help.registerTarget(menu, "This is the menu for the Platform Tab", 5, "selectorHelp")
+            for(var i = 0; i < repeater.count; i++){
+                Help.registerTarget(repeater.itemAt(i).toolItem, (6 + i === 6) ? "Use this menu item to open the platform and control a board" :
+                                                                 (i + 6 < repeater.count + 5) ? "Use this menu item to view documentation":
+                                                                 "Use this menu item to close the platform", 6 + i, "selectorHelp")
+            }
+        }
     }
 
     onConnectedChanged: {
         setControlIcon()
+    }
+
+    Connections {
+        target: Help.utility
+        // if order is hardcoded, toggle help_tour popup after dropdown popup otherwise reset z height.
+        onInternal_tour_indexChanged: {
+            if(platformTabRoot.state === "help_tour"){
+                if(Help.current_tour_targets[index]["target"] === menu) {
+                    dropDownPopup.open()
+                    menu.state = "help_tour"
+                } else if(Help.current_tour_targets[index]["target"] === currIcon) {
+                    dropDownPopup.close()
+                }
+            }
+        }
+
+        onTour_runningChanged: {
+            if(!tour_running){
+                menu.state = "normal"
+                dropDownPopup.close()
+            }
+        }
     }
 
     onViewChanged: {
@@ -157,6 +190,7 @@ Item {
             Layout.fillWidth: true
 
             SGText {
+                id: platformName
                 color: "white"
                 text: platformTabRoot.name
                 elide: Text.ElideRight
@@ -243,14 +277,27 @@ Item {
         width: menu.width
         height: menu.height
         padding: 0
-        closePolicy: Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
+        closePolicy: menu.state === "normal" ? Popup.CloseOnPressOutsideParent | Popup.CloseOnReleaseOutside : Popup.NoAutoClose
         focus: true
+
+        onOpened: {
+            if(menu.state === "help_tour"){
+                Help.refreshView(Help.internal_tour_index)
+            }
+        }
 
         Rectangle {
             id: menu
             color: Qt.darker(Theme.palette.green, 1.15)
             width: platformTabRoot.width
             height: menuColumn.height + 1
+            state: "normal"
+
+            onStateChanged: {
+                if(state === "help_tour"){
+                    Help.refreshView(Help.internal_tour_index)
+                }
+            }
 
             Accessible.role: Accessible.Pane
             Accessible.name: "Platform Tab Popup"
@@ -262,11 +309,14 @@ Item {
                 y: 1
 
                 Repeater {
+                    id: repeater
                     model: ListModel {
                         id: buttonModel
                     }
 
-                    delegate: SGToolButton { }
+                    delegate: SGToolButton {
+                        enabled: menu.state !== "help_tour"
+                    }
                 }
             }
         }

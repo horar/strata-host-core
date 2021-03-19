@@ -23,6 +23,7 @@ ProgramSettingsDelegate {
             dialogLabel: "Select JLink Commander executable"
             dialogSelectExisting: true
             showValidationResultIcon: false
+            contextMenuEnabled: true
             focus: true
 
             onActiveEditingChanged: {

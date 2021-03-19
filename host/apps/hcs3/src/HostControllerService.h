@@ -136,10 +136,10 @@ public slots:
 private slots:
     void sendMessageToClients(const QString &platformId, const QString& message);
 
-    void handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress);
+    void handleUpdateProgress(const QByteArray& deviceId, const QByteArray& clientId, FirmwareUpdateController::UpdateProgress progress);
 
-    void platformConnected(const int deviceId);
-    void platformDisconnected(const int deviceId);
+    void platformConnected(const QByteArray& deviceId);
+    void platformDisconnected(const QByteArray& deviceId);
 
 private:
     void handleMessage(const PlatformMessage& msg);

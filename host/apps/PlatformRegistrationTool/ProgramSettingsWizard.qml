@@ -14,12 +14,18 @@ FocusScope {
     clip: true
 
     property QtObject prtModel
-    property string controllerClassId
-    property string controllerOpn
     property var latestData: ({})
+    property string latestOpn: ""
+
     property var embeddedData: ({})
     property var assistedData: ({})
     property var controllerData: ({})
+
+    //not sure whether opn is in data blob
+    property string embeddedOpn: ""
+    property string assistedOpn: ""
+    property string controllerOpn: ""
+
     property string jlinkExePath
 
     signal registrationEmbeddedRequested()
@@ -42,16 +48,16 @@ FocusScope {
         id: stateMachine
 
         running: true
-        initialState: step1State
+        initialState: stateStep1
 
         signal findPlatformReplyNotValid()
         signal findPlatformOpnValid(int controllerType)
         signal findPlatformOpnNotValid()
 
         DSM.State {
-            id: step1State
+            id: stateStep1
 
-            initialState: waitForUserOpnState
+            initialState: stateWaitForUserOpn
 
             onEntered: {
                 firstOpnDelegate.title = "Orderable Part Number"
@@ -60,16 +66,20 @@ FocusScope {
             }
 
             DSM.State {
-                id: waitForUserOpnState
+                id: stateWaitForUserOpn
 
                 onEntered: {
                     wizard.embeddedData = {}
                     wizard.assistedData = {}
                     wizard.controllerData = {}
+
+                    wizard.embeddedOpn = ""
+                    wizard.assistedOpn = ""
+                    wizard.controllerOpn = ""
                 }
 
                 DSM.SignalTransition {
-                    targetState: waitForFindPlatformState
+                    targetState: stateWaitForFindPlatform
                     signal: firstOpnDelegate.checkOpnRequested
                     onTriggered: {
                         firstOpnDelegate.isSearching = true
@@ -79,41 +89,44 @@ FocusScope {
             }
 
             DSM.State {
-                id: waitForFindPlatformState
+                id: stateWaitForFindPlatform
 
                 onExited: {
                     firstOpnDelegate.isSearching = false
                 }
 
                 DSM.SignalTransition {
-                    targetState: embeddedStep2State
+                    targetState: stateEmbeddedStep2
                     signal: stateMachine.findPlatformOpnValid
                     guard: controllerType === 1
                     onTriggered: {
                         wizard.embeddedData = wizard.latestData
+                        wizard.embeddedOpn = wizard.latestOpn
                     }
                 }
 
                 DSM.SignalTransition {
-                    targetState: assistedStep2State
+                    targetState: stateAssistedStep2
                     signal: stateMachine.findPlatformOpnValid
                     guard: controllerType === 2
                     onTriggered: {
                         wizard.assistedData = wizard.latestData
+                        wizard.assistedOpn = wizard.latestOpn
                     }
                 }
 
                 DSM.SignalTransition {
-                    targetState: controllerStep2State
+                    targetState: stateControllerStep2
                     signal: stateMachine.findPlatformOpnValid
                     guard: controllerType === 3
                     onTriggered: {
                         wizard.controllerData = wizard.latestData
+                        wizard.controllerOpn = wizard.latestOpn
                     }
                 }
 
                 DSM.SignalTransition {
-                    targetState: waitForUserOpnState
+                    targetState: stateWaitForUserOpn
                     signal: stateMachine.findPlatformOpnNotValid
                     onTriggered: {
                         firstOpnDelegate.isSet = false
@@ -122,7 +135,7 @@ FocusScope {
                 }
 
                 DSM.SignalTransition {
-                    targetState: waitForUserOpnState
+                    targetState: stateWaitForUserOpn
                     signal: stateMachine.findPlatformReplyNotValid
                     onTriggered: {
                         firstOpnDelegate.isSet = false
@@ -133,7 +146,7 @@ FocusScope {
         }
 
         DSM.State {
-            id: embeddedStep2State
+            id: stateEmbeddedStep2
             onEntered: {
                 firstOpnDelegate.titleWhenSet = "Embedded Platform OPN"
                 firstOpnDelegate.isSet = true
@@ -143,7 +156,7 @@ FocusScope {
             }
 
             DSM.SignalTransition {
-                targetState: step1State
+                targetState: stateStep1
                 signal: backButton.clicked
                 onTriggered: {
                     wizard.jlinkExePath = jlinkPathDelegate.isSet ? jlinkPathDelegate.jlinkExePath : ""
@@ -160,9 +173,9 @@ FocusScope {
         }
 
         DSM.State {
-            id: assistedStep2State
+            id: stateAssistedStep2
 
-            initialState: assistedStep2WaitState
+            initialState: stateAssistedStep2Wait
 
             onEntered: {
                 firstOpnDelegate.titleWhenSet = "Assisted Platform OPN"
@@ -175,7 +188,7 @@ FocusScope {
             }
 
             DSM.SignalTransition {
-                targetState: step1State
+                targetState: stateStep1
                 signal: backButton.clicked
                 onTriggered: {
                     secondOpnDelegate.hide()
@@ -184,14 +197,14 @@ FocusScope {
             }
 
             DSM.State {
-                id: assistedStep2WaitState
+                id: stateAssistedStep2Wait
 
                 onEntered: {
                     wizard.controllerData = {}
                 }
 
                 DSM.SignalTransition {
-                    targetState: assistedStep2WaitForResultState
+                    targetState: stateAssistedStep2WaitForResult
                     signal: secondOpnDelegate.checkOpnRequested
                     onTriggered: {
                         secondOpnDelegate.isSearching = true
@@ -201,24 +214,25 @@ FocusScope {
             }
 
             DSM.State {
-                id: assistedStep2WaitForResultState
+                id: stateAssistedStep2WaitForResult
 
                 onExited: {
                     secondOpnDelegate.isSearching = false
                 }
 
                 DSM.SignalTransition {
-                    targetState: assistedStep3State
+                    targetState: stateAssistedStep3
                     signal: stateMachine.findPlatformOpnValid
                     guard: controllerType === 3
                     onTriggered: {
                         secondOpnDelegate.isSet = true
                         wizard.controllerData = wizard.latestData
+                        wizard.controllerOpn = wizard.latestOpn
                     }
                 }
 
                 DSM.SignalTransition {
-                    targetState: assistedStep2WaitState
+                    targetState: stateAssistedStep2Wait
                     signal: stateMachine.findPlatformOpnValid
                     guard: controllerType !== 3
                     onTriggered: {
@@ -227,7 +241,7 @@ FocusScope {
                 }
 
                 DSM.SignalTransition {
-                    targetState: assistedStep2WaitState
+                    targetState: stateAssistedStep2Wait
                     signal: stateMachine.findPlatformOpnNotValid
                     onTriggered: {
                         secondOpnDelegate.isSet = false
@@ -236,7 +250,7 @@ FocusScope {
                 }
 
                 DSM.SignalTransition {
-                    targetState: assistedStep2WaitState
+                    targetState: stateAssistedStep2Wait
                     signal: stateMachine.findPlatformReplyNotValid
                     onTriggered: {
                         secondOpnDelegate.isSet = false
@@ -244,11 +258,10 @@ FocusScope {
                     }
                 }
             }
-
         }
 
         DSM.State {
-            id: controllerStep2State
+            id: stateControllerStep2
             onEntered: {
                 firstOpnDelegate.titleWhenSet = "Controller Platform OPN"
                 firstOpnDelegate.isSet = true
@@ -256,7 +269,7 @@ FocusScope {
             }
 
             DSM.SignalTransition {
-                targetState: controllerStep3AState
+                targetState: stateControllerStep3A
                 signal: onlyControllerQuestionDelegate.userResponse
                 guard: onlyController === true
                 onTriggered: {
@@ -265,7 +278,7 @@ FocusScope {
             }
 
             DSM.SignalTransition {
-                targetState: controllerStep3BState
+                targetState: stateControllerStep3B
                 signal: onlyControllerQuestionDelegate.userResponse
                 guard: onlyController === false
                 onTriggered: {
@@ -274,7 +287,7 @@ FocusScope {
             }
 
             DSM.SignalTransition {
-                targetState: step1State
+                targetState: stateStep1
                 signal: backButton.clicked
                 onTriggered: {
                     onlyControllerQuestionDelegate.hide()
@@ -283,14 +296,14 @@ FocusScope {
         }
 
         DSM.State {
-            id: controllerStep3AState
+            id: stateControllerStep3A
             onEntered: {
                 jlinkPathDelegate.jlinkExePath = wizard.jlinkExePath
                 jlinkPathDelegate.show()
             }
 
             DSM.SignalTransition {
-                targetState: controllerStep2State
+                targetState: stateControllerStep2
                 signal: backButton.clicked
                 onTriggered: {
                     wizard.jlinkExePath = jlinkPathDelegate.isSet ? jlinkPathDelegate.jlinkExePath : ""
@@ -307,7 +320,7 @@ FocusScope {
         }
 
         DSM.State {
-            id: assistedStep3State
+            id: stateAssistedStep3
 
             onEntered: {
                 jlinkPathDelegate.jlinkExePath = wizard.jlinkExePath
@@ -315,7 +328,7 @@ FocusScope {
             }
 
             DSM.SignalTransition {
-                targetState: assistedStep2State
+                targetState: stateAssistedStep2
                 signal: backButton.clicked
                 onTriggered: {
                     wizard.jlinkExePath = jlinkPathDelegate.isSet ? jlinkPathDelegate.jlinkExePath : ""
@@ -332,9 +345,9 @@ FocusScope {
         }
 
         DSM.State {
-            id: controllerStep3BState
+            id: stateControllerStep3B
 
-            initialState: controllerStep3BWaitState
+            initialState: stateControllerStep3BWait
 
             onEntered: {
                 secondOpnDelegate.title = "Assisted Platform OPN"
@@ -344,7 +357,7 @@ FocusScope {
             }
 
             DSM.SignalTransition {
-                targetState: controllerStep2State
+                targetState: stateControllerStep2
                 signal: backButton.clicked
                 onTriggered: {
                     secondOpnDelegate.hide()
@@ -353,14 +366,14 @@ FocusScope {
             }
 
             DSM.State {
-                id: controllerStep3BWaitState
+                id: stateControllerStep3BWait
 
                 onEntered: {
                     wizard.assistedData = {}
                 }
 
                 DSM.SignalTransition {
-                    targetState: controllerStep3BWaitForResultState
+                    targetState: stateControllerStep3BWaitForResult
                     signal: secondOpnDelegate.checkOpnRequested
                     onTriggered: {
                         secondOpnDelegate.isSearching = true
@@ -370,24 +383,25 @@ FocusScope {
             }
 
             DSM.State {
-                id: controllerStep3BWaitForResultState
+                id: stateControllerStep3BWaitForResult
 
                 onExited: {
                     secondOpnDelegate.isSearching = false
                 }
 
                 DSM.SignalTransition {
-                    targetState: controllerStep4BState
+                    targetState: stateControllerStep4B
                     signal: stateMachine.findPlatformOpnValid
                     guard: controllerType === 2
                     onTriggered: {
                         secondOpnDelegate.isSet = true
                         wizard.assistedData = wizard.latestData
+                        wizard.assistedOpn = wizard.latestOpn
                     }
                 }
 
                 DSM.SignalTransition {
-                    targetState: controllerStep3BWaitState
+                    targetState: stateControllerStep3BWait
                     signal: stateMachine.findPlatformOpnValid
                     guard: controllerType !== 2
                     onTriggered: {
@@ -396,7 +410,7 @@ FocusScope {
                 }
 
                 DSM.SignalTransition {
-                    targetState: controllerStep3BWaitState
+                    targetState: stateControllerStep3BWait
                     signal: stateMachine.findPlatformOpnNotValid
                     onTriggered: {
                         secondOpnDelegate.isSet = false
@@ -405,7 +419,7 @@ FocusScope {
                 }
 
                 DSM.SignalTransition {
-                    targetState: controllerStep3BWaitState
+                    targetState: stateControllerStep3BWait
                     signal: stateMachine.findPlatformReplyNotValid
                     onTriggered: {
                         secondOpnDelegate.isSet = false
@@ -416,7 +430,7 @@ FocusScope {
         }
 
         DSM.State {
-            id: controllerStep4BState
+            id: stateControllerStep4B
 
             onEntered: {
                 jlinkPathDelegate.jlinkExePath = wizard.jlinkExePath
@@ -424,7 +438,7 @@ FocusScope {
             }
 
             DSM.SignalTransition {
-                targetState: controllerStep3BState
+                targetState: stateControllerStep3B
                 signal: backButton.clicked
                 onTriggered: {
                     wizard.jlinkExePath = jlinkPathDelegate.isSet ? jlinkPathDelegate.jlinkExePath : ""
@@ -496,7 +510,7 @@ FocusScope {
             left: contentColumn.left
 
         }
-        enabled: step1State.active === false
+        enabled: stateStep1.active === false
         icon.source: "qrc:/sgimages/chevron-left.svg"
         text: "Back"
     }
@@ -516,10 +530,10 @@ FocusScope {
             text: "Begin"
             icon.source: "qrc:/sgimages/chip-flash.svg"
             enabled: jlinkPathDelegate.isSet
-                     && (embeddedStep2State.active
-                         || controllerStep3AState.active
-                         || assistedStep3State.active
-                         || controllerStep4BState.active)
+                     && (stateEmbeddedStep2.active
+                         || stateControllerStep3A.active
+                         || stateAssistedStep3.active
+                         || stateControllerStep4B.active)
         }
     }
 
@@ -566,7 +580,7 @@ FocusScope {
             data = []
         }
 
-        processReplyData(JSON.stringify(data));
+        processReplyData(opnLowered, JSON.stringify(data));
     }
 
     function doFindPlatform(opn) {
@@ -581,7 +595,7 @@ FocusScope {
 
             console.log(Logger.prtCategory,"platform info:", status, data)
 
-            processReplyData(data);
+            processReplyData(opn.toLowerCase(), data);
         })
 
         deferred.finishedWithError.connect(function(status ,errorString) {
@@ -591,7 +605,7 @@ FocusScope {
         })
     }
 
-    function processReplyData(dataString) {
+    function processReplyData(opn, dataString) {
         console.log(dataString)
 
         try {
@@ -630,8 +644,10 @@ FocusScope {
             var isValid = CommonCpp.SGUtilsCpp.validateJson(dataString, JSON.stringify(validationSchema))
             if (isValid) {
                 wizard.latestData = dataObject
+                wizard.latestOpn = opn
                 stateMachine.findPlatformOpnValid(dataObject.controller_type)
                 wizard.latestData = {}
+                wizard.latestOpn = ""
             } else {
                 console.error(Logger.prtCategory, "Cannot validate OPN. Schema of reply not valid.")
                 stateMachine.findPlatformReplyNotValid()

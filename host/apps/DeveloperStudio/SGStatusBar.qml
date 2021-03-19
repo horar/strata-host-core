@@ -51,7 +51,7 @@ Rectangle {
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
-        Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
+        Help.registerTarget(help_tour, "When a platform has been selected, its tab will come into view.", 2, "selectorHelp")
         userSettings.loadSettings()
         alertIconContainer.visible = hasNotifications
     }
@@ -191,6 +191,50 @@ Rectangle {
             }
         }
 
+        SGPlatformTab {
+            id: help_tour
+            visible: false
+            device_id:Constants.NULL_DEVICE_ID
+            class_id: "000"
+            name: "Help Tour Example"
+            index: 0
+            connected: true
+            available: {
+                "documents": true,
+                "control": true
+            }
+            view: "control"
+            state: "help_tour"
+            Layout.preferredWidth: 250
+            Layout.fillHeight: true
+            onXChanged: {
+                if (visible) {
+                    Help.refreshView(Help.internal_tour_index)
+                }
+            }
+
+           Component.onCompleted: {
+               Help.registerTarget(help_tour.currIcon, "This button opens the platform dropdown menu.", 4, "selectorHelp")
+               Help.registerTarget(help_tour.platformName, "Clicking here will bring the platform's interface into view. ", 3, "selectorHelp")
+           }
+
+           Connections {
+               target: Help.utility
+
+               onTour_runningChanged: {
+                   if(!tour_running){
+                       help_tour.visible = false
+                   }
+               }
+
+               onInternal_tour_indexChanged: {
+                   if(Help.current_tour_targets[index]["target"] === help_tour){
+                        help_tour.visible = true
+                   }
+               }
+           }
+        }
+
         ListView {
             id: platformTabListView
             Layout.fillHeight: true
@@ -203,6 +247,7 @@ Rectangle {
                     Math.max(width - ((platformTabWidth * count) + count), 0) : 0
 
             delegate: SGPlatformTab {
+                id: delegate
                 width: platformTabListView.platformTabWidth +
                        (index == (platformTabListView.count - 1) ? platformTabListView.platformTabWidthRemainder : 0)
             }
@@ -337,41 +382,6 @@ Rectangle {
         CVCButton {
             id: cvcButton
             visible: false
-        }
-
-        SGPlatformTab {
-            // demonstration tab set for help tour
-            id: helpTab
-            class_id: "0"
-            device_id: Constants.NULL_DEVICE_ID
-            view: "control"
-            index: 0
-            connected: true
-            name: "Help Example"
-            visible: false
-            onXChanged: {
-                if (visible) {
-                    Help.refreshView(Help.internal_tour_index)
-                }
-            }
-            available: {
-                "documents": true,
-                "control": true
-            }
-
-            Connections {
-                target: Help.utility
-                onInternal_tour_indexChanged:{
-                    if (Help.current_tour_targets[index]["target"] === helpTab) {
-                        helpTab.visible = true
-                    } else {
-                        helpTab.visible = false
-                    }
-                }
-                onTour_runningChanged: {
-                    helpTab.visible = false
-                }
-            }
         }
     }
 

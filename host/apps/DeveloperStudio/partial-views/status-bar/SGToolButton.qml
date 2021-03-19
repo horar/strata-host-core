@@ -21,6 +21,14 @@ Rectangle {
         }
     }
     clip: true
+    property alias toolItem: toolItem
+
+    Item {
+        id: toolItem
+        implicitWidth: parent.width
+        height: 14
+        z: -1
+    }
 
     Accessible.name: model.text
     Accessible.role: Accessible.Button
@@ -42,6 +50,7 @@ Rectangle {
     }
 
     RowLayout {
+        id: row
         anchors {
             verticalCenter: parent.verticalCenter
             left: parent.left
@@ -50,6 +59,7 @@ Rectangle {
             rightMargin: 10
         }
         spacing: 10
+        height: 25
 
         Text {
             color: "white"

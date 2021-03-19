@@ -1,7 +1,6 @@
 #include "RequestsControllerTest.h"
 
 #include <StrataRPC/Message.h>
-// #include <StrataRPC/DeferredRequest.h>
 
 using namespace strata::strataRPC;
 
@@ -90,7 +89,7 @@ void RequestsControllerTest::testPopRequest()
             rc.addNewRequest("test_handler", QJsonObject({{}}));
 
         connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
-                [](const Message &) {});
+                [](const QJsonObject &) {});
 
         QVERIFY(deferredRequest->getId() > 0);
         QVERIFY(requestJson != "");
@@ -99,8 +98,6 @@ void RequestsControllerTest::testPopRequest()
     for (int i = 0; i < numOfTestCases; i++) {
         const auto [res, request] = rc.popPendingRequest(i + 1);
         QVERIFY(res);
-        QVERIFY(request.deferredRequest_->hasSuccessCallback());
-        QVERIFY(false == request.deferredRequest_->hasErrorCallback());
 
         Message message;
         message.messageID = i;

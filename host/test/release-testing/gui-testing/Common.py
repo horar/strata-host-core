@@ -77,7 +77,7 @@ RESET_PASSWORD_CLOSE_BUTTON = "ClosePopup"
 RESET_PASSWORD_EDIT = "example@onsemi.com"
 RESET_PASSWORD_SUBMIT_BUTTON = "Submit"
 
-PLATFORM_CONTROLS_BUTTON = "Open Platform Controls"
+PLATFORM_CONTROLS_BUTTON = "Open Hardware Controls"
 PLATFORM_TAB_BUTTON = "Open Platform Tab"
 
 STRATA_PROCESS = "Strata Developer Studio.exe"
@@ -104,7 +104,7 @@ def writeResults(totalFails, totalTests, path):
     with open(path, "r") as resultsFile:
         results = resultsFile.read()
         if results != "":
-            prevTotal, prevSuccesses = int(results.split(",")[0]), int(results.split(",")[1])
+            prevSuccesses, prevTotal = int(results.split(",")[0]), int(results.split(",")[1])
 
     newTotal = totalTests + prevTotal
     newSuccesses = (totalTests - totalFails) + prevSuccesses
