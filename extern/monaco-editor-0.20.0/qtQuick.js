@@ -664,6 +664,10 @@ function registerQmlAsLanguage() {
                 currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
                 return currentItems[bracketWord][propRange]
             } else {
+                const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber, column: propRange.startColumn })
+                if(prevParent.includes("functions") || prevParent.includes("on")|| prevParent.includes("if")){
+                    return Object.values(functionSuggestions)
+                }
                 return Object.values(suggestions)
             }
         }
