@@ -76,7 +76,7 @@ Window {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.margins: 5
-            height: 95
+            height: 139
 
             Button {
                 id: closeServerButton
@@ -103,6 +103,47 @@ Window {
                 Connections {
                     target: requestServerStatusButton
                     onClicked: Client.requestServerStatus()
+                }
+            }
+
+            Item {
+                id: serverPingItem
+                height: 44
+                anchors.top : requestServerStatusButton.bottom
+                anchors.right: parent.right
+                anchors.left: parent.left
+                anchors.margins: 5
+
+                Button {
+                    id: pingServerButton
+                    anchors.left: parent.left
+                    text: qsTr("Ping Server")
+
+                    Connections {
+                        target: pingServerButton
+                        onClicked: Client.pingServer()
+                    }
+                }
+
+                Label {
+                    id: serverDelayLabel
+                    anchors.left: pingServerButton.right
+                    anchors.verticalCenter: pingServerButton.verticalCenter
+                    anchors.margins: 5
+                    text: qsTr("Delay: ")
+                }
+
+                Label {
+                    id: serverDelayValue
+                    anchors.left: serverDelayLabel.right
+                    anchors.verticalCenter: pingServerButton.verticalCenter
+                }
+
+                Connections {
+                    target: Client
+                    onServerDelayUpdated: {
+                        serverDelayValue.text = delay + "ms"
+                    }
                 }
             }
         }

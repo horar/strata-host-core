@@ -1,6 +1,7 @@
 #include "Client.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <QElapsedTimer>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QList>
@@ -115,6 +116,35 @@ void Client::requestServerStatus()
 
     connect(deferredRequest, &DeferredRequest::finishedWithError, this,
             &Client::serverDisconnectedHandler);
+}
+
+void Client::pingServer()
+{
+    QElapsedTimer *elapsedTimer = new QElapsedTimer();
+    elapsedTimer->start();
+
+    auto deferredRequest = strataClient_->sendRequest("ping", QJsonObject());
+
+    if (deferredRequest == nullptr) {
+        qCCritical(logCategoryStrataClientSample) << "Failed to send ping request.";
+        delete elapsedTimer;
+        return;
+    }
+
+    connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this,
+            [this, elapsedTimer](const QJsonObject &) {
+                auto serverDelay = elapsedTimer->elapsed();
+                qCDebug(logCategoryStrataClientSample) << "Server Delay:" << serverDelay << "ms.";
+                emit serverDelayUpdated(serverDelay);
+                delete elapsedTimer;
+            });
+
+    connect(deferredRequest, &DeferredRequest::finishedWithError, this,
+            [this, elapsedTimer](const QJsonObject &) {
+                qCCritical(logCategoryStrataClientSample) << "Failed to get server delay.";
+                emit serverDelayUpdated(-1);
+                delete elapsedTimer;
+            });
 }
 
 void Client::serverDisconnectedHandler(const QJsonObject &)

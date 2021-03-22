@@ -24,6 +24,7 @@ signals:
     void connectionStatusUpdated();
     void serverTimeUpdated();
     void randomGraphUpdated(QList<int> randomNumbersList);
+    void serverDelayUpdated(qint64 delay);
     void errorOccured(const QString &errorMessage);
 
 public slots:
@@ -32,6 +33,8 @@ public slots:
     void closeServer();
     void requestRandomGraph();
     void requestServerStatus();
+    void pingServer();
+
     void serverDisconnectedHandler(const QJsonObject &);
     void strataClientErrorHandler(strata::strataRPC::StrataClient::ClientError errorType,
                                   const QString &errorMessage);

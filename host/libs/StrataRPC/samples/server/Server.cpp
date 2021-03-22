@@ -16,6 +16,10 @@ Server::Server(QObject *parent)
 
     strataServer_->registerHandler(
         "server_status", std::bind(&Server::serverStatusHandler, this, std::placeholders::_1));
+
+    strataServer_->registerHandler("ping", [this](const Message &message) {
+        strataServer_->notifyClient(message, QJsonObject(), ResponseType::Response);
+    });
 }
 
 Server::~Server()
