@@ -17,7 +17,7 @@ public:
      * @param deviceId device ID
      * @param name device name
      */
-    MockDevice(const int deviceId, const QString& name, const bool saveMessages);
+    MockDevice(const QByteArray& deviceId, const QString& name, const bool saveMessages);
 
     /**
      * MockDevice destructor

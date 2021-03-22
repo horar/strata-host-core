@@ -30,7 +30,7 @@ void FirmwareUpdateController::initialize(BoardController *boardController, stra
     downloadManager_ = downloadManager;
 }
 
-void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5)
+void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const QByteArray& deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5)
 {
     if (boardController_.isNull() || downloadManager_.isNull()) {
         QString errStr("FirmwareUpdateController is not properly initialized.");
@@ -65,7 +65,7 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
     fwUpdater->updateFirmware();
 }
 
-void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperation operation, UpdateStatus status, int complete, int total, QString errorString)
+void FirmwareUpdateController::handleUpdateProgress(const QByteArray& deviceId, UpdateOperation operation, UpdateStatus status, int complete, int total, QString errorString)
 {
     if (updates_.contains(deviceId) == false) {
         return;

@@ -14,7 +14,7 @@ import "qrc:/js/constants.js" as Constants
 
 Window {
     id: root
-    width: 800
+    width: 1200
     height: mainColumn.implicitHeight + 20
     maximumWidth: width
     maximumHeight: height
@@ -31,7 +31,7 @@ Window {
     ColumnLayout {
         id: mainColumn
         spacing: 5
-        anchors.centerIn: parent
+        anchors.fill: parent
 
         Rectangle {
             id: alertRect
@@ -305,25 +305,52 @@ Window {
 
             ColumnLayout {
                 id: injectPlatform
-
+                Layout.fillWidth: true
+                
                 RowLayout {
+
+                    Item {
+                        id: filler
+                        Layout.preferredWidth: 10
+                    }
 
                     Item {
                         Layout.preferredWidth: 40
                     }
 
                     Text {
+                        id: classFiller
                         Layout.preferredWidth: 310
                         text: 'Class ID'
                     }
 
                     Text {
+                        id: versionFiller
                         Layout.preferredWidth: 80
                         text: "Version"
                     }
 
                     Text {
-                        Layout.preferredWidth: 150
+                        id: bootLoaderFiller
+                        Layout.preferredWidth: 80
+                        text: "Bootloader"
+                    }
+
+                    Text {
+                        id: controllerDeviceFiller
+                        Layout.preferredWidth: 310
+                        text: "Controller Class ID"
+                    }
+
+                    Text {
+                        id: controllerTypeFiller
+                        Layout.preferredWidth: 130
+                        text: "Controller Type"
+                    }
+
+                    Text {
+                        id: deviceIDFiller
+                        Layout.preferredWidth: 130
                         text: "Device ID"
                     }
 
@@ -351,19 +378,32 @@ Window {
 
                         property var class_id: model.class_id
                         property var opn: model.opn
-                        property int device_id: model.device_id
+                        property string device_id: model.device_id
                         property string firmware_version: model.firmware_version
+                        property string bootloader_version: model.bootloader_version
+                        property string controller_class_id: model.controller_class_id
+                        property int controller_type: model.controller_type
                         property bool connected: model.connected
+                        property int deviceCurrentIndex: parseInt(device_id.split("_")[1])
 
-
-                        onDevice_idChanged: {
-                            if(platformModel.initialized){
-                                deviceIdComboBox.currentIndex = device_id
-                            }
+                        onDeviceCurrentIndexChanged: {
+                            deviceIdComboBox.currentIndex = deviceCurrentIndex
                         }
 
                         function setDevice_id(device_id) {
                             model.device_id = device_id
+                        }
+
+                        function setController_type(controller_type) {
+                            model.controller_type = controller_type
+                        }
+
+                        function setBootloader_version(bootloader_version) {
+                            model.bootloader_version = bootloader_version
+                        }
+
+                        function setController_class_id(controller_class_id) {
+                            model.controller_class_id = controller_class_id
                         }
 
                         function setFirmware_version(firmware_version) {
@@ -376,6 +416,10 @@ Window {
 
                         function setOpn(opn) {
                             model.opn = opn
+                        }
+
+                        Item {
+                            Layout.preferredWidth: filler.width
                         }
 
                         Rectangle {
@@ -408,7 +452,7 @@ Window {
 
                         RowLayout {
                             Layout.preferredHeight: 40
-                            Layout.preferredWidth: 310
+                            Layout.preferredWidth: classFiller.width
                             Layout.fillWidth: false
                             spacing: 0
 
@@ -484,36 +528,59 @@ Window {
 
                             Popup {
                                 id: popUp
-                                width: parent.width
+                                width: classFiller.width
                                 height: 485
                                 y: parent.y - height
 
                                 ColumnLayout {
-                                    anchors.fill: parent
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    anchors.top: parent.top
+                                    anchors.bottom: parent.bottom
                                     spacing: 5
 
-                                    RowLayout {
+                                    Loader {
+                                        id: switchButtons
                                         Layout.alignment: Qt.AlignHCenter
-                                        spacing: 2
+                                        Layout.preferredHeight: 40
+                                        Layout.maximumWidth: 300
+                                        Layout.minimumWidth: 300
 
-                                        SGButton {
-                                            Layout.preferredHeight: 40
-                                            Layout.preferredWidth: 140
-                                            text: "Platform Selector List"
-                                            enabled: popUpView.model !== PlatformSelection.platformSelectorModel
+                                        state: "recentList"
+                                        states: [State {
+                                                name: "platformList"
+                                                PropertyChanges {
+                                                    target: switchButtons
+                                                    sourceComponent: platformListButton
+                                                }
+                                            }, State {
+                                                name: "recentList"
+                                                PropertyChanges {
+                                                    target: switchButtons
+                                                    sourceComponent: recentListButton
+                                                }
+                                            }
+                                        ]
+                                        Component {
+                                            id: platformListButton
+                                            SGButton {
+                                                text: "Platform Selector List"
+                                                enabled: popUpView.model !== PlatformSelection.platformSelectorModel
 
-                                            onClicked: {
-                                                popUpView.model = PlatformSelection.platformSelectorModel
+                                                onClicked: {
+                                                    popUpView.model = PlatformSelection.platformSelectorModel
+                                                    switchButtons.state = "recentList"
+                                                }
                                             }
                                         }
-
-                                        SGButton {
-                                            Layout.preferredHeight: 40
-                                            Layout.preferredWidth: 140
-                                            text: "Recent Platforms"
-                                            enabled: popUpView.model !== recentPlatformsModel
-                                            onClicked: {
-                                                popUpView.model = recentPlatformsModel
+                                        Component {
+                                            id: recentListButton
+                                            SGButton {
+                                                text: "Recent Platforms"
+                                                enabled: popUpView.model !== recentPlatformsModel
+                                                onClicked: {
+                                                    popUpView.model = recentPlatformsModel
+                                                    switchButtons.state = "platformList"
+                                                }
                                             }
                                         }
                                     }
@@ -522,15 +589,16 @@ Window {
                                         // divider
                                         color: "grey"
                                         Layout.preferredHeight: 1
-                                        Layout.fillWidth: true
-                                        anchors.leftMargin: 10
-                                        anchors.rightMargin: 10
+                                        Layout.maximumWidth: 300
+                                        Layout.minimumWidth: 300
+                                        anchors.leftMargin: -10
                                     }
 
                                     ListView {
                                         id: popUpView
                                         Layout.fillHeight: true
-                                        Layout.fillWidth: true
+                                        Layout.maximumWidth: 300
+                                        Layout.minimumWidth: 300
                                         model: PlatformSelection.platformSelectorModel
                                         clip: true
 
@@ -581,7 +649,7 @@ Window {
                         SGTextField {
                             id: firmwareVersion
                             Layout.preferredHeight: 40
-                            Layout.preferredWidth: 80
+                            Layout.preferredWidth: versionFiller.width
                             placeholderText: "Firmware version #.#.#"
                             text: platformRow.firmware_version
 
@@ -602,10 +670,68 @@ Window {
                             }
                         }
 
+                        SGTextField {
+                            id: bootloaderVersion
+                            Layout.preferredHeight: 40
+                            Layout.preferredWidth: bootLoaderFiller.width
+                            placeholderText: "Bootloader version #.#.#"
+                            text: platformRow.bootloader_version
+                            enabled: !platformRow.connected
+
+                            property bool textChanged: false
+
+                            onTextChanged: {
+                                textChanged = true
+                            }
+
+                            onEditingFinished: {
+                                if(textChanged && platformRow.bootloader_version !== text && text !== ""){
+                                    platformRow.setBootloader_version(text)
+                                }
+                                textChanged = false
+                            }
+                        }
+
+                        SGComboBox {
+                            id: controllerClassid
+                            Layout.preferredWidth: controllerDeviceFiller.width
+                            Layout.preferredHeight: 40
+                            model: controllerClassIdModel
+                            enabled: !platformRow.connected && platformRow.controller_type === Constants.DEVICE_CONTROLLER_TYPES.ASSISTED
+                            textRole: "controller"
+                            popupHeight: 100
+
+                            onCurrentIndexChanged: {
+                                const newControllerId = model.get(currentIndex)
+                                if(newControllerId){
+                                    displayText = newControllerId.controller
+                                    platformRow.setController_class_id(newControllerId.controller)
+                                }
+                            }
+                        }
+
+                        SGComboBox {
+                            id: controllerTypeComboBox
+                            Layout.preferredWidth: controllerTypeFiller.width
+                            Layout.preferredHeight: 40
+                            model: controllerTypeModel
+                            enabled: !platformRow.connected
+                            textRole: "type"
+                            popupHeight: 150
+
+                            onCurrentIndexChanged: {
+                                const newControlType = model.get(currentIndex)
+                                if(newControlType){
+                                    displayText = newControlType.type
+                                    platformRow.setController_type(newControlType.value)
+                                }
+                            }
+                        }
+
                         SGComboBox {
                             id: deviceIdComboBox
                             Layout.preferredHeight: 40
-                            Layout.preferredWidth: 150
+                            Layout.preferredWidth: deviceIDFiller.width
                             model: deviceModel
                             enabled: !platformRow.connected
                             textRole: "name"
@@ -623,7 +749,7 @@ Window {
                         Switch {
                             id: connectSwitch
                             checked: model.connected
-                            enabled: model.connected || (platformRow.class_id !== "" && platformRow.device_id !== -1 && platformRow.firmware_version !== "")
+                            enabled: model.connected || (platformRow.class_id !== "" && platformRow.device_id !== "dev_-1" && platformRow.firmware_version !== "")
 
                             onCheckedChanged: {
                                 model.connected = checked
@@ -643,7 +769,7 @@ Window {
 
                     onClicked: {
                         if(enabled){
-                            platformModel.append({class_id: "", opn: "", device_id: platformModel.count, firmware_version: "0.0.0", connected: false})
+                            platformModel.append({class_id: "", opn: "", device_id: `dev_${platformModel.count}`, firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED,connected: false})
                         }
                     }
                 }
@@ -691,17 +817,35 @@ Window {
         id: deviceModel
     }
 
+    ListModel {
+        id: controllerClassIdModel
+    }
+
+    ListModel {
+        id: controllerTypeModel
+    }
+
     // Loads a device model, and prepends the classModel with any saved custom platforms
     function initialModelLoad() {
         if (platformModel.initialized === false) {
             for (var j = 0; j < 10; j++) {
-                deviceModel.append({name: `device_id ${j}`, device_id: j})
+                deviceModel.append({name: `device_id ${j}`, device_id: `dev_${j}`})
+            }
+
+            controllerClassIdModel.append({controller: "cabc126d-e921-435a-b447-983d910ebf2c"})
+            for (var i = 0; i < 5; i++){
+                controllerClassIdModel.append({controller: SGUtilsCpp.generateUuid()})
+            }
+            
+            const platformTypes = Object.keys(Constants.DEVICE_CONTROLLER_TYPES)
+            for(var i = 0; i < platformTypes.length; i++){
+                controllerTypeModel.append({type: platformTypes[i], value: Constants.DEVICE_CONTROLLER_TYPES[platformTypes[i]]})
             }
 
             readState()
 
             if (platformModel.count === 0) {
-                platformModel.append({class_id: "", opn: "---", device_id: 0, firmware_version: "0.0.0", connected: false})
+                platformModel.append({class_id: "", opn: "---", device_id: "dev_0", firmware_version: "0.0.0",bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED,connected: false})
             }
 
             platformModel.initialized = true
@@ -718,11 +862,13 @@ Window {
 
         for (var i = 0; i < platformModel.count; i++) {
             const updatedPlatform = platformModel.get(i)
+            const isAssisted = updatedPlatform.controller_type === Constants.DEVICE_CONTROLLER_TYPES.ASSISTED
             if (updatedPlatform.connected) {
                 injectList.list.push({
                                          "class_id": updatedPlatform.class_id,
                                          "device_id": updatedPlatform.device_id + Constants.DEBUG_DEVICE_ID,
-                                         "firmware_version": updatedPlatform.firmware_version
+                                         "firmware_version": updatedPlatform.firmware_version,
+                                         "controller_class_id":isAssisted ? updatedPlatform.controller_class_id : undefined,
                                      })
             }
         }
@@ -766,7 +912,7 @@ Window {
         if (localPlatformSettings.value("last-state") !== undefined) {
             const lastPlatforms = JSON.parse(localPlatformSettings.value("last-state"))
             for (var i = 0; i < lastPlatforms.length; i++) {
-                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: i, firmware_version: "0.0.0", connected: false})
+                platformModel.append({class_id: lastPlatforms[i].class_id, opn: lastPlatforms[i].opn, device_id: `dev_${i}`, firmware_version: "0.0.0", bootloader_version:"0.0.0",controller_class_id: "",controller_type: Constants.DEVICE_CONTROLLER_TYPES.EMBEDDED, connected: false})
             }
         }
     }
@@ -789,4 +935,5 @@ Window {
         }
         localPlatformSettings.setValue("last-state", JSON.stringify(platformState))
     }
+
 }

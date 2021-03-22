@@ -413,7 +413,7 @@ void PrtModel::startApplication()
     operation->run();
 }
 
-void PrtModel::boardReadyHandler(int deviceId, bool recognized)
+void PrtModel::boardReadyHandler(const QByteArray& deviceId, bool recognized)
 {
     Q_UNUSED(recognized)
 
@@ -422,7 +422,7 @@ void PrtModel::boardReadyHandler(int deviceId, bool recognized)
     emit boardReady(deviceId);
 }
 
-void PrtModel::boardDisconnectedHandler(int deviceId)
+void PrtModel::boardDisconnectedHandler(const QByteArray& deviceId)
 {
     int index = 0;
     while (index < platformList_.length()) {
