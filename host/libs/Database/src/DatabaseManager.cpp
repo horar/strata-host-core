@@ -51,19 +51,11 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
         return nullptr;
     }
 
-    // Wait until 'user_access_map' replication is finished
-    unsigned int retries = 0;
-    const unsigned int REPLICATOR_RETRY_MAX = 10;
-    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
-    while (authenticate(name) == false) {
-        ++retries;
-        std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
-        if (retries >= REPLICATOR_RETRY_MAX) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error with user access map replicator. Verify endpoint URL";
-            break;
-        }
+    // Authenticate user, get list of channels with access granted
+    if (authenticate(name) == false) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error with authentication for user" << name;
+        return nullptr;
     }
-
     QStringList channelAccess;
     const QStringList channelsGranted = getChannelsAccessGranted();
 
@@ -122,7 +114,7 @@ bool DatabaseManager::authenticate(const QString &name) {
     auto userAccessObj = userAccessMap.toObject();
 
     if (userAccessObj.isEmpty()) {
-        qCWarning(logCategoryCouchbaseDatabase) << "Warning: Received empty user access map";
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: Received empty user access map";
         return false;
     }
 

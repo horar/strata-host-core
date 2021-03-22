@@ -1,8 +1,8 @@
 #include <thread>
 
-#include "DatabaseManager.h"
-#include "DatabaseAccess.h"
-#include "CouchbaseDocument.h"
+#include "Database/DatabaseManager.h"
+#include "Database/DatabaseAccess.h"
+#include "Database/CouchbaseDocument.h"
 
 #include <QDir>
 #include <QDebug>
@@ -51,10 +51,10 @@ int main() {
 
     // Print channels granted to user
     channels = databaseManager->readChannelsAccessGrantedOfUser(endpointUsername);
-    qDebug() << "Channels: " << channels;
+    qDebug() << "Channels:" << channels;
 
     // Get database name
-    qDebug() << "Database name: " << DB->getDatabaseName();
+    qDebug() << "Database name:" << DB->getDatabaseName();
 
     // Create document 1, write to all buckets
     CouchbaseDocument Doc1("My_Doc_All_Buckets");
@@ -90,7 +90,7 @@ int main() {
         return -1;
     }
 
-    // Create document 3, write to bucket 'channel_C'
+    // Create document 3, write to bucket 'channel_public'
     CouchbaseDocument Doc3("My_Doc_Two_Buckets");
     body_string = R"foo({"StrataTest": "Contents_3"})foo";
 
@@ -100,8 +100,8 @@ int main() {
         qDebug() << "Failed to set document contents, body must be in JSON format.";
     }
 
-    auto DB_2 = databaseManager->login(endpointUsername, "channel_C", changeListener);
-    if (DB_2->write(&Doc3, "channel_C")) {
+    auto DB_2 = databaseManager->login(endpointUsername, "channel_public", changeListener);
+    if (DB_2->write(&Doc3, "channel_public")) {
         qDebug() << "Successfully saved database.";
     } else {
         qDebug() << "Error saving database.";

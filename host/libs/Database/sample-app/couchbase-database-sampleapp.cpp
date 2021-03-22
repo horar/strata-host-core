@@ -1,7 +1,7 @@
 #include <thread>
 
-#include "DatabaseLib.h"
-#include "CouchbaseDocument.h"
+#include "Database/DatabaseLib.h"
+#include "Database/CouchbaseDocument.h"
 
 #include <QDir>
 #include <QDebug>
