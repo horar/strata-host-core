@@ -12,7 +12,7 @@ Item {
     width: root.width
 
     property alias msg: msgText.text
-    property alias current: msgText.contextMenuEnabled
+    property bool current: false
     property alias msgText: msgText
     property string selection: msgText.selectedText
     property int selectionStart: msgText.selectionStart

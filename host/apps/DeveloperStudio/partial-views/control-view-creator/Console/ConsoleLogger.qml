@@ -109,7 +109,7 @@ Item {
                 consoleLogs.indexDragStarted = index
                 model.state = "someSelected"
                 var composedY = -(consoleDelegate.y - mouse.y - consoleDelegate.ListView.view.contentY) - delegateText.y
-                var composedX = -(consoleMessage.x-mouse.x) - delegateText.x
+                var composedX = -(consoleMessage.x - mouse.x) - delegateText.x
                 dropArea.start = delegateText.positionAt(composedX, composedY)
             }
 
