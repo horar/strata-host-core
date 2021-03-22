@@ -108,6 +108,7 @@ FocusScope {
             itemWidth: 400
             label: "Username"
             hasHelperText: false
+            contextMenuEnabled: true
             text: prtModel.authenticator.username
             enabled: loginStatus === LoginScreen.Logout
                      || loginStatus === LoginScreen.LoginFailed
@@ -119,6 +120,7 @@ FocusScope {
             label: "Password"
             passwordMode: true
             hasHelperText: false
+            contextMenuEnabled: true
             enabled: usernameEdit.enabled
         }
 

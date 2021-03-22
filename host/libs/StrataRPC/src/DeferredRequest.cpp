@@ -1,5 +1,5 @@
 #include <StrataRPC/DeferredRequest.h>
-#include <QMetaMethod>
+
 using namespace strata::strataRPC;
 
 DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_(id), timer_(this)
@@ -17,24 +17,14 @@ int DeferredRequest::getId() const
     return id_;
 }
 
-bool DeferredRequest::hasSuccessCallback()
+void DeferredRequest::callSuccessCallback(const QJsonObject &jsonPayload)
 {
-    return isSignalConnected(QMetaMethod::fromSignal(&DeferredRequest::finishedSuccessfully));
+    emit finishedSuccessfully(jsonPayload);
 }
 
-bool DeferredRequest::hasErrorCallback()
+void DeferredRequest::callErrorCallback(const QJsonObject &jsonPayload)
 {
-    return isSignalConnected(QMetaMethod::fromSignal(&DeferredRequest::finishedWithError));
-}
-
-void DeferredRequest::callSuccessCallback(const Message &message)
-{
-    emit finishedSuccessfully(message);
-}
-
-void DeferredRequest::callErrorCallback(const Message &message)
-{
-    emit finishedWithError(message);
+    emit finishedWithError(jsonPayload);
 }
 
 void DeferredRequest::startTimer()
