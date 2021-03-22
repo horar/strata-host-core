@@ -82,27 +82,9 @@ Item {
             width: consoleLogs.width
             anchors.bottomMargin: 5
             property alias delegateText: consoleMessage.msgText
-            signal noneSelected()
-            signal someSelected()
-            signal allSelected()
 
             Component.onCompleted: {
                 state = Qt.binding(function() { return model.state })
-            }
-
-            onNoneSelected: {
-                delegateText.deselect()
-                dropArea.start = -1
-            }
-
-            onSomeSelected: {
-                if (model.selectionStart !== delegateText.selectionStart || model.selectionEnd !== delegateText.selectionEnd) {
-                    delegateText.select(model.selectionStart, model.selectionEnd);
-                }
-            }
-
-            onAllSelected: {
-                delegateText.selectAll()
             }
 
             function startSelection(mouse) {
@@ -117,19 +99,26 @@ Item {
                 State {
                     name: "noneSelected"
                     StateChangeScript {
-                        script: consoleDelegate.noneSelected()
+                        script: {
+                            delegateText.deselect()
+                            dropArea.start = -1
+                        }
                     }
                 },
                 State {
                     name: "someSelected"
                     StateChangeScript {
-                        script: consoleDelegate.someSelected()
+                        script: {
+                            if (model.selectionStart !== delegateText.selectionStart || model.selectionEnd !== delegateText.selectionEnd) {
+                                delegateText.select(model.selectionStart, model.selectionEnd);
+                            }
+                        }
                     }
                 },
                 State {
                     name: "allSelected"
                     StateChangeScript {
-                        script: consoleDelegate.allSelected()
+                        script: delegateText.selectAll()
                     }
                 }
 
@@ -241,7 +230,7 @@ Item {
            onDoubleClicked: {
                var clickedDelegate = consoleLogs.itemAt(mouse.x+consoleLogs.contentX, mouse.y+consoleLogs.contentY)
                if(clickedDelegate) {
-                   clickedDelegate.allSelected()
+                   clickedDelegate.state = "allSelected"
                }
            }
 
