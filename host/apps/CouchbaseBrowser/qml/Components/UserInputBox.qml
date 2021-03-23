@@ -49,17 +49,41 @@ ColumnLayout {
             anchors {
                 verticalCenter: fieldBorder.verticalCenter
             }
+            SGContextMenuEditActions {
+                id: contextMenuPopup
+                textEditor: inputField
+                copyEnabled: isPassword === false
+            }
             TextField {
                 id: inputField
                 Layout.fillWidth: true
-
                 selectByMouse: true
+                persistentSelection: true   // must deselect manually
                 validator: RegExpValidator { regExp: /(^$|^(?!\s*$).+)/ }
                 background: Item {}
                 Component.onCompleted: {
                     inputField.echoMode = isPassword ? TextInput.Password : TextInput.Normal
                 }
+                onActiveFocusChanged: {
+                    if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                        inputField.deselect()
+                    }
+                }
                 onAccepted: root.accepted()
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.IBeamCursor
+                    acceptedButtons: Qt.RightButton
+                    onClicked: {
+                        inputField.forceActiveFocus()
+                    }
+                    onReleased: {
+                        if (containsMouse) {
+                            contextMenuPopup.popup(null)
+                        }
+                    }
+                }
             }
             SGIcon {
                 id: icon

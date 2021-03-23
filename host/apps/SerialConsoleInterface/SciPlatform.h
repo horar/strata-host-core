@@ -40,7 +40,7 @@ public:
     };
     Q_ENUM(PlatformStatus)
 
-    int deviceId();
+    QByteArray deviceId();
     void setDevice(strata::device::DevicePtr device);
     QString verboseName();
     void setVerboseName(const QString &verboseName);
@@ -104,7 +104,7 @@ private slots:
 
 private:
     strata::device::DevicePtr device_;
-    int deviceId_;
+    QByteArray deviceId_;
     QString verboseName_;
     QString appVersion_;
     QString bootloaderVersion_;

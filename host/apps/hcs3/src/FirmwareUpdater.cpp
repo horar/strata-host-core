@@ -81,8 +81,8 @@ void FirmwareUpdater::downloadFirmware()
 
     downloadId_ = downloadManager_->download(downloadRequestList, settings);
 
-    qDebug(logCategoryHcsFwUpdater).nospace().noquote() << "Downloading new firmware for device 0x"
-        << hex << static_cast<uint>(deviceId_) << " to '" << firmwareFile_.fileName() << "'. Download ID: '" << downloadId_ <<"'.";
+    qDebug(logCategoryHcsFwUpdater).nospace().noquote() << "Downloading new firmware for device"
+        << deviceId_ << " to '" << firmwareFile_.fileName() << "'. Download ID: '" << downloadId_ <<"'.";
 }
 
 void FirmwareUpdater::handleDownloadFinished(QString downloadId, QString errorString)
