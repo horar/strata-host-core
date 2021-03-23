@@ -25,11 +25,11 @@ public:
         DoneState,
     };
 
-    Q_INVOKABLE void program(int deviceId);
+    Q_INVOKABLE void program(QString deviceId);
 
 signals:
-    void jobProgressUpdate(int deviceId, float progress);
-    void jobStatusChanged(int deviceId, QString status, QString errorString);
+    void jobProgressUpdate(QString deviceId, float progress);
+    void jobStatusChanged(QString deviceId, QString status, QString errorString);
 
 private slots:
     void replyHandler(QJsonObject payload);
@@ -37,8 +37,8 @@ private slots:
 
 private:
     CoreInterface *coreInterface_;
-    QList<int> requestedDeviceIds_;
-    QHash<QString, int> jobIdHash_;
+    QList<QString> requestedDeviceIds_;
+    QHash<QString, QString> jobIdHash_;  // jobId <-> deviceId
 
     /*0.99 together*/
     const float downloadStateRange_ = 0.10;
@@ -47,7 +47,7 @@ private:
     const float programStateRange_ = 0.80;
     const float setDataStateRange_ = 0.02;
 
-    void notifyProgressChange(int deviceId, ProgressState state, float stateProgress);
-    void notifyFailure(int deviceId, const QJsonObject &payload);
+    void notifyProgressChange(const QString &deviceId, ProgressState state, float stateProgress);
+    void notifyFailure(const QString &deviceId, const QJsonObject &payload);
     float resolveOverallProgress(ProgressState state, float stateProgress);
 };

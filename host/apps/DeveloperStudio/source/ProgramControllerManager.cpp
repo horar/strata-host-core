@@ -17,10 +17,10 @@ ProgramControllerManager::~ProgramControllerManager()
 {
 }
 
-void ProgramControllerManager::program(int deviceId)
+void ProgramControllerManager::program(QString deviceId)
 {
     QJsonObject cmdPayloadObject;
-    cmdPayloadObject.insert("device_id",deviceId);
+    cmdPayloadObject.insert("device_id", deviceId);
 
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("hcs::cmd", "program_controller");
@@ -41,7 +41,7 @@ void ProgramControllerManager::replyHandler(QJsonObject payload)
         return;
     }
 
-    int deviceId = payload.value("device_id").toInt();
+    QString deviceId = payload.value("device_id").toString();
     if (requestedDeviceIds_.contains(deviceId) == false) {
         //not our request
         return;
@@ -65,7 +65,7 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
     QString jobType = payload.value("job_type").toString();
     QString jobStatus = payload.value("job_status").toString();
 
-    int deviceId = jobIdHash_.value(jobId);
+    QString deviceId = jobIdHash_.value(jobId);
 
     if (jobType == "clear_fw_class_id") {
         if (jobStatus == "running") {
@@ -140,13 +140,13 @@ void ProgramControllerManager::jobUpdateHandler(QJsonObject payload)
     }
 }
 
-void ProgramControllerManager::notifyProgressChange(int deviceId, ProgramControllerManager::ProgressState state, float stateProgress)
+void ProgramControllerManager::notifyProgressChange(const QString &deviceId, ProgramControllerManager::ProgressState state, float stateProgress)
 {
     float progress = resolveOverallProgress(state, stateProgress);
     emit jobProgressUpdate(deviceId, progress);
 }
 
-void ProgramControllerManager::notifyFailure(int deviceId, const QJsonObject &payload)
+void ProgramControllerManager::notifyFailure(const QString &deviceId, const QJsonObject &payload)
 {
     QString errorString = payload.value("error_string").toString();
     emit jobStatusChanged(deviceId, "failure", errorString);
