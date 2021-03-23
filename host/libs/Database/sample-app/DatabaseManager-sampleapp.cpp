@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QStandardPaths>
 
+using namespace strata::Database;
+
 // Replicator URL endpoint
 const QString endpointURL = "ws://10.0.0.157:4984/platform-list";
 const QString endpointUsername = "user_public";
@@ -28,10 +30,10 @@ int main() {
     unsigned int retries = 0;
     const unsigned int REPLICATOR_RETRY_MAX = 50;
     const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
-    while (databaseManager->getReplicatorStatus() != "Stopped" && databaseManager->getReplicatorStatus() != "Idle") {
+    while (databaseManager->getUserAccessReplicatorStatus() != "Stopped" && databaseManager->getUserAccessReplicatorStatus() != "Idle") {
         ++retries;
         std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
-        if (databaseManager->getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
+        if (databaseManager->getUserAccessReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
             qDebug() << "Error with execution of replicator. Verify endpoint URL" << endpointURL << "is valid.";
             return -1;
         }

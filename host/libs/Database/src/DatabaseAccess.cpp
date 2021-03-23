@@ -5,6 +5,8 @@
 #include <QDir>
 #include <QCoreApplication>
 
+using namespace strata::Database;
+
 DatabaseAccess::DatabaseAccess() {
 
 }
@@ -134,14 +136,12 @@ QJsonObject DatabaseAccess::getDocumentAsJsonObj(const QString &id, const QStrin
         return QJsonObject();
     }
 
-    QString bucketName;
     if (bucket.isEmpty()) {
-        bucketName = channelAccess_.at(0);
-    } else {
-        bucketName = bucket;
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to get document contents -- a valid bucket must be provided";
+        return QJsonObject();
     }
 
-    auto bucketObj = getBucket(bucketName);
+    auto bucketObj = getBucket(bucket);
     if (bucketObj == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
         return QJsonObject();
@@ -379,14 +379,12 @@ bool DatabaseAccess::leaveChannel(const QString &loginUsername, const QString &c
 }
 
 QString DatabaseAccess::getReplicatorStatus(const QString &bucket) {
-    QString bucketName;
     if (bucket.isEmpty()) {
-        bucketName = channelAccess_.at(0);
-    } else {
-        bucketName = bucket;
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to get replicator status -- a valid bucket must be provided";
+        return QString();
     }
 
-    auto bucketObj = getBucket(bucketName);
+    auto bucketObj = getBucket(bucket);
     if (bucketObj == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
         return QString();
@@ -396,14 +394,12 @@ QString DatabaseAccess::getReplicatorStatus(const QString &bucket) {
 }
 
 int DatabaseAccess::getReplicatorError(const QString &bucket) {
-    QString bucketName;
     if (bucket.isEmpty()) {
-        bucketName = channelAccess_.at(0);
-    } else {
-        bucketName = bucket;
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to get replicator error -- a valid bucket must be provided";
+        return -1;
     }
 
-    auto bucketObj = getBucket(bucketName);
+    auto bucketObj = getBucket(bucket);
     if (bucketObj == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: a valid bucket must be provided";
         return -1;

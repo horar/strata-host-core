@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <thread>
 
+using namespace strata::Database;
+
 CouchChat::CouchChat(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
     auto documentListenerCallback = std::bind(&CouchChat::documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
@@ -66,13 +68,13 @@ void CouchChat::documentListener(cbl::Replicator, bool isPush, const std::vector
     }
     if (documents.size() == 2 && (documents[0].ID == documents[1].ID)) {
         qDebug() << documents[0].ID;
-        auto result_obj = DB_->getDocumentAsJsonObj(documents[0].ID);
+        auto result_obj = DB_->getDocumentAsJsonObj(documents[0].ID, channelName_);
         auto user = result_obj.value("user");
         auto msg = result_obj.value("msg");
         emit receivedMessage(user.toString(), msg.toString());
     } else for (unsigned i = 0; i < documents.size(); ++i) {
         qDebug() << documents[i].ID;
-        auto result_obj = DB_->getDocumentAsJsonObj(documents[i].ID);
+        auto result_obj = DB_->getDocumentAsJsonObj(documents[i].ID, channelName_);
         auto user = result_obj.value("user");
         auto msg = result_obj.value("msg");
         emit receivedMessage(user.toString(), msg.toString());

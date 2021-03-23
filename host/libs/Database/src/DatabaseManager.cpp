@@ -8,6 +8,8 @@
 
 #include <thread>
 
+using namespace strata::Database;
+
 DatabaseManager::DatabaseManager() {
 
 }
@@ -24,12 +26,12 @@ bool DatabaseManager::init(const QString &path, const QString &endpointURL, std:
 
     // Object valid if database open successful
     if (userAccessDb_ == nullptr) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to open user_access_map.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to open user access map";
         return false;
     }
 
     if (userAccessDb_->startBasicReplicator(endpointURL, "", "", DatabaseAccess::ReplicatorType::PushAndPull, changeListener, documentListener, true) == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL << "is valid";
         return false;
     }
 
@@ -47,7 +49,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QString &chann
 
 DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &channelsRequested, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {
     if (name.isEmpty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: username cannot be empty.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: username cannot be empty";
         return nullptr;
     }
 
@@ -77,7 +79,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
 
     auto userDir = manageUserDir(path_, name, dbAccess_->channelAccess_);
     if (userDir.isEmpty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to create database directory.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to create database directory";
         return nullptr;
     }
 
@@ -94,7 +96,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
 
     // Start replicator (pull only for user DBs)
     if (dbAccess_->startBasicReplicator(endpointURL_, "", "", DatabaseAccess::ReplicatorType::Pull, changeListener, documentListener, true) == false) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: replicator failed to start. Verify endpoint URL" << endpointURL_ << "is valid";
     }
 
     return dbAccess_;
@@ -147,7 +149,7 @@ DatabaseAccess* DatabaseManager::getUserAccessMap() {
 
     auto userDir = manageUserDir(path_, userAccessDb_->name_, userAccessDb_->channelAccess_);
     if (userDir.isEmpty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to create database directory.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: failed to create database directory";
         return nullptr;
     }
 
@@ -275,16 +277,20 @@ QString DatabaseManager::getDbDirName() {
     return dbDirName_;
 }
 
-QString DatabaseManager::getReplicatorStatus() {
+QString DatabaseManager::getUserAccessReplicatorStatus() {
     if (userAccessDb_) {
-        return userAccessDb_->getReplicatorStatus();
+        return userAccessDb_->getReplicatorStatus(userAccessDb_->name_);
     }
+
+    qCCritical(logCategoryCouchbaseDatabase) << "Error: Invalid user access map";
     return QString();
 }
 
-int DatabaseManager::getReplicatorError() {
+int DatabaseManager::getUserAccessReplicatorError() {
     if (userAccessDb_) {
-        return userAccessDb_->getReplicatorError();
+        return userAccessDb_->getReplicatorError(userAccessDb_->name_);
     }
+
+    qCCritical(logCategoryCouchbaseDatabase) << "Error: Invalid user access map";
     return -1;
 }

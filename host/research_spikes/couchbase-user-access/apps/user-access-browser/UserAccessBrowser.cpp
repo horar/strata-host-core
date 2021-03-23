@@ -5,6 +5,8 @@
 
 #include <QDebug>
 
+using namespace strata::Database;
+
 UserAccessBrowser::UserAccessBrowser(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
     auto changeListenerCallback = std::bind(&UserAccessBrowser::changeListener, this, std::placeholders::_1, std::placeholders::_2);

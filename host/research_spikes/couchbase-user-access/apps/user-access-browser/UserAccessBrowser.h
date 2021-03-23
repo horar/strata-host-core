@@ -5,6 +5,8 @@
 
 #include "Database/DatabaseManager.h"
 
+namespace strata::Database
+{
 class UserAccessBrowser: public QObject {
     Q_OBJECT
 
@@ -41,3 +43,5 @@ private:
 
     void changeListener(cbl::Replicator, const CBLReplicatorStatus &status);
 };
+
+} // namespace strata::Database

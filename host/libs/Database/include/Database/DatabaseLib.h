@@ -4,6 +4,9 @@
 
 #include <QObject>
 
+namespace strata::Database
+{
+
 class CouchbaseDocument;
 class CouchbaseDatabase;
 
@@ -101,3 +104,5 @@ private:
 
     void default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 };
+
+} // namespace strata::Database

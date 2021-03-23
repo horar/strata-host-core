@@ -8,6 +8,8 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
+using namespace strata::Database;
+
 CouchbaseDatabase::CouchbaseDatabase(const std::string &db_name, const std::string &db_path, QObject *parent) : QObject(parent), database_name_(db_name), database_path_(db_path) {
 }
 

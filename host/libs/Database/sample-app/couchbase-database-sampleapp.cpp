@@ -7,6 +7,8 @@
 #include <QDebug>
 #include <QStandardPaths>
 
+using namespace strata::Database;
+
 #define DEBUG(...) printf("Database: "); printf(__VA_ARGS__); printf("\n");
 
 // Replicator URL endpoint

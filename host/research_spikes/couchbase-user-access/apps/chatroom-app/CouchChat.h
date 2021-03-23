@@ -5,6 +5,9 @@
 
 #include "Database/DatabaseManager.h"
 
+namespace strata::Database
+{
+
 class CouchChat: public QObject {
     Q_OBJECT
 
@@ -55,3 +58,5 @@ private:
 
     void documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 };
+
+} // namespace strata::Database

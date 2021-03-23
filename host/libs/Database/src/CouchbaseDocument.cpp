@@ -3,6 +3,8 @@
 
 #include <QUuid>
 
+using namespace strata::Database;
+
 CouchbaseDocument::CouchbaseDocument(const std::string id) {
     doc_ID_ = id;
     auto uuid = QUuid::createUuid();

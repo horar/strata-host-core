@@ -9,6 +9,8 @@
 #include <thread>
 #include <iostream>
 
+using namespace strata::Database;
+
 // Need valid replicator info to run replication tests
 #define Test_Replication false
 

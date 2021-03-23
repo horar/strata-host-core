@@ -1,6 +1,8 @@
 #include "logging/LoggingQtCategories.h"
 #include "Database/DatabaseLib.h"
 
+using namespace strata::Database;
+
 DatabaseLib::DatabaseLib(const QString &db_name, const QString &db_path, QObject *parent) {
     database_ = std::make_unique<CouchbaseDatabase>(db_name.toStdString(), db_path.toStdString(), parent);
 }

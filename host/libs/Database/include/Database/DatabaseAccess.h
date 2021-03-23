@@ -4,6 +4,9 @@
 
 #include <vector>
 
+namespace strata::Database
+{
+
 class DatabaseAccess
 {
     friend class DatabaseManager;
@@ -19,15 +22,15 @@ public:
 
     bool close();
 
-    bool write(CouchbaseDocument *doc, const QString &bucket = "");
+    bool write(CouchbaseDocument *doc, const QString &bucket);
 
     bool write(CouchbaseDocument *doc, const QStringList &buckets);
 
-    bool deleteDoc(const QString &id, const QString &bucket = "");
+    bool deleteDoc(const QString &id, const QString &bucket);
 
-    QString getDocumentAsStr(const QString &id, const QString &bucket = "");
+    QString getDocumentAsStr(const QString &id, const QString &bucket);
 
-    QJsonObject getDocumentAsJsonObj(const QString &id, const QString &bucket = "");
+    QJsonObject getDocumentAsJsonObj(const QString &id, const QString &bucket);
 
     QJsonObject getDatabaseAsJsonObj(const QString &bucket = "");
 
@@ -93,9 +96,9 @@ public:
 
     void stopReplicator();
 
-    QString getReplicatorStatus(const QString &bucket = "");
+    QString getReplicatorStatus(const QString &bucket);
 
-    int getReplicatorError(const QString &bucket = "");
+    int getReplicatorError(const QString &bucket);
 
 private:
     QString name_;
@@ -116,3 +119,5 @@ private:
 
     void default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 };
+
+} // namespace strata::Database

@@ -10,6 +10,9 @@
 #include "Database/CouchbaseDocument.h"
 #include "Database/DatabaseLib.h"
 
+namespace strata::Database
+{
+
 class DatabaseLib;
 
 class CouchbaseDocument;
@@ -191,3 +194,5 @@ private:
     LatestReplicationInformation latest_replication_;
     bool is_retry_ = false;
 };
+
+} // namespace strata::Database

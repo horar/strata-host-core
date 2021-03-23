@@ -5,7 +5,8 @@
 #include "Database/DatabaseLib.h"
 #include "../src/CouchbaseDatabase.h"
 
-class CouchbaseDatabase;
+namespace strata::Database
+{
 
 class CouchbaseDocument
 {
@@ -27,3 +28,5 @@ private:
 
     std::string doc_ID_;
 };
+
+} // namespace strata::Database

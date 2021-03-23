@@ -2,6 +2,9 @@
 
 #include "../src/CouchbaseDatabase.h"
 
+namespace strata::Database
+{
+
 class DatabaseAccess;
 
 class DatabaseManager
@@ -33,9 +36,9 @@ public:
 
     QString getDbDirName();
 
-    QString getReplicatorStatus();
+    QString getUserAccessReplicatorStatus();
 
-    int getReplicatorError();
+    int getUserAccessReplicatorError();
 
 private:
     const QString dbDirName_ = "databases";
@@ -62,3 +65,5 @@ private:
 
     QString manageUserDir(const QString &path, const QString &name, const QStringList &channelAccess);
 };
+
+} // namespace strata::Database
