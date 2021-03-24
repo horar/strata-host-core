@@ -1,3 +1,3 @@
 #include "LoggingQtCategories.h"
 
-Q_LOGGING_CATEGORY(logCategoryStrataServerSample, "strataServerSample") 
+Q_LOGGING_CATEGORY(logCategoryStrataServerSample, "strata.rpc.sample.client") 
