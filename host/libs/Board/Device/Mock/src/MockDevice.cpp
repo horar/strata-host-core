@@ -6,19 +6,21 @@
 
 namespace strata::device::mock {
 
-MockDevice::MockDevice(const int deviceId, const QString &name, const bool saveMessages)
+MockDevice::MockDevice(const QByteArray& deviceId, const QString &name, const bool saveMessages)
     : Device(deviceId, name, Device::Type::MockDevice),
       saveMessages_(saveMessages)
 {
-    qCDebug(logCategoryMockDevice).nospace() << "Created new mock device 0x" << hex << static_cast<uint>(deviceId_)
-                                             << ", name: " << deviceName_ << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
+    qCDebug(logCategorySerialDevice).nospace().noquote()
+        << "Created new mock device, ID: " << deviceId_ << ", name: " << deviceName_
+        << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
 MockDevice::~MockDevice()
 {
     MockDevice::close();
-    qCDebug(logCategoryMockDevice).nospace() << "Deleted mock device 0x" << hex << static_cast<uint>(deviceId_)
-                                             << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
+    qCDebug(logCategorySerialDevice).nospace().noquote()
+        << "Deleted mock device, ID: " <<  deviceId_
+        << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
 
 bool MockDevice::open()

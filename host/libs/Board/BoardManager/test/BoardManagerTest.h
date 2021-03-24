@@ -45,7 +45,7 @@ private slots:
     void handleDeviceError();
 
 protected slots:
-    void onBoardDisconnected(int deviceId);
+    void onBoardDisconnected(const QByteArray& deviceId);
 
 private:
     /*!
@@ -54,12 +54,12 @@ private:
      * \param deviceName name of the added device
      * \return Created mock device.
      */
-    std::shared_ptr<strata::device::mock::MockDevice> addMockDevice(const int deviceId, const QString deviceName);
+    std::shared_ptr<strata::device::mock::MockDevice> addMockDevice(const QByteArray& deviceId, const QString& deviceName);
     /*!
      * \brief Helper function, pretends a serial port was removed (only used for clean up after
      * disconnect) \param deviceId ID of the removed device
      */
-    void removeMockDevice(const int deviceId);
+    void removeMockDevice(const QByteArray& deviceId);
 
     std::shared_ptr<BoardManagerDerivate> boardManager_;
     /*!
@@ -69,5 +69,5 @@ private:
     /*!
      * \brief ID of last device calling the onBoardDisconnected slot
      */
-    int lastOnBoardDisconnectedDeviceId_;
+    QByteArray lastOnBoardDisconnectedDeviceId_;
 };

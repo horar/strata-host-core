@@ -12,7 +12,7 @@ void BoardManagerTest::cleanupTestCase()
 void BoardManagerTest::init()
 {
     onBoardDisconnectedCalls_ = 0;
-    lastOnBoardDisconnectedDeviceId_ = 0;
+    lastOnBoardDisconnectedDeviceId_.clear();
     boardManager_ = std::make_shared<BoardManagerDerivate>();
     connect(boardManager_.get(), &strata::BoardManager::boardDisconnected, this,
             &BoardManagerTest::onBoardDisconnected);
@@ -25,14 +25,14 @@ void BoardManagerTest::cleanup()
                &BoardManagerTest::onBoardDisconnected);
 }
 
-void BoardManagerTest::onBoardDisconnected(int deviceId)
+void BoardManagerTest::onBoardDisconnected(const QByteArray& deviceId)
 {
     onBoardDisconnectedCalls_++;
     lastOnBoardDisconnectedDeviceId_ = deviceId;
 }
 
-std::shared_ptr<strata::device::mock::MockDevice> BoardManagerTest::addMockDevice(const int deviceId,
-                                                                                  const QString deviceName)
+std::shared_ptr<strata::device::mock::MockDevice> BoardManagerTest::addMockDevice(const QByteArray& deviceId,
+                                                                                  const QString& deviceName)
 {
     auto devicesCount = boardManager_->activeDeviceIds().count();
     QVERIFY_(boardManager_->addNewMockDevice(deviceId, deviceName));
@@ -45,7 +45,7 @@ std::shared_ptr<strata::device::mock::MockDevice> BoardManagerTest::addMockDevic
     return mockDevice;
 }
 
-void BoardManagerTest::removeMockDevice(const int deviceId)
+void BoardManagerTest::removeMockDevice(const QByteArray& deviceId)
 {
     auto devicesCount = boardManager_->activeDeviceIds().count();
     auto device = boardManager_->device(deviceId);
@@ -62,73 +62,73 @@ void BoardManagerTest::removeMockDevice(const int deviceId)
 
 void BoardManagerTest::connectDisconnectTest()
 {
-    auto mockDevice = addMockDevice(1234, "Mock device");
+    auto mockDevice = addMockDevice("mock1234", "Mock device");
     QVERIFY(mockDevice.get() != nullptr);
     QVERIFY(mockDevice->mockIsOpened());
-    removeMockDevice(1234);
+    removeMockDevice("mock1234");
     QVERIFY(!mockDevice->mockIsOpened());
 }
 
 void BoardManagerTest::connectMultipleTest()
 {
     {
-        auto mockDevice = addMockDevice(1, "Mock device 1");
+        auto mockDevice = addMockDevice("mock1", "Mock device 1");
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
     {
-        auto mockDevice = addMockDevice(2, "Mock device 2");
+        auto mockDevice = addMockDevice("mock2", "Mock device 2");
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
     {
-        auto mockDevice = addMockDevice(3, "Mock device 3");
+        auto mockDevice = addMockDevice("mock3", "Mock device 3");
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
     {
-        auto mockDevice = addMockDevice(4, "Mock device 4");
+        auto mockDevice = addMockDevice("mock4", "Mock device 4");
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
     {
-        auto mockDevice = addMockDevice(5, "Mock device 5");
+        auto mockDevice = addMockDevice("mock5", "Mock device 5");
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
-    QCOMPARE(boardManager_->device(1)->deviceName(), "Mock device 1");
-    QCOMPARE(boardManager_->device(2)->deviceName(), "Mock device 2");
-    QCOMPARE(boardManager_->device(3)->deviceName(), "Mock device 3");
-    QCOMPARE(boardManager_->device(4)->deviceName(), "Mock device 4");
-    QCOMPARE(boardManager_->device(5)->deviceName(), "Mock device 5");
+    QCOMPARE(boardManager_->device("mock1")->deviceName(), "Mock device 1");
+    QCOMPARE(boardManager_->device("mock2")->deviceName(), "Mock device 2");
+    QCOMPARE(boardManager_->device("mock3")->deviceName(), "Mock device 3");
+    QCOMPARE(boardManager_->device("mock4")->deviceName(), "Mock device 4");
+    QCOMPARE(boardManager_->device("mock5")->deviceName(), "Mock device 5");
 
     QCOMPARE(onBoardDisconnectedCalls_, 0);
-    removeMockDevice(1);
+    removeMockDevice("mock1");
     QCOMPARE(onBoardDisconnectedCalls_, 1);
-    QCOMPARE(lastOnBoardDisconnectedDeviceId_, 1);
-    removeMockDevice(3);
+    QCOMPARE(lastOnBoardDisconnectedDeviceId_, "mock1");
+    removeMockDevice("mock3");
     QCOMPARE(onBoardDisconnectedCalls_, 2);
-    QCOMPARE(lastOnBoardDisconnectedDeviceId_, 3);
-    removeMockDevice(5);
+    QCOMPARE(lastOnBoardDisconnectedDeviceId_, "mock3");
+    removeMockDevice("mock5");
     QCOMPARE(onBoardDisconnectedCalls_, 3);
-    QCOMPARE(lastOnBoardDisconnectedDeviceId_, 5);
-    removeMockDevice(5);  // try to remove the same again
+    QCOMPARE(lastOnBoardDisconnectedDeviceId_, "mock5");
+    removeMockDevice("mock5");  // try to remove the same again
     QCOMPARE(onBoardDisconnectedCalls_, 3);
-    QCOMPARE(lastOnBoardDisconnectedDeviceId_, 5);
+    QCOMPARE(lastOnBoardDisconnectedDeviceId_, "mock5");
     {
-        auto mockDevice = addMockDevice(1, "Mock device 1");
+        auto mockDevice = addMockDevice("mock1", "Mock device 1");
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
     {
-        auto mockDevice = addMockDevice(6, "Mock device 6");
+        auto mockDevice = addMockDevice("mock6", "Mock device 6");
         QVERIFY(mockDevice.get() != nullptr);
         QVERIFY(mockDevice->mockIsOpened());
     }
-    QCOMPARE(boardManager_->device(1)->deviceName(), "Mock device 1");
-    QCOMPARE(boardManager_->device(2)->deviceName(), "Mock device 2");
-    QCOMPARE(boardManager_->device(4)->deviceName(), "Mock device 4");
-    QCOMPARE(boardManager_->device(6)->deviceName(), "Mock device 6");
+    QCOMPARE(boardManager_->device("mock1")->deviceName(), "Mock device 1");
+    QCOMPARE(boardManager_->device("mock2")->deviceName(), "Mock device 2");
+    QCOMPARE(boardManager_->device("mock4")->deviceName(), "Mock device 4");
+    QCOMPARE(boardManager_->device("mock6")->deviceName(), "Mock device 6");
 }
 
 // TODO tests for BoardManager signals:

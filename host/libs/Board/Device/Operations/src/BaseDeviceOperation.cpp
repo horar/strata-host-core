@@ -3,6 +3,7 @@
 
 #include "Commands/include/DeviceCommands.h"
 #include "DeviceOperationsConstants.h"
+
 #include <CommandValidator.h>
 
 #include "logging/LoggingQtCategories.h"
@@ -77,7 +78,7 @@ void BaseDeviceOperation::cancelOperation()
     finishOperation(Result::Cancel);
 }
 
-int BaseDeviceOperation::deviceId() const {
+QByteArray BaseDeviceOperation::deviceId() const {
     return device_->deviceId();
 }
 

@@ -592,28 +592,6 @@ Item {
                             contextMenuMarkPopup.popup(null)
                         }
                     }
-
-                    SGWidgets.SGIcon {
-                        id: markIconWithMouseArea
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        anchors.leftMargin: 5
-                        source: model.isMarked ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
-                        width: parent.height - 4
-                        height: width
-                        iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.isMarked ? markColor : cell.color
-                        visible: markIconSpacer.visible
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-
-                            onClicked: {
-                                logViewWrapper.forceActiveFocus()
-                                delegate.isHovered ? logModel.toggleIsMarked(index) : logModel.toggleIsMarked(currentIndex)
-                            }
-                        }
-                    }
                 }
             }
 
@@ -622,11 +600,28 @@ Item {
                 leftPadding: handleSpacer
                 spacing: 18
 
-                Item {
-                    id: markIconSpacer
+                SGWidgets.SGIcon {
+                    id: markIconWithMouseArea
                     width: textMetricsMark.boundingRect.width
-                    height: textMetricsMark.boundingRect.height
+                    height: textMetricsMark.boundingRect.height - 2
+                    anchors {
+                        top: parent.top
+                        topMargin: 1
+                    }
+
+                    source: model.isMarked ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
+                    iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.isMarked ? markColor : cell.color
                     visible: markIconVisible
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            logViewWrapper.forceActiveFocus()
+                            delegate.isHovered ? logModel.toggleIsMarked(index) : logModel.toggleIsMarked(currentIndex)
+                        }
+                    }
                 }
 
                 SGWidgets.SGText {
