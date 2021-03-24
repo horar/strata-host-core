@@ -1,4 +1,4 @@
-project(BoardManager-qtest LANGUAGES CXX)
+project(PlatformManager-qtest LANGUAGES CXX)
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Test
@@ -10,19 +10,18 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 add_executable(${PROJECT_NAME}-test
-    BoardManagerDerivate.cpp
-    BoardManagerIntegrationTest.cpp
-    BoardManagerTest.cpp
-    DeviceOperationsTest.cpp
-    DeviceOperationsV2Test.cpp
+    PlatformManagerDerivate.cpp
+    PlatformManagerIntegrationTest.cpp
+    PlatformManagerTest.cpp
+    PlatformOperationsTest.cpp
+    PlatformOperationsV2Test.cpp
     main.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}-test
     PRIVATE Qt5::Test
-    PRIVATE BoardManager
-    PRIVATE Device
-    PRIVATE DeviceOperations
+    PRIVATE Platform
+    PRIVATE PlatformManager
     PRIVATE CommandValidator
 )
 

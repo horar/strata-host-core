@@ -1,100 +1,70 @@
 project(Board
-    VERSION 1.0
+    VERSION 2.0
     LANGUAGES CXX
 )
 
-set(DEVICE "Device")
-set(DEVICE_OPERATIONS "DeviceOperations")
-set(BOARD_MANAGER "BoardManager")
+set(PLATFORM "Platform")
+set(PLATFORM_MANAGER "PlatformManager")
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core SerialPort
     REQUIRED
 )
 
-# Device
-add_library(${DEVICE}
-    Device/src/Device.cpp
-    Device/src/logging/LoggingQtCategories.cpp
-    Device/Serial/src/SerialDevice.cpp
-    Device/Mock/src/MockDevice.cpp
-    Device/Mock/src/MockDeviceControl.cpp
+# Platform
+add_library(${PLATFORM}
+    Platform/src/Device.cpp
+    Platform/src/logging/LoggingQtCategories.cpp
+    Platform/src/Serial/SerialDevice.cpp
+    Platform/src/Mock/MockDevice.cpp
+    Platform/src/Mock/MockDeviceControl.cpp
+
+    Platform/src/Operations/Commands/BasePlatformCommand.cpp
+    Platform/src/Operations/Commands/CmdGetFirmwareInfo.cpp
+    Platform/src/Operations/Commands/CmdRequestPlatformId.cpp
+    Platform/src/Operations/Commands/CmdStartBootloader.cpp
+    Platform/src/Operations/Commands/CmdStartFlash.cpp
+    Platform/src/Operations/Commands/CmdFlash.cpp
+    Platform/src/Operations/Commands/CmdStartBackupFirmware.cpp
+    Platform/src/Operations/Commands/CmdBackupFirmware.cpp
+    Platform/src/Operations/Commands/CmdStartApplication.cpp
+    Platform/src/Operations/Commands/CmdSetPlatformId.cpp
+    Platform/src/Operations/Commands/CmdSetAssistedPlatformId.cpp
+    Platform/src/Operations/Commands/CmdWait.cpp
+
+    Platform/src/Operations/BasePlatformOperation.cpp
+    Platform/src/Operations/Identify.cpp
+    Platform/src/Operations/StartBootloader.cpp
+    Platform/src/Operations/Flash.cpp
+    Platform/src/Operations/Backup.cpp
+    Platform/src/Operations/StartApplication.cpp
+    Platform/src/Operations/SetPlatformId.cpp
+    Platform/src/Operations/SetAssistedPlatformId.cpp
 
     #AUTOMOC wont find header if it is in different directory
-    Device/Device.h
-    Device/Serial/SerialDevice.h
-    Device/Mock/MockDevice.h
-    Device/Mock/MockDeviceControl.h
-    Device/Mock/MockDeviceConstants.h
-)
-add_library(strata::${DEVICE} ALIAS ${DEVICE})
+    Platform/include/Device.h
+    Platform/include/Serial/SerialDevice.h
+    Platform/include/Mock/MockDevice.h
+    Platform/include/Mock/MockDeviceControl.h
+    Platform/include/Mock/MockDeviceConstants.h
 
-target_include_directories(${DEVICE}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/src
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/Serial/src
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/Mock/src
+    Platform/include/Operations/BasePlatformOperation.h
+    Platform/include/Operations/Identify.h
+)
+add_library(strata::${PLATFORM} ALIAS ${PLATFORM})
+
+target_include_directories(${PLATFORM}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Platform/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Platform/src
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Platform/src/Serial
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Platform/src/Mock
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Platform/src/Operations
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Platform/src/Operations/Commands
 )
 
-target_link_libraries(${DEVICE}
+target_link_libraries(${PLATFORM}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
-    PUBLIC rapidjson::rapidjson
-    PUBLIC strata::QtLogger
-)
-
-target_compile_definitions(${DEVICE} PRIVATE
-    QT_DEPRECATED_WARNINGS
-    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
-)
-
-set_target_properties(${DEVICE} PROPERTIES
-    AUTOMOC ON
-)
-
-# DeviceOperations
-add_library(${DEVICE_OPERATIONS}
-    Device/src/logging/LoggingQtCategories.cpp
-
-    Device/Operations/Commands/src/BaseDeviceCommand.cpp
-    Device/Operations/Commands/src/CmdGetFirmwareInfo.cpp
-    Device/Operations/Commands/src/CmdRequestPlatformId.cpp
-    Device/Operations/Commands/src/CmdStartBootloader.cpp
-    Device/Operations/Commands/src/CmdStartFlash.cpp
-    Device/Operations/Commands/src/CmdFlash.cpp
-    Device/Operations/Commands/src/CmdStartBackupFirmware.cpp
-    Device/Operations/Commands/src/CmdBackupFirmware.cpp
-    Device/Operations/Commands/src/CmdStartApplication.cpp
-    Device/Operations/Commands/src/CmdSetPlatformId.cpp
-    Device/Operations/Commands/src/CmdSetAssistedPlatformId.cpp
-    Device/Operations/Commands/src/CmdWait.cpp
-
-    Device/Operations/src/BaseDeviceOperation.cpp
-    Device/Operations/src/Identify.cpp
-    Device/Operations/src/StartBootloader.cpp
-    Device/Operations/src/Flash.cpp
-    Device/Operations/src/Backup.cpp
-    Device/Operations/src/StartApplication.cpp
-    Device/Operations/src/SetPlatformId.cpp
-    Device/Operations/src/SetAssistedPlatformId.cpp
-
-    #AUTOMOC wont find header if it is in different directory
-    Device/Operations/BaseDeviceOperation.h
-    Device/Operations/Identify.h
-)
-add_library(strata::${DEVICE_OPERATIONS} ALIAS ${DEVICE_OPERATIONS})
-
-target_include_directories(${DEVICE_OPERATIONS}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Device/Operations/include
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/src
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/Operations
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/Operations/src
-)
-
-target_link_libraries(${DEVICE_OPERATIONS}
-    PUBLIC Qt5::Core
-    PUBLIC strata::Device
     PUBLIC rapidjson::rapidjson
     PUBLIC strata::QtLogger
     PRIVATE strata::CommandValidator
@@ -102,48 +72,47 @@ target_link_libraries(${DEVICE_OPERATIONS}
     PRIVATE strata::crc16
 )
 
-target_compile_definitions(${DEVICE_OPERATIONS} PRIVATE
+target_compile_definitions(${PLATFORM} PRIVATE
     QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
 
-set_target_properties(${DEVICE_OPERATIONS} PROPERTIES
+set_target_properties(${PLATFORM} PROPERTIES
     AUTOMOC ON
 )
 
-# BoardManager
-add_library(${BOARD_MANAGER}
-    BoardManager/src/BoardManager.cpp
-    BoardManager/src/logging/LoggingQtCategories.cpp
+# PlatformManager
+add_library(${PLATFORM_MANAGER}
+    PlatformManager/src/PlatformManager.cpp
+    PlatformManager/src/logging/LoggingQtCategories.cpp
 
     #AUTOMOC wont find header if it is in different directory
-    BoardManager/include/BoardManager.h
+    PlatformManager/include/PlatformManager.h
 )
-add_library(strata::${BOARD_MANAGER} ALIAS ${BOARD_MANAGER})
+add_library(strata::${PLATFORM_MANAGER} ALIAS ${PLATFORM_MANAGER})
 
-target_include_directories(${BOARD_MANAGER}
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/BoardManager/src
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BoardManager/include
+target_include_directories(${PLATFORM_MANAGER}
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/PlatformManager/src
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/PlatformManager/include
 )
 
-target_link_libraries(${BOARD_MANAGER}
+target_link_libraries(${PLATFORM_MANAGER}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
     PUBLIC strata::QtLogger
-    PUBLIC strata::Device
-    PRIVATE strata::DeviceOperations
+    PUBLIC strata::Platform
     PRIVATE strata::CommandValidator
 )
 
-target_compile_definitions(${BOARD_MANAGER} PRIVATE
+target_compile_definitions(${PLATFORM_MANAGER} PRIVATE
     QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
 
-set_target_properties(${BOARD_MANAGER} PROPERTIES
+set_target_properties(${PLATFORM_MANAGER} PROPERTIES
     AUTOMOC ON
 )
 
 if(BUILD_TESTING)
-    add_subdirectory(BoardManager/test)
+    add_subdirectory(PlatformManager/test)
 endif()
