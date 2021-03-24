@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-#include <Device/Device.h>
+#include <Device.h>
 
 #include <QSerialPort>
 

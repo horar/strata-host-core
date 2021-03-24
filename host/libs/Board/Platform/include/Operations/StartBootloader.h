@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-#include <Device/Operations/BaseDeviceOperation.h>
+#include <Operations/BasePlatformOperation.h>
 
 namespace strata::device::command {
     class CmdWait;

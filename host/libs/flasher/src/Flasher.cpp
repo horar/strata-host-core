@@ -3,13 +3,13 @@
 
 #include <QCryptographicHash>
 
-#include <Device/Operations/StartBootloader.h>
-#include <Device/Operations/Flash.h>
-#include <Device/Operations/Backup.h>
-#include <Device/Operations/SetAssistedPlatformId.h>
-#include <Device/Operations/StartApplication.h>
-#include <Device/Operations/Identify.h>
-#include <DeviceOperationsStatus.h>
+#include <Operations/StartBootloader.h>
+#include <Operations/Flash.h>
+#include <Operations/Backup.h>
+#include <Operations/SetAssistedPlatformId.h>
+#include <Operations/StartApplication.h>
+#include <Operations/Identify.h>
+#include <PlatformOperationsStatus.h>
 
 #include "logging/LoggingQtCategories.h"
 

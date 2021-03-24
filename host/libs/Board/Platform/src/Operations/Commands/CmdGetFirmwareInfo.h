@@ -1,7 +1,7 @@
 #ifndef CMD_GET_FIRMWARE_INFO_H
 #define CMD_GET_FIRMWARE_INFO_H
 
-#include "BaseDeviceCommand.h"
+#include "BasePlatformCommand.h"
 
 namespace strata::device::command {
 

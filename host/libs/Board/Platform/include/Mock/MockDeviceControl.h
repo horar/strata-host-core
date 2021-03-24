@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Device/Mock/MockDeviceConstants.h>
+#include <Mock/MockDeviceConstants.h>
 #include <rapidjson/document.h>
 #include <QString>
 

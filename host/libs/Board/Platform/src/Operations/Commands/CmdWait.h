@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-#include "BaseDeviceCommand.h"
+#include "BasePlatformCommand.h"
 
 namespace strata::device::command {
 

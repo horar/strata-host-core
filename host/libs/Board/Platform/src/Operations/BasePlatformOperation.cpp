@@ -1,8 +1,8 @@
-#include <Device/Operations/BaseDeviceOperation.h>
-#include <DeviceOperationsStatus.h>
+#include <Operations/BasePlatformOperation.h>
+#include <PlatformOperationsStatus.h>
 
-#include "Commands/include/DeviceCommands.h"
-#include "DeviceOperationsConstants.h"
+#include "Commands/PlatformCommands.h"
+#include "PlatformOperationsConstants.h"
 
 #include <CommandValidator.h>
 

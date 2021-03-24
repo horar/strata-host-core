@@ -1,7 +1,7 @@
 #include "CmdSetAssistedPlatformId.h"
 
-#include "DeviceOperationsConstants.h"
-#include <DeviceOperationsStatus.h>
+#include "PlatformOperationsConstants.h"
+#include <PlatformOperationsStatus.h>
 #include <CommandValidator.h>
 #include "logging/LoggingQtCategories.h"
 

@@ -2,11 +2,11 @@
 #include "logging/LoggingQtCategories.h"
 #include <SGUtilsCpp.h>
 
-#include <Device/Operations/StartBootloader.h>
-#include <Device/Operations/StartApplication.h>
-#include <Device/Operations/SetPlatformId.h>
-#include <Device/Operations/SetAssistedPlatformId.h>
-#include <Device/Operations/include/DeviceOperationsStatus.h>
+#include <Operations/StartBootloader.h>
+#include <Operations/StartApplication.h>
+#include <Operations/SetPlatformId.h>
+#include <Operations/SetAssistedPlatformId.h>
+#include <PlatformOperationsStatus.h>
 
 #include <QDir>
 #include <QSettings>

@@ -1,7 +1,7 @@
 #ifndef CMD_START_APPLICATION_H
 #define CMD_START_APPLICATION_H
 
-#include "BaseDeviceCommand.h"
+#include "BasePlatformCommand.h"
 
 namespace strata::device::command {
 

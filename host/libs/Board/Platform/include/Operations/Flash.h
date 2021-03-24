@@ -3,7 +3,7 @@
 #include <QString>
 #include <QVector>
 
-#include <Device/Operations/BaseDeviceOperation.h>
+#include <Operations/BasePlatformOperation.h>
 
 namespace strata::device::command {
     class CmdFlash;

@@ -7,7 +7,7 @@
 #include <QString>
 #include <QTemporaryFile>
 
-#include <Device/Device.h>
+#include <Device.h>
 #include <Flasher.h>
 
 namespace strata {

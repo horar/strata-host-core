@@ -1,5 +1,5 @@
-#include <Device/Operations/Identify.h>
-#include "Commands/include/DeviceCommands.h"
+#include <Operations/Identify.h>
+#include "Commands/PlatformCommands.h"
 
 #include <QTimer>
 

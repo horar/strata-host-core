@@ -9,7 +9,7 @@
 #include <vector>
 #include <chrono>
 
-#include <Device/Device.h>
+#include <Device.h>
 
 namespace strata::device::operation {
     class BaseDeviceOperation;

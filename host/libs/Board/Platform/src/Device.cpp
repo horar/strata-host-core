@@ -1,4 +1,4 @@
-#include <Device/Device.h>
+#include <Device.h>
 
 #include "logging/LoggingQtCategories.h"
 

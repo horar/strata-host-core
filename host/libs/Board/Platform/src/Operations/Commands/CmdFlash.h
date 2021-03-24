@@ -1,7 +1,7 @@
 #ifndef CMD_FLASH_H
 #define CMD_FLASH_H
 
-#include "BaseDeviceCommand.h"
+#include "BasePlatformCommand.h"
 
 #include <QVector>
 

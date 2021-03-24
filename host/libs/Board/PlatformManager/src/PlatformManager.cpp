@@ -1,10 +1,10 @@
-#include "BoardManager.h"
-#include "BoardManagerConstants.h"
+#include "PlatformManager.h"
+#include "PlatformManagerConstants.h"
 
 #include "logging/LoggingQtCategories.h"
 
-#include <Device/Serial/SerialDevice.h>
-#include <Device/Operations/Identify.h>
+#include <Serial/SerialDevice.h>
+#include <Operations/Identify.h>
 
 #include <CommandValidator.h>
 

@@ -1,6 +1,6 @@
-#include <Device/Operations/Backup.h>
-#include <DeviceOperationsStatus.h>
-#include "Commands/include/DeviceCommands.h"
+#include <Operations/Backup.h>
+#include <PlatformOperationsStatus.h>
+#include "Commands/PlatformCommands.h"
 
 #include "logging/LoggingQtCategories.h"
 

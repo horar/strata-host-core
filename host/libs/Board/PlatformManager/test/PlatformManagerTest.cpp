@@ -1,5 +1,5 @@
-#include "BoardManagerTest.h"
-#include <Device/Mock/MockDevice.h>
+#include "PlatformManagerTest.h"
+#include <Mock/MockDevice.h>
 
 void BoardManagerTest::initTestCase()
 {

@@ -1,6 +1,6 @@
-#include <Device/Operations/SetAssistedPlatformId.h>
-#include "Commands/include/DeviceCommands.h"
-#include "DeviceOperationsConstants.h"
+#include <Operations/SetAssistedPlatformId.h>
+#include "Commands/PlatformCommands.h"
+#include "PlatformOperationsConstants.h"
 #include "logging/LoggingQtCategories.h"
 
 

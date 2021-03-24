@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BoardManager.h>
+#include <PlatformManager.h>
 
 #include <SciPlatform.h>
 

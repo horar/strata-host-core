@@ -3,7 +3,7 @@
 #include "Authenticator.h"
 #include "RestClient.h"
 
-#include <BoardManager.h>
+#include <PlatformManager.h>
 #include <FlasherConnector.h>
 #include <DownloadManager.h>
 

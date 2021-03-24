@@ -6,7 +6,7 @@
 
 #include <rapidjson/document.h>
 
-#include <Device/Device.h>
+#include <Device.h>
 
 namespace strata::device::command {
 

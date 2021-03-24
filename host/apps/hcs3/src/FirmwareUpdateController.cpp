@@ -4,7 +4,7 @@
 #include "FirmwareUpdater.h"
 #include "BoardController.h"
 
-#include <Device/Device.h>
+#include <Device.h>
 #include <DownloadManager.h>
 
 #include "logging/LoggingQtCategories.h"

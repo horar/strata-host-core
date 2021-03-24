@@ -2,7 +2,7 @@
 
 #include <rapidjson/document.h>
 #include <QObject>
-#include <Device/Mock/MockDevice.h>
+#include <Mock/MockDevice.h>
 #include "QtTest.h"
 
 namespace strata::device::operation {

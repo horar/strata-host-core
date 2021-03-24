@@ -1,5 +1,5 @@
 #include "PrtModel.h"
-#include <BoardManager.h>
+#include <PlatformManager.h>
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>

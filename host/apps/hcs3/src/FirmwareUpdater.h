@@ -9,7 +9,7 @@
 #include <QTemporaryFile>
 
 #include <FlasherConnector.h>
-#include <Device/Device.h>
+#include <Device.h>
 
 #include "FirmwareUpdateController.h"
 

@@ -5,7 +5,7 @@
 #include <QString>
 #include <QHash>
 
-#include <BoardManager.h>
+#include <PlatformManager.h>
 
 /*
 This BoardController class is replacement for original classes BoardsController and PlatformBoard.

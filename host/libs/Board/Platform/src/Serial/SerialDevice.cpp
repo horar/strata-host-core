@@ -1,4 +1,4 @@
-#include <Device/Serial/SerialDevice.h>
+#include <Serial/SerialDevice.h>
 #include "SerialDeviceConstants.h"
 
 #include "logging/LoggingQtCategories.h"

@@ -1,7 +1,7 @@
 #ifndef CMD_START_BOOTLOADER_H
 #define CMD_START_BOOTLOADER_H
 
-#include "BaseDeviceCommand.h"
+#include "BasePlatformCommand.h"
 
 namespace strata::device::command {
 

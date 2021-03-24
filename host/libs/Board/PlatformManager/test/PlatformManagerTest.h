@@ -1,8 +1,8 @@
 #pragma once
 
 #include <QObject>
-#include "BoardManagerDerivate.h"
-#include <Device/Mock/MockDevice.h>
+#include "PlatformManagerDerivate.h"
+#include <Mock/MockDevice.h>
 #include "QtTest.h"
 
 class BoardManagerTest : public QObject

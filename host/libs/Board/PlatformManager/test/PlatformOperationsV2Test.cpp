@@ -3,10 +3,10 @@
 
 #include <CommandValidator.h>
 #include <rapidjson/writer.h>
-#include <Device/Operations/Identify.h>
-#include <Device/Operations/StartBootloader.h>
-#include <Device/Operations/StartApplication.h>
-#include "DeviceOperationsV2Test.h"
+#include <Operations/Identify.h>
+#include <Operations/StartBootloader.h>
+#include <Operations/StartApplication.h>
+#include "PlatformOperationsV2Test.h"
 
 using strata::device::operation::BaseDeviceOperation;
 using strata::device::mock::MockCommand;

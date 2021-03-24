@@ -1,4 +1,4 @@
-#include <Device/Mock/MockDevice.h>
+#include <Mock/MockDevice.h>
 
 #include "logging/LoggingQtCategories.h"
 

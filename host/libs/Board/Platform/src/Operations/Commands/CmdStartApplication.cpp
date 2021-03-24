@@ -1,9 +1,9 @@
 #include "CmdStartApplication.h"
-#include "DeviceOperationsConstants.h"
+#include "PlatformOperationsConstants.h"
 
 #include <cstring>
 
-#include <DeviceOperationsStatus.h>
+#include <PlatformOperationsStatus.h>
 
 #include <CommandValidator.h>
 

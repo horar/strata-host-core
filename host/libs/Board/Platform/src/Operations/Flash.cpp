@@ -1,5 +1,5 @@
-#include <Device/Operations/Flash.h>
-#include "Commands/include/DeviceCommands.h"
+#include <Operations/Flash.h>
+#include "Commands/PlatformCommands.h"
 
 #include "logging/LoggingQtCategories.h"
 

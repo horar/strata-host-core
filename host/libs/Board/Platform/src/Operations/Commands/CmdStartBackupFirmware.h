@@ -1,7 +1,7 @@
 #ifndef CMD_START_BACKUP_FIRMWARE_H
 #define CMD_START_BACKUP_FIRMWARE_H
 
-#include "BaseDeviceCommand.h"
+#include "BasePlatformCommand.h"
 
 namespace strata::device::command {
 

@@ -1,7 +1,7 @@
-#include <Device/Operations/StartBootloader.h>
-#include <DeviceOperationsStatus.h>
-#include "Commands/include/DeviceCommands.h"
-#include "DeviceOperationsConstants.h"
+#include <Operations/StartBootloader.h>
+#include <PlatformOperationsStatus.h>
+#include "Commands/PlatformCommands.h"
+#include "PlatformOperationsConstants.h"
 
 #include "logging/LoggingQtCategories.h"
 

@@ -1,5 +1,5 @@
-#include "BoardManagerDerivate.h"
-#include <Device/Mock/MockDevice.h>
+#include "PlatformManagerDerivate.h"
+#include <Mock/MockDevice.h>
 #include "QtTest.h"
 
 using strata::BoardManager;

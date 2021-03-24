@@ -4,9 +4,9 @@
 #include <QDir>
 #include <QObject>
 
-#include <BoardManager.h>
+#include <PlatformManager.h>
 #include <SGJLinkConnector.h>
-#include <Device/Device.h>
+#include <Device.h>
 
 #include <iostream>
 

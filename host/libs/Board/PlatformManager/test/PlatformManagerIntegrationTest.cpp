@@ -1,7 +1,7 @@
 #include <chrono>
 #include <thread>
 
-#include "BoardManagerIntegrationTest.h"
+#include "PlatformManagerIntegrationTest.h"
 
 void BoardManagerIntegrationTest::initTestCase()
 {

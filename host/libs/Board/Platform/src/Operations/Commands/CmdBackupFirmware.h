@@ -1,7 +1,7 @@
 #ifndef CMD_BACKUP_FIRMWARE_H
 #define CMD_BACKUP_FIRMWARE_H
 
-#include "BaseDeviceCommand.h"
+#include "BasePlatformCommand.h"
 
 #include <QVector>
 

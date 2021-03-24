@@ -1,4 +1,4 @@
-#include <BoardManager.h>
+#include <PlatformManager.h>
 #include "SciModel.h"
 #include "SciDatabaseConnector.h"
 #include "Version.h"

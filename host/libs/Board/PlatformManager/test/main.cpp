@@ -1,8 +1,8 @@
 #include <QtTest>
-#include "BoardManagerIntegrationTest.h"
-#include "BoardManagerTest.h"
-#include "DeviceOperationsTest.h"
-#include "DeviceOperationsV2Test.h"
+#include "PlatformManagerIntegrationTest.h"
+#include "PlatformManagerTest.h"
+#include "PlatformOperationsTest.h"
+#include "PlatformOperationsV2Test.h"
 
 int main(int argc, char *argv[])
 {

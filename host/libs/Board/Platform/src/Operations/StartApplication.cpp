@@ -1,6 +1,6 @@
-#include <Device/Operations/StartApplication.h>
-#include "Commands/include/DeviceCommands.h"
-#include "DeviceOperationsConstants.h"
+#include <Operations/StartApplication.h>
+#include "Commands/PlatformCommands.h"
+#include "PlatformOperationsConstants.h"
 
 namespace strata::device::operation {
 

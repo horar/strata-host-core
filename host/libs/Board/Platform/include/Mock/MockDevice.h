@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Device/Device.h>
-#include <Device/Mock/MockDeviceControl.h>
+#include <Device.h>
+#include <Mock/MockDeviceControl.h>
 #include <list>
 
 namespace strata::device::mock {

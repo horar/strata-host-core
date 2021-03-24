@@ -1,7 +1,7 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include <Device/Operations/Identify.h>
+#include <Operations/Identify.h>
 #include <memory>
 #include <QObject>
 #include <QString>

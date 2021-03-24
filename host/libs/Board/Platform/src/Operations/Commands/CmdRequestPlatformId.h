@@ -1,7 +1,7 @@
 #ifndef CMD_REQUEST_PLATFORM_ID_H
 #define CMD_REQUEST_PLATFORM_ID_H
 
-#include "BaseDeviceCommand.h"
+#include "BasePlatformCommand.h"
 
 namespace strata::device::command {
 

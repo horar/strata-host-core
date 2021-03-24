@@ -1,7 +1,7 @@
 #pragma once
 
-#include "BaseDeviceCommand.h"
-#include "DeviceOperationsData.h"
+#include "BasePlatformCommand.h"
+#include "PlatformOperationsData.h"
 
 #include <optional>
 
