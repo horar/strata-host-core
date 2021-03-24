@@ -10,3 +10,9 @@ const DEBUG_DEVICE_ID = "DEBUG";
 const GUEST_USER_ID = "Guest";
 const GUEST_FIRST_NAME = "First";
 const GUEST_LAST_NAME = "Last";
+
+/* Controller type designation */
+const DEVICE_CONTROLLER_TYPES = {
+    EMBEDDED: 0x01,
+    ASSISTED: 0x02,
+}
