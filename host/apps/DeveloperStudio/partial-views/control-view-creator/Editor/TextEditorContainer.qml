@@ -220,6 +220,7 @@ ColumnLayout {
             onCheckedChanged: {
                 if (checked) {
                     viewStack.currentIndex = 1
+                    visualEditor.reload()
                 }
             }
         }
@@ -345,7 +346,8 @@ ColumnLayout {
             }
         }
 
-        LayoutBuilder {
+        VisualEditor {
+            id: visualEditor
             file: model.filepath
         }
     }

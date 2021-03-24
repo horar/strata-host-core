@@ -7,7 +7,8 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 
-import "LayoutOverlay"
+import "VisualEditor/LayoutOverlay"
+import "VisualEditor"
 
 ColumnLayout {
     id: layoutBuilderRoot
@@ -156,39 +157,8 @@ ColumnLayout {
                     addPop.open()
                 }
 
-                Popup {
+                AddMenu {
                     id: addPop
-                    y: parent.height
-
-                    ColumnLayout {
-
-                        Button {
-                            text: "add Button"
-
-                            onClicked: {
-                                addControl(":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Button/DefaultButton.qml")
-                                addPop.close()
-                            }
-                        }
-
-                        Button {
-                            text: "add Text"
-
-                            onClicked: {
-                                addControl(":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Text/DefaultText.qml")
-                                addPop.close()
-                            }
-                        }
-
-                        Button {
-                            text: "add Divider"
-
-                            onClicked: {
-                                addControl("://tech/strata/sgwidgets.1.0/cvc-layout/widgets/Divider/DefaultDivider.qml")
-                                addPop.close()
-                            }
-                        }
-                    }
                 }
             }
 
