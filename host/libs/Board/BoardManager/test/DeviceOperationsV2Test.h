@@ -3,6 +3,7 @@
 #include <rapidjson/document.h>
 #include <QObject>
 #include <Device/Mock/MockDevice.h>
+
 #include "QtTest.h"
 
 namespace strata::device::operation {
@@ -53,6 +54,8 @@ private slots:
 
 protected slots:
     void handleOperationFinished(strata::device::operation::Result result, int, QString);
+    void handleSendCommand();
+    void handleCmdResult();
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
@@ -60,9 +63,15 @@ private:
 
     void connectHandlers(strata::device::operation::BaseDeviceOperation* operation);
 
+    //void connectFlashHandlers(strata::device::operation::BaseDeviceOperation* operation);
+
     std::shared_ptr<strata::device::mock::MockDevice> device_;
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
+
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;
     int operationTimeoutCount_ = 0;
+    int sendCommandCount_ = 0;
+    int cmdResultCount_ = 0;
+    int amountOfChunks_ = 0;
 };
