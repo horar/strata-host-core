@@ -126,8 +126,14 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
         if (0 == cmd.compare("start_application")) {
             recievedCommand = MockCommand::start_application;
         }
+        if (0 == cmd.compare("start_flash_firmware")) {
+            recievedCommand = MockCommand::start_flash_firmware;
+        }
         if (0 == cmd.compare("flash_firmware")) {
             recievedCommand = MockCommand::flash_firmware;
+        }
+        if (0 == cmd.compare("start_flash_bootloader")) {
+            recievedCommand = MockCommand::start_flash_bootloader;
         }
         if (0 == cmd.compare("flash_bootloader")) {
             recievedCommand = MockCommand::flash_bootloader;
@@ -332,6 +338,12 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
         case MockCommand::flash_bootloader:
             dynamicRequest = replacePlaceholders({test_commands::flash_bootloader_request}, requestDoc);
             retVal.push_back(test_commands::flash_bootloader_response);
+            break;
+        case MockCommand::start_flash_firmware:
+            retVal.push_back(test_commands::start_flash_firmware_response);
+            break;
+        case MockCommand::start_flash_bootloader:
+            retVal.push_back(test_commands::start_flash_bootloader_response);
             break;
 
         default: {

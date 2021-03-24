@@ -16,7 +16,9 @@ enum class MockCommand {
     start_bootloader,
     start_application,
     flash_firmware,
-    flash_bootloader
+    flash_bootloader,
+    start_flash_firmware,
+    start_flash_bootloader
 };
 Q_ENUM_NS(MockCommand)
 
@@ -444,6 +446,46 @@ R"({
             "size":{$request.payload.chunk.size},
             "crc":{$request.payload.chunk.crc},
             "data":"{$request.payload.chunk.data}"
+        }
+    }
+})";
+
+const QByteArray start_flash_firmware_request =
+R"({
+    "cmd":"start_flash_firmware",
+    "payload": {
+        "size": {$request.payload.size},
+        "chunks": {$request.payload.chunks},
+        "md5": "{$request.payload.md5}"
+    }
+})";
+
+const QByteArray start_flash_bootloader_request =
+R"({
+    "cmd":"start_flash_bootloader",
+    "payload": {
+        "size": {$request.payload.size},
+        "chunks": {$request.payload.chunks},
+        "md5": "{$request.payload.md5}"
+    }
+})";
+
+const QByteArray start_flash_firmware_response =
+R"({
+    "notification":{
+        "value":"start_flash_firmware",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})";
+
+const QByteArray start_flash_bootloader_response =
+R"({
+    "notification":{
+        "value":"start_flash_bootloader",
+        "payload":{
+            "status":"ok"
         }
     }
 })";
