@@ -96,7 +96,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Concurrent
     Qt5::RemoteObjects
 
-    strata::BoardManager
+    strata::PlatformManager
     strata::FlasherConnector
     strata::connector
     strata::EventsMgr
