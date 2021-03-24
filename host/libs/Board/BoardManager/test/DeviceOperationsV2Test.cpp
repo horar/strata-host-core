@@ -74,6 +74,7 @@ void DeviceOperationsV2Test::handleSendCommand()
         std::vector<QByteArray> request = device_->mockGetRecordedMessages();
         expectedDoc.Parse(request[0]);
         amountOfChunks_ = expectedDoc["payload"]["chunks"].GetInt();
+
         qDebug() << "There are" << expectedDoc["payload"]["chunks"].GetInt() << "chunks waiting to be flashed.";
     }
     sendCommandCount_++;
@@ -891,4 +892,31 @@ void DeviceOperationsV2Test::cancelFlashOperationTest()
     QCOMPARE(operationTimeoutCount_, 0);
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 0);
+}
+
+void DeviceOperationsV2Test::startFlashInvalidTest()
+{
+    rapidjson::Document expectedDoc;
+
+    operation::Flash* flashFirmwareOperation = new operation::Flash(device_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    deviceOperation_ = QSharedPointer<operation::Flash>(
+            flashFirmwareOperation, &QObject::deleteLater);
+    connectHandlers(flashFirmwareOperation);
+    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
+
+    device_->mockSetResponseForCommand(MockResponse::start_flash_firmware_invalid,MockCommand::start_flash_firmware);
+
+    deviceOperation_->run();
+
+    QTRY_COMPARE_WITH_TIMEOUT(flashFirmwareOperation->isFinished(), true, 1000);
+
+    QVERIFY(device_->name().isEmpty());
+    QVERIFY(device_->classId().isEmpty());
+    QVERIFY(device_->platformId().isEmpty());
+    QVERIFY(device_->bootloaderVer().isEmpty());
+    QVERIFY(device_->applicationVer().isEmpty());
+
+    QCOMPARE(operationTimeoutCount_,1);
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 1);
 }

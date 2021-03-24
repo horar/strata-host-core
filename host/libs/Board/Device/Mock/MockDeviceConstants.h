@@ -36,7 +36,8 @@ enum class MockResponse {
     flash_resend_chunk,
     flash_memory_error,
     flash_invalid_cmd_sequence,
-    flash_invalid_value
+    flash_invalid_value,
+    start_flash_firmware_invalid
 };
 Q_ENUM_NS(MockResponse)
 
@@ -476,6 +477,16 @@ R"({
         "value":"start_flash_firmware",
         "payload":{
             "status":"ok"
+        }
+    }
+})";
+
+const QByteArray start_flash_firmware_response_invalid =
+R"({
+    "notification":{
+        "value":"start_flash_firmware",
+        "payload":{
+            "status":-1
         }
     }
 })";

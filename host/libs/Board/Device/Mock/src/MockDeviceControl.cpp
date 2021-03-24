@@ -333,12 +333,26 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
                 retVal.push_back(test_commands::flash_firmware_response);
             }
             break;
+
         case MockCommand::flash_bootloader:
             retVal.push_back(test_commands::flash_bootloader_response);
             break;
+
         case MockCommand::start_flash_firmware:
+            if (customResponse) {
+                switch (response_) {
+                case MockResponse::start_flash_firmware_invalid: {
+                    retVal.push_back(test_commands::start_flash_firmware_response_invalid);
+                } break;
+                default: {
+                    retVal.push_back(test_commands::start_flash_firmware_response);
+                } break;
+                }
+            } else {
             retVal.push_back(test_commands::start_flash_firmware_response);
+            }
             break;
+
         case MockCommand::start_flash_bootloader:
             retVal.push_back(test_commands::start_flash_bootloader_response);
             break;

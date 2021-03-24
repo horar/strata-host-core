@@ -49,8 +49,8 @@ private slots:
     void flashMemoryErrorTest();
     void flashInvalidCmdSequenceTest();
     void flashInvalidValueTest();
-
     void cancelFlashOperationTest();
+    void startFlashInvalidTest();
 
 protected slots:
     void handleOperationFinished(strata::device::operation::Result result, int, QString);
@@ -62,8 +62,6 @@ private:
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     void connectHandlers(strata::device::operation::BaseDeviceOperation* operation);
-
-    //void connectFlashHandlers(strata::device::operation::BaseDeviceOperation* operation);
 
     std::shared_ptr<strata::device::mock::MockDevice> device_;
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
