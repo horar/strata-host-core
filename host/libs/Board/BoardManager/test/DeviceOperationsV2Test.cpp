@@ -125,9 +125,7 @@ void DeviceOperationsV2Test::connectHandlers(BaseDeviceOperation *operation)
 
 void DeviceOperationsV2Test::identifyEmbeddedApplicationTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
@@ -172,9 +170,7 @@ void DeviceOperationsV2Test::identifyEmbeddedApplicationTest()
 
 void DeviceOperationsV2Test::identifyEmbeddedBootloaderTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
@@ -219,9 +215,7 @@ void DeviceOperationsV2Test::identifyEmbeddedBootloaderTest()
 
 void DeviceOperationsV2Test::identifyAssistedApplicationTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
@@ -268,9 +262,7 @@ void DeviceOperationsV2Test::identifyAssistedApplicationTest()
 
 void DeviceOperationsV2Test::identifyAssistedBootloaderTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
@@ -317,9 +309,7 @@ void DeviceOperationsV2Test::identifyAssistedBootloaderTest()
 
 void DeviceOperationsV2Test::identifyAssistedNoBoardTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::Identify* identifyOperation = new operation::Identify(device_,true);
     deviceOperation_ = QSharedPointer<operation::Identify>(
@@ -363,9 +353,7 @@ void DeviceOperationsV2Test::identifyAssistedNoBoardTest()
 
 void DeviceOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::StartBootloader* startBootloaderOperation = new operation::StartBootloader(device_);
     deviceOperation_ = QSharedPointer<operation::StartBootloader>(
@@ -437,9 +425,7 @@ void DeviceOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
 
 void DeviceOperationsV2Test::switchToBootloaderAndBackAssistedTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::StartBootloader* startBootloaderOperation = new operation::StartBootloader(device_);
     deviceOperation_ = QSharedPointer<operation::StartBootloader>(
@@ -510,9 +496,7 @@ void DeviceOperationsV2Test::switchToBootloaderAndBackAssistedTest()
 void DeviceOperationsV2Test::cancelOperationEmbeddedTest()
 {
     device_->mockSetAutoResponse(false);
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     deviceOperation_ = QSharedPointer<operation::StartBootloader>(
         new operation::StartBootloader(device_), &QObject::deleteLater);
@@ -541,9 +525,7 @@ void DeviceOperationsV2Test::cancelOperationEmbeddedTest()
 void DeviceOperationsV2Test::cancelOperationAssistedTest()
 {
     device_->mockSetAutoResponse(false);
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     deviceOperation_ = QSharedPointer<operation::StartBootloader>(
         new operation::StartBootloader(device_), &QObject::deleteLater);
@@ -640,9 +622,7 @@ void DeviceOperationsV2Test::invalidValueV2Test()
 
 void DeviceOperationsV2Test::flashFirmwareTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::Flash* flashFirmwareOperation = new operation::Flash(device_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     deviceOperation_ = QSharedPointer<operation::Flash>(
@@ -685,9 +665,7 @@ void DeviceOperationsV2Test::flashFirmwareTest()
 
 void DeviceOperationsV2Test::flashBootloaderTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::Flash* flashBootloaderOperation = new operation::Flash(device_,1024,4,"207fb5670e66e7d6ecd89b5f195c0b71",false);
     deviceOperation_ = QSharedPointer<operation::Flash>(

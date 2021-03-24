@@ -102,9 +102,7 @@ void DeviceOperationsTest::connectHandlers(BaseDeviceOperation *operation) {
 
 void DeviceOperationsTest::identifyTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     deviceOperation_ = QSharedPointer<operation::Identify>(
         new operation::Identify(device_, true), &QObject::deleteLater);
@@ -178,9 +176,7 @@ void DeviceOperationsTest::notJSONTest()
 
 void DeviceOperationsTest::JSONWithoutPayloadTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
@@ -289,9 +285,7 @@ void DeviceOperationsTest::nackTest()
 
 void DeviceOperationsTest::invalidValueTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
@@ -381,9 +375,7 @@ void DeviceOperationsTest::invalidValueTest()
 
 void DeviceOperationsTest::switchToBootloaderAndBackTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     operation::StartBootloader* startBootloaderOperation = new operation::StartBootloader(device_);
     deviceOperation_ = QSharedPointer<operation::StartBootloader>(
@@ -443,9 +435,7 @@ void DeviceOperationsTest::switchToBootloaderAndBackTest()
 void DeviceOperationsTest::cancelOperationTest()
 {
     device_->mockSetAutoResponse(false);
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     deviceOperation_ = QSharedPointer<operation::StartBootloader>(
         new operation::StartBootloader(device_), &QObject::deleteLater);
@@ -470,9 +460,7 @@ void DeviceOperationsTest::cancelOperationTest()
 
 void DeviceOperationsTest::identifyLegacyTest()
 {
-    rapidjson::Document doc;
     rapidjson::Document expectedDoc;
-    rapidjson::ParseResult parseResult;
 
     device_->mockSetLegacy(true);
 
