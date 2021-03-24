@@ -17,8 +17,8 @@ public:
     bool init();
     void start();
 
-    bool getConnectionStatus();
-    QString getServerTime();
+    bool getConnectionStatus() const;
+    QString getServerTime() const;
 
 signals:
     void connectionStatusUpdated();

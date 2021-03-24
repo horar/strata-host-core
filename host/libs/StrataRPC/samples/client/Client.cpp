@@ -45,12 +45,12 @@ void Client::start()
 {
 }
 
-bool Client::getConnectionStatus()
+bool Client::getConnectionStatus() const
 {
     return connectionStatus_;
 }
 
-QString Client::getServerTime()
+QString Client::getServerTime() const
 {
     return serverTime_;
 }

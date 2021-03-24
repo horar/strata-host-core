@@ -29,10 +29,7 @@ Server::~Server()
 bool Server::init()
 {
     qCDebug(logCategoryStrataServerSample) << "Initializing Strata Server.";
-    if (false == strataServer_->initializeServer()) {
-        return false;
-    }
-    return true;
+    return strataServer_->initializeServer();
 }
 
 void Server::start()
@@ -46,10 +43,10 @@ void Server::start()
 
 void Server::serverErrorHandler(StrataServer::ServerError errorType, const QString &errorMessage)
 {
-    qCDebug(logCategoryStrataServerSample) << "###################################################";
-    qCDebug(logCategoryStrataServerSample) << "Error type:" << static_cast<int>(errorType);
+    qCDebug(logCategoryStrataServerSample).noquote() << QString(84, '#');
+    qCDebug(logCategoryStrataServerSample) << "Error type:" << errorType;
     qCDebug(logCategoryStrataServerSample) << "Error message:" << errorMessage;
-    qCDebug(logCategoryStrataServerSample) << "###################################################";
+    qCDebug(logCategoryStrataServerSample).noquote() << QString(84, '#');
 }
 
 void Server::closeServerHandler(const Message &message)
