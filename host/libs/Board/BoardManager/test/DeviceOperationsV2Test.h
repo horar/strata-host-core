@@ -69,6 +69,7 @@ private:
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;
     int operationTimeoutCount_ = 0;
+    int operationFailureCount_ = 0;
     int sendCommandCount_ = 0;
     int cmdResultCount_ = 0;
     int amountOfChunks_ = 0;
