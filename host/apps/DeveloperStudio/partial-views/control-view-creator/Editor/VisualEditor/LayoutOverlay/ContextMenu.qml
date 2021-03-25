@@ -29,9 +29,16 @@ Popup {
         }
 
         ContextMenuButton {
+            text: "Duplicate"
+            onClicked: {
+                visualEditor.functions.duplicateControl(layoutOverlayRoot.layoutInfo.uuid)
+            }
+        }
+
+        ContextMenuButton {
             text: "Delete"
             onClicked: {
-                layoutBuilderRoot.removeControl(layoutOverlayRoot.layoutInfo.uuid)
+                visualEditor.functions.removeControl(layoutOverlayRoot.layoutInfo.uuid)
             }
         }
     }

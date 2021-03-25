@@ -41,7 +41,7 @@ Popup {
                 implicitHeight: 20
 
                 onClicked: {
-                    visualEditor.addControl(model.controlUrl)
+                    visualEditor.functions.addControl(model.controlUrl)
                     addPop.close()
                 }
             }

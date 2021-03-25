@@ -34,6 +34,7 @@
         <file alias="Editor/VisualEditor.qml">partial-views/control-view-creator/Editor/VisualEditor.qml</file>
         <file alias="Editor/VisualEditor/AddMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/AddMenu.qml</file>
         <file alias="Editor/VisualEditor/VisualEditorMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml</file>
+        <file alias="Editor/VisualEditor/VisualEditorFunctions.qml">partial-views/control-view-creator/Editor/VisualEditor/VisualEditorFunctions.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/ContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/ContextMenu.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/ContextMenuButton.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/ContextMenuButton.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutOverlay.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutOverlay.qml</file>

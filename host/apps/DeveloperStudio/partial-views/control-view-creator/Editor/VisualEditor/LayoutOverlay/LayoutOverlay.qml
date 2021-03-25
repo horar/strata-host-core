@@ -49,10 +49,10 @@ LayoutContainer {
                     let newPosition = layoutOverlayRoot.mapToItem(overlayContainer, rect.x, rect.y)
                     let colRow = Qt.point(Math.round(newPosition.x / overlayContainer.columnSize), Math.round(newPosition.y / overlayContainer.rowSize))
 
-                    fileContents = replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.xColumns:",  colRow.x)
-                    fileContents = replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.yRows:",  colRow.y)
+                    fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.xColumns:",  colRow.x)
+                    fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.yRows:",  colRow.y)
 
-                    saveFile(file, fileContents)
+                    visualEditor.functions.saveFile(file, fileContents)
                 }
             }
 
@@ -135,10 +135,10 @@ LayoutContainer {
 
                     if (colRow.x !== layoutOverlayRoot.layoutInfo.columnsWide || colRow.y !== layoutOverlayRoot.layoutInfo.rowsTall) {
                         // if actually resized, edit file
-                        fileContents = replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.columnsWide:",  colRow.x)
-                        fileContents = replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.rowsTall:",  colRow.y)
+                        fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.columnsWide:",  colRow.x)
+                        fileContents = visualEditor.functions.replaceObjectPropertyValueInString (layoutOverlayRoot.layoutInfo.uuid, "layoutInfo.rowsTall:",  colRow.y)
 
-                        saveFile(file, fileContents)
+                        visualEditor.functions.saveFile(file, fileContents)
                     } else {
                         // reset mousearea position when it was dragged out of place but not enough to trigger above resize
                         x = 0

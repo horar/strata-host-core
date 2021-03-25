@@ -210,7 +210,7 @@ ColumnLayout {
 
             onCurrentIndexChanged:  {
                 if (currentIndex === 1) {
-                    visualEditor.reload()
+                    visualEditor.functions.reload()
                 }
             }
         }

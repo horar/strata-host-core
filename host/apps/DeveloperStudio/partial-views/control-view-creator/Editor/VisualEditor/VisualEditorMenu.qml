@@ -19,7 +19,7 @@ RowLayout {
         onClicked: {
             // todo: add file listener so external changes are auto reloaded?
             // changes are reloaded when switching between visual editor and text editor, but not if changes are made from another app
-            visualEditor.reload()
+            visualEditor.functions.reload()
         }
     }
 
@@ -72,10 +72,8 @@ RowLayout {
 
                     onClicked: {
                         let count = visualEditor.loader.item.columnCount
-                        count++
-                        visualEditor.fileContents = visualEditor.replaceObjectPropertyValueInString ("uibase", "columnCount:", count)
-                        visualEditor.saveFile()
-                        visualEditor.layoutDebugMode = true
+                        setRowsColumns("columnCount:", ++count)
+
                     }
                 }
 
@@ -84,10 +82,7 @@ RowLayout {
 
                     onClicked: {
                         let count = visualEditor.loader.item.columnCount
-                        count--
-                        visualEditor.fileContents = visualEditor.replaceObjectPropertyValueInString ("uibase", "columnCount:", count)
-                        visualEditor.saveFile()
-                        visualEditor.layoutDebugMode = true
+                        setRowsColumns("columnCount:", --count)
                     }
                 }
 
@@ -96,10 +91,8 @@ RowLayout {
 
                     onClicked: {
                         let count = visualEditor.loader.item.rowCount
-                        count++
-                        visualEditor.fileContents = visualEditor.replaceObjectPropertyValueInString ("uibase", "rowCount:", count)
-                        visualEditor.saveFile()
-                        visualEditor.layoutDebugMode = true
+                        setRowsColumns("rowCount:", ++count)
+
                     }
                 }
 
@@ -108,15 +101,16 @@ RowLayout {
 
                     onClicked: {
                         let count = visualEditor.loader.item.rowCount
-                        count--
-                        visualEditor.fileContents = visualEditor.replaceObjectPropertyValueInString ("uibase", "rowCount:", count)
-                        visualEditor.saveFile()
-                        visualEditor.layoutDebugMode = true
+                        setRowsColumns("rowCount:", --count)
                     }
                 }
             }
         }
     }
+
+    function setRowsColumns(type, count) {
+        visualEditor.fileContents = visualEditor.functions.replaceObjectPropertyValueInString ("uibase", type, count)
+        visualEditor.functions.saveFile()
+        visualEditor.layoutDebugMode = true
+    }
 }
-
-
