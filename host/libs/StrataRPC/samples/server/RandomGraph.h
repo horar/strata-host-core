@@ -1,8 +1,7 @@
 #pragma once
 
-#include <QObject>
-
 #include <StrataRPC/StrataServer.h>
+#include <QObject>
 
 class RandomGraph : public QObject
 {
