@@ -3,13 +3,13 @@
 
 #include <QCryptographicHash>
 
-#include <Device/Operations/StartBootloader.h>
-#include <Device/Operations/Flash.h>
-#include <Device/Operations/Backup.h>
-#include <Device/Operations/SetAssistedPlatformId.h>
-#include <Device/Operations/StartApplication.h>
-#include <Device/Operations/Identify.h>
-#include <DeviceOperationsStatus.h>
+#include <Operations/StartBootloader.h>
+#include <Operations/Flash.h>
+#include <Operations/Backup.h>
+#include <Operations/SetAssistedPlatformId.h>
+#include <Operations/StartApplication.h>
+#include <Operations/Identify.h>
+#include <PlatformOperationsStatus.h>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -17,7 +17,7 @@ namespace strata {
 
 using device::DevicePtr;
 
-namespace operation = device::operation;
+namespace operation = platform::operation;
 
 Flasher::Flasher(const DevicePtr& device, const QString& fileName) :
     Flasher(device, fileName, QString(), QString()) { }
@@ -309,11 +309,11 @@ void Flasher::handleOperationFinished(operation::Result result, int status, QStr
 }
 
 Flasher::FlasherOperation::FlasherOperation(
-        OperationPtr&& deviceOperation,
+        OperationPtr&& platformOperation,
         State stateOfFlasher,
         const std::function<void(int)>& finishedOperationHandler,
         const Flasher* parent)
-    : operation(std::move(deviceOperation)),
+    : operation(std::move(platformOperation)),
       state(stateOfFlasher),
       finishedHandler(finishedOperationHandler),
       flasher(parent)
@@ -321,10 +321,10 @@ Flasher::FlasherOperation::FlasherOperation(
     Q_ASSERT(flasher != nullptr);
     Q_ASSERT(operation != nullptr);
 
-    flasher->connect(operation.get(), &operation::BaseDeviceOperation::finished, flasher, &Flasher::handleOperationFinished);
+    flasher->connect(operation.get(), &operation::BasePlatformOperation::finished, flasher, &Flasher::handleOperationFinished);
 }
 
-void Flasher::operationDeleter(operation::BaseDeviceOperation* operation)
+void Flasher::operationDeleter(operation::BasePlatformOperation* operation)
 {
     operation->deleteLater();
 }

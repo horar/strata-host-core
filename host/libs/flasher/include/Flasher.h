@@ -9,10 +9,10 @@
 #include <vector>
 #include <chrono>
 
-#include <Device/Device.h>
+#include <Device.h>
 
-namespace strata::device::operation {
-    class BaseDeviceOperation;
+namespace strata::platform::operation {
+    class BasePlatformOperation;
     enum class Result : int;
 }
 
@@ -156,7 +156,7 @@ class Flasher : public QObject
         // run current operation from operationList_
         void runFlasherOperation();
         // process operation finished signal
-        void handleOperationFinished(device::operation::Result result, int status, QString errStr);
+        void handleOperationFinished(platform::operation::Result result, int status, QString errStr);
 
     private:
         // check if flasher action can start
@@ -185,9 +185,9 @@ class Flasher : public QObject
         void manageBackup(int chunkNumber);
 
         // deleter for flasher oparation
-        static void operationDeleter(device::operation::BaseDeviceOperation* operation);
+        static void operationDeleter(platform::operation::BasePlatformOperation* operation);
 
-        // error logic when dynamic_cast on DeviceOperation fails
+        // error logic when dynamic_cast on PlatformOperation fails
         void operationCastError();
 
         // methods for adding operations to operationList_
@@ -198,10 +198,10 @@ class Flasher : public QObject
         void addStartApplicationOperation();
         void addIdentifyOperation(bool flashingFirmware, std::chrono::milliseconds delay = std::chrono::milliseconds(0));
 
-        typedef std::unique_ptr<device::operation::BaseDeviceOperation, void(*)(device::operation::BaseDeviceOperation*)> OperationPtr;
+        typedef std::unique_ptr<platform::operation::BasePlatformOperation, void(*)(platform::operation::BasePlatformOperation*)> OperationPtr;
 
         struct FlasherOperation {
-            FlasherOperation(OperationPtr&& deviceOperation,
+            FlasherOperation(OperationPtr&& platformOperation,
                              State stateOfFlasher,
                              const std::function<void(int)>& finishedOperationHandler,
                              const Flasher* parent);

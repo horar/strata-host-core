@@ -3,9 +3,9 @@
 
 SciModel::SciModel(QObject *parent)
     : QObject(parent),
-      platformModel_(&boardManager_)
+      platformModel_(&platformManager_)
 {
-    boardManager_.init(true, true);
+    platformManager_.init(true, true);
 
 //disabled until remote db is ready
 //    bool result = db_.open("sci_db");
@@ -25,9 +25,9 @@ SciModel::~SciModel()
 {
 }
 
-strata::BoardManager *SciModel::boardManager()
+strata::PlatformManager *SciModel::platformManager()
 {
-    return &boardManager_;
+    return &platformManager_;
 }
 
 SciDatabaseConnector *SciModel::databaseConnector()

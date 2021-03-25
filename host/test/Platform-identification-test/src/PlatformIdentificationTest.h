@@ -4,9 +4,9 @@
 #include <QDir>
 #include <QObject>
 
-#include <BoardManager.h>
+#include <PlatformManager.h>
 #include <SGJLinkConnector.h>
-#include <Device/Device.h>
+#include <Device.h>
 
 #include <iostream>
 
@@ -58,9 +58,9 @@ private:
     void identifyPlatform(bool deviceRecognized);
     bool parseBinaryFileList(const QString& binariesPath);
     void printSummary();
-    void enableBoardManagerSignals(bool enable);
+    void enablePlatformManagerSignals(bool enable);
 
-    strata::BoardManager boardManager_;
+    strata::PlatformManager platformManager_;
     PlatfortestState_ testState_;
     QByteArray testDeviceId_;
     SGJLinkConnector jlinkConnector_;

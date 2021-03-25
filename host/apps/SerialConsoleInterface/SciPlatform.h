@@ -5,7 +5,7 @@
 #include "SciFilterSuggestionModel.h"
 #include "SciPlatformSettings.h"
 
-#include <BoardManager.h>
+#include <PlatformManager.h>
 #include <FlasherConnector.h>
 #include <QObject>
 #include <QPointer>

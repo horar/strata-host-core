@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("Description: This is a simple test to verify that the released platforms are identifed by the BoardManager.");
+    parser.setApplicationDescription("Description: This is a simple test to verify that the released platforms are identifed by the PlatformManager.");
     parser.addHelpOption();
 
     QCommandLineOption jlinkExePathOption(QStringList() << "j" << "jlink-path",

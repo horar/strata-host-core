@@ -1,7 +1,7 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include <Device/Operations/Identify.h>
+#include <Operations/Identify.h>
 #include <memory>
 #include <QObject>
 #include <QString>
@@ -80,12 +80,12 @@ public:
     void process() override;
 
 private slots:
-    virtual void handleIdentifyOperationFinished(device::operation::Result result, int status, QString errStr);
+    virtual void handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr);
 
 private:
     const int deviceNumber_;
     device::DevicePtr device_;
-    std::unique_ptr<device::operation::Identify> identifyOperation_;
+    std::unique_ptr<platform::operation::Identify> identifyOperation_;
 };
 
 }  // namespace

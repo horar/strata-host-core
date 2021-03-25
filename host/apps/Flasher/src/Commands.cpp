@@ -1,16 +1,16 @@
 #include "Commands.h"
 #include "SerialPortList.h"
 #include "logging/LoggingQtCategories.h"
-#include <Device/Device.h>
-#include <Device/Serial/SerialDevice.h>
-#include <Device/Operations/Identify.h>
+#include <Device.h>
+#include <Serial/SerialDevice.h>
+#include <Operations/Identify.h>
 #include <Flasher.h>
 
 #include <cstdlib>
 
 namespace strata {
 
-using device::serial::SerialDevice;
+using device::SerialDevice;
 
 Command::~Command() { }
 
@@ -149,18 +149,18 @@ void InfoCommand::process() {
         return;
     }
 
-    identifyOperation_ = std::make_unique<device::operation::Identify>(device_, false);
+    identifyOperation_ = std::make_unique<platform::operation::Identify>(device_, false);
 
-    connect(identifyOperation_.get(), &device::operation::BaseDeviceOperation::finished,
+    connect(identifyOperation_.get(), &platform::operation::BasePlatformOperation::finished,
             this, &InfoCommand::handleIdentifyOperationFinished);
 
     identifyOperation_->run();
 }
 
-void InfoCommand::handleIdentifyOperationFinished(device::operation::Result result, int status, QString errStr) {
+void InfoCommand::handleIdentifyOperationFinished(platform::operation::Result result, int status, QString errStr) {
     Q_UNUSED(status)
 
-    device::operation::Identify *identifyOp = qobject_cast<device::operation::Identify*>(QObject::sender());
+    platform::operation::Identify *identifyOp = qobject_cast<platform::operation::Identify*>(QObject::sender());
     if ((identifyOp == nullptr) || (identifyOp != identifyOperation_.get())) {
         qCCritical(logCategoryFlasherCli) << "Received corrupt operation pointer:" << identifyOp;
         emit finished(EXIT_FAILURE);
@@ -168,7 +168,7 @@ void InfoCommand::handleIdentifyOperationFinished(device::operation::Result resu
     }
 
     switch(result) {
-    case device::operation::Result::Success: {
+    case platform::operation::Result::Success: {
         QString message(QStringLiteral("List of available parameters for board:"));
 
         message.append(QStringLiteral("\nApplication Name: "));
