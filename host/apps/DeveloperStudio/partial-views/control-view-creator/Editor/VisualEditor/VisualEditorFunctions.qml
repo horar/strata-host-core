@@ -14,10 +14,10 @@ QtObject {
         if (fileUrl.startsWith("file")) {
             fileUrl = SGUtilsCpp.urlToLocalFile(fileUrl)
         }
-//        console.log("OpenFile:", fileUrl)
+        // console.log("OpenFile:", fileUrl)
 
         let fileContent = SGUtilsCpp.readTextFileContent(fileUrl)
-//        console.log("content:", fileContent)
+        // console.log("content:", fileContent)
         return fileContent
     }
 
@@ -48,7 +48,7 @@ QtObject {
     }
 
     function allChildren(item){
-        //        console.log("Item:", item.uuid)
+        // console.log("Item:", item.uuid)
         if (item.hasOwnProperty("layoutInfo")){
             overlayContainer.createOverlay(item)
         }
@@ -61,29 +61,44 @@ QtObject {
     }
 
     function addControl(controlPath){
-//        console.log("addControl:", controlPath)
+        // console.log("addControl:", controlPath)
         let testComponent = openFile(controlPath)
         testComponent = testComponent.arg(create_UUID()) // replace all instances of %1 with uuid
 
-        let regex = new RegExp("([\\s\\S]*)(\})","gm")  // insert testComponent before ending '}' in file
-        fileContents = fileContents.replace(regex, "$1\n" + testComponent + "$2");
-        // console.log("fileContents:", fileContents)
-        saveFile(file, fileContents)
+        insertTextAtEndOfFile(testComponent)
 
         if (!layoutDebugMode) {
             layoutDebugMode = true
         }
     }
 
+    function insertTextAtEndOfFile(text) {
+        let regex = new RegExp("([\\s\\S]*)(\})","gm")  // insert text before ending '}' in file
+        fileContents = fileContents.replace(regex, "$1\n" + text + "$2");
+        // console.log("fileContents:", fileContents)
+        saveFile()
+    }
+
     function removeControl(uuid) {
-        let regex = new RegExp("(\\s.*start_"+ uuid +"[\\s\\S]*end_"+ uuid +"\\s)")
+        let captureComponentByUuidRegex = new RegExp("(\\s.*start_"+ uuid +"[\\s\\S]*end_"+ uuid +"\\s)")
         // captures lines with start and end uuid tags, as well as those between and pre- and post-line breaks
-        fileContents = fileContents.replace(regex, "");
+        fileContents = fileContents.replace(captureComponentByUuidRegex, "");
 
         saveFile(file, fileContents)
     }
 
-    function replaceObjectPropertyValueInString (object, prop, value, string = fileContents) {
+    function duplicateControl(uuid){
+        let captureComponentByUuidRegex = new RegExp("(\\s.*start_"+ uuid +"[\\s\\S]*end_"+ uuid +"\\s)")
+        // captures lines with start and end uuid tags, as well as those between and pre- and post-line breaks
+        let copy = fileContents.match(captureComponentByUuidRegex)[0]
+        let newUuid = create_UUID()
+        let allInstancesOfUuidRegex = new RegExp(uuid, "g")
+        copy = copy.replace(allInstancesOfUuidRegex, newUuid)
+        copy = replaceObjectPropertyValueInString(newUuid, "id:", "duplicate_" + newUuid, copy)
+        insertTextAtEndOfFile(copy)
+    }
+
+    function replaceObjectPropertyValueInString (uuid, prop, value, string = fileContents) {
         // total regex: (start_42e89[\\s\\S]*?yRows:\\s*)(.*)([\\s\\S]*?end_42e89)
         // explanation: find "yRows" prop, only occurring between start and end uuid tags, replace anything following with value
 
@@ -91,9 +106,9 @@ QtObject {
         // \\s\\S is "space or not space" ,aka wildcard, since 's' flag does not work in qml
         // *? is lazy find, i.e. stop after first find, otherwise catches last match instead
         // all 3 groups are captured for replacement as it is impossible to replace only one group that is matched
-        let capture1 = "(start_" + object + "[\\s\\S]*?" + prop + "\\s*)"
+        let capture1 = "(start_" + uuid + "[\\s\\S]*?" + prop + "\\s*)"
         let capture2 = "(.*)"
-        let capture3 = "([\\s\\S]*?end_" + object + ")"
+        let capture3 = "([\\s\\S]*?end_" + uuid + ")"
         let regex = new RegExp(capture1 + capture2 + capture3, "gm")
         return string.replace(regex, "$1" + value + "$3");
     }
