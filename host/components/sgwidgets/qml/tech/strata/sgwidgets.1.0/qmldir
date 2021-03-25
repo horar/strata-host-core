@@ -59,6 +59,7 @@ LayoutContainer 1.0 cvc-layout/LayoutContainer.qml
 LayoutButton 1.0 cvc-layout/widgets/Button/LayoutButton.qml
 LayoutDivider 1.0 cvc-layout/widgets/Divider/LayoutDivider.qml
 LayoutText 1.0 cvc-layout/widgets/Text/LayoutText.qml
+LayoutSGIcon 1.0 cvc-layout/widgets/SGIcon/LayoutSGIcon.qml
 
 singleton SGSettings 1.0 SGSettings.qml
 

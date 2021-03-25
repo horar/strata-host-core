@@ -15,6 +15,7 @@ import "../"
 
 ColumnLayout {
     id: fileContainerRoot
+    spacing: 0
 
     property int modelIndex: index
     property string file: model.filename
@@ -186,7 +187,6 @@ ColumnLayout {
                     openFilesModel.closeTabAt(modelIndex)
                 }
             }
-
         }
     }
 
@@ -199,81 +199,48 @@ ColumnLayout {
     }
 
     RowLayout {
-        id: tabRow
 
-        Button {
-            text: "Text Editor"
-            checkable: true
-            checked: viewStack.currentIndex === 0
-            onCheckedChanged: {
-                if (checked) {
-                    viewStack.currentIndex = 0
-                    webEngine.forceActiveFocus()
-                }
-            }
-        }
+        SGComboBox {
+            id: viewSelector
+            model: ["Text Editor", "Visual Editor"]
+            currentIndex: 0
+            Layout.leftMargin: 5
+            Layout.topMargin: 5
+            Layout.bottomMargin: 5
 
-        Button {
-            text: "Visual Editor"
-            checkable: true
-            checked: viewStack.currentIndex === 1
-            onCheckedChanged: {
-                if (checked) {
-                    viewStack.currentIndex = 1
+            onCurrentIndexChanged:  {
+                if (currentIndex === 1) {
                     visualEditor.reload()
                 }
             }
         }
-    }
 
-    WebChannel {
-        id: channel
-        registeredObjects: [channelObject]
-    }
-
-    QtObject {
-        id: channelObject
-        objectName: "fileChannel"
-        WebChannel.id: "valueLink"
-
-        property string fileText: ""
-        property bool reset: false
-
-        signal setValue(string value);
-        signal setContainerHeight(string height);
-        signal setContainerWidth(string width);
-        signal undo();
-        signal redo();
-
-        function setHtml(value) {
-            setValue(value)
-        }
-
-        function refreshEditorWithExternalChanges() {
-            reset = true
-            fileText = openFile()
-            setHtml(channelObject.fileText)
-            externalChanges = false
-        }
-
-        function setVersionId(version) {
-            // If this is the first change, then we have just initialized the editor
-            if (!savedVersionId || reset) {
-                savedVersionId = version
-
-                if (reset)
-                    reset = false
+        Loader {
+            id: menuLoader
+            source: {
+                switch (viewSelector.currentIndex) {
+                    case 0:
+                        return ""
+                    case 1:
+                        active = true
+                        return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/VisualEditorMenu.qml"
+                }
             }
-
-            currentVersionId = version
-            model.unsavedChanges = (savedVersionId !== version)
         }
+    }
+
+    Rectangle {
+        // divider
+        Layout.fillWidth: true
+        implicitHeight: 1
+        color: "gray"
     }
 
     StackLayout {
         id: viewStack
         Layout.fillHeight: true
         Layout.fillWidth: true
+        currentIndex: viewSelector.currentIndex
 
         Keys.onPressed: {
             if (event.matches(StandardKey.Save)) {
@@ -349,6 +316,50 @@ ColumnLayout {
         VisualEditor {
             id: visualEditor
             file: model.filepath
+        }
+    }
+
+    WebChannel {
+        id: channel
+        registeredObjects: [channelObject]
+    }
+
+    QtObject {
+        id: channelObject
+        objectName: "fileChannel"
+        WebChannel.id: "valueLink"
+
+        property string fileText: ""
+        property bool reset: false
+
+        signal setValue(string value);
+        signal setContainerHeight(string height);
+        signal setContainerWidth(string width);
+        signal undo();
+        signal redo();
+
+        function setHtml(value) {
+            setValue(value)
+        }
+
+        function refreshEditorWithExternalChanges() {
+            reset = true
+            fileText = openFile()
+            setHtml(channelObject.fileText)
+            externalChanges = false
+        }
+
+        function setVersionId(version) {
+            // If this is the first change, then we have just initialized the editor
+            if (!savedVersionId || reset) {
+                savedVersionId = version
+
+                if (reset)
+                    reset = false
+            }
+
+            currentVersionId = version
+            model.unsavedChanges = (savedVersionId !== version)
         }
     }
 }

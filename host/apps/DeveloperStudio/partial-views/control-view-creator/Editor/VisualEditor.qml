@@ -12,11 +12,13 @@ import "VisualEditor"
 
 ColumnLayout {
     id: layoutBuilderRoot
+    spacing: 0
 
     property bool layoutDebugMode: false
     property var overlayObjects: []
     property string file: ""
     property string fileContents: ""
+    property alias loader: loader
 
     Component.onCompleted: {
         reload()
@@ -46,11 +48,12 @@ ColumnLayout {
         sdsModel.resourceLoader.clearComponentCache(layoutBuilderRoot)
         fileContents = openFile(file)
         loader.setSource(layoutBuilderRoot.file)
-        if (loader.children[0] && loader.children[0].objectName === "ControlViewRoot") {
+        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
             overlayContainer.rowCount = loader.children[0].rowCount
             overlayContainer.columnCount = loader.children[0].columnCount
             allChildren(loader.children[0])
         } else {
+            // todo: this catches many errors and labels all as "does not derive from UIBase" - needs to handle all better
             console.log("Visual Editor error: file does not derive from UIBase")
             loader.setSource("qrc:/partial-views/SGLoadError.qml") // todo: modify primary text in SGLoadError as well as error message, allow more specific message here than "platform user interface"
             loader.item.error_message = "File does not derive from UIBase"
@@ -65,7 +68,9 @@ ColumnLayout {
         }
 
         for (let i = 0; i < item.children.length; i++) {
-            allChildren(item.children[i])
+            if (item.children[i].objectName !== "UIBase") { // don't examine children made up of a separate UIBase (e.g. composite widgets also created in VisualEditor)
+                allChildren(item.children[i])
+            }
         }
     }
 
@@ -125,109 +130,17 @@ ColumnLayout {
         return fileContents.match(regex)[1];
     }
 
-    Rectangle {
-        color: "lightgrey"
-        implicitHeight: controls.implicitHeight + 2
-        Layout.fillWidth: true
-
-        RowLayout {
-            id: controls
-
-            Button {
-                text: "Reload"
-                onClicked: {
-                    // todo: add file listener so external changes are auto reloaded
-                    reload()
-                }
-            }
-
-            Button {
-                text: "Layout mode: " + layoutDebugMode
-                checkable: true
-                checked: layoutDebugMode
-                onCheckedChanged: {
-                    layoutDebugMode = checked
-                }
-            }
-
-            Button {
-                text: "Add..."
-
-                onClicked: {
-                    addPop.open()
-                }
-
-                AddMenu {
-                    id: addPop
-                }
-            }
-
-            Button {
-                text: "Rows/Cols..."
-
-                onClicked: {
-                    rowColPop.open()
-                }
-
-                Popup {
-                    id: rowColPop
-                    y: parent.height
-
-                    ColumnLayout {
-
-                        Button {
-                            text: "columns++"
-
-                            onClicked: {
-                                let count = loader.item.columnCount
-                                count++
-                                fileContents = replaceObjectPropertyValueInString ("uibase", "columnCount:", count)
-                                saveFile(file, fileContents)
-                            }
-                        }
-
-                        Button {
-                            text: "columns--"
-
-                            onClicked: {
-                                let count = loader.item.columnCount
-                                count--
-                                fileContents = replaceObjectPropertyValueInString ("uibase", "columnCount:", count)
-                                saveFile(file, fileContents)
-                            }
-                        }
-
-                        Button {
-                            text: "rows++"
-
-                            onClicked: {
-                                let count = loader.item.rowCount
-                                count++
-                                fileContents = replaceObjectPropertyValueInString ("uibase", "rowCount:", count)
-                                saveFile(file, fileContents)
-                            }
-                        }
-
-                        Button {
-                            text: "rows--"
-
-                            onClicked: {
-                                let count = loader.item.rowCount
-                                count--
-                                fileContents = replaceObjectPropertyValueInString ("uibase", "rowCount:", count)
-                                saveFile(file, fileContents)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     Item {
         id: loaderContainer
         Layout.fillHeight: true
         Layout.fillWidth: true
+
+        Loader {
+            id: loader
+            anchors {
+                fill: parent
+            }
+        }
 
         Item {
             id: gridContainer
@@ -252,13 +165,6 @@ ColumnLayout {
                     width: overlayContainer.width
                     color: "lightgrey"
                 }
-            }
-        }
-
-        Loader {
-            id: loader
-            anchors {
-                fill: parent
             }
         }
 

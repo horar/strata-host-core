@@ -29,6 +29,11 @@ Popup {
                     text: "Divider"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Divider/Divider.txt"
                 }
+
+                ListElement {
+                    text: "Icon"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/SGIcon/SGIcon.txt"
+                }
             }
 
             delegate: Button {
@@ -36,7 +41,7 @@ Popup {
                 implicitHeight: 20
 
                 onClicked: {
-                    addControl(model.controlUrl)
+                    visualEditor.addControl(model.controlUrl)
                     addPop.close()
                 }
             }
