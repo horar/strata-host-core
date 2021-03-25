@@ -157,7 +157,7 @@ void Client::strataClientErrorHandler(StrataClient::ClientError errorType,
 {
     qCCritical(logCategoryStrataClientSample)
         << "Client Error:" << errorType << "Message:" << errorMessage;
-    emit errorOccured(errorMessage);
+    emit errorOccurred(errorMessage);
 }
 
 void Client::serverTimeHandler(const QJsonObject &payload)

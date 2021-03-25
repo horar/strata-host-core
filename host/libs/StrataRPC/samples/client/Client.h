@@ -25,7 +25,7 @@ signals:
     void serverTimeUpdated();
     void randomGraphUpdated(QList<int> randomNumbersList);
     void serverDelayUpdated(qint64 delay);
-    void errorOccured(const QString &errorMessage);
+    void errorOccurred(const QString &errorMessage);
 
 public slots:
     void connectToServer();

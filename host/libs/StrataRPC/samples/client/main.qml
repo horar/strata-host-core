@@ -189,7 +189,7 @@ Window {
 
             Connections {
                 target: Client
-                onErrorOccured: {
+                onErrorOccurred: {
                     errorsTextArea.append(errorMessage);
                     errorsTextArea.msgCount++;
                 }
