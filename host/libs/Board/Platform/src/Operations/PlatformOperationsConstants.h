@@ -1,5 +1,4 @@
-#ifndef DEVICEOPERATIONS_CONSTANTS_H
-#define DEVICEOPERATIONS_CONSTANTS_H
+#pragma once
 
 #include <chrono>
 #include <QString>
@@ -60,5 +59,3 @@ constexpr const char* const CSTR_BOOTLOADER = "bootloader";
 constexpr const char* const CSTR_NAME_BOOTLOADER = "Bootloader";
 
 }  // namespace
-
-#endif // DEVICEOPERATIONS_CONSTANTS_H

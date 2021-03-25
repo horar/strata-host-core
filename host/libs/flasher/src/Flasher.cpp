@@ -17,7 +17,7 @@ namespace strata {
 
 using device::DevicePtr;
 
-namespace operation = device::operation;
+namespace operation = platform::operation;
 
 Flasher::Flasher(const DevicePtr& device, const QString& fileName) :
     Flasher(device, fileName, QString(), QString()) { }
@@ -309,11 +309,11 @@ void Flasher::handleOperationFinished(operation::Result result, int status, QStr
 }
 
 Flasher::FlasherOperation::FlasherOperation(
-        OperationPtr&& deviceOperation,
+        OperationPtr&& platformOperation,
         State stateOfFlasher,
         const std::function<void(int)>& finishedOperationHandler,
         const Flasher* parent)
-    : operation(std::move(deviceOperation)),
+    : operation(std::move(platformOperation)),
       state(stateOfFlasher),
       finishedHandler(finishedOperationHandler),
       flasher(parent)
@@ -321,10 +321,10 @@ Flasher::FlasherOperation::FlasherOperation(
     Q_ASSERT(flasher != nullptr);
     Q_ASSERT(operation != nullptr);
 
-    flasher->connect(operation.get(), &operation::BaseDeviceOperation::finished, flasher, &Flasher::handleOperationFinished);
+    flasher->connect(operation.get(), &operation::BasePlatformOperation::finished, flasher, &Flasher::handleOperationFinished);
 }
 
-void Flasher::operationDeleter(operation::BaseDeviceOperation* operation)
+void Flasher::operationDeleter(operation::BasePlatformOperation* operation)
 {
     operation->deleteLater();
 }

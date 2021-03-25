@@ -5,9 +5,9 @@
 
 #include <optional>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class CmdSetAssistedPlatformId: public BaseDeviceCommand
+class CmdSetAssistedPlatformId: public BasePlatformCommand
 {
 public:
     explicit CmdSetAssistedPlatformId(const device::DevicePtr &device);

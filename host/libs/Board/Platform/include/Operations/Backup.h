@@ -4,13 +4,13 @@
 
 #include <Operations/BasePlatformOperation.h>
 
-namespace strata::device::command {
+namespace strata::platform::command {
     class CmdStartBackupFirmware;
 }
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
-class Backup : public BaseDeviceOperation {
+class Backup : public BasePlatformOperation {
 
 public:
     explicit Backup(const device::DevicePtr& device);

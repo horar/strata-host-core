@@ -7,10 +7,10 @@
 
 #include <cstring>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
 CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse, uint maxRetries) :
-    BaseDeviceCommand(device, QStringLiteral("get_firmware_info"), CommandType::GetFirmwareInfo),
+    BasePlatformCommand(device, QStringLiteral("get_firmware_info"), CommandType::GetFirmwareInfo),
     requireResponse_(requireResponse), maxRetries_(maxRetries), retriesCount_(0)
 { }
 
@@ -73,7 +73,7 @@ void CmdGetFirmwareInfo::commandRejected() {
 void CmdGetFirmwareInfo::onTimeout() {
     if (retriesCount_ < maxRetries_) {
         ++retriesCount_;
-        qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to get firmware info.";
+        qCInfo(logCategoryPlatformOperations) << device_ << "Going to retry to get firmware info.";
         result_ = CommandResult::Retry;
     } else {
         if (requireResponse_) {

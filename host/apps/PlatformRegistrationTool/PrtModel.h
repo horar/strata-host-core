@@ -84,7 +84,7 @@ private slots:
     void downloadFinishedHandler(QString groupId, QString errorString);
 
 private:
-    strata::BoardManager boardManager_;
+    strata::PlatformManager platformManager_;
     QList<strata::device::DevicePtr> platformList_;
     QPointer<strata::FlasherConnector> flasherConnector_;
     QNetworkAccessManager networkManager_;

@@ -1,5 +1,4 @@
-#ifndef BOARD_MANAGER_CONSTANTS_H
-#define BOARD_MANAGER_CONSTANTS_H
+#pragma once
 
 #include <chrono>
 
@@ -10,5 +9,3 @@ constexpr std::chrono::milliseconds IDENTIFY_LAUNCH_DELAY(500);
 constexpr unsigned int GET_FW_INFO_MAX_RETRIES(2);
 
 }  // namespace
-
-#endif

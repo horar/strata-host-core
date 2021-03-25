@@ -2,15 +2,15 @@
 
 #include "PlatformManager.h"
 
-class BoardManagerDerivate : public strata::BoardManager
+class PlatformManagerDerivate : public strata::PlatformManager
 {
     Q_OBJECT
 
 public:
-    BoardManagerDerivate();
+    PlatformManagerDerivate();
 
     /**
-     * Initialize BoardManagerDerivate (start managing connected Mock devices).
+     * Initialize PlatformManagerDerivate (start managing connected Mock devices).
      * @param requireFwInfoResponse if true require response to get_firmware_info command during device identification
      * @param keepDevicesOpen if true communication channel is not released (closed) if device is not recognized
      */
@@ -33,7 +33,7 @@ public:
 
 private slots:
     virtual void checkNewSerialDevices() override;
-    virtual void handleOperationFinished(strata::device::operation::Result result, int status, QString errStr) override;
+    virtual void handleOperationFinished(strata::platform::operation::Result result, int status, QString errStr) override;
     virtual void handleDeviceError(strata::device::Device::ErrorCode errCode, QString errStr) override;
 
 private:

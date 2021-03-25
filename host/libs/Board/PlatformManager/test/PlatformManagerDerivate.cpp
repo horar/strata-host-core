@@ -2,21 +2,21 @@
 #include <Mock/MockDevice.h>
 #include "QtTest.h"
 
-using strata::BoardManager;
+using strata::PlatformManager;
 using strata::device::Device;
 using strata::device::DevicePtr;
 
-BoardManagerDerivate::BoardManagerDerivate() : BoardManager()
+PlatformManagerDerivate::PlatformManagerDerivate() : PlatformManager()
 {
 }
 
-void BoardManagerDerivate::init(bool requireFwInfoResponse, bool keepDevicesOpen)
+void PlatformManagerDerivate::init(bool requireFwInfoResponse, bool keepDevicesOpen)
 {
     reqFwInfoResp_ = requireFwInfoResponse;
     keepDevicesOpen_ = keepDevicesOpen;
 }
 
-bool BoardManagerDerivate::addNewMockDevice(const QByteArray& deviceId, const QString deviceName)
+bool PlatformManagerDerivate::addNewMockDevice(const QByteArray& deviceId, const QString deviceName)
 {
     qDebug().nospace().noquote() << "Adding new mock device (" << deviceId << "): '" << deviceName << "'";
     std::set<QByteArray> ports(serialPortsList_);
@@ -73,7 +73,7 @@ bool BoardManagerDerivate::addNewMockDevice(const QByteArray& deviceId, const QS
     return true;
 }
 
-bool BoardManagerDerivate::removeMockDevice(const QByteArray& deviceId)
+bool PlatformManagerDerivate::removeMockDevice(const QByteArray& deviceId)
 {
     bool res = true;
     // call after disconnecting
@@ -96,31 +96,31 @@ bool BoardManagerDerivate::removeMockDevice(const QByteArray& deviceId)
     return res;
 }
 
-void BoardManagerDerivate::checkNewSerialDevices()
+void PlatformManagerDerivate::checkNewSerialDevices()
 {
-    // empty, disable the BoardManager functionality working with serial ports
+    // empty, disable the PlatformManager functionality working with serial ports
 }
 
-void BoardManagerDerivate::handleOperationFinished(strata::device::operation::Result result, int status, QString errStr)
+void PlatformManagerDerivate::handleOperationFinished(strata::platform::operation::Result result, int status, QString errStr)
 {
-    BoardManager::handleOperationFinished(result, status, errStr);
+    PlatformManager::handleOperationFinished(result, status, errStr);
 }
 
-void BoardManagerDerivate::handleDeviceError(strata::device::Device::ErrorCode errCode, QString errStr)
+void PlatformManagerDerivate::handleDeviceError(strata::device::Device::ErrorCode errCode, QString errStr)
 {
-    BoardManager::handleDeviceError(errCode, errStr);
+    PlatformManager::handleDeviceError(errCode, errStr);
 }
 
 // mutex_ must be locked before calling this function (due to modification openedDevices_ and using mockIdToName_)
-bool BoardManagerDerivate::addMockPort(const QByteArray& deviceId, bool startOperations)
+bool PlatformManagerDerivate::addMockPort(const QByteArray& deviceId, bool startOperations)
 {
     // 1. construct the mock device
     // 2. open the device
-    // 3. attach DeviceOperations object
+    // 3. attach PlatformOperations object
 
     const QString name = serialIdToName_.value(deviceId);
 
-    DevicePtr device = std::make_shared<strata::device::mock::MockDevice>(deviceId, name, true);
+    DevicePtr device = std::make_shared<strata::device::MockDevice>(deviceId, name, true);
 
     if (openDevice(device) == false) {
         qWarning().nospace().noquote() << "Cannot open device: ID: " << deviceId << ", name: '" << name << "'";
@@ -129,7 +129,7 @@ bool BoardManagerDerivate::addMockPort(const QByteArray& deviceId, bool startOpe
     }
     qInfo().nospace().noquote() << "Added new mock device: ID: " << deviceId << ", name: '" << name << "'";
     if (startOperations) {
-        startDeviceOperations(device);
+        startPlatformOperations(device);
     }
     return true;
 }

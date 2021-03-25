@@ -10,7 +10,7 @@
 /*
 This BoardController class is replacement for original classes BoardsController and PlatformBoard.
 
-Instead of two original classes is now used BoardManager.
+Instead of two original classes is now used PlatformManager.
 
 Functions in this BoardController class are very similar as original ones from BoardsController class.
 BoardsController managed PlatformBoard objects (one PlatformBoard object for one device).
@@ -19,7 +19,7 @@ PlatformBoard class held information about board and also shared pointer to Plat
 which managed communication with serial device. Properties which was held by PlatformBoard class are
 now in Board struct.
 
-All (serial port) devices are now managed by BoardManager where devices are identified by device ID.
+All (serial port) devices are now managed by PlatformManager where devices are identified by device ID.
 To be compatible with rest rest of current HCS implementation we need to have some information about connected
 devices. This information are stored in boards_ map.
 */
@@ -64,7 +64,7 @@ signals:
     void boardDisconnected(QByteArray deviceId);
     void boardMessage(QString platformId, QString message);
 
-private slots:  // slots for signals from BoardManager
+private slots:  // slots for signals from PlatformManager
     void newConnection(const QByteArray& deviceId, bool recognized);
     void closeConnection(const QByteArray& deviceId);
     void messageFromBoard(QString message);
@@ -75,7 +75,7 @@ private:
         strata::device::DevicePtr device;
     };
 
-    strata::BoardManager boardManager_;
+    strata::PlatformManager platformManager_;
 
     // map: deviceID <-> Board
     QHash<QByteArray, Board> boards_;

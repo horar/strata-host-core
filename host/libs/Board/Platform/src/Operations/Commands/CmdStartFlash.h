@@ -3,9 +3,9 @@
 
 #include "BasePlatformCommand.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class CmdStartFlash : public BaseDeviceCommand {
+class CmdStartFlash : public BasePlatformCommand {
 public:
     CmdStartFlash(const device::DevicePtr& device, int size, int chunks, const QString& md5, bool flashFirmware);
     QByteArray message() override;

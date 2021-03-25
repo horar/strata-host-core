@@ -9,10 +9,10 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
 CmdStartApplication::CmdStartApplication(const device::DevicePtr& device) :
-    BaseDeviceCommand(device, QStringLiteral("start_application"), CommandType::StartApplication)
+    BasePlatformCommand(device, QStringLiteral("start_application"), CommandType::StartApplication)
 { }
 
 QByteArray CmdStartApplication::message() {
@@ -30,7 +30,7 @@ bool CmdStartApplication::processNotification(rapidjson::Document& doc) {
             setDeviceBootloaderMode(false);
         } else {
             if (std::strcmp(jsonStatus, CSTR_NO_FIRMWARE) == 0) {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Nothing to start, board has no valid firmware.";
+                qCWarning(logCategoryPlatformOperations) << device_ << "Nothing to start, board has no valid firmware.";
                 result_ = CommandResult::FinaliseOperation;
                 status_ = operation::NO_FIRMWARE;
             }

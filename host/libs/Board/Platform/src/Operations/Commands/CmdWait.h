@@ -4,12 +4,12 @@
 
 #include "BasePlatformCommand.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
 // This is special command used for waiting between commands in command list.
-// There is also special handling of this command in BaseDeviceOperation.
+// There is also special handling of this command in BasePlatformOperation.
 
-class CmdWait : public BaseDeviceCommand {
+class CmdWait : public BasePlatformCommand {
 public:
     CmdWait(const device::DevicePtr& device,
             std::chrono::milliseconds waitTime,

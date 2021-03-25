@@ -1,5 +1,4 @@
-#ifndef BASE_DEVICE_COMMAND_H
-#define BASE_DEVICE_COMMAND_H
+#pragma once
 
 #include <QByteArray>
 #include <QString>
@@ -8,7 +7,7 @@
 
 #include <Device.h>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
 enum class CommandResult : int {
     InProgress,        // waiting for proper response from device
@@ -36,25 +35,25 @@ enum class CommandType : int {
     Wait
 };
 
-class BaseDeviceCommand {
+class BasePlatformCommand {
 public:
     /*!
-     * BaseDeviceCommand constructor.
+     * BasePlatformCommand constructor.
      * \param name command name
      * \param device the device on which the operation is performed
      */
-    BaseDeviceCommand(const DevicePtr& device, const QString& name, CommandType cmdType);
+    BasePlatformCommand(const device::DevicePtr& device, const QString& name, CommandType cmdType);
 
     /*!
-     * BaseDeviceCommand destructor.
+     * BasePlatformCommand destructor.
      */
-    virtual ~BaseDeviceCommand();
+    virtual ~BasePlatformCommand();
 
     // disable copy assignment operator
-    BaseDeviceCommand & operator=(const BaseDeviceCommand&) = delete;
+    BasePlatformCommand & operator=(const BasePlatformCommand&) = delete;
 
     // disable copy constructor
-    BaseDeviceCommand(const BaseDeviceCommand&) = delete;
+    BasePlatformCommand(const BasePlatformCommand&) = delete;
 
     /*!
      * Returns JSON command.
@@ -122,18 +121,16 @@ public:
 
 protected:
     virtual void setDeviceVersions(const char* bootloaderVer, const char* applicationVer) final;
-    virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, Device::ControllerType type) final;
+    virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, device::Device::ControllerType type) final;
     virtual void setDeviceAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) final;
     virtual void setDeviceBootloaderMode(bool inBootloaderMode) final;
-    virtual void setDeviceApiVersion(Device::ApiVersion apiVersion) final;
+    virtual void setDeviceApiVersion(device::Device::ApiVersion apiVersion) final;
     const QString cmdName_;
     const CommandType cmdType_;
-    const DevicePtr& device_;
+    const device::DevicePtr& device_;
     bool ackOk_;
     CommandResult result_;
     int status_;
 };
 
 }  // namespace
-
-#endif

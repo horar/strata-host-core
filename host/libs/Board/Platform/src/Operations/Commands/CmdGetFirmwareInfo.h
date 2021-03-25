@@ -3,9 +3,9 @@
 
 #include "BasePlatformCommand.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class CmdGetFirmwareInfo : public BaseDeviceCommand {
+class CmdGetFirmwareInfo : public BasePlatformCommand {
 public:
     explicit CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse = true, uint maxRetries = 0);
     QByteArray message() override;

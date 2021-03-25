@@ -3,9 +3,9 @@
 #include <chrono>
 #include <Operations/BasePlatformOperation.h>
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
-class Identify : public BaseDeviceOperation {
+class Identify : public BasePlatformOperation {
     Q_OBJECT
     Q_DISABLE_COPY(Identify)
 

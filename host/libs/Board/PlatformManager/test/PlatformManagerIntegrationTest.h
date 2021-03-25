@@ -3,7 +3,7 @@
 #include <QObject>
 #include "QtTest.h"
 
-class BoardManagerIntegrationTest : public QObject
+class PlatformManagerIntegrationTest : public QObject
 {
     Q_OBJECT
 

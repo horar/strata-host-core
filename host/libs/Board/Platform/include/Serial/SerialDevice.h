@@ -8,7 +8,7 @@
 
 #include <QSerialPort>
 
-namespace strata::device::serial {
+namespace strata::device {
 
 class SerialDevice : public Device
 {

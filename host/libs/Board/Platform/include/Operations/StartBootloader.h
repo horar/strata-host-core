@@ -4,13 +4,13 @@
 
 #include <Operations/BasePlatformOperation.h>
 
-namespace strata::device::command {
+namespace strata::platform::command {
     class CmdWait;
 }
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
-class StartBootloader : public BaseDeviceOperation {
+class StartBootloader : public BasePlatformOperation {
 
 public:
     explicit StartBootloader(const device::DevicePtr& device);
@@ -23,7 +23,7 @@ public:
 
 private:
     void skipCommands(command::CommandResult& result, int& status);
-    std::vector<std::unique_ptr<command::BaseDeviceCommand>>::iterator beforeStartBootloader_;
+    std::vector<std::unique_ptr<command::BasePlatformCommand>>::iterator beforeStartBootloader_;
     command::CmdWait* cmdWait_;
 };
 

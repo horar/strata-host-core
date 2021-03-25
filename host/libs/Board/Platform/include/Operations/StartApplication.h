@@ -2,9 +2,9 @@
 
 #include <Operations/BasePlatformOperation.h>
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
-class StartApplication : public BaseDeviceOperation {
+class StartApplication : public BasePlatformOperation {
 
 public:
     explicit StartApplication(const device::DevicePtr& device);

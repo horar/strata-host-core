@@ -1,5 +1,4 @@
-#ifndef DEVICE_COMMANDS_H
-#define DEVICE_COMMANDS_H
+#pragma once
 
 #include "BasePlatformCommand.h"
 #include "CmdGetFirmwareInfo.h"
@@ -13,5 +12,3 @@
 #include "CmdSetPlatformId.h"
 #include "CmdSetAssistedPlatformId.h"
 #include "CmdWait.h"
-
-#endif

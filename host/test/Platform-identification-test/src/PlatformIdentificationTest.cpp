@@ -1,6 +1,6 @@
 #include "PlatformIdentificationTest.h"
 
-using strata::BoardManager;
+using strata::PlatformManager;
 using strata::device::DevicePtr;
 
 PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
@@ -22,18 +22,18 @@ PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     connect(&testTimeout_, &QTimer::timeout, this, &PlatformIdentificationTest::testTimeoutHandler);
 }
 
-void PlatformIdentificationTest::enableBoardManagerSignals(bool enable) {
+void PlatformIdentificationTest::enablePlatformManagerSignals(bool enable) {
     if (enable) {
-        connect(&boardManager_, &BoardManager::boardInfoChanged, this, &PlatformIdentificationTest::newConnectionHandler);
-        connect(&boardManager_, &BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
+        connect(&platformManager_, &PlatformManager::boardInfoChanged, this, &PlatformIdentificationTest::newConnectionHandler);
+        connect(&platformManager_, &PlatformManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     } else {
-        disconnect(&boardManager_, &BoardManager::boardInfoChanged, this, &PlatformIdentificationTest::newConnectionHandler);
-        disconnect(&boardManager_, &BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
+        disconnect(&platformManager_, &PlatformManager::boardInfoChanged, this, &PlatformIdentificationTest::newConnectionHandler);
+        disconnect(&platformManager_, &PlatformManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     }
 }
 
 bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString& binariesPath) {
-    boardManager_.init(false, true);
+    platformManager_.init(false, true);
 
     if (parseBinaryFileList(binariesPath) == false) {
         return false;
@@ -98,7 +98,7 @@ void PlatformIdentificationTest::newConnectionHandler(const QByteArray& deviceId
     std::cout << "new board connected deviceId = " << deviceId.toStdString() << std::endl;
     std::cout << "board identified = " << recognized << std::endl;  // This flag is not enough!
     testDeviceId_ = deviceId;
-    enableBoardManagerSignals(false);
+    enablePlatformManagerSignals(false);
     identifyPlatform(recognized);
 }
 
@@ -112,7 +112,7 @@ void PlatformIdentificationTest::flashCompletedHandler(bool exitedNormally) {
     std::cout << "flash is done" << std::endl;
     if (exitedNormally) {
         std::cout << "Platform was flashed successfully" << std::endl;
-        enableBoardManagerSignals(true);
+        enablePlatformManagerSignals(true);
         setState(PlatfortestState_::ConnectingToPlatform);
     } else {
         std::cerr << "Failed to flash the platform. Aborting..." << std::endl;
@@ -122,7 +122,7 @@ void PlatformIdentificationTest::flashCompletedHandler(bool exitedNormally) {
 }
 
 void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
-    DevicePtr testDevice = boardManager_.device(testDeviceId_);
+    DevicePtr testDevice = platformManager_.device(testDeviceId_);
     // determine if the test passed or not
     bool testPassed = false;
 
@@ -176,7 +176,7 @@ void PlatformIdentificationTest::connectToPlatform() {
     std::cout << "Connecting to platform" << std::endl;
     if (testDeviceId_.isEmpty()) {
         // get the connected devices and set testDeviceId_
-        auto connectedDevicesList = boardManager_.activeDeviceIds();
+        auto connectedDevicesList = platformManager_.activeDeviceIds();
         if (connectedDevicesList.empty()) {
             std::cerr << "No connected devices. Aborting..." << std::endl;
             testFailed_ = true;
@@ -185,7 +185,7 @@ void PlatformIdentificationTest::connectToPlatform() {
             testDeviceId_ = connectedDevicesList.front();
         }
     }
-    boardManager_.reconnectDevice(testDeviceId_);
+    platformManager_.reconnectDevice(testDeviceId_);
 }
 
 void PlatformIdentificationTest::flashPlatform(const QString& binaryFileName) {

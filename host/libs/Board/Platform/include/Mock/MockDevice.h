@@ -4,7 +4,7 @@
 #include <Mock/MockDeviceControl.h>
 #include <list>
 
-namespace strata::device::mock {
+namespace strata::device {
 
 class MockDevice : public Device
 {
@@ -77,4 +77,4 @@ private:
     MockDeviceControl control_;
 };
 
-}  // namespace strata::device::mock
+}  // namespace strata::device

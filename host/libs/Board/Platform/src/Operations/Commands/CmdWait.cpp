@@ -2,12 +2,12 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
 CmdWait::CmdWait(const device::DevicePtr& device,
                  std::chrono::milliseconds waitTime,
                  const QString& description)
-    : BaseDeviceCommand(device, QStringLiteral("wait"), CommandType::Wait),
+    : BasePlatformCommand(device, QStringLiteral("wait"), CommandType::Wait),
       waitTime_(waitTime), description_(description)
 {
     result_ = CommandResult::Done;

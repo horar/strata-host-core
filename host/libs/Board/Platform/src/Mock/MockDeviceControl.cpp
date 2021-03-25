@@ -2,7 +2,7 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::device::mock {
+namespace strata::device {
 
 MockDeviceControl::MockDeviceControl(QObject *parent)
     : QObject(parent)
@@ -368,4 +368,4 @@ std::vector<QByteArray> MockDeviceControl::replacePlaceholders(const std::vector
     return retVal;
 }
 
-} // namespace strata::device::mock
+} // namespace strata::device

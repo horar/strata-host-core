@@ -5,9 +5,9 @@
 
 #include <QVector>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class CmdBackupFirmware : public BaseDeviceCommand {
+class CmdBackupFirmware : public BasePlatformCommand {
 public:
     CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk, int totalChunks);
     QByteArray message() override;

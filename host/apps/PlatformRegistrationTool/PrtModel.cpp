@@ -39,10 +39,10 @@ PrtModel::PrtModel(QObject *parent)
 
     restClient_.init(cloudServiceUrl_, &networkManager_, &authenticator_);
 
-    boardManager_.init(true, true);
+    platformManager_.init(true, true);
 
-    connect(&boardManager_, &strata::BoardManager::boardInfoChanged, this, &PrtModel::boardReadyHandler);
-    connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PrtModel::boardDisconnectedHandler);
+    connect(&platformManager_, &strata::PlatformManager::boardInfoChanged, this, &PrtModel::boardReadyHandler);
+    connect(&platformManager_, &strata::PlatformManager::boardDisconnected, this, &PrtModel::boardDisconnectedHandler);
 
     connect(&downloadManager_, &strata::DownloadManager::groupDownloadFinished, this, &PrtModel::downloadFinishedHandler);
 }
@@ -272,8 +272,8 @@ void PrtModel::setPlatformId(
         const QString &platformId,
         int boardCount)
 {
-    using strata::device::operation::SetPlatformId;
-    using strata::device::operation::Result;
+    using strata::platform::operation::SetPlatformId;
+    using strata::platform::operation::Result;
 
     if (platformList_.isEmpty()) {
         QString errorString = "No platform connected";
@@ -282,7 +282,7 @@ void PrtModel::setPlatformId(
         return;
     }
 
-    strata::device::command::CmdSetPlatformIdData data;
+    strata::platform::command::CmdSetPlatformIdData data;
     data.classId = classId;
     data.platformId = platformId;
     data.boardCount = boardCount;
@@ -295,9 +295,9 @@ void PrtModel::setPlatformId(
 
         if (result != Result::Success) {
             emit setPlatformIdFinished(errorString);
-        } else if (status == strata::device::operation::SET_PLATFORM_ID_FAILED) {
+        } else if (status == strata::platform::operation::SET_PLATFORM_ID_FAILED) {
             emit setPlatformIdFinished("Board refused registration");
-        } else if (status == strata::device::operation::PLATFORM_ID_ALREADY_SET) {
+        } else if (status == strata::platform::operation::PLATFORM_ID_ALREADY_SET) {
             emit setPlatformIdFinished("Board has already been registered");
         }
 
@@ -310,8 +310,8 @@ void PrtModel::setPlatformId(
 
 void PrtModel::setAssistedPlatformId()
 {
-    using strata::device::operation::SetAssistedPlatformId;
-    using strata::device::operation::Result;
+    using strata::platform::operation::SetAssistedPlatformId;
+    using strata::platform::operation::Result;
 
     if (platformList_.isEmpty()) {
         QString errorString = "No platform connected";
@@ -322,12 +322,12 @@ void PrtModel::setAssistedPlatformId()
 
     /*only faked data as there is no service support for asisted platforms type*/
 
-    strata::device::command::CmdSetPlatformIdData baseData;
+    strata::platform::command::CmdSetPlatformIdData baseData;
     baseData.classId = "abababab-62e5-4541-ab70-0f51322c711a";
     baseData.platformId = "acacacac-p2e5-4541-ab70-0f51322c711a";
     baseData.boardCount = 4;
 
-    strata::device::command::CmdSetPlatformIdData controllerData;
+    strata::platform::command::CmdSetPlatformIdData controllerData;
     controllerData.classId = "cccccccc-62e5-4541-ab70-0f51322c711a";
     controllerData.platformId = "aaaaaaaa-62e5-4541-ab70-0f51322c711a";
     controllerData.boardCount = 1;
@@ -345,11 +345,11 @@ void PrtModel::setAssistedPlatformId()
 
         if (result != Result::Success) {
             emit setPlatformIdFinished(errorString);
-        } else if (status == strata::device::operation::SET_PLATFORM_ID_FAILED) {
+        } else if (status == strata::platform::operation::SET_PLATFORM_ID_FAILED) {
             emit setPlatformIdFinished("Board refused registration");
-        } else if (status == strata::device::operation::PLATFORM_ID_ALREADY_SET) {
+        } else if (status == strata::platform::operation::PLATFORM_ID_ALREADY_SET) {
             emit setPlatformIdFinished("Board has already been registered");
-        } else if (status == strata::device::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
+        } else if (status == strata::platform::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
             emit setPlatformIdFinished("Board not connected to dongle");
         }
 
@@ -361,8 +361,8 @@ void PrtModel::setAssistedPlatformId()
 
 void PrtModel::startBootloader()
 {
-    using strata::device::operation::StartBootloader;
-    using strata::device::operation::Result;
+    using strata::platform::operation::StartBootloader;
+    using strata::platform::operation::Result;
 
     if (platformList_.isEmpty()) {
         QString errorString = "No platform connected";
@@ -388,8 +388,8 @@ void PrtModel::startBootloader()
 
 void PrtModel::startApplication()
 {
-    using strata::device::operation::StartApplication;
-    using strata::device::operation::Result;
+    using strata::platform::operation::StartApplication;
+    using strata::platform::operation::Result;
 
     if (platformList_.isEmpty()) {
         QString errorString = "No platform connected";
@@ -417,7 +417,7 @@ void PrtModel::boardReadyHandler(const QByteArray& deviceId, bool recognized)
 {
     Q_UNUSED(recognized)
 
-    platformList_.append(boardManager_.device(deviceId));
+    platformList_.append(platformManager_.device(deviceId));
     emit deviceCountChanged();
     emit boardReady(deviceId);
 }

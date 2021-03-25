@@ -3,7 +3,7 @@
 #include <QRegularExpression>
 #include <QByteArray>
 
-namespace strata::device::mock {
+namespace strata::device {
 
 constexpr unsigned MAX_STORED_MESSAGES = 4096;
 
@@ -38,10 +38,10 @@ enum class MockVersion {
 };
 Q_ENUM_NS(MockVersion)
 
-} // namespace strata::device::mock
+} // namespace strata::device
 
 // these are global constants for testing
-namespace strata::device::mock::test_commands {
+namespace strata::device::test_commands {
 
 const QRegularExpression parameterRegex = QRegularExpression("\\{\\$.*\\}");
 
@@ -416,4 +416,4 @@ R"({
 const QByteArray no_JSON_response =
 "notJSON";
 
-} // namespace strata::device::mock::test_commands
+} // namespace strata::device::test_commands

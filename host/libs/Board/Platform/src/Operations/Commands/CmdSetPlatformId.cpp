@@ -8,12 +8,12 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
 CmdSetPlatformId::CmdSetPlatformId(
         const device::DevicePtr &device,
         const CmdSetPlatformIdData &data)
-    : BaseDeviceCommand(device, QStringLiteral("set_platform_id"), CommandType::SetPlatformId),
+    : BasePlatformCommand(device, QStringLiteral("set_platform_id"), CommandType::SetPlatformId),
       data_(data)
 {
 }
@@ -54,7 +54,7 @@ bool CmdSetPlatformId::processNotification(rapidjson::Document &doc)
     } else if (jsonStatus == JSON_ALREADY_INITIALIZED) {
         status_ = operation::PLATFORM_ID_ALREADY_SET;
     } else {
-        qCCritical(logCategoryDeviceOperations) << device_ << "Unknown status string:" << jsonStatus;
+        qCCritical(logCategoryPlatformOperations) << device_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;

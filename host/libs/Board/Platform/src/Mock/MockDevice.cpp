@@ -4,7 +4,7 @@
 
 #include <QTimer>
 
-namespace strata::device::mock {
+namespace strata::device {
 
 MockDevice::MockDevice(const QByteArray& deviceId, const QString &name, const bool saveMessages)
     : Device(deviceId, name, Device::Type::MockDevice),
@@ -178,5 +178,5 @@ bool MockDevice::mockSetVersion(MockVersion version)
     return control_.mockSetVersion(version);
 }
 
-}  // namespace strata::device::mock
+}  // namespace strata::device
 

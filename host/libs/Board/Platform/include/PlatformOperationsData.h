@@ -2,7 +2,7 @@
 
 #include <QString>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
 struct CmdSetPlatformIdData {
     QString classId;

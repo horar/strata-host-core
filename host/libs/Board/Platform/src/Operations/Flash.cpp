@@ -3,19 +3,19 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
 using command::CmdStartFlash;
 using command::CmdFlash;
 using command::CommandType;
 
 Flash::Flash(const device::DevicePtr& device, int size, int chunks, const QString &md5, bool flashFirmware) :
-    BaseDeviceOperation(device, (flashFirmware) ? Type::FlashFirmware : Type::FlashBootloader),
+    BasePlatformOperation(device, (flashFirmware) ? Type::FlashFirmware : Type::FlashBootloader),
     chunkCount_(chunks), flashFirmware_(flashFirmware)
 {
     commandList_.reserve(2);
 
-    // BaseDeviceOperation member device_ must be used as a parameter for commands!
+    // BasePlatformOperation member device_ must be used as a parameter for commands!
     std::unique_ptr<CmdFlash> cmdFlash = std::make_unique<CmdFlash>(device_, chunkCount_, flashFirmware_);
     cmdFlash_ = cmdFlash.get();
 
@@ -28,9 +28,9 @@ Flash::Flash(const device::DevicePtr& device, int size, int chunks, const QStrin
 
 void Flash::flashChunk(const QVector<quint8>& chunk, int chunkNumber)
 {
-    if (BaseDeviceOperation::hasStarted() == false || currentCommand_ == commandList_.end()) {
+    if (BasePlatformOperation::hasStarted() == false || currentCommand_ == commandList_.end()) {
         QString errMsg(QStringLiteral("Cannot flash chunk, flash operation is not running."));
-        qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
+        qCWarning(logCategoryPlatformOperations) << device_ << errMsg;
         finishOperation(Result::Error, errMsg);
         return;
     }
@@ -47,7 +47,7 @@ void Flash::flashChunk(const QVector<quint8>& chunk, int chunkNumber)
 
     if ((cmdType == CommandType::FlashFirmware) || (cmdType == CommandType::FlashBootloader)) {
         cmdFlash_->setNewChunk(chunk, chunkNumber);
-        BaseDeviceOperation::resume();
+        BasePlatformOperation::resume();
     }
 }
 

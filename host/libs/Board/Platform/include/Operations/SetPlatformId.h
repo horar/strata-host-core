@@ -3,9 +3,9 @@
 #include <Operations/BasePlatformOperation.h>
 #include <PlatformOperationsData.h>
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
-class SetPlatformId : public BaseDeviceOperation {
+class SetPlatformId : public BasePlatformOperation {
 
 public:
     SetPlatformId(

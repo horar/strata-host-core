@@ -5,12 +5,12 @@
 #include <Mock/MockDevice.h>
 #include "QtTest.h"
 
-namespace strata::device::operation {
-class BaseDeviceOperation;
+namespace strata::platform::operation {
+class BasePlatformOperation;
 enum class Result : int;
 }
 
-class DeviceOperationsTest : public QObject
+class PlatformOperationsTest : public QObject
 {
     Q_OBJECT
 
@@ -34,16 +34,16 @@ private slots:
     void identifyLegacyTest();
 
 protected slots:
-    void handleOperationFinished(strata::device::operation::Result result, int, QString);
+    void handleOperationFinished(strata::platform::operation::Result result, int, QString);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
-    void connectHandlers(strata::device::operation::BaseDeviceOperation* operation);
+    void connectHandlers(strata::platform::operation::BasePlatformOperation* operation);
 
-    std::shared_ptr<strata::device::mock::MockDevice> device_;
-    QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
+    std::shared_ptr<strata::device::MockDevice> device_;
+    QSharedPointer<strata::platform::operation::BasePlatformOperation> platformOperation_;
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;
     int operationTimeoutCount_ = 0;

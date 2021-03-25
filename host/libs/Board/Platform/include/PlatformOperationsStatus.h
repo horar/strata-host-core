@@ -1,9 +1,8 @@
-#ifndef DEVICE_OPERATIONS_STATUS_H
-#define DEVICE_OPERATIONS_STATUS_H
+#pragma once
 
 #include <climits>
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
 // special values of status for device operation finished() signal
 constexpr int DEFAULT_STATUS(INT_MIN);
@@ -16,5 +15,3 @@ constexpr int PLATFORM_ID_ALREADY_SET(-201);
 constexpr int BOARD_NOT_CONNECTED_TO_CONTROLLER(-202);
 
 }
-
-#endif

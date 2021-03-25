@@ -3,9 +3,9 @@
 
 #include "BasePlatformCommand.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class CmdStartBackupFirmware : public BaseDeviceCommand {
+class CmdStartBackupFirmware : public BasePlatformCommand {
 public:
     explicit CmdStartBackupFirmware(const device::DevicePtr& device);
     QByteArray message() override;

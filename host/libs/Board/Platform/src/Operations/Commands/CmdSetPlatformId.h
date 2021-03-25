@@ -3,9 +3,9 @@
 #include "BasePlatformCommand.h"
 #include "PlatformOperationsData.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class CmdSetPlatformId: public BaseDeviceCommand
+class CmdSetPlatformId: public BasePlatformCommand
 {
 public:
     CmdSetPlatformId(

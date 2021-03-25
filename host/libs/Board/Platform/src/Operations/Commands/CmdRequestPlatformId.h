@@ -3,9 +3,9 @@
 
 #include "BasePlatformCommand.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class CmdRequestPlatformId : public BaseDeviceCommand {
+class CmdRequestPlatformId : public BasePlatformCommand {
 public:
     explicit CmdRequestPlatformId(const device::DevicePtr& device);
     QByteArray message() override;

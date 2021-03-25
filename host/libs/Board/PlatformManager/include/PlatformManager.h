@@ -1,5 +1,4 @@
-#ifndef BOARD_MANAGER_H
-#define BOARD_MANAGER_H
+#pragma once
 
 #include <set>
 #include <memory>
@@ -16,24 +15,24 @@
 
 #include <Device.h>
 
-namespace strata::device::operation {
-    class BaseDeviceOperation;
+namespace strata::platform::operation {
+    class BasePlatformOperation;
     enum class Result: int;
 }
 
 namespace strata {
 
-    class BoardManager : public QObject
+    class PlatformManager : public QObject
     {
         Q_OBJECT
-        Q_DISABLE_COPY(BoardManager)
+        Q_DISABLE_COPY(PlatformManager)
 
     public:
-        BoardManager();
-        ~BoardManager();
+        PlatformManager();
+        ~PlatformManager();
 
         /**
-         * Initialize BoardManager (start managing connected devices).
+         * Initialize PlatformManager (start managing connected devices).
          * @param requireFwInfoResponse if true require response to get_firmware_info command during device identification
          * @param keepDevicesOpen if true communication channel is not released (closed) if device is not recognized
          */
@@ -103,7 +102,7 @@ namespace strata {
 
     protected slots:
         virtual void checkNewSerialDevices();
-        virtual void handleOperationFinished(device::operation::Result result, int status, QString errStr);
+        virtual void handleOperationFinished(platform::operation::Result result, int status, QString errStr);
         virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
     private slots:
@@ -114,7 +113,7 @@ namespace strata {
         void computeListDiff(std::set<QByteArray>& list, std::set<QByteArray>& added_ports, std::set<QByteArray>& removed_ports);
         bool addSerialPort(const QByteArray& deviceId);
         bool openDevice(const device::DevicePtr newDevice);
-        void startDeviceOperations(const device::DevicePtr device);
+        void startPlatformOperations(const device::DevicePtr device);
         bool removeDevice(const QByteArray& deviceId);
 
         void logInvalidDeviceId(const QString& message, const QByteArray& deviceId) const;
@@ -131,7 +130,7 @@ namespace strata {
         QHash<QByteArray, device::DevicePtr> openedDevices_;
         QHash<QByteArray, QTimer*> reconnectTimers_;
 
-        QHash<QByteArray, std::shared_ptr<device::operation::BaseDeviceOperation>> identifyOperations_;
+        QHash<QByteArray, std::shared_ptr<platform::operation::BasePlatformOperation>> identifyOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;
@@ -140,10 +139,8 @@ namespace strata {
 
     private:
         void startIdentifyOperation(const device::DevicePtr device);
-        static void operationLaterDeleter(device::operation::BaseDeviceOperation* operation);
+        static void operationLaterDeleter(platform::operation::BasePlatformOperation* operation);
 
     };
 
 }
-
-#endif

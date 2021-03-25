@@ -8,17 +8,17 @@
 #include "logging/LoggingQtCategories.h"
 #include "JsonStrings.h"
 
-using strata::BoardManager;
+using strata::PlatformManager;
 using strata::device::Device;
 using strata::device::DevicePtr;
 
 BoardController::BoardController() {
-    connect(&boardManager_, &BoardManager::boardInfoChanged, this, &BoardController::newConnection);
-    connect(&boardManager_, &BoardManager::boardDisconnected, this, &BoardController::closeConnection);
+    connect(&platformManager_, &PlatformManager::boardInfoChanged, this, &BoardController::newConnection);
+    connect(&platformManager_, &PlatformManager::boardDisconnected, this, &BoardController::closeConnection);
 }
 
 void BoardController::initialize() {
-    boardManager_.init(false, false);
+    platformManager_.init(false, false);
 }
 
 bool BoardController::sendMessage(const QByteArray& deviceId, const QByteArray& message) {
@@ -41,7 +41,7 @@ DevicePtr BoardController::getDevice(const QByteArray& deviceId) const {
 
 void BoardController::newConnection(const QByteArray& deviceId, bool recognized) {
     if (recognized) {
-        DevicePtr device = boardManager_.device(deviceId);
+        DevicePtr device = platformManager_.device(deviceId);
         if (device == nullptr) {
             return;
         }

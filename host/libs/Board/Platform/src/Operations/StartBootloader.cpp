@@ -5,7 +5,7 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
 using command::CmdRequestPlatformId;
 using command::CmdGetFirmwareInfo;
@@ -14,11 +14,11 @@ using command::CmdWait;
 using command::CommandResult;
 
 StartBootloader::StartBootloader(const device::DevicePtr& device) :
-    BaseDeviceOperation(device, Type::StartBootloader)
+    BasePlatformOperation(device, Type::StartBootloader)
 {
     commandList_.reserve(6);
 
-    // BaseDeviceOperation member device_ must be used as a parameter for commands!
+    // BasePlatformOperation member device_ must be used as a parameter for commands!
 
     // Legacy note related to EFM boards:
     // Bootloader takes 5 seconds to start (known issue related to clock source).
@@ -56,12 +56,12 @@ void StartBootloader::setWaitTime(const std::chrono::milliseconds& waitTime)
 void StartBootloader::skipCommands(CommandResult& result, int& status)
 {
     if ((currentCommand_ == beforeStartBootloader_) && (result == CommandResult::Done)) {
-        if (BaseDeviceOperation::bootloaderMode() == true) {
+        if (BasePlatformOperation::bootloaderMode() == true) {
             // skip rest of commands - set result to 'FinaliseOperation'
             result = CommandResult::FinaliseOperation;
             // set status for 'finished' signal
             status = ALREADY_IN_BOOTLOADER;
-            qCInfo(logCategoryDeviceOperations) << device_ << "Platform already in bootloader mode.";
+            qCInfo(logCategoryPlatformOperations) << device_ << "Platform already in bootloader mode.";
         }
     }
 }

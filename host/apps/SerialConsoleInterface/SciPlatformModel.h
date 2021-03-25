@@ -32,7 +32,7 @@ class SciPlatformModel: public QAbstractListModel
                NOTIFY condensedAtStartupChanged)
 
 public:
-    SciPlatformModel(strata::BoardManager *boardManager, QObject *parent = nullptr);
+    SciPlatformModel(strata::PlatformManager *platformManager, QObject *parent = nullptr);
     virtual ~SciPlatformModel() override;
 
     enum ModelRole {
@@ -81,7 +81,7 @@ private:
     QHash<int, QByteArray> roleByEnumHash_;
     QHash<QByteArray, int> roleByNameHash_;
 
-    strata::BoardManager *boardManager_ = nullptr;
+    strata::PlatformManager *platformManager_ = nullptr;
     QList<SciPlatform*> platformList_;
     SciPlatformSettings sciSettings_;
 

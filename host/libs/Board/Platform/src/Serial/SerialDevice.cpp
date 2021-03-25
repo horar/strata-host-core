@@ -9,7 +9,7 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
-namespace strata::device::serial {
+namespace strata::device {
 
 SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name)
     : Device(deviceId, name, Type::SerialDevice)

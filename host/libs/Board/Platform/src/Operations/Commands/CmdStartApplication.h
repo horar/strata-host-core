@@ -3,9 +3,9 @@
 
 #include "BasePlatformCommand.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class CmdStartApplication : public BaseDeviceCommand {
+class CmdStartApplication : public BasePlatformCommand {
 public:
     explicit CmdStartApplication(const device::DevicePtr& device);
     QByteArray message() override;

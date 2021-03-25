@@ -11,10 +11,10 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
 CmdFlash::CmdFlash(const device::DevicePtr& device, int chunkCount, bool flashFirmware) :
-    BaseDeviceCommand(device,
+    BasePlatformCommand(device,
                       (flashFirmware) ? QStringLiteral("flash_firmware") : QStringLiteral("flash_bootloader"),
                       (flashFirmware) ? CommandType::FlashFirmware : CommandType::FlashBootloader),
     flashFirmware_(flashFirmware), chunkNumber_(0), chunkCount_(chunkCount),
@@ -76,10 +76,10 @@ bool CmdFlash::processNotification(rapidjson::Document& doc) {
                 const char* binaryType = (flashFirmware_) ? "firmware" : "bootloader";
                 if (retriesCount_ < maxRetries_) {
                     ++retriesCount_;
-                    qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to flash " << binaryType << " chunk.";
+                    qCInfo(logCategoryPlatformOperations) << device_ << "Going to retry to flash " << binaryType << " chunk.";
                     result_ = CommandResult::Retry;
                 } else {
-                    qCWarning(logCategoryDeviceOperations) << device_ << "Reached maximum retries for flash " << binaryType << " chunk.";
+                    qCWarning(logCategoryPlatformOperations) << device_ << "Reached maximum retries for flash " << binaryType << " chunk.";
                 }
             }
         }

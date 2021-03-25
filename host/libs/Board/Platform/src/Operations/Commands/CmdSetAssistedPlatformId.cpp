@@ -8,10 +8,10 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(const DevicePtr &device)
-    : BaseDeviceCommand(device, QStringLiteral("set_assisted_platform_id"), CommandType::SetAssistedPlatformId)
+CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(const device::DevicePtr &device)
+    : BasePlatformCommand(device, QStringLiteral("set_assisted_platform_id"), CommandType::SetAssistedPlatformId)
 {
 }
 
@@ -81,7 +81,7 @@ bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document &doc)
     } else if (jsonStatus == JSON_BOARD_NOT_CONNECTED) {
         status_ = operation::BOARD_NOT_CONNECTED_TO_CONTROLLER;
     } else {
-        qCCritical(logCategoryDeviceOperations) << device_ << "Unknown status string:" << jsonStatus;
+        qCCritical(logCategoryPlatformOperations) << device_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;

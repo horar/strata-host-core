@@ -7,14 +7,14 @@
 
 #include <Device.h>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class BaseDeviceCommand;
+class BasePlatformCommand;
 enum class CommandResult : int;
 
 }
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
 enum class Type: int {
     Identify,
@@ -36,24 +36,24 @@ enum class Result: int {
     Error     // error during operation
 };
 
-class BaseDeviceOperation : public QObject
+class BasePlatformOperation : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(BaseDeviceOperation)
+    Q_DISABLE_COPY(BasePlatformOperation)
 
 protected:
     /*!
-     * BaseDeviceOperation constructor.
+     * BasePlatformOperation constructor.
      * \param device device which will be used by device operation
      * \param type type of operation (value from OperationType enum)
      */
-    BaseDeviceOperation(const device::DevicePtr& device, Type type);
+    BasePlatformOperation(const device::DevicePtr& device, Type type);
 
 public:
     /*!
-     * BaseDeviceOperation destructor.
+     * BasePlatformOperation destructor.
      */
-    virtual ~BaseDeviceOperation();
+    virtual ~BasePlatformOperation();
 
     /*!
      * Run operation.
@@ -153,8 +153,8 @@ protected:
     // Every operation can have specific status when it finishes.
     int status_;
 
-    std::vector<std::unique_ptr<command::BaseDeviceCommand>> commandList_;
-    std::vector<std::unique_ptr<command::BaseDeviceCommand>>::iterator currentCommand_;
+    std::vector<std::unique_ptr<command::BasePlatformCommand>> commandList_;
+    std::vector<std::unique_ptr<command::BasePlatformCommand>>::iterator currentCommand_;
 
     std::function<void(command::CommandResult&, int&)> postCommandHandler_;
 

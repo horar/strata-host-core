@@ -3,13 +3,13 @@
 #include <Operations/BasePlatformOperation.h>
 #include <PlatformOperationsData.h>
 
-namespace strata::device::command {
+namespace strata::platform::command {
     class CmdSetAssistedPlatformId;
 }
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
-class SetAssistedPlatformId : public BaseDeviceOperation {
+class SetAssistedPlatformId : public BasePlatformOperation {
 
 public:
     explicit SetAssistedPlatformId(const device::DevicePtr &device);

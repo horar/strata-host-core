@@ -3,26 +3,26 @@
 
 #include "PlatformManagerIntegrationTest.h"
 
-void BoardManagerIntegrationTest::initTestCase()
+void PlatformManagerIntegrationTest::initTestCase()
 {
 }
 
-void BoardManagerIntegrationTest::cleanupTestCase()
+void PlatformManagerIntegrationTest::cleanupTestCase()
 {
 }
 
-void BoardManagerIntegrationTest::init()
+void PlatformManagerIntegrationTest::init()
 {
 }
 
-void BoardManagerIntegrationTest::cleanup()
+void PlatformManagerIntegrationTest::cleanup()
 {
 }
 
-void BoardManagerIntegrationTest::connectTest()
+void PlatformManagerIntegrationTest::connectTest()
 {
     QEXPECT_FAIL("", "TODO", Continue);
     QVERIFY(false);
 }
 
-// TODO tests for BoardManager + DeviceOperations integration:
+// TODO tests for PlatformManager + PlatformOperations integration:

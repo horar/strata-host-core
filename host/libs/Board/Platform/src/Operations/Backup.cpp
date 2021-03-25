@@ -4,18 +4,18 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::device::operation {
+namespace strata::platform::operation {
 
 using command::CmdStartBackupFirmware;
 using command::CmdBackupFirmware;
 using command::CommandType;
 
 Backup::Backup(const device::DevicePtr& device) :
-    BaseDeviceOperation(device, Type::BackupFirmware), totalChunks_(0)
+    BasePlatformOperation(device, Type::BackupFirmware), totalChunks_(0)
 {
     commandList_.reserve(2);
 
-    // BaseDeviceOperation member device_ must be used as a parameter for commands!
+    // BasePlatformOperation member device_ must be used as a parameter for commands!
     std::unique_ptr<CmdStartBackupFirmware> cmdStartBackupFirmware = std::make_unique<CmdStartBackupFirmware>(device_);
     cmdStartBackup_ = cmdStartBackupFirmware.get();
 
@@ -28,9 +28,9 @@ Backup::Backup(const device::DevicePtr& device) :
 
 void Backup::backupNextChunk()
 {
-    if (BaseDeviceOperation::hasStarted() == false || currentCommand_ == commandList_.end()) {
+    if (BasePlatformOperation::hasStarted() == false || currentCommand_ == commandList_.end()) {
         QString errMsg(QStringLiteral("Cannot backup chunk, backup operation is not running."));
-        qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
+        qCWarning(logCategoryPlatformOperations) << device_ << errMsg;
         finishOperation(Result::Error, errMsg);
         return;
     }
@@ -48,7 +48,7 @@ void Backup::backupNextChunk()
 
     // currentCommand_ may not be the same as in previous if condition
     if ((*currentCommand_)->type() == CommandType::BackupFirmware) {
-         BaseDeviceOperation::resume();
+         BasePlatformOperation::resume();
     }
 }
 

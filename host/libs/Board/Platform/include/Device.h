@@ -9,12 +9,12 @@
 #include <QMutex>
 #include <QReadWriteLock>
 
-namespace strata::device {
+namespace strata::platform {
     namespace command {
-        class BaseDeviceCommand;
+        class BasePlatformCommand;
     }
     namespace operation {
-        class BaseDeviceOperation;
+        class BasePlatformOperation;
     }
 }
 
@@ -29,8 +29,8 @@ namespace strata::device {
         Q_OBJECT
         Q_DISABLE_COPY(Device)
 
-    friend class strata::device::operation::BaseDeviceOperation;
-    friend class strata::device::command::BaseDeviceCommand;
+    friend class strata::platform::operation::BasePlatformOperation;
+    friend class strata::platform::command::BasePlatformCommand;
 
     public:
         /**
@@ -202,7 +202,7 @@ namespace strata::device {
         /**
          * Check if controller is connected to platform (dongle is connected to board).
          * This method must be called after Identify operation finishes or after signal
-         * boardInfoChanged is received from BoardManager.
+         * boardInfoChanged is received from PlatformManager.
          * @return true if controller is connected to platform, false otherwise
          */
         virtual bool isControllerConnectedToPlatform() final;
@@ -231,7 +231,7 @@ namespace strata::device {
         void deviceError(ErrorCode errCode, QString msg);
 
     private:
-      // *** functions used by friend classes BaseDeviceOperation and BaseDeviceCommand:
+      // *** functions used by friend classes BasePlatformOperation and BasePlatformCommand:
         // Does not change property if parameter is nullptr.
         virtual void setVersions(const char* bootloaderVer, const char* applicationVer) final;
         // Clears property if parameter is nullptr.
@@ -255,8 +255,8 @@ namespace strata::device {
         // Mutex for protect access to operationLock_.
         QMutex operationMutex_;
         // If some operation (identification, flashing firmware, ...) is running, device should be locked
-        // for other operations or sending messages. Device can be locked only by DeviceOperations class.
-        // Address of DeviceOperations class instance is used as value of operationLock_. 0 means unlocked.
+        // for other operations or sending messages. Device can be locked only by PlatformOperations class.
+        // Address of PlatformOperations class instance is used as value of operationLock_. 0 means unlocked.
         quintptr operationLock_;
 
     private:

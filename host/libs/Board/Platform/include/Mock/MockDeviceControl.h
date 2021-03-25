@@ -4,7 +4,7 @@
 #include <rapidjson/document.h>
 #include <QString>
 
-namespace strata::device::mock {
+namespace strata::device {
 
 class MockDeviceControl : public QObject
 {
@@ -41,4 +41,4 @@ private:
     MockVersion version_ = MockVersion::version1;
 };
 
-} // namespace strata::device::mock
+} // namespace strata::device

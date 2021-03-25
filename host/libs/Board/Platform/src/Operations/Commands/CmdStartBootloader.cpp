@@ -6,10 +6,10 @@
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
 CmdStartBootloader::CmdStartBootloader(const device::DevicePtr& device) :
-    BaseDeviceCommand(device, QStringLiteral("start_bootloader"), CommandType::StartBootloader)
+    BasePlatformCommand(device, QStringLiteral("start_bootloader"), CommandType::StartBootloader)
 { }
 
 QByteArray CmdStartBootloader::message() {

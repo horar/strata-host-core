@@ -5,9 +5,9 @@
 
 #include <QVector>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-class CmdFlash : public BaseDeviceCommand {
+class CmdFlash : public BasePlatformCommand {
 public:
     CmdFlash(const device::DevicePtr& device, int chunkCount, bool flashFirmware);
     QByteArray message() override;

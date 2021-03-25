@@ -2,69 +2,69 @@
 
 #include <PlatformOperationsStatus.h>
 
-namespace strata::device::command {
+namespace strata::platform::command {
 
-BaseDeviceCommand::BaseDeviceCommand(const DevicePtr& device, const QString& commandName, CommandType cmdType) :
+BasePlatformCommand::BasePlatformCommand(const device::DevicePtr& device, const QString& commandName, CommandType cmdType) :
     cmdName_(commandName), cmdType_(cmdType), device_(device), ackOk_(false),
     result_(CommandResult::InProgress), status_(operation::DEFAULT_STATUS) { }
 
-BaseDeviceCommand::~BaseDeviceCommand() { }
+BasePlatformCommand::~BasePlatformCommand() { }
 
-void BaseDeviceCommand::commandAcknowledged() {
+void BasePlatformCommand::commandAcknowledged() {
     ackOk_ = true;
 }
 
-bool BaseDeviceCommand::isCommandAcknowledged() const {
+bool BasePlatformCommand::isCommandAcknowledged() const {
     return ackOk_;
 }
 
-void BaseDeviceCommand::commandRejected() {
+void BasePlatformCommand::commandRejected() {
     result_ = CommandResult::Reject;
 }
 
-void BaseDeviceCommand::onTimeout() {
+void BasePlatformCommand::onTimeout() {
     // Default result is 'InProgress' - command timed out, finish operation with failure.
     // If timeout is not a problem, reimplement this method and set result to 'Done' or 'Retry'.
     result_ = CommandResult::InProgress;
 }
 
-bool BaseDeviceCommand::logSendMessage() const {
+bool BasePlatformCommand::logSendMessage() const {
     return true;
 }
 
-const QString BaseDeviceCommand::name() const {
+const QString BasePlatformCommand::name() const {
     return cmdName_;
 }
 
-CommandType BaseDeviceCommand::type() const {
+CommandType BasePlatformCommand::type() const {
     return cmdType_;
 }
 
-CommandResult BaseDeviceCommand::result() const {
+CommandResult BasePlatformCommand::result() const {
     return result_;
 }
 
-int BaseDeviceCommand::status() const {
+int BasePlatformCommand::status() const {
     return status_;
 }
 
-void BaseDeviceCommand::setDeviceVersions(const char* bootloaderVer, const char* applicationVer) {
+void BasePlatformCommand::setDeviceVersions(const char* bootloaderVer, const char* applicationVer) {
     device_->setVersions(bootloaderVer, applicationVer);
 }
 
-void BaseDeviceCommand::setDeviceProperties(const char* name, const char* platformId, const char* classId, Device::ControllerType type) {
+void BasePlatformCommand::setDeviceProperties(const char* name, const char* platformId, const char* classId, device::Device::ControllerType type) {
     device_->setProperties(name, platformId, classId, type);
 }
 
-void BaseDeviceCommand::setDeviceAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) {
+void BasePlatformCommand::setDeviceAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) {
     device_->setAssistedProperties(platformId, classId, fwClassId);
 }
 
-void BaseDeviceCommand::setDeviceBootloaderMode(bool inBootloaderMode) {
+void BasePlatformCommand::setDeviceBootloaderMode(bool inBootloaderMode) {
     device_->setBootloaderMode(inBootloaderMode);
 }
 
-void BaseDeviceCommand::setDeviceApiVersion(Device::ApiVersion apiVersion) {
+void BasePlatformCommand::setDeviceApiVersion(device::Device::ApiVersion apiVersion) {
     device_->setApiVersion(apiVersion);
 }
 
