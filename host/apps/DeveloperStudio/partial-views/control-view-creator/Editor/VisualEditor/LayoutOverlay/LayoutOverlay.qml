@@ -58,16 +58,17 @@ LayoutContainer {
 
             onPositionChanged: {
                 if (pressed) {
-                    // todo: invalid placement can be achieved outside layout
-
-                    // need to take into account the pointer position within the mouseArea
+                    // determine mouse pointer position within mouseArea and how it relates to the overlayContainer, converted to row/column API
                     let newPoint = dragMouseArea.mapToItem(overlayContainer, mouse.x-startPoint.x, mouse.y-startPoint.y)
                     let newX = Math.round(newPoint.x/overlayContainer.columnSize) * overlayContainer.columnSize
                     let newY = Math.round(newPoint.y/overlayContainer.rowSize) * overlayContainer.rowSize
-                    let correctedPoint = overlayContainer.mapToItem(layoutOverlayRoot, newX, newY)
+                    newX = Math.max(0, newX) // constrain positional movement to only rows/columns >=0
+                    newY = Math.max(0, newY)
 
-                    rect.x = correctedPoint.x
-                    rect.y = correctedPoint.y
+                    let newPosition = overlayContainer.mapToItem(layoutOverlayRoot, newX, newY)
+
+                    rect.x = newPosition.x
+                    rect.y = newPosition.y
                 }
             }
         }
@@ -153,7 +154,7 @@ LayoutContainer {
                         let newY = Math.round(newPoint.y/overlayContainer.rowSize) * overlayContainer.rowSize
                         let newPosition = overlayContainer.mapToItem(layoutOverlayRoot, newX, newY)
 
-                        rect.width = Math.max(newPosition.x, overlayContainer.columnSize)
+                        rect.width = Math.max(newPosition.x, overlayContainer.columnSize) // size must be >= one column, 1 row. no 0x0 or negative sizes
                         rect.height = Math.max(newPosition.y, overlayContainer.rowSize)
                     }
                 }
