@@ -85,7 +85,6 @@ FocusScope {
 
         property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
         property alias messageWrapEnabled: logViewerMain.messageWrapEnabled
-        property alias indexColumnVisible: checkBoxIndex.checked
         property alias timestampColumnVisible: checkBoxTs.checked
         property alias pidColumnVisible: checkBoxPid.checked
         property alias tidColumnVisible: checkBoxTid.checked
@@ -563,13 +562,6 @@ FocusScope {
                     padding: 5
 
                     SGWidgets.SGCheckBox {
-                        id: checkBoxIndex
-                        text: qsTr("Index")
-                        font.family: "monospace"
-                        checked: indexColumnVisible
-                    }
-
-                    SGWidgets.SGCheckBox {
                         id: checkBoxTs
                         text: qsTr("Timestamp")
                         font.family: "monospace"
@@ -950,7 +942,7 @@ FocusScope {
                         delegate: Item {
                             id: markDelegate
                             width: parent.width
-                            height: mark.height + horizontalDividerMark.height
+                            height: markTimestamp.height + horizontalDividerMark.height
 
                             MouseArea {
                                 id: markDelegateMouseArea
@@ -969,7 +961,7 @@ FocusScope {
 
                                 Rectangle {
                                     id: cellMark
-                                    height: mark.height
+                                    height: markTimestamp.height
                                     width: parent.width - 5
                                     color: markDelegateMouseArea.containsMouse ? "darkgray" : "#eeeeee"
                                 }
@@ -986,26 +978,10 @@ FocusScope {
                                 }
 
                                 SGWidgets.SGText {
-                                    id: mark
-                                    topPadding: 5
-                                    bottomPadding: 5
-                                    anchors.left: markIcon.right
-                                    anchors.leftMargin: 5
-                                    anchors.verticalCenter: cellMark.verticalCenter
-                                    text: {
-                                        //hackVariable is re-calculated once the sourceModel's count changes
-                                        var hackVariable = markedModel.sourceModel.count
-                                        //re-evaluates the model.index once the hackVariable changes
-                                        return markedModel.mapIndexToSource(model.index) + 1
-                                    }
-                                    elide: Text.ElideRight
-                                }
-
-                                SGWidgets.SGText {
                                     id: markTimestamp
                                     topPadding: 5
                                     bottomPadding: 5
-                                    anchors.left: mark.right
+                                    anchors.left: markIcon.right
                                     anchors.leftMargin: 15
                                     anchors.right: cellMark.right
                                     anchors.verticalCenter: cellMark.verticalCenter
@@ -1053,7 +1029,7 @@ FocusScope {
                     visible: fileLoaded && showMarks === false
                     focus: true
 
-                    indexColumnVisible: checkBoxIndex.checked
+                    indexColumnVisible: false
                     timestampColumnVisible: checkBoxTs.checked
                     pidColumnVisible: checkBoxPid.checked
                     tidColumnVisible: checkBoxTid.checked
@@ -1090,7 +1066,7 @@ FocusScope {
                         anchors.margins: 2
                         model: searchResultModel
 
-                        indexColumnVisible: checkBoxIndex.checked
+                        indexColumnVisible: false
                         timestampColumnVisible: checkBoxTs.checked
                         pidColumnVisible: checkBoxPid.checked
                         tidColumnVisible: checkBoxTid.checked
