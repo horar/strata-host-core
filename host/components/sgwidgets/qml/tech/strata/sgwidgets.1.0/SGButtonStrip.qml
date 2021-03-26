@@ -4,8 +4,8 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Item {
     id: control
-    width: strip.width
-    height: strip.height
+    implicitWidth: strip.width
+    implicitHeight: strip.height
 
     property alias model: repeater.model
     readonly property alias count: repeater.count

@@ -6,8 +6,8 @@ Slider {
     id: root
     padding: 0
     value: 0
-    height: 28
-    width: 300
+    implicitHeight: 28
+    implicitWidth: 300
     live: false
     layer.enabled: true
 

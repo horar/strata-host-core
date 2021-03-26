@@ -44,15 +44,14 @@ var mapping = {
         activelyFiltering: false,
         row: -1
     },
-    // Commented out per Will Abdeh request, to be uncommented in future release
-    //            "category-power-management": {
-    //                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
-    //                text: "Power Management",
-    //                type: "category",
-    //                inUse: false,
-    //    activelyFiltering: false,
-    //    row: -1
-    //            },
+    "subcategory-powerman-battery": {
+        iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
+        text: "Battery Management",
+        type: "category",
+        inUse: false,
+        activelyFiltering: false,
+        row: -1
+    },
     "subcategory-powerman-load-switch": {
         iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/load_switches.svg",
         text: "Load Switches",
