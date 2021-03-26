@@ -19,6 +19,7 @@ find_package(Qt5 ${VERSION_QT5}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE Qt5::Core
     PRIVATE StrataRPC-StrataServer
+    PRIVATE strata::QtLogger
 )
 
 set_target_properties(${PROJECT_NAME}

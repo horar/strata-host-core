@@ -1,14 +1,22 @@
 #include "Client.h"
 
+#include <QtLoggerSetup.h>
 #include <QCommandLineParser>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QSettings>
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setApplicationName(QStringLiteral("strataRPC Client Sample"));
+    QApplication::setOrganizationName("ON Semiconductor");
     QApplication app(argc, argv);
+
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
 
     QCommandLineParser parser;
     parser.addHelpOption();

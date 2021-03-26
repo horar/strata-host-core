@@ -21,6 +21,7 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE Qt5::Quick
     PRIVATE Qt5::Widgets
     PRIVATE StrataRPC-StrataClient
+    PRIVATE strata::QtLogger
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
