@@ -17,14 +17,20 @@ Popup {
         }
     }
 
+    onClosed: {
+        contextLoader.active = false
+    }
+
     ColumnLayout {
         spacing: 1
 
         ContextMenuButton {
             text: "Set ID"
             onClicked: {
-                renamePopup.text = layoutOverlayRoot.objectName
-                renamePopup.open()
+                renameLoader.active = true
+                renameLoader.item.text = layoutOverlayRoot.objectName
+                renameLoader.item.open()
+                contextMenu.close()
             }
         }
 
@@ -32,6 +38,7 @@ Popup {
             text: "Duplicate"
             onClicked: {
                 visualEditor.functions.duplicateControl(layoutOverlayRoot.layoutInfo.uuid)
+                contextMenu.close()
             }
         }
 
@@ -39,6 +46,7 @@ Popup {
             text: "Bring To Front"
             onClicked: {
                 visualEditor.functions.bringToFront(layoutOverlayRoot.layoutInfo.uuid)
+                contextMenu.close()
             }
         }
 
@@ -46,6 +54,27 @@ Popup {
             text: "Delete"
             onClicked: {
                 visualEditor.functions.removeControl(layoutOverlayRoot.layoutInfo.uuid)
+                contextMenu.close()
+            }
+        }
+
+        Rectangle {
+            // divider
+            color: "grey"
+            Layout.fillWidth: true
+            implicitHeight: 1
+            visible: extraContextLoader.source !== ""
+        }
+
+        Loader {
+            id: extraContextLoader
+            source: {
+                switch (layoutOverlayRoot.type) {
+                case "LayoutRectangle":
+                    return "qrc:/partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml"
+                default:
+                    return ""
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ ColumnLayout {
     id: visualEditor
     spacing: 0
 
-    property bool layoutDebugMode: false
+    property bool layoutDebugMode: true
     property var overlayObjects: []
     property string file: ""
     property string fileContents: ""
@@ -83,6 +83,7 @@ ColumnLayout {
 
                 // overlay's object name is equivalent to the id of the item since id's are not accessible at runtime
                 overLayObject.objectName = functions.getId(item.layoutInfo.uuid)
+                overLayObject.type = functions.getType(item.layoutInfo.uuid)
                 overLayObject.layoutInfo.uuid = item.layoutInfo.uuid
                 overLayObject.layoutInfo.columnsWide = item.layoutInfo.columnsWide
                 overLayObject.layoutInfo.rowsTall = item.layoutInfo.rowsTall

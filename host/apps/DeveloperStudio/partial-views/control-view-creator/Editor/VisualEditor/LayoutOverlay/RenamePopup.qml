@@ -25,9 +25,13 @@ Popup {
     property alias text: textField.text
 
     onVisibleChanged: {
-        textField.selectAll()
-        textField.forceActiveFocus()
+        if (visible) {
+            textField.selectAll()
+            textField.forceActiveFocus()
+        }
     }
+
+    onClosed: renameLoader.active = false
 
     ColumnLayout {
 

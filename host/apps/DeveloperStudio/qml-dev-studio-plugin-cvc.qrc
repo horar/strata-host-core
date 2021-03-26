@@ -40,5 +40,6 @@
         <file alias="Editor/VisualEditor/LayoutOverlay/LayoutOverlay.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/LayoutOverlay.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/RenamePopup.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/RenamePopup.qml</file>
         <file alias="Editor/VisualEditor/LayoutOverlay/resize.svg">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/resize.svg</file>
+        <file alias="Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml">partial-views/control-view-creator/Editor/VisualEditor/LayoutOverlay/TypeContextMenus/RectangleContextMenu.qml</file>
     </qresource>
 </RCC>

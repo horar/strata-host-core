@@ -24,7 +24,7 @@ RowLayout {
     }
 
     Button {
-        text: "Layout mode: " + visualEditor.layoutDebugMode
+        text: "Layout mode"
         checkable: true
         checked: visualEditor.layoutDebugMode
         implicitHeight: viewSelector.height

@@ -7,10 +7,6 @@ Button {
     implicitHeight: 20
     Layout.fillWidth: true
 
-    onClicked: {
-        contextMenu.close()
-    }
-
     MouseArea {
         id: mouse
         anchors {
@@ -19,6 +15,6 @@ Button {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
 
-        onPressed:  mouse.accepted = false
+        onPressed: mouse.accepted = false
     }
 }

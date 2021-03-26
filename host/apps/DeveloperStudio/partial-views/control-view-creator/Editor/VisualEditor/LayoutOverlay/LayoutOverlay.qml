@@ -10,6 +10,8 @@ LayoutContainer {
     id: layoutOverlayRoot
     visible: layoutDebugMode
 
+    property string type: ""
+
     Item { // contentItem in LayoutContainer
 
         MouseArea {
@@ -32,9 +34,10 @@ LayoutContainer {
 
             onClicked: {
                 if (mouse.button == Qt.RightButton) {
-                    contextMenu.x = mouse.x
-                    contextMenu.y = mouse.y
-                    contextMenu.open()
+                    contextLoader.active = true
+                    contextLoader.item.x = mouse.x
+                    contextLoader.item.y = mouse.y
+                    contextLoader.item.open()
                 }
             }
 
@@ -83,18 +86,28 @@ LayoutContainer {
         }
 
         Rectangle {
-            opacity: .75
+            opacity: .85
             anchors {
                 fill: nameString
             }
         }
 
-        Text {
+        ColumnLayout {
             id: nameString
             x: 1
             y: x
-            font.pixelSize: 10
-            text: layoutOverlayRoot.objectName //+ " - " + layoutOverlayRoot.layoutInfo.uuid
+            spacing: 2
+
+            Text {
+                font.pixelSize: 10
+                text: layoutOverlayRoot.objectName
+            }
+
+            Text {
+                font.pixelSize: 8
+                text: layoutOverlayRoot.type
+                opacity: .5
+            }
         }
 
         Image {
@@ -161,12 +174,20 @@ LayoutContainer {
             }
         }
 
-        ContextMenu {
-            id: contextMenu
+        Loader {
+            id: contextLoader
+            active: false
+            sourceComponent: ContextMenu {
+                id: contextMenu
+            }
         }
 
-        RenamePopup {
-            id: renamePopup
+        Loader {
+            id: renameLoader
+            active: false
+            sourceComponent: RenamePopup {
+                id: renamePopup
+            }
         }
     }
 }

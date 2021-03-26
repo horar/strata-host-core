@@ -38,17 +38,21 @@ QtObject {
         if (loader.children[0] && loader.children[0].objectName === "UIBase") {
             overlayContainer.rowCount = loader.children[0].rowCount
             overlayContainer.columnCount = loader.children[0].columnCount
-            allChildren(loader.children[0])
+            identifyChildren(loader.children[0])
         } else {
-            // todo: this catches many errors and labels all as "does not derive from UIBase" - needs to handle all better
-            console.log("Visual Editor error: file does not derive from UIBase")
-            loader.setSource("qrc:/partial-views/SGLoadError.qml") // todo: modify primary text in SGLoadError as well as error message, allow more specific message here than "platform user interface"
-            loader.item.error_message = "File does not derive from UIBase"
             // todo: disable visual editor controls
+            if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
+                loader.setSource("qrc:/partial-views/SGLoadError.qml") // todo: modify primary text in SGLoadError as well as error message, allow more specific message here than "platform user interface"
+                console.log("Visual Editor error: file does not derive from UIBase")
+                loader.item.error_message = "File does not derive from UIBase"
+            } else {
+                loader.setSource("qrc:/partial-views/SGLoadError.qml")
+                loader.item.error_message = "Build error, see logs"
+            }
         }
     }
 
-    function allChildren(item){
+    function identifyChildren(item){
         // console.log("Item:", item.uuid)
         if (item.hasOwnProperty("layoutInfo")){
             overlayContainer.createOverlay(item)
@@ -56,7 +60,7 @@ QtObject {
 
         for (let i = 0; i < item.children.length; i++) {
             if (item.children[i].objectName !== "UIBase") { // don't examine children made up of a separate UIBase (e.g. composite widgets also created in VisualEditor)
-                allChildren(item.children[i])
+                identifyChildren(item.children[i])
             }
         }
     }
@@ -127,6 +131,13 @@ QtObject {
         let capture2 = "(.*)"
         let capture3 = "[\\s\\S]*?end_" + uuid + ""
         let regex = new RegExp(capture1 + capture2 + capture3)
+        return fileContents.match(regex)[1];
+    }
+
+    function getType(uuid) {
+        let capture1 = "([A-Za-z0-9_]+)" // qml object type, e.g. Rectangle
+        let capture2 = "\\s*{\\s*\/\/\\s*start_" + uuid
+        let regex = new RegExp(capture1 + capture2)
         return fileContents.match(regex)[1];
     }
 
