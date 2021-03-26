@@ -54,14 +54,15 @@ private slots:
 
 protected slots:
     void handleOperationFinished(strata::device::operation::Result result, int, QString);
-    void handleSendCommand();
-    void handleCmdResult();
+    void handleFlashSendCommand();
+    void handleFlashCmdResult();
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     void connectHandlers(strata::device::operation::BaseDeviceOperation* operation);
+    void connectFlashHandlers(strata::device::operation::BaseDeviceOperation* operation);
 
     std::shared_ptr<strata::device::mock::MockDevice> device_;
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
@@ -70,7 +71,7 @@ private:
     int operationFinishedCount_ = 0;
     int operationTimeoutCount_ = 0;
     int operationFailureCount_ = 0;
-    int sendCommandCount_ = 0;
-    int cmdResultCount_ = 0;
-    int amountOfChunks_ = 0;
+    int flashSendCommandCount_ = 0;
+    int flashCmdResultCount_ = 0;
+    int flashAmountOfChunks_ = 0;
 };
