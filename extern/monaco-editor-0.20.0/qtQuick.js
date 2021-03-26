@@ -383,7 +383,7 @@ function registerQmlAsLanguage() {
             }
         } 
 
-        return Object.values(functionSuggestions)
+        return Object.values(suggestions)
     }
 
     // Initializes the library to become an Object array to be feed into suggestions
@@ -525,7 +525,11 @@ function registerQmlAsLanguage() {
                 topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
                 bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
                 var getId = model.findNextMatch("id:", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
-                initializeQtQuick(model)
+                if(position.lineNumber >= topOfFile.range.startLineNumber && position.lineNumber <= bottomOfFile.range.startLineNumber ){
+                    initializeQtQuick(model)
+                } else {
+                    return {suggestions: []}
+                }
                 if (getId !== null && getId !== undefined) {
                     var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
