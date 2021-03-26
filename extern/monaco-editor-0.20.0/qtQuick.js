@@ -305,6 +305,7 @@ function registerQmlAsLanguage() {
         var nextMatch = model.findNextMatch("}", position, false, false)
         var nextnextMatch = model.findNextMatch("}", { lineNumber: nextMatch.range.startLineNumber, column: nextMatch.range.endColumn }, false, false)
         var prevprevMatch = model.findPreviousMatch("{", { lineNumber: prevMatch.range.startLineNumber, column: prevMatch.range.startColumn }, false, false)
+
         //Edge Case 4: this is when there is only one QtItem, most common is when we create a new file
         if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
 
@@ -381,7 +382,23 @@ function registerQmlAsLanguage() {
             } else if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent)) {
                 return retrieveType(model, propRange)
             }
-        } 
+        } else if(position.lineNumber > prevMatch.range.startLineNumber && position.lineNumber > prevBracketMatch.range.startLineNumber){
+            var prevParent = findPreviousBracketParent(model, position)
+            if(qtObjectKeyValues.hasOwnProperty(prevParent)){
+                propRange = {
+                    startLineNumber: position.lineNumber,
+                    endLineNumber: nextMatch.range.startLineNumber,
+                    startColumn: position.column,
+                    endColumn: nextMatch.range.endColumn,
+                }
+                convertStrArrayToObjArray(prevParent, qtObjectKeyValues[prevParent].properties, qtObjectKeyValues[prevParent].flag, false, prevParent)
+                if (currentItems[prevParent] === undefined) {
+                    currentItems[prevParent] = {}
+                }
+                currentItems[prevParent][propRange] = qtObjectPropertyValues[prevParent]
+                return currentItems[prevParent][propRange]
+            }
+        }
 
         return Object.values(suggestions)
     }
@@ -655,7 +672,7 @@ function registerQmlAsLanguage() {
             }
             currentItems[bracketWord][propRange] = qtObjectPropertyValues[bracketWord]
             return currentItems[bracketWord][propRange]
-        } else if (bracketWord.includes("function") || bracketWord.includes("on") || bracketWord.includes("if")) {
+        } else if (bracketWord.includes("function") || bracketWord.substring(0,2) === "on" || bracketWord.includes("if")) {
             //display signal Calls, function Calls, ids properties and function,signal, calls
             return Object.values(functionSuggestions)
         } else {
@@ -669,8 +686,21 @@ function registerQmlAsLanguage() {
                 return currentItems[bracketWord][propRange]
             } else {
                 const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber, column: propRange.startColumn })
-                if(prevParent.includes("functions") || prevParent.includes("on")|| prevParent.includes("if")){
+                if(prevParent.includes("functions") || prevParent.substring(0,2) === "on"|| prevParent.includes("if")){
                     return Object.values(functionSuggestions)
+                }
+                if(bracketWord.includes(":")){
+                    var propertyItem = bracketWord.split(":")[1].trim()
+                    if(qtObjectKeyValues.hasOwnProperty(propertyItem)){
+                        convertStrArrayToObjArray(propertyItem, qtObjectKeyValues[propertyItem].properties, qtObjectKeyValues[propertyItem].flag, qtObjectKeyValues[propertyItem].isId, propertyItem)
+                        if (currentItems[propertyItem] === undefined) {
+                            currentItems[propertyItem] = {}
+                        }
+                        currentItems[propertyItem][propRange] = qtObjectPropertyValues[propertyItem]
+                        return currentItems[propertyItem][propRange]
+                    } else {
+                        return []
+                    }
                 }
                 return Object.values(suggestions)
             }
