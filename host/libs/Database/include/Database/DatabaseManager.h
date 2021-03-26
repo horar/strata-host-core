@@ -1,11 +1,13 @@
 #pragma once
 
-#include "../src/CouchbaseDatabase.h"
+#include "DatabaseAccess.h"
 
 namespace strata::Database
 {
 
 class DatabaseAccess;
+
+class DatabaseLib;
 
 class DatabaseManager
 {
@@ -18,11 +20,11 @@ public:
 
     DatabaseManager(const DatabaseManager&) = delete;
 
-    bool init(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
+    bool init(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener = nullptr);
 
-    DatabaseAccess* login(const QString &name, const QString &channelsRequested, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
+    DatabaseAccess* login(const QString &name, const QString &channelsRequested, std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener = nullptr);
 
-    DatabaseAccess* login(const QString &name, const QStringList &channelsRequested, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr);
+    DatabaseAccess* login(const QString &name, const QStringList &channelsRequested, std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener = nullptr, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener = nullptr);
 
     bool joinChannel(const QString &strataLoginUsername, const QString &channel);
 

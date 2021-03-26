@@ -1,9 +1,8 @@
 #include "logging/LoggingQtCategories.h"
 #include "Database/DatabaseManager.h"
-#include "Database/DatabaseAccess.h"
+#include "CouchbaseDatabase.h"
 
 #include <QDir>
-#include <QJsonDocument>
 #include <QJsonArray>
 
 #include <thread>
@@ -18,10 +17,9 @@ DatabaseManager::~DatabaseManager() {
     delete userAccessDb_;
 }
 
-bool DatabaseManager::init(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {
+bool DatabaseManager::init(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
     path_ = path;
     endpointURL_ = endpointURL;
-
     userAccessDb_ = getUserAccessMap();
 
     // Object valid if database open successful
@@ -38,7 +36,7 @@ bool DatabaseManager::init(const QString &path, const QString &endpointURL, std:
     return true;
 }
 
-DatabaseAccess* DatabaseManager::login(const QString &name, const QString &channelsRequested, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {
+DatabaseAccess* DatabaseManager::login(const QString &name, const QString &channelsRequested, std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
     if (channelsRequested.isEmpty() || channelsRequested == "*" || channelsRequested == "all") {
         return login(name, QStringList(), changeListener, documentListener);
     } else {
@@ -47,7 +45,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QString &chann
     }
 }
 
-DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &channelsRequested, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {
+DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &channelsRequested, std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
     if (name.isEmpty()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: username cannot be empty";
         return nullptr;

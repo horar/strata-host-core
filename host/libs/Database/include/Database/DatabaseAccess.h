@@ -1,11 +1,21 @@
 #pragma once
 
-#include "../src/CouchbaseDatabase.h"
-
 #include <vector>
+
+#include <QString>
+#include <QJsonObject>
+#include <QStringList>
+
+namespace cbl {
+    class Replicator;
+}
 
 namespace strata::Database
 {
+
+class CouchbaseDocument;
+
+class CouchbaseDatabase;
 
 class DatabaseAccess
 {
@@ -56,24 +66,23 @@ public:
         PushAndPull
     };
 
-    /**
-     * Initializes and starts the DB replicator
-     * @param url replicator / sync-gateway URL to connect to
-     * @param token sync-gateway authentication token
-     * @param cookieName sync-gateway authentication cookie name
-     * @param channels replication channels (optional)
-     * @param type push/pull/push and pull (optional)
-     * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
-     * @param reconnection_policy default behavior or automatically try to reconnect (optional)
-     * @return true when succeeded, otherwise false
-     */
-    bool startSessionReplicator(const QString &url,
-                         const QString &token = "",
-                         const QString &cookieName = "",
-                         const ReplicatorType &replicatorType = ReplicatorType::Pull,
-                         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr,
-                         std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr,
-                         bool continuous = false);
+    enum class ActivityLevel {
+        ReplicatorStopped,    ///< The replicator is unstarted, finished, or hit a fatal error.
+        ReplicatorOffline,    ///< The replicator is offline, as the remote host is unreachable.
+        ReplicatorConnecting, ///< The replicator is connecting to the remote host.
+        ReplicatorIdle,       ///< The replicator is inactive, waiting for changes to sync.
+        ReplicatorBusy        ///< The replicator is actively transferring data.
+    };
+
+    typedef struct {
+        ActivityLevel activityLevel;
+        int error;
+    } ReplicatorStatus;
+
+    typedef struct {
+        QString id;
+        int error;
+    } ReplicatedDocument;
 
     /**
      * Initializes and starts the DB replicator
@@ -87,12 +96,31 @@ public:
      * @return true when succeeded, otherwise false
      */
     bool startBasicReplicator(const QString &url,
-                         const QString &username = "",
-                         const QString &password = "",
-                         const ReplicatorType &replicatorType = ReplicatorType::Pull,
-                         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr,
-                         std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr,
-                         bool continuous = false);
+        const QString &username = "",
+        const QString &password = "",
+        const ReplicatorType &replicatorType = ReplicatorType::Pull,
+        std::function<void(cbl::Replicator rep, const ActivityLevel &status)> changeListener = nullptr,
+        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
+        bool continuous = false);
+
+    /**
+     * Initializes and starts the DB replicator
+     * @param url replicator / sync-gateway URL to connect to
+     * @param token sync-gateway authentication token
+     * @param cookieName sync-gateway authentication cookie name
+     * @param channels replication channels (optional)
+     * @param type push/pull/push and pull (optional)
+     * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
+     * @param reconnection_policy default behavior or automatically try to reconnect (optional)
+     * @return true when succeeded, otherwise false
+     */
+    bool startSessionReplicator(const QString &url,
+        const QString &token = "",
+        const QString &cookieName = "",
+        const ReplicatorType &replicatorType = ReplicatorType::Pull,
+        std::function<void(cbl::Replicator rep, const ActivityLevel &status)> changeListener = nullptr,
+        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
+        bool continuous = false);
 
     void stopReplicator();
 
@@ -109,15 +137,11 @@ private:
 
     std::vector<std::unique_ptr<CouchbaseDatabase>> database_map_;
 
-    std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback_ = nullptr;
+    std::function<void(cbl::Replicator rep, const ActivityLevel &status)> change_listener_callback_ = nullptr;
 
-    std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
+    std::function<void(cbl::Replicator, bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
 
     CouchbaseDatabase* getBucket(const QString &bucketName);
-
-    void default_changeListener(cbl::Replicator, const CBLReplicatorStatus &status);
-
-    void default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 };
 
 } // namespace strata::Database

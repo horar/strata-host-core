@@ -1,8 +1,8 @@
 #include <thread>
 
 #include "Database/DatabaseManager.h"
-#include "Database/DatabaseAccess.h"
 #include "Database/CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDir>
 #include <QDebug>
@@ -16,7 +16,7 @@ const QString endpointUsername = "user_public";
 
 int main() {
     // Open database manager
-    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
+    auto changeListener = [](cbl::Replicator, const DatabaseAccess::ActivityLevel) {
         qDebug() << "DatabaseManager-sampleapp changeListener -> replication status changed!";
     };
 

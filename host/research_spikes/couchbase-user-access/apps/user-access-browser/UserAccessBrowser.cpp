@@ -1,7 +1,5 @@
 #include "UserAccessBrowser.h"
-#include "Database/DatabaseManager.h"
-#include "Database/DatabaseAccess.h"
-#include "Database/CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDebug>
 
@@ -43,8 +41,8 @@ void UserAccessBrowser::clearUserDir(const QString &loginUsername) {
     DB_->clearUserDir(loginUsername, databaseManager_->getDbDirName());
 }
 
-void UserAccessBrowser::changeListener(cbl::Replicator, const CBLReplicatorStatus &status) {
-    if (databaseManager_ && status.activity == kCBLReplicatorIdle) {
+void UserAccessBrowser::changeListener(cbl::Replicator, const DatabaseAccess::ActivityLevel &status) {
+    if (databaseManager_ && status == DatabaseAccess::ActivityLevel::ReplicatorIdle) {
         auto allChannelsGranted = databaseManager_->readChannelsAccessGrantedOfUser(loginUsername_);
         auto allChannelsDenied = databaseManager_->readChannelsAccessDeniedOfUser(loginUsername_);
         auto allDocumentIDs = getAllDocumentIDs();

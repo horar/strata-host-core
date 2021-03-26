@@ -2,8 +2,15 @@
 
 #include <string>
 
-#include "Database/DatabaseLib.h"
-#include "../src/CouchbaseDatabase.h"
+namespace cbl {
+    class MutableDocument;
+}
+
+namespace fleece {
+    class MutableDict;
+    struct slice;
+    template <class Collection, class Key> class keyref;
+}
 
 namespace strata::Database
 {
@@ -19,9 +26,9 @@ public:
 
     bool setBody(const QString &body);
 
-    fleece::keyref<fleece::MutableDict, fleece::slice> operator[] (const std::string &key);
-
     void tagChannelField(const std::vector<std::string> &channels);
+
+    fleece::keyref<fleece::MutableDict, fleece::slice> operator[] (const std::string &key);
 
 private:
     std::unique_ptr<cbl::MutableDocument> mutable_doc_;

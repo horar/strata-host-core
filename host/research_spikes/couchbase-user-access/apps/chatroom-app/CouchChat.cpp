@@ -1,6 +1,6 @@
 #include "CouchChat.h"
-#include "Database/DatabaseManager.h"
-#include "Database/DatabaseAccess.h"
+#include "Database/CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDebug>
 #include <thread>
@@ -61,20 +61,20 @@ void CouchChat::sendMessage(const QString &message) {
     }
 }
 
-void CouchChat::documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
+void CouchChat::documentListener(cbl::Replicator, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents) {
     qDebug() << "---" << documents.size() << "docs" << (isPush ? "pushed:" : "pulled:");
     if (DB_ == nullptr) {
         return;
     }
-    if (documents.size() == 2 && (documents[0].ID == documents[1].ID)) {
-        qDebug() << documents[0].ID;
-        auto result_obj = DB_->getDocumentAsJsonObj(documents[0].ID, channelName_);
+    if (documents.size() == 2 && (documents[0].id == documents[1].id)) {
+        qDebug() << documents[0].id;
+        auto result_obj = DB_->getDocumentAsJsonObj(documents[0].id, channelName_);
         auto user = result_obj.value("user");
         auto msg = result_obj.value("msg");
         emit receivedMessage(user.toString(), msg.toString());
     } else for (unsigned i = 0; i < documents.size(); ++i) {
-        qDebug() << documents[i].ID;
-        auto result_obj = DB_->getDocumentAsJsonObj(documents[i].ID, channelName_);
+        qDebug() << documents[i].id;
+        auto result_obj = DB_->getDocumentAsJsonObj(documents[i].id, channelName_);
         auto user = result_obj.value("user");
         auto msg = result_obj.value("msg");
         emit receivedMessage(user.toString(), msg.toString());

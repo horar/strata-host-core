@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../src/CouchbaseDatabase.h"
+#include "DatabaseAccess.h"
 
 #include <QObject>
 
@@ -8,6 +8,7 @@ namespace strata::Database
 {
 
 class CouchbaseDocument;
+
 class CouchbaseDatabase;
 
 class DatabaseLib : public QObject
@@ -73,19 +74,20 @@ public:
      * @param username sync-gateway username (optional)
      * @param password sync-gateway password (optional)
      * @param channels replication channels (optional)
-     * @param type push/pull/push and pull (optional)
-     * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
-     * @param reconnection_policy default behavior or automatically try to reconnect (optional)
+     * @param replicatorType push/pull/push and pull (optional)
+     * @param changeListener function handle (optional, default is used)
+     * @param documentListener function handle (optional, default is used)
+     * @param continuous replicator continuous (optional, default to one-shot)
      * @return true when succeeded, otherwise false
      */
     bool startBasicReplicator(const QString &url,
-                         const QString &username = "",
-                         const QString &password = "",
-                         const QStringList &channels = QStringList(),
-                         const QString &replicator_type = "",
-                         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr,
-                         std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr,
-                         bool continuous = false);
+        const QString &username = "",
+        const QString &password = "",
+        const QStringList &channels = QStringList(),
+        const QString &replicatorType = "",
+        std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener = nullptr,
+        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener = nullptr,
+        bool continuous = false);
 
     void stopReplicator();
 
@@ -96,13 +98,9 @@ public:
 private:
     std::unique_ptr<CouchbaseDatabase> database_;
 
-    std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr;
+    std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> change_listener_callback_ = nullptr;
 
-    std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr;
-
-    void default_changeListener(cbl::Replicator, const CBLReplicatorStatus &status);
-
-    void default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
+    std::function<void(cbl::Replicator, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
 };
 
 } // namespace strata::Database

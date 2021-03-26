@@ -7,20 +7,15 @@
 #include <QJsonObject>
 
 #include <couchbase-lite-C/CouchbaseLite.hh>
-#include "Database/CouchbaseDocument.h"
-#include "Database/DatabaseLib.h"
 
 namespace strata::Database
 {
-
-class DatabaseLib;
 
 class CouchbaseDocument;
 
 class CouchbaseDatabase : public QObject
 {
     Q_OBJECT
-    friend class CouchbaseDocument;
 
 public:
     /**
@@ -85,36 +80,23 @@ public:
         kPushAndPull
     };
 
-    enum class ConflictResolutionPolicy {
-        kDefaultBehavior,
-        kResolveToRemoteRevision
+    enum class SGActivityLevel {
+        CBLReplicatorStopped,    ///< The replicator is unstarted, finished, or hit a fatal error.
+        CBLReplicatorOffline,    ///< The replicator is offline, as the remote host is unreachable.
+        CBLReplicatorConnecting, ///< The replicator is connecting to the remote host.
+        CBLReplicatorIdle,       ///< The replicator is inactive, waiting for changes to sync.
+        CBLReplicatorBusy        ///< The replicator is actively transferring data.
     };
 
-    enum class ReconnectionPolicy {
-        kDefaultBehavior,
-        kAutomaticallyReconnect
-    };
+    typedef struct {
+        SGActivityLevel activityLevel;
+        int error;
+    } SGReplicatorStatus;
 
-    /**
-     * Initializes and starts the DB replicator
-     * @param url replicator / sync-gateway URL to connect to
-     * @param token sync-gateway authentication token
-     * @param cookie_name sync-gateway authentication cookie name
-     * @param channels replication channels (optional)
-     * @param type push/pull/push and pull (optional)
-     * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
-     * @param reconnection_policy default behavior or automatically try to reconnect (optional)
-     * @return true when succeeded, otherwise false
-     */
-    bool startSessionReplicator(const std::string &url,
-                         const std::string &token = "",
-                         const std::string &cookie_name = "",
-                         const std::vector<std::string> &channels = std::vector<std::string>(),
-                         const ReplicatorType &replicatorType = ReplicatorType::kPull,
-                         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr,
-                         std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr,
-                         bool continuous = false
-                        );
+    typedef struct {
+        std::string id;
+        int error;
+    } SGReplicatedDocument;
 
     /**
      * Initializes and starts the DB replicator
@@ -122,24 +104,49 @@ public:
      * @param username sync-gateway username (optional)
      * @param password sync-gateway password (optional)
      * @param channels replication channels (optional)
-     * @param type push/pull/push and pull (optional)
-     * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
-     * @param reconnection_policy default behavior or automatically try to reconnect (optional)
+     * @param replicatorType push/pull/push and pull (optional)
+     * @param change_listener_callback
+     * @param document_listener_callback
+     * @param continuous
      * @return true when succeeded, otherwise false
      */
     bool startBasicReplicator(const std::string &url,
-                         const std::string &username = "",
-                         const std::string &password = "",
-                         const std::vector<std::string> &channels = std::vector<std::string>(),
-                         const ReplicatorType &replicatorType = ReplicatorType::kPull,
-                         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr,
-                         std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr,
-                         bool continuous = false
-                        );
+        const std::string &username = "",
+        const std::string &password = "",
+        const std::vector<std::string> &channels = std::vector<std::string>(),
+        const ReplicatorType &replicatorType = ReplicatorType::kPull,
+        std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback = nullptr,
+        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback = nullptr,
+        bool continuous = false
+        );
+
+    /**
+     * Initializes and starts the DB replicator
+     * @param url replicator / sync-gateway URL to connect to
+     * @param token sync-gateway authentication token
+     * @param cookieName sync-gateway authentication cookie name
+     * @param channels replication channels (optional)
+     * @param type push/pull/push and pull (optional)
+     * @param change_listener_callback
+     * @param document_listener_callback
+     * @param continuous
+     * @return true when succeeded, otherwise false
+     */
+    bool startSessionReplicator(const std::string &url,
+        const std::string &token = "",
+        const std::string &cookieName = "",
+        const std::vector<std::string> &channels = std::vector<std::string>(),
+        const ReplicatorType &replicatorType = ReplicatorType::kPull,
+        std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback = nullptr,
+        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback = nullptr,
+        bool continuous = false
+        );
 
     void stopReplicator();
 
-    std::string getReplicatorStatus();
+    CouchbaseDatabase::SGActivityLevel getReplicatorStatus();
+
+    std::string getReplicatorStatusString();
 
     int getReplicatorError();
 
@@ -150,28 +157,6 @@ public:
     static void logReceived(CBLLogDomain domain, CBLLogLevel level, const char *message);
 
 private:
-    struct LatestReplicationInformation {
-        std::string url;
-        std::string username;
-        std::string password;
-        std::vector<std::string> channels;
-        ReplicatorType replicatorType;
-        std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback;
-        std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback;
-        bool continuous;
-
-        void reset () {
-            url = "";
-            username = "";
-            password = "";
-            channels.clear();
-            replicatorType = ReplicatorType::kPull;
-            change_listener_callback = nullptr;
-            document_listener_callback = nullptr;
-            continuous = false;
-        }
-    };
-
     bool documentExistInDB(const std::string &id);
 
     void replicatorStatusChanged(cbl::Replicator rep, const CBLReplicatorStatus &status);
@@ -180,7 +165,9 @@ private:
 
     std::string database_name_;
     std::string database_path_;
-    std::string status_;
+
+    SGActivityLevel status_;
+
     int error_code_ = 0;
 
     std::unique_ptr<cbl::Database> database_;
@@ -191,8 +178,8 @@ private:
     std::unique_ptr<cbl::Replicator::ChangeListener> ctoken_ = nullptr;
     std::unique_ptr<cbl::Replicator::DocumentListener> dtoken_ = nullptr;
 
-    LatestReplicationInformation latest_replication_;
-    bool is_retry_ = false;
+    std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback_;
+    std::function<void(cbl::Replicator, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback_;
 };
 
 } // namespace strata::Database

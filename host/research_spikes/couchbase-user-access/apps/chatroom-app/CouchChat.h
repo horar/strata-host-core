@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Database/DatabaseManager.h"
+#include "Database/DatabaseAccess.h"
+
 #include <QObject>
 #include <QQmlApplicationEngine>
-
-#include "Database/DatabaseManager.h"
 
 namespace strata::Database
 {
@@ -56,7 +57,7 @@ private:
     // Replicator URL endpoint
     QString endpointURL_ = "ws://localhost:4984/chatroom-app";
 
-    void documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
+    void documentListener(cbl::Replicator, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents);
 };
 
 } // namespace strata::Database

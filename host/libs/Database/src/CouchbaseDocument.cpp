@@ -1,5 +1,7 @@
 #include "logging/LoggingQtCategories.h"
+
 #include "Database/CouchbaseDocument.h"
+#include "CouchbaseDatabase.h"
 
 #include <QUuid>
 
