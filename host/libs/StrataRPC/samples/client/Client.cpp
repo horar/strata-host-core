@@ -87,13 +87,18 @@ void Client::closeServer()
 void Client::requestRandomGraph()
 {
     qCInfo(logCategoryStrataClientSample) << "Requesting random graph from the server.";
-    auto deferrefRequest = strataClient_->sendRequest("generate_graph", QJsonObject{{"size", 6}});
+    auto deferredRequest = strataClient_->sendRequest("generate_graph", QJsonObject{{"size", 6}});
 
-    connect(deferrefRequest, &DeferredRequest::finishedSuccessfully, this, [](const QJsonObject &) {
+    if (deferredRequest == nullptr) {
+        qCCritical(logCategoryStrataClientSample) << "Failed To send generate_graph request.";
+        return;
+    }
+
+    connect(deferredRequest, &DeferredRequest::finishedSuccessfully, this, [](const QJsonObject &) {
         qCInfo(logCategoryStrataClientSample) << "Server is generating graph.";
     });
 
-    connect(deferrefRequest, &DeferredRequest::finishedWithError, this, [](const QJsonObject &) {
+    connect(deferredRequest, &DeferredRequest::finishedWithError, this, [](const QJsonObject &) {
         qCCritical(logCategoryStrataClientSample) << "Failed to request graph from the server.";
     });
 }
