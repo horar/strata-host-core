@@ -22,6 +22,7 @@ QtObject {
     }
 
     function saveFile(fileUrl = file, text = fileContents) {
+        // todo: potentially clean up empty lines in file before save, e.g. more than 2 empty lines in a row -> 1 empty line
         SGUtilsCpp.atomicWrite(SGUtilsCpp.urlToLocalFile(fileUrl), text)
         reload()
     }
@@ -95,6 +96,14 @@ QtObject {
         let allInstancesOfUuidRegex = new RegExp(uuid, "g")
         copy = copy.replace(allInstancesOfUuidRegex, newUuid)
         copy = replaceObjectPropertyValueInString(newUuid, "id:", "duplicate_" + newUuid, copy)
+        insertTextAtEndOfFile(copy)
+    }
+
+    function bringToFront(uuid){
+        let captureComponentByUuidRegex = new RegExp("(\\s.*start_"+ uuid +"[\\s\\S]*end_"+ uuid +"\\s)")
+        // captures lines with start and end uuid tags, as well as those between and pre- and post-line breaks
+        let copy = fileContents.match(captureComponentByUuidRegex)[0]
+        fileContents = fileContents.replace(captureComponentByUuidRegex, "");
         insertTextAtEndOfFile(copy)
     }
 

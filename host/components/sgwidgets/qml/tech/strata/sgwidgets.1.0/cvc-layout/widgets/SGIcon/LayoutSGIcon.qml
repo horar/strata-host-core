@@ -26,7 +26,7 @@ LayoutContainer {
                 fill: parent
             }
             hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 
             onClicked:  {
                 layoutRoot.clicked()

@@ -36,6 +36,13 @@ Popup {
         }
 
         ContextMenuButton {
+            text: "Bring To Front"
+            onClicked: {
+                visualEditor.functions.bringToFront(layoutOverlayRoot.layoutInfo.uuid)
+            }
+        }
+
+        ContextMenuButton {
             text: "Delete"
             onClicked: {
                 visualEditor.functions.removeControl(layoutOverlayRoot.layoutInfo.uuid)
