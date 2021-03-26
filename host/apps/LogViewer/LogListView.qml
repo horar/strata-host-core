@@ -39,10 +39,6 @@ Item {
     property bool markIconVisible
     property bool showMarks: false
     property bool searchingMode: false
-    property bool errorLogLevel: false
-    property bool warningLogLevel: false
-    property bool infoLogLevel: false
-    property bool debugLogLevel: false
 
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)

@@ -44,11 +44,6 @@ FocusScope {
     property bool showDropAreaIndicator: false
     property bool showMarks: false
     property string markColor: TangoTheme.palette.chameleon3
-    property bool errorLogLevel: true
-    property bool warningLogLevel: true
-    property bool infoLogLevel: true
-    property bool debugLogLevel: true
-    property bool unknownLogLevel: true
 
     LogViewModels.LogModel {
         id: logModel
@@ -644,10 +639,10 @@ FocusScope {
                         id: checkBoxDebug
                         text: qsTr("Debug")
                         font.family: "monospace"
-                        checked: debugLogLevel
+                        checked: true
                         onCheckedChanged: {
                             logSortFilterModel.invalidate()
-                            if (showMarksButton.checked || searchingMode) {
+                            if (searchingMode) {
                                 searchResultModel.invalidate()
                             }
                         }
@@ -657,10 +652,10 @@ FocusScope {
                         id: checkBoxInfo
                         text: qsTr("Info")
                         font.family: "monospace"
-                        checked: infoLogLevel
+                        checked: true
                         onCheckedChanged: {
                             logSortFilterModel.invalidate()
-                            if (showMarksButton.checked || searchingMode) {
+                            if (searchingMode) {
                                 searchResultModel.invalidate()
                             }
                         }
@@ -670,10 +665,10 @@ FocusScope {
                         id: checkBoxWarning
                         text: qsTr("Warning")
                         font.family: "monospace"
-                        checked: warningLogLevel
+                        checked: true
                         onCheckedChanged: {
                             logSortFilterModel.invalidate()
-                            if (showMarksButton.checked || searchingMode) {
+                            if (searchingMode) {
                                 searchResultModel.invalidate()
                             }
                         }
@@ -683,10 +678,10 @@ FocusScope {
                         id: checkBoxError
                         text: qsTr("Error")
                         font.family: "monospace"
-                        checked: errorLogLevel
+                        checked: true
                         onCheckedChanged: {
                             logSortFilterModel.invalidate()
-                            if (showMarksButton.checked || searchingMode) {
+                            if (searchingMode) {
                                 searchResultModel.invalidate()
                             }
                         }
@@ -696,10 +691,10 @@ FocusScope {
                         id: checkBoxUnknown
                         text: qsTr("Unknown")
                         font.family: "monospace"
-                        checked: unknownLogLevel
+                        checked: true
                         onCheckedChanged: {
                             logSortFilterModel.invalidate()
-                            if (showMarksButton.checked || searchingMode) {
+                            if (searchingMode) {
                                 searchResultModel.invalidate()
                             }
                         }
