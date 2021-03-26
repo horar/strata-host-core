@@ -65,45 +65,60 @@ RowLayout {
             id: rowColPop
             y: parent.height
 
+            Component.onCompleted: {
+                fetchValues()
+            }
+
             ColumnLayout {
 
-                Button {
-                    text: "columns++"
+                RowLayout {
 
-                    onClicked: {
-                        let count = visualEditor.loader.item.columnCount
-                        setRowsColumns("columnCount:", ++count)
+                    Text {
+                        text: "Columns:"
+                        Layout.preferredWidth: 80
+                    }
 
+                    SpinBox {
+                        id: colSpin
+                        editable: true
+                        onValueChanged: {
+                            if (visualEditor.loader.item && visualEditor.loader.item.columnCount !== undefined) {
+                                if (value !== visualEditor.loader.item.columnCount) {
+                                    setRowsColumns("columnCount:", value)
+                                }
+                            }
+                        }
                     }
                 }
 
-                Button {
-                    text: "columns--"
+                RowLayout {
 
-                    onClicked: {
-                        let count = visualEditor.loader.item.columnCount
-                        setRowsColumns("columnCount:", --count)
+                    Text {
+                        text: "Rows:"
+                        Layout.preferredWidth: 80
+                    }
+
+                    SpinBox {
+                        id: rowSpin
+                        editable: true
+                        onValueChanged: {
+                            if (visualEditor.loader.item && visualEditor.loader.item.rowCount !== undefined) {
+                                if (value !== visualEditor.loader.item.rowCount) {
+                                    setRowsColumns("rowCount:", value)
+                                }
+                            }
+                        }
                     }
                 }
+            }
+        }
+    }
 
-                Button {
-                    text: "rows++"
-
-                    onClicked: {
-                        let count = visualEditor.loader.item.rowCount
-                        setRowsColumns("rowCount:", ++count)
-
-                    }
-                }
-
-                Button {
-                    text: "rows--"
-
-                    onClicked: {
-                        let count = visualEditor.loader.item.rowCount
-                        setRowsColumns("rowCount:", --count)
-                    }
-                }
+    Connections {
+        target: visualEditor.loader
+        onStatusChanged: {
+            if (visualEditor.loader.status === Loader.Ready) {
+                fetchValues()
             }
         }
     }
@@ -114,6 +129,15 @@ RowLayout {
         
         if (!visualEditor.layoutDebugMode) {
             visualEditor.layoutDebugMode = true
+        }
+    }
+
+    function fetchValues() {
+        if (visualEditor.loader.item && visualEditor.loader.item.rowCount !== undefined) {
+            rowSpin.value = visualEditor.loader.item.rowCount
+        }
+        if (visualEditor.loader.item && visualEditor.loader.item.columnCount !== undefined) {
+            colSpin.value = visualEditor.loader.item.columnCount
         }
     }
 }

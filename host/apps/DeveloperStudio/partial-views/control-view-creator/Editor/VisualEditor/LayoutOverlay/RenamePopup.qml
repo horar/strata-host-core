@@ -32,7 +32,11 @@ Popup {
     ColumnLayout {
 
         Text {
-            text: "Ensure all id's are unique, otherwise build may fail"
+            text: "Ensure all id's are unique, otherwise build will fail. Id's must start with lower case letter, and contain only letters, numbers and underscores."
+            Layout.fillWidth: true
+            Layout.maximumWidth: textField.implicitWidth
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.Wrap
         }
 
         TextField {
