@@ -53,13 +53,14 @@ SGDialogJS 1.0 dialogs/SGDialog.js
 SGBaseEditor 1.0 editors/SGBaseEditor.qml
 SGTextFieldEditor 1.0 editors/SGTextFieldEditor.qml
 
-UIBase 1.0 cvc-layout/UIBase.qml
-LayoutInfo 1.0 cvc-layout/LayoutInfo.qml
 LayoutContainer 1.0 cvc-layout/LayoutContainer.qml
 LayoutButton 1.0 cvc-layout/widgets/Button/LayoutButton.qml
 LayoutDivider 1.0 cvc-layout/widgets/Divider/LayoutDivider.qml
-LayoutText 1.0 cvc-layout/widgets/Text/LayoutText.qml
+LayoutInfo 1.0 cvc-layout/LayoutInfo.qml
+LayoutRectangle 1.0 cvc-layout/widgets/Rectangle/LayoutRectangle.qml
 LayoutSGIcon 1.0 cvc-layout/widgets/SGIcon/LayoutSGIcon.qml
+LayoutText 1.0 cvc-layout/widgets/Text/LayoutText.qml
+UIBase 1.0 cvc-layout/UIBase.qml
 
 singleton SGSettings 1.0 SGSettings.qml
 

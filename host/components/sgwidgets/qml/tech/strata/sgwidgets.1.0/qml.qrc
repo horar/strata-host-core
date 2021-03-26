@@ -66,5 +66,7 @@
         <file>cvc-layout/widgets/Text/Text.txt</file>
         <file>cvc-layout/widgets/SGIcon/LayoutSGIcon.qml</file>
         <file>cvc-layout/widgets/SGIcon/SGIcon.txt</file>
+        <file>cvc-layout/widgets/Rectangle/LayoutRectangle.qml</file>
+        <file>cvc-layout/widgets/Rectangle/Rectangle.txt</file>
     </qresource>
 </RCC>
