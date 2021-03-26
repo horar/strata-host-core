@@ -1,26 +1,31 @@
 #pragma once
 
 #include <chrono>
+#include <QTimer>
 
 #include "BaseDeviceCommand.h"
 
 namespace strata::device::command {
 
 // This is special command used for waiting between commands in command list.
-// There is also special handling of this command in BaseDeviceOperation.
+// This command has also its own implementation of sendCommand method.
 
-class CmdWait : public BaseDeviceCommand {
+class CmdWait : public BaseDeviceCommand
+{
 public:
     CmdWait(const device::DevicePtr& device,
             std::chrono::milliseconds waitTime,
             const QString& description = QString());
+
+    void sendCommand(quintptr lockId) override;
+    void cancel() override;
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
+    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+
     void setWaitTime(std::chrono::milliseconds waitTime);
-    std::chrono::milliseconds waitTime() const;
-    QString description() const;
+
 private:
-    std::chrono::milliseconds waitTime_;
+    QTimer waitTimer_;
     QString description_;
 };
 

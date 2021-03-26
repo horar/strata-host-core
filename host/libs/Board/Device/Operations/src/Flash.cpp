@@ -22,33 +22,25 @@ Flash::Flash(const device::DevicePtr& device, int size, int chunks, const QStrin
     commandList_.emplace_back(std::make_unique<CmdStartFlash>(device_, size, chunkCount_, md5, flashFirmware_));
     commandList_.emplace_back(std::move(cmdFlash));
 
-    currentCommand_ = commandList_.end();
+    initCommandList();
+
     flashCommand_ = commandList_.begin() + 1;
 }
 
 void Flash::flashChunk(const QVector<quint8>& chunk, int chunkNumber)
 {
-    if (BaseDeviceOperation::hasStarted() == false || currentCommand_ == commandList_.end()) {
-        QString errMsg(QStringLiteral("Cannot flash chunk, flash operation is not running."));
+    if (BaseDeviceOperation::hasStarted() == false
+            || currentCommand_ == commandList_.end()
+            || ( ((*currentCommand_)->type() != CommandType::FlashFirmware) && ((*currentCommand_)->type() != CommandType::FlashBootloader) ))
+    {
+        QString errMsg(QStringLiteral("Cannot flash chunk, bad state of flash operation."));
         qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
         finishOperation(Result::Error, errMsg);
         return;
     }
 
-    CommandType cmdType = (*currentCommand_)->type();
-
-    // This operation has 2 commands (first is CmdStartFlash and second is CmdFlash),
-    // and this method (flashChunk()) can be called only if operation has started. It means that we are
-    // currently on finished CmdStartFlash (first call of flashChunk()) or on finished CmdFlash command.
-    if ((cmdType == CommandType::StartFlashFirmware) || (cmdType == CommandType::StartFlashBootloader)) {
-        currentCommand_ = flashCommand_;
-        cmdType = (*currentCommand_)->type();
-    }
-
-    if ((cmdType == CommandType::FlashFirmware) || (cmdType == CommandType::FlashBootloader)) {
-        cmdFlash_->setNewChunk(chunk, chunkNumber);
-        BaseDeviceOperation::resume();
-    }
+    cmdFlash_->setNewChunk(chunk, chunkNumber);
+    BaseDeviceOperation::resume();
 }
 
 }  // namespace

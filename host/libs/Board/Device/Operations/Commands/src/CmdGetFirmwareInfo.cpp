@@ -18,13 +18,13 @@ QByteArray CmdGetFirmwareInfo::message() {
     return QByteArray("{\"cmd\":\"get_firmware_info\",\"payload\":{}}");
 }
 
-bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
+bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc, CommandResult& result) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::getFirmwareInfoNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         const rapidjson::Value& bootloader = payload[JSON_BOOTLOADER];
         const rapidjson::Value& application = payload[JSON_APPLICATION];
 
-        result_ = CommandResult::Failure;
+        result = CommandResult::Failure;
 
         if (payload.HasMember(JSON_API_VERSION) &&
             (std::strcmp(payload[JSON_API_VERSION].GetString(), CSTR_API_2_0) == 0)
@@ -52,7 +52,7 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
         }
         if (bootloaderVer || applicationVer) {
             setDeviceVersions(bootloaderVer, applicationVer);
-            result_ = CommandResult::Done;
+            result = CommandResult::Done;
         }
 
         return true;
@@ -61,27 +61,27 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
     }
 }
 
-void CmdGetFirmwareInfo::commandRejected() {
-    if (requireResponse_) {
-        result_ = CommandResult::Reject;
-    } else {
-        setDeviceVersions(nullptr, "");
-        result_ = CommandResult::Done;
-    }
-}
-
-void CmdGetFirmwareInfo::onTimeout() {
+CommandResult CmdGetFirmwareInfo::onTimeout() {
     if (retriesCount_ < maxRetries_) {
         ++retriesCount_;
         qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to get firmware info.";
-        result_ = CommandResult::Retry;
+        return CommandResult::Retry;
     } else {
         if (requireResponse_) {
-            result_ = CommandResult::InProgress;
+            return CommandResult::Timeout;
         } else {
             setDeviceVersions(nullptr, "");
-            result_ = CommandResult::Done;
+            return CommandResult::Done;
         }
+    }
+}
+
+CommandResult CmdGetFirmwareInfo::onReject() {
+    if (requireResponse_) {
+        return CommandResult::Reject;
+    } else {
+        setDeviceVersions(nullptr, "");
+        return CommandResult::Done;
     }
 }
 

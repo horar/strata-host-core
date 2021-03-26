@@ -3,6 +3,7 @@
 
 #include <QByteArray>
 #include <QString>
+#include <QTimer>
 
 #include <rapidjson/document.h>
 
@@ -11,13 +12,17 @@
 namespace strata::device::command {
 
 enum class CommandResult : int {
-    InProgress,        // waiting for proper response from device
-    Done,              // successfully done (received device response is OK)
-    Partial,           // successfully done (received device response is OK), another command is expected to follow
+    Done,              // successfully done
+    DoneAndWait,       // successfully done, move to next command but do not send it
+    Repeat,            // successfully done, command is expected to be send again (with new data)
     Retry,             // retry - send command again with same data
     Reject,            // command was rejected (is unsupported)
     Failure,           // response to command is not successful
-    FinaliseOperation  // finish operation (there is no point in continuing)
+    FinaliseOperation, // finish operation (there is no point in continuing)
+    Timeout,           // command has timed out
+    Unsent,            // command was not sent (sending to device has failed)
+    Cancel,            // command was cencelled
+    DeviceError        // unexpected device error has occured
 };
 
 enum class CommandType : int {
@@ -36,15 +41,20 @@ enum class CommandType : int {
     Wait
 };
 
-class BaseDeviceCommand {
-public:
+class BaseDeviceCommand : public QObject
+{
+    Q_OBJECT
+
+protected:
     /*!
      * BaseDeviceCommand constructor.
+     * \param device the device on which is this command performed
      * \param name command name
-     * \param device the device on which the operation is performed
+     * \param cmdType type of command (value from CommandType enum)
      */
     BaseDeviceCommand(const DevicePtr& device, const QString& name, CommandType cmdType);
 
+public:
     /*!
      * BaseDeviceCommand destructor.
      */
@@ -57,44 +67,15 @@ public:
     BaseDeviceCommand(const BaseDeviceCommand&) = delete;
 
     /*!
-     * Returns JSON command.
-     * \return message to be send to device
+     * Sends command to device.
+     * \param lockId device lock ID
      */
-    virtual QByteArray message() = 0;
+    virtual void sendCommand(quintptr lockId);
 
     /*!
-     * Process response (notification) from device.
-     * \param doc JSON from notification
-     * \return true if notification is valid for sent command, otherwise false
+     * Cancel running command.
      */
-    virtual bool processNotification(rapidjson::Document& doc) = 0;
-
-    /*!
-     * Sets ACK OK flag.
-     */
-    virtual void commandAcknowledged() final;
-
-    /*!
-     * Checks if ACK OK flag is set.
-     * \return true if ACK OK flag is set, otherwise false
-     */
-    virtual bool isCommandAcknowledged() const final;
-
-    /*!
-     * Sets command result to CommandResult::Reject.
-     */
-    virtual void commandRejected();
-
-    /*!
-     * This method is called when expires timeout for sent command.
-     */
-    virtual void onTimeout();
-
-    /*!
-     * Checks if information about sent message should be logged.
-     * \return true if information about sent message should be logged, otherwise false
-     */
-    virtual bool logSendMessage() const;
+    virtual void cancel();
 
     /*!
      * Command name.
@@ -109,16 +90,56 @@ public:
     virtual CommandType type() const final;
 
     /*!
-     * Command result.
-     * \return result of command (value from CommandResult enum)
+     * Set command response timeout.
+     * \param responseInterval command response timeout
      */
-    virtual CommandResult result() const final;
+    virtual void setResponseTimeout(std::chrono::milliseconds responseInterval) final;
+
+signals:
+    /*!
+     * Emitted when command is finished.
+     * \param result value from CommandResult enum
+     * \param status specific command return value
+     */
+    void finished(CommandResult result, int status);
+
+protected:
+    /*!
+     * Returns JSON command.
+     * \return message to be send to device
+     */
+    virtual QByteArray message() = 0;
 
     /*!
-     * Command status.
-     * \return status specific for command (chunk number, defined constant, ...)
+     * Process response (notification) from device.
+     * \param doc JSON from notification
+     * \param result comand result set by this method
+     * \return true if notification is valid for sent command, otherwise false
      */
-    virtual int status() const final;
+    virtual bool processNotification(rapidjson::Document& doc, CommandResult& result) = 0;
+
+    /*!
+     * This method is called when expires timeout for sent command.
+     * \return value from CommandResult enum
+     */
+    virtual CommandResult onTimeout();
+
+    /*!
+     * This method is called when command is rejected by device.
+     * \return value from CommandResult enum
+     */
+    virtual CommandResult onReject();
+
+    /*!
+     * Checks if information about sent message should be logged.
+     * \return true if information about sent message should be logged, otherwise false
+     */
+    virtual bool logSendMessage() const;
+
+private slots:
+    void handleDeviceResponse(const QByteArray data);
+    void handleResponseTimeout();
+    void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
 protected:
     virtual void setDeviceVersions(const char* bootloaderVer, const char* applicationVer) final;
@@ -126,12 +147,19 @@ protected:
     virtual void setDeviceAssistedProperties(const char* platformId, const char* classId, const char* fwClassId) final;
     virtual void setDeviceBootloaderMode(bool inBootloaderMode) final;
     virtual void setDeviceApiVersion(Device::ApiVersion apiVersion) final;
+
     const QString cmdName_;
     const CommandType cmdType_;
     const DevicePtr& device_;
     bool ackOk_;
-    CommandResult result_;
     int status_;
+
+private:
+    void finishCommand(CommandResult result);
+    void logWrongResponse(const QByteArray& response);
+    bool deviceSignalsConnected_;
+
+    QTimer responseTimer_;
 };
 
 }  // namespace

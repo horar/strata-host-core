@@ -96,13 +96,11 @@ public:
     virtual Type type() const final;
 
     /*!
-     * Get error string for provided Result.
-     * \param result enum value
-     * \return corresponding error string
+     * Set response timeout for all commands in operation.
+     * This method is used only in unit tests, DO NOT abuse it for other purposes!
+     * \param responseInterval command response timeout
      */
-     static QString resolveErrorString(Result result);
-
-     void setResponseTimeout(std::chrono::milliseconds responseInterval);
+    void setResponseTimeout(std::chrono::milliseconds responseInterval);
 
 protected:
     /*!
@@ -121,31 +119,26 @@ signals:
      */
     void finished(Result result, int status, QString errorString = QString());
 
-    // signals only for internal use:
+    // signal only for internal use:
     // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
     void sendCommand(QPrivateSignal);
-    void processCmdResult(QPrivateSignal);
 
 private slots:
     void handleSendCommand();
-    void handleDeviceResponse(const QByteArray data);
-    void handleResponseTimeout();
-    void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
-    void handleProcessCmdResult();
+    void handleCommandFinished(command::CommandResult result, int status);
 
 private:
     void reset();
 
     const Type type_;
 
-    QTimer responseTimer_;
-
     bool started_;
     bool succeeded_;
     bool finished_;
 
 protected:
-    void finishOperation(Result result, const QString &errorString=QString());
+    void initCommandList();
+    void finishOperation(Result result, const QString &errorString);
     void resume();
 
     device::DevicePtr device_;

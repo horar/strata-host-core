@@ -22,7 +22,7 @@ SetAssistedPlatformId::SetAssistedPlatformId(const DevicePtr &device)
     commandList_.emplace_back(std::move(cmdSetAssistPlatfId));
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
 
-    currentCommand_ = commandList_.end();
+    initCommandList();
 }
 
 void SetAssistedPlatformId::setBaseData(const command::CmdSetPlatformIdData &data)

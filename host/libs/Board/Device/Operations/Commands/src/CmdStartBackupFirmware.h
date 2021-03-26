@@ -9,7 +9,7 @@ class CmdStartBackupFirmware : public BaseDeviceCommand {
 public:
     explicit CmdStartBackupFirmware(const device::DevicePtr& device);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
+    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
     int totalChunks() const;
 private:
     uint chunks_;
