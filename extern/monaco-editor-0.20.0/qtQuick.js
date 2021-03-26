@@ -545,7 +545,7 @@ function registerQmlAsLanguage() {
                 if(topOfFile === undefined && bottomOfFile === undefined ||(topOfFile.range !== null && bottomOfFile.range !== null && (position.lineNumber >= topOfFile.range.startLineNumber && position.lineNumber <= bottomOfFile.range.startLineNumber))){
                     initializeQtQuick(model)
                 }
-                
+
                 if (getId !== null && getId !== undefined) {
                     var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
@@ -699,7 +699,14 @@ function registerQmlAsLanguage() {
                     }
                 }
                 const newParent = findPreviousBracketParent(model,{ lineNumber: propRange.startLineNumber, column: propRange.startColumn })
-                alert(newParent)
+                if(qtObjectKeyValues.hasOwnProperty(newParent)){
+                    convertStrArrayToObjArray(newParent, qtObjectKeyValues[newParent].properties, qtObjectKeyValues[newParent].flag, qtObjectKeyValues[newParent].isId, newParent)
+                    if (currentItems[newParent] === undefined) {
+                        currentItems[newParent] = {}
+                    }
+                    currentItems[newParent][propRange] = qtObjectPropertyValues[newParent]
+                    return currentItems[newParent][propRange]
+                }
                 return Object.values(suggestions)
             }
         }
