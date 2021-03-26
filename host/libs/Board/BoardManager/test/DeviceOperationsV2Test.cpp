@@ -90,6 +90,9 @@ void DeviceOperationsV2Test::handleFlashCmdResult()
         strata::device::operation::Flash* operation = dynamic_cast<strata::device::operation::Flash*>(deviceOperation_.data());
         operation->flashChunk(QVector<quint8>(256),flashCmdResultCount_);
         flashCmdResultCount_++;
+    } else {
+        QEXPECT_FAIL("", "Amount of CmdResults invalid.", Continue);
+        QVERIFY(false);
     }
 }
 
