@@ -60,10 +60,21 @@ Item {
             let timestamp2 = Date.fromLocaleString(Qt.locale(), listing2.timestamp, timeFormat);
 
             // sort listings according to following comment priority:
-            return listing1.connected ||  // connected platforms on top
-                    (listing1.device_id !== Constants.NULL_DEVICE_ID && !listing2.connected) || // listings with a device id attached (from a previously connected board) on top
-                    (!listing2.available.documents && !listing2.available.order) || // "coming soon" on bottom
-                    timestamp1 > timestamp2 // newer listings on top
+            if (listing1.connected && !listing2.connected) {
+                return true // // connected platforms on top
+            } else if (!listing1.connected && listing2.connected) {
+                return false
+            } else if (listing1.device_id !== Constants.NULL_DEVICE_ID && listing2.device_id === Constants.NULL_DEVICE_ID) {
+                return true // listings with a device id attached (from a previously connected board) on top
+            } else if (listing1.device_id === Constants.NULL_DEVICE_ID && listing2.device_id !== Constants.NULL_DEVICE_ID) {
+                return false
+            } else if (listing1.available.documents && listing1.available.order && !listing2.available.documents && !listing2.available.order) {
+                return true // "coming soon" on bottom
+            } else if (!listing1.available.documents && !listing1.available.order && listing2.available.documents && listing2.available.order) {
+                return false
+            } else {
+                return timestamp1 > timestamp2 // newer listings on top
+            }
         }
 
         function in_filter(item) {
