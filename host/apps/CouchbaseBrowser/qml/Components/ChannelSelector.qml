@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Window 2.12
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.12
+import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: root
@@ -56,12 +57,17 @@ Rectangle {
                         opacity: searchButton.hovered ? 1 : 0.5
                     }
                 }
+                SGContextMenuEditActions {
+                    id: contextMenuPopup
+                    textEditor: inputField
+                }
                 TextField {
                     id: inputField
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-
+                    selectByMouse: true
                     placeholderText: "Search or Enter new channel"
+                    persistentSelection: true   // must deselect manually
                     background: Item {}
                     onPressed: searchButton.clicked()
                     onAccepted: addButton.clicked()
@@ -69,6 +75,24 @@ Rectangle {
                         suggestionList.searchKeyword = text
                         if (text.length !== 0) {
                             hiddenContainer.visible = true
+                        }
+                    }
+                    onActiveFocusChanged: {
+                        if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                            inputField.deselect()
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.IBeamCursor
+                        acceptedButtons: Qt.RightButton
+                        onClicked: {
+                            inputField.forceActiveFocus()
+                        }
+                        onReleased: {
+                            if (containsMouse) {
+                                contextMenuPopup.popup(null)
+                            }
                         }
                     }
                     Popup {
