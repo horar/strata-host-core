@@ -5,6 +5,8 @@
 
 #include "UserAccessBrowser.h"
 
+using namespace strata::Database;
+
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     QQmlApplicationEngine *engine = new QQmlApplicationEngine();

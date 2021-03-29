@@ -3,11 +3,14 @@
 #include "logging/LoggingQtCategories.h"
 #include <Device/Device.h>
 #include <Device/Serial/SerialDevice.h>
+#include <Device/Operations/Identify.h>
 #include <Flasher.h>
 
 #include <cstdlib>
 
 namespace strata {
+
+using device::serial::SerialDevice;
 
 Command::~Command() { }
 
@@ -80,14 +83,15 @@ void FlasherCommand::process() {
         return;
     }
 
-    QString name = serialPorts.name(deviceNumber_ - 1);
+    const QString name = serialPorts.name(deviceNumber_ - 1);
     if (name.isEmpty()) {
         qCCritical(logCategoryFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
         emit finished(EXIT_FAILURE);
         return;
     }
 
-    device::DevicePtr device = std::make_shared<device::serial::SerialDevice>(static_cast<int>(qHash(name)), name);
+    const QByteArray deviceId = SerialDevice::createDeviceId(name);
+    device::DevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
     if (device->open() == false) {
         qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
         emit finished(EXIT_FAILURE);
@@ -110,6 +114,104 @@ void FlasherCommand::process() {
     case CmdType::BackupFirmware :
         flasher_->backupFirmware();
         break;
+    }
+}
+
+// INFO command
+
+InfoCommand::InfoCommand(int deviceNumber) :
+    deviceNumber_(deviceNumber) { }
+
+// Destructor must be defined due to unique pointer to incomplete type.
+InfoCommand::~InfoCommand() { }
+
+void InfoCommand::process() {
+    SerialPortList serialPorts;
+
+    if (serialPorts.count() == 0) {
+        qCCritical(logCategoryFlasherCli) << "No board is connected.";
+        emit finished(EXIT_FAILURE);
+        return;
+    }
+
+    const QString name = serialPorts.name(deviceNumber_ - 1);
+    if (name.isEmpty()) {
+        qCCritical(logCategoryFlasherCli) << "Board number" << deviceNumber_ << "is not available.";
+        emit finished(EXIT_FAILURE);
+        return;
+    }
+
+    const QByteArray deviceId = SerialDevice::createDeviceId(name);
+    device_ = std::make_shared<SerialDevice>(deviceId, name);
+    if (device_->open() == false) {
+        qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
+        emit finished(EXIT_FAILURE);
+        return;
+    }
+
+    identifyOperation_ = std::make_unique<device::operation::Identify>(device_, false);
+
+    connect(identifyOperation_.get(), &device::operation::BaseDeviceOperation::finished,
+            this, &InfoCommand::handleIdentifyOperationFinished);
+
+    identifyOperation_->run();
+}
+
+void InfoCommand::handleIdentifyOperationFinished(device::operation::Result result, int status, QString errStr) {
+    Q_UNUSED(status)
+
+    device::operation::Identify *identifyOp = qobject_cast<device::operation::Identify*>(QObject::sender());
+    if ((identifyOp == nullptr) || (identifyOp != identifyOperation_.get())) {
+        qCCritical(logCategoryFlasherCli) << "Received corrupt operation pointer:" << identifyOp;
+        emit finished(EXIT_FAILURE);
+        return;
+    }
+
+    switch(result) {
+    case device::operation::Result::Success: {
+        QString message(QStringLiteral("List of available parameters for board:"));
+
+        message.append(QStringLiteral("\nApplication Name: "));
+        message.append(device_->name());
+        message.append(QStringLiteral("\nDevice Name: "));
+        message.append(device_->deviceName());
+        message.append(QStringLiteral("\nDevice Id: "));
+        message.append(device_->deviceId());
+        message.append(QStringLiteral("\nDevice Type: "));
+        message.append(QVariant::fromValue(device_->deviceType()).toString());
+        message.append(QStringLiteral("\nController Type: "));
+        message.append(QVariant::fromValue(device_->controllerType()).toString());
+        if (device_->controllerType() == device::Device::ControllerType::Assisted) {
+            message.append(QStringLiteral(" (Platform Connected: "));
+            message.append(QVariant(device_->isControllerConnectedToPlatform()).toString());
+            message.append(QStringLiteral(")"));
+        }
+        message.append(QStringLiteral("\nBoard Mode: "));
+        message.append(QVariant::fromValue(identifyOp->boardMode()).toString());
+        message.append(QStringLiteral(" (API: "));
+        message.append(QVariant::fromValue(device_->apiVersion()).toString());
+        message.append(QStringLiteral(")\nApplication version: "));
+        message.append(device_->applicationVer());
+        message.append(QStringLiteral("\nBootloader version: "));
+        message.append(device_->bootloaderVer());
+        message.append(QStringLiteral("\nPlatform Id: "));
+        message.append(device_->platformId());
+        message.append(QStringLiteral("\nClass Id: "));
+        message.append(device_->classId());
+        message.append(QStringLiteral("\nController Platform Id: "));
+        message.append(device_->controllerPlatformId());
+        message.append(QStringLiteral("\nController Class Id: "));
+        message.append(device_->controllerClassId());
+        message.append(QStringLiteral("\nFirmware Class Id: "));
+        message.append(device_->firmwareClassId());
+
+        qCInfo(logCategoryFlasherCli).noquote() << message;
+        emit finished(EXIT_SUCCESS);
+    } break;
+    default: {
+        qCWarning(logCategoryFlasherCli) << "Identify operation failed:" << errStr;
+        emit finished(EXIT_FAILURE);
+    } break;
     }
 }
 

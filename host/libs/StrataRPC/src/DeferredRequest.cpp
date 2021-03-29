@@ -1,10 +1,11 @@
 #include <StrataRPC/DeferredRequest.h>
-#include <QDebug>
-#include <QMetaMethod>
+
 using namespace strata::strataRPC;
 
-DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_(id)
+DeferredRequest::DeferredRequest(int id, QObject *parent) : QObject(parent), id_(id), timer_(this)
 {
+    timer_.setSingleShot(true);
+    connect(&timer_, &QTimer::timeout, this, &DeferredRequest::requestTimeoutHandler);
 }
 
 DeferredRequest::~DeferredRequest()
@@ -16,22 +17,27 @@ int DeferredRequest::getId() const
     return id_;
 }
 
-bool DeferredRequest::hasSuccessCallback()
+void DeferredRequest::callSuccessCallback(const QJsonObject &jsonPayload)
 {
-    return isSignalConnected(QMetaMethod::fromSignal(&DeferredRequest::finishedSuccessfully));
+    emit finishedSuccessfully(jsonPayload);
 }
 
-bool DeferredRequest::hasErrorCallback()
+void DeferredRequest::callErrorCallback(const QJsonObject &jsonPayload)
 {
-    return isSignalConnected(QMetaMethod::fromSignal(&DeferredRequest::finishedWithError));
+    emit finishedWithError(jsonPayload);
 }
 
-void DeferredRequest::callSuccessCallback(const Message &message)
+void DeferredRequest::startTimer()
 {
-    emit finishedSuccessfully(message);
+    timer_.start(REQUEST_TIMEOUT);
 }
 
-void DeferredRequest::callErrorCallback(const Message &message)
+void DeferredRequest::stopTimer()
 {
-    emit finishedWithError(message);
+    timer_.stop();
+}
+
+void DeferredRequest::requestTimeoutHandler()
+{
+    emit requestTimedout(id_);
 }

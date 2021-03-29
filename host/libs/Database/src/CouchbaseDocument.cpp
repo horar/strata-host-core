@@ -1,7 +1,11 @@
-#include "CouchbaseDocument.h"
 #include "logging/LoggingQtCategories.h"
 
+#include "Database/CouchbaseDocument.h"
+#include "CouchbaseDatabase.h"
+
 #include <QUuid>
+
+using namespace strata::Database;
 
 CouchbaseDocument::CouchbaseDocument(const std::string id) {
     doc_ID_ = id;

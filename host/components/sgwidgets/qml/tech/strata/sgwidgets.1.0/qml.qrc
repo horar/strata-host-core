@@ -18,6 +18,7 @@
         <file>SGIcon.qml</file>
         <file>SGIconButton.qml</file>
         <file>SGInfoBox.qml</file>
+        <file>SGLogLevelSelector.qml</file>
         <file>SGMainWindow.qml</file>
         <file>SGMarkdownViewer/SGMarkdownViewer.qml</file>
         <file>SGMarkdownViewer/index.html</file>
@@ -45,6 +46,7 @@
         <file>SGTextArea.qml</file>
         <file>SGTextEdit.qml</file>
         <file>SGTextField.qml</file>
+        <file>SGTextInput.qml</file>
         <file>SGWindow.qml</file>
         <file>utils/SGUtils.js</file>
         <file>editors/SGBaseEditor.qml</file>

@@ -42,9 +42,9 @@ public:
     void updateFirmware();
 
 signals:
-    void updateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation, FirmwareUpdateController::UpdateStatus status,
+    void updateProgress(QByteArray deviceId, FirmwareUpdateController::UpdateOperation operation, FirmwareUpdateController::UpdateStatus status,
                         qint64 complete = -1, qint64 total = -1, QString errorString = QString());
-    void updaterError(int deviceId, QString errorString);
+    void updaterError(QByteArray deviceId, QString errorString);
     // internal signal:
     void flashFirmware(QPrivateSignal);
 
@@ -68,7 +68,7 @@ private:
     bool running_;
 
     const strata::device::DevicePtr device_;
-    const int deviceId_;
+    const QByteArray deviceId_;
 
     QPointer<strata::DownloadManager> downloadManager_;
     QString downloadId_;

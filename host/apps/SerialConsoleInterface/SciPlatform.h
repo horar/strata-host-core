@@ -2,6 +2,7 @@
 
 #include "SciScrollbackModel.h"
 #include "SciCommandHistoryModel.h"
+#include "SciFilterSuggestionModel.h"
 #include "SciPlatformSettings.h"
 
 #include <BoardManager.h>
@@ -22,6 +23,7 @@ class SciPlatform: public QObject {
     Q_PROPERTY(PlatformStatus status READ status NOTIFY statusChanged)
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
+    Q_PROPERTY(SciFilterSuggestionModel* filterSuggestionModel READ filterSuggestionModel CONSTANT)
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
     Q_PROPERTY(bool programInProgress READ programInProgress NOTIFY programInProgressChanged)
 
@@ -38,7 +40,7 @@ public:
     };
     Q_ENUM(PlatformStatus)
 
-    int deviceId();
+    QByteArray deviceId();
     void setDevice(strata::device::DevicePtr device);
     QString verboseName();
     void setVerboseName(const QString &verboseName);
@@ -50,6 +52,7 @@ public:
     void setStatus(SciPlatform::PlatformStatus status);
     SciScrollbackModel* scrollbackModel();
     SciCommandHistoryModel* commandHistoryModel();
+    SciFilterSuggestionModel* filterSuggestionModel();
     QString errorString();
     void setErrorString(const QString &errorString);
     bool programInProgress() const;
@@ -101,7 +104,7 @@ private slots:
 
 private:
     strata::device::DevicePtr device_;
-    int deviceId_;
+    QByteArray deviceId_;
     QString verboseName_;
     QString appVersion_;
     QString bootloaderVersion_;
@@ -113,6 +116,7 @@ private:
     SciScrollbackModel *scrollbackModel_;
     SciCommandHistoryModel *commandHistoryModel_;
     SciPlatformSettings *settings_;
+    SciFilterSuggestionModel *filterSuggestionModel_;
     QPointer<strata::FlasherConnector> flasherConnector_;
 
     void setProgramInProgress(bool programInProgress);

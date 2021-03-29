@@ -37,6 +37,10 @@ macro(generate_app_version)
     cmake_parse_arguments(local "" "${options}" "" ${ARGN})
 
     message(STATUS "Creating app version target for ${PROJECT_NAME} (prefix: '${local_GITTAG_PREFIX}')...")
+    if(${PROJECT_NAME}_ENABLED_PLUGINS)
+        list(JOIN ${PROJECT_NAME}_ENABLED_PLUGINS ":" SUPPORTED_PLUGINS)
+        message(STATUS "Supported plugin list for ${PROJECT_NAME}: ${SUPPORTED_PLUGINS}")
+    endif()
 
     if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/Version.h)
         message(STATUS "Writting ${PROJECT_NAME}'s Version.h...")
@@ -51,7 +55,8 @@ macro(generate_app_version)
             "    static const std::string_view versionPatch;\n\n"
             "    static const std::string_view buildId;\n"
             "    static const std::string_view gitRevision;\n"
-            "    static const std::string_view stageOfDevelopment;\n"
+            "    static const std::string_view stageOfDevelopment;\n\n"
+            "    static const std::string_view supportedPlugins_;\n"
             "};\n"
         )
     endif()
@@ -89,6 +94,8 @@ macro(generate_app_version)
             -DPROJECT_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
 
             -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
+
+            -DSUPPORTED_PLUGINS=${SUPPORTED_PLUGINS}
 
             -P ${CMAKE_SOURCE_DIR}/CMake/Modules/GitVersion-builder.cmake
             COMMENT "Analyzing git-tag version changes for '${PROJECT_NAME}'..." VERBATIM

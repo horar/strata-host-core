@@ -1,11 +1,16 @@
 #include <thread>
 
-#include "DatabaseLib.h"
-#include "CouchbaseDocument.h"
+#include "Database/DatabaseLib.h"
+#include "Database/CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDir>
 #include <QDebug>
+#include <QJsonValue>
+#include <QJsonObject>
 #include <QStandardPaths>
+
+using namespace strata::Database;
 
 #define DEBUG(...) printf("Database: "); printf(__VA_ARGS__); printf("\n");
 
@@ -148,11 +153,11 @@ int main() {
     }
 
     // Start replicator on DB 3 with all non-default options
-    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
+    auto changeListener = [](cbl::Replicator, const DatabaseAccess::ActivityLevel) {
         qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!\n";
     };
 
-    auto documentListener = [](cbl::Replicator, bool, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>>) {
+    auto documentListener = [](cbl::Replicator, bool, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>>) {
         qDebug() << "CouchbaseDatabaseSampleApp documentListener -> document status changed!\n";
     };
 

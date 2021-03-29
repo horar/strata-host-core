@@ -1,7 +1,7 @@
 #pragma once
 
-#include <StrataRPC/Message.h>
 #include <QObject>
+#include <QTimer>
 
 namespace strata::strataRPC
 {
@@ -28,46 +28,58 @@ public:
      */
     int getId() const;
 
-    /**
-     * Check if the request has a connected slot/lambda to finishedSuccessfully signal.
-     * @return boolean if a signal/slot is connected to finishedSuccessfully signal.
-     */
-    bool hasSuccessCallback();
-
-    /**
-     * Check if the request has a connected slot/lambda to finishedWithError signal.
-     * @return boolean if a signal/slot is connected to finishedWithError signal.
-     */
-    bool hasErrorCallback();
-
 signals:
     /**
      * Signal Emitted when the server respond with a successful message.
-     * @param [in] message parsed server message.
+     * @param [in] jsonPayload QJsonObject of the payload.
      */
-    void finishedSuccessfully(const Message &message);
+    void finishedSuccessfully(const QJsonObject &jsonPayload);
 
     /**
      * Signal Emitted when the server respond with a Error message.
-     * @param [in] message parsed server message.
+     * @param [in] jsonPayload QJsonObject of the payload.
      */
-    void finishedWithError(const Message &message);
+    void finishedWithError(const QJsonObject &jsonPayload);
+
+    /**
+     * Signal emitted on timeout.
+     * @param [in] requestId request id.
+     */
+    void requestTimedout(int requestId);
+
+private slots:
+    /**
+     * Handles timeout signal from QTimer
+     */
+    void requestTimeoutHandler();
 
 private:
     friend class StrataClient;
 
     /**
      * Emits finishedSuccessfully signal.
-     * @param [in] message parsed server message.
+     * @param [in] jsonPayload QJsonObject of the payload.
      */
-    void callSuccessCallback(const Message &message);
+    void callSuccessCallback(const QJsonObject &jsonPayload);
 
     /**
      * Emits finishedWithError signal.
-     * @param [in] message parsed server message.
+     * @param [in] jsonPayload QJsonObject of the payload.
      */
-    void callErrorCallback(const Message &message);
+    void callErrorCallback(const QJsonObject &jsonPayload);
+
+    /**
+     * Starts timer for timeout.
+     */
+    void startTimer();
+
+    /**
+     * Stops timer for timeout.
+     */
+    void stopTimer();
 
     int id_;
+    QTimer timer_;
+    static constexpr std::chrono::milliseconds REQUEST_TIMEOUT{500};
 };
 }  // namespace strata::strataRPC

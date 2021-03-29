@@ -17,9 +17,10 @@ class UrlConfig : public QObject{
     Q_PROPERTY(QString privacyPolicyUrl READ getPrivacyPolicyUrl CONSTANT);
     Q_PROPERTY(QString licenseUrl READ getLicenseUrl CONSTANT);
     Q_PROPERTY(QString authServer READ getAuthServer CONSTANT);
+    Q_PROPERTY(QString testAuthServer READ getTestAuthServer CONSTANT);
 
 public:
-    explicit UrlConfig(QObject *parent = nullptr);
+    explicit UrlConfig(const QString &fileName, QObject *parent = nullptr);
 
     QString getSalesPopupUrl() const;
     QString getLicenseUrl() const;
@@ -28,13 +29,17 @@ public:
     QString getMouserUrl() const;
     QString getDigiKeyUrl() const;
     QString getAvnetUrl() const;
+    QString getTestAuthServer() const;
     virtual ~UrlConfig();
 
 
-    bool parseUrl(const QString &fileName);
+    bool parseUrl();
 
 private:
+    QString fileName_;
+
     QString authServer_;
+    QString testAuthServer_;
     QString salesPopupUrl_;
     QString licenseUrl_;
     QString privacyPolicyUrl_;

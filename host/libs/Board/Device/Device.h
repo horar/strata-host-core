@@ -62,19 +62,23 @@ namespace strata::device {
         * The Type enum to recognize device type.
         */
         enum class Type {
-            SerialDevice
+            SerialDevice,
+            MockDevice
         };
+        Q_ENUM(Type)
 
         enum class ApiVersion {
             Unknown,
             v1_0,
             v2_0
         };
+        Q_ENUM(ApiVersion)
 
         enum class ControllerType {
             Embedded = 0x01,
             Assisted = 0x02
         };
+        Q_ENUM(ControllerType)
 
         /**
          * Device constructor
@@ -82,7 +86,7 @@ namespace strata::device {
          * @param name device name
          * @param type device type (value form Type enum)
          */
-        Device(const int deviceId, const QString& name, const Type type);
+        Device(const QByteArray& deviceId, const QString& name, const Type type);
 
         /**
          * Device destructor
@@ -181,7 +185,7 @@ namespace strata::device {
          * Get device ID.
          * @return Device ID
          */
-        virtual int deviceId() const final;
+        virtual QByteArray deviceId() const final;
 
         /**
          * Get device name given by system (e.g. COM3)
@@ -244,7 +248,7 @@ namespace strata::device {
       // ***
 
     protected:
-        const int deviceId_;
+        const QByteArray deviceId_;
         const QString deviceName_;  // name given by system (e.g. COM3)
         const Type deviceType_;
 

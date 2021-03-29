@@ -53,13 +53,14 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
-    ${CMAKE_SOURCE_DIR}/assets/config/sds.qrc
-
-    $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
 
     source/HcsNode.cpp
     ${NODE_RO_SRCS}
 )
+
+set(${PROJECT_NAME}_ENABLED_PLUGINS "")
+add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "DEBUGBAR" PLUGIN_NAME "debugbar")
+add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "CVC" PLUGIN_NAME "cvc")
 
 generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
 generate_app_build_timestamp()
@@ -131,8 +132,32 @@ if(WIN32)
     endif()
 endif()
 
+set(SDS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/assets/config/sds)
+
+if(NOT APPS_CORESW_SDS_CONFIG)
+    set(APPS_CORESW_SDS_CONFIG sds_qa.config CACHE STRING "Desired SDS configuration file." FORCE)
+    message(STATUS "Defaulting 'APPS_CORESW_SDS_CONFIG' to ${APPS_CORESW_SDS_CONFIG}.")
+endif()
+file(GLOB APPS_CORESW_SDS_CONFIG_CHOICES
+    RELATIVE ${SDS_CONFIG_LOCATION}
+    ${SDS_CONFIG_LOCATION}/*.config
+)
+
+set_property(CACHE APPS_CORESW_SDS_CONFIG PROPERTY STRINGS ${APPS_CORESW_SDS_CONFIG_CHOICES})
+if(NOT APPS_CORESW_SDS_CONFIG IN_LIST APPS_CORESW_SDS_CONFIG_CHOICES)
+    message(FATAL_ERROR "Specify 'APPS_CORESW_SDS_CONFIG'. Must be one of ${APPS_CORESW_SDS_CONFIG_CHOICES}")
+endif()
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${SDS_CONFIG_LOCATION}/${APPS_CORESW_SDS_CONFIG}
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/sds.config
+    COMMENT "Deploying 'sds.config'..."
+    VERBATIM
+)
+
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
-set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
+set_source_files_properties(main.cpp source/SDSModel.cpp source/config/ConfigFile.cpp PROPERTIES
     COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
 )
 

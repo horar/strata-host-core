@@ -12,19 +12,17 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME}
     # Database
-    include/DatabaseLib.h
-    include/CouchbaseDatabase.h
-    include/CouchbaseDocument.h
-    include/DatabaseManager.h
-    include/DatabaseAccess.h
-    include/TokenManager.h
+    include/Database/DatabaseLib.h
+    include/Database/DatabaseManager.h
+    include/Database/DatabaseAccess.h
+    include/Database/CouchbaseDocument.h
 
+    src/CouchbaseDatabase.h
     src/DatabaseLib.cpp
     src/CouchbaseDatabase.cpp
     src/CouchbaseDocument.cpp
     src/DatabaseManager.cpp
     src/DatabaseAccess.cpp
-    src/TokenManager.cpp
 
     # Logging Categories
     logging/LoggingQtCategories.h

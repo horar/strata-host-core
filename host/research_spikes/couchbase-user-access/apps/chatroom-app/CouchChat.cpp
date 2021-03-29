@@ -1,14 +1,20 @@
 #include "CouchChat.h"
-#include "DatabaseManager.h"
-#include "DatabaseAccess.h"
+#include "Database/CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDebug>
 #include <thread>
 
+using namespace strata::Database;
+
 CouchChat::CouchChat(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
     auto documentListenerCallback = std::bind(&CouchChat::documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    databaseManager_ = std::make_unique<DatabaseManager>("", endpointURL_, nullptr, documentListenerCallback);
+
+    databaseManager_ = std::make_unique<DatabaseManager>();
+    if (databaseManager_->init("", endpointURL_, nullptr, documentListenerCallback) == false) {
+        qDebug() << "Error with initialization of database manager. Verify endpoint URL" << endpointURL_ << "is valid.";
+    }
 }
 
 void CouchChat::login(const QString &loginUsername, const QString &desiredChatroom) {
@@ -55,20 +61,20 @@ void CouchChat::sendMessage(const QString &message) {
     }
 }
 
-void CouchChat::documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
+void CouchChat::documentListener(cbl::Replicator, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents) {
     qDebug() << "---" << documents.size() << "docs" << (isPush ? "pushed:" : "pulled:");
     if (DB_ == nullptr) {
         return;
     }
-    if (documents.size() == 2 && (documents[0].ID == documents[1].ID)) {
-        qDebug() << documents[0].ID;
-        auto result_obj = DB_->getDocumentAsJsonObj(documents[0].ID);
+    if (documents.size() == 2 && (documents[0].id == documents[1].id)) {
+        qDebug() << documents[0].id;
+        auto result_obj = DB_->getDocumentAsJsonObj(documents[0].id, channelName_);
         auto user = result_obj.value("user");
         auto msg = result_obj.value("msg");
         emit receivedMessage(user.toString(), msg.toString());
     } else for (unsigned i = 0; i < documents.size(); ++i) {
-        qDebug() << documents[i].ID;
-        auto result_obj = DB_->getDocumentAsJsonObj(documents[i].ID);
+        qDebug() << documents[i].id;
+        auto result_obj = DB_->getDocumentAsJsonObj(documents[i].id, channelName_);
         auto user = result_obj.value("user");
         auto msg = result_obj.value("msg");
         emit receivedMessage(user.toString(), msg.toString());

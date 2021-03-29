@@ -6,13 +6,21 @@
         <file>LoginScreen.qml</file>
         <file>PrtAboutWindow.qml</file>
         <file>ProgramDeviceWizard.qml</file>
+        <file>AssistedModeStateMachine.qml</file>
+        <file>EmbeddedModeStateMachine.qml</file>
+        <file>ProgramSettingsWizard.qml</file>
+        <file>ProgramSettingsDelegate.qml</file>
+        <file>ProgramSettingsOpnDelegate.qml</file>
+        <file>ProgramSettingsQuestionDelegate.qml</file>
+        <file>ProgramSettingsJlinkPathDelegate.qml</file>
         <file>UserMenuButton.qml</file>
         <file>CanvasShapes.js</file>
         <file>FeedbackArrow.qml</file>
         <file>Arrow.qml</file>
-        <file>Workflow.qml</file>
+        <file>ProgramWorkflow.qml</file>
         <file>WorkflowNode.qml</file>
         <file>WorkflowNodeText.qml</file>
         <file>images/jlink-connect-schema.svg</file>
+        <file>jsonSchemas.js</file>
     </qresource>
 </RCC>

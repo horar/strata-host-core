@@ -1,10 +1,13 @@
 #pragma once
 
+#include "Database/DatabaseManager.h"
+#include "Database/DatabaseAccess.h"
+
 #include <QObject>
 #include <QQmlApplicationEngine>
 
-#include "DatabaseManager.h"
-
+namespace strata::Database
+{
 class UserAccessBrowser: public QObject {
     Q_OBJECT
 
@@ -39,5 +42,7 @@ private:
 
     QString endpointURL_ = "ws://localhost:4984/platform-list";
 
-    void changeListener(cbl::Replicator, const CBLReplicatorStatus &status);
+    void changeListener(cbl::Replicator, const DatabaseAccess::ActivityLevel &status);
 };
+
+} // namespace strata::Database

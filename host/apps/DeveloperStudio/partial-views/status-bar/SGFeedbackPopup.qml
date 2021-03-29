@@ -21,7 +21,7 @@ SGStrataPopup {
     width: container.width * 0.8
     height: 600
     x: container.width/2 - root.width/2
-    y: container.parent.windowHeight/2 - root.height/2
+    y: mainWindow.height/2 - root.height/2
 
     onVisibleChanged: {
         if (visible) {
@@ -240,12 +240,14 @@ SGStrataPopup {
                                 margins: 10
                             }
 
-                            TextEdit {
+                            SGTextEdit {
                                 id: textEdit
                                 width: scrollingText.width
                                 wrapMode: TextEdit.Wrap
                                 height: Math.max(scrollingText.height, contentHeight)
                                 enabled: !feedbackStatus.visible
+                                selectByMouse: true
+                                contextMenuEnabled: true
                                 // Text Length Limiter
                                 readOnly: feedbackStatus.visible
                                 KeyNavigation.tab: submitButton

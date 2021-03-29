@@ -6,6 +6,7 @@
 
 namespace strata::strataRPC
 {
+template <class HandlerArgument>
 class Dispatcher;
 class ServerConnector;
 class ClientsController;
@@ -16,6 +17,20 @@ class StrataServer : public QObject
     Q_DISABLE_COPY(StrataServer);
 
 public:
+    /**
+     * Enum to describe errors
+     */
+    enum class ServerError {
+        FailedToInitializeServer,
+        FailedToRegisterHandler,
+        FailedToUnregisterHandler,
+        FailedToRegisterClient,
+        FailedToUnregisterClient,
+        FailedToBuildClientMessage,
+        HandlerNotFound
+    };
+    Q_ENUM(ServerError);
+
     /**
      * StrataServer constructor
      * @param [in] address Sets the server address
@@ -90,12 +105,27 @@ public slots:
      */
     void notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject);
 
+private slots:
+    /**
+     * Slot to handle dispatching client notification/requests handlers.
+     * @note This will emit errorOccurred signal if the handler is not registered.
+     * @param [in] clientMessage parsed server message.
+     */
+    void dispatchHandler(const Message &clientMessage);
+
 signals:
     /**
      * Signal emitted when a new client message is parsed and ready to be dispatched
      * @param [in] clientMessage populated Message object with the command/notification metadata.
      */
     void newClientMessageParsed(const Message &clientMessage);
+
+    /**
+     * Emitted when an error has occurred.
+     * @param [in] errorType error category description.
+     * @param [in] errorMessage QString of the actual error.
+     */
+    void errorOccurred(StrataServer::ServerError errorType, const QString &errorMessage);
 
 private:
     /**
@@ -152,7 +182,7 @@ private:
      */
     void unregisterClientHandler(const Message &clientMessage);
 
-    std::unique_ptr<Dispatcher> dispatcher_;
+    std::unique_ptr<Dispatcher<const Message &>> dispatcher_;
     std::unique_ptr<ClientsController> clientsController_;
     std::unique_ptr<ServerConnector> connector_;
 };

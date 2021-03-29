@@ -134,6 +134,38 @@ TextField {
             running: busyIndicatorRunning
         }
 
+        Loader {
+            id: contextMenuPopupLoader
+            active: contextMenuEnabled
+            anchors.fill: parent
+
+            sourceComponent: Item {
+                property alias contextMenuPopupVisible: contextMenuPopup.visible
+
+                SGWidgets.SGContextMenuEditActions {
+                    id: contextMenuPopup
+                    textEditor: control
+                    copyEnabled: control.echoMode !== TextField.Password
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.IBeamCursor
+                    acceptedButtons: Qt.RightButton
+
+                    onReleased: {
+                        if (containsMouse) {
+                            contextMenuPopup.popup(null)
+                        }
+                    }
+
+                    onClicked: {
+                        control.forceActiveFocus()
+                    }
+                }
+            }
+        }
+
         Row {
             id: rightIcons
             anchors {
@@ -238,37 +270,6 @@ TextField {
             onClicked: {
                 control.forceActiveFocus()
                 control.clear()
-            }
-        }
-    }
-
-    Loader {
-        id: contextMenuPopupLoader
-        active: contextMenuEnabled
-        anchors.fill: parent
-
-        sourceComponent: Item {
-            property alias contextMenuPopupVisible: contextMenuPopup.visible
-
-            SGWidgets.SGContextMenuEditActions {
-                id: contextMenuPopup
-                textEditor: control
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.IBeamCursor
-                acceptedButtons: Qt.RightButton
-
-                onReleased: {
-                    if (containsMouse) {
-                        contextMenuPopup.popup(null)
-                    }
-                }
-
-                onClicked: {
-                    control.forceActiveFocus()
-                }
             }
         }
     }

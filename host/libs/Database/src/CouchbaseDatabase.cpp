@@ -1,14 +1,18 @@
-#include "CouchbaseDatabase.h"
 #include "logging/LoggingQtCategories.h"
+#include "CouchbaseDatabase.h"
+#include "Database/CouchbaseDocument.h"
 
 #include <string>
 #include <thread>
 
 #include <QDir>
-#include <QString>
-#include <QDebug>
+#include <QJsonDocument>
+#include <QJsonArray>
+
+using namespace strata::Database;
 
 CouchbaseDatabase::CouchbaseDatabase(const std::string &db_name, const std::string &db_path, QObject *parent) : QObject(parent), database_name_(db_name), database_path_(db_path) {
+
 }
 
 CouchbaseDatabase::~CouchbaseDatabase() {
@@ -31,12 +35,12 @@ bool CouchbaseDatabase::open() {
     }
 
     QDir dir(QString::fromStdString(database_path_));
-    if (!dir.isAbsolute()) {
+    if (dir.isAbsolute() == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Failed to open database, an absolute path must be provided.";
         return false;
     }
 
-    if (!dir.isReadable()) {
+    if (dir.isReadable() == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Failed to open database, invalid path provided.";
         return false;
     }
@@ -47,11 +51,11 @@ bool CouchbaseDatabase::open() {
     try {
         database_ = std::make_unique<cbl::Database>(database_name_.c_str(), db_config);
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of database. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of database. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
         return false;
     }
 
-    if (!database_ || !database_->valid()) {
+    if (database_ == nullptr || database_->valid() == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of database.";
         return false;
     }
@@ -59,21 +63,21 @@ bool CouchbaseDatabase::open() {
 }
 
 bool CouchbaseDatabase::close() {
-    if (!database_) {
+    if (database_ == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Cannot close database (database not initialized).";
         return false;
     }
     try {
         database_->close();
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem closing database. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem closing database. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
         return false;
     }
     return true;
 }
 
 bool CouchbaseDatabase::save(CouchbaseDocument *doc) {
-    if (!database_) {
+    if (database_ == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database, verify database is valid and open.";
         return false;
     }
@@ -82,7 +86,7 @@ bool CouchbaseDatabase::save(CouchbaseDocument *doc) {
     try {
         database_->saveDocument(*doc->mutable_doc_.get());
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
         return false;
     }
     return true;
@@ -96,7 +100,7 @@ bool CouchbaseDatabase::documentExistInDB(const std::string &id) {
 }
 
 bool CouchbaseDatabase::deleteDoc(const std::string &id) {
-    if (!documentExistInDB(id)) {
+    if (documentExistInDB(id) == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem deleting document: not found in DB.";
         return false;
     }
@@ -105,18 +109,18 @@ bool CouchbaseDatabase::deleteDoc(const std::string &id) {
         temp_doc.deleteDoc();
         database_->saveDocument(temp_doc);
     } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem deleting document. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem deleting document. Error code:" << err.code << ", domain:" << err.domain << ", info:" << err.internal_info;
         return false;
     }
     return true;
 }
 
 std::string CouchbaseDatabase::getDocumentAsStr(const std::string &id) {
-    if (!database_) {
+    if (database_ == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document, verify database is valid and open.";
         return "";
     }
-    if (!documentExistInDB(id)) {
+    if (documentExistInDB(id) == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document: not found in DB.";
         return "";
     }
@@ -124,12 +128,12 @@ std::string CouchbaseDatabase::getDocumentAsStr(const std::string &id) {
 }
 
 QJsonObject CouchbaseDatabase::getDocumentAsJsonObj(const std::string &id) {
-    if (!database_) {
+    if (database_ == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document, verify database is valid and open.";
         return QJsonObject();
     }
     auto doc = database_->getMutableDocument(id);
-    if (!doc.valid()) {
+    if (doc.valid() == false) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document: not found in DB.";
         return QJsonObject();
     }
@@ -138,7 +142,7 @@ QJsonObject CouchbaseDatabase::getDocumentAsJsonObj(const std::string &id) {
 }
 
 QJsonObject CouchbaseDatabase::getDatabaseAsJsonObj() {
-    if (!database_) {
+    if (database_ == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Failed to read database, verify database is valid and open.";
         return QJsonObject();
     }
@@ -151,7 +155,7 @@ QJsonObject CouchbaseDatabase::getDatabaseAsJsonObj() {
 }
 
 std::vector<std::string> CouchbaseDatabase::getAllDocumentKeys() {
-    if (!database_) {
+    if (database_ == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Failed to read database, verify database is valid and open.";
         return std::vector<std::string>();
     }
@@ -166,73 +170,13 @@ std::vector<std::string> CouchbaseDatabase::getAllDocumentKeys() {
     return keys;
 }
 
-bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std::string &token, const std::string &cookie_name,
-                                const std::vector<std::string> &channels, const ReplicatorType &replicator_type,
-                                std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback,
-                                std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback,
-                                bool continuous) {
-
-    if (!database_) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, verify DB is valid and open.";
-        return false;
-    }
-
-    if (url.empty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, URL endpoint may not be empty.";
-        return false;
-    }
-
-    if (token.empty() || cookie_name.empty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, token and cookie name may not be empty.";
-        return false;
-    }
-
-    replicator_configuration_ = std::make_unique<cbl::ReplicatorConfiguration>(*database_.get());
-
-    // Set the endpoint URL to connect to
-    replicator_configuration_->endpoint.setURL(url.c_str());
-
-    replicator_configuration_->authenticator.setSession(token.c_str(), cookie_name.c_str());
-
-    switch (replicator_type) {
-        case ReplicatorType::kPull:
-            replicator_configuration_->replicatorType = kCBLReplicatorTypePull;
-        case ReplicatorType::kPush:
-            replicator_configuration_->replicatorType = kCBLReplicatorTypePush;
-        default:
-            replicator_configuration_->replicatorType = kCBLReplicatorTypePushAndPull;
-    }
-
-    replicator_configuration_->continuous = continuous;
-
-    // Official CBL API: Replicator CTOR can throw so this is wrapped in try/catch
-    try {
-        replicator_ = std::make_unique<cbl::Replicator>(*replicator_configuration_.get());
-    } catch (CBLError err) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of replicator. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
-        return false;
-    }
-
-    if (change_listener_callback) {
-        ctoken_ = std::make_unique<cbl::Replicator::ChangeListener>(replicator_->addChangeListener(std::bind(&CouchbaseDatabase::replicatorStatusChanged, this, std::placeholders::_1, std::placeholders::_2)));
-        latest_replication_.change_listener_callback = change_listener_callback;
-    }
-
-    if (document_listener_callback) {
-        dtoken_ = std::make_unique<cbl::Replicator::DocumentListener>(replicator_->addDocumentListener(std::bind(&CouchbaseDatabase::documentStatusChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-        latest_replication_.document_listener_callback = document_listener_callback;
-    }
-
-    replicator_->start();
-    return true;
-}
-
 bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::string &username, const std::string &password,
-                                const std::vector<std::string> &channels, const ReplicatorType &replicator_type,
-                                std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback,
-                                std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback,
-                                bool continuous) {
-    if (!database_) {
+    const std::vector<std::string> &channels, const ReplicatorType &replicatorType,
+    std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback,
+    std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback,
+    bool continuous) {
+
+    if (database_ == nullptr) {
         qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, verify DB is valid and open.";
         return false;
     }
@@ -253,11 +197,11 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
     replicator_configuration_->endpoint.setURL(url.c_str());
 
     // Set the username and password for authentication
-    if (!username.empty()) {
+    if (username.empty() == false) {
         replicator_configuration_->authenticator.setBasic(username.c_str(), password.c_str());
     }
 
-    switch (replicator_type) {
+    switch (replicatorType) {
         case ReplicatorType::kPull:
             replicator_configuration_->replicatorType = kCBLReplicatorTypePull;
         case ReplicatorType::kPush:
@@ -266,7 +210,7 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
             replicator_configuration_->replicatorType = kCBLReplicatorTypePushAndPull;
     }
 
-    if (!channels.empty()) {
+    if (channels.empty() == false) {
         auto channels_temp = fleece::MutableArray::newArray();
         for (auto &channel : channels) {
             channels_temp.append(channel);
@@ -284,20 +228,84 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
         return false;
     }
 
-    latest_replication_.url = url;
-    latest_replication_.username = username;
-    latest_replication_.password = password;
-    latest_replication_.channels = channels;
-    latest_replication_.replicator_type = replicator_type;
-
     if (change_listener_callback) {
         ctoken_ = std::make_unique<cbl::Replicator::ChangeListener>(replicator_->addChangeListener(std::bind(&CouchbaseDatabase::replicatorStatusChanged, this, std::placeholders::_1, std::placeholders::_2)));
-        latest_replication_.change_listener_callback = change_listener_callback;
+        change_listener_callback_ = change_listener_callback;
     }
 
     if (document_listener_callback) {
         dtoken_ = std::make_unique<cbl::Replicator::DocumentListener>(replicator_->addDocumentListener(std::bind(&CouchbaseDatabase::documentStatusChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-        latest_replication_.document_listener_callback = document_listener_callback;
+        document_listener_callback_ = document_listener_callback;
+    }
+
+    replicator_->start();
+    return true;
+}
+
+bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std::string &token, const std::string &cookieName,
+    const std::vector<std::string> &channels, const ReplicatorType &replicatorType,
+    std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback,
+    std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback,
+    bool continuous) {
+
+    if (database_ == nullptr) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, verify DB is valid and open.";
+        return false;
+    }
+
+    if (url.empty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, URL endpoint may not be empty.";
+        return false;
+    }
+
+    if (token.empty() || cookieName.empty()) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, token and cookie name may not be empty.";
+        return false;
+    }
+
+    replicator_configuration_ = std::make_unique<cbl::ReplicatorConfiguration>(*database_.get());
+
+    // Set the endpoint URL to connect to
+    replicator_configuration_->endpoint.setURL(url.c_str());
+
+    // Set the token value and cookie name
+    replicator_configuration_->authenticator.setSession(token.c_str(), cookieName.c_str());
+
+    switch (replicatorType) {
+        case ReplicatorType::kPull:
+            replicator_configuration_->replicatorType = kCBLReplicatorTypePull;
+        case ReplicatorType::kPush:
+            replicator_configuration_->replicatorType = kCBLReplicatorTypePush;
+        default:
+            replicator_configuration_->replicatorType = kCBLReplicatorTypePushAndPull;
+    }
+
+    if (channels.empty() == false) {
+        auto channels_temp = fleece::MutableArray::newArray();
+        for (auto &channel : channels) {
+            channels_temp.append(channel);
+        }
+        replicator_configuration_->channels = channels_temp;
+    }
+
+    replicator_configuration_->continuous = continuous;
+
+    // Official CBL API: Replicator CTOR can throw so this is wrapped in try/catch
+    try {
+        replicator_ = std::make_unique<cbl::Replicator>(*replicator_configuration_.get());
+    } catch (CBLError err) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of replicator. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        return false;
+    }
+
+    if (change_listener_callback) {
+        ctoken_ = std::make_unique<cbl::Replicator::ChangeListener>(replicator_->addChangeListener(std::bind(&CouchbaseDatabase::replicatorStatusChanged, this, std::placeholders::_1, std::placeholders::_2)));
+        change_listener_callback_ = change_listener_callback;
+    }
+
+    if (document_listener_callback) {
+        dtoken_ = std::make_unique<cbl::Replicator::DocumentListener>(replicator_->addDocumentListener(std::bind(&CouchbaseDatabase::documentStatusChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+        document_listener_callback_ = document_listener_callback;
     }
 
     replicator_->start();
@@ -305,13 +313,12 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
 }
 
 void CouchbaseDatabase::stopReplicator() {
-    if (!database_) {
+    if (database_ == nullptr) {
         return;
     }
     if (replicator_) {
         replicator_->stop();
     }
-    latest_replication_.reset();
 }
 
 void CouchbaseDatabase::joinChannel(const QString &strataLoginUsername, const QString &channel) {
@@ -346,7 +353,7 @@ void CouchbaseDatabase::leaveChannel(const QString &strataLoginUsername, const Q
             continue;
         }
         if (this_value.toString() == strataLoginUsername) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Found channel, removing: " << this_value.toString();
+            qCCritical(logCategoryCouchbaseDatabase) << "Found channel, removing:" << this_value.toString();
             channels_arr.removeAt(ctr);
             break;
         }
@@ -364,50 +371,40 @@ void CouchbaseDatabase::leaveChannel(const QString &strataLoginUsername, const Q
 void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLReplicatorStatus &status) {
     error_code_ = rep.status().error.code;
 
-    // Set status as string for easy interfacing
     switch (status.activity) {
         case CBLReplicatorActivityLevel::kCBLReplicatorStopped:
-            // Check status for error, set retry flag
-            if (is_retry_) {
-                startBasicReplicator(latest_replication_.url, latest_replication_.username, latest_replication_.password, latest_replication_.channels, latest_replication_.replicator_type,
-                    latest_replication_.change_listener_callback, latest_replication_.document_listener_callback);
-                return;
-            }
-            status_ = "Stopped";
+            status_ = SGActivityLevel::CBLReplicatorStopped;
             break;
         case CBLReplicatorActivityLevel::kCBLReplicatorOffline:
-            status_ = "Offline";
+            status_ = SGActivityLevel::CBLReplicatorOffline;
             break;
         case CBLReplicatorActivityLevel::kCBLReplicatorConnecting:
-            status_ = "Connecting";
+            status_ = SGActivityLevel::CBLReplicatorConnecting;
             break;
         case CBLReplicatorActivityLevel::kCBLReplicatorIdle:
-            status_ = "Idle";
+            status_ = SGActivityLevel::CBLReplicatorIdle;
             break;
         case CBLReplicatorActivityLevel::kCBLReplicatorBusy:
-            status_ = "Busy";
+            status_ = SGActivityLevel::CBLReplicatorBusy;
             break;
     }
 
-    if (rep.status().error.code != 0) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Received replicator error code:" << rep.status().error.code <<
-            ", domain:" << rep.status().error.domain << ", info:" << rep.status().error.internal_info;
-        if (rep.status().error.domain == 2 && rep.status().error.code == 5) {
-            is_retry_ = true;
-            return;
-        }
-    }
-
-    is_retry_ = false;
-
-    if (latest_replication_.change_listener_callback) {
-        latest_replication_.change_listener_callback(rep, status);
+    if (change_listener_callback_) {
+        change_listener_callback_(rep, status_);
     }
 }
 
 void CouchbaseDatabase::documentStatusChanged(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
-    if (latest_replication_.document_listener_callback) {
-        latest_replication_.document_listener_callback(rep, isPush, documents);
+    if (document_listener_callback_) {
+        std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> SGDocuments;
+        for (const auto &doc : documents) {
+            CouchbaseDatabase::SGReplicatedDocument SGDocument;
+            SGDocument.id = doc.ID;
+            SGDocument.error = doc.error.code;
+            SGDocuments.push_back(SGDocument);
+        }
+
+        document_listener_callback_(rep, isPush, SGDocuments);
     }
 }
 
@@ -419,14 +416,26 @@ std::string CouchbaseDatabase::getDatabasePath() {
     return database_path_;
 }
 
-std::string CouchbaseDatabase::getReplicatorStatus() {
+CouchbaseDatabase::SGActivityLevel CouchbaseDatabase::getReplicatorStatus() {
     return status_;
 }
 
-int CouchbaseDatabase::getReplicatorError() {
-    if (is_retry_ && error_code_ != 0) {
-        return 0;
+std::string CouchbaseDatabase::getReplicatorStatusString() {
+    switch (status_) {
+        case SGActivityLevel::CBLReplicatorStopped:
+            return "Stopped";
+        case SGActivityLevel::CBLReplicatorOffline:
+            return "Offline";
+        case SGActivityLevel::CBLReplicatorConnecting:
+            return "Connecting";
+        case SGActivityLevel::CBLReplicatorIdle:
+            return "Idle";
+        case SGActivityLevel::CBLReplicatorBusy:
+            return "Busy";
     }
+}
+
+int CouchbaseDatabase::getReplicatorError() {
     return error_code_;
 }
 
@@ -456,6 +465,6 @@ void CouchbaseDatabase::setLogCallback(void (*callback)(CBLLogDomain domain, CBL
     }
 }
 
-void CouchbaseDatabase::logReceived(CBLLogDomain domain, CBLLogLevel level, const char *message) {
+void CouchbaseDatabase::logReceived(CBLLogDomain /*domain*/, CBLLogLevel /*level*/, const char *message) {
     qCCritical(logCategoryCouchbaseDatabase) << "Received Couchbase log" << message;
 }

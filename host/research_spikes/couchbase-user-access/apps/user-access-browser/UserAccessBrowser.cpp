@@ -1,14 +1,18 @@
 #include "UserAccessBrowser.h"
-#include "DatabaseManager.h"
-#include "DatabaseAccess.h"
-#include "CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDebug>
+
+using namespace strata::Database;
 
 UserAccessBrowser::UserAccessBrowser(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
     auto changeListenerCallback = std::bind(&UserAccessBrowser::changeListener, this, std::placeholders::_1, std::placeholders::_2);
-    databaseManager_ = std::make_unique<DatabaseManager>("", endpointURL_, changeListenerCallback);
+
+    databaseManager_ = std::make_unique<DatabaseManager>();
+    if (databaseManager_->init("", endpointURL_, changeListenerCallback) == false) {
+        qDebug() << "Error with initialization of database manager. Verify endpoint URL" << endpointURL_ << "is valid.";
+    }
 }
 
 void UserAccessBrowser::login(const QString &loginUsername) {
@@ -37,8 +41,8 @@ void UserAccessBrowser::clearUserDir(const QString &loginUsername) {
     DB_->clearUserDir(loginUsername, databaseManager_->getDbDirName());
 }
 
-void UserAccessBrowser::changeListener(cbl::Replicator, const CBLReplicatorStatus &status) {
-    if (databaseManager_ && status.activity == kCBLReplicatorIdle) {
+void UserAccessBrowser::changeListener(cbl::Replicator, const DatabaseAccess::ActivityLevel &status) {
+    if (databaseManager_ && status == DatabaseAccess::ActivityLevel::ReplicatorIdle) {
         auto allChannelsGranted = databaseManager_->readChannelsAccessGrantedOfUser(loginUsername_);
         auto allChannelsDenied = databaseManager_->readChannelsAccessDeniedOfUser(loginUsername_);
         auto allDocumentIDs = getAllDocumentIDs();

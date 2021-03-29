@@ -48,6 +48,10 @@ Item {
         logListView.positionViewAtEnd();
     }
 
+    function copyToClipboard(textElement) {
+        CommonCPP.SGUtilsCpp.copyToClipboard(textElement.text)
+    }
+
     //fontMetrics.boundingRect(text) does not re-evaluate itself upon changing the font size
     TextMetrics {
         id: textMetricsTs
@@ -556,35 +560,36 @@ Item {
                     }
                 }
 
+                SGWidgets.SGAbstractContextMenu {
+                    id: contextMenuMarkPopup
+
+                    Action {
+                        id: copyAction
+                        text: qsTr("Copy")
+                        onTriggered: {
+                            copyToClipboard(msg)
+                        }
+                    }
+
+                    onClosed: {
+                        logViewWrapper.forceActiveFocus()
+                    }
+                }
+
                 MouseArea {
                     id: cellMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                     onPressed: {
                         logViewWrapper.forceActiveFocus()
                         currentIndex = index
                     }
 
-                    SGWidgets.SGIcon {
-                        id: markIconWithMouseArea
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.left
-                        anchors.leftMargin: 5
-                        source: model.isMarked ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
-                        width: parent.height - 4
-                        height: width
-                        iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.isMarked ? markColor : cell.color
-                        visible: markIconSpacer.visible
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-
-                            onClicked: {
-                                logViewWrapper.forceActiveFocus()
-                                delegate.isHovered ? logModel.toggleIsMarked(index) : logModel.toggleIsMarked(currentIndex)
-                            }
+                    onReleased: {
+                        if (containsMouse && (mouse.button === Qt.RightButton)) {
+                            contextMenuMarkPopup.popup(null)
                         }
                     }
                 }
@@ -595,11 +600,28 @@ Item {
                 leftPadding: handleSpacer
                 spacing: 18
 
-                Item {
-                    id: markIconSpacer
+                SGWidgets.SGIcon {
+                    id: markIconWithMouseArea
                     width: textMetricsMark.boundingRect.width
-                    height: textMetricsMark.boundingRect.height
+                    height: textMetricsMark.boundingRect.height - 2
+                    anchors {
+                        top: parent.top
+                        topMargin: 1
+                    }
+
+                    source: model.isMarked ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
+                    iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.isMarked ? markColor : cell.color
                     visible: markIconVisible
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            logViewWrapper.forceActiveFocus()
+                            delegate.isHovered ? logModel.toggleIsMarked(index) : logModel.toggleIsMarked(currentIndex)
+                        }
+                    }
                 }
 
                 SGWidgets.SGText {
@@ -610,8 +632,7 @@ Item {
                         var hackVariable = markedModel.sourceModel.count
                         if (showMarks) {
                             return markedModel.mapIndexToSource(model.index) + 1
-                        }
-                        else {
+                        } else {
                             if (searchingMode) {
                                 return searchResultModel.mapIndexToSource(model.index) + 1
                             }

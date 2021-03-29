@@ -1,12 +1,14 @@
 #include <thread>
 
-#include "DatabaseManager.h"
-#include "DatabaseAccess.h"
-#include "CouchbaseDocument.h"
+#include "Database/DatabaseManager.h"
+#include "Database/CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDir>
 #include <QDebug>
 #include <QStandardPaths>
+
+using namespace strata::Database;
 
 // Replicator URL endpoint
 const QString endpointURL = "ws://10.0.0.157:4984/platform-list";
@@ -14,19 +16,24 @@ const QString endpointUsername = "user_public";
 
 int main() {
     // Open database manager
-    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
+    auto changeListener = [](cbl::Replicator, const DatabaseAccess::ActivityLevel) {
         qDebug() << "DatabaseManager-sampleapp changeListener -> replication status changed!";
     };
-    auto databaseManager = std::make_unique<DatabaseManager>("", endpointURL, changeListener);
+
+    auto databaseManager = std::make_unique<DatabaseManager>();
+    if (databaseManager->init("", endpointURL, changeListener) == false) {
+        qDebug() << "Error with initialization of database manager. Verify endpoint URL" << endpointURL << "is valid.";
+        return -1;
+    }
 
     // Wait until user_access_map replication is finished
     unsigned int retries = 0;
     const unsigned int REPLICATOR_RETRY_MAX = 50;
     const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
-    while (databaseManager->getReplicatorStatus() != "Stopped" && databaseManager->getReplicatorStatus() != "Idle") {
+    while (databaseManager->getUserAccessReplicatorStatus() != "Stopped" && databaseManager->getUserAccessReplicatorStatus() != "Idle") {
         ++retries;
         std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
-        if (databaseManager->getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
+        if (databaseManager->getUserAccessReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
             qDebug() << "Error with execution of replicator. Verify endpoint URL" << endpointURL << "is valid.";
             return -1;
         }
@@ -46,10 +53,10 @@ int main() {
 
     // Print channels granted to user
     channels = databaseManager->readChannelsAccessGrantedOfUser(endpointUsername);
-    qDebug() << "Channels: " << channels;
+    qDebug() << "Channels:" << channels;
 
     // Get database name
-    qDebug() << "Database name: " << DB->getDatabaseName();
+    qDebug() << "Database name:" << DB->getDatabaseName();
 
     // Create document 1, write to all buckets
     CouchbaseDocument Doc1("My_Doc_All_Buckets");
@@ -85,7 +92,7 @@ int main() {
         return -1;
     }
 
-    // Create document 3, write to bucket 'channel_C'
+    // Create document 3, write to bucket 'channel_public'
     CouchbaseDocument Doc3("My_Doc_Two_Buckets");
     body_string = R"foo({"StrataTest": "Contents_3"})foo";
 
@@ -95,8 +102,8 @@ int main() {
         qDebug() << "Failed to set document contents, body must be in JSON format.";
     }
 
-    auto DB_2 = databaseManager->login(endpointUsername, "channel_C", changeListener);
-    if (DB_2->write(&Doc3, "channel_C")) {
+    auto DB_2 = databaseManager->login(endpointUsername, "channel_public", changeListener);
+    if (DB_2->write(&Doc3, "channel_public")) {
         qDebug() << "Successfully saved database.";
     } else {
         qDebug() << "Error saving database.";

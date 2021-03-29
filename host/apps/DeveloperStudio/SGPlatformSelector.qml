@@ -188,18 +188,4 @@ Rectangle{
             onClicked: helpIcon.clickAction()
         }
     }
-
-    Item {
-        id: orderPopup
-
-        function open() {
-            var salesPopup = NavigationControl.createView("qrc:/partial-views/general/SGWebPopup.qml", orderPopup)
-            salesPopup.width = Qt.binding(()=> container.width-100)
-            salesPopup.height = Qt.binding(()=> container.height - 100)
-            salesPopup.x = Qt.binding(()=> container.width/2 - salesPopup.width/2)
-            salesPopup.y =  Qt.binding(()=> container.height/2 - salesPopup.height/2)
-            salesPopup.url = urls.salesPopupUrl
-            salesPopup.open()
-        }
-    }
 }

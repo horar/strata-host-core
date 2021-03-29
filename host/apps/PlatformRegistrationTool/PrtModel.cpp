@@ -27,7 +27,7 @@ PrtModel::PrtModel(QObject *parent)
     QSettings settings(configFilePath, QSettings::IniFormat);
 
     cloudServiceUrl_ = settings.value("cloud-service/url").toUrl();
-    serverType_ = settings.value("server-type/server").toString();
+    serverType_ = settings.value("cloud-service/server").toString();
 
     if (cloudServiceUrl_.isValid() == false) {
         qCCritical(logCategoryPrt) << "cloud service url is not valid:" << cloudServiceUrl_.toString();
@@ -134,23 +134,24 @@ void PrtModel::downloadBinaries(
         const QString firmwareMd5)
 {
 
-//    //use this to fake it
-//    QTimer::singleShot(2500, this, [this](){
-//        bool ok = fakeDownloadBinaries(
-//                    "/Users/martin/dev/strata firmware/with_bootloader/bootloader-release.bin",
-//                    "/Users/martin/dev/strata firmware/with_bootloader/water-heater-release.bin");
+    //use this to fake it
+    QTimer::singleShot(2500, this, [this](){
+        bool ok = fakeDownloadBinaries(
+                    "/Users/zbh6nr/dev/strata firmware/with_assisted/bootloader-release.bin",
+                    "/Users/zbh6nr/dev/strata firmware/with_assisted/str-level-shifters-gevb-v002.bin");
 
-//        qDebug() << "bootloader" << bootloaderFile_->fileName();
-//        qDebug() << "firmware" << firmwareFile_->fileName();
 
-//        if (ok == false) {
-//            emit downloadFirmwareFinished("Fake download failed");
-//        } else {
-//            emit downloadFirmwareFinished("");
-//        }
-//    });
+        if (ok == false) {
+            emit downloadFirmwareFinished("Fake download failed");
+        } else {
+            qDebug() << "bootloader" << bootloaderFile_->fileName();
+            qDebug() << "firmware" << firmwareFile_->fileName();
 
-//    return;
+            emit downloadFirmwareFinished("");
+        }
+    });
+
+    return;
 
     if (downloadJobId_.isEmpty() == false) {
         return;
@@ -264,15 +265,6 @@ void PrtModel::clearBinaries()
     if (firmwareFile_.isNull() == false) {
         firmwareFile_->deleteLater();
     }
-}
-
-void PrtModel::requestBootloaderUrl()
-{
-    //TODO finish this method once bootloader endpoint is ready
-
-    QTimer::singleShot(1000, [this](){
-        emit bootloaderUrlRequestFinished("fake-bootloader-url","", "");
-    });
 }
 
 void PrtModel::setPlatformId(
@@ -421,7 +413,7 @@ void PrtModel::startApplication()
     operation->run();
 }
 
-void PrtModel::boardReadyHandler(int deviceId, bool recognized)
+void PrtModel::boardReadyHandler(const QByteArray& deviceId, bool recognized)
 {
     Q_UNUSED(recognized)
 
@@ -430,7 +422,7 @@ void PrtModel::boardReadyHandler(int deviceId, bool recognized)
     emit boardReady(deviceId);
 }
 
-void PrtModel::boardDisconnectedHandler(int deviceId)
+void PrtModel::boardDisconnectedHandler(const QByteArray& deviceId)
 {
     int index = 0;
     while (index < platformList_.length()) {
@@ -519,4 +511,13 @@ QString PrtModel::resolveConfigFilePath()
 QString PrtModel::serverType() const
 {
     return serverType_;
+}
+
+bool PrtModel::debugBuild() const
+{
+#ifdef NDEBUG
+    return false;
+#else
+    return true;
+#endif
 }

@@ -1,13 +1,18 @@
 #include "couchbase-database-test.h"
 
-#include "DatabaseLib.h"
+#include "Database/DatabaseLib.h"
+#include "Database/CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDir>
 #include <QObject>
+#include <QJsonObject>
 #include <QCoreApplication>
 
 #include <thread>
 #include <iostream>
+
+using namespace strata::Database;
 
 // Need valid replicator info to run replication tests
 #define Test_Replication false
@@ -107,7 +112,7 @@ TEST_F(CouchbaseDatabaseTest, DOCS) {
     result_obj = db->getDocumentAsJsonObj("Test Doc 2");
     EXPECT_EQ(result_obj.count(), 0);
     // Edit document key "age" value to 30
-    (*doc_2)["age"] = 30;
+    // (*doc_2)["age"] = 30;
     EXPECT_TRUE(db->save(doc_2));
     // Get value of key "age"
     result_obj = db->getDocumentAsJsonObj("Test Doc 2");
@@ -172,11 +177,11 @@ TEST_F(CouchbaseDatabaseTest, REPLICATOR) {
     EXPECT_TRUE(keys.size() > 0);
 
     // Define custom listeners
-    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
+    auto changeListener = [](cbl::Replicator, const DatabaseAccess::ActivityLevel) {
         std::cout << "CouchbaseDatabase TEST changeListener -> replication status changed!" << std::endl;
     };
 
-    auto documentListener = [](cbl::Replicator, bool, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>>) {
+    auto documentListener = [](cbl::Replicator, bool, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>>) {
         std::cout << "CouchbaseDatabase TEST documentListener -> document status changed!" << std::endl;
     };
 

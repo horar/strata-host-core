@@ -13,7 +13,7 @@ namespace strata::device::command {
 CmdSetPlatformId::CmdSetPlatformId(
         const device::DevicePtr &device,
         const CmdSetPlatformIdData &data)
-    : BaseDeviceCommand(device, QStringLiteral("set_platform_id")),
+    : BaseDeviceCommand(device, QStringLiteral("set_platform_id"), CommandType::SetPlatformId),
       data_(data)
 {
 }
