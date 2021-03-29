@@ -9,6 +9,8 @@
 #include <Device/Operations/Flash.h>
 #include "DeviceOperationsV2Test.h"
 
+#include "CodecBase64.h"
+
 using strata::device::operation::BaseDeviceOperation;
 using strata::device::mock::MockCommand;
 using strata::device::mock::MockResponse;
@@ -132,6 +134,15 @@ void DeviceOperationsV2Test::connectFlashHandlers(operation::BaseDeviceOperation
     connect(operation, &BaseDeviceOperation::sendCommand, this, &DeviceOperationsV2Test::handleFlashSendCommand);
     connect(operation, &BaseDeviceOperation::processCmdResult, this, &DeviceOperationsV2Test::handleFlashCmdResult);
     connect(operation, &BaseDeviceOperation::finished, this, &DeviceOperationsV2Test::handleOperationFinished);
+}
+
+QByteArray DeviceOperationsV2Test::dataForChunkSize(int chunkSize) //get actual data for chunkSize
+{
+    size_t chunkBase64Size = base64::encoded_size(static_cast<size_t>(chunkSize));
+    QByteArray chunkBase64;
+    chunkBase64.resize(static_cast<int>(chunkBase64Size));
+    base64::encode(chunkBase64.data(), QVector<quint8>(chunkSize).data(), static_cast<size_t>(chunkSize));
+    return chunkBase64.data();
 }
 
 void DeviceOperationsV2Test::identifyEmbeddedApplicationTest()
@@ -661,18 +672,24 @@ void DeviceOperationsV2Test::flashFirmwareTest()
     QCOMPARE(expectedDoc["payload"]["size"].GetInt(),768);
     QCOMPARE(expectedDoc["payload"]["chunks"].GetInt(),3);
     QCOMPARE(expectedDoc["payload"]["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+
     expectedDoc.Parse(recordedMessages[1]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),0);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
+
     expectedDoc.Parse(recordedMessages[2]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),1);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
+
     expectedDoc.Parse(recordedMessages[3]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),2);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
 }
 
 void DeviceOperationsV2Test::flashBootloaderTest()
@@ -705,22 +722,30 @@ void DeviceOperationsV2Test::flashBootloaderTest()
     QCOMPARE(expectedDoc["payload"]["size"].GetInt(),1024);
     QCOMPARE(expectedDoc["payload"]["chunks"].GetInt(),4);
     QCOMPARE(expectedDoc["payload"]["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+
     expectedDoc.Parse(recordedMessages[1]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),0);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
+
     expectedDoc.Parse(recordedMessages[2]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),1);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
+
     expectedDoc.Parse(recordedMessages[3]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),2);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
+
     expectedDoc.Parse(recordedMessages[4]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),3);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
 }
 
 void DeviceOperationsV2Test::flashResendChunkTest()
@@ -755,18 +780,24 @@ void DeviceOperationsV2Test::flashResendChunkTest()
     QCOMPARE(expectedDoc["payload"]["size"].GetInt(),256);
     QCOMPARE(expectedDoc["payload"]["chunks"].GetInt(),1);
     QCOMPARE(expectedDoc["payload"]["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+
     expectedDoc.Parse(recordedMessages[1]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),0); //initial chunk - recieved status:ok
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
+
     expectedDoc.Parse(recordedMessages[2]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),1); //first chunk - recieved status:resend_chunk
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
+
     expectedDoc.Parse(recordedMessages[3]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),1); //re-sent chunk after recieving resend_chunk
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
 }
 
 void DeviceOperationsV2Test::flashMemoryErrorTest()
@@ -801,10 +832,12 @@ void DeviceOperationsV2Test::flashMemoryErrorTest()
     QCOMPARE(expectedDoc["payload"]["size"].GetInt(),768);
     QCOMPARE(expectedDoc["payload"]["chunks"].GetInt(),3);
     QCOMPARE(expectedDoc["payload"]["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+
     expectedDoc.Parse(recordedMessages[1]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),0);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
 }
 
 void DeviceOperationsV2Test::flashInvalidCmdSequenceTest()
@@ -839,10 +872,12 @@ void DeviceOperationsV2Test::flashInvalidCmdSequenceTest()
     QCOMPARE(expectedDoc["payload"]["size"].GetInt(),768);
     QCOMPARE(expectedDoc["payload"]["chunks"].GetInt(),3);
     QCOMPARE(expectedDoc["payload"]["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+
     expectedDoc.Parse(recordedMessages[1]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),0);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
 }
 
 void DeviceOperationsV2Test::flashInvalidValueTest()
@@ -879,10 +914,12 @@ void DeviceOperationsV2Test::flashInvalidValueTest()
     QCOMPARE(expectedDoc["payload"]["size"].GetInt(),768);
     QCOMPARE(expectedDoc["payload"]["chunks"].GetInt(),3);
     QCOMPARE(expectedDoc["payload"]["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+
     expectedDoc.Parse(recordedMessages[1]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
     QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),0);
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
+    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
 }
 
 void DeviceOperationsV2Test::cancelFlashOperationTest()

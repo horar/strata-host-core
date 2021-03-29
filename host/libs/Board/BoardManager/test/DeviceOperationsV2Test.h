@@ -67,6 +67,8 @@ private:
     std::shared_ptr<strata::device::mock::MockDevice> device_;
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
 
+    QByteArray dataForChunkSize(int chunkSize);
+
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;
     int operationTimeoutCount_ = 0;
