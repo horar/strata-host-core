@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  sync-gateway:
+    container_name: platform-list-sgw
+    image: couchbase/sync-gateway:2.5.1-community
+    ports:
+      - "4984:4984"
+    command:
+      - /tmp/config/sync-gateway-config-platform-list.json
+    volumes:
+      - ./conf:/tmp/config:ro
+    networks:
+      - backend
+    links:
+      - couchbase
+    depends_on:
+      - couchbase
+    restart: on-failure
+
+  couchbase:
+    container_name: platform-list-cb
+    image: couchbase:community-6.0.0
+    ports:
+      - "8091-8094:8091-8094"
+      - "11210:11210"
+    volumes:
+      - ./backup/cb:/opt/couchbase/var
+    networks:
+      - backend
+
+  # simple file server (local development only)
+  nginx:
+    container_name: platform-list-fs
+    image: nginx:1.17.3-alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./files:/srv:ro
+      - ./conf/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

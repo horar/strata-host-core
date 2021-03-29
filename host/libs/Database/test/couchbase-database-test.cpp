@@ -1,13 +1,18 @@
 #include "couchbase-database-test.h"
 
-#include "Database.h"
+#include "Database/DatabaseLib.h"
+#include "Database/CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDir>
 #include <QObject>
+#include <QJsonObject>
 #include <QCoreApplication>
 
 #include <thread>
 #include <iostream>
+
+using namespace strata::Database;
 
 // Need valid replicator info to run replication tests
 #define Test_Replication false
@@ -21,10 +26,10 @@
 #endif
 
 TEST_F(CouchbaseDatabaseTest, OPEN_DB) {
-    Database *db_1 = new Database("Test Database 1");
-    Database *db_2 = new Database("Test Database 2", "Invalid path");
-    Database *db_3 = new Database("Test Database 3", QDir::currentPath());
-    Database *db_4 = new Database("");
+    DatabaseLib *db_1 = new DatabaseLib("Test Database 1");
+    DatabaseLib *db_2 = new DatabaseLib("Test Database 2", "Invalid path");
+    DatabaseLib *db_3 = new DatabaseLib("Test Database 3", QDir::currentPath());
+    DatabaseLib *db_4 = new DatabaseLib("");
 
     // DB must have valid pointer
     EXPECT_NE(db_1, nullptr);
@@ -63,7 +68,7 @@ TEST_F(CouchbaseDatabaseTest, OPEN_DB) {
 }
 
 TEST_F(CouchbaseDatabaseTest, DOCS) {
-    Database *db = new Database("Test Database 4");
+    DatabaseLib *db = new DatabaseLib("Test Database 4");
     EXPECT_TRUE(db->open());
     CouchbaseDocument *doc_1 = new CouchbaseDocument("Test Doc 1");
     CouchbaseDocument *doc_2 = new CouchbaseDocument("Test Doc 2");
@@ -107,7 +112,7 @@ TEST_F(CouchbaseDatabaseTest, DOCS) {
     result_obj = db->getDocumentAsJsonObj("Test Doc 2");
     EXPECT_EQ(result_obj.count(), 0);
     // Edit document key "age" value to 30
-    (*doc_2)["age"] = 30;
+    // (*doc_2)["age"] = 30;
     EXPECT_TRUE(db->save(doc_2));
     // Get value of key "age"
     result_obj = db->getDocumentAsJsonObj("Test Doc 2");
@@ -141,19 +146,19 @@ TEST_F(CouchbaseDatabaseTest, DOCS) {
 #if Test_Replication
 // This test is disabled by default, requires valid replicator information
 TEST_F(CouchbaseDatabaseTest, REPLICATOR) {
-    Database *db_1 = new Database("Test Database 5");
-    Database *db_2 = new Database("Test Database 6");
+    DatabaseLib *db_1 = new DatabaseLib("Test Database 5");
+    DatabaseLib *db_2 = new DatabaseLib("Test Database 6");
 
     // Attempt to start replication (DB not open)
-    EXPECT_FALSE(db_1->startReplicator(replicator_url));
+    EXPECT_FALSE(db_1->startBasicReplicator(replicator_url));
     // Open DB
     EXPECT_TRUE(db_1->open());
     // Attempt to start replication (empty endpoint)
-    EXPECT_FALSE(db_1->startReplicator(""));
+    EXPECT_FALSE(db_1->startBasicReplicator(""));
     // Attempt to start replication (invalid endpoint)
-    EXPECT_FALSE(db_1->startReplicator("Invalid endpoint"));
+    EXPECT_FALSE(db_1->startBasicReplicator("Invalid endpoint"));
     // Attempt to start replication (valid endpoint)
-    EXPECT_TRUE(db_1->startReplicator(replicator_url));
+    EXPECT_TRUE(db_1->startBasicReplicator(replicator_url));
     // Wait until replication is finished
     unsigned int retries = 0;
     const unsigned int REPLICATOR_RETRY_MAX = 50;
@@ -172,18 +177,18 @@ TEST_F(CouchbaseDatabaseTest, REPLICATOR) {
     EXPECT_TRUE(keys.size() > 0);
 
     // Define custom listeners
-    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
+    auto changeListener = [](cbl::Replicator, const DatabaseAccess::ActivityLevel) {
         std::cout << "CouchbaseDatabase TEST changeListener -> replication status changed!" << std::endl;
     };
 
-    auto documentListener = [](cbl::Replicator, bool, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>>) {
+    auto documentListener = [](cbl::Replicator, bool, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>>) {
         std::cout << "CouchbaseDatabase TEST documentListener -> document status changed!" << std::endl;
     };
 
     // Open DB
     EXPECT_TRUE(db_2->open());
     // Attempt to start replication using all possible inputs
-    EXPECT_TRUE(db_2->startReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener));
+    EXPECT_TRUE(db_2->startBasicReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener));
     // Wait until replication is finished
     retries = 0;
     while (db_2->getReplicatorStatus() != "Stopped" && db_2->getReplicatorStatus() != "Idle") {
