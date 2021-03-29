@@ -119,6 +119,13 @@ signals:
      */
     void finished(Result result, int status, QString errorString = QString());
 
+    /*!
+     * This signal is emitted during some operations (e.g. firmware flashing) when one of
+     * operation commands is done and its status is needed for caller of operation.
+     * \param status partial operation status
+     */
+    void partialStatus(int status);
+
     // signal only for internal use:
     // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
     void sendCommand(QPrivateSignal);

@@ -124,15 +124,15 @@ void BaseDeviceOperation::handleCommandFinished(CommandResult result, int status
                 emit sendCommand(QPrivateSignal());  // send (next) command
             } else {
                 // Do not send next command, it will be sent by calling BaseDeviceOperation::resume() method.
-                emit finished(Result::Success, status_);
+                emit partialStatus(status_);
             }
         }
         break;
     case CommandResult::Repeat :
-        // Operation is not finished yet, so emit only signal and do not call function finishOperation().
+        // Operation is not finished yet, so emit only value of status and do not call function finishOperation().
         // Do not increment currentCommand_, the same command will be repeated.
         // Following (repeated) command will be sent by calling BaseDeviceOperation::resume() method.
-        emit finished(Result::Success, status_);
+        emit partialStatus(status_);
         break;
     case CommandResult::Retry :
         emit sendCommand(QPrivateSignal());  // send same command again
