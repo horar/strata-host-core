@@ -95,12 +95,14 @@ public:
      */
     virtual Type type() const final;
 
+#ifdef BUILD_TESTING
     /*!
      * Set response timeout for all commands in operation.
      * This method is used only in unit tests, DO NOT abuse it for other purposes!
      * \param responseInterval command response timeout
      */
     void setResponseTimeout(std::chrono::milliseconds responseInterval);
+#endif
 
 protected:
     /*!

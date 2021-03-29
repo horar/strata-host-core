@@ -84,12 +84,14 @@ Type BaseDeviceOperation::type() const
     return type_;
 }
 
+#ifdef BUILD_TESTING
 void BaseDeviceOperation::setResponseTimeout(std::chrono::milliseconds responseInterval)
 {
     for (auto it = commandList_.begin(); it != commandList_.end(); ++it) {
         (*it)->setResponseTimeout(responseInterval);
     }
 }
+#endif
 
 bool BaseDeviceOperation::bootloaderMode()
 {
