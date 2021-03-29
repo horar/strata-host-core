@@ -13,6 +13,8 @@ class StrataServerBenchmark : public QObject
 
 private slots:
     void benchmarkLargeNumberOfHandlers();
+    void benchmarkLargeNUmberOfClients();
+    void benchmarkRegisteringClients();
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
