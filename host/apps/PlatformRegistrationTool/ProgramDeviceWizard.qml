@@ -293,7 +293,7 @@ FocusScope {
         SGWidgets.SGButton {
             id: breakBtn
             text: "End"
-            visible: wizard.stateDownloadActive || wizard.stateAssistedCheckActive || wizard.stateLoopSucceedActive || wizard.stateErrorActive
+            visible: wizard.stateDownloadActive || wizard.stateAssistedCheckActive || wizard.stateControllerCheckActive || wizard.stateLoopSucceedActive || wizard.stateErrorActive
         }
 
         SGWidgets.SGButton {

@@ -485,6 +485,11 @@ DSM.StateMachine {
 
         initialState: checkAssistedDeviceIsConnected
 
+        DSM.SignalTransition {
+            targetState: exitState
+            signal: breakButton.clicked
+        }
+
         DSM.State {
             id: checkAssistedDeviceIsConnected
 
