@@ -15,7 +15,7 @@ QByteArray CmdRequestPlatformId::message() {
     return QByteArray("{\"cmd\":\"request_platform_id\",\"payload\":{}}");
 }
 
-bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
+bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc, CommandResult& result) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         const char *name = payload[JSON_NAME].GetString();
@@ -48,7 +48,7 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
             }
         }
 
-        result_ = CommandResult::Done;
+        result = CommandResult::Done;
         return true;
     } else {
         return false;

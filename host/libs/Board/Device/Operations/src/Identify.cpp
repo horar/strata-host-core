@@ -18,11 +18,13 @@ Identify::Identify(const device::DevicePtr& device,
     commandList_.reserve(3);
 
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
-    commandList_.emplace_back(std::make_unique<CmdWait>(device_, delay, QStringLiteral("Waiting for board to boot.")));
+    if (delay > std::chrono::milliseconds(0)) {
+        commandList_.emplace_back(std::make_unique<CmdWait>(device_, delay, QStringLiteral("Waiting for board to boot")));
+    }
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, requireFwInfoResponse, maxFwInfoRetries));
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
 
-    currentCommand_ = commandList_.end();
+    initCommandList();
 }
 
 Identify::BoardMode Identify::boardMode()
