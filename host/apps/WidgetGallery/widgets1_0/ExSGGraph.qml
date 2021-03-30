@@ -280,7 +280,6 @@ Item {
                     function removeOutOfViewPoints() {
                         // recursively clean up points that have moved out of view
                         if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
-                            console.info(timedGraphPoints.curve(0).at(0))
                             timedGraphPoints.curve(0).remove(0)
                             removeOutOfViewPoints()
                         }
