@@ -1,9 +1,3 @@
-# Spyglass Project Infrastructure:
-
-* Platform - has been deprecated
-* Host
-* Cloud
-
 # Platform Deprecation Note:
 
 * Firmware development under spyglass has been deprecated and moved to platform-apps and embedded-strata-core repositories.
@@ -22,3 +16,20 @@ Checkout Hello Strata page for more details: https://confluence.onsemi.com/pages
   * Another alternative is using `git worktree` on spyglass root directory:
 
     ```git worktree add ./platform platform```
+
+# Deprecation Note #2:
+
+### spyglass/platform_rsl10 
+* Has been moved to: https://code.onsemi.com/projects/SECSWST/repos/embedded-portable-core/browse
+
+### spyglass/bitbucket-pipelines.yml
+* Has been deleted
+  
+### spyglass/research-spike
+* has been deleted
+
+### spyglass/DeploymentScript
+* has been deleted
+
+### cloud
+* has been deleted
