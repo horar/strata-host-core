@@ -1363,6 +1363,18 @@ const qtTypeJson = {
             "source": "Layouts",
             "nonInstantiable": true,
         },
+        "ListElement": {
+            "properties": {
+                "property": {
+                    "meta_properties": []
+                },
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "",
+            "source": "Models",
+            "nonInstantiable": false
+        },
         "ListModel": {
             "properties": {
                 "count": {
