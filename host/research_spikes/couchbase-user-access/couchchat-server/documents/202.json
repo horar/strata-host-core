@@ -1,0 +1,149 @@
+{
+    "channels": "202",
+    "channels_available": ["channel_public"],
+    "documents": {
+        "downloads": [
+            {
+                "file": "202/cad/fbe1312fc516d4e9c02a1bd63bbc60e5.brd",
+                "filename": "STR-USBC-2PORT-100W-EVK_cad.brd",
+                "filesize": "4848844",
+                "md5": "fbe1312fc516d4e9c02a1bd63bbc60e5",
+                "name": "cad",
+                "order": 1,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_cad.brd",
+                "timestamp": "2020-05-05T21:44:53.667Z"
+            },
+            {
+                "file": "202/cad/9ae9c2c5886db5c4e342a7a20a102bdd.DSN",
+                "filename": "STR-USBC-2PORT-100W-EVK_cad.DSN",
+                "filesize": "1090560",
+                "md5": "9ae9c2c5886db5c4e342a7a20a102bdd",
+                "name": "cad",
+                "order": 1,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_cad.DSN",
+                "timestamp": "2020-05-05T21:44:53.668Z"
+            },
+            {
+                "file": "202/bom/514bcf5bd41ae2081a261c1fa6b42397.xlsx",
+                "filename": "STR-USBC-2PORT-100W-EVK_bom.xlsx",
+                "filesize": "18130",
+                "md5": "514bcf5bd41ae2081a261c1fa6b42397",
+                "name": "bom",
+                "order": 0,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_bom.xlsx",
+                "timestamp": "2020-05-05T21:44:53.670Z"
+            },
+            {
+                "file": "202/fab/5fb3f580702268ea598bc52bd2807145.bin",
+                "filename": "usb-pd-2-port-debug-0.1.20181231140926.bin",
+                "filesize": "252208",
+                "md5": "5fb3f580702268ea598bc52bd2807145",
+                "name": "fab",
+                "order": 2,
+                "prettyName": "usb-pd-2-port-debug-0.1.20181231140926.bin",
+                "timestamp": "2020-05-05T21:44:53.671Z"
+            },
+            {
+                "file": "202/fab/dee84fb923c8308456815089927885aa.zip",
+                "filename": "STR-USBC-2PORT-100W-EVK_fab.zip",
+                "filesize": "589459",
+                "md5": "dee84fb923c8308456815089927885aa",
+                "name": "fab",
+                "order": 2,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_fab.zip",
+                "timestamp": "2020-05-05T21:44:53.672Z"
+            }
+        ],
+        "views": [
+            {
+                "file": "202/demo_setup/f605fe48fb6348958033d4858b1d6335.pdf",
+                "filename": "STR-USBC-2PORT-100W-EVK_demo_setup.pdf",
+                "filesize": "270573",
+                "md5": "f605fe48fb6348958033d4858b1d6335",
+                "name": "demo_setup",
+                "order": 1,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_demo_setup.pdf",
+                "timestamp": "2020-05-05T21:44:53.655Z"
+            },
+            {
+                "file": "202/layout/2ac2849b924ec067a9be272db0db9a50.pdf",
+                "filename": "STR-USBC-2PORT-100W-EVK_layout.pdf",
+                "filesize": "1677883",
+                "md5": "2ac2849b924ec067a9be272db0db9a50",
+                "name": "layout",
+                "order": 3,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_layout.pdf",
+                "timestamp": "2020-05-05T21:44:53.657Z"
+            },
+            {
+                "file": "202/user_guide/f6027c2849f5e3a2ae6f71eee1a58689.pdf",
+                "filename": "STR-USBC-2PORT-100W-EVK_user_guide.pdf",
+                "filesize": "1116391",
+                "md5": "f6027c2849f5e3a2ae6f71eee1a58689",
+                "name": "user_guide",
+                "order": 6,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_user_guide.pdf",
+                "timestamp": "2020-05-05T21:44:53.658Z"
+            },
+            {
+                "file": "202/block_diagram/4b2a45d9e9599b70befec942992ebcf2.pdf",
+                "filename": "STR-USBC-2PORT-100W-EVK_block_diagram.pdf",
+                "filesize": "127378",
+                "md5": "4b2a45d9e9599b70befec942992ebcf2",
+                "name": "block_diagram",
+                "order": 0,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_block_diagram.pdf",
+                "timestamp": "2020-05-05T21:44:53.660Z"
+            },
+            {
+                "file": "202/schematic/2f655d973d64a53cb1dc380a59fadfd3.pdf",
+                "filename": "STR-USBC-2PORT-100W-EVK_schematic.pdf",
+                "filesize": "287261",
+                "md5": "2f655d973d64a53cb1dc380a59fadfd3",
+                "name": "schematic",
+                "order": 4,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_schematic.pdf",
+                "timestamp": "2020-05-05T21:44:53.661Z"
+            },
+            {
+                "file": "202/faq/d03c6e762f49e5a155d6c7cfc905243f.pdf",
+                "filename": "STR-USBC-2PORT-100W-EVK_faq.pdf",
+                "filesize": "141509",
+                "md5": "d03c6e762f49e5a155d6c7cfc905243f",
+                "name": "faq",
+                "order": 2,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_faq.pdf",
+                "timestamp": "2020-05-05T21:44:53.663Z"
+            },
+            {
+                "file": "202/test_report/b819c8a1c6e40c9d1c7ab93ee5d3e0ac.pdf",
+                "filename": "STR-USBC-2PORT-100W-EVK_test_report.pdf",
+                "filesize": "2091905",
+                "md5": "b819c8a1c6e40c9d1c7ab93ee5d3e0ac",
+                "name": "test_report",
+                "order": 5,
+                "prettyName": "STR-USBC-2PORT-100W-EVK_test_report.pdf",
+                "timestamp": "2020-05-05T21:44:53.665Z"
+            },
+            {
+                "file": "202/datasheet/datasheet.csv",
+                "filename": "datasheet.csv",
+                "filesize": 1731,
+                "md5": "d7d598fbca19f45b6d58daf1d0548e91",
+                "name": "datasheet",
+                "prettyName": "datasheet.csv",
+                "timestamp": "2020-05-05T21:44:53.675Z"
+            }
+        ]
+    },
+    "name": "STR-USBC-2PORT-100W-EVK",
+    "platform_selector": {
+        "file": "202/platform_selector/thumb.jpeg",
+        "filename": "thumbnail",
+        "filesize": "14737",
+        "md5": "39a1bf3fc30d5fe18fad4d77b8724a0b",
+        "name": "platform_selector",
+        "prettyName": "thumbnail",
+        "timestamp": "2020-05-05T21:44:53.675Z"
+    }
+}

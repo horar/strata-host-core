@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
+import tech.strata.sgwidgets 1.0
 import "../Components"
 
 CustomPopup {
@@ -66,6 +67,10 @@ CustomPopup {
                 anchors.topMargin: 5
 
                 clip: true
+                SGContextMenuEditActions {
+                    id: contextMenuPopup
+                    textEditor: bodyTextArea
+                }
                 TextArea {
                     id: bodyTextArea
                     text: "{}"
@@ -73,6 +78,7 @@ CustomPopup {
                     placeholderText: "Enter Body"
                     wrapMode: "Wrap"
                     selectByMouse: true
+                    persistentSelection: true   // must deselect manually
                     background: Rectangle {
                         anchors.fill:parent
                         color: "white"
@@ -80,6 +86,26 @@ CustomPopup {
                     onTextChanged: {
                         if (text === "") text = "{}";
                         validBody = isJSONString()
+                    }
+                    onActiveFocusChanged: {
+                        if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                            bodyTextArea.deselect()
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.IBeamCursor
+                        acceptedButtons: Qt.RightButton
+                        drag.target: Item {}
+                        onClicked: {
+                            bodyTextArea.forceActiveFocus()
+                        }
+                        onReleased: {
+                            if (containsMouse) {
+                                contextMenuPopup.popup(null)
+                            }
+                        }
                     }
                 }
             }

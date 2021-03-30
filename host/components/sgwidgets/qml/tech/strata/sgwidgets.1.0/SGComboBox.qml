@@ -7,7 +7,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 
 ComboBox {
     id: root
-    height: 32 * fontSizeMultiplier
+    implicitHeight: 32 * fontSizeMultiplier
     implicitWidth: modelWidth + height + contentItem.leftPadding
     font.pixelSize: SGSettings.fontPixelSize * fontSizeMultiplier
     model: ["First", "Second", "Third"]

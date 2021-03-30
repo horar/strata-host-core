@@ -6,7 +6,7 @@
 var device_id
 
 function init() {
-    device_id = parseInt(NavigationControl.context.device_id)
+    device_id = NavigationControl.context.device_id
 }
 
 // -------------------------

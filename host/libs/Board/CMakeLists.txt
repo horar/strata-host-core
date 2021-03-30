@@ -145,5 +145,6 @@ set_target_properties(${BOARD_MANAGER} PROPERTIES
 )
 
 if(BUILD_TESTING)
+    add_compile_definitions(BUILD_TESTING)
     add_subdirectory(BoardManager/test)
 endif()
