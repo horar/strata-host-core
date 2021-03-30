@@ -79,7 +79,6 @@ Item {
             id: consoleDelegate
             height: consoleMessage.height
             width: consoleLogs.width
-            anchors.verticalCenterOffset: 5
             property alias delegateText: consoleMessage.msgText
 
             Component.onCompleted: {

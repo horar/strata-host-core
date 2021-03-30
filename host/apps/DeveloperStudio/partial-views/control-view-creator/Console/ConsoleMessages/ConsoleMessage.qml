@@ -8,12 +8,11 @@ import tech.strata.theme 1.0
 
 Rectangle {
     id: msgRoot
-    height: (msgMetric.height * (msgText.lineCount)) + msgMetric.font.pixelSize
+    height: (msgMetric.height * (msgText.lineCount))
     width: root.width
     color: "transparent"
     clip: true
     
-
     property alias msg: msgText.text
     property bool current: false
     property alias msgText: msgText
@@ -26,7 +25,6 @@ Rectangle {
         fontSizeMultiplier: fontMultiplier
         anchors.fill: parent
 
-        anchors.margins: 1
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         color: current ? "black" : "#777"
         readOnly: true
