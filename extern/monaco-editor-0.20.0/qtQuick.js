@@ -542,11 +542,11 @@ function registerQmlAsLanguage() {
                 topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
                 bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
                 var getId = model.findNextMatch("id:", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
-                if(topOfFile === undefined && bottomOfFile === undefined ||(topOfFile.range !== null && bottomOfFile.range !== null && (position.lineNumber >= topOfFile.range.startLineNumber && position.lineNumber <= bottomOfFile.range.startLineNumber))){
+                if(topOfFile === undefined && bottomOfFile === undefined ||(topOfFile.range !== null && bottomOfFile.range !== null)){
                     initializeQtQuick(model)
                 }
 
-                if (getId !== null && getId !== undefined) {
+                if (getId.range !== null || getId !== undefined) {
                     var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
                     if (!(nextCheck.range.startLineNumber === bottomOfFile.range.startLineNumber && prevCheck.range.startLineNumber === topOfFile.range.startLineNumber)) {
@@ -554,23 +554,9 @@ function registerQmlAsLanguage() {
                     }
                 }
                 if ((position.lineNumber < topOfFile.range.startLineNumber || position.lineNumber > bottomOfFile.range.startLineNumber) || (bottomOfFile === null && topOfFile === null)) {
-                    editor.updateOptions({
-                        suggest: {
-                            showFunctions: false,
-                            showClasses: true,
-                            showKeyWords: false,
-                            showProperties: false,
-                        }
-                    })
-                } else {
-                    editor.updateOptions({
-                        suggest: {
-                            showFunctions: true,
-                            showClasses: true,
-                            showKeyWords: true,
-                            showProperties: true,
-                        }
-                    })
+                    return {suggestions: suggestions}
+                } else if(topOfFile.range === null && bottomOfFile.range === null){
+                    return {suggestions: []}
                 }
                 if (active.includes(".")) {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
@@ -642,6 +628,10 @@ function registerQmlAsLanguage() {
         while (position.lineNumber > fullRange.startLineNumber && !searchedIds) {
             var getPrevIDPosition = model.findPreviousMatch("id:", position, false, false)
             if (position.lineNumber < getPrevIDPosition.range.startLineNumber) {
+                break;
+            }
+
+            if(getPrevIDPosition === null || getPrevIDPosition === undefined){
                 break;
             }
 
