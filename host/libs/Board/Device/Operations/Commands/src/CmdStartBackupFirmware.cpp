@@ -25,11 +25,11 @@ bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc, Comma
         if (payload.HasMember(JSON_STATUS)) {
             const char* jsonStatus = payload[JSON_STATUS].GetString();
             if (std::strcmp(jsonStatus, CSTR_NO_FIRMWARE) == 0) {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Nothing to backup, board has no firmware.";
+                qCWarning(logCategoryDeviceCommand) << device_ << "Nothing to backup, board has no firmware.";
                 result = CommandResult::FinaliseOperation;
                 status_ = operation::NO_FIRMWARE;
             } else {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Bad notification status: '" << jsonStatus << "'.";
+                qCWarning(logCategoryDeviceCommand) << device_ << "Bad notification status: '" << jsonStatus << "'.";
                 result = CommandResult::Failure;
             }
         } else {
@@ -45,7 +45,7 @@ bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc, Comma
                 result = CommandResult::DoneAndWait;
                 status_ = operation::BACKUP_STARTED;
             } else {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Wrong format of notification.";
+                qCWarning(logCategoryDeviceCommand) << device_ << "Wrong format of notification.";
                 result = CommandResult::Failure;
             }
         }

@@ -81,7 +81,7 @@ bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document& doc, Com
     } else if (jsonStatus == JSON_BOARD_NOT_CONNECTED) {
         status_ = operation::BOARD_NOT_CONNECTED_TO_CONTROLLER;
     } else {
-        qCCritical(logCategoryDeviceOperations) << device_ << "Unknown status string:" << jsonStatus;
+        qCCritical(logCategoryDeviceCommand) << device_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;

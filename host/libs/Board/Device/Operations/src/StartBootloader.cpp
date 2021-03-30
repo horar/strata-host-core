@@ -61,7 +61,7 @@ void StartBootloader::skipCommands(CommandResult& result, int& status)
             result = CommandResult::FinaliseOperation;
             // set status for 'finished' signal
             status = ALREADY_IN_BOOTLOADER;
-            qCInfo(logCategoryDeviceOperations) << device_ << "Platform already in bootloader mode.";
+            qCInfo(logCategoryDeviceOperation) << device_ << "Platform already in bootloader mode.";
         }
     }
 }

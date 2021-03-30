@@ -30,7 +30,7 @@ bool CmdStartApplication::processNotification(rapidjson::Document& doc, CommandR
             setDeviceBootloaderMode(false);
         } else {
             if (std::strcmp(jsonStatus, CSTR_NO_FIRMWARE) == 0) {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Nothing to start, board has no valid firmware.";
+                qCWarning(logCategoryDeviceCommand) << device_ << "Nothing to start, board has no valid firmware.";
                 result = CommandResult::FinaliseOperation;
                 status_ = operation::NO_FIRMWARE;
             }

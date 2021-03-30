@@ -93,29 +93,29 @@ void BaseDeviceCommand::handleDeviceResponse(const QByteArray data)
     rapidjson::Document doc;
 
     if (CommandValidator::parseJsonCommand(data, doc) == false) {
-        qCWarning(logCategoryDeviceOperations) << device_ << "Cannot parse JSON: '" << data << "'.";
+        qCWarning(logCategoryDeviceCommand) << device_ << "Cannot parse JSON: '" << data << "'.";
         return;
     }
 
     if (doc.HasMember(JSON_ACK)) {
         if (CommandValidator::validate(CommandValidator::JsonType::ack, doc)) {
             const QString ackStr = doc[JSON_ACK].GetString();
-            qCDebug(logCategoryDeviceOperations) << device_ << "Received '" << ackStr << "' ACK.";
+            qCDebug(logCategoryDeviceCommand) << device_ << "Received '" << ackStr << "' ACK.";
             const rapidjson::Value& payload = doc[JSON_PAYLOAD];
 
             ackOk_ = payload[JSON_RETURN_VALUE].GetBool();
 
             if (ackStr == cmdName_) {
                 if (ackOk_ == false) {
-                    qCWarning(logCategoryDeviceOperations) << device_ << "ACK for '" << cmdName_ << "' command is not OK: '"
+                    qCWarning(logCategoryDeviceCommand) << device_ << "ACK for '" << cmdName_ << "' command is not OK: '"
                                                            << payload[JSON_RETURN_STRING].GetString() << "'.";
                     // ACK is not 'ok' - command is rejected by device
                     finishCommand(this->onReject());
                 }
             } else {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong ACK. Expected '" << cmdName_ << "', got '" << ackStr << "'.";
+                qCWarning(logCategoryDeviceCommand) << device_ << "Received wrong ACK. Expected '" << cmdName_ << "', got '" << ackStr << "'.";
                 if (ackOk_ == false) {
-                    qCWarning(logCategoryDeviceOperations) << device_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
+                    qCWarning(logCategoryDeviceCommand) << device_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
                 }
             }
         } else {
@@ -131,18 +131,18 @@ void BaseDeviceCommand::handleDeviceResponse(const QByteArray data)
             responseTimer_.stop();
 
             if (ackOk_ == false) {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Received notification without previous ACK.";
+                qCWarning(logCategoryDeviceCommand) << device_ << "Received notification without previous ACK.";
             }
-            qCDebug(logCategoryDeviceOperations) << device_ << "Processed '" << cmdName_ << "' notification.";
+            qCDebug(logCategoryDeviceCommand) << device_ << "Processed '" << cmdName_ << "' notification.";
 
             if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
                 if (result == CommandResult::Failure) {
-                    qCWarning(logCategoryDeviceOperations) << device_ << "Received faulty notification: '" << data << "'.";
+                    qCWarning(logCategoryDeviceCommand) << device_ << "Received faulty notification: '" << data << "'.";
                 }
 
                 const QByteArray status = CommandValidator::notificationStatus(doc);
                 if (status.isEmpty() == false) {
-                    qCInfo(logCategoryDeviceOperations) << device_ << "Command '" << cmdName_ << "' retruned '" << status << "'.";
+                    qCInfo(logCategoryDeviceCommand) << device_ << "Command '" << cmdName_ << "' retruned '" << status << "'.";
                 }
             }
 
@@ -159,7 +159,7 @@ void BaseDeviceCommand::handleDeviceResponse(const QByteArray data)
 
 void BaseDeviceCommand::handleResponseTimeout()
 {
-    qCWarning(logCategoryDeviceOperations) << device_ << "Command '" << cmdName_ << "' timed out.";
+    qCWarning(logCategoryDeviceCommand) << device_ << "Command '" << cmdName_ << "' timed out.";
     finishCommand(this->onTimeout());
 }
 
@@ -182,7 +182,7 @@ void BaseDeviceCommand::finishCommand(CommandResult result)
 
 void BaseDeviceCommand::logWrongResponse(const QByteArray& response)
 {
-    qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong, unexpected or malformed response: '" << response << "'.";
+    qCWarning(logCategoryDeviceCommand) << device_ << "Received wrong, unexpected or malformed response: '" << response << "'.";
 }
 
 void BaseDeviceCommand::setDeviceVersions(const char* bootloaderVer, const char* applicationVer) {

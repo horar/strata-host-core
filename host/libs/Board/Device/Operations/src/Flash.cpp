@@ -34,7 +34,7 @@ void Flash::flashChunk(const QVector<quint8>& chunk, int chunkNumber)
             || ( ((*currentCommand_)->type() != CommandType::FlashFirmware) && ((*currentCommand_)->type() != CommandType::FlashBootloader) ))
     {
         QString errMsg(QStringLiteral("Cannot flash chunk, bad state of flash operation."));
-        qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
+        qCWarning(logCategoryDeviceOperation) << device_ << errMsg;
         finishOperation(Result::Error, errMsg);
         return;
     }

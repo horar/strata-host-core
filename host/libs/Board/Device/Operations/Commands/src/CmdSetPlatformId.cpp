@@ -54,7 +54,7 @@ bool CmdSetPlatformId::processNotification(rapidjson::Document& doc, CommandResu
     } else if (jsonStatus == JSON_ALREADY_INITIALIZED) {
         status_ = operation::PLATFORM_ID_ALREADY_SET;
     } else {
-        qCCritical(logCategoryDeviceOperations) << device_ << "Unknown status string:" << jsonStatus;
+        qCCritical(logCategoryDeviceCommand) << device_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;

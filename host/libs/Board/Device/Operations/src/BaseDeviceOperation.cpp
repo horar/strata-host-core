@@ -17,27 +17,27 @@ BaseDeviceOperation::BaseDeviceOperation(const device::DevicePtr& device, Type t
 {
     connect(this, &BaseDeviceOperation::sendCommand, this, &BaseDeviceOperation::handleSendCommand, Qt::QueuedConnection);
 
-    //qCDebug(logCategoryDeviceOperations) << device_ << "Created new device operation (" << static_cast<int>(type_) << ").";
+    //qCDebug(logCategoryDeviceOperation) << device_ << "Created new device operation (" << static_cast<int>(type_) << ").";
 }
 
 BaseDeviceOperation::~BaseDeviceOperation()
 {
     device_->unlockDevice(reinterpret_cast<quintptr>(this));
-    //qCDebug(logCategoryDeviceOperations) << device_ << "Deleted device operation (" << static_cast<int>(type_) << ").";
+    //qCDebug(logCategoryDeviceOperation) << device_ << "Deleted device operation (" << static_cast<int>(type_) << ").";
 }
 
 void BaseDeviceOperation::run()
 {
     if (started_) {
         QString errStr(QStringLiteral("The operation has already run."));
-        qCWarning(logCategoryDeviceOperations) << device_ << errStr;
+        qCWarning(logCategoryDeviceOperation) << device_ << errStr;
         finishOperation(Result::Error, errStr);
         return;
     }
 
     if (device_->lockDeviceForOperation(reinterpret_cast<quintptr>(this)) == false) {
         QString errStr(QStringLiteral("Cannot get access to device (another operation is running)."));
-        qCWarning(logCategoryDeviceOperations) << device_ << errStr;
+        qCWarning(logCategoryDeviceOperation) << device_ << errStr;
         finishOperation(Result::Error, errStr);
         return;
     }
@@ -65,7 +65,7 @@ bool BaseDeviceOperation::isFinished() const
 
 void BaseDeviceOperation::cancelOperation()
 {
-    qCDebug(logCategoryDeviceOperations) << device_ << "Cancelling currently running operation.";
+    qCDebug(logCategoryDeviceOperation) << device_ << "Cancelling currently running operation.";
 
     if (currentCommand_ != commandList_.end()) {
         (*currentCommand_)->cancel();

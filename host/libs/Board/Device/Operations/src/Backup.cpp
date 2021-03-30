@@ -38,7 +38,7 @@ void Backup::backupNextChunk()
             || (*currentCommand_)->type() != CommandType::BackupFirmware)
     {
         QString errMsg(QStringLiteral("Cannot backup chunk, bad state of backup operation."));
-        qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
+        qCWarning(logCategoryDeviceOperation) << device_ << errMsg;
         finishOperation(Result::Error, errMsg);
         return;
     }
