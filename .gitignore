@@ -3,15 +3,12 @@ Debug/
 MinSizeRel/
 Release/
 
-platform/cli/USB-PD/BUILD/*
 *build*/
 *BUILD*/
 #simlink to build directory
 *.pro.user*
 *.pro.user
 *.exe
-!platform/lib/libmbed-os.a
-!host/lib/linux/lib*
 *.project
 *.cproject
 .settings
@@ -27,12 +24,6 @@ GeneratedFiles*
 *.sw[po]
 tags
 *.config
-platform/tools/arm-gcc-toolchain/*
-platform/mbed-os/sources/*
-platform/applications/*/release/*
-platform/applications/*/debug/*
-!platform/applications/*/release/CMakeLists.txt
-!platform/applications/*/debug/CMakeLists.txt
 *.jlink
 *.DS_Store
 *.qmlc
