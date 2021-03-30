@@ -32,13 +32,12 @@ Item {
         id: consoleLogs
         anchors.fill: parent
         model: consoleItems
-        clip: true
-        spacing: 0
         signal deselectAll()
         property int indexDragStarted: -1
         property bool selecting: false
         signal selectInBetween(int indexDragEnded)
         property bool isActiveSelecting: false
+        spacing: 0
 
         onDeselectAll: {
           consoleItems.invalidate()
@@ -80,7 +79,7 @@ Item {
             id: consoleDelegate
             height: consoleMessage.height
             width: consoleLogs.width
-            anchors.bottomMargin: 5
+            anchors.verticalCenterOffset: 5
             property alias delegateText: consoleMessage.msgText
 
             Component.onCompleted: {

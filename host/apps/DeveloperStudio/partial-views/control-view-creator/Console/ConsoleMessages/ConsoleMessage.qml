@@ -6,10 +6,13 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
 
-Item {
+Rectangle {
     id: msgRoot
-    height: msgMetric.height * msgText.lineCount
+    height: (msgMetric.height * (msgText.lineCount)) + msgMetric.font.pixelSize
     width: root.width
+    color: "transparent"
+    clip: true
+    
 
     property alias msg: msgText.text
     property bool current: false
@@ -22,6 +25,8 @@ Item {
         id: msgText
         fontSizeMultiplier: fontMultiplier
         anchors.fill: parent
+
+        anchors.margins: 1
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         color: current ? "black" : "#777"
         readOnly: true
