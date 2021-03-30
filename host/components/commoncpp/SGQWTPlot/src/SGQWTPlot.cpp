@@ -929,4 +929,3 @@ QRectF SGQWTPlotCurveData::boundingRect() const
 {
     return qwtBoundingRect(*this);
 }
-
