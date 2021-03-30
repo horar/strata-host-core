@@ -5,8 +5,8 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 Item {
     id: control
 
-    width: wrapper.width
-    height: wrapper.height
+    implicitWidth: wrapper.width
+    implicitHeight: wrapper.height
 
     property alias text: textItem.text
     property alias spacing: wrapper.spacing

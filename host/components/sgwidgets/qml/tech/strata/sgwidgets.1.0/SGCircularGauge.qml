@@ -60,7 +60,7 @@ Item {
             property var center: { "x": outerRadius, "y": outerRadius}
             property real lineWidth: outerRadius * 0.45
             property real radius: outerRadius - lineWidth/2
-            property real ratio: Math.max(0, Math.min(root.value/root.maximumValue, 1)) // bound to 0, 1
+            property real ratio: Math.max(0, Math.min((root.value - root.minimumValue)/(root.maximumValue - root.minimumValue), 1)) // bound to 0, 1
 
             tickmarkLabel:  SGText {
                                 text: styleData.value.toFixed(root.tickmarkDecimalPlaces)

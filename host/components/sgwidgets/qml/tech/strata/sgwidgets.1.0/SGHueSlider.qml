@@ -7,8 +7,8 @@ Slider {
     id: hueSlider
     padding: 0
     value: 128
-    height: 28
-    width: 300
+    implicitHeight: 28
+    implicitWidth: 300
     live: false
     from: 0
     to: 255

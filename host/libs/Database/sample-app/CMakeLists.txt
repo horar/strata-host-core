@@ -1,18 +1,17 @@
-project(database-sampleapp
-    LANGUAGES CXX
+add_executable(DatabaseManager-sampleapp
+    DatabaseManager-sampleapp.cpp
 )
 
-add_executable(database-sampleapp
+add_executable(Database-sampleapp
     couchbase-database-sampleapp.cpp
 )
 
-target_link_libraries(database-sampleapp
+target_link_libraries(DatabaseManager-sampleapp
     PUBLIC
     Database
 )
 
-if (APPLE)
-    target_link_libraries(database-sampleapp
-        PRIVATE ${FOUNDATION_LIBRARY}
-    )
-endif()
+target_link_libraries(Database-sampleapp
+    PUBLIC
+    Database
+)
