@@ -1,7 +1,6 @@
 #pragma once
 
 #include <chrono>
-#include <QTimer>
 
 #include "BaseDeviceCommand.h"
 
@@ -15,17 +14,17 @@ class CmdWait : public BaseDeviceCommand
 public:
     CmdWait(const device::DevicePtr& device,
             std::chrono::milliseconds waitTime,
-            const QString& description = QString());
+            const QString& description);
 
     void sendCommand(quintptr lockId) override;
-    void cancel() override;
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    CommandResult onTimeout() override;
 
     void setWaitTime(std::chrono::milliseconds waitTime);
 
 private:
-    QTimer waitTimer_;
+    std::chrono::milliseconds waitTime_;
     QString description_;
 };
 

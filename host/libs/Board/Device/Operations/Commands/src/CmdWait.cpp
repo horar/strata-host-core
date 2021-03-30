@@ -8,26 +8,18 @@ CmdWait::CmdWait(const device::DevicePtr& device,
                  std::chrono::milliseconds waitTime,
                  const QString& description)
     : BaseDeviceCommand(device, QStringLiteral("wait"), CommandType::Wait),
+      waitTime_(waitTime),
       description_(description)
-{
-    waitTimer_.setSingleShot(true);
-    waitTimer_.setInterval(waitTime);
-    waitTimer_.callOnTimeout(this, [this](){ emit finished(CommandResult::Done, status_); } );
-}
+{ }
 
 void CmdWait::sendCommand(quintptr lockId)
 {
     Q_UNUSED(lockId)
 
-    qCInfo(logCategoryDeviceCommand) << device_ << description_ << ". Next command will be sent after "
-        << waitTimer_.intervalAsDuration().count() << " milliseconds.";
-    waitTimer_.start();
-}
-
-void CmdWait::cancel()
-{
-    waitTimer_.stop();
-    emit finished(CommandResult::Cancel, status_);
+    qCInfo(logCategoryDeviceCommand) << device_ << description_
+        << ". Next command will be sent after " << waitTime_.count() << " milliseconds.";
+    responseTimer_.setInterval(waitTime_);
+    responseTimer_.start();
 }
 
 QByteArray CmdWait::message()
@@ -49,9 +41,14 @@ bool CmdWait::processNotification(rapidjson::Document& doc, CommandResult& resul
     return false;
 }
 
+CommandResult CmdWait::onTimeout()
+{
+    return CommandResult::Done;
+}
+
 void CmdWait::setWaitTime(std::chrono::milliseconds waitTime)
 {
-    waitTimer_.setInterval(waitTime);
+    waitTime_ = waitTime;
 }
 
 }  // namespace

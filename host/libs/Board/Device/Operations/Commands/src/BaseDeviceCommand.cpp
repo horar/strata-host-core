@@ -17,10 +17,10 @@ BaseDeviceCommand::BaseDeviceCommand(const DevicePtr& device, const QString& com
       device_(device),
       ackOk_(false),
       status_(operation::DEFAULT_STATUS),
+      responseTimeout_(RESPONSE_TIMEOUT),
       deviceSignalsConnected_(false)
 {
     responseTimer_.setSingleShot(true);
-    responseTimer_.setInterval(RESPONSE_TIMEOUT);
     connect(&responseTimer_, &QTimer::timeout, this, &BaseDeviceCommand::handleResponseTimeout);
 }
 
@@ -45,6 +45,7 @@ void BaseDeviceCommand::sendCommand(quintptr lockId)
     ackOk_ = false;  // "ok" ACK for this command
 
     if (device_->sendMessage(this->message(), lockId)) {
+        responseTimer_.setInterval(responseTimeout_);
         responseTimer_.start();
     } else {
         qCCritical(logCategoryDeviceCommand) << device_ << QStringLiteral("Cannot send '") + cmdName_ + QStringLiteral("' command.");
@@ -52,7 +53,8 @@ void BaseDeviceCommand::sendCommand(quintptr lockId)
     }
 }
 
-// If method 'sendCommand' is overriden, probably this method should be overriden too.
+// If method 'sendCommand' is overriden, check if this method is still valid.
+// If is not, override it too.
 void BaseDeviceCommand::cancel()
 {
     responseTimer_.stop();
@@ -69,7 +71,7 @@ CommandType BaseDeviceCommand::type() const {
 
 void BaseDeviceCommand::setResponseTimeout(std::chrono::milliseconds responseInterval)
 {
-    responseTimer_.setInterval(responseInterval);
+    responseTimeout_ = responseInterval;
 }
 
 CommandResult BaseDeviceCommand::onTimeout() {
@@ -159,7 +161,9 @@ void BaseDeviceCommand::handleDeviceResponse(const QByteArray data)
 
 void BaseDeviceCommand::handleResponseTimeout()
 {
-    qCWarning(logCategoryDeviceCommand) << device_ << "Command '" << cmdName_ << "' timed out.";
+    if (cmdType_ != CommandType::Wait) {
+        qCWarning(logCategoryDeviceCommand) << device_ << "Command '" << cmdName_ << "' timed out.";
+    }
     finishCommand(this->onTimeout());
 }
 

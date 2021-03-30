@@ -151,15 +151,16 @@ protected:
     const QString cmdName_;
     const CommandType cmdType_;
     const DevicePtr& device_;
+    QTimer responseTimer_;
     bool ackOk_;
     int status_;
 
 private:
     void finishCommand(CommandResult result);
     void logWrongResponse(const QByteArray& response);
+    std::chrono::milliseconds responseTimeout_;
     bool deviceSignalsConnected_;
 
-    QTimer responseTimer_;
 };
 
 }  // namespace
