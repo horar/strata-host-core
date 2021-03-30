@@ -268,20 +268,24 @@ Item {
                     }
 
                     onTriggered: {
-                        let currentTime = Date.now()
-                        let curve = timedGraphPoints.curve(0)
-                        curve.shiftPoints((currentTime - lastTime)/1000, 0)
-                        curve.append(0, sgGraphExample.yourDataValueHere())
+                        //                        let currentTime = Date.now()
+                        //                        let curve = timedGraphPoints.curve(0)
+                        //                        curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                        //                        curve.append(0, sgGraphExample.yourDataValueHere())
                         removeOutOfViewPoints()
-                        timedGraphPoints.update()
-                        lastTime = currentTime
+                        //                        timedGraphPoints.update()
+                        //                        lastTime = currentTime
                     }
 
                     function removeOutOfViewPoints() {
                         // recursively clean up points that have moved out of view
-                        if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
-                            timedGraphPoints.curve(0).remove(0)
-                            removeOutOfViewPoints()
+
+                        if(timedGraphPoints.curve(0).at(0) > 0) {
+                            console.info(timedGraphPoints.curve(0).at(0))
+                            if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
+                                timedGraphPoints.curve(0).remove(0)
+                                removeOutOfViewPoints()
+                            }
                         }
                     }
                 }
