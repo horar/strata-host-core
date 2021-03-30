@@ -5,7 +5,6 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 
-
 FocusScope {
     id: wizard
 
@@ -19,9 +18,34 @@ FocusScope {
     property QtObject prtModel
 
     property int spacing: 10
-    property variant warningDialog: null
 
     property alias jLinkConnector: jLinkConnector
+
+    property bool stateDownloadActive: embeddedStateMachine.stateDownloadActive || assistedStateMachine.stateDownloadActive
+    property bool stateControllerCheckActive: assistedStateMachine.stateControllerCheckActive
+    property bool stateControllerRegistrationActive: assistedStateMachine.stateControllerRegistrationActive
+    property bool stateControllerAlreadyRegisteredActive: assistedStateMachine.stateControllerAlreadyRegisteredActive
+    property bool stateAssistedCheckActive: embeddedStateMachine.stateCheckDeviceActive || assistedStateMachine.stateAssistedDeviceCheckActive
+    property bool stateAssistedRegistrationActive: embeddedStateMachine.stateRegistrationActive || assistedStateMachine.stateAssistedDeviceRegistrationActive
+    property bool stateErrorActive: embeddedStateMachine.stateErrorActive || assistedStateMachine.stateErrorActive
+    property bool stateLoopFailedActive: embeddedStateMachine.stateLoopFailedActive || assistedStateMachine.stateLoopFailedActive
+    property bool stateLoopSucceedActive: embeddedStateMachine.stateLoopSucceedActive || assistedStateMachine.stateLoopSucceedActive
+
+    property string statusText: {
+        if (registrationMode === ProgramDeviceWizard.Embedded) {
+            return embeddedStateMachine.statusText
+        }
+
+        return assistedStateMachine.statusText
+    }
+
+    property string subtext: {
+        if (registrationMode === ProgramDeviceWizard.Embedded) {
+            return embeddedStateMachine.subtext
+        }
+
+        return assistedStateMachine.subtext
+    }
 
     clip: true
 
@@ -34,25 +58,33 @@ FocusScope {
 
     Component.onCompleted: {
         resolveDataForStateMachine()
-        embeddedStateMachine.start()
+
+        if (registrationMode === ProgramDeviceWizard.Embedded) {
+
+            console.log(Logger.prtCategory, "classId", embeddedStateMachine.classId)
+            console.log(Logger.prtCategory, "opn", embeddedStateMachine.opn)
+            console.log(Logger.prtCategory, "mcuJlinkDevice", embeddedStateMachine.jlinkDevice)
+            console.log(Logger.prtCategory, "mcuBootloaderStartAddress", embeddedStateMachine.bootloaderStartAddress)
+            console.log(Logger.prtCategory, "firmware", embeddedStateMachine.firmwareData.version, embeddedStateMachine.firmwareData.file, embeddedStateMachine.firmwareData.timestamp)
+            console.log(Logger.prtCategory, "bootloader", embeddedStateMachine.bootloaderData.version, embeddedStateMachine.bootloaderData.file, embeddedStateMachine.bootloaderData.timestamp)
+
+            embeddedStateMachine.start()
+        } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+
+            console.log(Logger.prtCategory, "assistedDeviceClassId", assistedStateMachine.assistedDeviceClassId)
+            console.log(Logger.prtCategory, "assistedDeviceOpn", assistedStateMachine.assistedDeviceOpn)
+            console.log(Logger.prtCategory, "controllerClassId", assistedStateMachine.controllerClassId)
+            console.log(Logger.prtCategory, "controllerOpn", assistedStateMachine.controllerOpn)
+            console.log(Logger.prtCategory, "mcuJlinkDevice", assistedStateMachine.jlinkDevice)
+            console.log(Logger.prtCategory, "mcuBootloaderStartAddress", assistedStateMachine.bootloaderStartAddress)
+            console.log(Logger.prtCategory, "firmware", assistedStateMachine.firmwareData.version, assistedStateMachine.firmwareData.file, assistedStateMachine.firmwareData.timestamp)
+            console.log(Logger.prtCategory, "bootloader", assistedStateMachine.bootloaderData.version, assistedStateMachine.bootloaderData.file, assistedStateMachine.bootloaderData.timestamp)
+
+            assistedStateMachine.start()
+        } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
+            console.error(Logger.prtCategory, "controller only mode is not implemented yet")
+        }
     }
-
-    Rectangle {
-        anchors.fill: parent
-        color: "#eeeeee"
-    }
-
-    property bool stateDownloadActive: embeddedStateMachine.stateDownloadActive
-    property bool stateControllerCheckActive
-    property bool stateControllerRegistrationActive
-    property bool stateAssistedCheckActive: embeddedStateMachine.stateCheckDeviceActive
-    property bool stateAssistedRegistrationActive: embeddedStateMachine.stateRegistrationActive
-    property bool stateErrorActive: embeddedStateMachine.stateErrorActive
-    property bool stateLoopFailedActive: embeddedStateMachine.stateLoopFailedActive
-    property bool stateLoopSucceedActive: embeddedStateMachine.stateLoopSucceedActive
-
-    property string statusText: embeddedStateMachine.statusText
-    property string subtext: embeddedStateMachine.subtext
 
     EmbeddedModeStateMachine {
         id: embeddedStateMachine
@@ -60,17 +92,23 @@ FocusScope {
         running: false
         prtModel: wizard.prtModel
         jLinkConnector: wizard.jLinkConnector
-
-        firmwareData: wizard.firmware
-        bootloaderData: wizard.bootloader
-        classId: wizard.platformClassId
-        jlinkDevice: wizard.mcuJlinkDevice
-        bootloaderStartAddress: wizard.mcuBootloaderStartAddress
-        opn: wizard.platformOpn
-
         registrationMode: wizard.registrationMode
         jlinkExePath: wizard.jlinkExePath
+        breakButton: breakBtn
+        continueButton: continueBtn
+        onExitWizardRequested: {
+            closeWizard()
+        }
+    }
 
+    AssistedModeStateMachine {
+        id: assistedStateMachine
+
+        running: false
+        prtModel: wizard.prtModel
+        jLinkConnector: wizard.jLinkConnector
+        registrationMode: wizard.registrationMode
+        jlinkExePath: wizard.jlinkExePath
         breakButton: breakBtn
         continueButton: continueBtn
 
@@ -79,8 +117,9 @@ FocusScope {
         }
     }
 
-    AssistedModeStateMachine {
-        id: assistedStateMachine
+    Rectangle {
+        anchors.fill: parent
+        color: "#eeeeee"
     }
 
     SGWidgets.SGText {
@@ -109,7 +148,7 @@ FocusScope {
         nodeDownloadHighlight: wizard.stateDownloadActive
 
         nodeControllerCheckHighlight: wizard.stateControllerCheckActive
-        nodeControllerRegistrationHighlight: wizard.stateControllerRegistrationActive
+        nodeControllerRegistrationHighlight: wizard.stateControllerRegistrationActive || wizard.stateControllerAlreadyRegisteredActive
         nodeAssistedCheckHighlight: wizard.stateAssistedCheckActive
         nodeAssistedRegistrationHighlight: wizard.stateAssistedRegistrationActive
 
@@ -166,7 +205,7 @@ FocusScope {
             /* QtBug-85860: When "running" property is changed too fast,
                     BusyIndicator stays hidden, even though "running" property is "true".*/
 
-            property bool runBusyIndicator: wizard.stateDownloadActive || wizard.stateAssistedRegistrationActive
+            property bool runBusyIndicator: wizard.stateDownloadActive || wizard.stateControllerRegistrationActive || wizard.stateAssistedRegistrationActive
             onRunBusyIndicatorChanged: fixRunIndicatorTimer.start()
 
             Timer {
@@ -237,7 +276,7 @@ FocusScope {
             fillMode: Image.PreserveAspectFit
             sourceSize: Qt.size(width, height)
             smooth: true
-            visible: wizard.stateAssistedCheckActive
+            visible: wizard.stateAssistedCheckActive || wizard.stateControllerCheckActive
         }
     }
 
@@ -264,86 +303,85 @@ FocusScope {
         }
     }
 
-    function showFirmwareWarning(version, name, callback, callbackError) {
-        var title = "Device already with firmware"
-        var msg = "Connected device already has firmware " + name + " of version " + version
-        msg += "\n"
-        msg += "\n"
-        msg += "Do you want to program it anyway ?"
-
-        warningDialog = SGWidgets.SGDialogJS.showConfirmationDialog(
-                    wizard,
-                    title,
-                    msg,
-                    "Program it",
-                    function() {
-                        callback()
-                    },
-                    "Cancel",
-                    function() {
-                        callbackError()
-                    },
-                    SGWidgets.SGMessageDialog.Warning,
-                    )
-    }
-
     function resolveDataForStateMachine() {
 
         if (registrationMode === ProgramDeviceWizard.Embedded) {
-
             embeddedStateMachine.classId = wizard.embeddedData.class_id
             embeddedStateMachine.opn = wizard.embeddedData.opn
             embeddedStateMachine.jlinkDevice = wizard.embeddedData.mcu.jlink_device
             embeddedStateMachine.bootloaderStartAddress = wizard.embeddedData.mcu.bootloader_start_address
 
-
-            var latestFirmwareIndex = findHighestBinary(wizard.embeddedData.firmware)
-            if (latestFirmwareIndex < 0) {
+            var highestFirmwareIndex = findHighestBinary(wizard.embeddedData.firmware)
+            if (highestFirmwareIndex < 0) {
                 console.error(Logger.prtCategory,"no valid firmware available", JSON.stringify(wizard.embeddedData))
                 return
             }
 
-            embeddedStateMachine.firmwareData = embeddedData.firmware[latestFirmwareIndex]
+            embeddedStateMachine.firmwareData = wizard.embeddedData.firmware[highestFirmwareIndex]
 
-            var latestBootloaderIndex = findHighestBinary(wizard.embeddedData.bootloader)
-            if (latestFirmwareIndex < 0) {
+            var highestBootloaderIndex = findHighestBinary(wizard.embeddedData.bootloader)
+            if (highestFirmwareIndex < 0) {
                 console.error(Logger.prtCategory,"no valid bootloader available", JSON.stringify(wizard.embeddedData))
                 return
             }
 
-            embeddedStateMachine.bootloaderData = wizard.embeddedData.bootloader[latestFirmwareIndex]
-
-
+            embeddedStateMachine.bootloaderData = wizard.embeddedData.bootloader[highestBootloaderIndex]
         } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+
+            assistedStateMachine.controllerClassId = wizard.controllerData.class_id
+            assistedStateMachine.controllerOpn = wizard.controllerData.opn
+
+            assistedStateMachine.jlinkDevice = wizard.controllerData.mcu.jlink_device
+            assistedStateMachine.bootloaderStartAddress = wizard.controllerData.mcu.bootloader_start_address
+
+            var highestBootloaderIndex = findHighestBinary(wizard.controllerData.bootloader)
+            if (highestBootloaderIndex < 0) {
+                console.error(Logger.prtCategory,"no valid bootloader available", JSON.stringify(wizard.controllerData))
+                return
+            }
+
+            assistedStateMachine.bootloaderData = wizard.controllerData.bootloader[highestBootloaderIndex]
+
+            var controller_class_id = assistedStateMachine.bootloaderData.controller_class_id
+
+            var highestFirmwareIndex = findHighestBinary(wizard.assistedData.firmware, controller_class_id)
+            if (highestFirmwareIndex < 0) {
+                console.error(Logger.prtCategory,"no intersection for firmware and controller combination", JSON.stringify(wizard.assistedData))
+                return
+            }
+
+            assistedStateMachine.firmwareData = wizard.assistedData.firmware[highestFirmwareIndex]
+            assistedStateMachine.assistedDeviceClassId = wizard.assistedData.class_id
+            assistedStateMachine.assistedDeviceOpn = wizard.assistedData.opn
+
 
         } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
 
         }
-
-        console.log(Logger.prtCategory, "classId", embeddedStateMachine.classId)
-        console.log(Logger.prtCategory, "opn", embeddedStateMachine.opn)
-        console.log(Logger.prtCategory, "mcuJlinkDevice", embeddedStateMachine.jlinkDevice)
-        console.log(Logger.prtCategory, "mcuBootloaderStartAddress", embeddedStateMachine.bootloaderStartAddress)
-        console.log(Logger.prtCategory, "firmware", embeddedStateMachine.firmwareData.version, embeddedStateMachine.firmwareData.file, embeddedStateMachine.firmwareData.timestamp)
-        console.log(Logger.prtCategory, "bootloader", embeddedStateMachine.bootloaderData.version, embeddedStateMachine.bootloaderData.file, embeddedStateMachine.bootloaderData.timestamp)
     }
 
-    function findHighestBinary(binaryList) {
-        var latestBinaryIndex = -1
-        for (var i = 1; i < binaryList.length; ++i) {
+    function findHighestBinary(binaryList, controller_class_id) {
+        var highestBinaryIndex = -1
+        for (var i = 0; i < binaryList.length; ++i) {
             if (isBinaryValid(binaryList[i]) === false) {
                 console.error(Logger.prtCategory,"entry is not valid", JSON.stringify(binaryList[i]))
                 continue
             }
 
-            if (latestBinaryIndex < 0) {
-                latestBinaryIndex = i
-            } else if (CommonCpp.SGVersionUtils.greaterThan(binaryList[i].version, binaryList[latestBinaryIndex].version)) {
-                latestBinaryIndex = i
+            if (highestBinaryIndex < 0) {
+                if (controller_class_id === undefined || binaryList[i].controller_class_id === controller_class_id) {
+                    highestBinaryIndex = i
+                }
+            } else {
+                if (controller_class_id === undefined || binaryList[i].controller_class_id === controller_class_id) {
+                    if (CommonCpp.SGVersionUtils.greaterThan(binaryList[i].version, binaryList[highestBinaryIndex].version)) {
+                        highestBinaryIndex = i
+                    }
+                }
             }
         }
 
-        return latestBinaryIndex
+        return highestBinaryIndex
     }
 
     function isBinaryValid(firmware) {

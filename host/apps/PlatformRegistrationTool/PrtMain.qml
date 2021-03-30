@@ -79,19 +79,24 @@ Item {
             prtModel: prtMain.prtModel
 
             onRegistrationEmbeddedRequested: {
-                console.log("EMBEDDED")
                 var properties = {
                     "registrationMode": ProgramDeviceWizard.Embedded,
                     "jlinkExePath": settingsWizard.jlinkExePath,
                     "embeddedData": settingsWizard.embeddedData,
                 }
 
-                console.log("jLinkExePath", properties.jLinkExePath)
                 startRegistrationProcess(properties)
             }
 
             onRegistrationAssistedAndControllerRequested: {
-                console.log("not implemented yet")
+                var properties = {
+                    "registrationMode": ProgramDeviceWizard.ControllerAndAssisted,
+                    "jlinkExePath": settingsWizard.jlinkExePath,
+                    "controllerData": settingsWizard.controllerData,
+                    "assistedData": settingsWizard.assistedData,
+                }
+
+                startRegistrationProcess(properties)
             }
 
             onRegistrationControllerRequested: {
@@ -99,8 +104,6 @@ Item {
             }
 
             function startRegistrationProcess(properties) {
-                //TODO implement in future tickets
-
                 stackView.push(programWizardComponent, properties)
             }
         }
@@ -112,11 +115,6 @@ Item {
         ProgramDeviceWizard {
             focus: true
             prtModel: prtMain.prtModel
-
-            //TEMPORARY just to skip settings step
-//            registrationMode: ProgramDeviceWizard.Embedded
-//            embeddedData: JsonSchemas.fakeEmbeddedData
-//            jlinkExePath: "/Applications/SEGGER/JLink/JLinkExe"
         }
     }
 
