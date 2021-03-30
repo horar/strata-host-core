@@ -1372,7 +1372,7 @@ const qtTypeJson = {
             "functions": [],
             "signals": [],
             "inherits": "",
-            "source": "Models",
+            "source": "",
             "nonInstantiable": false
         },
         "ListModel": {
@@ -1397,7 +1397,7 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "",
-            "source": "Models",
+            "source": "",
             "nonInstantiable": false,
         },
         "ListView": {
