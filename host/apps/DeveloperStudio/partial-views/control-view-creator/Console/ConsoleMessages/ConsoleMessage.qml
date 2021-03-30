@@ -6,12 +6,10 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
 
-Rectangle {
+Item {
     id: msgRoot
-    height: (msgMetric.height * (msgText.lineCount))
+    height: msgText.contentHeight
     width: root.width
-    color: "transparent"
-    clip: true
     
     property alias msg: msgText.text
     property bool current: false
@@ -34,11 +32,5 @@ Rectangle {
         onSelectedTextChanged: msgRoot.selection = selectedText
         onSelectionStartChanged: msgRoot.selectionStart = selectionStart
         onSelectionEndChanged: msgRoot.selectionEnd = selectionEnd
-    }
-
-    TextMetrics {
-        id: msgMetric
-        text: msg
-        font.pixelSize: SGSettings.fontPixelSize * fontMultiplier
     }
 }
