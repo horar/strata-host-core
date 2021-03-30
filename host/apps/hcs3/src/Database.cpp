@@ -3,7 +3,7 @@
 
 #include "logging/LoggingQtCategories.h"
 
-#include <DatabaseManager.h>
+#include <Database/DatabaseManager.h>
 #include <string>
 
 #include <QDir>
@@ -17,21 +17,18 @@ Database::~Database()
     stop();
 }
 
-bool Database::open(std::string_view db_path, const std::string& db_name, const std::string& replUrl, const std::string& username, const std::string& password)
+bool Database::open(std::string_view db_path, const std::string& db_name)
 {
-    if (databaseManager_ != nullptr) {
-        return false;
-    }
+    QString name = QString::fromStdString(db_name);
+    QString path_ = QString::fromStdString(std::string(db_path));
 
-    // TODO: use replUrl, username, password. Hardcoded for development only
-    const QString endpointURL_ = "ws://10.0.0.157:4984/platform-list";
+    QStringList channelAccess;
 
-    auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    DB_ = new strata::Database::DatabaseAccess();
+    DB_->name_ = name;
+    DB_->channelAccess_ = channelAccess;
 
-    databaseManager_ = std::make_unique<DatabaseManager>(QString::fromStdString(std::string(db_path)), endpointURL_, nullptr, documentListenerCallback);
-    DB_ = databaseManager_->login("user_public", "channel_public", nullptr, documentListenerCallback);
-
-    if (DB_ == nullptr) {
+    if (DB_->open(path_, channelAccess) == false) {
         qCCritical(logCategoryHcsDb) << "Failed to open database";
         return false;
     }
@@ -39,37 +36,38 @@ bool Database::open(std::string_view db_path, const std::string& db_name, const 
     return true;
 }
 
-void Database::documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
+void Database::documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents) {
     qCCritical(logCategoryHcsDb) << "---" << documents.size() << "docs" << (isPush ? "pushed" : "pulled");
     for (unsigned i = 0; i < documents.size(); ++i) {
-        emit documentUpdated(QString::fromStdString(documents[i].ID));
+        emit documentUpdated(documents[i].id);
     }
 }
 
-// TODO: refactor function or remove
+// TODO: implement function or remove
 bool Database::addReplChannel(const std::string& channel)
 {
     return true;
 }
 
-// TODO: refactor function or remove
+// TODO: implement function or remove
 bool Database::remReplChannel(const std::string& channel)
 {
     return true;
 }
 
-// TODO: refactor function or remove
+// TODO: implement function or remove
 void Database::updateChannels()
 {
 }
 
+// TODO: implement
 bool Database::getDocument(const std::string& doc_id, std::string& result)
 {
     if (DB_ == nullptr) {
         return false;
     }
 
-    QString myQStr = DB_->getDocumentAsStr(QString::fromStdString(doc_id), "channel_public");
+    QString myQStr = DB_->getDocumentAsStr(QString::fromStdString(doc_id), DB_->getDatabaseName());
     result = myQStr.toStdString();
 
     return true;
@@ -81,7 +79,11 @@ void Database::stop()
 
 }
 
-void Database::onDocumentEnd(bool /*pushing*/, std::string doc_id, std::string /*error_message*/, bool /*is_error*/, bool /*error_is_transient*/)
+bool Database::initReplicator(const std::string& replUrl, const std::string& username, const std::string& password)
 {
-    emit documentUpdated(QString::fromStdString(doc_id));
+    auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
+
+    DB_->startBasicReplicator(QString::fromStdString(replUrl), QString::fromStdString(username), QString::fromStdString(password), strata::Database::DatabaseAccess::ReplicatorType::Pull, nullptr, documentListenerCallback, true);
+
+    return true;
 }

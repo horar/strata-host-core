@@ -1,13 +1,11 @@
-
-#ifndef HOST_HCS_DATABASE_H__
-#define HOST_HCS_DATABASE_H__
+#pragma once
 
 #include <string>
 #include <set>
 #include <QObject>
 
-#include <DatabaseManager.h>
-#include <DatabaseAccess.h>
+#include <Database/DatabaseManager.h>
+#include <Database/DatabaseAccess.h>
 
 class HCS_Dispatcher;
 
@@ -27,7 +25,14 @@ public:
      * @return returns true when succeeded, otherwise false
      * NOTE: add a path to the DB.
      */
-    bool open(std::string_view db_path, const std::string& db_name, const std::string& replUrl, const std::string& username, const std::string& password);
+    bool open(std::string_view db_path, const std::string& db_name);
+
+    /**
+     * Initializes and starts the DB replicator
+     * @param replUrl replicator URL to connect to
+     * @return returns true when succeeded otherwise false
+     */
+    bool initReplicator(const std::string& replUrl, const std::string& username, const std::string& password);
 
     /**
      * Adds a channel to the replication
@@ -62,20 +67,16 @@ signals:
     void documentUpdated(QString documentId);
 
 private:
-    void onDocumentEnd(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
-
     void updateChannels();
 
 private:
     std::string sgDatabasePath_;
 
-    std::unique_ptr<DatabaseManager> databaseManager_ = nullptr;
+    std::unique_ptr<strata::Database::DatabaseManager> databaseManager_ = nullptr;
 
-    DatabaseAccess* DB_ = nullptr;
+    strata::Database::DatabaseAccess* DB_ = nullptr;
 
-    void documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
+    void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents);
 
     std::set<std::string> channels_;
 };
-
-#endif //HOST_HCS_DATABASE_H__
