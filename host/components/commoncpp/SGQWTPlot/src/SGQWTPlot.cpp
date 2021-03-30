@@ -854,14 +854,12 @@ void SGQWTPlotCurve::appendList(const QVariantList &list)
 
 void SGQWTPlotCurve::remove(int index)
 {
-   qCWarning(logCategoryQWTPlot) << index;
-    if(index >= 0){
+    if(index < curveData_.count() && index > -1) {
         curveData_.remove(index);
         if (autoUpdate_) {
             update();
         }
     }
-
 }
 
 void SGQWTPlotCurve::clear()
@@ -877,7 +875,7 @@ QPointF SGQWTPlotCurve::at(int index)
     if (index < curveData_.count()) {
         return curveData_[index];
     } else {
-        qCWarning(logCategoryQWTPlot) << "Index Invalid" ;
+        qCWarning(logCategoryQWTPlot) << "Index Invalid " << index << " return 0,0" ;
         return QPointF(0,0);
     }
 }
