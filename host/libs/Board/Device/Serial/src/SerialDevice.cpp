@@ -25,7 +25,7 @@ SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, Seri
     if ((port != nullptr) && (port->portName() == name)) {
         serialPort_ = std::move(port);
     } else {
-        qCWarning(logCategorySerialDevice).noquote()
+        qCWarning(logCategoryDeviceSerial).noquote()
             << "Provided port will not be used, is not compatible with device " << deviceId_;
         serialPort_ = std::make_unique<QSerialPort>(name);
     }
@@ -36,7 +36,7 @@ SerialDevice::SerialDevice(const QByteArray& deviceId, const QString& name, Seri
 SerialDevice::~SerialDevice() {
     close();
     serialPort_.reset();
-    qCDebug(logCategorySerialDevice).nospace().noquote()
+    qCDebug(logCategoryDeviceSerial).nospace().noquote()
         << "Deleted serial device, ID: " <<  deviceId_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
@@ -54,7 +54,7 @@ void SerialDevice::initSerialDevice() {
     connect(serialPort_.get(), &QSerialPort::readyRead, this, &SerialDevice::readMessage);
     connect(this, &SerialDevice::writeToPort, this, &SerialDevice::handleWriteToPort);
 
-    qCDebug(logCategorySerialDevice).nospace().noquote()
+    qCDebug(logCategoryDeviceSerial).nospace().noquote()
         << "Created new serial device, ID: " << deviceId_ << ", name: '" << deviceName_
         << "', unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
@@ -117,7 +117,7 @@ void SerialDevice::readMessage() {
         readBuffer_.append(data.data() + from, static_cast<size_t>(end - from));
         from = end + 1;  // +1 due to skip '\n'
 
-        // qCDebug(logCategorySerialDevice) << this << ": received message: " << QString::fromStdString(readBuffer_);
+        // qCDebug(logCategoryDeviceSerial) << this << ": received message: " << QString::fromStdString(readBuffer_);
         emit msgFromDevice(QByteArray::fromStdString(readBuffer_));
         readBuffer_.clear();
         // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
@@ -159,7 +159,7 @@ bool SerialDevice::writeData(const QByteArray data, quintptr lockId) {
         return true;
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
-        qCWarning(logCategorySerialDevice) << this << errMsg;
+        qCWarning(logCategoryDeviceSerial) << this << errMsg;
         emit deviceError(ErrorCode::DeviceBusy, errMsg);
         return false;
     }
@@ -211,7 +211,7 @@ void SerialDevice::handleWriteToPort(const QByteArray data) {
         emit messageSent(data);
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
-        qCCritical(logCategorySerialDevice) << this << errMsg;
+        qCCritical(logCategoryDeviceSerial) << this << errMsg;
         emit deviceError(ErrorCode::SendMessageError, errMsg);
     }
 }
@@ -222,10 +222,10 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         QString errMsg = "Serial port error (" + QString::number(error) + "): " + serialPort_->errorString();
         if (error == QSerialPort::ResourceError) {
             // board was unconnected from computer (cable was unplugged)
-            qCWarning(logCategorySerialDevice) << this << ": " << errMsg << " (Probably unexpectedly disconnected device.)";
+            qCWarning(logCategoryDeviceSerial) << this << ": " << errMsg << " (Probably unexpectedly disconnected device.)";
         }
         else {
-            qCCritical(logCategorySerialDevice) << this << errMsg;
+            qCCritical(logCategoryDeviceSerial) << this << errMsg;
         }
         emit deviceError(translateQSerialPortError(error), serialPort_->errorString());
     }
