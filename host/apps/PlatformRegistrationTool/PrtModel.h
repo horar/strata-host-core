@@ -37,6 +37,15 @@ public:
 
     Q_INVOKABLE QString deviceFirmwareVersion() const;
     Q_INVOKABLE QString deviceFirmwareVerboseName() const;
+
+    Q_INVOKABLE QString devicePlatformId() const;
+    Q_INVOKABLE QString deviceClassId() const;
+
+    Q_INVOKABLE QString deviceControllerPlatformId() const;
+    Q_INVOKABLE QString deviceControllerClassId() const;
+
+    Q_INVOKABLE bool isAssistedDeviceConnected() const;
+
     Q_INVOKABLE void downloadBinaries(
             QString bootloaderUrl,
             QString bootloaderMd5,
@@ -53,15 +62,17 @@ public:
             const QString &platformId,
             int boardCount);
 
-    Q_INVOKABLE void setAssistedPlatformId();
+    Q_INVOKABLE void setAssistedPlatformId(const QVariantMap &data);
+
     Q_INVOKABLE void startBootloader();
     Q_INVOKABLE void startApplication();
 
     Q_INVOKABLE void clearBinaries();
 
 signals:
-    void boardReady(QByteArray deviceId);
+    void deviceInfoChanged(QByteArray deviceId);
     void boardDisconnected(QByteArray deviceId);
+
     void deviceCountChanged();
     void bootloaderFilepathChanged();
     void downloadFirmwareFinished(QString errorString);
@@ -74,12 +85,13 @@ signals:
     void flasherFinished(strata::FlasherConnector::Result result);
     void notifyServiceFinished(int boardCount, QString errorString);
     void setPlatformIdFinished(QString errorString);
+    void setAssistedPlatformIdFinished(QString statusString);
     void startBootloaderFinished(QString errorString);
     void startApplicationFinished(QString errorString);
 
 private slots:
-    void boardReadyHandler(const QByteArray& deviceId, bool recognized);
-    void boardDisconnectedHandler(const QByteArray& deviceId);
+    void deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized);
+    void deviceDisconnectedHandler(const QByteArray& deviceId);
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
     void downloadFinishedHandler(QString groupId, QString errorString);
 
