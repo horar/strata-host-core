@@ -5,9 +5,9 @@
 # simply be unarchived and the min/vs,min-maps/vs, and the monaco.d.ts can be "installed" to the build folder
 #
 set(MONACO_TAG 0.20.0)
-    file(REMOVE_RECURSE ${EXTERN_INSTALL_DIR_PATH}/../extern/monaco-editor-0.20.0-prefix/)
-    file(REMOVE_RECURSE ${EXTERN_INSTALL_DIR_PATH}/../bin/component-monaco.rcc)
-    file(REMOVE_RECURSE ${EXTERN_INSTALL_DIR_PATH}/../components/monaco/)
+    file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/extern/monaco-editor-0.20.0-prefix/)
+    file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/bin/component-monaco.rcc)
+    file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/components/monaco/)
     ExternalProject_Add(monaco-editor-${MONACO_TAG}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package
         INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}
