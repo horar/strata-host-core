@@ -8,6 +8,7 @@
 #include <Device/Operations/StartApplication.h>
 #include <Device/Operations/Flash.h>
 #include "DeviceOperationsV2Test.h"
+#include "DeviceOperationsStatus.h"
 
 #include "CodecBase64.h"
 
@@ -35,7 +36,7 @@ void DeviceOperationsV2Test::init()
     operationFinishedCount_ = 0;
     operationTimeoutCount_ = 0;
     flashSendCommandCount_ = 0;
-    flashCmdResultCount_ = 0;
+    flashPartialStatusCount_ = 0;
     flashAmountOfChunks_ = 0;
     device_ = std::make_shared<strata::device::mock::MockDevice>("mock1234", "Mock device", true);
     QVERIFY(device_->mockSetVersion(MockVersion::version2));
@@ -86,16 +87,12 @@ void DeviceOperationsV2Test::handleFlashSendCommand()
     flashSendCommandCount_++;
 }
 
-void DeviceOperationsV2Test::handleFlashCmdResult()
+void DeviceOperationsV2Test::handleFlashPartialStatus(int status)
 {
-    if (flashCmdResultCount_ <= flashAmountOfChunks_) {
-        strata::device::operation::Flash* operation = dynamic_cast<strata::device::operation::Flash*>(deviceOperation_.data());
-        operation->flashChunk(QVector<quint8>(256),flashCmdResultCount_);
-        flashCmdResultCount_++;
-    } else {
-        QEXPECT_FAIL("", "Amount of CmdResults invalid.", Continue);
-        QVERIFY(false);
-    }
+    flashPartialStatusTest(device_->mockGetResponse(),status); //test if flash started
+    strata::device::operation::Flash* operation = dynamic_cast<strata::device::operation::Flash*>(deviceOperation_.data());
+    operation->flashChunk(QVector<quint8>(256),flashPartialStatusCount_);
+    flashPartialStatusCount_++;
 }
 
 void DeviceOperationsV2Test::printJsonDoc(rapidjson::Document &doc)
@@ -132,7 +129,7 @@ void DeviceOperationsV2Test::connectHandlers(BaseDeviceOperation *operation)
 void DeviceOperationsV2Test::connectFlashHandlers(operation::BaseDeviceOperation *operation)
 {
     connect(operation, &BaseDeviceOperation::sendCommand, this, &DeviceOperationsV2Test::handleFlashSendCommand);
-    connect(operation, &BaseDeviceOperation::processCmdResult, this, &DeviceOperationsV2Test::handleFlashCmdResult);
+    connect(operation, &BaseDeviceOperation::partialStatus, this, &DeviceOperationsV2Test::handleFlashPartialStatus);
     connect(operation, &BaseDeviceOperation::finished, this, &DeviceOperationsV2Test::handleOperationFinished);
 }
 
@@ -143,6 +140,59 @@ QByteArray DeviceOperationsV2Test::dataForChunkSize(int chunkSize) //get actual 
     chunkBase64.resize(static_cast<int>(chunkBase64Size));
     base64::encode(chunkBase64.data(), QVector<quint8>(chunkSize).data(), static_cast<size_t>(chunkSize));
     return chunkBase64.data();
+}
+
+void DeviceOperationsV2Test::flashPartialStatusTest(strata::device::mock::MockResponse response, int status)
+{
+    switch(response) {
+    case MockResponse::normal: {
+        switch(flashPartialStatusCount_) {
+        case 0: QCOMPARE(status,strata::device::operation::FLASH_STARTED); //test if flash started
+            break;
+        default: QCOMPARE(status, flashPartialStatusCount_-1); //flashPartialStatusCount-1 because start_flash_firmware is sent first
+            break;
+        }
+        break;
+    }
+    case MockResponse::flash_resend_chunk: {
+        switch(flashPartialStatusCount_) {
+        case 0: QCOMPARE(status, strata::device::operation::FLASH_STARTED);
+            break;
+        default: QCOMPARE(status, flashPartialStatusCount_-1);
+            break;
+        }
+        break;
+    }
+    case MockResponse::flash_memory_error: {
+        switch(flashPartialStatusCount_) {
+        case 0: QCOMPARE(status,strata::device::operation::FLASH_STARTED);
+            break;
+        default: QCOMPARE(status, flashPartialStatusCount_-1);
+            break;
+        }
+        break;
+    }
+    case MockResponse::flash_invalid_cmd_sequence: {
+        switch(flashPartialStatusCount_) {
+        case 0: QCOMPARE(status,strata::device::operation::FLASH_STARTED);
+            break;
+        default: QCOMPARE(status, flashPartialStatusCount_-1);
+            break;
+        }
+        break;
+    }
+    case MockResponse::flash_invalid_value: {
+        switch(flashPartialStatusCount_) {
+        case 0: QCOMPARE(status,strata::device::operation::FLASH_STARTED);
+            break;
+        default: QCOMPARE(status, flashPartialStatusCount_-1);
+            break;
+        }
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void DeviceOperationsV2Test::identifyEmbeddedApplicationTest()
@@ -662,7 +712,8 @@ void DeviceOperationsV2Test::flashFirmwareTest()
 
     QCOMPARE(operationFailureCount_, 0);
     QCOMPARE(operationTimeoutCount_, 0);
-    QCOMPARE(operationFinishedCount_, 3);
+    QCOMPARE(operationFinishedCount_, 1); //finished flashing
+    QCOMPARE(flashPartialStatusCount_, 3); //three chunks flashed
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 4);
@@ -712,7 +763,8 @@ void DeviceOperationsV2Test::flashBootloaderTest()
 
     QCOMPARE(operationFailureCount_, 0);
     QCOMPARE(operationTimeoutCount_, 0);
-    QCOMPARE(operationFinishedCount_, 4);
+    QCOMPARE(operationFinishedCount_, 1);
+    QCOMPARE(flashPartialStatusCount_, 4); //four chunks flashed
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 5);
@@ -752,7 +804,7 @@ void DeviceOperationsV2Test::flashResendChunkTest()
 {
     rapidjson::Document expectedDoc;
 
-    operation::Flash* flashFirmwareOperation = new operation::Flash(device_,256,1,"207fb5670e66e7d6ecd89b5f195c0b71",true);
+    operation::Flash* flashFirmwareOperation = new operation::Flash(device_,512,2,"207fb5670e66e7d6ecd89b5f195c0b71",true);
     deviceOperation_ = QSharedPointer<operation::Flash>(
             flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
@@ -761,41 +813,36 @@ void DeviceOperationsV2Test::flashResendChunkTest()
 
     flashFirmwareOperation->run();
 
-    QTRY_COMPARE_WITH_TIMEOUT(flashFirmwareOperation->isFinished(), true, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(flashFirmwareOperation->isFinished(), true, 1100);
 
     QVERIFY(device_->name().isEmpty());
     QVERIFY(device_->classId().isEmpty());
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
-    QCOMPARE(operationFailureCount_, 1);
-    QCOMPARE(operationTimeoutCount_, 0);
+    QCOMPARE(operationFailureCount_, 0);
+    QCOMPARE(operationTimeoutCount_, 1);
     QCOMPARE(operationFinishedCount_, 1);
+    QCOMPARE(flashPartialStatusCount_, 1);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
-    QCOMPARE(recordedMessages.size(), 4);
+    QCOMPARE(recordedMessages.size(), 3);
 
     expectedDoc.Parse(recordedMessages[0]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(expectedDoc["payload"]["size"].GetInt(),256);
-    QCOMPARE(expectedDoc["payload"]["chunks"].GetInt(),1);
+    QCOMPARE(expectedDoc["payload"]["size"].GetInt(),512);
+    QCOMPARE(expectedDoc["payload"]["chunks"].GetInt(),2);
     QCOMPARE(expectedDoc["payload"]["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
 
     expectedDoc.Parse(recordedMessages[1]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),0); //initial chunk - recieved status:ok
+    QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),0); //initial chunk - recieved status:resend_chunk
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
     QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
 
     expectedDoc.Parse(recordedMessages[2]);
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),1); //first chunk - recieved status:resend_chunk
-    QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
-    QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
-
-    expectedDoc.Parse(recordedMessages[3]);
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),1); //re-sent chunk after recieving resend_chunk
+    QCOMPARE(expectedDoc["payload"]["chunk"]["number"].GetInt(),0); //re-sent chunk after recieving resend_chunk
     QCOMPARE(expectedDoc["payload"]["chunk"]["size"].GetInt(),256);
     QCOMPARE(expectedDoc["payload"]["chunk"]["data"].GetString(),dataForChunkSize(256));
 }
@@ -820,9 +867,10 @@ void DeviceOperationsV2Test::flashMemoryErrorTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
+    QCOMPARE(operationFailureCount_, 1);
     QCOMPARE(operationTimeoutCount_, 0);
     QCOMPARE(operationFinishedCount_, 1);
-    QCOMPARE(operationFailureCount_, 2);
+    QCOMPARE(flashPartialStatusCount_, 1);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
@@ -860,9 +908,10 @@ void DeviceOperationsV2Test::flashInvalidCmdSequenceTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
+    QCOMPARE(operationFailureCount_, 2);
     QCOMPARE(operationTimeoutCount_, 0);
     QCOMPARE(operationFinishedCount_, 1);
-    QCOMPARE(operationFailureCount_, 3);
+    QCOMPARE(flashPartialStatusCount_, 1);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);
@@ -902,9 +951,10 @@ void DeviceOperationsV2Test::flashInvalidValueTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
+    QCOMPARE(operationFailureCount_, 2);
     QCOMPARE(operationTimeoutCount_, 1);
-    QCOMPARE(operationFailureCount_, 3);
     QCOMPARE(operationFinishedCount_, 1);
+    QCOMPARE(flashPartialStatusCount_, 1);
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 2);;
@@ -943,7 +993,7 @@ void DeviceOperationsV2Test::cancelFlashOperationTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
-    QCOMPARE(operationFailureCount_, 3); //2 chunks + one fail flash
+    QCOMPARE(operationFailureCount_, 2); //2 chunks + one fail flash
     QCOMPARE(operationErrorCount_, 1); //flash w/o flash operation
     QCOMPARE(operationTimeoutCount_, 0);
     QCOMPARE(operationFinishedCount_, 2); //run & cancel operations
@@ -973,7 +1023,7 @@ void DeviceOperationsV2Test::startFlashInvalidTest()
     QVERIFY(device_->bootloaderVer().isEmpty());
     QVERIFY(device_->applicationVer().isEmpty());
 
-    QCOMPARE(operationFailureCount_, 3);
+    QCOMPARE(operationFailureCount_, 2);
     QCOMPARE(operationFinishedCount_, 1);
     QCOMPARE(operationTimeoutCount_,1);
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();

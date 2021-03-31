@@ -55,7 +55,7 @@ private slots:
 protected slots:
     void handleOperationFinished(strata::device::operation::Result result, int, QString);
     void handleFlashSendCommand();
-    void handleFlashCmdResult();
+    void handleFlashPartialStatus(int status);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
@@ -69,11 +69,13 @@ private:
 
     QByteArray dataForChunkSize(int chunkSize);
 
+    void flashPartialStatusTest(strata::device::mock::MockResponse response, int status);
+
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;
     int operationTimeoutCount_ = 0;
     int operationFailureCount_ = 0;
     int flashSendCommandCount_ = 0;
-    int flashCmdResultCount_ = 0;
+    int flashPartialStatusCount_ = 0;
     int flashAmountOfChunks_ = 0;
 };
