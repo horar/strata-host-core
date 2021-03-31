@@ -614,18 +614,25 @@ function registerQmlAsLanguage() {
             prev = getPrev(model, startPosition)
             startPosition = { lineNumber: prev.range.startLineNumber, column: prev.range.startColumn }
             next = getNext(model, endPosition)
-            endPosition = { lineNumber: next.range.startLineNumber, column: next.range.endColumn }
+            endPosition = { lineNumber: next.range.startLineNumber, column: next.range.startColumn }
 
             var prevContent = model.getLineContent(prev.range.startLineNumber)
             var content = prevContent.replace("\t", "").split(/\{|\t/)[0].trim()
             var getPrevContent = model.findPreviousMatch(content, startPosition)
-            endPosition = { lineNumber: getPrevContent.range.startLineNumber, column: prev.range.endColumn }
+            endPosition = { lineNumber: getPrevContent.range.startLineNumber, column: prev.range.startColumn }
             next = getNext(model, endPosition)
             while (true) {
                 next = getNext(model, endPosition)
+                var checkPrev = getPrev(model,endPosition)
                 endPosition = { lineNumber: next.range.startLineNumber, column: next.range.startColumn }
                 if (getPrevContent.range.startColumn === next.range.startColumn) {
                     break
+                }
+                if(checkPrev.range.startColumn >= next.range.startColumn) {    
+                    var content = model.getLineContent(checkPrev.range.startLineNumber)
+                    var bracket = content.replace("\t","").split(/\{|\t/)[0].trim()
+                    parent = bracket
+                    break;
                 }
             }
             var checkNext = getNext(model, endPosition)
@@ -636,8 +643,10 @@ function registerQmlAsLanguage() {
                 parent = bracket
                 stopped = true
             }
+        
+
             
-            if (getPrevContent.range.startLineNumber < position.lineNumber && next.range.startLineNumber > position.lineNumber) {
+            if (getPrevContent.range.startLineNumber <= position.lineNumber && next.range.startLineNumber >= position.lineNumber) {
                 parent = content
                 stopped = true
             }
