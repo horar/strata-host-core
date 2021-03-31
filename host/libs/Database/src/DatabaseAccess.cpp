@@ -16,36 +16,6 @@ DatabaseAccess::~DatabaseAccess() {
     close();
 }
 
-bool DatabaseAccess::open(const QString &userDir, const QStringList &channelList) {
-    if (channelList.isEmpty()) {
-        auto db = std::make_unique<CouchbaseDatabase>(name_.toStdString(), userDir.toStdString());
-        database_map_.push_back(std::move(db));
-
-        if (database_map_.back()->open()) {
-            qCInfo(logCategoryCouchbaseDatabase) << "Opened bucket" << name_;
-            return true;
-        } else {
-            qCCritical(logCategoryCouchbaseDatabase) << "Failed to open bucket" << name_;
-            return false;
-        }
-    }
-
-    bool ok = true;
-    for (const auto& bucket : channelList) {
-        auto db = std::make_unique<CouchbaseDatabase>(bucket.toStdString(), userDir.toStdString());
-        database_map_.push_back(std::move(db));
-
-        if (database_map_.back()->open()) {
-            qCInfo(logCategoryCouchbaseDatabase) << "Opened bucket" << bucket;
-        } else {
-            qCCritical(logCategoryCouchbaseDatabase) << "Failed to open bucket" << bucket;
-            ok = false;
-        }
-    }
-
-    return ok;
-}
-
 bool DatabaseAccess::close() {
     bool ok = true;
     for (const auto& bucket : database_map_) {
@@ -300,101 +270,6 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
             }
 
             document_listener_callback_(rep, isPush, SGDocuments);
-        } else {
-            qCInfo(logCategoryCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
-        }
-    };
-
-    bool ok = true;
-    for (const auto& bucket : database_map_) {
-        std::vector<std::string> single_DB_channel;
-        single_DB_channel.push_back(bucket->getDatabaseName());
-        if (bucket->startBasicReplicator(url.toStdString(), username.toStdString(), password.toStdString(), single_DB_channel, _replicator_type, change_listener_callback, document_listener_callback, continuous) == false) {
-            qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator on bucket/channel" << QString::fromStdString(bucket->getDatabaseName());
-            ok = false;
-        }
-    }
-
-    return ok;
-}
-
-bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &username, const QString &password, const ReplicatorType &replicatorType,
-    std::function<void(const ActivityLevel &status)> changeListener,
-    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener,
-    bool continuous) {
-
-    if (url.isEmpty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error starting replicator: url may not be empty";
-        return false;
-    }
-
-    std::vector<std::string> channels;
-    for (const auto& channel : channelAccess_) {
-        channels.push_back(channel.toStdString());
-    }
-
-    CouchbaseDatabase::ReplicatorType _replicator_type;
-    switch (replicatorType) {
-        case ReplicatorType::Pull:
-            _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
-        case ReplicatorType::Push:
-            _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
-        default:
-            _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
-    }
-
-    if (changeListener) {
-        change_listener_callback_NoRep_ = changeListener;
-    }
-
-    if (documentListener) {
-        document_listener_callback_NoRep_ = documentListener;
-    }
-
-    auto change_listener_callback = [this] (cbl::Replicator /*rep*/, const CouchbaseDatabase::SGActivityLevel &status) -> void {
-        ActivityLevel activityLevel;
-        QString activityLevelStr;
-
-        switch ((CouchbaseDatabase::SGActivityLevel)status) {
-            case CouchbaseDatabase::SGActivityLevel::CBLReplicatorStopped:
-                activityLevelStr = "Stopped";
-                activityLevel = ActivityLevel::ReplicatorStopped;
-                break;
-            case CouchbaseDatabase::SGActivityLevel::CBLReplicatorOffline:
-                activityLevelStr = "Offline";
-                activityLevel = ActivityLevel::ReplicatorOffline;
-                break;
-            case CouchbaseDatabase::SGActivityLevel::CBLReplicatorConnecting:
-                activityLevelStr = "Connecting";
-                activityLevel = ActivityLevel::ReplicatorConnecting;
-                break;
-            case CouchbaseDatabase::SGActivityLevel::CBLReplicatorIdle:
-                activityLevelStr = "Idle";
-                activityLevel = ActivityLevel::ReplicatorIdle;
-                break;
-            case CouchbaseDatabase::SGActivityLevel::CBLReplicatorBusy:
-                activityLevelStr = "Busy";
-                activityLevel = ActivityLevel::ReplicatorBusy;
-                break;
-        }
-
-        if (change_listener_callback_NoRep_) {
-            change_listener_callback_NoRep_(activityLevel);
-        } else {
-            qCInfo(logCategoryCouchbaseDatabase) << "--- PROGRESS: status=" << activityLevelStr;
-        }
-    };
-
-    auto document_listener_callback = [this] (cbl::Replicator /*rep*/, bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> documents) {
-        if (document_listener_callback_NoRep_) {
-            std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> SGDocuments;
-            for (const auto &doc : documents) {
-                DatabaseAccess::ReplicatedDocument SGDocument;
-                SGDocument.id = QString::fromStdString(doc.id);
-                SGDocument.error = doc.error;
-                SGDocuments.push_back(SGDocument);
-            }
-            document_listener_callback_NoRep_(isPush, SGDocuments);
         } else {
             qCInfo(logCategoryCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
         }

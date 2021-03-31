@@ -31,8 +31,6 @@ public:
 
     DatabaseAccess(const DatabaseAccess&) = delete;
 
-    bool open(const QString &userDir, const QStringList &channelList);
-
     bool close();
 
     bool write(CouchbaseDocument *doc, const QString &bucket);
@@ -76,10 +74,12 @@ public:
         ReplicatorIdle,       ///< The replicator is inactive, waiting for changes to sync.
         ReplicatorBusy        ///< The replicator is actively transferring data.
     };
+
     typedef struct {
         ActivityLevel activityLevel;
         int error;
     } ReplicatorStatus;
+
     typedef struct {
         QString id;
         int error;
@@ -102,14 +102,6 @@ public:
         const ReplicatorType &replicatorType = ReplicatorType::Pull,
         std::function<void(cbl::Replicator rep, const ActivityLevel &status)> changeListener = nullptr,
         std::function<void(cbl::Replicator rep, bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
-        bool continuous = false);
-
-    bool startBasicReplicator(const QString &url,
-        const QString &username = "",
-        const QString &password = "",
-        const ReplicatorType &replicatorType = ReplicatorType::Pull,
-        std::function<void(const ActivityLevel &status)> changeListener = nullptr,
-        std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
         bool continuous = false);
 
     /**
@@ -137,7 +129,7 @@ public:
 
     int getReplicatorError(const QString &bucket);
 
-/*private:*/
+private:
     QString name_;
 
     QString user_directory_;
@@ -149,10 +141,6 @@ public:
     std::function<void(cbl::Replicator rep, const ActivityLevel &status)> change_listener_callback_ = nullptr;
 
     std::function<void(cbl::Replicator, bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
-
-    std::function<void(const ActivityLevel &status)> change_listener_callback_NoRep_ = nullptr;
-
-    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> document_listener_callback_NoRep_ = nullptr;
 
     CouchbaseDatabase* getBucket(const QString &bucketName);
 };
