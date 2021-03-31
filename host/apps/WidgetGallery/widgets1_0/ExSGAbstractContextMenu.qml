@@ -4,6 +4,10 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.logger 1.0
 
+// This example describes describes how to use and customize
+// Custom context menu GUI element that appears upon user interaction
+// (right-click mouse operation) in the Strata GUI applications.
+//
 // Notes to consider during design of custom menus
 //
 //    The custom options should follow existing terminologies in other applications (if applicable).
@@ -22,8 +26,11 @@ Item {
     width: contentColumn.width
     height: editEnabledCheckBox.y + editEnabledCheckBox.height
 
+    // custom shortcuts to match the context menu
+
     Shortcut {
         sequence: "Ctrl+R"
+        enabled: redAction.enabled
         onActivated: {
             // execute action when user triggers the shortcut
             console.log("Activated shortcut: " + sequence)
@@ -33,6 +40,7 @@ Item {
 
     Shortcut {
         sequence: "Ctrl+G"
+        enabled: greenAction.enabled
         onActivated: {
             // execute action when user triggers the shortcut
             console.log("Activated shortcut: " + sequence)
@@ -42,11 +50,21 @@ Item {
 
     Shortcut {
         sequence: "Ctrl+B"
-        enabled: false
+        enabled: blueAction.enabled
         onActivated: {
             // execute action when user triggers the shortcut
             console.log("Activated shortcut: " + sequence)
             blueAction.trigger(null)
+        }
+    }
+
+    Shortcut {
+        sequence: "Ctrl+O"
+        enabled: orangeAction.enabled
+        onActivated: {
+            // execute action when user triggers the shortcut
+            console.log("Activated shortcut: " + sequence)
+            orangeAction.trigger(null)
         }
     }
 
@@ -82,12 +100,14 @@ Item {
                 property color defaultColor: Theme.palette.lightGray
                 property color currentColor: defaultColor
 
+                // example of defining the context menu
                 SGWidgets.SGAbstractContextMenu {
                     id: contextMenuPopup
 
                     Action {
                         id: redAction
                         text: "Red"
+                        enabled: redEnabledCheckBox.checked
                         onTriggered: {
                             // execute action when user clicks the option
                             console.log("Selected: " + text)
@@ -98,6 +118,7 @@ Item {
                     Action {
                         id: greenAction
                         text: "Green"
+                        enabled: greenEnabledCheckBox.checked
                         onTriggered: {
                             // execute action when user clicks the option
                             console.log("Selected: " + text)
@@ -108,7 +129,7 @@ Item {
                     Action {
                         id: blueAction
                         text: "Blue"
-                        enabled: false
+                        enabled: blueEnabledCheckBox.checked
                         onTriggered: {
                             // execute action when user clicks the option
                             console.log("Selected: " + text)
@@ -129,20 +150,22 @@ Item {
                     }
 
                     onOpened: {
+                        // optional, can do something when popup is opened
                         console.log("Context menu opened")
                     }
 
                     onClosed: {
-                        // optional, do something when popup is closed (i.e. force focus back to original element if applicable)
+                        // optional, can do something when popup is closed (i.e. force focus back to original element if applicable)
                         // note that context menu popup will steal focus and it should be returned back in this function if it is necessary to be somewhere
                         console.log("Context menu closed")
                     }
                 }
 
+                // MouseArea opens the popup
                 MouseArea {
                     anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    acceptedButtons: Qt.RightButton // if reusing existing MouseArea, use Qt.LeftButton | Qt.RightButton
+                    cursorShape: Qt.PointingHandCursor // use the cursor that fits
+                    acceptedButtons: Qt.RightButton    // if reusing existing MouseArea, use Qt.LeftButton | Qt.RightButton
 
                     // Using onReleased provided best behavior during testing
                     onReleased: {
@@ -150,6 +173,51 @@ Item {
                         if (containsMouse) {
                             contextMenuPopup.popup(null) // will create context menu at cursor position
                         }
+                    }
+                }
+            }
+        }
+
+        Row {
+            SGWidgets.SGCheckBox {
+                id: redEnabledCheckBox
+                text: "Red enabled"
+                checked: true
+            }
+
+            SGWidgets.SGCheckBox {
+                id: greenEnabledCheckBox
+                text: "Green enabled"
+                checked: true
+            }
+
+            SGWidgets.SGCheckBox {
+                id: blueEnabledCheckBox
+                text: "Blue enabled"
+                checked: false
+            }
+
+            SGWidgets.SGCheckBox {
+                id: orangeVisibleCheckBox
+                text: "Orange enabled and visible"
+                checked: false
+                onCheckedChanged: {
+                    if(checked === true) {
+                        contextMenuPopup.insertAction(3, orangeAction) // add new action to menu on index N
+                    } else {
+                        contextMenuPopup.takeAction(3) // remove action from menu at index N (but does not destroy it)
+                    }
+                }
+
+                Action {
+                    id: orangeAction
+                    text: "Orange"
+                    enabled: orangeVisibleCheckBox.checked
+
+                    onTriggered: {
+                        // execute action when user clicks the option
+                        console.log("Selected: " + text)
+                        contentRectangle.currentColor = Theme.palette.orange
                     }
                 }
             }
