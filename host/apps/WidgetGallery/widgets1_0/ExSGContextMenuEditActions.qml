@@ -4,6 +4,10 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.logger 1.0
 
+// This example describes describes how to use and customize
+// Edit context menu GUI element that appears upon user interaction
+// (right-click mouse operation) in the Strata GUI applications.
+//
 // This context menu is intended for editable text fields such as:
 // TextField, TextInput, TextEdit, TextArea and offers basic Edit options:
 //    Undo
@@ -18,6 +22,12 @@ Item {
     width: contentColumn.width
     height: editEnabledCheckBox.y + editEnabledCheckBox.height
 
+    // This is to match look and feel of other controls
+    Control {
+        id: dummyControl
+        enabled: editEnabledCheckBox.checked
+    }
+
     Column {
         id: contentColumn
         spacing: 10
@@ -28,8 +38,11 @@ Item {
                 text: "Using existing SGTextField"
                 fontSizeMultiplier: 1.3
             }
+            // In case of using existing SGWidgets which support this functionality
+            // (e.g. SGTextArea, SGTextEdit, SGTextField, SGTextInput, SGFileSelector, SGTextFieldEditor, ...)
+            // it is necessary to define 'contextMenuEnabled: true' in these elements
             SGWidgets.SGTextField {
-                contextMenuEnabled: true
+                contextMenuEnabled: true // will automatically enable the context menu with Edit options
             }
         }
 
@@ -39,6 +52,8 @@ Item {
                 fontSizeMultiplier: 1.3
             }
 
+            // In case of using custom text fields such as TextField, TextInput, TextEdit, TextArea
+            // it is necessary to define the SGContextMenuEditActions which predefines the context menu
             SGWidgets.SGContextMenuEditActions {
                 id: contextMenuPopupTextField
                 textEditor: textField    // mandatory, should be id from one of [TextField, TextInput, TextEdit, TextArea]
@@ -54,6 +69,8 @@ Item {
                 selectByMouse: true // necessary for selecting the text by mouse
                 persistentSelection: true // stops the text fields from deselecting the text when losing focus, must be done manually
 
+                // it is necessary to alter focus behavior of text fields
+                // because when popup opens, they lose focus and deselect all text
                 onActiveFocusChanged: {
                     // keep the standard deselect behavior on losing focus active as long as context menu is not visible
                     if ((activeFocus === false) && (contextMenuPopupTextField.visible === false)) {
@@ -61,6 +78,7 @@ Item {
                     }
                 }
 
+                // MouseArea opens the popup
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.IBeamCursor     // must be explicitly defined if MouseArea overlays text fields
@@ -89,6 +107,8 @@ Item {
                 fontSizeMultiplier: 1.3
             }
 
+            // In case of using custom text fields such as TextField, TextInput, TextEdit, TextArea
+            // it is necessary to define the SGContextMenuEditActions which predefines the context menu
             SGWidgets.SGContextMenuEditActions {
                 id: contextMenuPopupTextInput
                 textEditor: textInput    // mandatory, should be id from one of [TextField, TextInput, TextEdit, TextArea]
@@ -99,24 +119,30 @@ Item {
                 width: 200
                 height: 40
 
-                color: textField.palette.base
+                color: dummyControl.palette.base
                 border.width: textInput.activeFocus ? 2 : 1
                 border.color: {
                     if (textInput.activeFocus) {
-                        return textField.palette.highlight
+                        return dummyControl.palette.highlight
                     } else {
-                        return textField.palette.mid
+                        return dummyControl.palette.mid
                     }
                 }
 
                 TextInput {
                     id: textInput
                     padding: 6 + 6
+                    color: dummyControl.palette.text
+                    selectionColor: dummyControl.palette.highlight
+                    selectedTextColor: dummyControl.palette.highlightedText
+                    font: dummyControl.font
                     anchors.fill: parent
 
                     selectByMouse: true // necessary for selecting the text by mouse
                     persistentSelection: true // stops the text fields from deselecting the text when losing focus, must be done manually
 
+                    // it is necessary to alter focus behavior of text fields
+                    // because when popup opens, they lose focus and deselect all text
                     onActiveFocusChanged: {
                         // keep the standard deselect behavior on losing focus active as long as context menu is not visible
                         if ((activeFocus === false) && (contextMenuPopupTextInput.visible === false)) {
@@ -133,12 +159,13 @@ Item {
                         }
 
                         visible: textInput.text.length === 0
-                        color: textField.palette.text
+                        color: dummyControl.palette.text
                         opacity: textInput.enabled ? 0.5 : 1
                         font: textInput.font
                         elide: Text.ElideRight
                     }
 
+                    // MouseArea opens the popup
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.IBeamCursor     // must be explicitly defined if MouseArea overlays text fields
@@ -167,6 +194,8 @@ Item {
                 fontSizeMultiplier: 1.3
             }
 
+            // In case of using custom text fields such as TextField, TextInput, TextEdit, TextArea
+            // it is necessary to define the SGContextMenuEditActions which predefines the context menu
             SGWidgets.SGContextMenuEditActions {
                 id: contextMenuPopupTextArea
                 textEditor: textArea     // mandatory, should be id from one of [TextField, TextInput, TextEdit, TextArea]
@@ -182,13 +211,13 @@ Item {
 
                 background: Rectangle {
                     anchors.fill: parent
-                    color: textArea.palette.base
+                    color: dummyControl.palette.base
                     border.width: textArea.activeFocus ? 2 : 1
                     border.color: {
                         if (textArea.activeFocus) {
-                            return textArea.palette.highlight
+                            return dummyControl.palette.highlight
                         } else {
-                            return textArea.palette.mid
+                            return dummyControl.palette.mid
                         }
                     }
                 }
@@ -196,6 +225,8 @@ Item {
                 selectByMouse: true // necessary for selecting the text by mouse
                 persistentSelection: true // stops the text fields from deselecting the text when losing focus, must be done manually
 
+                // it is necessary to alter focus behavior of text fields
+                // because when popup opens, they lose focus and deselect all text
                 onActiveFocusChanged: {
                     // keep the standard deselect behavior on losing focus active as long as context menu is not visible
                     if ((activeFocus === false) && (contextMenuPopupTextArea.visible === false)) {
@@ -203,6 +234,7 @@ Item {
                     }
                 }
 
+                // MouseArea opens the popup
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.IBeamCursor     // must be explicitly defined if MouseArea overlays text fields
@@ -230,6 +262,8 @@ Item {
                 fontSizeMultiplier: 1.3
             }
 
+            // In case of using custom text fields such as TextField, TextInput, TextEdit, TextArea
+            // it is necessary to define the SGContextMenuEditActions which predefines the context menu
             SGWidgets.SGContextMenuEditActions {
                 id: contextMenuPopupTextEdit
                 textEditor: textEdit     // mandatory, should be id from one of [TextField, TextInput, TextEdit, TextArea]
@@ -240,13 +274,13 @@ Item {
                 width: 200
                 height: 100
 
-                color: textArea.palette.base
+                color: dummyControl.palette.base
                 border.width: textEdit.activeFocus ? 2 : 1
                 border.color: {
                     if (textEdit.activeFocus) {
-                        return textArea.palette.highlight
+                        return dummyControl.palette.highlight
                     } else {
-                        return textArea.palette.mid
+                        return dummyControl.palette.mid
                     }
                 }
 
@@ -254,11 +288,18 @@ Item {
                     id: textEdit
                     wrapMode: TextEdit.Wrap
                     padding: 4 + 4
+                    color: dummyControl.palette.text
+                    selectionColor: dummyControl.palette.highlight
+                    selectedTextColor: dummyControl.palette.highlightedText
+                    font: dummyControl.font
                     anchors.fill: parent
+                    clip: true
 
                     selectByMouse: true // necessary for selecting the text by mouse
                     persistentSelection: true // stops the text fields from deselecting the text when losing focus, must be done manually
 
+                    // it is necessary to alter focus behavior of text fields
+                    // because when popup opens, they lose focus and deselect all text
                     onActiveFocusChanged: {
                         // keep the standard deselect behavior on losing focus active as long as context menu is not visible
                         if ((activeFocus === false) && (contextMenuPopupTextEdit.visible === false)) {
@@ -275,12 +316,13 @@ Item {
                         }
 
                         visible: textEdit.text.length === 0
-                        color: textArea.palette.text
+                        color: dummyControl.palette.text
                         opacity: textEdit.enabled ? 0.5 : 1
                         font: textEdit.font
                         elide: Text.ElideRight
                     }
 
+                    // MouseArea opens the popup
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.IBeamCursor     // must be explicitly defined if MouseArea overlays text fields
