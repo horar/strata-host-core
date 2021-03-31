@@ -98,7 +98,7 @@ target_link_libraries(${DEVICE_OPERATIONS}
     PUBLIC rapidjson::rapidjson
     PUBLIC strata::QtLogger
     PRIVATE strata::CommandValidator
-    PUBLIC strata::base64
+    PRIVATE strata::base64
     PRIVATE strata::crc16
 )
 
