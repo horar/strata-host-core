@@ -57,7 +57,7 @@ private:
     // Replicator URL endpoint
     QString endpointURL_ = "ws://localhost:4984/chatroom-app";
 
-    void documentListener(cbl::Replicator, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents);
+    void documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents);
 };
 
 } // namespace strata::Database

@@ -31,7 +31,7 @@ public:
 
     DatabaseAccess(const DatabaseAccess&) = delete;
 
-    bool open(const QString &userDir, const QStringList &channelList);
+    bool open(const QString &name, const QString &userDir, const QStringList &channelList = QStringList());
 
     bool close();
 
@@ -76,10 +76,12 @@ public:
         ReplicatorIdle,       ///< The replicator is inactive, waiting for changes to sync.
         ReplicatorBusy        ///< The replicator is actively transferring data.
     };
+
     typedef struct {
         ActivityLevel activityLevel;
         int error;
     } ReplicatorStatus;
+
     typedef struct {
         QString id;
         int error;
@@ -96,14 +98,6 @@ public:
      * @param continuous replicator continuous (optional, default to one-shot)
      * @return true when succeeded, otherwise false
      */
-    bool startBasicReplicator(const QString &url,
-        const QString &username = "",
-        const QString &password = "",
-        const ReplicatorType &replicatorType = ReplicatorType::Pull,
-        std::function<void(cbl::Replicator rep, const ActivityLevel &status)> changeListener = nullptr,
-        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
-        bool continuous = false);
-
     bool startBasicReplicator(const QString &url,
         const QString &username = "",
         const QString &password = "",
@@ -127,8 +121,8 @@ public:
         const QString &token = "",
         const QString &cookieName = "",
         const ReplicatorType &replicatorType = ReplicatorType::Pull,
-        std::function<void(cbl::Replicator rep, const ActivityLevel &status)> changeListener = nullptr,
-        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
+        std::function<void(const ActivityLevel &status)> changeListener = nullptr,
+        std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
         bool continuous = false);
 
     void stopReplicator();
@@ -137,7 +131,7 @@ public:
 
     int getReplicatorError(const QString &bucket);
 
-/*private:*/
+private:
     QString name_;
 
     QString user_directory_;
@@ -146,13 +140,9 @@ public:
 
     std::vector<std::unique_ptr<CouchbaseDatabase>> database_map_;
 
-    std::function<void(cbl::Replicator rep, const ActivityLevel &status)> change_listener_callback_ = nullptr;
+    std::function<void(const ActivityLevel &status)> change_listener_callback_ = nullptr;
 
-    std::function<void(cbl::Replicator, bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
-
-    std::function<void(const ActivityLevel &status)> change_listener_callback_NoRep_ = nullptr;
-
-    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> document_listener_callback_NoRep_ = nullptr;
+    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
 
     CouchbaseDatabase* getBucket(const QString &bucketName);
 };
