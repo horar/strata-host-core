@@ -3,6 +3,7 @@
 #include <rapidjson/document.h>
 #include <QObject>
 #include <Device/Mock/MockDevice.h>
+#include <Device/Operations/Flash.h>
 
 #include "QtTest.h"
 
@@ -65,6 +66,7 @@ private:
 
     std::shared_ptr<strata::device::mock::MockDevice> device_;
     QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
+    QSharedPointer<strata::device::operation::Flash> flashOperation_;
 
     QByteArray dataForChunkSize(int chunkSize);
 

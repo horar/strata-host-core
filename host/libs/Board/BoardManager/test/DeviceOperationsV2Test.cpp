@@ -51,6 +51,15 @@ void DeviceOperationsV2Test::cleanup()
         deviceOperation_.reset();
     }
 
+    BaseDeviceOperation *flashOperation = flashOperation_.data();
+    if (flashOperation != nullptr) {
+        disconnect(flashOperation, &BaseDeviceOperation::finished, this,
+                   &DeviceOperationsV2Test::handleOperationFinished);
+        disconnect(flashOperation, &BaseDeviceOperation::partialStatus, this,
+                   &DeviceOperationsV2Test::handleFlashPartialStatus);
+        flashOperation_.reset();
+    }
+
     if (device_.get() != nullptr) {
         device_.reset();
     }
@@ -75,8 +84,8 @@ void DeviceOperationsV2Test::handleOperationFinished(operation::Result result, i
 void DeviceOperationsV2Test::handleFlashPartialStatus(int status)
 {
     flashPartialStatusTest(device_->mockGetResponse(),status); //test if flashing has started
-    strata::device::operation::Flash* operation = dynamic_cast<strata::device::operation::Flash*>(deviceOperation_.data());
-    operation->flashChunk(QVector<quint8>(256),flashPartialStatusCount_);
+    //strata::device::operation::Flash* operation = dynamic_cast<strata::device::operation::Flash*>(deviceOperation_.data());
+    flashOperation_->flashChunk(QVector<quint8>(256),flashPartialStatusCount_);
     flashPartialStatusCount_++;
 }
 
@@ -681,7 +690,7 @@ void DeviceOperationsV2Test::flashFirmwareTest()
     rapidjson::Document expectedDoc;
 
     operation::Flash* flashFirmwareOperation = new operation::Flash(device_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
-    deviceOperation_ = QSharedPointer<operation::Flash>(
+    flashOperation_ = QSharedPointer<operation::Flash>(
                 flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
 
@@ -732,7 +741,7 @@ void DeviceOperationsV2Test::flashBootloaderTest()
     rapidjson::Document expectedDoc;
 
     operation::Flash* flashBootloaderOperation = new operation::Flash(device_,1024,4,"207fb5670e66e7d6ecd89b5f195c0b71",false);
-    deviceOperation_ = QSharedPointer<operation::Flash>(
+    flashOperation_ = QSharedPointer<operation::Flash>(
             flashBootloaderOperation, &QObject::deleteLater);
     connectFlashHandlers(flashBootloaderOperation);
 
@@ -789,7 +798,7 @@ void DeviceOperationsV2Test::flashResendChunkTest()
     rapidjson::Document expectedDoc;
 
     operation::Flash* flashFirmwareOperation = new operation::Flash(device_,512,2,"207fb5670e66e7d6ecd89b5f195c0b71",true);
-    deviceOperation_ = QSharedPointer<operation::Flash>(
+    flashOperation_ = QSharedPointer<operation::Flash>(
             flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
 
@@ -836,7 +845,7 @@ void DeviceOperationsV2Test::flashMemoryErrorTest()
     rapidjson::Document expectedDoc;
 
     operation::Flash* flashFirmwareOperation = new operation::Flash(device_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
-    deviceOperation_ = QSharedPointer<operation::Flash>(
+    flashOperation_ = QSharedPointer<operation::Flash>(
             flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
 
@@ -877,7 +886,7 @@ void DeviceOperationsV2Test::flashInvalidCmdSequenceTest()
     rapidjson::Document expectedDoc;
 
     operation::Flash* flashFirmwareOperation = new operation::Flash(device_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
-    deviceOperation_ = QSharedPointer<operation::Flash>(
+    flashOperation_ = QSharedPointer<operation::Flash>(
             flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
 
@@ -918,14 +927,14 @@ void DeviceOperationsV2Test::flashInvalidValueTest()
     rapidjson::Document expectedDoc;
 
     operation::Flash* flashFirmwareOperation = new operation::Flash(device_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
-    deviceOperation_ = QSharedPointer<operation::Flash>(
+    flashOperation_ = QSharedPointer<operation::Flash>(
             flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
-    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
+    flashOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponse(MockResponse::flash_invalid_value);
 
-    deviceOperation_->run();
+    flashFirmwareOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(flashFirmwareOperation->isFinished(), true, 1000);
 
@@ -959,7 +968,7 @@ void DeviceOperationsV2Test::flashInvalidValueTest()
 void DeviceOperationsV2Test::cancelFlashOperationTest()
 {
     operation::Flash* flashFirmwareOperation = new operation::Flash(device_,512,2,"207fb5670e66e7d6ecd89b5f195c0b71",true);
-    deviceOperation_ = QSharedPointer<operation::Flash>(
+    flashOperation_ = QSharedPointer<operation::Flash>(
             flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
     flashFirmwareOperation->run();
@@ -990,14 +999,14 @@ void DeviceOperationsV2Test::startFlashInvalidTest()
     rapidjson::Document expectedDoc;
 
     operation::Flash* flashFirmwareOperation = new operation::Flash(device_,768,3,"207fb5670e66e7d6ecd89b5f195c0b71",true);
-    deviceOperation_ = QSharedPointer<operation::Flash>(
+    flashOperation_ = QSharedPointer<operation::Flash>(
             flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
-    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
+    flashOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponseForCommand(MockResponse::start_flash_firmware_invalid,MockCommand::start_flash_firmware);
 
-    deviceOperation_->run();
+    flashFirmwareOperation->run();
 
     QTRY_COMPARE_WITH_TIMEOUT(flashFirmwareOperation->isFinished(), true, 1000);
 
