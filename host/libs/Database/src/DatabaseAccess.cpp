@@ -216,7 +216,7 @@ QStringList DatabaseAccess::getAllDocumentKeys(const QString &bucket) {
 
     auto keyList = bucketObj->getAllDocumentKeys();
     QStringList keyStrList;
-    for (const auto key : keyList) {
+    for (const auto& key : keyList) {
         keyStrList << QString::fromStdString(key);
     }
     return keyStrList;
