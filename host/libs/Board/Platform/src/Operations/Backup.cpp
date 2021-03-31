@@ -11,50 +11,44 @@ using command::CmdBackupFirmware;
 using command::CommandType;
 
 Backup::Backup(const device::DevicePtr& device) :
-    BasePlatformOperation(device, Type::BackupFirmware), totalChunks_(0)
+    BasePlatformOperation(device, Type::BackupFirmware)
 {
     commandList_.reserve(2);
 
-    // BasePlatformOperation member device_ must be used as a parameter for commands!
+    // BaseDeviceOperation member device_ must be used as a parameter for commands!
+
     std::unique_ptr<CmdStartBackupFirmware> cmdStartBackupFirmware = std::make_unique<CmdStartBackupFirmware>(device_);
     cmdStartBackup_ = cmdStartBackupFirmware.get();
 
+    std::unique_ptr<CmdBackupFirmware> cmdBackupFirmware = std::make_unique<CmdBackupFirmware>(device_, chunk_, 0);
+    cmdBackup_ = cmdBackupFirmware.get();
+
     commandList_.emplace_back(std::move(cmdStartBackupFirmware));
+    commandList_.emplace_back(std::move(cmdBackupFirmware));
 
-    currentCommand_ = commandList_.end();
+    initCommandList();
 
-    postCommandHandler_ = std::bind(&Backup::setTotalChunks, this, std::placeholders::_1, std::placeholders::_2);
+    postCommandHandler_ = std::bind(&Backup::setTotalChunksForBackup, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 void Backup::backupNextChunk()
 {
-    if (BasePlatformOperation::hasStarted() == false || currentCommand_ == commandList_.end()) {
-        QString errMsg(QStringLiteral("Cannot backup chunk, backup operation is not running."));
-        qCWarning(logCategoryPlatformOperations) << device_ << errMsg;
+    if (BasePlatformOperation::hasStarted() == false
+            || currentCommand_ == commandList_.end()
+            || (*currentCommand_)->type() != CommandType::BackupFirmware)
+    {
+        QString errMsg(QStringLiteral("Cannot backup chunk, bad state of backup operation."));
+        qCWarning(logCategoryPlatformOperation) << device_ << errMsg;
         finishOperation(Result::Error, errMsg);
         return;
     }
 
-    // This operation has 2 commands (first is StartBackupFirmware and second is CmdBackupFirmware),
-    // and this method (backupNextChunk()) can be called only if operation has started. It means that
-    // we are currently on finished CmdStartBackupFirmware (first call of backupNextChunk()) or
-    // on finished CmdBackupFirmware command. If we call this method (backupNextChunk()) first time,
-    // we suppose that totalChunks_ was already set by totalChunks() method (which is assigned to
-    // postCommandHandler_) and therefore we can add CmdBackupFirmware command.
-    if ((*currentCommand_)->type() == CommandType::StartBackupFirmware) {
-        commandList_.emplace_back(std::make_unique<CmdBackupFirmware>(device_, chunk_, totalChunks_));
-        currentCommand_ = commandList_.end() - 1;
-    }
-
-    // currentCommand_ may not be the same as in previous if condition
-    if ((*currentCommand_)->type() == CommandType::BackupFirmware) {
-         BasePlatformOperation::resume();
-    }
+    BasePlatformOperation::resume();
 }
 
 int Backup::totalChunks() const
 {
-    return totalChunks_;
+    return cmdStartBackup_->totalChunks();
 }
 
 QVector<quint8> Backup::recentBackupChunk() const
@@ -62,12 +56,12 @@ QVector<quint8> Backup::recentBackupChunk() const
     return chunk_;
 }
 
-void Backup::setTotalChunks(command::CommandResult& result, int& status)
+void Backup::setTotalChunksForBackup(command::CommandResult& result, int& status)
 {
     Q_UNUSED(result)
 
     if (status == operation::BACKUP_STARTED) {
-        totalChunks_ = cmdStartBackup_->totalChunks();
+        cmdBackup_->setTotalChunks(cmdStartBackup_->totalChunks());
     }
 }
 

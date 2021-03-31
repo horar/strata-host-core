@@ -41,8 +41,8 @@ PrtModel::PrtModel(QObject *parent)
 
     platformManager_.init(true, true);
 
-    connect(&platformManager_, &strata::PlatformManager::boardInfoChanged, this, &PrtModel::boardReadyHandler);
-    connect(&platformManager_, &strata::PlatformManager::boardDisconnected, this, &PrtModel::boardDisconnectedHandler);
+    connect(&platformManager_, &strata::PlatformManager::boardInfoChanged, this, &PrtModel::deviceInfoChangeHandler);
+    connect(&platformManager_, &strata::PlatformManager::boardDisconnected, this, &PrtModel::deviceDisconnectedHandler);
 
     connect(&downloadManager_, &strata::DownloadManager::groupDownloadFinished, this, &PrtModel::downloadFinishedHandler);
 }
@@ -78,7 +78,7 @@ QString PrtModel::bootloaderFilepath()
 QString PrtModel::deviceFirmwareVersion() const
 {
     if (platformList_.isEmpty()) {
-        return "";
+        return QString();
     }
 
     return platformList_.first()->applicationVer();
@@ -87,10 +87,55 @@ QString PrtModel::deviceFirmwareVersion() const
 QString PrtModel::deviceFirmwareVerboseName() const
 {
     if (platformList_.isEmpty()) {
-        return "";
+        return QString();
     }
 
     return platformList_.first()->name();
+}
+
+QString PrtModel::devicePlatformId() const
+{
+    if (platformList_.isEmpty()) {
+        return QString();
+    }
+
+    return platformList_.first()->platformId();
+}
+
+QString PrtModel::deviceClassId() const
+{
+    if (platformList_.isEmpty()) {
+        return QString();
+    }
+
+    return platformList_.first()->classId();
+}
+
+QString PrtModel::deviceControllerPlatformId() const
+{
+    if (platformList_.isEmpty()) {
+        return QString();
+    }
+
+    return platformList_.first()->controllerPlatformId();
+}
+
+QString PrtModel::deviceControllerClassId() const
+{
+    if (platformList_.isEmpty()) {
+        return QString();
+    }
+
+    return platformList_.first()->controllerClassId();
+}
+
+bool PrtModel::isAssistedDeviceConnected() const
+{
+    if (platformList_.isEmpty()) {
+        return false;
+    }
+
+    return platformList_.first()->isControllerConnectedToPlatform();
 }
 
 void PrtModel::programDevice()
@@ -137,9 +182,8 @@ void PrtModel::downloadBinaries(
     //use this to fake it
     QTimer::singleShot(2500, this, [this](){
         bool ok = fakeDownloadBinaries(
-                    "/Users/zbh6nr/dev/strata firmware/with_assisted/bootloader-release.bin",
+                    "/Users/zbh6nr/dev/strata firmware/with_assisted/bootloader-release-erase.bin",
                     "/Users/zbh6nr/dev/strata firmware/with_assisted/str-level-shifters-gevb-v002.bin");
-
 
         if (ok == false) {
             emit downloadFirmwareFinished("Fake download failed");
@@ -296,19 +340,20 @@ void PrtModel::setPlatformId(
         if (result != Result::Success) {
             emit setPlatformIdFinished(errorString);
         } else if (status == strata::platform::operation::SET_PLATFORM_ID_FAILED) {
-            emit setPlatformIdFinished("Board refused registration");
+            emit setPlatformIdFinished("Platform refused registration");
         } else if (status == strata::platform::operation::PLATFORM_ID_ALREADY_SET) {
-            emit setPlatformIdFinished("Board has already been registered");
+            emit setPlatformIdFinished("Platform has already been registered");
+        } else {
+            emit setPlatformIdFinished("");
         }
 
-        emit setPlatformIdFinished("");
         operation->deleteLater();
     });
 
     operation->run();
 }
 
-void PrtModel::setAssistedPlatformId()
+void PrtModel::setAssistedPlatformId(const QVariantMap &data)
 {
     using strata::platform::operation::SetAssistedPlatformId;
     using strata::platform::operation::Result;
@@ -316,41 +361,43 @@ void PrtModel::setAssistedPlatformId()
     if (platformList_.isEmpty()) {
         QString errorString = "No platform connected";
         qCCritical(logCategoryPrt) << errorString;
-        emit startApplicationFinished(errorString);
+        emit setAssistedPlatformIdFinished(errorString);
         return;
     }
 
-    /*only faked data as there is no service support for asisted platforms type*/
-
-    strata::platform::command::CmdSetPlatformIdData baseData;
-    baseData.classId = "abababab-62e5-4541-ab70-0f51322c711a";
-    baseData.platformId = "acacacac-p2e5-4541-ab70-0f51322c711a";
-    baseData.boardCount = 4;
-
-    strata::platform::command::CmdSetPlatformIdData controllerData;
-    controllerData.classId = "cccccccc-62e5-4541-ab70-0f51322c711a";
-    controllerData.platformId = "aaaaaaaa-62e5-4541-ab70-0f51322c711a";
-    controllerData.boardCount = 1;
-
-    QString fwClassId = "ffffffff-62e5-4541-ab70-0f51322c711a";
-
     SetAssistedPlatformId *operation = new SetAssistedPlatformId(platformList_.first());
-    //any of
-    operation->setBaseData(baseData);
-    operation->setControllerData(controllerData);
-    operation->setFwClassId(fwClassId);
+
+    if (data.contains("class_id") && data.contains("platform_id") && data.contains("board_count")) {
+        strata::platform::command::CmdSetPlatformIdData baseData;
+        baseData.classId = data.value("class_id").toString();
+        baseData.platformId = data.value("platform_id").toString();
+        baseData.boardCount = data.value("board_count").toInt();
+        operation->setBaseData(baseData);
+    }
+
+    if (data.contains("controller_class_id") && data.contains("controller_platform_id") && data.contains("controller_board_count")) {
+        strata::platform::command::CmdSetPlatformIdData controllerData;
+        controllerData.classId = data.value("controller_class_id").toString();
+        controllerData.platformId = data.value("controller_platform_id").toString();
+        controllerData.boardCount = data.value("controller_board_count").toInt();
+        operation->setControllerData(controllerData);
+    }
+
+    if (data.contains("fw_class_id")) {
+        operation->setFwClassId(data.value("fw_class_id").toString());
+    }
 
     connect(operation, &SetAssistedPlatformId::finished, [this, operation](Result result, int status, QString errorString) {
-        qDebug() << "PLATFORM ID SET fnished" << static_cast<int>(result) << status << errorString;
-
-        if (result != Result::Success) {
-            emit setPlatformIdFinished(errorString);
-        } else if (status == strata::platform::operation::SET_PLATFORM_ID_FAILED) {
-            emit setPlatformIdFinished("Board refused registration");
+        if (status == strata::platform::operation::SET_PLATFORM_ID_FAILED) {
+            emit setAssistedPlatformIdFinished("failed");
         } else if (status == strata::platform::operation::PLATFORM_ID_ALREADY_SET) {
-            emit setPlatformIdFinished("Board has already been registered");
-        } else if (status == strata::platform::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
-            emit setPlatformIdFinished("Board not connected to dongle");
+            emit setAssistedPlatformIdFinished("already_initialized");
+        } else if(status == strata::platform::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
+            emit setAssistedPlatformIdFinished("device_not_connected");
+        } else if (result != Result::Success) {
+            emit setAssistedPlatformIdFinished(errorString);
+        } else{
+            emit setAssistedPlatformIdFinished("ok");
         }
 
         operation->deleteLater();
@@ -413,16 +460,23 @@ void PrtModel::startApplication()
     operation->run();
 }
 
-void PrtModel::boardReadyHandler(const QByteArray& deviceId, bool recognized)
+void PrtModel::deviceInfoChangeHandler(const QByteArray& deviceId, bool recognized)
 {
     Q_UNUSED(recognized)
 
-    platformList_.append(platformManager_.device(deviceId));
-    emit deviceCountChanged();
-    emit boardReady(deviceId);
+    strata::device::DevicePtr device = platformManager_.device(deviceId);
+
+    if (platformList_.indexOf(device) < 0) {
+        //new device connected
+        platformList_.append(device);
+
+        emit deviceCountChanged();
+    } else {
+        emit deviceInfoChanged(deviceId);
+    }
 }
 
-void PrtModel::boardDisconnectedHandler(const QByteArray& deviceId)
+void PrtModel::deviceDisconnectedHandler(const QByteArray& deviceId)
 {
     int index = 0;
     while (index < platformList_.length()) {
@@ -454,7 +508,7 @@ void PrtModel::downloadFinishedHandler(QString groupId, QString errorString)
 
     qCDebug(logCategoryPrt) << groupId << errorString;
 
-    downloadFirmwareFinished(errorString);
+    emit downloadFirmwareFinished(errorString);
 
     downloadJobId_.clear();
 }

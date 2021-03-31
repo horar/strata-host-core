@@ -308,6 +308,17 @@ void Flasher::handleOperationFinished(operation::Result result, int status, QStr
     }
 }
 
+void Flasher::handleOperationPartialStatus(int status)
+{
+    if (operationList_.empty() || currentOperation_ == operationList_.end()) {
+        return;
+    }
+
+    if (currentOperation_->finishedHandler) {
+        currentOperation_->finishedHandler(status);
+    }
+}
+
 Flasher::FlasherOperation::FlasherOperation(
         OperationPtr&& platformOperation,
         State stateOfFlasher,
@@ -322,6 +333,7 @@ Flasher::FlasherOperation::FlasherOperation(
     Q_ASSERT(operation != nullptr);
 
     flasher->connect(operation.get(), &operation::BasePlatformOperation::finished, flasher, &Flasher::handleOperationFinished);
+    flasher->connect(operation.get(), &operation::BasePlatformOperation::partialStatus, flasher, &Flasher::handleOperationPartialStatus);
 }
 
 void Flasher::operationDeleter(operation::BasePlatformOperation* operation)

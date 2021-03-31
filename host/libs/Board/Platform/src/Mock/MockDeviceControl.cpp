@@ -37,10 +37,10 @@ bool MockDeviceControl::mockSetLegacy(bool legacy)
 {
     if (isLegacy_ != legacy) {
         isLegacy_ = legacy;
-        qCDebug(logCategoryMockDevice) << "Configured legacy mode to" << isLegacy_;
+        qCDebug(logCategoryDeviceMock) << "Configured legacy mode to" << isLegacy_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Legacy mode already configured to" << isLegacy_;
+    qCDebug(logCategoryDeviceMock) << "Legacy mode already configured to" << isLegacy_;
     return false;
 }
 
@@ -48,11 +48,11 @@ bool MockDeviceControl::mockSetCommand(MockCommand command)
 {
     if (command_ != command) {
         command_ = command;
-        qCDebug(logCategoryMockDevice) << "Configured command from command-response pair to"
+        qCDebug(logCategoryDeviceMock) << "Configured command from command-response pair to"
                                        << command_<< ":" << response_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Command from command-response pair already configured to"
+    qCDebug(logCategoryDeviceMock) << "Command from command-response pair already configured to"
                                    << command_<< ":" << response_;
     return false;
 }
@@ -61,11 +61,11 @@ bool MockDeviceControl::mockSetResponse(MockResponse response)
 {
     if (response_ != response) {
         response_ = response;
-        qCDebug(logCategoryMockDevice) << "Configured response command-response pair to"
+        qCDebug(logCategoryDeviceMock) << "Configured response command-response pair to"
                                        << command_<< ":" << response_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Response from command-response pair already configured to"
+    qCDebug(logCategoryDeviceMock) << "Response from command-response pair already configured to"
                                    << command_<< ":" << response_;
     return false;
 }
@@ -75,11 +75,11 @@ bool MockDeviceControl::mockSetResponseForCommand(MockResponse response, MockCom
     if ((command_ != command) || (response_ != response)) {
         command_ = command;
         response_ = response;
-        qCDebug(logCategoryMockDevice) << "Configured command-response pair to"
+        qCDebug(logCategoryDeviceMock) << "Configured command-response pair to"
                                        << command_<< ":" << response_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Command-response pair already configured to"
+    qCDebug(logCategoryDeviceMock) << "Command-response pair already configured to"
                                    << command_<< ":" << response_;
     return false;
 }
@@ -88,10 +88,10 @@ bool MockDeviceControl::mockSetVersion(MockVersion version)
 {
     if (version_ != version) {
         version_ = version;
-        qCDebug(logCategoryMockDevice) << "Configured version to" << version_;
+        qCDebug(logCategoryDeviceMock) << "Configured version to" << version_;
         return true;
     }
-    qCDebug(logCategoryMockDevice) << "Version already configured to" << version_;
+    qCDebug(logCategoryDeviceMock) << "Version already configured to" << version_;
     return false;
 }
 

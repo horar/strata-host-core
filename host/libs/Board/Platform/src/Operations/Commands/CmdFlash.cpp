@@ -62,24 +62,24 @@ QByteArray CmdFlash::message() {
     return QByteArray(sb.GetString(), static_cast<int>(sb.GetSize()));
 }
 
-bool CmdFlash::processNotification(rapidjson::Document& doc) {
+bool CmdFlash::processNotification(rapidjson::Document& doc, CommandResult& result) {
     CommandValidator::JsonType jsonType = (flashFirmware_)
                                           ? CommandValidator::JsonType::flashFirmwareNotif
                                           : CommandValidator::JsonType::flashBootloaderNotif;
     if (CommandValidator::validateNotification(jsonType, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (status == JSON_OK) {
-            result_ = (chunkNumber_ == (chunkCount_ - 1)) ? CommandResult::Done : CommandResult::Partial;
+            result = (chunkNumber_ == (chunkCount_ - 1)) ? CommandResult::Done : CommandResult::Repeat;
         } else {
-            result_ = CommandResult::Failure;
+            result = CommandResult::Failure;
             if (status == JSON_RESEND_CHUNK) {
                 const char* binaryType = (flashFirmware_) ? "firmware" : "bootloader";
                 if (retriesCount_ < maxRetries_) {
                     ++retriesCount_;
-                    qCInfo(logCategoryPlatformOperations) << device_ << "Going to retry to flash " << binaryType << " chunk.";
-                    result_ = CommandResult::Retry;
+                    qCInfo(logCategoryPlatformCommand) << device_ << "Going to retry to flash " << binaryType << " chunk.";
+                    result = CommandResult::Retry;
                 } else {
-                    qCWarning(logCategoryPlatformOperations) << device_ << "Reached maximum retries for flash " << binaryType << " chunk.";
+                    qCWarning(logCategoryPlatformCommand) << device_ << "Reached maximum retries for flash " << binaryType << " chunk.";
                 }
             }
         }

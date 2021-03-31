@@ -9,7 +9,7 @@ class CmdStartBootloader : public BasePlatformCommand {
 public:
     explicit CmdStartBootloader(const device::DevicePtr& device);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
+    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
 };
 
 }  // namespace

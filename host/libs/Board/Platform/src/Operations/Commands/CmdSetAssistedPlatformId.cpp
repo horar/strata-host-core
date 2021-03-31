@@ -10,22 +10,22 @@
 
 namespace strata::platform::command {
 
-CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(const device::DevicePtr &device)
+CmdSetAssistedPlatformId::CmdSetAssistedPlatformId(const device::DevicePtr& device)
     : BasePlatformCommand(device, QStringLiteral("set_assisted_platform_id"), CommandType::SetAssistedPlatformId)
 {
 }
 
-void CmdSetAssistedPlatformId::setBaseData(const CmdSetPlatformIdData &data)
+void CmdSetAssistedPlatformId::setBaseData(const CmdSetPlatformIdData& data)
 {
     data_ = data;
 }
 
-void CmdSetAssistedPlatformId::setControllerData(const CmdSetPlatformIdData &controllerData)
+void CmdSetAssistedPlatformId::setControllerData(const CmdSetPlatformIdData& controllerData)
 {
     controllerData_ = controllerData;
 }
 
-void CmdSetAssistedPlatformId::setFwClassId(const QString &fwClassId)
+void CmdSetAssistedPlatformId::setFwClassId(const QString& fwClassId)
 {
     fwClassId_ = fwClassId;
 }
@@ -61,19 +61,19 @@ QByteArray CmdSetAssistedPlatformId::message()
     return doc.toJson(QJsonDocument::Compact);
 }
 
-bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document &doc)
+bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document& doc, CommandResult& result)
 {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::setAssistedPlatformIdNotif, doc) == false) {
         return false;
     }
 
-    result_ = CommandResult::Failure;
+    result = CommandResult::Failure;
 
     const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
     const QString jsonStatus = payload[JSON_STATUS].GetString();
 
     if (jsonStatus == JSON_OK) {
-        result_ = CommandResult::Done;
+        result = CommandResult::Done;
     } else if (jsonStatus == JSON_FAILED) {
         status_ = operation::SET_PLATFORM_ID_FAILED;
     } else if (jsonStatus == JSON_ALREADY_INITIALIZED) {
@@ -81,7 +81,7 @@ bool CmdSetAssistedPlatformId::processNotification(rapidjson::Document &doc)
     } else if (jsonStatus == JSON_BOARD_NOT_CONNECTED) {
         status_ = operation::BOARD_NOT_CONNECTED_TO_CONTROLLER;
     } else {
-        qCCritical(logCategoryPlatformOperations) << device_ << "Unknown status string:" << jsonStatus;
+        qCCritical(logCategoryPlatformCommand) << device_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;

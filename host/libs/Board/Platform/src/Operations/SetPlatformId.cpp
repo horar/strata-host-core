@@ -18,7 +18,7 @@ SetPlatformId::SetPlatformId(
     commandList_.emplace_back(std::make_unique<CmdSetPlatformId>(device_, data));
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
 
-    currentCommand_ = commandList_.end();
+    initCommandList();
 }
 
 }  // namespace

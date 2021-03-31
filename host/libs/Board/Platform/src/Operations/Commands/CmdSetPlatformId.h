@@ -8,12 +8,10 @@ namespace strata::platform::command {
 class CmdSetPlatformId: public BasePlatformCommand
 {
 public:
-    CmdSetPlatformId(
-            const device::DevicePtr &device,
-            const CmdSetPlatformIdData &data);
+    CmdSetPlatformId(const device::DevicePtr& device, const CmdSetPlatformIdData& data);
 
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
+    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
 
 private:
     CmdSetPlatformIdData data_;

@@ -114,5 +114,6 @@ set_target_properties(${PLATFORM_MANAGER} PROPERTIES
 )
 
 if(BUILD_TESTING)
+    add_compile_definitions(BUILD_TESTING)
     add_subdirectory(PlatformManager/test)
 endif()

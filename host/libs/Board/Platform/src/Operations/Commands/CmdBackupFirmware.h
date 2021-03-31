@@ -11,11 +11,12 @@ class CmdBackupFirmware : public BasePlatformCommand {
 public:
     CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk, int totalChunks);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
+    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
     bool logSendMessage() const override;
+    void setTotalChunks(int totalChunks);
 private:
     QVector<quint8>& chunk_;
-    const int totalChunks_;
+    int totalChunks_;
     int chunkNumber_;
     bool firstBackupChunk_;
     const uint maxRetries_;

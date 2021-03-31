@@ -1,35 +1,64 @@
 #include "BasePlatformCommand.h"
 
+#include "PlatformOperationsConstants.h"
 #include <PlatformOperationsStatus.h>
+
+#include <rapidjson/document.h>
+
+#include <CommandValidator.h>
+
+#include "logging/LoggingQtCategories.h"
 
 namespace strata::platform::command {
 
-BasePlatformCommand::BasePlatformCommand(const device::DevicePtr& device, const QString& commandName, CommandType cmdType) :
-    cmdName_(commandName), cmdType_(cmdType), device_(device), ackOk_(false),
-    result_(CommandResult::InProgress), status_(operation::DEFAULT_STATUS) { }
+BasePlatformCommand::BasePlatformCommand(const device::DevicePtr& device, const QString& commandName, CommandType cmdType)
+    : cmdName_(commandName),
+      cmdType_(cmdType),
+      device_(device),
+      ackOk_(false),
+      status_(operation::DEFAULT_STATUS),
+      responseTimeout_(RESPONSE_TIMEOUT),
+      deviceSignalsConnected_(false)
+{
+    responseTimer_.setSingleShot(true);
+    connect(&responseTimer_, &QTimer::timeout, this, &BasePlatformCommand::handleResponseTimeout);
+}
 
 BasePlatformCommand::~BasePlatformCommand() { }
 
-void BasePlatformCommand::commandAcknowledged() {
-    ackOk_ = true;
+// Do not override this method (unless you really need to).
+void BasePlatformCommand::sendCommand(quintptr lockId)
+{
+    if (deviceSignalsConnected_ == false) {
+        connect(device_.get(), &device::Device::msgFromDevice, this, &BasePlatformCommand::handleDeviceResponse);
+        connect(device_.get(), &device::Device::deviceError, this, &BasePlatformCommand::handleDeviceError);
+        deviceSignalsConnected_ = true;
+    }
+
+    QString logMsg(QStringLiteral("Sending '") + cmdName_ + QStringLiteral("' command."));
+    if (this->logSendMessage()) {
+        qCInfo(logCategoryPlatformCommand) << device_ << logMsg;
+    } else {
+        qCDebug(logCategoryPlatformCommand) << device_ << logMsg;
+    }
+
+    ackOk_ = false;  // "ok" ACK for this command
+
+    if (device_->sendMessage(this->message(), lockId)) {
+        responseTimer_.setInterval(responseTimeout_);
+        responseTimer_.start();
+    } else {
+        qCCritical(logCategoryPlatformCommand) << device_ << QStringLiteral("Cannot send '") + cmdName_ + QStringLiteral("' command.");
+        finishCommand(CommandResult::Unsent);
+    }
 }
 
-bool BasePlatformCommand::isCommandAcknowledged() const {
-    return ackOk_;
-}
-
-void BasePlatformCommand::commandRejected() {
-    result_ = CommandResult::Reject;
-}
-
-void BasePlatformCommand::onTimeout() {
-    // Default result is 'InProgress' - command timed out, finish operation with failure.
-    // If timeout is not a problem, reimplement this method and set result to 'Done' or 'Retry'.
-    result_ = CommandResult::InProgress;
-}
-
-bool BasePlatformCommand::logSendMessage() const {
-    return true;
+// If method 'sendCommand' is overriden, check if this method is still valid.
+// If is not, override it too.
+void BasePlatformCommand::cancel()
+{
+    responseTimer_.stop();
+    finishCommand(CommandResult::Cancel);
 }
 
 const QString BasePlatformCommand::name() const {
@@ -40,12 +69,124 @@ CommandType BasePlatformCommand::type() const {
     return cmdType_;
 }
 
-CommandResult BasePlatformCommand::result() const {
-    return result_;
+void BasePlatformCommand::setResponseTimeout(std::chrono::milliseconds responseInterval)
+{
+    responseTimeout_ = responseInterval;
 }
 
-int BasePlatformCommand::status() const {
-    return status_;
+CommandResult BasePlatformCommand::onTimeout() {
+    // Default result is 'Timeout' - command timed out.
+    // If timeout is not a problem, reimplement this method and return 'Done' or 'Retry'.
+    return CommandResult::Timeout;
+}
+
+CommandResult BasePlatformCommand::onReject() {
+    // Default result is 'Reject' - command was rejected.
+    // If reject is not a problem, reimplement this method and return to 'Done'.
+    return CommandResult::Reject;
+}
+
+bool BasePlatformCommand::logSendMessage() const {
+    return true;
+}
+
+void BasePlatformCommand::handleDeviceResponse(const QByteArray data)
+{
+    rapidjson::Document doc;
+
+    if (CommandValidator::parseJsonCommand(data, doc) == false) {
+        qCWarning(logCategoryPlatformCommand) << device_ << "Cannot parse JSON: '" << data << "'.";
+        return;
+    }
+
+    if (doc.HasMember(JSON_ACK)) {
+        if (CommandValidator::validate(CommandValidator::JsonType::ack, doc)) {
+            const QString ackStr = doc[JSON_ACK].GetString();
+            qCDebug(logCategoryPlatformCommand) << device_ << "Received '" << ackStr << "' ACK.";
+            const rapidjson::Value& payload = doc[JSON_PAYLOAD];
+
+            ackOk_ = payload[JSON_RETURN_VALUE].GetBool();
+
+            if (ackStr == cmdName_) {
+                if (ackOk_ == false) {
+                    qCWarning(logCategoryPlatformCommand) << device_ << "ACK for '" << cmdName_ << "' command is not OK: '"
+                                                           << payload[JSON_RETURN_STRING].GetString() << "'.";
+                    // ACK is not 'ok' - command is rejected by device
+                    finishCommand(this->onReject());
+                }
+            } else {
+                qCWarning(logCategoryPlatformCommand) << device_ << "Received wrong ACK. Expected '" << cmdName_ << "', got '" << ackStr << "'.";
+                if (ackOk_ == false) {
+                    qCWarning(logCategoryPlatformCommand) << device_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
+                }
+            }
+        } else {
+            logWrongResponse(data);
+        }
+
+        return;
+    }
+
+    if (doc.HasMember(JSON_NOTIFICATION)) {
+        CommandResult result = CommandResult::Failure;
+        if (this->processNotification(doc, result)) {
+            responseTimer_.stop();
+
+            if (ackOk_ == false) {
+                qCWarning(logCategoryPlatformCommand) << device_ << "Received notification without previous ACK.";
+            }
+            qCDebug(logCategoryPlatformCommand) << device_ << "Processed '" << cmdName_ << "' notification.";
+
+            if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
+                if (result == CommandResult::Failure) {
+                    qCWarning(logCategoryPlatformCommand) << device_ << "Received faulty notification: '" << data << "'.";
+                }
+
+                const QByteArray status = CommandValidator::notificationStatus(doc);
+                if (status.isEmpty() == false) {
+                    qCInfo(logCategoryPlatformCommand) << device_ << "Command '" << cmdName_ << "' retruned '" << status << "'.";
+                }
+            }
+
+            finishCommand(result);
+        } else {
+            logWrongResponse(data);
+        }
+
+        return;
+    }
+
+    logWrongResponse(data);
+}
+
+void BasePlatformCommand::handleResponseTimeout()
+{
+    if (cmdType_ != CommandType::Wait) {
+        qCWarning(logCategoryPlatformCommand) << device_ << "Command '" << cmdName_ << "' timed out.";
+    }
+    finishCommand(this->onTimeout());
+}
+
+void BasePlatformCommand::handleDeviceError(device::Device::ErrorCode errCode, QString errStr)
+{
+    Q_UNUSED(errCode)
+    responseTimer_.stop();
+    qCCritical(logCategoryPlatformCommand) << device_ << "Error: " << errStr;
+    finishCommand(CommandResult::DeviceError);
+}
+
+void BasePlatformCommand::finishCommand(CommandResult result)
+{
+    if ((result != CommandResult::Repeat) && deviceSignalsConnected_) {
+        disconnect(device_.get(), &device::Device::msgFromDevice, this, &BasePlatformCommand::handleDeviceResponse);
+        disconnect(device_.get(), &device::Device::deviceError, this, &BasePlatformCommand::handleDeviceError);
+    }
+    emit finished(result, status_);
+}
+
+void BasePlatformCommand::logWrongResponse(const QByteArray& response)
+{
+    qCWarning(logCategoryPlatformCommand) << device_ << "Received wrong, unexpected or malformed response: '" << response << "'.";
 }
 
 void BasePlatformCommand::setDeviceVersions(const char* bootloaderVer, const char* applicationVer) {

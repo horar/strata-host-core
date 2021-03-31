@@ -10,7 +10,7 @@ MockDevice::MockDevice(const QByteArray& deviceId, const QString &name, const bo
     : Device(deviceId, name, Device::Type::MockDevice),
       saveMessages_(saveMessages)
 {
-    qCDebug(logCategorySerialDevice).nospace().noquote()
+    qCDebug(logCategoryDeviceMock).nospace().noquote()
         << "Created new mock device, ID: " << deviceId_ << ", name: " << deviceName_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
@@ -18,7 +18,7 @@ MockDevice::MockDevice(const QByteArray& deviceId, const QString &name, const bo
 MockDevice::~MockDevice()
 {
     MockDevice::close();
-    qCDebug(logCategorySerialDevice).nospace().noquote()
+    qCDebug(logCategoryDeviceMock).nospace().noquote()
         << "Deleted mock device, ID: " <<  deviceId_
         << ", unique ID: 0x" << hex << reinterpret_cast<quintptr>(this);
 }
@@ -26,7 +26,7 @@ MockDevice::~MockDevice()
 bool MockDevice::open()
 {
     if (opened_ == true) {
-        qCWarning(logCategoryMockDevice) << this << "Attempt to open already opened mock port";
+        qCWarning(logCategoryDeviceMock) << this << "Attempt to open already opened mock port";
         return true;
     }
 
@@ -46,10 +46,10 @@ bool MockDevice::sendMessage(const QByteArray msg)
         return false;
     }
 
-    qCDebug(logCategoryMockDevice) << this << "Received request:" << msg;
+    qCDebug(logCategoryDeviceMock) << this << "Received request:" << msg;
     if (saveMessages_) {
         if (recordedMessages_.size() >= MAX_STORED_MESSAGES) {
-            qCWarning(logCategoryMockDevice) << this << "Maximum number (" << MAX_STORED_MESSAGES
+            qCWarning(logCategoryDeviceMock) << this << "Maximum number (" << MAX_STORED_MESSAGES
                                              << ") of stored messages reached";
             recordedMessages_.pop_front();
         }
@@ -78,7 +78,7 @@ void MockDevice::mockEmitResponses(const QByteArray msg)
 {
     auto responses = control_.getResponses(msg);
     for (const QByteArray& response : responses) {
-        qCDebug(logCategoryMockDevice) << this << "Returning response:" << response;
+        qCDebug(logCategoryDeviceMock) << this << "Returning response:" << response;
         QTimer::singleShot(
             10, this, [=]() {  // deferred emit (if emitted in the same loop, may cause trouble)
                 emit msgFromDevice(response);

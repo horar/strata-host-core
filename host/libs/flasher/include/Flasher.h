@@ -157,6 +157,8 @@ class Flasher : public QObject
         void runFlasherOperation();
         // process operation finished signal
         void handleOperationFinished(platform::operation::Result result, int status, QString errStr);
+        // process operation partialStatus signal
+        void handleOperationPartialStatus(int status);
 
     private:
         // check if flasher action can start

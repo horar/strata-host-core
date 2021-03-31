@@ -9,7 +9,7 @@ class CmdRequestPlatformId : public BasePlatformCommand {
 public:
     explicit CmdRequestPlatformId(const device::DevicePtr& device);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
+    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
 };
 
 }  // namespace
