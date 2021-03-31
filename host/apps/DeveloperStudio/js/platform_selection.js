@@ -217,8 +217,17 @@ function parseConnectedPlatforms (connected_platform_list_json) {
             } else {
                 // Assisted Strata
                 // properties (class_id, ...) could be changed (e.g. controller (dongle) removed from platform (board))
-                disconnectPlatform(previouslyConnected[previousIndex])
-                addConnectedPlatform(platform)
+                if(
+                        previouslyConnected[previousIndex].class_id !== platform.class_id ||
+                        previouslyConnected[previousIndex].controller_class_id !== platform.controller_class_id ||
+                        previouslyConnected[previousIndex].platform_id !== platform.platform_id ||
+                        previouslyConnected[previousIndex].controller_platform_id !== platform.controller_platform_id) {
+
+                    disconnectPlatform(previouslyConnected[previousIndex])
+                    addConnectedPlatform(platform)
+                } else {
+                    refreshFirmwareVersion(platform)
+                }
             }
             // device previously connected: keep status, remove from previouslyConnected list
             previouslyConnected.splice(previousIndex, 1);
