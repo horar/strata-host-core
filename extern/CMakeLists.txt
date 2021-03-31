@@ -23,7 +23,7 @@ else()
 endif()
 
 # root of all 3rd party project (git submodules)
-set(SOURCE_DIR_EXTERN ${CMAKE_SOURCE_DIR}/../extern)
+set(SOURCE_DIR_EXTERN ${CMAKE_SOURCE_DIR}/extern)
 
 if(CMAKE_BUILD_TYPE STREQUAL "OTA")
     set(CMAKE_BUILD_TYPE_EXTERNAL_PROJECT Release)

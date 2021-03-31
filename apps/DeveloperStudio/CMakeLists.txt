@@ -132,7 +132,7 @@ if(WIN32)
     endif()
 endif()
 
-set(SDS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/assets/config/sds)
+set(SDS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/internal/assets/config/sds)
 
 if(NOT APPS_CORESW_SDS_CONFIG)
     set(APPS_CORESW_SDS_CONFIG sds_qa.config CACHE STRING "Desired SDS configuration file." FORCE)

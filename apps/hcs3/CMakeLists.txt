@@ -82,7 +82,7 @@ file(GLOB HCS_CREDENTIALS_LOCATION_CHOICES
 )
 set_property(CACHE APPS_CORESW_HCS_CREDENTIALS PROPERTY STRINGS ${HCS_CREDENTIALS_LOCATION_CHOICES})
 
-file(READ ${CMAKE_SOURCE_DIR}/assets/config/hcs/credentials/${APPS_CORESW_HCS_CREDENTIALS} JSON_CREDENTIALS)
+file(READ ${CMAKE_SOURCE_DIR}/internal/assets/config/hcs/credentials/${APPS_CORESW_HCS_CREDENTIALS} JSON_CREDENTIALS)
 generate_replicator_credentials(JSON_FILE ${JSON_CREDENTIALS})
 
 set_target_properties(${PROJECT_NAME}Lib PROPERTIES
@@ -135,7 +135,7 @@ endif()
 
 
 # deploy desired config file into side-by-side to compiled binary
-set(HCS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/assets/config/hcs)
+set(HCS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/internal/assets/config/hcs)
 
 if(NOT APPS_CORESW_HCS_CONFIG)
     set(APPS_CORESW_HCS_CONFIG hcs_qa.config CACHE STRING "Desired HCS configuration file." FORCE)
