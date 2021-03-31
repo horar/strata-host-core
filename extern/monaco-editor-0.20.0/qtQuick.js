@@ -542,19 +542,19 @@ function registerQmlAsLanguage() {
                 topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
                 bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
                 var getId = model.findNextMatch("id:", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
-                if(topOfFile === undefined && bottomOfFile === undefined ||(topOfFile.range !== null && bottomOfFile.range !== null)){
+                if(topOfFile.range !== null && bottomOfFile.range !== null){
                     initializeQtQuick(model)
                 }
 
-                if (getId.range !== null || getId !== undefined) {
+                if (getId !== null) {
                     var nextCheck = model.findNextMatch("}", { lineNumber: getId.range.endLineNumber, column: getId.range.endColumn })
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
                     if (!(nextCheck.range.startLineNumber === bottomOfFile.range.startLineNumber && prevCheck.range.startLineNumber === topOfFile.range.startLineNumber)) {
                         getTypeID(model)
                     }
                 }
-                if ((position.lineNumber < topOfFile.range.startLineNumber || position.lineNumber > bottomOfFile.range.startLineNumber) || (bottomOfFile === null && topOfFile === null)) {
-                    return {suggestions: suggestions}
+                if ((position.lineNumber < topOfFile.range.startLineNumber || position.lineNumber > bottomOfFile.range.startLineNumber)) {
+                    return {suggestions: Object.values(suggestions)}
                 } else if(topOfFile.range === null && bottomOfFile.range === null){
                     return {suggestions: []}
                 }
