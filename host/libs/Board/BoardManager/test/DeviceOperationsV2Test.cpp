@@ -35,9 +35,9 @@ void DeviceOperationsV2Test::init()
     operationErrorCount_ = 0;
     operationFinishedCount_ = 0;
     operationTimeoutCount_ = 0;
-    flashSendCommandCount_ = 0;
+    //flashSendCommandCount_ = 0;
     flashPartialStatusCount_ = 0;
-    flashAmountOfChunks_ = 0;
+    //flashAmountOfChunks_ = 0;
     device_ = std::make_shared<strata::device::mock::MockDevice>("mock1234", "Mock device", true);
     QVERIFY(device_->mockSetVersion(MockVersion::version2));
     QVERIFY(!device_->mockIsOpened());
@@ -74,22 +74,9 @@ void DeviceOperationsV2Test::handleOperationFinished(operation::Result result, i
     }
 }
 
-void DeviceOperationsV2Test::handleFlashSendCommand()
-{
-    if (flashSendCommandCount_ == 1) {
-        rapidjson::Document expectedDoc;
-        std::vector<QByteArray> request = device_->mockGetRecordedMessages();
-        expectedDoc.Parse(request[0]);
-        flashAmountOfChunks_ = expectedDoc["payload"]["chunks"].GetInt();
-
-        qDebug() << "There are" << expectedDoc["payload"]["chunks"].GetInt() << "chunks waiting to be flashed.";
-    }
-    flashSendCommandCount_++;
-}
-
 void DeviceOperationsV2Test::handleFlashPartialStatus(int status)
 {
-    flashPartialStatusTest(device_->mockGetResponse(),status); //test if flash started
+    flashPartialStatusTest(device_->mockGetResponse(),status); //test if flashing has started
     strata::device::operation::Flash* operation = dynamic_cast<strata::device::operation::Flash*>(deviceOperation_.data());
     operation->flashChunk(QVector<quint8>(256),flashPartialStatusCount_);
     flashPartialStatusCount_++;
@@ -128,7 +115,6 @@ void DeviceOperationsV2Test::connectHandlers(BaseDeviceOperation *operation)
 
 void DeviceOperationsV2Test::connectFlashHandlers(operation::BaseDeviceOperation *operation)
 {
-    connect(operation, &BaseDeviceOperation::sendCommand, this, &DeviceOperationsV2Test::handleFlashSendCommand);
     connect(operation, &BaseDeviceOperation::partialStatus, this, &DeviceOperationsV2Test::handleFlashPartialStatus);
     connect(operation, &BaseDeviceOperation::finished, this, &DeviceOperationsV2Test::handleOperationFinished);
 }
@@ -147,7 +133,7 @@ void DeviceOperationsV2Test::flashPartialStatusTest(strata::device::mock::MockRe
     switch(response) {
     case MockResponse::normal: {
         switch(flashPartialStatusCount_) {
-        case 0: QCOMPARE(status,strata::device::operation::FLASH_STARTED); //test if flash started
+        case 0: QCOMPARE(status,strata::device::operation::FLASH_STARTED);
             break;
         default: QCOMPARE(status, flashPartialStatusCount_-1); //flashPartialStatusCount-1 because start_flash_firmware is sent first
             break;

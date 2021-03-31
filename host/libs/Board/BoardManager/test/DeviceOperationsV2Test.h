@@ -54,7 +54,6 @@ private slots:
 
 protected slots:
     void handleOperationFinished(strata::device::operation::Result result, int, QString);
-    void handleFlashSendCommand();
     void handleFlashPartialStatus(int status);
 
 private:
@@ -75,7 +74,5 @@ private:
     int operationFinishedCount_ = 0;
     int operationTimeoutCount_ = 0;
     int operationFailureCount_ = 0;
-    int flashSendCommandCount_ = 0;
     int flashPartialStatusCount_ = 0;
-    int flashAmountOfChunks_ = 0;
 };
