@@ -35,9 +35,7 @@ void DeviceOperationsV2Test::init()
     operationErrorCount_ = 0;
     operationFinishedCount_ = 0;
     operationTimeoutCount_ = 0;
-    //flashSendCommandCount_ = 0;
     flashPartialStatusCount_ = 0;
-    //flashAmountOfChunks_ = 0;
     device_ = std::make_shared<strata::device::mock::MockDevice>("mock1234", "Mock device", true);
     QVERIFY(device_->mockSetVersion(MockVersion::version2));
     QVERIFY(!device_->mockIsOpened());
