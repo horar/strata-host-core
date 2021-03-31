@@ -84,7 +84,6 @@ void DeviceOperationsV2Test::handleOperationFinished(operation::Result result, i
 void DeviceOperationsV2Test::handleFlashPartialStatus(int status)
 {
     flashPartialStatusTest(device_->mockGetResponse(),status); //test if flashing has started
-    //strata::device::operation::Flash* operation = dynamic_cast<strata::device::operation::Flash*>(deviceOperation_.data());
     flashOperation_->flashChunk(QVector<quint8>(256),flashPartialStatusCount_);
     flashPartialStatusCount_++;
 }
