@@ -7,6 +7,8 @@
 #include <Database/DatabaseManager.h>
 #include <Database/DatabaseAccess.h>
 
+using namespace strata::Database;
+
 class HCS_Dispatcher;
 
 class Database final: public QObject
@@ -25,7 +27,7 @@ public:
      * @return returns true when succeeded, otherwise false
      * NOTE: add a path to the DB.
      */
-    bool open(std::string_view db_path, const std::string& db_name);
+    bool open(const QString& db_path, const QString& db_name);
 
     /**
      * Initializes and starts the DB replicator
@@ -67,16 +69,25 @@ signals:
     void documentUpdated(QString documentId);
 
 private:
+    struct Replication {
+        QString url;
+        QString username;
+        QString password;
+    };
+
+    Replication replication_;
+
+    QString databaseName_;
+
+    QString databasePath_;
+
+    QStringList databaseChannels_;
+
+    std::unique_ptr<DatabaseAccess> DB_ = nullptr;
+
+    bool isRunning_ = false;
+
+    void documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents);
+
     void updateChannels();
-
-private:
-    std::string sgDatabasePath_;
-
-    std::unique_ptr<strata::Database::DatabaseManager> databaseManager_ = nullptr;
-
-    strata::Database::DatabaseAccess* DB_ = nullptr;
-
-    void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents);
-
-    std::set<std::string> channels_;
 };

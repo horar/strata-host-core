@@ -17,18 +17,41 @@ Database::~Database()
     stop();
 }
 
-bool Database::open(std::string_view db_path, const std::string& db_name)
+bool Database::open(const QString& db_path, const QString& db_name)
 {
-    QString name = QString::fromStdString(db_name);
-    QString path_ = QString::fromStdString(std::string(db_path));
+    if (DB_ != nullptr) {
+        return false;
+    }
 
-    QStringList channelAccess;
+    databaseName_ = db_name;
+    databasePath_ = db_path;
+    qCDebug(logCategoryHcsDb) << "DB location set to:" << databasePath_;
 
-    DB_ = new strata::Database::DatabaseAccess();
-    DB_->name_ = name;
-    DB_->channelAccess_ = channelAccess;
+    if (databasePath_.isEmpty()) {
+        qCCritical(logCategoryHcsDb) << "Missing writable DB location path";
+        return false;
+    }
 
-    if (DB_->open(path_, channelAccess) == false) {
+    // Check if directories/files already exist
+    // If 'db' and 'strata_db' (db_name) directories exist but the main DB file does not, remove directory 'strata_db' (db_name) to avoid bug with opening DB
+    // Directory will be re-created when DB is opened
+    QDir db_directory{databasePath_};
+    if (db_directory.cd(QString("%1.cblite2").arg(db_name)) && !db_directory.exists(QStringLiteral("db.sqlite3"))) {
+        if (db_directory.removeRecursively()) {
+            qCInfo(logCategoryHcsDb)
+                << "DB directories exist but DB file does not -- successfully deleted directory"
+                << db_directory.absolutePath();
+        } else {
+            qCWarning(logCategoryHcsDb)
+                << "DB directories exist but DB file does not -- unable to delete directory"
+                << db_directory.absolutePath();
+        }
+    }
+
+    // Opening the db
+    DB_ = std::make_unique<DatabaseAccess>();
+
+    if (DB_->open(databaseName_, databasePath_, databaseChannels_) == false) {
         qCCritical(logCategoryHcsDb) << "Failed to open database";
         return false;
     }
@@ -36,31 +59,65 @@ bool Database::open(std::string_view db_path, const std::string& db_name)
     return true;
 }
 
-void Database::documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents) {
+void Database::documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)
+{
     qCCritical(logCategoryHcsDb) << "---" << documents.size() << "docs" << (isPush ? "pushed" : "pulled");
     for (unsigned i = 0; i < documents.size(); ++i) {
         emit documentUpdated(documents[i].id);
     }
 }
 
-// TODO: implement function or remove
 bool Database::addReplChannel(const std::string& channel)
 {
+    if (channel.empty()) {
+        return false;
+    }
+
+    if (databaseChannels_.contains(QString::fromStdString(channel)) == false) {
+        databaseChannels_ << QString::fromStdString(channel);
+        updateChannels();
+    }
+
     return true;
 }
 
-// TODO: implement function or remove
 bool Database::remReplChannel(const std::string& channel)
 {
+    if (channel.empty()) {
+        return false;
+    }
+
+    if (databaseChannels_.contains(QString::fromStdString(channel))) {
+        databaseChannels_.removeAll(QString::fromStdString(channel));
+        updateChannels();
+    }
+
     return true;
 }
 
-// TODO: implement function or remove
 void Database::updateChannels()
 {
+    if (DB_ == nullptr) {
+        return;
+    }
+
+    bool wasRunning = isRunning_;
+    if (wasRunning) {
+        DB_->stopReplicator();
+    }
+
+    DB_->close();
+
+    if (DB_->open(databaseName_, databasePath_, databaseChannels_) == false) {
+        qCCritical(logCategoryHcsDb) << "Failed to open database";
+    }
+
+    if (wasRunning) {
+        auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
+        isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, nullptr, documentListenerCallback, true);
+    }
 }
 
-// TODO: implement
 bool Database::getDocument(const std::string& doc_id, std::string& result)
 {
     if (DB_ == nullptr) {
@@ -73,17 +130,22 @@ bool Database::getDocument(const std::string& doc_id, std::string& result)
     return true;
 }
 
-// TODO: implement
 void Database::stop()
 {
+    DB_->close();
 
+    DB_ = nullptr;
+    isRunning_ = false;
 }
 
 bool Database::initReplicator(const std::string& replUrl, const std::string& username, const std::string& password)
 {
+    replication_.url = QString::fromStdString(replUrl);
+    replication_.username = QString::fromStdString(username);
+    replication_.password = QString::fromStdString(password);
+
     auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
+    isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, nullptr, documentListenerCallback, true);
 
-    DB_->startBasicReplicator(QString::fromStdString(replUrl), QString::fromStdString(username), QString::fromStdString(password), strata::Database::DatabaseAccess::ReplicatorType::Pull, nullptr, documentListenerCallback, true);
-
-    return true;
+    return isRunning_;
 }

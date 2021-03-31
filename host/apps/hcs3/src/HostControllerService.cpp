@@ -67,7 +67,7 @@ bool HostControllerService::initialize(const QString& config)
 
     rapidjson::Value& db_cfg = config_["database"];
 
-    if (db_.open(baseFolder.toStdString(), "strata_db") == false) {
+    if (db_.open(baseFolder, "strata_db") == false) {
         qCCritical(logCategoryHcs) << "Failed to open database.";
         return false;
     }
