@@ -375,7 +375,7 @@ Rectangle {
 
     function requestRecompile() {
         recompileRequested = true
-        sdsModel.resourceLoader.recompileControlViewQrc(editor.fileTreeModel.url)
+        sdsModel.resourceLoader.recompileControlViewQrc(SGUtilsCpp.urlToLocalFile(editor.fileTreeModel.url))
     }
 
     function loadDebugView (compiledRccFile) {
