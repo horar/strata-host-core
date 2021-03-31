@@ -542,8 +542,12 @@ function registerQmlAsLanguage() {
                 topOfFile = model.findNextMatch("{", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
                 bottomOfFile = model.findPreviousMatch("}", { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn })
                 var getId = model.findNextMatch("id:", { lineNumber: fullRange.startLineNumber, column: fullRange.startColumn })
-                if(topOfFile.range !== null && bottomOfFile.range !== null){
-                    initializeQtQuick(model)
+                if(topOfFile !== null && bottomOfFile !== null){
+                    var getLineContent = model.getLineContent(topOfFile.range.startLineNumber)
+                    var checkLine = getLineContent.replace("\t", "").split(/\{|\t/)[0].trim()
+                    if(qtTypeJson["sources"].hasOwnProperty(checkLine)){
+                        initializeQtQuick(model)
+                    }
                 }
 
                 if (getId !== null) {
