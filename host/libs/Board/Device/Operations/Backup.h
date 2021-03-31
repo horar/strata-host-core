@@ -6,6 +6,7 @@
 
 namespace strata::device::command {
     class CmdStartBackupFirmware;
+    class CmdBackupFirmware;
 }
 
 namespace strata::device::operation {
@@ -20,8 +21,8 @@ public:
     QVector<quint8> recentBackupChunk() const;
 private:
     command::CmdStartBackupFirmware* cmdStartBackup_;
-    void setTotalChunks(command::CommandResult& result, int& status);
-    int totalChunks_;
+    command::CmdBackupFirmware* cmdBackup_;
+    void setTotalChunksForBackup(command::CommandResult& result, int& status);
     QVector<quint8> chunk_;
 };
 
