@@ -100,6 +100,7 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
     rapidjson::Document requestDoc;
     rapidjson::ParseResult parseResult = requestDoc.Parse(request.toStdString().c_str());
     std::vector<QByteArray> retVal;
+
     if (parseResult.IsError()) {
         return std::vector<QByteArray>({test_commands::nack_badly_formatted_json});
     }
@@ -124,6 +125,18 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
         }
         if (0 == cmd.compare("start_application")) {
             recievedCommand = MockCommand::start_application;
+        }
+        if (0 == cmd.compare("start_flash_firmware")) {
+            recievedCommand = MockCommand::start_flash_firmware;
+        }
+        if (0 == cmd.compare("flash_firmware")) {
+            recievedCommand = MockCommand::flash_firmware;
+        }
+        if (0 == cmd.compare("start_flash_bootloader")) {
+            recievedCommand = MockCommand::start_flash_bootloader;
+        }
+        if (0 == cmd.compare("flash_bootloader")) {
+            recievedCommand = MockCommand::flash_bootloader;
         }
 
         retVal.push_back(test_commands::ack);
@@ -296,6 +309,54 @@ std::vector<QByteArray> MockDeviceControl::getResponses(QByteArray request)
                 retVal.push_back(test_commands::start_application_response);
             }
             break;
+
+        case MockCommand::flash_firmware:
+            if (customResponse) {
+                switch (response_) {
+                case MockResponse::flash_resend_chunk: {
+                    retVal.push_back(test_commands::flash_firmware_response_resend_chunk);
+                } break;
+                case MockResponse::flash_memory_error: {
+                    retVal.push_back(test_commands::flash_firmware_response_memory_error);
+                } break;
+                case MockResponse::flash_invalid_cmd_sequence: {
+                    retVal.push_back(test_commands::flash_firmware_response_invalid_cmd_sequence);
+                } break;
+                case MockResponse::flash_invalid_value: {
+                    retVal.push_back(test_commands::flash_firmware_invalid_value);
+                } break;
+                default: {
+                    retVal.push_back(test_commands::flash_firmware_response);
+                } break;
+                }
+            } else {
+                retVal.push_back(test_commands::flash_firmware_response);
+            }
+            break;
+
+        case MockCommand::flash_bootloader:
+            retVal.push_back(test_commands::flash_bootloader_response);
+            break;
+
+        case MockCommand::start_flash_firmware:
+            if (customResponse) {
+                switch (response_) {
+                case MockResponse::start_flash_firmware_invalid: {
+                    retVal.push_back(test_commands::start_flash_firmware_response_invalid);
+                } break;
+                default: {
+                    retVal.push_back(test_commands::start_flash_firmware_response);
+                } break;
+                }
+            } else {
+            retVal.push_back(test_commands::start_flash_firmware_response);
+            }
+            break;
+
+        case MockCommand::start_flash_bootloader:
+            retVal.push_back(test_commands::start_flash_bootloader_response);
+            break;
+
         default: {
             retVal.pop_back();  // remove ack
             retVal.push_back(test_commands::nack_command_not_found);
@@ -326,11 +387,15 @@ QString MockDeviceControl::getPlaceholderValue(const QString placeholder, const 
             targetDocumentNode = &(*targetDocumentNode)[placeholderPart.toStdString().c_str()];
         }
 
+        if (targetDocumentNode->IsInt()) {
+            return QString::number(targetDocumentNode->GetInt());
+        }
+
         if (targetDocumentNode->IsString()) {
             return targetDocumentNode->GetString();
         }
         // fallthrough
-    }  // add other namespaces as required in the future (e.g. refer to mock variables)
+    } // add other namespaces as required in the future (e.g. refer to mock variables)
     //QFAIL_(("Problem replacing placeholder <" + placeholder + ">").toStdString().c_str());
     return placeholder;  // fallback, return the value as is
 }
