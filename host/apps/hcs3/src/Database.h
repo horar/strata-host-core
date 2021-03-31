@@ -1,11 +1,20 @@
-#pragma once
+
+#ifndef HOST_HCS_DATABASE_H__
+#define HOST_HCS_DATABASE_H__
 
 #include <string>
 #include <set>
 #include <QObject>
 
-#include <Database/DatabaseManager.h>
-#include <Database/DatabaseAccess.h>
+namespace Strata {
+    class SGDatabase;
+    class SGURLEndpoint;
+    class SGReplicatorConfiguration;
+    class SGReplicator;
+    class SGBasicAuthenticator;
+
+    class SGMutableDocument;
+};
 
 class HCS_Dispatcher;
 
@@ -25,7 +34,7 @@ public:
      * @return returns true when succeeded, otherwise false
      * NOTE: add a path to the DB.
      */
-    bool open(std::string_view db_path, const std::string& db_name);
+    bool open(std::string_view db_path, const std::string &db_name);
 
     /**
      * Initializes and starts the DB replicator
@@ -67,16 +76,25 @@ signals:
     void documentUpdated(QString documentId);
 
 private:
+    void onDocumentEnd(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
+
     void updateChannels();
 
 private:
     std::string sgDatabasePath_;
+    Strata::SGDatabase *sg_database_{nullptr};
 
-    std::unique_ptr<strata::Database::DatabaseManager> databaseManager_ = nullptr;
+    Strata::SGURLEndpoint *url_endpoint_{nullptr};
+    Strata::SGReplicatorConfiguration *sg_replicator_configuration_{nullptr};
+    Strata::SGReplicator *sg_replicator_{nullptr};
+    bool isRunning_{false};
 
-    strata::Database::DatabaseAccess* DB_ = nullptr;
+    // Set replicator reconnection timer to 15 seconds
+    const unsigned int REPLICATOR_RECONNECTION_INTERVAL = 15;
 
-    void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents);
+    Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
 
     std::set<std::string> channels_;
 };
+
+#endif //HOST_HCS_DATABASE_H__
