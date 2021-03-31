@@ -19,10 +19,12 @@ SetAssistedPlatformId::SetAssistedPlatformId(const DevicePtr &device)
     std::unique_ptr<CmdSetAssistedPlatformId> cmdSetAssistPlatfId = std::make_unique<CmdSetAssistedPlatformId>(device_);
     cmdSetAssistPlatfid_ = cmdSetAssistPlatfId.get();
 
+    cmdSetAssistPlatfid_->setResponseTimeout(std::chrono::milliseconds(2000));
+
     commandList_.emplace_back(std::move(cmdSetAssistPlatfId));
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
 
-    currentCommand_ = commandList_.end();
+    initCommandList();
 }
 
 void SetAssistedPlatformId::setBaseData(const command::CmdSetPlatformIdData &data)

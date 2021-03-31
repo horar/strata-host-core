@@ -2,6 +2,7 @@ import QtQml 2.12
 import QtQml.StateMachine 1.12 as DSM
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.flasherConnector 1.0
+import tech.strata.logger 1.0
 
 DSM.StateMachine {
     id: stateMachine
@@ -76,20 +77,17 @@ DSM.StateMachine {
     signal jlinkProcessFailed()
 
     running: false
-    initialState: validateInputState
+    initialState: stateValidateInput
 
 
     DSM.State {
-        id: validateInputState
+        id: stateValidateInput
 
         onEntered: {
             prtModel.clearBinaries();
 
             var errorString = ""
-            if (registrationMode === ProgramDeviceWizard.Unknown) {
-                errorString = "Registration mode not set"
-            } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted
-                       || registrationMode === ProgramDeviceWizard.ControllerOnly) {
+            if (registrationMode !== ProgramDeviceWizard.Embedded) {
                 errorString = "Registration mode not supported"
             } else if (jlinkExePath.length === 0) {
                 errorString = "Path to JLink.exe not set"
@@ -107,9 +105,8 @@ DSM.StateMachine {
                 errorString = "OPN not set"
             }
 
-            console.log("errorString", errorString)
-
             if (errorString.length > 0) {
+                console.error(Logger.prtCategory, "settings are not valid:", errorString)
                 stateMachine.settingsInvalid(errorString)
             } else {
                 stateMachine.settingsValid()
@@ -136,6 +133,8 @@ DSM.StateMachine {
         onEntered: {
             stateMachine.statusText = "Downloading"
 
+            console.debug(Logger.prtCategory, "binaries download about to start")
+
             prtModel.downloadBinaries(
                         stateMachine.bootloaderData.file,
                         stateMachine.bootloaderData.md5,
@@ -159,6 +158,7 @@ DSM.StateMachine {
             signal: prtModel.downloadFirmwareFinished
             guard: errorString.length > 0
             onTriggered: {
+                console.error(Logger.prtCategory, "download failed:", errorString)
                 stateMachine.internalSubtext = errorString
             }
         }
@@ -183,9 +183,9 @@ DSM.StateMachine {
         DSM.State {
             id: stateCheckDeviceCount
             onEntered: {
-                jLinkConnector.device = stateMachine.jlinkDevice
-                jLinkConnector.startAddress = stateMachine.bootloaderStartAddress
                 stateMachine.statusText = "Waiting for device to connect"
+
+                console.debug(Logger.prtCategory, "device count:", prtModel.deviceCount)
 
                 if (prtModel.deviceCount === 1) {
                     stateMachine.deviceCountValid()
@@ -210,6 +210,8 @@ DSM.StateMachine {
 
             onEntered: {
                 stateMachine.statusText = "Waiting for device to connect"
+
+                console.debug(Logger.prtCategory, "waiting for device")
             }
 
             DSM.SignalTransition {
@@ -226,6 +228,10 @@ DSM.StateMachine {
 
             onEntered: {
                 stateMachine.statusText = "Waiting for JLink connection"
+                jLinkConnector.device = stateMachine.jlinkDevice
+                jLinkConnector.startAddress = stateMachine.bootloaderStartAddress
+
+                console.debug(Logger.prtCategory, "waiting for jlink")
             }
 
             DSM.State {
@@ -282,6 +288,8 @@ DSM.StateMachine {
                 stateMachine.internalSubtext = ""
                 var run = jLinkConnector.programBoardRequested(prtModel.bootloaderFilepath)
 
+                console.debug(Logger.prtCategory, "bootloader about to be programmed")
+
                 if (run === false) {
                     stateMachine.jlinkProcessFailed()
                 }
@@ -292,6 +300,7 @@ DSM.StateMachine {
                 signal: stateMachine.jlinkProcessFailed
                 onTriggered: {
                     stateMachine.internalSubtext = "JLink process failed"
+                    console.error(Logger.prtCategory, "jlink process failed")
                 }
             }
 
@@ -307,6 +316,7 @@ DSM.StateMachine {
                 guard: exitedNormally === false
                 onTriggered: {
                     stateMachine.internalSubtext = "JLink process failed"
+                    console.error(Logger.prtCategory, "jlink process failed")
                 }
             }
         }
@@ -316,6 +326,9 @@ DSM.StateMachine {
 
             onEntered: {
                 stateMachine.statusText = "Programming firmware"
+
+                console.debug(Logger.prtCategory, "firmware about to be programmed")
+
                 prtModel.programDevice();
             }
 
@@ -375,6 +388,8 @@ DSM.StateMachine {
                 stateRegistration.currentPlatformId = CommonCpp.SGUtilsCpp.generateUuid()
                 stateRegistration.currentBoardCount = -1
 
+                console.debug(Logger.prtCategory, "cloud service is about to be notified")
+
                 prtModel.notifyServiceAboutRegistration(
                             stateMachine.classId,
                             stateRegistration.currentPlatformId)
@@ -428,6 +443,9 @@ DSM.StateMachine {
 
             onEntered: {
                 stateMachine.internalSubtext = "writing to device"
+
+                console.debug(Logger.prtCategory, "device is about to be registered")
+
                 prtModel.setPlatformId(
                             stateMachine.classId,
                             stateRegistration.currentPlatformId,
@@ -446,6 +464,7 @@ DSM.StateMachine {
                 guard: errorString.length > 0
                 onTriggered: {
                     stateMachine.internalSubtext = errorString
+                    console.error(Logger.prtCategory, "device registration failed:", errorString)
                 }
             }
         }
@@ -506,6 +525,7 @@ DSM.StateMachine {
 
         onEntered: {
             stateMachine.statusText = "Registration Successful"
+            console.debug(Logger.prtCategory, "registration successful")
         }
 
         DSM.SignalTransition {

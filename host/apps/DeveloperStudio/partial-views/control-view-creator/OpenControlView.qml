@@ -37,14 +37,14 @@ Rectangle {
     }
 
     function openProject(filepath, addToProjectList) {
-        let path = filepath.trim();
-
-        if (path.startsWith("file:///")) {
+        const path = filepath.trim();
+        let localFile = path
+        if (localFile.startsWith("file://")) {
             // type is url
-            path = SGUtilsCpp.urlToLocalFile(path);
+            localFile = SGUtilsCpp.urlToLocalFile(path);
         }
 
-        if (!SGUtilsCpp.exists(path)) {
+        if (!SGUtilsCpp.exists(localFile)) {
             console.warn("Tried to open non-existent project")
             if (alertMessage.visible) {
                 alertMessage.Layout.preferredHeight = 0
@@ -54,7 +54,7 @@ Rectangle {
             return false;
         }
 
-        openProjectContainer.url = SGUtilsCpp.pathToUrl(path)
+        openProjectContainer.url = path
         console.info(openProjectContainer.url);
         toolBarListView.currentIndex = toolBarListView.editTab
         if (addToProjectList) {

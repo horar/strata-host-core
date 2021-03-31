@@ -1,16 +1,21 @@
 #include <thread>
 
-#include "Database.h"
-#include "CouchbaseDocument.h"
+#include "Database/DatabaseLib.h"
+#include "Database/CouchbaseDocument.h"
+#include "../src/CouchbaseDatabase.h"
 
 #include <QDir>
 #include <QDebug>
+#include <QJsonValue>
+#include <QJsonObject>
 #include <QStandardPaths>
+
+using namespace strata::Database;
 
 #define DEBUG(...) printf("Database: "); printf(__VA_ARGS__); printf("\n");
 
 // Replicator URL endpoint
-const QString replicator_url = "ws://localhost:4984/strata-db";
+const QString replicator_url = "ws://10.0.0.157:4984/strata-db";
 const QString replicator_username = "";
 const QString replicator_password = "";
 const QStringList replicator_channels = {};
@@ -21,7 +26,7 @@ int main() {
      *******************************************/
 
     // Default DB location will be the current location
-    Database DB_1("Sample Database 1");
+    DatabaseLib DB_1("Sample Database 1");
 
     // Open DB 1
     if (DB_1.open()) {
@@ -113,7 +118,7 @@ int main() {
     QDir dir;
     const QString documentsPath = dir.absolutePath();
 
-    Database DB_2("Sample Database 2", documentsPath);
+    DatabaseLib DB_2("Sample Database 2", documentsPath);
 
     // Open DB 2
     if (DB_2.open()) {
@@ -124,7 +129,7 @@ int main() {
     }
 
     // Start replicator on DB 2 with all default arguments
-    if (DB_2.startReplicator(replicator_url)) {
+    if (DB_2.startBasicReplicator(replicator_url)) {
         DEBUG("Replicator successfully started.");
     } else {
         qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";
@@ -137,7 +142,7 @@ int main() {
     document_keys = DB_2.getAllDocumentKeys();
     qDebug() << "\nAll document keys of DB 2 after replication: " << document_keys << "\n";
 
-    Database DB_3("Sample Database 3", documentsPath);
+    DatabaseLib DB_3("Sample Database 3", documentsPath);
 
     // Open DB 3
     if (DB_3.open()) {
@@ -148,15 +153,15 @@ int main() {
     }
 
     // Start replicator on DB 3 with all non-default options
-    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
+    auto changeListener = [](cbl::Replicator, const DatabaseAccess::ActivityLevel) {
         qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!\n";
     };
 
-    auto documentListener = [](cbl::Replicator, bool, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>>) {
+    auto documentListener = [](cbl::Replicator, bool, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>>) {
         qDebug() << "CouchbaseDatabaseSampleApp documentListener -> document status changed!\n";
     };
 
-    if (DB_3.startReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener)) {
+    if (DB_3.startBasicReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener)) {
         DEBUG("Replicator successfully started.");
     } else {
         qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";

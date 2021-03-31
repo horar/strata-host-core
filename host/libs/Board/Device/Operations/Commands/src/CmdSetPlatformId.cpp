@@ -11,8 +11,8 @@
 namespace strata::device::command {
 
 CmdSetPlatformId::CmdSetPlatformId(
-        const device::DevicePtr &device,
-        const CmdSetPlatformIdData &data)
+        const device::DevicePtr& device,
+        const CmdSetPlatformIdData& data)
     : BaseDeviceCommand(device, QStringLiteral("set_platform_id"), CommandType::SetPlatformId),
       data_(data)
 {
@@ -36,25 +36,25 @@ QByteArray CmdSetPlatformId::message()
     return doc.toJson(QJsonDocument::Compact);
 }
 
-bool CmdSetPlatformId::processNotification(rapidjson::Document &doc)
+bool CmdSetPlatformId::processNotification(rapidjson::Document& doc, CommandResult& result)
 {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::setPlatformIdNotif, doc) == false) {
         return false;
     }
 
-    result_ = CommandResult::Failure;
+    result = CommandResult::Failure;
 
     const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
     const QString jsonStatus = payload[JSON_STATUS].GetString();
 
     if (jsonStatus == JSON_OK) {
-        result_ = CommandResult::Done;
+        result = CommandResult::Done;
     } else if (jsonStatus == JSON_FAILED) {
         status_ = operation::SET_PLATFORM_ID_FAILED;
     } else if (jsonStatus == JSON_ALREADY_INITIALIZED) {
         status_ = operation::PLATFORM_ID_ALREADY_SET;
     } else {
-        qCCritical(logCategoryDeviceOperations) << device_ << "Unknown status string:" << jsonStatus;
+        qCCritical(logCategoryDeviceCommand) << device_ << "Unknown status string:" << jsonStatus;
     }
 
     return true;
