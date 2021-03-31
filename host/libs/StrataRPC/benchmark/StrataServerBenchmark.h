@@ -1,9 +1,8 @@
 #pragma once
 
-#include "QtTest.h"
-
 #include <StrataRPC/StrataServer.h>
 #include <QObject>
+#include <QtTest>
 
 using strata::strataRPC::StrataServer;
 
