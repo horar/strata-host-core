@@ -46,3 +46,48 @@ void StrataServerBenchmark::benchmarkRegisteringClients()
         clientsCounter++;
     }
 }
+
+void StrataServerBenchmark::benchmarkNotifyClientAPIv2()
+{
+    StrataServer server(address_, false);
+
+    server.newClientMessage(
+        "clientId",
+        R"({"id":1,"jsonrpc":"2.0","method":"register_client","params":{"api_version":"2.0"}})");
+
+    QBENCHMARK
+    {
+        server.notifyClient("clientId", "test_handler", QJsonObject(),
+                            strata::strataRPC::ResponseType::Notification);
+    }
+}
+
+void StrataServerBenchmark::benchmarkNotifyClientAPIv1()
+{
+    StrataServer server(address_, false);
+
+    server.newClientMessage("clientId", R"({"cmd":"register_client", "payload":{}})");
+
+    QBENCHMARK
+    {
+        server.notifyClient("clientId", "test_handler", QJsonObject(),
+                            strata::strataRPC::ResponseType::Notification);
+    }
+}
+
+void StrataServerBenchmark::benchmarkNotifyClientWithLargeNumberOfClients()
+{
+    int totalNumberOfClients = 1000;
+    StrataServer server(address_, false);
+
+    for (int i = 0; i < totalNumberOfClients; i++) {
+        server.newClientMessage(QByteArray::number(i),
+                                R"({"jsonrpc": "2.0","method":"100","params": {},"id":1})");
+    }
+
+    QBENCHMARK
+    {
+        server.notifyClient("999", "test_handler", QJsonObject(),
+                            strata::strataRPC::ResponseType::Notification);
+    }
+}

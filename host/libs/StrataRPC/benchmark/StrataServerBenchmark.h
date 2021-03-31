@@ -15,6 +15,9 @@ private slots:
     void benchmarkLargeNumberOfHandlers();
     void benchmarkLargeNUmberOfClients();
     void benchmarkRegisteringClients();
+    void benchmarkNotifyClientAPIv2();
+    void benchmarkNotifyClientAPIv1();
+    void benchmarkNotifyClientWithLargeNumberOfClients();
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
