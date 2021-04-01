@@ -2,7 +2,6 @@
 #include <DeviceOperationsStatus.h>
 
 #include "Commands/include/DeviceCommands.h"
-#include "DeviceOperationsConstants.h"
 
 #include "logging/LoggingQtCategories.h"
 
@@ -85,10 +84,11 @@ Type BaseDeviceOperation::type() const
 }
 
 #ifdef BUILD_TESTING
-void BaseDeviceOperation::setResponseTimeout(std::chrono::milliseconds responseInterval)
+void BaseDeviceOperation::setResponseTimeouts(std::chrono::milliseconds responseTimeout)
 {
     for (auto it = commandList_.begin(); it != commandList_.end(); ++it) {
-        (*it)->setResponseTimeout(responseInterval);
+        (*it)->setAckTimeout(responseTimeout);
+        (*it)->setNotificationTimeout(responseTimeout);
     }
 }
 #endif
@@ -150,6 +150,9 @@ void BaseDeviceOperation::handleCommandFinished(CommandResult result, int status
         break;
     case CommandResult::Timeout :
         finishOperation(Result::Timeout, QStringLiteral("No response from device."));
+        break;
+    case CommandResult::MissingAck :
+        finishOperation(Result::Failure, QStringLiteral("Command was not acknowledged."));
         break;
     case CommandResult::Unsent :
         finishOperation(Result::Failure, QStringLiteral("Sending command has failed."));

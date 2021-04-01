@@ -621,7 +621,7 @@ void DeviceOperationsV2Test::noResponseEmbeddedTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
         new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
+    deviceOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponse(MockResponse::embedded_app);
 
@@ -646,7 +646,7 @@ void DeviceOperationsV2Test::noResponseAssistedTest()
     deviceOperation_ = QSharedPointer<operation::Identify>(
         new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
+    deviceOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponse(MockResponse::assisted_app);
 
@@ -670,7 +670,7 @@ void DeviceOperationsV2Test::invalidValueV2Test()
     deviceOperation_ = QSharedPointer<operation::Identify>(
                 new operation::Identify(device_, true), &QObject::deleteLater);
     connectHandlers(deviceOperation_.data());
-    deviceOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
+    deviceOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponseForCommand(MockResponse::invalid, MockCommand::get_firmware_info);
 
@@ -929,7 +929,7 @@ void DeviceOperationsV2Test::flashInvalidValueTest()
     flashOperation_ = QSharedPointer<operation::Flash>(
             flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
-    flashOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
+    flashOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponse(MockResponse::flash_invalid_value);
 
@@ -1001,7 +1001,7 @@ void DeviceOperationsV2Test::startFlashInvalidTest()
     flashOperation_ = QSharedPointer<operation::Flash>(
             flashFirmwareOperation, &QObject::deleteLater);
     connectFlashHandlers(flashFirmwareOperation);
-    flashOperation_->setResponseTimeout(RESPONSE_TIMEOUT_TESTS);
+    flashOperation_->setResponseTimeouts(RESPONSE_TIMEOUT_TESTS);
 
     device_->mockSetResponseForCommand(MockResponse::start_flash_firmware_invalid,MockCommand::start_flash_firmware);
 
