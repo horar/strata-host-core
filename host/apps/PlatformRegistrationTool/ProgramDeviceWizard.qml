@@ -266,13 +266,27 @@ FocusScope {
 
         Image {
             width: parent.width
-            height: 200
+            height: 250
             anchors {
                 top: statusSubtext.bottom
                 margins: 10
             }
 
-            source: "qrc:/images/jlink-connect-schema.svg"
+            source: {
+                if (registrationMode === ProgramDeviceWizard.Embedded) {
+                    return "qrc:/images/connect-schema-embedded.svg"
+                }
+
+                if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+                    return "qrc:/images/connect-schema-assisted.svg"
+                }
+
+                if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
+                    return "qrc:/images/connect-schema-controller.svg"
+                }
+
+                return ""
+            }
             fillMode: Image.PreserveAspectFit
             sourceSize: Qt.size(width, height)
             smooth: true
