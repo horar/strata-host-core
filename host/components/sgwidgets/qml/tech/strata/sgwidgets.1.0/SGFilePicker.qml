@@ -83,7 +83,7 @@ FocusScope {
 
     function selectFilePath() {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
-                    filePicker.parent,
+                    ApplicationWindow.window,
                     fileDialogComponent,
                     {
                         "title": dialogLabel,
