@@ -339,8 +339,8 @@ bool ZmqConnector::socketAndContextOpen()
             (false == isConnected())) {
             qCInfo(logCategoryZmqConnector) << "Reopening socket";
             // must be released in this order
-            socket_.release();
-            context_.release();
+            socket_.reset();
+            context_.reset();
         } else {
             qCCritical(logCategoryZmqConnector) << "Unable to open socket, it is already open";
             return false;
@@ -362,8 +362,8 @@ bool ZmqConnector::socketAndContextOpen()
     }
 
     // release these objects in case it failed to allocate them
-    socket_.release();
-    context_.release();
+    socket_.reset();
+    context_.reset();
     return false;
 }
 
