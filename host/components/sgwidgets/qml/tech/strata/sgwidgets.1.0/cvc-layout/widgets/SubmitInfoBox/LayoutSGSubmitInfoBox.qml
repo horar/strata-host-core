@@ -12,10 +12,16 @@ LayoutContainer {
     property alias placeholderText: infoObject.placeholderText
     property alias readOnly: infoObject.readOnly
     property alias boxColor: infoObject.boxColor
+    signal accepted(string text)
+    signal editingFinished(string text)
 
-    SGInfoBox {
+    SGSubmitInfoBox {
         id: infoObject
         fontSizeMultiplier: parent.fontSizeMultiplier
+
+        onAccepted: parent.accepted(infoObject.text)
+        onEditingFinished: parent.editingFinished(infoObject.text)
+
     }
 }
 
