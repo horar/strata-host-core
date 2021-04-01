@@ -1,6 +1,6 @@
 #include "BaseDeviceCommand.h"
 
-#include "DeviceOperationsConstants.h"
+#include "DeviceCommandConstants.h"
 #include <DeviceOperationsStatus.h>
 
 #include <rapidjson/document.h>

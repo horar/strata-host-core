@@ -1,8 +1,6 @@
 #include <Device/Operations/SetAssistedPlatformId.h>
 #include "Commands/include/DeviceCommands.h"
-#include "DeviceOperationsConstants.h"
 #include "logging/LoggingQtCategories.h"
-
 
 namespace strata::device::operation {
 

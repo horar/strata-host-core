@@ -1,5 +1,5 @@
 #include "CmdGetFirmwareInfo.h"
-#include "DeviceOperationsConstants.h"
+#include "DeviceCommandConstants.h"
 
 #include <CommandValidator.h>
 
