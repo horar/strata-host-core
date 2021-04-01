@@ -52,8 +52,7 @@ DSM.StateMachine {
             t = "Controller\n" + controllerOpn.toUpperCase() + "\n\n"
             t += "Assisted device\n" + assistedDeviceOpn.toUpperCase() + "\n\n"
             t += "You can unplug controller now\n\n"
-            t += "To program another device, simply plug it in and\n"
-            t += "process will start automatically\n\n"
+            t += "To program another device, simply plug it in and process will start automatically\n\n"
             t += "or press End to finish current session"
         } else if (stateLoopFailed.active) {
             t = internalSubtext
