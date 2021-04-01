@@ -20,9 +20,6 @@
         <file>ProgramWorkflow.qml</file>
         <file>WorkflowNode.qml</file>
         <file>WorkflowNodeText.qml</file>
-        <file>images/connect-schema-embedded.svg</file>
-        <file>images/connect-schema-assisted.svg</file>
-        <file>images/connect-schema-controller.svg</file>
         <file>jsonSchemas.js</file>
     </qresource>
 </RCC>
