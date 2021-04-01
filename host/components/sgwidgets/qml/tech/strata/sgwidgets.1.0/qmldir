@@ -63,6 +63,7 @@ LayoutText 1.0 cvc-layout/widgets/Text/LayoutText.qml
 LayoutSwitch 1.0 cvc-layout/widgets/Switch/LayoutSwitch.qml
 LayoutSGInfoBox 1.0 cvc-layout/widgets/InfoBox/LayoutSGInfoBox.qml
 LayoutSGSubmitInfoBox 1.0 cvc-layout/widgets/SubmitInfoBox/LayoutSGSubmitInfoBox.qml
+LayoutSGCircularGauge 1.0 cvc-layout/widgets/CircularGauge/LayoutSGCircularGauge.qml
 
 UIBase 1.0 cvc-layout/UIBase.qml
 

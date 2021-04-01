@@ -74,5 +74,7 @@
         <file>cvc-layout/widgets/InfoBox/LayoutSGInfoBox.qml</file>
         <file>cvc-layout/widgets/SubmitInfoBox/LayoutSGSubmitInfoBox.qml</file>
         <file>cvc-layout/widgets/SubmitInfoBox/SGSubmitInfoBox.txt</file>
+        <file>cvc-layout/widgets/CircularGauge/LayoutSGCircularGauge.qml</file>
+        <file>cvc-layout/widgets/CircularGauge/SGCircularGauge.txt</file>
     </qresource>
 </RCC>
