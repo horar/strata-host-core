@@ -310,7 +310,6 @@ function registerQmlAsLanguage() {
 
         //Edge Case 4: this is when there is only one QtItem, most common is when we create a new file
         if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber && nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
-
             propRange = {
                 startLineNumber: prevMatch.range.startLineNumber,
                 endLineNumber: nextMatch.range.startLineNumber,
@@ -322,7 +321,6 @@ function registerQmlAsLanguage() {
         //Edge Case 3: this is to ensure that editing the top of the file does not allow a child item to read in its parent data i.e Item and anchors dont mix
         if (prevMatch.range.startLineNumber === topOfFile.range.startLineNumber || prevprevMatch.range.startLineNumber === topOfFile.range.startLineNumber) {
             if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && (nextMatch.range.startLineNumber <= nextnextMatch.range.startLineNumber && prevBracketMatch.range.startLineNumber >= nextnextMatch.range.startLineNumber)) {
-
                 propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
                     endLineNumber: nextMatch.range.startLineNumber,
@@ -335,7 +333,6 @@ function registerQmlAsLanguage() {
         //Edge Case 5: same as 3, just inveresed for the end of the file
         if (nextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber || nextnextMatch.range.startLineNumber === bottomOfFile.range.startLineNumber) {
             if (position.lineNumber >= prevMatch.range.startLineNumber && position.lineNumber <= nextMatch.range.startLineNumber && prevMatch.range.startLineNumber > prevBracketMatch.range.startLineNumber) {
-
                 propRange = {
                     startLineNumber: prevMatch.range.startLineNumber,
                     endLineNumber: nextMatch.range.startLineNumber,
@@ -383,10 +380,26 @@ function registerQmlAsLanguage() {
                 return currentItems[prevParent][propRange]
             } else if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent)) {
                 return retrieveType(model, propRange)
+            } else if (prevParent.includes(":")) {
+                const propertyItem = prevParent.replace("\t", "").split(":")[1].trim()
+                propRange = {
+                    startLineNumber: prevMatch.range.startLineNumber,
+                    endLineNumber: nextMatch.range.startLineNumber,
+                    startColumn: prevMatch.range.startColumn,
+                    endColumn: nextMatch.range.endColumn,
+                }
+
+                convertStrArrayToObjArray(propertyItem, qtObjectKeyValues[propertyItem].properties, qtObjectKeyValues[propertyItem].flag, false, propertyItem)
+                if (currentItems[propertyItem] === undefined) {
+                    currentItems[propertyItem] = {}
+                }
+                currentItems[propertyItem][propRange] = qtObjectPropertyValues[propertyItem]
+                return currentItems[propertyItem][propRange]
+
             } else {
                 return Object.values(functionSuggestions)
             }
-        } 
+        }
         if (position.lineNumber > prevMatch.range.startLineNumber && position.lineNumber > prevBracketMatch.range.startLineNumber) {
             var prevParent = findPreviousBracketParent(model, position)
             if (qtObjectKeyValues.hasOwnProperty(prevParent)) {
@@ -632,12 +645,12 @@ function registerQmlAsLanguage() {
     function findPreviousBracketParent(model, position) {
         var currentClosestTop = matchingBrackets[0].top
         var currentClosestBottom = matchingBrackets[0].bottom
-        for(var i = 0; i < matchingBrackets.length; i++){
-            if(position.lineNumber <= matchingBrackets[i].bottom && position.lineNumber >= matchingBrackets[i].top){
-                if(currentClosestTop < matchingBrackets[i].top){
-                    currentClosestTop =  matchingBrackets[i].top
+        for (var i = 0; i < matchingBrackets.length; i++) {
+            if (position.lineNumber <= matchingBrackets[i].bottom && position.lineNumber >= matchingBrackets[i].top) {
+                if (currentClosestTop < matchingBrackets[i].top) {
+                    currentClosestTop = matchingBrackets[i].top
                 }
-                if(currentClosestBottom > matchingBrackets[i].bottom){
+                if (currentClosestBottom > matchingBrackets[i].bottom) {
                     currentClosestBottom = matchingBrackets[i].bottom
                 }
             }
@@ -656,32 +669,32 @@ function registerQmlAsLanguage() {
         return model.findPreviousMatch("{", position)
     }
 
-    function createMatchingPairs(model){
+    function createMatchingPairs(model) {
         matchingBrackets = []
-        matchingBrackets.push({top: topOfFile.range.startLineNumber, bottom: bottomOfFile.range.startLineNumber})
-        var next = getNext(model, {lineNumber: topOfFile.range.startLineNumber, column: topOfFile.range.endColumn})
-        var prev = getPrev(model, {lineNumber: next.range.startLineNumber, column: next.range.startColumn})
-        while(next.range.startLineNumber < bottomOfFile.range.startLineNumber){
-            var checkNext = getNext(model, {lineNumber: prev.range.startLineNumber, column: prev.range.endColumn})
-            if(next.range.startLineNumber === checkNext.range.startLineNumber){
-                matchingBrackets.push({top: prev.range.startLineNumber, bottom: next.range.startLineNumber})
+        matchingBrackets.push({ top: topOfFile.range.startLineNumber, bottom: bottomOfFile.range.startLineNumber })
+        var next = getNext(model, { lineNumber: topOfFile.range.startLineNumber, column: topOfFile.range.endColumn })
+        var prev = getPrev(model, { lineNumber: next.range.startLineNumber, column: next.range.startColumn })
+        while (next.range.startLineNumber < bottomOfFile.range.startLineNumber) {
+            var checkNext = getNext(model, { lineNumber: prev.range.startLineNumber, column: prev.range.endColumn })
+            if (next.range.startLineNumber === checkNext.range.startLineNumber) {
+                matchingBrackets.push({ top: prev.range.startLineNumber, bottom: next.range.startLineNumber })
             } else {
-                var initialPosition = {lineNumber: next.range.startLineNumber, column: next.range.startLineNumber}
+                var initialPosition = { lineNumber: next.range.startLineNumber, column: next.range.startLineNumber }
                 var checkPrev = getPrev(model, initialPosition)
                 var getLine = model.getLineContent(checkPrev.range.startLineNumber)
                 var content = getLine.replace("\t", "").split(/\{|\t/)[0].trim()
                 var getWord = model.findPreviousMatch(content, initialPosition)
-                 while(next.range.startColumn < getWord.range.startColumn){
-                        initialPosition = {lineNumber: getWord.range.startLineNumber, column: getWord.range.startColumn}
-                        checkPrev = getPrev(model,initialPosition)
-                        getLine = model.getLineContent(checkPrev.range.startLineNumber)
-                        content = getLine.replace("\t", "").split(/\{|\t/)[0].trim()
-                        getWord = model.findPreviousMatch(content, initialPosition)
-                 }
-                 matchingBrackets.push({top: getWord.range.startLineNumber, bottom: next.range.startLineNumber})
+                while (next.range.startColumn < getWord.range.startColumn) {
+                    initialPosition = { lineNumber: getWord.range.startLineNumber, column: getWord.range.startColumn }
+                    checkPrev = getPrev(model, initialPosition)
+                    getLine = model.getLineContent(checkPrev.range.startLineNumber)
+                    content = getLine.replace("\t", "").split(/\{|\t/)[0].trim()
+                    getWord = model.findPreviousMatch(content, initialPosition)
+                }
+                matchingBrackets.push({ top: getWord.range.startLineNumber, bottom: next.range.startLineNumber })
             }
-            next = getNext(model, {lineNumber: next.range.startLineNumber, column: next.range.endColumn})
-            prev = getPrev(model, {lineNumber: next.range.startLineNumber, column: next.range.startColumn})
+            next = getNext(model, { lineNumber: next.range.startLineNumber, column: next.range.endColumn })
+            prev = getPrev(model, { lineNumber: next.range.startLineNumber, column: next.range.startColumn })
         }
     }
 
@@ -725,6 +738,17 @@ function registerQmlAsLanguage() {
             //display signal Calls, function Calls, ids properties and function,signal, calls
             return Object.values(functionSuggestions)
         } else {
+            if (bracketWord.includes(":")) {
+                var propertyItem = bracketWord.replace("\t", "").split(":")[1].trim()
+                if (qtObjectKeyValues.hasOwnProperty(propertyItem)) {
+                    convertStrArrayToObjArray(propertyItem, qtObjectKeyValues[propertyItem].properties, qtObjectKeyValues[propertyItem].flag, qtObjectKeyValues[propertyItem].isId, propertyItem)
+                    if (currentItems[propertyItem] === undefined) {
+                        currentItems[propertyItem] = {}
+                    }
+                    currentItems[propertyItem][propRange] = qtObjectPropertyValues[propertyItem]
+                    return currentItems[propertyItem][propRange]
+                }
+            }
             const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber - 1, column: propRange.startColumn })
             if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent)) {
                 convertStrArrayToObjArray(bracketWord, qtObjectMetaPropertyValues[prevParent][bracketWord], true, true)
