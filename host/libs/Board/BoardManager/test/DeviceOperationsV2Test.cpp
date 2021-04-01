@@ -207,28 +207,31 @@ void DeviceOperationsV2Test::identifyEmbeddedApplicationTest()
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
-    expectedDoc.Parse(test_commands::request_platform_id_response_ver2_embedded.data(),
-                      test_commands::request_platform_id_response_ver2_embedded.size());
-    const rapidjson::Value& payloadEmbedded = expectedDoc["notification"]["payload"];
+    {
+        expectedDoc.Parse(test_commands::request_platform_id_response_ver2_embedded.data(),
+                          test_commands::request_platform_id_response_ver2_embedded.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QCOMPARE(device_->name(),       payloadEmbedded["name"].GetString());
-    QCOMPARE(device_->platformId(), payloadEmbedded["platform_id"].GetString());
-    QCOMPARE(device_->classId(),    payloadEmbedded["class_id"].GetString());
+        QCOMPARE(device_->name(), expectedPayload["name"].GetString());
+        QCOMPARE(device_->platformId(), expectedPayload["platform_id"].GetString());
+        QCOMPARE(device_->classId(), expectedPayload["class_id"].GetString());
 
-    QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Embedded);
-    QVERIFY(device_->controllerPlatformId().isEmpty());
-    QVERIFY(device_->controllerClassId().isEmpty());
-    QVERIFY(!device_->isControllerConnectedToPlatform());
+        QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Embedded);
+        QVERIFY(device_->controllerPlatformId().isEmpty());
+        QVERIFY(device_->controllerClassId().isEmpty());
+        QVERIFY(device_->isControllerConnectedToPlatform() == false);
+    }
+    {
+        expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
+                          test_commands::get_firmware_info_response_ver2_application.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
-                      test_commands::get_firmware_info_response_ver2_application.size());
-    const rapidjson::Value& payloadApplication = expectedDoc["notification"]["payload"];
+        QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Application);
 
-    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Application);
-
-    QCOMPARE("application",             payloadApplication["active"]);
-    QCOMPARE(device_->bootloaderVer(),  payloadApplication["bootloader"]["version"].GetString());
-    QCOMPARE(device_->applicationVer(), payloadApplication["application"]["version"].GetString());
+        QCOMPARE("application", expectedPayload["active"]);
+        QCOMPARE(device_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
+        QCOMPARE(device_->applicationVer(), expectedPayload["application"]["version"].GetString());
+    }
 }
 
 void DeviceOperationsV2Test::identifyEmbeddedBootloaderTest()
@@ -251,28 +254,31 @@ void DeviceOperationsV2Test::identifyEmbeddedBootloaderTest()
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
-    expectedDoc.Parse(test_commands::request_platform_id_response_ver2_embedded_bootloader.data(),
-                      test_commands::request_platform_id_response_ver2_embedded_bootloader.size());
-    const rapidjson::Value& payloadEmbBtldr = expectedDoc["notification"]["payload"];
+    {
+        expectedDoc.Parse(test_commands::request_platform_id_response_ver2_embedded_bootloader.data(),
+                          test_commands::request_platform_id_response_ver2_embedded_bootloader.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QCOMPARE(device_->name(),       payloadEmbBtldr["name"].GetString());
-    QCOMPARE(device_->platformId(), payloadEmbBtldr["platform_id"].GetString());
-    QCOMPARE(device_->classId(),    payloadEmbBtldr["class_id"].GetString());
+        QCOMPARE(device_->name(), expectedPayload["name"].GetString());
+        QCOMPARE(device_->platformId(), expectedPayload["platform_id"].GetString());
+        QCOMPARE(device_->classId(), expectedPayload["class_id"].GetString());
 
-    QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Embedded);
-    QVERIFY(device_->controllerPlatformId().isEmpty());
-    QVERIFY(device_->controllerClassId().isEmpty());
-    QVERIFY(!device_->isControllerConnectedToPlatform());
+        QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Embedded);
+        QVERIFY(device_->controllerPlatformId().isEmpty());
+        QVERIFY(device_->controllerClassId().isEmpty());
+        QVERIFY(!device_->isControllerConnectedToPlatform());
+    }
+    {
+        expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_bootloader.data(),
+                          test_commands::get_firmware_info_response_ver2_bootloader.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_bootloader.data(),
-                      test_commands::get_firmware_info_response_ver2_bootloader.size());
-    const rapidjson::Value& payloadBootloader = expectedDoc["notification"]["payload"];
+        QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Bootloader);
 
-    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Bootloader);
-
-    QCOMPARE("bootloader",              payloadBootloader["active"]);
-    QCOMPARE(device_->bootloaderVer(),  payloadBootloader["bootloader"]["version"].GetString());
-    QCOMPARE(device_->applicationVer(), payloadBootloader["application"]["version"].GetString());
+        QCOMPARE("bootloader", expectedPayload["active"]);
+        QCOMPARE(device_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
+        QCOMPARE(device_->applicationVer(), expectedPayload["application"]["version"].GetString());
+    }
 }
 
 void DeviceOperationsV2Test::identifyAssistedApplicationTest()
@@ -295,28 +301,31 @@ void DeviceOperationsV2Test::identifyAssistedApplicationTest()
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
-    expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted.data(),
-                      test_commands::request_platform_id_response_ver2_assisted.size());
-    const rapidjson::Value& payloadAssisted = expectedDoc["notification"]["payload"];
+    {
+        expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted.data(),
+                          test_commands::request_platform_id_response_ver2_assisted.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QCOMPARE(device_->name(),       payloadAssisted["name"].GetString());
-    QCOMPARE(device_->platformId(), payloadAssisted["platform_id"].GetString());
-    QCOMPARE(device_->classId(),    payloadAssisted["class_id"].GetString());
+        QCOMPARE(device_->name(), expectedPayload["name"].GetString());
+        QCOMPARE(device_->platformId(), expectedPayload["platform_id"].GetString());
+        QCOMPARE(device_->classId(), expectedPayload["class_id"].GetString());
 
-    QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Assisted);
-    QCOMPARE(device_->controllerPlatformId(), payloadAssisted["controller_platform_id"].GetString());
-    QCOMPARE(device_->controllerClassId(),    payloadAssisted["controller_class_id"].GetString());
-    QVERIFY(device_->isControllerConnectedToPlatform());
+        QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Assisted);
+        QCOMPARE(device_->controllerPlatformId(), expectedPayload["controller_platform_id"].GetString());
+        QCOMPARE(device_->controllerClassId(), expectedPayload["controller_class_id"].GetString());
+        QVERIFY(device_->isControllerConnectedToPlatform());
+    }
+    {
+        expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
+                          test_commands::get_firmware_info_response_ver2_application.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
-                      test_commands::get_firmware_info_response_ver2_application.size());
-    const rapidjson::Value& payloadApplication = expectedDoc["notification"]["payload"];
+        QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Application);
 
-    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Application);
-
-    QCOMPARE("application",             payloadApplication["active"]);
-    QCOMPARE(device_->bootloaderVer(),  payloadApplication["bootloader"]["version"].GetString());
-    QCOMPARE(device_->applicationVer(), payloadApplication["application"]["version"].GetString());
+        QCOMPARE("application", expectedPayload["active"]);
+        QCOMPARE(device_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
+        QCOMPARE(device_->applicationVer(), expectedPayload["application"]["version"].GetString());
+    }
 }
 
 void DeviceOperationsV2Test::identifyAssistedBootloaderTest()
@@ -338,31 +347,33 @@ void DeviceOperationsV2Test::identifyAssistedBootloaderTest()
     QCOMPARE(recordedMessages.size(), 2);
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
+    {
+        expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted_bootloader.data(),
+                          test_commands::request_platform_id_response_ver2_assisted_bootloader.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted_bootloader.data(),
-                      test_commands::request_platform_id_response_ver2_assisted_bootloader.size());
-    const rapidjson::Value& payloadAssistBtldr = expectedDoc["notification"]["payload"];
+        QCOMPARE(device_->name(), expectedPayload["name"].GetString());
+        QCOMPARE(device_->platformId(), expectedPayload["platform_id"].GetString());
+        QCOMPARE(device_->classId(), expectedPayload["class_id"].GetString());
 
-    QCOMPARE(device_->name(),       payloadAssistBtldr["name"].GetString());
-    QCOMPARE(device_->platformId(), payloadAssistBtldr["platform_id"].GetString());
-    QCOMPARE(device_->classId(),    payloadAssistBtldr["class_id"].GetString());
+        QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Assisted);
 
-    QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Assisted);
+        QCOMPARE(device_->controllerPlatformId(), expectedPayload["controller_platform_id"].GetString());
+        QCOMPARE(device_->controllerClassId(), expectedPayload["controller_class_id"].GetString());
 
-    QCOMPARE(device_->controllerPlatformId(), payloadAssistBtldr["controller_platform_id"].GetString());
-    QCOMPARE(device_->controllerClassId(),    payloadAssistBtldr["controller_class_id"].GetString());
+        QVERIFY(device_->isControllerConnectedToPlatform());
+    }
+    {
+        expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_bootloader.data(),
+                          test_commands::get_firmware_info_response_ver2_bootloader.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QVERIFY(device_->isControllerConnectedToPlatform());
+        QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Bootloader);
 
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_bootloader.data(),
-                      test_commands::get_firmware_info_response_ver2_bootloader.size());
-    const rapidjson::Value& payloadBootloader = expectedDoc["notification"]["payload"];
-
-    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Bootloader);
-
-    QCOMPARE("bootloader",              payloadBootloader["active"].GetString());
-    QCOMPARE(device_->bootloaderVer(),  payloadBootloader["bootloader"]["version"].GetString());
-    QCOMPARE(device_->applicationVer(), payloadBootloader["application"]["version"].GetString());
+        QCOMPARE("bootloader", expectedPayload["active"].GetString());
+        QCOMPARE(device_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
+        QCOMPARE(device_->applicationVer(), expectedPayload["application"]["version"].GetString());
+    }
 }
 
 void DeviceOperationsV2Test::identifyAssistedNoBoardTest()
@@ -385,27 +396,30 @@ void DeviceOperationsV2Test::identifyAssistedNoBoardTest()
     verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
 
-    expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted_without_board.data(),
-                      test_commands::request_platform_id_response_ver2_assisted_without_board.size());
-    const rapidjson::Value& payloadNoBoard = expectedDoc["notification"]["payload"];
+    {
+        expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted_without_board.data(),
+                          test_commands::request_platform_id_response_ver2_assisted_without_board.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QCOMPARE(device_->name(), payloadNoBoard["name"].GetString());
-    QVERIFY(device_->platformId().isEmpty());
-    QVERIFY(device_->classId().isEmpty());
-    QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Assisted);
-    QCOMPARE(device_->controllerPlatformId(), payloadNoBoard["controller_platform_id"].GetString());
-    QCOMPARE(device_->controllerClassId(), payloadNoBoard["controller_class_id"].GetString());
-    QVERIFY(!device_->isControllerConnectedToPlatform());
+        QCOMPARE(device_->name(), expectedPayload["name"].GetString());
+        QVERIFY(device_->platformId().isEmpty());
+        QVERIFY(device_->classId().isEmpty());
+        QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Assisted);
+        QCOMPARE(device_->controllerPlatformId(), expectedPayload["controller_platform_id"].GetString());
+        QCOMPARE(device_->controllerClassId(), expectedPayload["controller_class_id"].GetString());
+        QVERIFY(!device_->isControllerConnectedToPlatform());
+    }
+    {
+        expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
+                          test_commands::get_firmware_info_response_ver2_application.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
-                      test_commands::get_firmware_info_response_ver2_application.size());
-    const rapidjson::Value& payloadApplication = expectedDoc["notification"]["payload"];
+        QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Application);
 
-    QVERIFY(identifyOperation->boardMode() == operation::Identify::BoardMode::Application);
-
-    QCOMPARE("application",             payloadApplication["active"]);
-    QCOMPARE(device_->bootloaderVer(),  payloadApplication["bootloader"]["version"].GetString());
-    QCOMPARE(device_->applicationVer(), payloadApplication["application"]["version"].GetString());
+        QCOMPARE("application", expectedPayload["active"]);
+        QCOMPARE(device_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
+        QCOMPARE(device_->applicationVer(), expectedPayload["application"]["version"].GetString());
+    }
 }
 
 void DeviceOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
@@ -425,50 +439,56 @@ void DeviceOperationsV2Test::switchToBootloaderAndBackEmbeddedTest()
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(device_->mockIsBootloader());
-    expectedDoc.Parse(test_commands::request_platform_id_response_ver2_embedded.data(),
-                      test_commands::request_platform_id_response_ver2_embedded.size());
-    const rapidjson::Value& payloadEmbedded1 = expectedDoc["notification"]["payload"];
+    {
+        expectedDoc.Parse(test_commands::request_platform_id_response_ver2_embedded.data(),
+                          test_commands::request_platform_id_response_ver2_embedded.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QCOMPARE(device_->name(),       payloadEmbedded1["name"].GetString());
-    QCOMPARE(device_->platformId(), payloadEmbedded1["platform_id"].GetString());
-    QCOMPARE(device_->classId(),    payloadEmbedded1["class_id"].GetString());
+        QCOMPARE(device_->name(),       expectedPayload["name"].GetString());
+        QCOMPARE(device_->platformId(), expectedPayload["platform_id"].GetString());
+        QCOMPARE(device_->classId(),    expectedPayload["class_id"].GetString());
 
-    QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Embedded);
-    QVERIFY(device_->controllerPlatformId().isEmpty());
-    QVERIFY(device_->controllerClassId().isEmpty());
-    QVERIFY(!device_->isControllerConnectedToPlatform());
+        QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Embedded);
+        QVERIFY(device_->controllerPlatformId().isEmpty());
+        QVERIFY(device_->controllerClassId().isEmpty());
+        QVERIFY(!device_->isControllerConnectedToPlatform());
+    }
+    {
+        expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
+                          test_commands::get_firmware_info_response_ver2_application.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
-                      test_commands::get_firmware_info_response_ver2_application.size());
-    const rapidjson::Value& payloadApplication1 = expectedDoc["notification"]["payload"];
+        QCOMPARE(device_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
+        QCOMPARE(device_->applicationVer(), expectedPayload["application"]["version"].GetString());
 
-    QCOMPARE(device_->bootloaderVer(),  payloadApplication1["bootloader"]["version"].GetString());
-    QCOMPARE(device_->applicationVer(), payloadApplication1["application"]["version"].GetString());
+        deviceOperation_ = QSharedPointer<operation::StartApplication>(
+                    new operation::StartApplication(device_), &QObject::deleteLater);
+        connectHandlers(deviceOperation_.data());
 
-    deviceOperation_ = QSharedPointer<operation::StartApplication>(
-        new operation::StartApplication(device_), &QObject::deleteLater);
-    connectHandlers(deviceOperation_.data());
+        device_->mockSetResponse(MockResponse::embedded_app);
 
-    device_->mockSetResponse(MockResponse::embedded_app);
+        deviceOperation_->run();
+        QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
 
-    deviceOperation_->run();
-    QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
+        QVERIFY(!device_->mockIsBootloader());
+    }
+    {
+        expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
+                          test_commands::get_firmware_info_response_ver2_application.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QVERIFY(!device_->mockIsBootloader());
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
-                      test_commands::get_firmware_info_response_ver2_application.size());
-    const rapidjson::Value& payloadApplication2 = expectedDoc["notification"]["payload"];
+        QCOMPARE(device_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
+        QCOMPARE(device_->applicationVer(), expectedPayload["application"]["version"].GetString());
+    }
+    {
+        expectedDoc.Parse(test_commands::request_platform_id_response_ver2_embedded.data(),
+                          test_commands::request_platform_id_response_ver2_embedded.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QCOMPARE(device_->bootloaderVer(),  payloadApplication2["bootloader"]["version"].GetString());
-    QCOMPARE(device_->applicationVer(), payloadApplication2["application"]["version"].GetString());
-
-    expectedDoc.Parse(test_commands::request_platform_id_response_ver2_embedded.data(),
-                      test_commands::request_platform_id_response_ver2_embedded.size());
-    const rapidjson::Value& payloadEmbedded2 = expectedDoc["notification"]["payload"];
-
-    QCOMPARE(device_->name(),       payloadEmbedded2["name"].GetString());
-    QCOMPARE(device_->platformId(), payloadEmbedded2["platform_id"].GetString());
-    QCOMPARE(device_->classId(),    payloadEmbedded2["class_id"].GetString());
+        QCOMPARE(device_->name(), expectedPayload["name"].GetString());
+        QCOMPARE(device_->platformId(), expectedPayload["platform_id"].GetString());
+        QCOMPARE(device_->classId(), expectedPayload["class_id"].GetString());
+    }
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 8);
@@ -500,27 +520,30 @@ void DeviceOperationsV2Test::switchToBootloaderAndBackAssistedTest()
 
     QVERIFY(device_->mockIsBootloader());
 
-    expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted.data(),
-                      test_commands::request_platform_id_response_ver2_assisted.size());
-    const rapidjson::Value& payloadAssisted1 = expectedDoc["notification"]["payload"];
+    {
+        expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted.data(),
+                          test_commands::request_platform_id_response_ver2_assisted.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QCOMPARE(device_->name(),       payloadAssisted1["name"].GetString());
-    QCOMPARE(device_->platformId(), payloadAssisted1["platform_id"].GetString());
-    QCOMPARE(device_->classId(),    payloadAssisted1["class_id"].GetString());
+        QCOMPARE(device_->name(), expectedPayload["name"].GetString());
+        QCOMPARE(device_->platformId(), expectedPayload["platform_id"].GetString());
+        QCOMPARE(device_->classId(), expectedPayload["class_id"].GetString());
 
-    QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Assisted);
+        QVERIFY(device_->controllerType() == strata::device::Device::ControllerType::Assisted);
 
-    QCOMPARE(device_->controllerPlatformId(), payloadAssisted1["controller_platform_id"].GetString());
-    QCOMPARE(device_->controllerClassId(),    payloadAssisted1["controller_class_id"].GetString());
+        QCOMPARE(device_->controllerPlatformId(), expectedPayload["controller_platform_id"].GetString());
+        QCOMPARE(device_->controllerClassId(), expectedPayload["controller_class_id"].GetString());
 
-    QVERIFY(device_->isControllerConnectedToPlatform());
+        QVERIFY(device_->isControllerConnectedToPlatform());
+    }
+    {
+        expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_bootloader.data(),
+                          test_commands::get_firmware_info_response_ver2_bootloader.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_bootloader.data(),
-                      test_commands::get_firmware_info_response_ver2_bootloader.size());
-    const rapidjson::Value& payloadBootloader = expectedDoc["notification"]["payload"];
-
-    QCOMPARE(device_->bootloaderVer(),  payloadBootloader["bootloader"]["version"].GetString());
-    QCOMPARE(device_->applicationVer(), payloadBootloader["application"]["version"].GetString());
+        QCOMPARE(device_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
+        QCOMPARE(device_->applicationVer(), expectedPayload["application"]["version"].GetString());
+    }
 
     deviceOperation_ = QSharedPointer<operation::StartApplication>(
         new operation::StartApplication(device_), &QObject::deleteLater);
@@ -529,21 +552,23 @@ void DeviceOperationsV2Test::switchToBootloaderAndBackAssistedTest()
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperation_->isSuccessfullyFinished(), true, 1000);
 
     QVERIFY(!device_->mockIsBootloader());
+    {
+        expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
+                          test_commands::get_firmware_info_response_ver2_application.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    expectedDoc.Parse(test_commands::get_firmware_info_response_ver2_application.data(),
-                      test_commands::get_firmware_info_response_ver2_application.size());
-    const rapidjson::Value& payloadApplication = expectedDoc["notification"]["payload"];
+        QCOMPARE(device_->bootloaderVer(), expectedPayload["bootloader"]["version"].GetString());
+        QCOMPARE(device_->applicationVer(), expectedPayload["application"]["version"].GetString());
+    }
+    {
+        expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted.data(),
+                          test_commands::request_platform_id_response_ver2_assisted.size());
+        const rapidjson::Value& expectedPayload = expectedDoc["notification"]["payload"];
 
-    QCOMPARE(device_->bootloaderVer(),  payloadApplication["bootloader"]["version"].GetString());
-    QCOMPARE(device_->applicationVer(), payloadApplication["application"]["version"].GetString());
-
-    expectedDoc.Parse(test_commands::request_platform_id_response_ver2_assisted.data(),
-                      test_commands::request_platform_id_response_ver2_assisted.size());
-    const rapidjson::Value& payloadAssisted2 = expectedDoc["notification"]["payload"];
-
-    QCOMPARE(device_->name(),       payloadAssisted2["name"].GetString());
-    QCOMPARE(device_->platformId(), payloadAssisted2["platform_id"].GetString());
-    QCOMPARE(device_->classId(),    payloadAssisted2["class_id"].GetString());
+        QCOMPARE(device_->name(), expectedPayload["name"].GetString());
+        QCOMPARE(device_->platformId(), expectedPayload["platform_id"].GetString());
+        QCOMPARE(device_->classId(), expectedPayload["class_id"].GetString());
+    }
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 8);
@@ -710,33 +735,38 @@ void DeviceOperationsV2Test::flashFirmwareTest()
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 4);
 
-    expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
-    const rapidjson::Value& payloadMsg0 = expectedDoc["payload"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(payloadMsg0["size"].GetInt(),768);
-    QCOMPARE(payloadMsg0["chunks"].GetInt(),3);
-    QCOMPARE(payloadMsg0["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
-
-    expectedDoc.Parse(recordedMessages[1].data(), recordedMessages[1].size());
-    const rapidjson::Value& chunkMsg1 = expectedDoc["payload"]["chunk"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(chunkMsg1["number"].GetInt(),0);
-    QCOMPARE(chunkMsg1["size"].GetInt(),256);
-    QCOMPARE(chunkMsg1["data"].GetString(),dataForChunkSize(256));
-
-    expectedDoc.Parse(recordedMessages[2].data(), recordedMessages[2].size());
-    const rapidjson::Value& chunkMsg2 = expectedDoc["payload"]["chunk"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(chunkMsg2["number"].GetInt(),1);
-    QCOMPARE(chunkMsg2["size"].GetInt(),256);
-    QCOMPARE(chunkMsg2["data"].GetString(),dataForChunkSize(256));
-
-    expectedDoc.Parse(recordedMessages[3].data(), recordedMessages[3].size());
-    const rapidjson::Value& chunkMsg3 = expectedDoc["payload"]["chunk"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(chunkMsg3["number"].GetInt(),2);
-    QCOMPARE(chunkMsg3["size"].GetInt(),256);
-    QCOMPARE(chunkMsg3["data"].GetString(),dataForChunkSize(256));
+    {
+        expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
+        const rapidjson::Value& expectedPayload = expectedDoc["payload"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_firmware");
+        QCOMPARE(expectedPayload["size"].GetInt(),768);
+        QCOMPARE(expectedPayload["chunks"].GetInt(),3);
+        QCOMPARE(expectedPayload["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+    }
+    {
+        expectedDoc.Parse(recordedMessages[1].data(), recordedMessages[1].size());
+        const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
+        QCOMPARE(expectedChunk["number"].GetInt(),0);
+        QCOMPARE(expectedChunk["size"].GetInt(),256);
+        QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
+    }
+    {
+        expectedDoc.Parse(recordedMessages[2].data(), recordedMessages[2].size());
+        const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
+        QCOMPARE(expectedChunk["number"].GetInt(),1);
+        QCOMPARE(expectedChunk["size"].GetInt(),256);
+        QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
+    }
+    {
+        expectedDoc.Parse(recordedMessages[3].data(), recordedMessages[3].size());
+        const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
+        QCOMPARE(expectedChunk["number"].GetInt(),2);
+        QCOMPARE(expectedChunk["size"].GetInt(),256);
+        QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
+    }
 }
 
 void DeviceOperationsV2Test::flashBootloaderTest()
@@ -765,40 +795,46 @@ void DeviceOperationsV2Test::flashBootloaderTest()
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 5);
 
-    expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
-    const rapidjson::Value& payloadMsg0 = expectedDoc["payload"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_bootloader");
-    QCOMPARE(payloadMsg0["size"].GetInt(),1024);
-    QCOMPARE(payloadMsg0["chunks"].GetInt(),4);
-    QCOMPARE(payloadMsg0["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
-
-    expectedDoc.Parse(recordedMessages[1].data(), recordedMessages[1].size());
-    const rapidjson::Value& chunkMsg1 = expectedDoc["payload"]["chunk"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
-    QCOMPARE(chunkMsg1["number"].GetInt(),0);
-    QCOMPARE(chunkMsg1["size"].GetInt(),256);
-    QCOMPARE(chunkMsg1["data"].GetString(),dataForChunkSize(256));
-
-    expectedDoc.Parse(recordedMessages[2].data(), recordedMessages[2].size());
-    const rapidjson::Value& chunkMsg2 = expectedDoc["payload"]["chunk"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
-    QCOMPARE(chunkMsg2["number"].GetInt(),1);
-    QCOMPARE(chunkMsg2["size"].GetInt(),256);
-    QCOMPARE(chunkMsg2["data"].GetString(),dataForChunkSize(256));
-
-    expectedDoc.Parse(recordedMessages[3].data(), recordedMessages[3].size());
-    const rapidjson::Value& chunkMsg3 = expectedDoc["payload"]["chunk"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
-    QCOMPARE(chunkMsg3["number"].GetInt(),2);
-    QCOMPARE(chunkMsg3["size"].GetInt(),256);
-    QCOMPARE(chunkMsg3["data"].GetString(),dataForChunkSize(256));
-
-    expectedDoc.Parse(recordedMessages[4].data(), recordedMessages[4].size());
-    const rapidjson::Value& chunkMsg4 = expectedDoc["payload"]["chunk"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
-    QCOMPARE(chunkMsg4["number"].GetInt(),3);
-    QCOMPARE(chunkMsg4["size"].GetInt(),256);
-    QCOMPARE(chunkMsg4["data"].GetString(),dataForChunkSize(256));
+    {
+        expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
+        const rapidjson::Value& expectedPayload = expectedDoc["payload"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_bootloader");
+        QCOMPARE(expectedPayload["size"].GetInt(),1024);
+        QCOMPARE(expectedPayload["chunks"].GetInt(),4);
+        QCOMPARE(expectedPayload["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+    }
+    {
+        expectedDoc.Parse(recordedMessages[1].data(), recordedMessages[1].size());
+        const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
+        QCOMPARE(expectedChunk["number"].GetInt(),0);
+        QCOMPARE(expectedChunk["size"].GetInt(),256);
+        QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
+    }
+    {
+        expectedDoc.Parse(recordedMessages[2].data(), recordedMessages[2].size());
+        const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
+        QCOMPARE(expectedChunk["number"].GetInt(),1);
+        QCOMPARE(expectedChunk["size"].GetInt(),256);
+        QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
+    }
+    {
+        expectedDoc.Parse(recordedMessages[3].data(), recordedMessages[3].size());
+        const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
+        QCOMPARE(expectedChunk["number"].GetInt(),2);
+        QCOMPARE(expectedChunk["size"].GetInt(),256);
+        QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
+    }
+    {
+        expectedDoc.Parse(recordedMessages[4].data(), recordedMessages[4].size());
+        const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"flash_bootloader");
+        QCOMPARE(expectedChunk["number"].GetInt(),3);
+        QCOMPARE(expectedChunk["size"].GetInt(),256);
+        QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
+    }
 }
 
 void DeviceOperationsV2Test::flashResendChunkTest()
@@ -829,26 +865,30 @@ void DeviceOperationsV2Test::flashResendChunkTest()
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 3);
 
-    expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
-    const rapidjson::Value& payloadMsg0 = expectedDoc["payload"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(payloadMsg0["size"].GetInt(),512);
-    QCOMPARE(payloadMsg0["chunks"].GetInt(),2);
-    QCOMPARE(payloadMsg0["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
-
-    expectedDoc.Parse(recordedMessages[1].data(), recordedMessages[1].size());
-    const rapidjson::Value& chunkMsg1 = expectedDoc["payload"]["chunk"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(chunkMsg1["number"].GetInt(),0); //initial chunk - recieved status:resend_chunk
-    QCOMPARE(chunkMsg1["size"].GetInt(),256);
-    QCOMPARE(chunkMsg1["data"].GetString(),dataForChunkSize(256));
-
-    expectedDoc.Parse(recordedMessages[2].data(), recordedMessages[2].size());
-    const rapidjson::Value& chunkMsg2 = expectedDoc["payload"]["chunk"];
-    QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(chunkMsg2["number"].GetInt(),0); //re-sent chunk after recieving resend_chunk
-    QCOMPARE(chunkMsg2["size"].GetInt(),256);
-    QCOMPARE(chunkMsg2["data"].GetString(),dataForChunkSize(256));
+    {
+        expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
+        const rapidjson::Value& expectedPayload = expectedDoc["payload"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_firmware");
+        QCOMPARE(expectedPayload["size"].GetInt(),512);
+        QCOMPARE(expectedPayload["chunks"].GetInt(),2);
+        QCOMPARE(expectedPayload["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+    }
+    {
+        expectedDoc.Parse(recordedMessages[1].data(), recordedMessages[1].size());
+        const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
+        QCOMPARE(expectedChunk["number"].GetInt(),0); //initial chunk - recieved status:resend_chunk
+        QCOMPARE(expectedChunk["size"].GetInt(),256);
+        QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
+    }
+    {
+        expectedDoc.Parse(recordedMessages[2].data(), recordedMessages[2].size());
+        const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
+        QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
+        QCOMPARE(expectedChunk["number"].GetInt(),0); //re-sent chunk after recieving resend_chunk
+        QCOMPARE(expectedChunk["size"].GetInt(),256);
+        QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
+    }
 }
 
 void DeviceOperationsV2Test::flashMemoryErrorTest()
@@ -880,18 +920,18 @@ void DeviceOperationsV2Test::flashMemoryErrorTest()
     QCOMPARE(recordedMessages.size(), 2);
 
     expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
-    const rapidjson::Value& payloadMsg0 = expectedDoc["payload"];
+    const rapidjson::Value& expectedPayload = expectedDoc["payload"];
     QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(payloadMsg0["size"].GetInt(),768);
-    QCOMPARE(payloadMsg0["chunks"].GetInt(),3);
-    QCOMPARE(payloadMsg0["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+    QCOMPARE(expectedPayload["size"].GetInt(),768);
+    QCOMPARE(expectedPayload["chunks"].GetInt(),3);
+    QCOMPARE(expectedPayload["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
 
     expectedDoc.Parse(recordedMessages[1].data(), recordedMessages[1].size());
-    const rapidjson::Value& chunkMsg1 = expectedDoc["payload"]["chunk"];
+    const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(chunkMsg1["number"].GetInt(),0);
-    QCOMPARE(chunkMsg1["size"].GetInt(),256);
-    QCOMPARE(chunkMsg1["data"].GetString(),dataForChunkSize(256));
+    QCOMPARE(expectedChunk["number"].GetInt(),0);
+    QCOMPARE(expectedChunk["size"].GetInt(),256);
+    QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
 }
 
 void DeviceOperationsV2Test::flashInvalidCmdSequenceTest()
@@ -923,18 +963,18 @@ void DeviceOperationsV2Test::flashInvalidCmdSequenceTest()
     QCOMPARE(recordedMessages.size(), 2);
 
     expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
-    const rapidjson::Value& payloadMsg0 = expectedDoc["payload"];
+    const rapidjson::Value& expectedPayload = expectedDoc["payload"];
     QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(payloadMsg0["size"].GetInt(),768);
-    QCOMPARE(payloadMsg0["chunks"].GetInt(),3);
-    QCOMPARE(payloadMsg0["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+    QCOMPARE(expectedPayload["size"].GetInt(),768);
+    QCOMPARE(expectedPayload["chunks"].GetInt(),3);
+    QCOMPARE(expectedPayload["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
 
     expectedDoc.Parse(recordedMessages[1].data(), recordedMessages[1].size());
-    const rapidjson::Value& chunkMsg1 = expectedDoc["payload"]["chunk"];
+    const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(chunkMsg1["number"].GetInt(),0);
-    QCOMPARE(chunkMsg1["size"].GetInt(),256);
-    QCOMPARE(chunkMsg1["data"].GetString(),dataForChunkSize(256));
+    QCOMPARE(expectedChunk["number"].GetInt(),0);
+    QCOMPARE(expectedChunk["size"].GetInt(),256);
+    QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
 }
 
 void DeviceOperationsV2Test::flashInvalidValueTest()
@@ -968,18 +1008,18 @@ void DeviceOperationsV2Test::flashInvalidValueTest()
     QCOMPARE(recordedMessages.size(), 2);;
 
     expectedDoc.Parse(recordedMessages[0].data(), recordedMessages[0].size());
-    const rapidjson::Value& payloadMsg0 = expectedDoc["payload"];
+    const rapidjson::Value& expectedPayload = expectedDoc["payload"];
     QCOMPARE(expectedDoc["cmd"].GetString(),"start_flash_firmware");
-    QCOMPARE(payloadMsg0["size"].GetInt(),768);
-    QCOMPARE(payloadMsg0["chunks"].GetInt(),3);
-    QCOMPARE(payloadMsg0["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
+    QCOMPARE(expectedPayload["size"].GetInt(),768);
+    QCOMPARE(expectedPayload["chunks"].GetInt(),3);
+    QCOMPARE(expectedPayload["md5"].GetString(),"207fb5670e66e7d6ecd89b5f195c0b71");
 
     expectedDoc.Parse(recordedMessages[1].data(), recordedMessages[1].size());
-    const rapidjson::Value& chunkMsg1 = expectedDoc["payload"]["chunk"];
+    const rapidjson::Value& expectedChunk = expectedDoc["payload"]["chunk"];
     QCOMPARE(expectedDoc["cmd"].GetString(),"flash_firmware");
-    QCOMPARE(chunkMsg1["number"].GetInt(),0);
-    QCOMPARE(chunkMsg1["size"].GetInt(),256);
-    QCOMPARE(chunkMsg1["data"].GetString(),dataForChunkSize(256));
+    QCOMPARE(expectedChunk["number"].GetInt(),0);
+    QCOMPARE(expectedChunk["size"].GetInt(),256);
+    QCOMPARE(expectedChunk["data"].GetString(),dataForChunkSize(256));
 }
 
 void DeviceOperationsV2Test::cancelFlashOperationTest()
