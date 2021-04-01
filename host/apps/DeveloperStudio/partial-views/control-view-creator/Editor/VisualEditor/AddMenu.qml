@@ -39,6 +39,16 @@ Popup {
                     text: "Rectangle"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Rectangle/Rectangle.txt"
                 }
+                ListElement {
+                    text: "Switch"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Switch/SGSwitch.txt"
+                }
+                ListElement {
+                    text: "InfoBox"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/InfoBox/SGInfoBox.txt"
+                }
+
+
             }
 
             delegate: Button {

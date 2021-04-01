@@ -60,6 +60,9 @@ LayoutInfo 1.0 cvc-layout/LayoutInfo.qml
 LayoutRectangle 1.0 cvc-layout/widgets/Rectangle/LayoutRectangle.qml
 LayoutSGIcon 1.0 cvc-layout/widgets/SGIcon/LayoutSGIcon.qml
 LayoutText 1.0 cvc-layout/widgets/Text/LayoutText.qml
+LayoutSwitch 1.0 cvc-layout/widgets/Switch/LayoutSwitch.qml
+LayoutSGInfoBox 1.0 cvc-layout/widgets/InfoBox/LayoutSGInfoBox.qml
+
 UIBase 1.0 cvc-layout/UIBase.qml
 
 singleton SGSettings 1.0 SGSettings.qml

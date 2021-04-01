@@ -68,5 +68,9 @@
         <file>cvc-layout/widgets/SGIcon/SGIcon.txt</file>
         <file>cvc-layout/widgets/Rectangle/LayoutRectangle.qml</file>
         <file>cvc-layout/widgets/Rectangle/Rectangle.txt</file>
+        <file>cvc-layout/widgets/Switch/LayoutSwitch.qml</file>
+        <file>cvc-layout/widgets/Switch/SGSwitch.txt</file>
+        <file>cvc-layout/widgets/InfoBox/SGInfoBox.txt</file>
+        <file>cvc-layout/widgets/InfoBox/LayoutSGInfoBox.qml</file>
     </qresource>
 </RCC>
