@@ -231,7 +231,7 @@ Item {
                 if (consoleMouseArea.pressed) {
                     if (mouse.y > consoleMouseArea.height * .95) {
                         consoleLogs.flick(0, -200)
-                    } else if (mouse.y < consoleMouseArea.height * .05) {
+                    } else if (mouse.y < consoleMouseArea.height * .05 && consoleLogs.contentY > 0) {
                         consoleLogs.flick(0, 200)
                     }
                 }
