@@ -13,7 +13,7 @@ Item {
     width: parent.width
     height: parent.height
 
-    property double fontMultiplier: 1.3
+    property double fontMultiplier: 1.0
     property string searchText: ""
 
     onFontMultiplierChanged: {
@@ -26,21 +26,27 @@ Item {
 
     onSearchTextChanged: {
         consoleItems.invalidate()
+        consoleLogs.deselectAll()
     }
 
     ListView {
         id: consoleLogs
         anchors.fill: parent
         model: consoleItems
-        signal deselectAll()
-        property int indexDragStarted: -1
-        property bool selecting: false
-        signal selectInBetween(int indexDragEnded)
-        property bool isActiveSelecting: false
+        clip: true
         spacing: 0
 
+        property int indexDragStarted: -1
+        property bool selecting: false
+        property bool isActiveSelecting: false
+
+        signal selectInBetween(int indexDragEnded)
+        signal deselectAll()
+
         onDeselectAll: {
-          consoleItems.invalidate()
+            for (var i = 0; i < consoleModel.count; i++) {
+                consoleModel.get(i).state = "noneSelected"
+            }
         }
 
         onSelectInBetween: {
@@ -55,7 +61,7 @@ Item {
             }
 
             for (var i = 0; i < consoleLogs.model.count; i++) {
-                var listElement = consoleLogs.model.get(consoleLogs.model.mapIndexToSource(i));
+                var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i));
                 if (i >= start && i < end) {
                     listElement.state = "allSelected"
                 } else if (i < start - 1 || i > end) {
@@ -79,7 +85,6 @@ Item {
             id: consoleDelegate
             height: consoleMessage.height
             width: consoleLogs.width
-            property alias delegateText: consoleMessage.msgText
 
             Component.onCompleted: {
                 state = Qt.binding(function() { return model.state })
@@ -88,9 +93,9 @@ Item {
             function startSelection(mouse) {
                 consoleLogs.indexDragStarted = index
                 model.state = "someSelected"
-                var composedY = -(consoleDelegate.y - mouse.y - consoleDelegate.ListView.view.contentY) - delegateText.y
-                var composedX = -(consoleMessage.x - mouse.x) - delegateText.x
-                dropArea.start = delegateText.positionAt(composedX, composedY)
+                var composedY = -(consoleDelegate.y - mouse.y - consoleDelegate.ListView.view.contentY) - consoleMessage.y
+                var composedX = mouse.x - consoleMessage.x
+                dropArea.start = consoleMessage.positionAt(composedX, composedY)
             }
 
             states: [
@@ -98,7 +103,7 @@ Item {
                     name: "noneSelected"
                     StateChangeScript {
                         script: {
-                            delegateText.deselect()
+                            consoleMessage.deselect()
                             dropArea.start = -1
                         }
                     }
@@ -107,8 +112,8 @@ Item {
                     name: "someSelected"
                     StateChangeScript {
                         script: {
-                            if (model.selectionStart !== delegateText.selectionStart || model.selectionEnd !== delegateText.selectionEnd) {
-                                delegateText.select(model.selectionStart, model.selectionEnd);
+                            if (model.selectionStart !== consoleMessage.selectionStart || model.selectionEnd !== consoleMessage.selectionEnd) {
+                                consoleMessage.select(model.selectionStart, model.selectionEnd);
                             }
                         }
                     }
@@ -116,10 +121,9 @@ Item {
                 State {
                     name: "allSelected"
                     StateChangeScript {
-                        script: delegateText.selectAll()
+                        script: consoleMessage.selectAll()
                     }
                 }
-
             ]
 
             ConsoleTime {
@@ -142,15 +146,12 @@ Item {
 
             ConsoleMessage {
                 id: consoleMessage
-                msg: model.msg
+                text: model.msg
                 anchors.top: parent.top
                 anchors.left: consoleTypes.right
                 anchors.right: parent.right
                 anchors.leftMargin: 10
                 current: model.current
-                selection: model.selection
-                selectionStart: model.selectionStart
-                selectionEnd: model.selectionEnd
             }
 
             DropArea {
@@ -165,16 +166,16 @@ Item {
                     if (index > consoleLogs.indexDragStarted) {
                         start = 0
                     } else if (index < consoleLogs.indexDragStarted){
-                        start = delegateText.length
+                        start = consoleMessage.length
                     }
 
-                    root.state = "someSelected"
+                    model.state = "someSelected"
                     consoleLogs.selectInBetween(index)
                 }
 
                 onPositionChanged: {
-                    end = delegateText.positionAt(drag.x, drag.y)
-                    delegateText.select(start, end)
+                    end = consoleMessage.positionAt(drag.x, drag.y)
+                    consoleMessage.select(start, end)
                 }
             }
 
@@ -182,17 +183,13 @@ Item {
                 target: consoleLogs
                 onSelectInBetween:{
                     // covers case where drag hasn't triggered before leaving first delegate
-                    if (index === root.indexDragStarted) {
-                        if (indexDragEnded > indexDragStarted) {
-                            dropArea.end = delegateText.length
-                            if(dropArea.start > 0){
-                                delegateText.selectAll()
-                            } else {
-                                delegateText.select(dropArea.start, dropArea.end)
-                            }
-                        } else if (indexDragEnded < indexDragStarted) {
+                    if (index === consoleLogs.indexDragStarted) {
+                        if (indexDragEnded > consoleLogs.indexDragStarted) {
+                            dropArea.end = consoleMessage.length
+                            consoleMessage.select(dropArea.start, dropArea.end)
+                        } else if (indexDragEnded < consoleLogs.indexDragStarted) {
                             dropArea.end = 0
-                            delegateText.select(dropArea.start, dropArea.end)
+                            consoleMessage.select(dropArea.start, dropArea.end)
                         }
                     }
                 }
@@ -204,15 +201,11 @@ Item {
             anchors.fill: consoleLogs
             drag.target: dragitem
             cursorShape: Qt.IBeamCursor
-            propagateComposedEvents: false
-        }
-
-        Connections {
-            target: consoleMouseArea
+            propagateComposedEvents: true
 
             onPressed:{
                 consoleLogs.deselectAll()
-                var clickedDelegate = consoleLogs.itemAt(mouse.x+consoleLogs.contentX, mouse.y+consoleLogs.contentY)
+                var clickedDelegate = consoleLogs.itemAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
                 if (clickedDelegate) {
                     clickedDelegate.startSelection(mouse)
                 } else {
@@ -225,13 +218,24 @@ Item {
                 consoleLogs.deselectAll()
             }
 
-           onDoubleClicked: {
-               var clickedDelegate = consoleLogs.itemAt(mouse.x+consoleLogs.contentX, mouse.y+consoleLogs.contentY)
-               if(clickedDelegate) {
-                   clickedDelegate.state = "allSelected"
-               }
-           }
+            onDoubleClicked: {
+                consoleLogs.deselectAll()
+                var clickedIndex = consoleLogs.indexAt(mouse.x + consoleLogs.contentX, mouse.y + consoleLogs.contentY)
+                if (clickedIndex > -1) {
+                    consoleModel.get(consoleItems.mapIndexToSource(clickedIndex)).state = "allSelected"
+                }
+            }
 
+            onPositionChanged: {
+                // Scroll up or down to select more when user is close to edges of list
+                if (consoleMouseArea.pressed) {
+                    if (mouse.y > consoleMouseArea.height * .95) {
+                        consoleLogs.flick(0, -200)
+                    } else if (mouse.y < consoleMouseArea.height * .05) {
+                        consoleLogs.flick(0, 200)
+                    }
+                }
+            }
         }
 
         Item {
@@ -244,6 +248,7 @@ Item {
             Component.onCompleted: dragitem.parent = consoleMouseArea
         }
     }
+
     SGSortFilterProxyModel {
         id: consoleItems
         sourceModel: consoleModel
@@ -291,7 +296,17 @@ Item {
                     }
                 }
 
-                consoleModel.append({time: timestamp(), type: getMsgType(type), msg: msg, current: true,state: "noneSelected",selection: "",selectionStart: 0, selectionEnd: 0})
+                consoleModel.append({
+                                        time: timestamp(),
+                                        type: getMsgType(type),
+                                        msg: msg,
+                                        current: true,
+                                        state: "noneSelected",
+                                        selection: "",
+                                        selectionStart: 0,
+                                        selectionEnd: 0
+                                    })
+
                 consoleLogs.logAdded()
 
                 if(type === 1){
@@ -313,14 +328,12 @@ Item {
         }
     }
 
-
     function timestamp(){
         var date = new Date(Date.now())
         let hours = date.getHours()
         let minutes = date.getMinutes()
         let seconds = date.getSeconds()
         let millisecs = date.getMilliseconds()
-
 
         if(hours < 10){
             hours = `0${hours}`
@@ -346,7 +359,6 @@ Item {
     }
 
     function clearLogs() {
-        consoleItems.clear();
         consoleModel.clear();
         errorCount = 0
         warningCount = 0

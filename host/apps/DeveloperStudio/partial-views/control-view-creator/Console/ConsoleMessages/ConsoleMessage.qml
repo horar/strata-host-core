@@ -6,31 +6,20 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
 
-Item {
-    id: msgRoot
-    height: msgText.contentHeight
-    width: root.width
-    
-    property alias msg: msgText.text
+SGTextEdit {
+    id: msgText
+    fontSizeMultiplier: fontMultiplier
+    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+    color: current ? "black" : "#777"
+    readOnly: true
+    selectByMouse: false // selection determined by dragArea
+    selectionColor: Theme.palette.highlight
+    contextMenuEnabled: true
+    persistentSelection: true
+
     property bool current: false
-    property alias msgText: msgText
-    property string selection: msgText.selectedText
-    property int selectionStart: msgText.selectionStart
-    property int selectionEnd: msgText.selectionEnd
 
-    SGTextEdit {
-        id: msgText
-        fontSizeMultiplier: fontMultiplier
-        anchors.fill: parent
-
-        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        color: current ? "black" : "#777"
-        readOnly: true
-        selectByMouse: true
-        selectionColor: Theme.palette.highlight
-        contextMenuEnabled: true
-        onSelectedTextChanged: msgRoot.selection = selectedText
-        onSelectionStartChanged: msgRoot.selectionStart = selectionStart
-        onSelectionEndChanged: msgRoot.selectionEnd = selectionEnd
-    }
+    onSelectedTextChanged: model.selection = selectedText
+    onSelectionStartChanged: model.selectionStart = selectionStart
+    onSelectionEndChanged: model.selectionEnd = selectionEnd
 }
