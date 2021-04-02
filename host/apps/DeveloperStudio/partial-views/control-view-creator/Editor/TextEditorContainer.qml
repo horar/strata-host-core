@@ -24,6 +24,16 @@ Item {
     property int currentVersionId
     property bool externalChanges: false
 
+    Connections {
+        target: mainWindow
+
+        onVisibilityChanged: {
+            channelObject.resetContainer(fileContainerRoot.height.toString(), fileContainerRoot.width.toString())
+        }
+    }
+
+    
+
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
 
@@ -228,6 +238,7 @@ Item {
         signal setValue(string value);
         signal setContainerHeight(string height);
         signal setContainerWidth(string width);
+        signal resetContainer(string height, string width)
         signal undo();
         signal redo();
 
@@ -271,10 +282,7 @@ Item {
         settings.showScrollBars: false
 
         anchors {
-            top: alertRow.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
+            fill: parent
         }
 
         onHeightChanged: {
