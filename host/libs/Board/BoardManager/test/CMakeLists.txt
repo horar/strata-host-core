@@ -24,6 +24,7 @@ target_link_libraries(${PROJECT_NAME}-test
     PRIVATE Device
     PRIVATE DeviceOperations
     PRIVATE CommandValidator
+    PRIVATE strata::base64
 )
 
 add_test(NAME ${PROJECT_NAME}-test

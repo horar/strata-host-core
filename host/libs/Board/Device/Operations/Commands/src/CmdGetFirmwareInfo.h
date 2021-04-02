@@ -9,9 +9,9 @@ class CmdGetFirmwareInfo : public BaseDeviceCommand {
 public:
     explicit CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse = true, uint maxRetries = 0);
     QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
-    void commandRejected() override;
-    void onTimeout() override;
+    bool processNotification(rapidjson::Document& doc, CommandResult& result) override;
+    CommandResult onTimeout() override;
+    CommandResult onReject() override;
 private:
     const bool requireResponse_;
     const uint maxRetries_;

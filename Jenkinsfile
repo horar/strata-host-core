@@ -6,7 +6,7 @@ def INSTALLER_PATH = ""
 pipeline {
     agent { 
         node { 
-            label 'master'
+            label 'Strata-OTA-Win-Prod'
             // TODO: hard drive letter should be loaded from ${env.SystemDrive} but node can't access env
             customWorkspace "C:/${REPO_NAME}"
         } 

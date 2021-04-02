@@ -27,8 +27,8 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     // jumps to bootloader, it will have a hardware fault which requires board to be reset.
     std::unique_ptr<CmdWait> cmdWait = std::make_unique<CmdWait>(
                 device_,
-                BOOTLOADER_5_SEC_BOOT_TIME,
-                QStringLiteral("Waiting for bootloader to start."));
+                BOOTLOADER_BOOT_TIME,
+                QStringLiteral("Waiting for bootloader to start"));
     cmdWait_ = cmdWait.get();
 
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true, MAX_GET_FW_INFO_RETRIES)); // 0
@@ -38,7 +38,7 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, true));  // 4
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));      // 5
 
-    currentCommand_ = commandList_.end();
+    initCommandList();
 
     // Before calling 'start_bootloader' command, we need to check if board is already
     // in bootloader mode. If so, we skip rest of commands in command list and set
@@ -61,7 +61,7 @@ void StartBootloader::skipCommands(CommandResult& result, int& status)
             result = CommandResult::FinaliseOperation;
             // set status for 'finished' signal
             status = ALREADY_IN_BOOTLOADER;
-            qCInfo(logCategoryDeviceOperations) << device_ << "Platform already in bootloader mode.";
+            qCInfo(logCategoryDeviceOperation) << device_ << "Platform already in bootloader mode.";
         }
     }
 }

@@ -57,6 +57,7 @@ var documentAssistedSchema = {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
     "properties": {
+        "opn": {"type": "string"},
         "class_id": {"type": "string"},
         "controller_type": {"type": "integer"},
         "firmware": {
@@ -76,13 +77,14 @@ var documentAssistedSchema = {
             }
         }
     },
-    "required": ["class_id", "controller_type", "firmware"]
+    "required": ["opn", "class_id", "controller_type", "firmware"]
 }
 
 var documentControllerSchema = {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
     "properties": {
+        "opn": {"type": "string"},
         "class_id": {"type": "string"},
         "controller_type": {"type": "integer"},
         "mcu": {
@@ -114,12 +116,13 @@ var documentControllerSchema = {
             }
         }
     },
-    "required": ["class_id", "controller_type", "mcu", "bootloader"]
+    "required": ["opn", "class_id", "controller_type", "mcu", "bootloader"]
 }
 
 /* fake data for testing until cloud service can provide proper data */
 
 var fakeEmbeddedData = {
+    "opn": "STR-EMBEDDED",
     "class_id": "ffe2f2c2-3ba8-45f4-b481-379b9d9b5622",
     "controller_type": 1,
     "mcu": {
@@ -168,6 +171,7 @@ var fakeEmbeddedData = {
 }
 
 var fakeAssistedData = {
+    "opn": "STR-ASSISTED",
     "class_id": "aae2f2c2-3ba8-45f4-b481-379b9d9b56aa",
     "controller_type": 2,
     "firmware": [
@@ -183,6 +187,7 @@ var fakeAssistedData = {
 }
 
 var fakeControllerData = {
+    "opn": "STR-CONTROLLER",
     "class_id": "cce2f2c2-3ba8-45f4-b481-379b9d9b56cc",
     "controller_type": 3,
     "mcu": {

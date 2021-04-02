@@ -1363,6 +1363,18 @@ const qtTypeJson = {
             "source": "Layouts",
             "nonInstantiable": true,
         },
+        "ListElement": {
+            "properties": {
+                "property": {
+                    "meta_properties": []
+                },
+            },
+            "functions": [],
+            "signals": [],
+            "inherits": "",
+            "source": "",
+            "nonInstantiable": false
+        },
         "ListModel": {
             "properties": {
                 "count": {
@@ -1385,7 +1397,7 @@ const qtTypeJson = {
             ],
             "signals": [],
             "inherits": "",
-            "source": "Models",
+            "source": "",
             "nonInstantiable": false,
         },
         "ListView": {
@@ -4651,28 +4663,5 @@ const qtTypeJson = {
         "String": [
             "arg()",
         ],
-        "property": [
-            "alias",
-            "real",
-            "string",
-            "url",
-            "double",
-            "int",
-            "bool",
-            "color",
-            "var",
-            "coordinate",
-            "date",
-            "default",
-            "enumeration",
-            "size",
-            "point",
-            "list",
-            "vector2d",
-            "vector3d",
-            "rect",
-            "palette"
-        ],
-        "signal": []
     }
 }

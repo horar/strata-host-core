@@ -49,7 +49,9 @@ Item {
                 text: "Default"
                 fontSizeMultiplier: 1.3
             }
-            SGWidgets.SGTextField { }
+            SGWidgets.SGTextField {
+                contextMenuEnabled: contextMenuEnabledCheckBox.checked
+            }
 
         }
 
@@ -61,6 +63,7 @@ Item {
 
             SGWidgets.SGTextField {
                 leftIconSource: "qrc:/sgimages/zoom.svg"
+                contextMenuEnabled: contextMenuEnabledCheckBox.checked
             }
         }
 
@@ -74,6 +77,7 @@ Item {
                 id: suggestionTextField
                 suggestionListModel: sortFilterModel
                 suggestionDelegateNumbering: true
+                contextMenuEnabled: contextMenuEnabledCheckBox.checked
                 onSuggestionDelegateSelected: {
                     var sourceIndex = sortFilterModel.mapIndexToSource(index)
                     if (sourceIndex < 0) {
@@ -96,6 +100,7 @@ Item {
                 SGWidgets.SGTextField {
                     id: textFieldWithBusyInd
                     leftIconSource: "qrc:/sgimages/zoom.svg"
+                    contextMenuEnabled: contextMenuEnabledCheckBox.checked
                 }
 
                 SGWidgets.SGButton {
@@ -116,6 +121,7 @@ Item {
             SGWidgets.SGTextField {
                 passwordMode: true
                 text: "password"
+                contextMenuEnabled: contextMenuEnabledCheckBox.checked
             }
         }
 
@@ -127,7 +133,14 @@ Item {
 
             SGWidgets.SGTextField {
                 showClearButton: true
+                contextMenuEnabled: contextMenuEnabledCheckBox.checked
             }
+        }
+
+        SGWidgets.SGCheckBox {
+            id: contextMenuEnabledCheckBox
+            text: "Context menu enabled"
+            checked: false
         }
     }
 
