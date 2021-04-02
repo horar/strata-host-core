@@ -68,7 +68,7 @@
         <file>cvc-layout/widgets/SGIcon/SGIcon.txt</file>
         <file>cvc-layout/widgets/Rectangle/LayoutRectangle.qml</file>
         <file>cvc-layout/widgets/Rectangle/Rectangle.txt</file>
-        <file>cvc-layout/widgets/Switch/LayoutSwitch.qml</file>
+        <file>cvc-layout/widgets/Switch/LayoutSGSwitch.qml</file>
         <file>cvc-layout/widgets/Switch/SGSwitch.txt</file>
         <file>cvc-layout/widgets/InfoBox/SGInfoBox.txt</file>
         <file>cvc-layout/widgets/InfoBox/LayoutSGInfoBox.qml</file>
@@ -76,5 +76,9 @@
         <file>cvc-layout/widgets/SubmitInfoBox/SGSubmitInfoBox.txt</file>
         <file>cvc-layout/widgets/CircularGauge/LayoutSGCircularGauge.qml</file>
         <file>cvc-layout/widgets/CircularGauge/SGCircularGauge.txt</file>
+        <file>cvc-layout/widgets/StatusLight/LayoutSGStatusLight.qml</file>
+        <file>cvc-layout/widgets/StatusLight/SGStatusLight.txt</file>
+        <file>cvc-layout/widgets/ComboBox/LayoutSGComboBox.qml</file>
+        <file>cvc-layout/widgets/ComboBox/SGComboBox.txt</file>
     </qresource>
 </RCC>

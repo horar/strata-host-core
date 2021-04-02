@@ -32,6 +32,7 @@ Item {
         width: Math.min(statusLight.width, statusLight.height) * (root.flatStyle ? 0.6 : 0.8)
         height: width
         radius: width/2
+
         color: {
             switch (root.status) {
             case SGStatusLight.Yellow: return "yellow"

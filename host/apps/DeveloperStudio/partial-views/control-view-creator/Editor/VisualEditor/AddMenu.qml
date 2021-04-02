@@ -55,6 +55,14 @@ Popup {
                     text: "CircularGauge"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/CircularGauge/SGCircularGauge.txt"
                 }
+                ListElement {
+                    text: "StatusLight"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/StatusLight/SGStatusLight.txt"
+                }
+                ListElement {
+                    text: "ComboBox"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ComboBox/SGComboBox.txt"
+                }
 
 
             }
