@@ -17,7 +17,7 @@ option(BUILD_GITTAG_VERSION "Use project version string from Git tag" ON)
 add_feature_info(BUILD_GITTAG_VERSION BUILD_GITTAG_VERSION "Use project version string from Git tag")
 
 
-set(GIT_ROOT_DIR "${CMAKE_SOURCE_DIR}/..")
+set(GIT_ROOT_DIR "${CMAKE_SOURCE_DIR}")
 if(IS_DIRECTORY ${GIT_ROOT_DIR}/.git)
     find_package(Git 2.7 REQUIRED)
 endif()
