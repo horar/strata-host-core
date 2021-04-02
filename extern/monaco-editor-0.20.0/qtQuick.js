@@ -9,6 +9,7 @@ const qtObjectPropertyValues = {}
 const qtObjectMetaPropertyValues = {}
 var isInitialized = false
 var searchedIds = false
+var functionsAdded = false
 var suggestions = {}
 var functionSuggestions = {}
 const currentItems = {}
@@ -496,6 +497,21 @@ function registerQmlAsLanguage() {
             }
         }
         updateObjectFormat()
+        // js functions
+        if (!functionsAdded) {
+            for (const qtCustomProps in qtTypeJson["custom_properties"]) {
+                const qtproperties = qtTypeJson["custom_properties"][qtCustomProps]
+                createQtObjectValPairs(qtCustomProps, { label: qtCustomProps, insertText: qtCustomProps, properties: qtproperties, flag: true })
+                functionSuggestions[qtCustomProps] = {
+                    label: qtObjectKeyValues[qtCustomProps].label.trim(),
+                    kind: monaco.languages.CompletionItemKind.KeyWord,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    insertText: qtObjectKeyValues[qtCustomProps].insertText,
+                    range: null
+                }
+            }
+            functionsAdded = true
+        }
     }
 
     function updateObjectFormat() {
@@ -521,7 +537,7 @@ function registerQmlAsLanguage() {
 
     function createSuggestions() {
         for (const key in qtObjectKeyValues) {
-            if (!qtObjectKeyValues[key].isId && !qtTypeJson["sources"][key].nonInstantiable) {
+            if (!qtObjectKeyValues[key].isId && qtTypeJson["sources"].hasOwnProperty(key) && !qtTypeJson["sources"][key].nonInstantiable) {
                 suggestions[key] = {
                     label: qtObjectKeyValues[key].label.trim(),
                     kind: monaco.languages.CompletionItemKind.Class,
