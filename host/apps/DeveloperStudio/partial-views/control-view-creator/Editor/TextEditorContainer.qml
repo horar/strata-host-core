@@ -32,8 +32,6 @@ Item {
         }
     }
 
-    
-
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
 
