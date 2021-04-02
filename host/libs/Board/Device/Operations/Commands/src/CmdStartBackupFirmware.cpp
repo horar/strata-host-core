@@ -1,5 +1,5 @@
 #include "CmdStartBackupFirmware.h"
-#include "DeviceOperationsConstants.h"
+#include "DeviceCommandConstants.h"
 
 #include <cstring>
 
@@ -19,18 +19,18 @@ QByteArray CmdStartBackupFirmware::message() {
     return QByteArray("{\"cmd\":\"start_backup_firmware\",\"payload\":{}}");
 }
 
-bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc) {
+bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc, CommandResult& result) {
     if (CommandValidator::validateNotification(CommandValidator::JsonType::startBackupFirmwareNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         if (payload.HasMember(JSON_STATUS)) {
             const char* jsonStatus = payload[JSON_STATUS].GetString();
             if (std::strcmp(jsonStatus, CSTR_NO_FIRMWARE) == 0) {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Nothing to backup, board has no firmware.";
-                result_ = CommandResult::FinaliseOperation;
+                qCWarning(logCategoryDeviceCommand) << device_ << "Nothing to backup, board has no firmware.";
+                result = CommandResult::FinaliseOperation;
                 status_ = operation::NO_FIRMWARE;
             } else {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Bad notification status: '" << jsonStatus << "'.";
-                result_ = CommandResult::Failure;
+                qCWarning(logCategoryDeviceCommand) << device_ << "Bad notification status: '" << jsonStatus << "'.";
+                result = CommandResult::Failure;
             }
         } else {
             const rapidjson::Value& size = payload[JSON_SIZE];
@@ -42,11 +42,11 @@ bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc) {
                 size_ = size.GetUint();
                 md5_ = md5.GetString();
                 */
-                result_ = CommandResult::Partial;
+                result = CommandResult::DoneAndWait;
                 status_ = operation::BACKUP_STARTED;
             } else {
-                qCWarning(logCategoryDeviceOperations) << device_ << "Wrong format of notification.";
-                result_ = CommandResult::Failure;
+                qCWarning(logCategoryDeviceCommand) << device_ << "Wrong format of notification.";
+                result = CommandResult::Failure;
             }
         }
         return true;

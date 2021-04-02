@@ -1,5 +1,5 @@
 #include "CmdStartFlash.h"
-#include "DeviceOperationsConstants.h"
+#include "DeviceCommandConstants.h"
 
 #include <DeviceOperationsStatus.h>
 
@@ -22,19 +22,19 @@ QByteArray CmdStartFlash::message() {
     );
 }
 
-bool CmdStartFlash::processNotification(rapidjson::Document& doc) {
+bool CmdStartFlash::processNotification(rapidjson::Document& doc, CommandResult& result) {
     CommandValidator::JsonType jsonType = (flashFirmware_)
                                           ? CommandValidator::JsonType::startFlashFirmwareNotif
                                           : CommandValidator::JsonType::startFlashBootloaderNotif;
     if (CommandValidator::validateNotification(jsonType, doc)) {
         const rapidjson::Value& jsonStatus = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (jsonStatus == JSON_OK) {
-            result_ = CommandResult::Partial;
+            result = CommandResult::DoneAndWait;
             status_ = operation::FLASH_STARTED;
             if (flashFirmware_) { setDeviceVersions(nullptr, ""); }  // clear firmware version
             else { setDeviceVersions("", nullptr); }  // clear bootloader version
         } else {
-            result_ = CommandResult::Failure;
+            result = CommandResult::Failure;
         }
         return true;
     } else {

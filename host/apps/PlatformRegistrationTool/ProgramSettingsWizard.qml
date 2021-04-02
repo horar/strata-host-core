@@ -15,16 +15,10 @@ FocusScope {
 
     property QtObject prtModel
     property var latestData: ({})
-    property string latestOpn: ""
 
     property var embeddedData: ({})
     property var assistedData: ({})
     property var controllerData: ({})
-
-    //not sure whether opn is in data blob
-    property string embeddedOpn: ""
-    property string assistedOpn: ""
-    property string controllerOpn: ""
 
     property string jlinkExePath
 
@@ -72,10 +66,6 @@ FocusScope {
                     wizard.embeddedData = {}
                     wizard.assistedData = {}
                     wizard.controllerData = {}
-
-                    wizard.embeddedOpn = ""
-                    wizard.assistedOpn = ""
-                    wizard.controllerOpn = ""
                 }
 
                 DSM.SignalTransition {
@@ -101,7 +91,6 @@ FocusScope {
                     guard: controllerType === 1
                     onTriggered: {
                         wizard.embeddedData = wizard.latestData
-                        wizard.embeddedOpn = wizard.latestOpn
                     }
                 }
 
@@ -111,7 +100,6 @@ FocusScope {
                     guard: controllerType === 2
                     onTriggered: {
                         wizard.assistedData = wizard.latestData
-                        wizard.assistedOpn = wizard.latestOpn
                     }
                 }
 
@@ -121,7 +109,6 @@ FocusScope {
                     guard: controllerType === 3
                     onTriggered: {
                         wizard.controllerData = wizard.latestData
-                        wizard.controllerOpn = wizard.latestOpn
                     }
                 }
 
@@ -227,7 +214,6 @@ FocusScope {
                     onTriggered: {
                         secondOpnDelegate.isSet = true
                         wizard.controllerData = wizard.latestData
-                        wizard.controllerOpn = wizard.latestOpn
                     }
                 }
 
@@ -396,7 +382,6 @@ FocusScope {
                     onTriggered: {
                         secondOpnDelegate.isSet = true
                         wizard.assistedData = wizard.latestData
-                        wizard.assistedOpn = wizard.latestOpn
                     }
                 }
 
@@ -644,10 +629,8 @@ FocusScope {
             var isValid = CommonCpp.SGUtilsCpp.validateJson(dataString, JSON.stringify(validationSchema))
             if (isValid) {
                 wizard.latestData = dataObject
-                wizard.latestOpn = opn
                 stateMachine.findPlatformOpnValid(dataObject.controller_type)
                 wizard.latestData = {}
-                wizard.latestOpn = ""
             } else {
                 console.error(Logger.prtCategory, "Cannot validate OPN. Schema of reply not valid.")
                 stateMachine.findPlatformReplyNotValid()

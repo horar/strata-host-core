@@ -24,7 +24,6 @@
         <file alias="Console/ConsoleLogger.qml">partial-views/control-view-creator/Console/ConsoleLogger.qml</file>
         <file alias="Console/ConsoleContainer.qml">partial-views/control-view-creator/Console/ConsoleContainer.qml</file>
         <file alias="components/SGControlViewButton.qml">partial-views/control-view-creator/components/SGControlViewButton.qml</file>
-        <file alias="Console/ConsoleMessages/ConsoleDelegate.qml">partial-views/control-view-creator/Console/ConsoleMessages/ConsoleDelegate.qml</file>
         <file alias="Console/ConsoleMessages/ConsoleMessage.qml">partial-views/control-view-creator/Console/ConsoleMessages/ConsoleMessage.qml</file>
         <file alias="Console/ConsoleMessages/ConsoleTime.qml">partial-views/control-view-creator/Console/ConsoleMessages/ConsoleTime.qml</file>
         <file alias="Console/ConsoleMessages/ConsoleTypes.qml">partial-views/control-view-creator/Console/ConsoleMessages/ConsoleTypes.qml</file>

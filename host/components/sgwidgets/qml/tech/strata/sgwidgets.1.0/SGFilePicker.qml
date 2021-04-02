@@ -5,7 +5,7 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import QtQuick.Dialogs 1.3
 
 FocusScope {
-    id: fileSelector
+    id: filePicker
     height: textEdit.height
 
     property alias filePath: textEdit.text
@@ -51,7 +51,7 @@ FocusScope {
         focus: true
 
         function inputValidationErrorMsg() {
-            return fileSelector.inputValidationErrorMsg()
+            return filePicker.inputValidationErrorMsg()
         }
     }
 
@@ -83,7 +83,7 @@ FocusScope {
 
     function selectFilePath() {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
-                    fileSelector.parent,
+                    ApplicationWindow.window,
                     fileDialogComponent,
                     {
                         "title": dialogLabel,
