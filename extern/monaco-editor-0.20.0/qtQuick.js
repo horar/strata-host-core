@@ -640,7 +640,6 @@ function registerQmlAsLanguage() {
                     if (qtTypeJson["sources"].hasOwnProperty(checkLine)) {
                         createMatchingPairs(model)
                         initializeQtQuick(model)
-                        getPropertyType(model)
                     } else {
                         return { suggestions: [] }
                     }
@@ -653,6 +652,7 @@ function registerQmlAsLanguage() {
                         getTypeID(model)
                     }
                 }
+                getPropertyType(model)
                 if ((position.lineNumber < topOfFile.range.startLineNumber || position.lineNumber > bottomOfFile.range.startLineNumber)) {
                     return { suggestions: [] }
                 } else if (topOfFile === null && bottomOfFile === null) {
@@ -869,17 +869,22 @@ function registerQmlAsLanguage() {
                 nextPosition = {lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn}
             }
             var getProperty = model.getLineContent(nextPosition.lineNumber)
-            var propertyWord = getProperty.split(" ")[2].trim()
+            var propertyWord = getProperty.trim().replace("\t","").split(" ")[2].trim().split(":")[0].trim()
             customProperties.push("on"+propertyWord[0].toUpperCase()+propertyWord.substring(1)+"Changed")
-
             var getPrevId = model.findPreviousMatch("id:", nextPosition)
+
             if(getPrevId !== null && getPrevId.range.startLineNumber > previousBracket.range.startLineNumber){
                 var getLine = model.getLineContent(getPrevId.range.startLineNumber)
-                var id = getLine.replace("\t","").split(":")[0].trim()
-                qtObjectKeyValues[qtIdPairs[getPrevId.range.startLineNumber][id]].properties.push(propertyWord)
-            } 
+                var id = getLine.replace("\t","").split(":")[1].trim()
+                qtObjectKeyValues[qtIdPairs[getPrevId.range.startLineNumber - 1][id]].properties.push(propertyWord)
+            }
+
+            var checkNextProperty = model.findNextMatch("property", nextPosition)
+                if(checkNextProperty.range.startLineNumber <= nextPosition.lineNumber){
+                    break
+                }
+            }
         }
-    }
 
     editor.getModel().onDidChangeContent((event) => {
         var getLine = editor.getModel().getLineContent(event.changes[0].range.startLineNumber);
@@ -891,10 +896,9 @@ function registerQmlAsLanguage() {
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(word, position, type)
         }
-        if(getLine.includes("property")){
-            var word = getLine.trim().split(" ")[2]
+        if(getLine.trim().replace("\t","").split(" ")[2] !== "" && getLine.trim().replace("\t","").split(" ")[2] !== undefined){
+            var word = getLine.trim().replace("\t","").split(" ")[2].trim().split(":")[0].trim()
             if(word !== undefined){
-                word = word.split(":")[0].trim()
                 var getPropertyType = editor.getModel().findPreviousMatch("{",position,false,false)
                 var content = editor.getModel().getLineContent({lineNumber: getPropertyType.range.startLineNumber, column: getPropertyType.range.startColumn})
                 var type = content.replace("\t","").split(/\{|\t/)[0].trim()
