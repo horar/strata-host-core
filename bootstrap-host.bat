@@ -46,7 +46,7 @@ echo "======================================================================="
 echo " Preparing sandbox.."
 echo "======================================================================="
 REM rd /s /q build
-if not exist build-host md build-host
+if not exist build md build
 
 echo "-----------------------------------------------------------------------------"
 echo "Actual/local branch list.."

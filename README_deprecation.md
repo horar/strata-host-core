@@ -31,3 +31,5 @@ Checkout Hello Strata page for more details: https://confluence.onsemi.com/pages
 * spyglass/CMakeLists.txt
 * host/ui and host/ui_resources
 * host/ext_libs
+* deployment/strata/patches/usb-pd-requestedId-retry-patch.patch
+* deployment/strata/usbc-100w-installer.sh

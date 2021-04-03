@@ -47,7 +47,7 @@ Before you run compilation make sure you have updated git branch and git submodu
 git submodule update --init --recursive
 ```
 
-In 'host' folder run commands in console:
+In spyglass root directory run commands in console:
 
 ```
 mkdir build
@@ -62,17 +62,17 @@ make
 Optionally create simple app DMG with all dependant libraries
 
 ```
-    cd spyglass/host/build
+    cd spyglass/build
     macdeployqt bin/Serial\ Console\ Interface.app -dmg -qmldir=../apps/SerialConsoleInterface/
 
 ```
 
 DMG file with application will be created inside the directory:
-spyglass/host/build/bin
+spyglass/build/bin
 
 Or on Windows:
 ```
-    cd spyglass\host\build
+    cd spyglass\build
     windeployqt --force --no-translations --qmldir ..\apps\SerialConsoleInterface "bin\Serial Console Interface.exe"
 
 ```
