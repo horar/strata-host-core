@@ -20,7 +20,6 @@
         <file>ProgramWorkflow.qml</file>
         <file>WorkflowNode.qml</file>
         <file>WorkflowNodeText.qml</file>
-        <file>images/jlink-connect-schema.svg</file>
         <file>jsonSchemas.js</file>
     </qresource>
 </RCC>

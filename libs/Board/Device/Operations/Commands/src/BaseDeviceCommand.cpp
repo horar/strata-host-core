@@ -1,6 +1,6 @@
 #include "BaseDeviceCommand.h"
 
-#include "DeviceOperationsConstants.h"
+#include "DeviceCommandConstants.h"
 #include <DeviceOperationsStatus.h>
 
 #include <rapidjson/document.h>
@@ -17,7 +17,8 @@ BaseDeviceCommand::BaseDeviceCommand(const DevicePtr& device, const QString& com
       device_(device),
       ackOk_(false),
       status_(operation::DEFAULT_STATUS),
-      responseTimeout_(RESPONSE_TIMEOUT),
+      ackTimeout_(ACK_TIMEOUT),
+      notificationTimeout_(NOTIFICATION_TIMEOUT),
       deviceSignalsConnected_(false)
 {
     responseTimer_.setSingleShot(true);
@@ -45,7 +46,7 @@ void BaseDeviceCommand::sendCommand(quintptr lockId)
     ackOk_ = false;  // "ok" ACK for this command
 
     if (device_->sendMessage(this->message(), lockId)) {
-        responseTimer_.setInterval(responseTimeout_);
+        responseTimer_.setInterval(ackTimeout_);
         responseTimer_.start();
     } else {
         qCCritical(logCategoryDeviceCommand) << device_ << QStringLiteral("Cannot send '") + cmdName_ + QStringLiteral("' command.");
@@ -69,9 +70,14 @@ CommandType BaseDeviceCommand::type() const {
     return cmdType_;
 }
 
-void BaseDeviceCommand::setResponseTimeout(std::chrono::milliseconds responseInterval)
+void BaseDeviceCommand::setAckTimeout(std::chrono::milliseconds ackTimeout)
 {
-    responseTimeout_ = responseInterval;
+    ackTimeout_ = ackTimeout;
+}
+
+void BaseDeviceCommand::setNotificationTimeout(std::chrono::milliseconds notificationTimeout)
+{
+    notificationTimeout_ = notificationTimeout;
 }
 
 CommandResult BaseDeviceCommand::onTimeout() {
@@ -108,7 +114,11 @@ void BaseDeviceCommand::handleDeviceResponse(const QByteArray data)
             ackOk_ = payload[JSON_RETURN_VALUE].GetBool();
 
             if (ackStr == cmdName_) {
-                if (ackOk_ == false) {
+                responseTimer_.stop();
+                if (ackOk_) {
+                    responseTimer_.setInterval(notificationTimeout_);
+                    responseTimer_.start();
+                } else {
                     qCWarning(logCategoryDeviceCommand) << device_ << "ACK for '" << cmdName_ << "' command is not OK: '"
                                                            << payload[JSON_RETURN_STRING].GetString() << "'.";
                     // ACK is not 'ok' - command is rejected by device
@@ -132,23 +142,24 @@ void BaseDeviceCommand::handleDeviceResponse(const QByteArray data)
         if (this->processNotification(doc, result)) {
             responseTimer_.stop();
 
-            if (ackOk_ == false) {
-                qCWarning(logCategoryDeviceCommand) << device_ << "Received notification without previous ACK.";
-            }
             qCDebug(logCategoryDeviceCommand) << device_ << "Processed '" << cmdName_ << "' notification.";
 
-            if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
-                if (result == CommandResult::Failure) {
-                    qCWarning(logCategoryDeviceCommand) << device_ << "Received faulty notification: '" << data << "'.";
-                }
+            if (ackOk_) {
+                if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
+                    if (result == CommandResult::Failure) {
+                        qCWarning(logCategoryDeviceCommand) << device_ << "Received faulty notification: '" << data << "'.";
+                    }
 
-                const QByteArray status = CommandValidator::notificationStatus(doc);
-                if (status.isEmpty() == false) {
-                    qCInfo(logCategoryDeviceCommand) << device_ << "Command '" << cmdName_ << "' retruned '" << status << "'.";
+                    const QByteArray status = CommandValidator::notificationStatus(doc);
+                    if (status.isEmpty() == false) {
+                        qCInfo(logCategoryDeviceCommand) << device_ << "Command '" << cmdName_ << "' retruned '" << status << "'.";
+                    }
                 }
+                finishCommand(result);
+            } else {
+                qCWarning(logCategoryDeviceCommand) << device_ << "Received notification without previous ACK.";
+                finishCommand(CommandResult::MissingAck);
             }
-
-            finishCommand(result);
         } else {
             logWrongResponse(data);
         }

@@ -1,5 +1,5 @@
 #include "CmdStartFlash.h"
-#include "DeviceOperationsConstants.h"
+#include "DeviceCommandConstants.h"
 
 #include <DeviceOperationsStatus.h>
 

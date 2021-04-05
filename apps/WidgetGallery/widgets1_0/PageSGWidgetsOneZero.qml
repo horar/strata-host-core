@@ -113,6 +113,16 @@ FocusScope {
             name: "SGUserSettings"
             page: "ExSGUserSettings.qml"
         }
+
+        ListElement {
+            name: "SGAbstractContextMenu"
+            page: "ExSGAbstractContextMenu.qml"
+        }
+
+        ListElement {
+            name: "SGContextMenuEditActions"
+            page: "ExSGContextMenuEditActions.qml"
+        }
     }
 
     Component.onCompleted: {
@@ -263,7 +273,7 @@ FocusScope {
                             fontSizeMultiplier: 1.5
                             checkable: true
                             ButtonGroup.group: group
-                            minimumContentWidth: 180
+                            minimumContentWidth: 240
                             color: Theme.palette.green
 
                             onClicked: {

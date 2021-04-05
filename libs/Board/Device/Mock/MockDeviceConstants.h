@@ -14,7 +14,11 @@ enum class MockCommand {
     get_firmware_info,
     request_platform_id,
     start_bootloader,
-    start_application
+    start_application,
+    flash_firmware,
+    flash_bootloader,
+    start_flash_firmware,
+    start_flash_bootloader
 };
 Q_ENUM_NS(MockCommand)
 
@@ -28,7 +32,12 @@ enum class MockResponse {
     assisted_app,
     assisted_no_board,
     embedded_btloader,
-    assisted_btloader
+    assisted_btloader,
+    flash_resend_chunk,
+    flash_memory_error,
+    flash_invalid_cmd_sequence,
+    flash_invalid_value,
+    start_flash_firmware_invalid
 };
 Q_ENUM_NS(MockResponse)
 
@@ -415,5 +424,141 @@ R"({
 
 const QByteArray no_JSON_response =
 "notJSON";
+
+const QByteArray flash_firmware_request =
+R"({
+    "cmd":"flash_firmware",
+    "payload":{
+        "chunk":{
+            "number":{$request.payload.chunk.number},
+            "size":{$request.payload.chunk.size},
+            "crc":{$request.payload.chunk.crc},
+            "data":"{$request.payload.chunk.data}"
+        }
+    }
+})";
+
+const QByteArray flash_bootloader_request =
+R"({
+    "cmd":"flash_bootloader",
+    "payload":{
+        "chunk":{
+            "number":{$request.payload.chunk.number},
+            "size":{$request.payload.chunk.size},
+            "crc":{$request.payload.chunk.crc},
+            "data":"{$request.payload.chunk.data}"
+        }
+    }
+})";
+
+const QByteArray start_flash_firmware_request =
+R"({
+    "cmd":"start_flash_firmware",
+    "payload": {
+        "size": {$request.payload.size},
+        "chunks": {$request.payload.chunks},
+        "md5": "{$request.payload.md5}"
+    }
+})";
+
+const QByteArray start_flash_bootloader_request =
+R"({
+    "cmd":"start_flash_bootloader",
+    "payload": {
+        "size": {$request.payload.size},
+        "chunks": {$request.payload.chunks},
+        "md5": "{$request.payload.md5}"
+    }
+})";
+
+const QByteArray start_flash_firmware_response =
+R"({
+    "notification":{
+        "value":"start_flash_firmware",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})";
+
+const QByteArray start_flash_firmware_response_invalid =
+R"({
+    "notification":{
+        "value":"start_flash_firmware",
+        "payload":{
+            "status":-1
+        }
+    }
+})";
+
+const QByteArray start_flash_bootloader_response =
+R"({
+    "notification":{
+        "value":"start_flash_bootloader",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})";
+
+const QByteArray flash_firmware_response =
+R"({
+    "notification":{
+        "value":"flash_firmware",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})";
+
+const QByteArray flash_firmware_response_resend_chunk =
+R"({
+    "notification":{
+        "value":"flash_firmware",
+        "payload":{
+            "status":"resend_chunk"
+        }
+    }
+})";
+
+const QByteArray flash_firmware_response_memory_error =
+R"({
+    "notification":{
+        "value":"flash_firmware",
+        "payload":{
+            "status":"flash_memory_error"
+        }
+    }
+})";
+
+const QByteArray flash_firmware_response_invalid_cmd_sequence =
+R"({
+    "notification":{
+        "value":"flash_firmware",
+        "payload":{
+            "status":"invalid_cmd_sequence"
+        }
+    }
+})";
+
+const QByteArray flash_firmware_invalid_value =
+R"({
+    "notification":{
+        "value":"flash_firmware",
+        "payload":{
+            "status":"-1
+        }
+    }
+})";
+
+const QByteArray flash_bootloader_response =
+R"({
+    "notification":{
+        "value":"flash_bootloader",
+        "payload":{
+            "status":"ok"
+        }
+    }
+})";
 
 } // namespace strata::device::mock::test_commands

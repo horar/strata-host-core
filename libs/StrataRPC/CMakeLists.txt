@@ -91,3 +91,7 @@ endif()
 if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
+
+if(BUILD_BENCHMARK)
+    add_subdirectory(benchmark)
+endif()
