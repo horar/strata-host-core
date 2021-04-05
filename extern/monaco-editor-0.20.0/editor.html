@@ -44,6 +44,10 @@
                 editor.layout()
             });
 
+            link.goToUUID.connect(function (uuid){
+                searchForUUID(uuid)
+            })
+
             link.undo.connect(function () {
                 editor.trigger('undoClicked', 'undo');
             });
