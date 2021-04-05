@@ -2970,3 +2970,17 @@ function registerQmlAsLanguage() {
         }
     })
 }
+
+/*
+    External facing functions that will be used in conjunction with the Visual Editor
+*/
+function searchForUUID(uuid){
+    const model = editor.getModel()
+    const range = model.getFullModelRange()
+    const uuidMatch = model.findNextMatch(uuid,{lineNumber: range.startLineNumber, column: range.startColumn})
+    const endUUidMatch = model.findNextMatch(`end_${uuid}`,{lineNumber: range.startLineNumber, column: range.startColumn})
+    if (uuidMatch !== null) {
+        editor.revealLineInCenter(uuidMatch.range.startLineNumber)
+        editor.setSelection({startLineNumber: uuidMatch.range.startLineNumber, startColumn: 0, endColumn: endUUidMatch.range.endColumn, endLineNumber: endUUidMatch.range.startLineNumber})
+    }
+}
