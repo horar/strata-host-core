@@ -63,6 +63,10 @@ Popup {
                     text: "ComboBox"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/ComboBox/SGComboBox.txt"
                 }
+                ListElement {
+                    text: "Graph"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Graph/SGGraph.txt"
+                }
 
 
             }

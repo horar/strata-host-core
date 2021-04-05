@@ -66,6 +66,7 @@ LayoutSGSubmitInfoBox 1.0 cvc-layout/widgets/SubmitInfoBox/LayoutSGSubmitInfoBox
 LayoutSGCircularGauge 1.0 cvc-layout/widgets/CircularGauge/LayoutSGCircularGauge.qml
 LayoutSGStatusLight 1.0 cvc-layout/widgets/StatusLight/LayoutSGStatusLight.qml
 LayoutSGComboBox 1.0 cvc-layout/widgets/ComboBox/LayoutSGComboBox.qml
+LayoutSGGraph 1.0 cvc-layout/widgets/Graph/LayoutSGGraph.qml
 
 UIBase 1.0 cvc-layout/UIBase.qml
 

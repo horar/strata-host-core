@@ -80,5 +80,7 @@
         <file>cvc-layout/widgets/StatusLight/SGStatusLight.txt</file>
         <file>cvc-layout/widgets/ComboBox/LayoutSGComboBox.qml</file>
         <file>cvc-layout/widgets/ComboBox/SGComboBox.txt</file>
+        <file>cvc-layout/widgets/Graph/LayoutSGGraph.qml</file>
+        <file>cvc-layout/widgets/Graph/SGGraph.txt</file>
     </qresource>
 </RCC>

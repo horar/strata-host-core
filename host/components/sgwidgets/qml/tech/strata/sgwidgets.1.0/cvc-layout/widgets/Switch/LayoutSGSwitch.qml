@@ -34,12 +34,11 @@ LayoutContainer {
         textColor: parent.textColor
         handleColor: parent.handleColor
 
-        onReleased: swicthObject.released()
-        onCanceled: swicthObject.canceled()
-        onClicked: swicthObject.clicked()
-        onToggled: swicthObject.toggled()
-        //onPressed: swicthObject.press()
-        onPressAndHold: swicthObject.pressAndHold()
+        onReleased: parent.released()
+        onCanceled: parent.canceled()
+        onClicked: parent.clicked()
+        onToggled: parent.toggled()
+        onPressAndHold: parent.pressAndHold()
 
         //elide: Text.ElideRight
         // wrapMode: Text.Wrap
