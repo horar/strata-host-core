@@ -10,7 +10,6 @@ const qtObjectPropertyValues = {}
 const qtObjectMetaPropertyValues = {}
 var isInitialized = false
 var searchedIds = false
-var searchedProperties = false
 var functionsAdded = false
 var suggestions = {}
 var functionSuggestions = {}
@@ -650,9 +649,9 @@ function registerQmlAsLanguage() {
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
                     if (!(nextCheck.range.startLineNumber === bottomOfFile.range.startLineNumber && prevCheck.range.startLineNumber === topOfFile.range.startLineNumber)) {
                         getTypeID(model)
+                        getPropertyType(model)
                     }
                 }
-                getPropertyType(model)
                 if ((position.lineNumber < topOfFile.range.startLineNumber || position.lineNumber > bottomOfFile.range.startLineNumber)) {
                     return { suggestions: [] }
                 } else if (topOfFile === null && bottomOfFile === null) {
@@ -670,10 +669,9 @@ function registerQmlAsLanguage() {
                     }
                 }
                 if (active.includes(":")) {
-                    const prevParent = findPreviousBracketParent(model, position)
-                    determineCustomPropertyParents(model,position, prevParent)
                     return { suggestions: Object.values(functionSuggestions) }
                 }
+                determineCustomPropertyParents(model,position)
                 var fetchedSuggestions = searchForChildBrackets(model, position)
                 return { suggestions: fetchedSuggestions }
             }
@@ -756,14 +754,14 @@ function registerQmlAsLanguage() {
             position = { lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn }
             var content = model.getValueInRange({ startLineNumber: getIdType.range.startLineNumber, startColumn: 0, endLineNumber: getIdType.range.startLineNumber, endColumn: getIdType.range.endColumn })
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-            addCustomIdAndTypes(prevId, position, type)
+            addCustomIdAndTypes(prevId, {lineNumber: getPrevIDPosition.range.startLineNumber, column:  getPrevIDPosition.range.startColumn}, type)
         }
         searchedIds = true
     }
 
     function getPropertyType(model){
         var position = { lineNumber: fullRange.endLineNumber, column: fullRange.endColumn }
-        while (position.lineNumber > fullRange.startLineNumber && !searchedProperties) {
+        while (position.lineNumber > fullRange.startLineNumber) {
             var getPrevPropertyPosition = model.findPreviousMatch("property", position)
             if(getPrevPropertyPosition === null){
                 break;
@@ -776,11 +774,10 @@ function registerQmlAsLanguage() {
 
             var getPropertyType = model.findPreviousMatch("{", { lineNumber: getPrevPropertyPosition.range.startLineNumber, column: getPrevPropertyPosition.range.startColumn })
             position = { lineNumber: getPropertyType.range.startLineNumber, column: getPropertyType.range.startColumn }
-            var content = model.getValueInRange({ startLineNumber: getPropertyType.range.startLineNumber, startColumn: 0, endLineNumber: getPropertyType.range.startLineNumber, endColumn: getPropertyType.range.endColumn })
+            var content = model.getLineContent(position.lineNumber)
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomProperties(position.lineNumber,type,prevProperty)
         }
-        searchedProperties = true
     }
     // This grabs the Item type from the parent bracket and returns the suggestions
     function retrieveType(model, propRange) {
@@ -849,11 +846,12 @@ function registerQmlAsLanguage() {
         }
     }
 
-    function determineCustomPropertyParents(model,position,parent){
+    function determineCustomPropertyParents(model,position){
         // determine custom properties before returning
         customProperties = []
         var startPosition = position
-        const previousBracket = model.findPreviousMatch(parent,startPosition)
+        const previousBracket = model.findPreviousMatch("{",startPosition)
+        const prevParent = findPreviousBracketParent(model,position)
         var prevNextBracket = previousBracket
         var nextPosition = {lineNumber: previousBracket.range.startLineNumber, column: previousBracket.range.startColumn}
 
@@ -876,7 +874,8 @@ function registerQmlAsLanguage() {
             if(getPrevId !== null && getPrevId.range.startLineNumber > previousBracket.range.startLineNumber){
                 var getLine = model.getLineContent(getPrevId.range.startLineNumber)
                 var id = getLine.replace("\t","").split(":")[1].trim()
-                qtObjectKeyValues[qtIdPairs[getPrevId.range.startLineNumber - 1][id]].properties.push(propertyWord)
+                var getPrevBracket = model.findPreviousMatch("{",{lineNumber: getPrevId.range.startLineNumber, column: getPrevId.range.startColumn})
+                qtObjectKeyValues[qtIdPairs[getPrevId.range.startLineNumber][id]].properties.push(propertyWord)
             }
 
             var checkNextProperty = model.findNextMatch("property", nextPosition)
@@ -895,8 +894,7 @@ function registerQmlAsLanguage() {
             var content = editor.getModel().getLineContent({ lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn })
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(word, position, type)
-        }
-        if(getLine.trim().replace("\t","").split(" ")[2] !== "" && getLine.trim().replace("\t","").split(" ")[2] !== undefined){
+        }else if(getLine.replace("\t","").split(" ")[2] !== "" && getLine.replace("\t","").split(" ")[2] !== undefined && !getLine.includes("import")){
             var word = getLine.trim().replace("\t","").split(" ")[2].trim().split(":")[0].trim()
             if(word !== undefined){
                 var getPropertyType = editor.getModel().findPreviousMatch("{",position,false,false)
