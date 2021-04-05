@@ -337,6 +337,7 @@ ColumnLayout {
         signal setContainerWidth(string width);
         signal undo();
         signal redo();
+        signal goToUUID(string uuid)
 
         function setHtml(value) {
             setValue(value)
@@ -360,6 +361,15 @@ ColumnLayout {
 
             currentVersionId = version
             model.unsavedChanges = (savedVersionId !== version)
+        }
+    }
+
+    Connections {
+        target: visualEditor.functions
+
+        onPassUUID: {
+            viewSelector.currentIndex = 0
+            channelObject.goToUUID(uuid)
         }
     }
 }
