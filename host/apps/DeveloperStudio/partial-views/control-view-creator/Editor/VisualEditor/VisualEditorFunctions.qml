@@ -10,6 +10,8 @@ import tech.strata.commoncpp 1.0
 QtObject {
     id: functions
 
+    signal passUUID(string uuid)
+
     function openFile(fileUrl) {
         if (fileUrl.startsWith("file")) {
             fileUrl = SGUtilsCpp.urlToLocalFile(fileUrl)
