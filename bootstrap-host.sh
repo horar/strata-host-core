@@ -29,8 +29,8 @@ git submodule update --init --recursive
 echo "-----------------------------------------------------------------------------"
 echo "Create a build folder.."
 echo "-----------------------------------------------------------------------------"
-mkdir -pv build
-cd build
+mkdir -pv build-host
+cd build-host
 
 echo "-----------------------------------------------------------------------------"
 echo "Generate project files.."

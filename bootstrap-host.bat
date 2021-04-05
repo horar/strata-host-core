@@ -45,8 +45,8 @@ qmake --version
 echo "======================================================================="
 echo " Preparing sandbox.."
 echo "======================================================================="
-REM rd /s /q build
-if not exist build md build
+REM rd /s /q build-host
+if not exist build-host md build-host
 
 echo "-----------------------------------------------------------------------------"
 echo "Actual/local branch list.."
@@ -61,7 +61,7 @@ git submodule update --init --recursive
 echo "======================================================================="
 echo " Generating project.."
 echo "======================================================================="
-cd build
+cd build-host
 cmake -G "NMake Makefiles JOM" ^
 	-DCMAKE_BUILD_TYPE=Debug ^
 	..
