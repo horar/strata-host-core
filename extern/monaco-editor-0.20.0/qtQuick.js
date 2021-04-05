@@ -852,21 +852,23 @@ function registerQmlAsLanguage() {
         var startPosition = position
         const previousBracket = model.findPreviousMatch("{",startPosition)
         const prevParent = findPreviousBracketParent(model,position)
+        const prevParentBracket = model.findPreviousMatch(prevParent, position)
         var prevNextBracket = previousBracket
-        var nextPosition = {lineNumber: previousBracket.range.startLineNumber, column: previousBracket.range.startColumn}
-
+        var nextPosition = {lineNumber: prevParentBracket.range.startLineNumber, column: previousBracket.range.startColumn}
+        var nextProperty = model.findNextMatch("property",nextPosition)
+        nextPosition = {lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn}
         while(previousBracket.range.startLineNumber === prevNextBracket.range.startLineNumber){
-            var nextProperty = model.findNextMatch("property",nextPosition)
             if(nextProperty === null){
                 break;
             }
             prevNextBracket = model.findPreviousMatch("{",{lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn})
             if(prevNextBracket.range.startLineNumber !== previousBracket.range.startLineNumber){
                 break;
-            } else {
-                nextPosition = {lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn}
             }
             var getProperty = model.getLineContent(nextPosition.lineNumber)
+            if(getProperty === ""){
+                break;
+            }
             var propertyWord = getProperty.trim().replace("\t","").split(" ")[2].trim().split(":")[0].trim()
             customProperties.push("on"+propertyWord[0].toUpperCase()+propertyWord.substring(1)+"Changed")
             var getPrevId = model.findPreviousMatch("id:", nextPosition)
@@ -874,12 +876,13 @@ function registerQmlAsLanguage() {
             if(getPrevId !== null && getPrevId.range.startLineNumber > previousBracket.range.startLineNumber){
                 var getLine = model.getLineContent(getPrevId.range.startLineNumber)
                 var id = getLine.replace("\t","").split(":")[1].trim()
-                var getPrevBracket = model.findPreviousMatch("{",{lineNumber: getPrevId.range.startLineNumber, column: getPrevId.range.startColumn})
                 qtObjectKeyValues[qtIdPairs[getPrevId.range.startLineNumber][id]].properties.push(propertyWord)
             }
-
-            var checkNextProperty = model.findNextMatch("property", nextPosition)
-                if(checkNextProperty.range.startLineNumber <= nextPosition.lineNumber){
+            
+            nextPosition = {lineNumber: nextProperty.range.startLineNumber + 1, column: nextProperty.range.startColumn}
+            nextProperty = model.findNextMatch("property",nextPosition)
+            var checkNextBracket = model.findNextMatch("{", nextPosition)
+                if(nextProperty.range.startLineNumber >= checkNextBracket.range.startLineNumber){
                     break
                 }
             }
