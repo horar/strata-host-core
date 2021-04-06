@@ -39,9 +39,23 @@ public:
      */
     virtual void deinit() override;
 
-private:
-    bool addMockDevice(const QByteArray& deviceId);
+    /**
+     * Will create new mock device and emit detected signal
+     * @param deviceId device ID
+     * @param name mock device name
+     * @param saveMessages true when mock device should save messages (for tests), otherwise false
+     * @return true if device did not existed and was created, otherwise false
+     */
+    bool mockDeviceDetected(const QByteArray& deviceId, const QString& name, const bool saveMessages);
 
+    /**
+     * Will emit lost signal for previously detected device
+     * @param deviceId device ID
+     * @return true if device existed and was removed, otherwise false
+     */
+    bool mockDeviceLost(const QByteArray& deviceId);
+
+private:
     std::set<QByteArray> deviceIds_;
     bool running_ = false;
 };
