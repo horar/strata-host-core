@@ -76,8 +76,10 @@ Item {
             } else if (listing1.available.documents === false && listing1.available.order === false &&
                        listing2.available.documents === true && listing2.available.order === true) {
                 return false    // "coming soon" on bottom
-            } else {
+            } else if (timestamp1.getTime() !== timestamp2.getTime()) {
                 return timestamp1 > timestamp2 // newer listings on top, older on bottom
+            } else {
+                return listing1.opn < listing2.opn // sort alphabetically by opn if everything else fails
             }
         }
 

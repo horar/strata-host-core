@@ -42,25 +42,6 @@ macro(generate_app_version)
         message(STATUS "Supported plugin list for ${PROJECT_NAME}: ${SUPPORTED_PLUGINS}")
     endif()
 
-    if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/Version.h)
-        message(STATUS "Writting ${PROJECT_NAME}'s Version.h...")
-        file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Version.h
-            "// WARNING! All changes made in this file will be lost!!\n\n"
-            "#pragma once\n\n"
-            "#include <string_view>\n\n"
-            "struct AppInfo final {\n"
-            "    static const std::string_view version;\n"
-            "    static const std::string_view versionMajor;\n"
-            "    static const std::string_view versionMinor;\n"
-            "    static const std::string_view versionPatch;\n\n"
-            "    static const std::string_view buildId;\n"
-            "    static const std::string_view gitRevision;\n"
-            "    static const std::string_view stageOfDevelopment;\n\n"
-            "    static const std::string_view supportedPlugins_;\n"
-            "};\n"
-        )
-    endif()
-
     add_custom_target(${PROJECT_NAME}_version ALL)
     add_custom_command(
         TARGET ${PROJECT_NAME}_version
@@ -72,7 +53,7 @@ macro(generate_app_version)
 
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
 
-            -DVERSION_FILE=Version.cpp
+            -DVERSION_FILES=Version.cpp\;Version.h
 
             -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
             -DWORKING_DIR=${CMAKE_CURRENT_BINARY_DIR}
@@ -164,7 +145,7 @@ macro(generate_component_version)
 
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
 
-            -DVERSION_FILE=version.json
+            -DVERSION_FILES=version.json
 
             -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
             -DWORKING_DIR=${CMAKE_CURRENT_BINARY_DIR}
@@ -208,7 +189,7 @@ macro(generate_ifw_version)
 
                 -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
 
-                -DVERSION_FILE=version.json
+                -DVERSION_FILES=version.json
                 -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
                 -DWORKING_DIR=${CMAKE_CURRENT_BINARY_DIR}
                 -DDEPLOYMENT_DIR=${CMAKE_BINARY_DIR}

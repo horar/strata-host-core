@@ -122,7 +122,7 @@ FocusScope {
             font.bold: true
         }
 
-        SGWidgets.SGFileSelector {
+        SGWidgets.SGFilePicker {
             id: firmwarePathEdit
             contextMenuEnabled: true
             width: content.width

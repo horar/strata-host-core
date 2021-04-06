@@ -9,7 +9,7 @@ using namespace strata::Database;
 
 CouchChat::CouchChat(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
-    auto documentListenerCallback = std::bind(&CouchChat::documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    auto documentListenerCallback = std::bind(&CouchChat::documentListener, this, std::placeholders::_1, std::placeholders::_2);
 
     databaseManager_ = std::make_unique<DatabaseManager>();
     if (databaseManager_->init("", endpointURL_, nullptr, documentListenerCallback) == false) {
@@ -18,7 +18,7 @@ CouchChat::CouchChat(QQmlApplicationEngine *engine, QObject *parent) : QObject(p
 }
 
 void CouchChat::login(const QString &loginUsername, const QString &desiredChatroom) {
-    auto documentListenerCallback = std::bind(&CouchChat::documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    auto documentListenerCallback = std::bind(&CouchChat::documentListener, this, std::placeholders::_1, std::placeholders::_2);
     DB_ = databaseManager_->login(loginUsername, desiredChatroom, nullptr, documentListenerCallback);
 
     loginUsername_ = loginUsername;
@@ -61,7 +61,7 @@ void CouchChat::sendMessage(const QString &message) {
     }
 }
 
-void CouchChat::documentListener(cbl::Replicator, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents) {
+void CouchChat::documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents) {
     qDebug() << "---" << documents.size() << "docs" << (isPush ? "pushed:" : "pulled:");
     if (DB_ == nullptr) {
         return;

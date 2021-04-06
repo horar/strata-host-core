@@ -96,47 +96,45 @@ TEST_F(CouchbaseDatabaseTest, DOCS) {
     EXPECT_EQ(result_str, "");
     // Save Test Doc 1 to DB and retrieve values
     EXPECT_TRUE(db->save(doc_1));
-    result_str = db->getDocumentAsStr("Test Doc 1");
+    auto doc_keys = db->getAllDocumentKeys();
+    EXPECT_GE(doc_keys.size(), 1);
+    auto doc1_key = doc_keys[0];
+
+    result_str = db->getDocumentAsStr(doc1_key);
     EXPECT_NE(result_str, "");
     // Get document as a json object and test for keys
-    auto result_obj = db->getDocumentAsJsonObj("Test Doc 1");
+    auto result_obj = db->getDocumentAsJsonObj(doc1_key);
+
     EXPECT_TRUE(result_obj.contains("name"));
     EXPECT_TRUE(result_obj.contains("age"));
     EXPECT_EQ(result_obj.value("age"), 1);
+
+    // Delete doc_1 from DB
+    EXPECT_TRUE(db->deleteDoc(doc1_key));
+    // DB is now empty
+    EXPECT_EQ(db->getAllDocumentKeys().size(), 0);
 
     // Doc 2
     // Set valid json
     body = R"foo({"name": "My Name", "age" : 1})foo";
     EXPECT_TRUE(doc_2->setBody(body));
-    // Get value of key "age"
     result_obj = db->getDocumentAsJsonObj("Test Doc 2");
     EXPECT_EQ(result_obj.count(), 0);
     // Edit document key "age" value to 30
-    // (*doc_2)["age"] = 30;
+    (*doc_2)["age"] = 30;
     EXPECT_TRUE(db->save(doc_2));
+    doc_keys = db->getAllDocumentKeys();
+    EXPECT_GE(doc_keys.size(), 1);
+    auto doc2_key = doc_keys[0];
+
     // Get value of key "age"
-    result_obj = db->getDocumentAsJsonObj("Test Doc 2");
+    result_obj = db->getDocumentAsJsonObj(doc2_key);
     EXPECT_EQ(result_obj.value("age"), 30);
 
-    // Retrieve all document keys
-    QStringList keys = db->getAllDocumentKeys();
-    EXPECT_EQ(keys.size(), 2);
-    EXPECT_TRUE(keys.contains("Test Doc 1"));
-    EXPECT_TRUE(keys.contains("Test Doc 2"));
-
-    // Delete Doc 1, check only Doc 2 exists
-    db->deleteDoc("Test Doc 1");
-    keys = db->getAllDocumentKeys();
-    EXPECT_FALSE(keys.contains("Test Doc 1"));
-    EXPECT_TRUE(keys.contains("Test Doc 2"));
-    EXPECT_EQ(keys.size(), 1);
-
-    // Delete Doc 2, check DB is empty
-    db->deleteDoc("Test Doc 2");
-    keys = db->getAllDocumentKeys();
-    EXPECT_FALSE(keys.contains("Test Doc 1"));
-    EXPECT_FALSE(keys.contains("Test Doc 2"));
-    EXPECT_EQ(keys.size(), 0);
+    // Delete doc_2 from DB
+    EXPECT_TRUE(db->deleteDoc(doc2_key));
+    // DB is now empty
+    EXPECT_EQ(db->getAllDocumentKeys().size(), 0);
 
     delete doc_1;
     delete doc_2;

@@ -21,7 +21,7 @@ public:
     void setFwClassId(const QString &fwClassId);
 
 private:
-    command::CmdSetAssistedPlatformId* cmdSetAssistPlatfid_;
+    command::CmdSetAssistedPlatformId* cmdSetAssistPlatfId_;
 };
 
 }  // namespace

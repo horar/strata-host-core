@@ -17,7 +17,7 @@ DatabaseManager::~DatabaseManager() {
     delete userAccessDb_;
 }
 
-bool DatabaseManager::init(const QString &path, const QString &endpointURL, std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
+bool DatabaseManager::init(const QString &path, const QString &endpointURL, std::function<void(const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
     path_ = path;
     endpointURL_ = endpointURL;
     userAccessDb_ = getUserAccessMap();
@@ -36,7 +36,7 @@ bool DatabaseManager::init(const QString &path, const QString &endpointURL, std:
     return true;
 }
 
-DatabaseAccess* DatabaseManager::login(const QString &name, const QString &channelsRequested, std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
+DatabaseAccess* DatabaseManager::login(const QString &name, const QString &channelsRequested, std::function<void(const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
     if (channelsRequested.isEmpty() || channelsRequested == "*" || channelsRequested == "all") {
         return login(name, QStringList(), changeListener, documentListener);
     } else {
@@ -45,7 +45,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QString &chann
     }
 }
 
-DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &channelsRequested, std::function<void(cbl::Replicator rep, const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
+DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &channelsRequested, std::function<void(const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
     if (name.isEmpty()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error: username cannot be empty";
         return nullptr;
