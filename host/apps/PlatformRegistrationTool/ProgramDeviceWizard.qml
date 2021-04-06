@@ -299,6 +299,7 @@ FocusScope {
                 id: busyIndicator
                 width: parent.width
                 height: parent.height
+                running: false
             }
 
             SGWidgets.SGIcon {
