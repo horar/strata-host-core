@@ -68,6 +68,7 @@ public:
     Q_INVOKABLE void startApplication();
 
     Q_INVOKABLE void clearBinaries();
+    Q_INVOKABLE void abortDownload();
 
 signals:
     void deviceInfoChanged(QByteArray deviceId);

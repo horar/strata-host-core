@@ -173,6 +173,9 @@ DSM.StateMachine {
         DSM.SignalTransition {
             targetState: exitState
             signal: breakButton.clicked
+            onTriggered: {
+                prtModel.abortDownload()
+            }
         }
 
         DSM.SignalTransition {

@@ -311,6 +311,11 @@ void PrtModel::clearBinaries()
     }
 }
 
+void PrtModel::abortDownload()
+{
+    downloadManager_.abortAll(downloadJobId_);
+}
+
 void PrtModel::setPlatformId(
         const QString &classId,
         const QString &platformId,
