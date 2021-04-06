@@ -87,7 +87,7 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
     ApiVersion apiVersion;
 
     Client client = clientsController_->getClient(clientMessage.clientID);
-    
+
     // Check if registered client
     if (true == client.getClientID().isEmpty()) {
         qCDebug(logCategoryStrataServer) << "client not registered";
