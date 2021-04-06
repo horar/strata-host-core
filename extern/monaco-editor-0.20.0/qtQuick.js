@@ -553,6 +553,11 @@ function registerQmlAsLanguage() {
             arr = removeDuplicates(arr)
             createQtObjectValPairs(key, { label: key, insertText: key, properties: arr, flag: false, isId: false })
         }
+        for(const key in qtTypeJson){
+            if(key === "property"){
+                createQtObjectValPairs(key, {label: key, insertText: key, properties: qtTypeJson[key], flag: true, isId: false})
+            }
+        }
         createSuggestions()
     }
 
@@ -873,7 +878,7 @@ function registerQmlAsLanguage() {
                 break;
             }
             var getProperty = model.getLineContent(nextPosition.lineNumber)
-            if(getProperty === ""){
+            if(getProperty === "" || getProperty.trim().replace("\t","").split(" ")[2] === undefined){
                 break;
             }
             var propertyWord = getProperty.trim().replace("\t","").split(" ")[2].trim().split(":")[0].trim()
@@ -912,7 +917,7 @@ function registerQmlAsLanguage() {
             addCustomIdAndTypes(word, position, type)
         }else if(getLine.replace("\t","").split(" ")[2] !== "" && getLine.replace("\t","").split(" ")[2] !== undefined && !getLine.includes("import")){
             var word = getLine.trim().replace("\t","").split(" ")[2].trim().split(":")[0].trim()
-            if(word !== undefined){
+            if(word !== undefined || word !== ""){
                 var getPropertyType = editor.getModel().findPreviousMatch("{",position,false,false)
                 var content = editor.getModel().getLineContent({lineNumber: getPropertyType.range.startLineNumber, column: getPropertyType.range.startColumn})
                 var type = content.replace("\t","").split(/\{|\t/)[0].trim()
