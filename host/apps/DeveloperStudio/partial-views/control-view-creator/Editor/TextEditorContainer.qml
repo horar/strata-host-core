@@ -280,7 +280,10 @@ Item {
         settings.showScrollBars: false
 
         anchors {
-            fill: parent
+           	top: alertRow.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
         }
 
         onHeightChanged: {
