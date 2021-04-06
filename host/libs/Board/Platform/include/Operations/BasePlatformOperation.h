@@ -97,11 +97,11 @@ public:
 
 #ifdef BUILD_TESTING
     /*!
-     * Set response timeout for all commands in operation.
+     * Set same response timeouts (ACK + notification) for all commands in operation.
      * This method is used only in unit tests, DO NOT abuse it for other purposes!
      * \param responseInterval command response timeout
      */
-    void setResponseTimeout(std::chrono::milliseconds responseInterval);
+    void setResponseTimeouts(std::chrono::milliseconds responseTimeout);
 #endif
 
 protected:

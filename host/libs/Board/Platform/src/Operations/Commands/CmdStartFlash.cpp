@@ -1,5 +1,5 @@
 #include "CmdStartFlash.h"
-#include "PlatformOperationsConstants.h"
+#include "PlatformCommandConstants.h"
 
 #include <PlatformOperationsStatus.h>
 

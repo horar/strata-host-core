@@ -13,7 +13,7 @@ ProgramSettingsDelegate {
     content: Item {
         height: pathEdit.y + pathEdit.height
 
-        SGWidgets.SGFileSelector {
+        SGWidgets.SGFilePicker {
             id: pathEdit
             width: parent.width
 

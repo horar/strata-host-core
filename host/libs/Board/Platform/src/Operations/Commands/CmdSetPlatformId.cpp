@@ -1,6 +1,6 @@
 #include "CmdSetPlatformId.h"
 
-#include "PlatformOperationsConstants.h"
+#include "PlatformCommandConstants.h"
 #include <PlatformOperationsStatus.h>
 #include <CommandValidator.h>
 #include "logging/LoggingQtCategories.h"

@@ -1,5 +1,5 @@
 #include "CmdFlash.h"
-#include "PlatformOperationsConstants.h"
+#include "PlatformCommandConstants.h"
 
 #include <CommandValidator.h>
 

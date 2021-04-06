@@ -86,10 +86,11 @@ Type BasePlatformOperation::type() const
 }
 
 #ifdef BUILD_TESTING
-void BasePlatformOperation::setResponseTimeout(std::chrono::milliseconds responseInterval)
+void BasePlatformOperation::setResponseTimeouts(std::chrono::milliseconds responseTimeout)
 {
     for (auto it = commandList_.begin(); it != commandList_.end(); ++it) {
-        (*it)->setResponseTimeout(responseInterval);
+        (*it)->setAckTimeout(responseTimeout);
+        (*it)->setNotificationTimeout(responseTimeout);
     }
 }
 #endif
@@ -151,6 +152,9 @@ void BasePlatformOperation::handleCommandFinished(CommandResult result, int stat
         break;
     case CommandResult::Timeout :
         finishOperation(Result::Timeout, QStringLiteral("No response from device."));
+        break;
+    case CommandResult::MissingAck :
+        finishOperation(Result::Failure, QStringLiteral("Command was not acknowledged."));
         break;
     case CommandResult::Unsent :
         finishOperation(Result::Failure, QStringLiteral("Sending command has failed."));

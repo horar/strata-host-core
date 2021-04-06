@@ -19,6 +19,7 @@ enum class CommandResult : int {
     Failure,           // response to command is not successful
     FinaliseOperation, // finish operation (there is no point in continuing)
     Timeout,           // command has timed out
+    MissingAck,        // failure - received notification without previous ACK
     Unsent,            // command was not sent (sending to device has failed)
     Cancel,            // command was cencelled
     DeviceError        // unexpected device error has occured
@@ -89,10 +90,16 @@ public:
     virtual CommandType type() const final;
 
     /*!
-     * Set command response timeout.
-     * \param responseInterval command response timeout
+     * Set response timeout for command ACK.
+     * \param ackTimeout command ACK response timeout
      */
-    virtual void setResponseTimeout(std::chrono::milliseconds responseInterval) final;
+    virtual void setAckTimeout(std::chrono::milliseconds ackTimeout) final;
+
+    /*!
+     * Set response timeout for command notification. This timeout starts after receiving ACK.
+     * \param notificationTimeout command notification response timeout
+     */
+    virtual void setNotificationTimeout(std::chrono::milliseconds notificationTimeout) final;
 
 signals:
     /*!
@@ -157,7 +164,8 @@ protected:
 private:
     void finishCommand(CommandResult result);
     void logWrongResponse(const QByteArray& response);
-    std::chrono::milliseconds responseTimeout_;
+    std::chrono::milliseconds ackTimeout_;
+    std::chrono::milliseconds notificationTimeout_;
     bool deviceSignalsConnected_;
 
 };

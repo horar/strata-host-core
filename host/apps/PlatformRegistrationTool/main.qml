@@ -6,10 +6,10 @@ import Qt.labs.platform 1.1 as QtLabsPlatform
 
 SGWidgets.SGMainWindow {
     id: root
-    width: 1024
-    height: 768
-    minimumWidth: 1024
-    minimumHeight: 768
+    width: 800
+    height: 600
+    minimumWidth: 800
+    minimumHeight: 600
 
     visible: true
     title: qsTr("Platform Registration Tool")

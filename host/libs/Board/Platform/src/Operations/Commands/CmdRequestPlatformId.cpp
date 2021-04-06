@@ -1,5 +1,5 @@
 #include "CmdRequestPlatformId.h"
-#include "PlatformOperationsConstants.h"
+#include "PlatformCommandConstants.h"
 
 #include <CommandValidator.h>
 

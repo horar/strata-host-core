@@ -1,5 +1,5 @@
 #include "CmdStartBootloader.h"
-#include "PlatformOperationsConstants.h"
+#include "PlatformCommandConstants.h"
 #include <PlatformOperationsStatus.h>
 
 #include <CommandValidator.h>

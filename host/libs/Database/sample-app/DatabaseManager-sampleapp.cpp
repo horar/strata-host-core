@@ -16,7 +16,7 @@ const QString endpointUsername = "user_public";
 
 int main() {
     // Open database manager
-    auto changeListener = [](cbl::Replicator, const DatabaseAccess::ActivityLevel) {
+    auto changeListener = [](const DatabaseAccess::ActivityLevel) {
         qDebug() << "DatabaseManager-sampleapp changeListener -> replication status changed!";
     };
 

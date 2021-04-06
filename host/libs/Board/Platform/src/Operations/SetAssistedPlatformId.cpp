@@ -1,8 +1,6 @@
 #include <Operations/SetAssistedPlatformId.h>
 #include "Commands/PlatformCommands.h"
-#include "PlatformOperationsConstants.h"
 #include "logging/LoggingQtCategories.h"
-
 
 namespace strata::platform::operation {
 
@@ -17,9 +15,10 @@ SetAssistedPlatformId::SetAssistedPlatformId(const device::DevicePtr &device)
     // BasePlatformOperation member device_ must be used as a parameter for commands!
 
     std::unique_ptr<CmdSetAssistedPlatformId> cmdSetAssistPlatfId = std::make_unique<CmdSetAssistedPlatformId>(device_);
-    cmdSetAssistPlatfid_ = cmdSetAssistPlatfId.get();
+    cmdSetAssistPlatfId_ = cmdSetAssistPlatfId.get();
 
-    cmdSetAssistPlatfid_->setResponseTimeout(std::chrono::milliseconds(2000));
+    // special case, firmware takes too long to send ACK (see CS-1722)
+    cmdSetAssistPlatfId_->setAckTimeout(std::chrono::milliseconds(2000));
 
     commandList_.emplace_back(std::move(cmdSetAssistPlatfId));
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
@@ -29,17 +28,17 @@ SetAssistedPlatformId::SetAssistedPlatformId(const device::DevicePtr &device)
 
 void SetAssistedPlatformId::setBaseData(const command::CmdSetPlatformIdData &data)
 {
-    cmdSetAssistPlatfid_->setBaseData(data);
+    cmdSetAssistPlatfId_->setBaseData(data);
 }
 
 void SetAssistedPlatformId::setControllerData(const command::CmdSetPlatformIdData &controllerData)
 {
-    cmdSetAssistPlatfid_->setControllerData(controllerData);
+    cmdSetAssistPlatfId_->setControllerData(controllerData);
 }
 
 void SetAssistedPlatformId::setFwClassId(const QString &fwClassId)
 {
-    cmdSetAssistPlatfid_->setFwClassId(fwClassId);
+    cmdSetAssistPlatfId_->setFwClassId(fwClassId);
 }
 
 }  // namespace
