@@ -228,6 +228,7 @@ Item {
         signal setValue(string value);
         signal setContainerHeight(string height);
         signal setContainerWidth(string width);
+        signal resetContainer(string height, string width)
         signal undo();
         signal redo();
 
@@ -271,7 +272,7 @@ Item {
         settings.showScrollBars: false
 
         anchors {
-            top: alertRow.bottom
+           	top: alertRow.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
@@ -283,6 +284,15 @@ Item {
 
         onWidthChanged: {
             channelObject.setContainerWidth(width.toString())
+        }
+        // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
+        // the visibilty changed is called when the window is resized from signals outside of the app
+        Connections {
+            target: mainWindow
+
+            onVisibilityChanged: {
+                channelObject.resetContainer(webEngine.height.toString(), webEngine.width.toString())
+            }
         }
 
         onLoadingChanged: {
