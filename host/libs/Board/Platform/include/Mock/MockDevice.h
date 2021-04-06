@@ -36,6 +36,13 @@ public:
     virtual void close() override;
 
     /**
+     * Create ID for mock device
+     * @param mockName name of the mock device
+     * @return ID for mock device
+     */
+    static QByteArray createDeviceId(const QString& mockName);
+
+    /**
      * Send message to mock device.
      * @param msg message to be written to device
      * @return true if message can be sent, otherwise false

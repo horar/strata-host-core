@@ -40,6 +40,11 @@ void MockDevice::close()
     recordedMessages_.clear();
 }
 
+QByteArray MockDevice::createDeviceId(const QString& mockName)
+{
+    return QByteArray('m' + QByteArray::number(qHash(mockName), 16));
+}
+
 bool MockDevice::sendMessage(const QByteArray msg)
 {
     if (opened_ == false) {
