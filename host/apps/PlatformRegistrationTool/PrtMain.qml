@@ -100,7 +100,13 @@ Item {
             }
 
             onRegistrationControllerRequested: {
-                console.log("not implemented yet")
+                var properties = {
+                    "registrationMode": ProgramDeviceWizard.ControllerOnly,
+                    "jlinkExePath": settingsWizard.jlinkExePath,
+                    "controllerData": settingsWizard.controllerData,
+                }
+
+                startRegistrationProcess(properties)
             }
 
             function startRegistrationProcess(properties) {
