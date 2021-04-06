@@ -24,14 +24,6 @@ Item {
     property int currentVersionId
     property bool externalChanges: false
 
-    Connections {
-        target: mainWindow
-
-        onVisibilityChanged: {
-            channelObject.resetContainer(fileContainerRoot.height.toString(), fileContainerRoot.width.toString())
-        }
-    }
-
     function openFile() {
         let fileText = SGUtilsCpp.readTextFileContent(SGUtilsCpp.urlToLocalFile(model.filepath));
 
@@ -292,6 +284,15 @@ Item {
 
         onWidthChanged: {
             channelObject.setContainerWidth(width.toString())
+        }
+        // This handles the edge case of height and width not being reset after minimizing and/or maximizing the window, 
+        // the visibilty changed is called when the window is resized from signals outside of the app
+        Connections {
+            target: mainWindow
+
+            onVisibilityChanged: {
+                channelObject.resetContainer(webEngine.height.toString(), webEngine.width.toString())
+            }
         }
 
         onLoadingChanged: {
