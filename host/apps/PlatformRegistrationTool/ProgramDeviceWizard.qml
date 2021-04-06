@@ -21,15 +21,35 @@ FocusScope {
 
     property alias jLinkConnector: jLinkConnector
 
-    property bool stateDownloadActive: embeddedStateMachine.stateDownloadActive || assistedStateMachine.stateDownloadActive || controllerStateMachine.stateDownloadActive
-    property bool stateControllerCheckActive: assistedStateMachine.stateControllerCheckActive || controllerStateMachine.stateControllerCheckActive
-    property bool stateControllerRegistrationActive: assistedStateMachine.stateControllerRegistrationActive || controllerStateMachine.stateControllerRegistrationActive
+    property bool stateDownloadActive: embeddedStateMachine.stateDownloadActive
+                                       || assistedStateMachine.stateDownloadActive
+                                       || controllerStateMachine.stateDownloadActive
+
+    property bool stateControllerCheckActive: assistedStateMachine.stateControllerCheckActive
+                                              || controllerStateMachine.stateControllerCheckActive
+
+    property bool stateControllerRegistrationActive: assistedStateMachine.stateControllerRegistrationActive
+                                                     || controllerStateMachine.stateControllerRegistrationActive
+
     property bool stateControllerAlreadyRegisteredActive: assistedStateMachine.stateControllerAlreadyRegisteredActive
-    property bool stateAssistedCheckActive: embeddedStateMachine.stateCheckDeviceActive || assistedStateMachine.stateAssistedDeviceCheckActive
-    property bool stateAssistedRegistrationActive: embeddedStateMachine.stateRegistrationActive || assistedStateMachine.stateAssistedDeviceRegistrationActive
-    property bool stateErrorActive: embeddedStateMachine.stateErrorActive || assistedStateMachine.stateErrorActive || controllerStateMachine.stateErrorActive
-    property bool stateLoopFailedActive: embeddedStateMachine.stateLoopFailedActive || assistedStateMachine.stateLoopFailedActive || controllerStateMachine.stateLoopFailedActive
-    property bool stateLoopSucceedActive: embeddedStateMachine.stateLoopSucceedActive || assistedStateMachine.stateLoopSucceedActive || controllerStateMachine.stateLoopSucceedActive
+
+    property bool stateAssistedCheckActive: embeddedStateMachine.stateCheckDeviceActive
+                                            || assistedStateMachine.stateAssistedDeviceCheckActive
+
+    property bool stateAssistedRegistrationActive: embeddedStateMachine.stateRegistrationActive
+                                                   || assistedStateMachine.stateAssistedDeviceRegistrationActive
+
+    property bool stateErrorActive: embeddedStateMachine.stateErrorActive
+                                    || assistedStateMachine.stateErrorActive
+                                    || controllerStateMachine.stateErrorActive
+
+    property bool stateLoopFailedActive: embeddedStateMachine.stateLoopFailedActive
+                                         || assistedStateMachine.stateLoopFailedActive
+                                         || controllerStateMachine.stateLoopFailedActive
+
+    property bool stateLoopSucceedActive: embeddedStateMachine.stateLoopSucceedActive
+                                          || assistedStateMachine.stateLoopSucceedActive
+                                          || controllerStateMachine.stateLoopSucceedActive
 
     property string statusText
     property string subtext
@@ -262,8 +282,10 @@ FocusScope {
             /* QtBug-85860: When "running" property is changed too fast,
                     BusyIndicator stays hidden, even though "running" property is "true".*/
 
-            property bool runBusyIndicator: wizard.stateDownloadActive || wizard.stateControllerRegistrationActive || wizard.stateAssistedRegistrationActive
             onRunBusyIndicatorChanged: fixRunIndicatorTimer.start()
+            property bool runBusyIndicator: wizard.stateDownloadActive
+                                            || wizard.stateControllerRegistrationActive
+                                            || wizard.stateAssistedRegistrationActive
 
             Timer {
                 id: fixRunIndicatorTimer
