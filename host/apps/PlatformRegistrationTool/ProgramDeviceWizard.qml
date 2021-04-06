@@ -131,7 +131,17 @@ FocusScope {
             leftMargin: 8
         }
 
-        text: "Registration"
+        text: {
+            if (registrationMode === ProgramDeviceWizard.Embedded) {
+                return "Embedded Platform Registration"
+            } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+                return "Assisted Platform Registration"
+            } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
+                return "Controller Only Registration"
+            }
+
+            return ""
+        }
         font.bold: true
         fontSizeMultiplier: 1.6
     }
