@@ -2979,7 +2979,7 @@ function searchForUUID(uuid){
     const range = model.getFullModelRange()
     const uuidMatch = model.findNextMatch(uuid,{lineNumber: range.startLineNumber, column: range.startColumn})
     const endUUidMatch = model.findNextMatch(`end_${uuid}`,{lineNumber: range.startLineNumber, column: range.startColumn})
-    if (uuidMatch !== null) {
+    if (uuidMatch !== null && endUUidMatch !== null) {
         editor.revealLineInCenter(uuidMatch.range.startLineNumber)
         editor.setSelection({startLineNumber: uuidMatch.range.startLineNumber, startColumn: 0, endColumn: endUUidMatch.range.endColumn, endLineNumber: endUUidMatch.range.startLineNumber})
     }
