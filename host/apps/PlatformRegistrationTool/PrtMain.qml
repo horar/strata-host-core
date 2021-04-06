@@ -90,7 +90,7 @@ Item {
 
             onRegistrationAssistedAndControllerRequested: {
                 var properties = {
-                    "registrationMode": ProgramDeviceWizard.ControllerAndAssisted,
+                    "registrationMode": ProgramDeviceWizard.Assisted,
                     "jlinkExePath": settingsWizard.jlinkExePath,
                     "controllerData": settingsWizard.controllerData,
                     "assistedData": settingsWizard.assistedData,

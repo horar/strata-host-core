@@ -39,7 +39,7 @@ FocusScope {
     enum RegistrationMode {
         Unknown,
         Embedded,
-        ControllerAndAssisted,
+        Assisted,
         ControllerOnly
     }
 
@@ -56,7 +56,7 @@ FocusScope {
             console.log(Logger.prtCategory, "bootloader", embeddedStateMachine.bootloaderData.version, embeddedStateMachine.bootloaderData.file, embeddedStateMachine.bootloaderData.timestamp)
 
             embeddedStateMachine.start()
-        } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+        } else if (registrationMode === ProgramDeviceWizard.Assisted) {
 
             console.log(Logger.prtCategory, "assistedDeviceClassId", assistedStateMachine.assistedDeviceClassId)
             console.log(Logger.prtCategory, "assistedDeviceOpn", assistedStateMachine.assistedDeviceOpn)
@@ -126,14 +126,14 @@ FocusScope {
             target: wizard
             property: "statusText"
             value: assistedStateMachine.statusText
-            when: registrationMode === ProgramDeviceWizard.ControllerAndAssisted
+            when: registrationMode === ProgramDeviceWizard.Assisted
         }
 
         Binding {
             target: wizard
             property: "subtext"
             value: assistedStateMachine.subtext
-            when: registrationMode === ProgramDeviceWizard.ControllerAndAssisted
+            when: registrationMode === ProgramDeviceWizard.Assisted
         }
     }
 
@@ -183,7 +183,7 @@ FocusScope {
         text: {
             if (registrationMode === ProgramDeviceWizard.Embedded) {
                 return "Embedded Platform Registration"
-            } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+            } else if (registrationMode === ProgramDeviceWizard.Assisted) {
                 return "Assisted Platform Registration"
             } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
                 return "Controller Only Registration"
@@ -211,8 +211,8 @@ FocusScope {
         nodeAssistedRegistrationHighlight: wizard.stateAssistedRegistrationActive
         nodeDoneHighlight: wizard.stateLoopSucceedActive || wizard.stateLoopFailedActive || wizard.stateErrorActive
 
-        showControllerNodes: registrationMode === ProgramDeviceWizard.ControllerAndAssisted || registrationMode === ProgramDeviceWizard.ControllerOnly
-        showAssistedNodes: registrationMode === ProgramDeviceWizard.ControllerAndAssisted || registrationMode === ProgramDeviceWizard.Embedded
+        showControllerNodes: registrationMode === ProgramDeviceWizard.Assisted || registrationMode === ProgramDeviceWizard.ControllerOnly
+        showAssistedNodes: registrationMode === ProgramDeviceWizard.Assisted || registrationMode === ProgramDeviceWizard.Embedded
     }
 
     CommonCpp.SGJLinkConnector {
@@ -334,7 +334,7 @@ FocusScope {
                     return "qrc:/images/connect-schema-embedded.svg"
                 }
 
-                if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+                if (registrationMode === ProgramDeviceWizard.Assisted) {
                     return "qrc:/images/connect-schema-assisted.svg"
                 }
 
@@ -397,7 +397,7 @@ FocusScope {
             }
 
             embeddedStateMachine.bootloaderData = wizard.embeddedData.bootloader[highestBootloaderIndex]
-        } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+        } else if (registrationMode === ProgramDeviceWizard.Assisted) {
 
             assistedStateMachine.controllerClassId = wizard.controllerData.class_id
             assistedStateMachine.controllerOpn = wizard.controllerData.opn
