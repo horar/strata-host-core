@@ -42,11 +42,13 @@ QtObject {
         } else {
             // todo: disable visual editor controls
             if (loader.children[0] && loader.children[0].objectName !== "UIBase") {
-                loader.setSource("qrc:/partial-views/SGLoadError.qml") // todo: modify primary text in SGLoadError as well as error message, allow more specific message here than "platform user interface"
+                loader.setSource("qrc:/partial-views/SGLoadError.qml")
                 console.log("Visual Editor error: file does not derive from UIBase")
-                loader.item.error_message = "File does not derive from UIBase"
+                loader.item.error_intro = "Unable to display file"
+                loader.item.error_message = "File does not derive from UIBase. UIBase must be root object to use visual editor."
             } else {
                 loader.setSource("qrc:/partial-views/SGLoadError.qml")
+                loader.item.error_intro = "Unable to display file"
                 loader.item.error_message = "Build error, see logs"
             }
         }
