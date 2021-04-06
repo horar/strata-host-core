@@ -506,6 +506,8 @@ FocusScope {
     }
 
     function closeWizard() {
+        console.debug(Logger.prtCategory, "program device wizard is about to close")
+
         StackView.view.pop();
     }
 }
