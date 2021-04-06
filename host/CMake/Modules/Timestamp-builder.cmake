@@ -2,7 +2,7 @@
 
 # TODO: add MSVC/Xcode support
 if(NOT "${BUILD_TYPE}" STREQUAL "Debug")
-    string(TIMESTAMP formattedTimestamp "%d.%m.%Y %H:%M:%S")
+    string(TIMESTAMP formattedTimestamp UTC)
     message(STATUS "Timestamp for ${PROJECT_NAME}: ${formattedTimestamp}")
 else()
     string(TIMESTAMP formattedTimestamp "N/A (debug build)")

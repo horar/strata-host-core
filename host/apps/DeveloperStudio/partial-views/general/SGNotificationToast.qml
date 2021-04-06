@@ -85,7 +85,6 @@ Rectangle {
             if(interval > 0){
                 closeAlertTimer.start()
             }
-
         }
     }
 

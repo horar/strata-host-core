@@ -211,11 +211,13 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
     }
 
     if (channels.empty() == false) {
-        auto channels_temp = fleece::MutableArray::newArray();
-        for (auto &channel : channels) {
-            channels_temp.append(channel);
+        if (channels.size() != 1 || channels[0] != database_name_) {
+            auto channels_temp = fleece::MutableArray::newArray();
+            for (auto &channel : channels) {
+                channels_temp.append(channel);
+            }
+            replicator_configuration_->channels = channels_temp;
         }
-        replicator_configuration_->channels = channels_temp;
     }
 
     replicator_configuration_->continuous = continuous;
