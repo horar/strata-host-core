@@ -17,6 +17,8 @@ var customProperties = []
 const currentItems = {}
 var editor = null
 
+var otherProperties = {}
+
 var bottomOfFile = null;
 var topOfFile = null;
 var fullRange = null;
@@ -54,6 +56,7 @@ function removeOnCalls(properties) {
 function convertStrArrayToObjArray(key, properties, isProperty = false, isIdReference = false, metaParent = "") {
     var propertySuggestions = []
     qtObjectPropertyValues[key] = []
+
     for (var i = 0; i < properties.length; i++) {
         if (properties[i].includes("()")) {
             propertySuggestions.push(createDynamicProperty(properties[i], true))
@@ -649,7 +652,6 @@ function registerQmlAsLanguage() {
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
                     if (!(nextCheck.range.startLineNumber === bottomOfFile.range.startLineNumber && prevCheck.range.startLineNumber === topOfFile.range.startLineNumber)) {
                         getTypeID(model)
-                        getPropertyType(model)
                     }
                 }
                 if ((position.lineNumber < topOfFile.range.startLineNumber || position.lineNumber > bottomOfFile.range.startLineNumber)) {
@@ -661,7 +663,11 @@ function registerQmlAsLanguage() {
                     const activeWord = active.substring(0, active.length - 1).split('.')[0]
                     const prevParent = findPreviousBracketParent(model, position)
                     if (qtObjectKeyValues.hasOwnProperty(activeWord)) {
-                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties, true, qtObjectKeyValues[activeWord].isId)
+                        var others = []
+                        if(otherProperties.hasOwnProperty(activeWord)){
+                                others = otherProperties[activeWord]
+                        }
+                        convertStrArrayToObjArray(activeWord, qtObjectKeyValues[activeWord].properties.concat(others), true, qtObjectKeyValues[activeWord].isId)
                         return { suggestions: qtObjectPropertyValues[activeWord] }
                     } else if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent) && qtObjectMetaPropertyValues[prevParent].hasOwnProperty(activeWord)) {
                         convertStrArrayToObjArray(activeWord, qtObjectMetaPropertyValues[prevParent][activeWord], true, true, null)
@@ -785,6 +791,7 @@ function registerQmlAsLanguage() {
         var splitContent = content.replace("\t", "").split(/\{|\t/)
         var bracketWord = splitContent[0].trim()
         if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
+
             convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties.concat(customProperties), qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId, bracketWord)
             if (currentItems[bracketWord] === undefined) {
                 currentItems[bracketWord] = {}
@@ -877,6 +884,12 @@ function registerQmlAsLanguage() {
                 var getLine = model.getLineContent(getPrevId.range.startLineNumber)
                 var id = getLine.replace("\t","").split(":")[1].trim()
                 qtObjectKeyValues[qtIdPairs[getPrevId.range.startLineNumber][id]].properties.push(propertyWord)
+                if(otherProperties.hasOwnProperty(id)){
+                    otherProperties[id].push(propertyWord)
+                    otherProperties[id] = removeDuplicates(otherProperties[id])
+                } else {
+                    otherProperties[id] = []
+                }
             }
             
             nextPosition = {lineNumber: nextProperty.range.startLineNumber + 1, column: nextProperty.range.startColumn}
