@@ -7,7 +7,7 @@ using namespace strata::Database;
 
 UserAccessBrowser::UserAccessBrowser(QQmlApplicationEngine *engine, QObject *parent) : QObject(parent) {
     engine_ = engine;
-    auto changeListenerCallback = std::bind(&UserAccessBrowser::changeListener, this, std::placeholders::_1, std::placeholders::_2);
+    auto changeListenerCallback = std::bind(&UserAccessBrowser::changeListener, this, std::placeholders::_1);
 
     databaseManager_ = std::make_unique<DatabaseManager>();
     if (databaseManager_->init("", endpointURL_, changeListenerCallback) == false) {
@@ -16,7 +16,7 @@ UserAccessBrowser::UserAccessBrowser(QQmlApplicationEngine *engine, QObject *par
 }
 
 void UserAccessBrowser::login(const QString &loginUsername) {
-    auto changeListenerCallback = std::bind(&UserAccessBrowser::changeListener, this, std::placeholders::_1, std::placeholders::_2);
+    auto changeListenerCallback = std::bind(&UserAccessBrowser::changeListener, this, std::placeholders::_1);
     DB_ = databaseManager_->login(loginUsername, "all", changeListenerCallback);
 
     loginUsername_ = loginUsername;
@@ -41,7 +41,7 @@ void UserAccessBrowser::clearUserDir(const QString &loginUsername) {
     DB_->clearUserDir(loginUsername, databaseManager_->getDbDirName());
 }
 
-void UserAccessBrowser::changeListener(cbl::Replicator, const DatabaseAccess::ActivityLevel &status) {
+void UserAccessBrowser::changeListener(const DatabaseAccess::ActivityLevel &status) {
     if (databaseManager_ && status == DatabaseAccess::ActivityLevel::ReplicatorIdle) {
         auto allChannelsGranted = databaseManager_->readChannelsAccessGrantedOfUser(loginUsername_);
         auto allChannelsDenied = databaseManager_->readChannelsAccessDeniedOfUser(loginUsername_);

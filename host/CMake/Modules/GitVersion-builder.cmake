@@ -66,19 +66,21 @@ else()
     message(FATAL_ERROR "Not a git cloned project. Can't create version string from git tag!!")
 endif()
 
-function(process_config_file PROJECT_NAME INPUT_DIR WORKING_DIR DEPLOYMENT_DIR CONFIG_FILENAME)
-    message(STATUS "Processing ${PROJECT_NAME} ${CONFIG_FILENAME} file...")
-
+function(process_config_file PROJECT_NAME INPUT_DIR WORKING_DIR DEPLOYMENT_DIR CONFIG_FILENAMES)
     string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%d")
 
-    file(READ ${INPUT_DIR}/${CONFIG_FILENAME}.in inFile_original)
-    string(CONFIGURE "${inFile_original}" inFile_updated @ONLY)
-    file(WRITE ${WORKING_DIR}/${CONFIG_FILENAME}.tmp "${inFile_updated}")
-    execute_process(
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${WORKING_DIR}/${CONFIG_FILENAME}.tmp
-        ${DEPLOYMENT_DIR}/${CONFIG_FILENAME}
-    )
+    foreach(configFileName IN LISTS CONFIG_FILENAMES)
+        message(STATUS "Processing ${PROJECT_NAME} ${configFileName} file...")
+
+        file(READ ${INPUT_DIR}/${configFileName}.in inFile_original)
+        string(CONFIGURE "${inFile_original}" inFile_updated @ONLY)
+        file(WRITE ${WORKING_DIR}/${configFileName}.tmp "${inFile_updated}")
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${WORKING_DIR}/${configFileName}.tmp
+            ${DEPLOYMENT_DIR}/${configFileName}
+        )
+    endforeach()
 endfunction()
 
 function(process_resource_file PROJECT_NAME INPUT_DIR WORKING_DIR DEPLOYMENT_DIR RESOURCE_FILENAME)
@@ -92,7 +94,7 @@ endfunction()
 if(EXISTS ${PROJECT_DIR}/resources/qtifw/packages/meta/package.xml.in AND CMAKE_BUILD_TYPE STREQUAL "OTA")
     process_config_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta/ ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta package.xml)
 else()
-    process_config_file(${PROJECT_NAME} ${INPUT_DIR} ${WORKING_DIR} ${WORKING_DIR} ${VERSION_FILE})
+    process_config_file(${PROJECT_NAME} ${INPUT_DIR} ${WORKING_DIR} ${WORKING_DIR} "${VERSION_FILES}")
     if(APPLE AND PROJECT_MACBUNDLE)
         process_config_file(${PROJECT_NAME} ${INPUT_DIR} ${WORKING_DIR} ${WORKING_DIR} Info.plist)
     elseif(WIN32)
