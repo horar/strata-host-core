@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div id="container" style="width: 100%; height: 300px;"></div>
+    <div id="container" style="width: 100%; height: 100%;"></div>
     <!-- 
             the "loader.js" adds the editor and initializes the require variable
             the "editor.main.js" inits and defines the MonacoEditor
@@ -44,8 +44,9 @@
                 editor.layout()
             });
 
-            link.goToUUID.connect(function (uuid){
+            link.goToUUID.connect(function (uuid, err){
                 searchForUUID(uuid)
+                link.checkForErrors(err_flag,err_msg)
             })
 
             link.undo.connect(function () {

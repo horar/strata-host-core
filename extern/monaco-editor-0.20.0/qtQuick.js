@@ -2974,7 +2974,10 @@ function registerQmlAsLanguage() {
 /*
     External facing functions that will be used in conjunction with the Visual Editor
 */
-function searchForUUID(uuid){
+var err_flag = false
+var err_msg = ""
+
+function searchForUUID(uuid, err){
     const model = editor.getModel()
     const range = model.getFullModelRange()
     const uuidMatch = model.findNextMatch(uuid,{lineNumber: range.startLineNumber, column: range.startColumn})
@@ -2982,5 +2985,18 @@ function searchForUUID(uuid){
     if (uuidMatch !== null && endUUidMatch !== null) {
         editor.revealLineInCenter(uuidMatch.range.startLineNumber)
         editor.setSelection({startLineNumber: uuidMatch.range.startLineNumber, startColumn: 0, endColumn: endUUidMatch.range.endColumn, endLineNumber: endUUidMatch.range.startLineNumber})
+    } else {
+        err_flag = true
+        consoleErrorMessage("uuid_search")
+    }
+}
+
+function consoleErrorMessage(type){
+    switch(type){
+        case "uuid_search": err_msg = "The uuid search failed to find and select specified widget"
+        break;
+        case "parent_search": err_msg = "This parent is not recognized, either it needs to be imported or defined"
+        break;
+        default: err_msg = "There is an error within the monaco editor that is causing a failure in suggestions"
     }
 }
