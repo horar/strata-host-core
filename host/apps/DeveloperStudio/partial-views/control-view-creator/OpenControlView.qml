@@ -11,9 +11,8 @@ import tech.strata.fonts 1.0
 import "../general"
 import "components/"
 
-Rectangle {
+Item {
     id: openProjectContainer
-    color: "#ccc"
 
     property url url
     property string configFileName: "previousProjects.json"
@@ -136,6 +135,17 @@ Rectangle {
         }
     }
 
+    FileDialog {
+        id: fileDialog
+        nameFilters: ["*.qrc"]
+        folder: fileDialog.shortcuts.home
+        onAccepted: {
+            if (fileDialog.fileUrl.toString() !== "") {
+                fileOutput.text = fileDialog.fileUrl
+            }
+        }
+    }
+
     ColumnLayout {
         id: recentProjColumn
         anchors {
@@ -150,17 +160,6 @@ Rectangle {
             color: "red"
         }
 
-        FileDialog {
-            id: fileDialog
-            nameFilters: ["*.qrc"]
-            folder: fileDialog.shortcuts.home
-            onAccepted: {
-                if (fileDialog.fileUrl.toString() !== "") {
-                    fileOutput.text = fileDialog.fileUrl
-                }
-            }
-        }
-
         SGText {
             id: recentProjText
             color: "#666"
@@ -171,12 +170,11 @@ Rectangle {
 
         ListView {
             id: listView
-            implicitWidth: contentItem.childrenRect.width
-            implicitHeight: contentItem.childrenRect.height
+            Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.maximumHeight: implicitHeight
+            implicitHeight: contentHeight
             orientation: ListView.Vertical
-            highlightFollowsCurrentItem: true
             spacing: 10
             clip: true
 
@@ -186,8 +184,8 @@ Rectangle {
 
             delegate:  Rectangle {
                 id: projectUrlContainer
-                height: 40
-                width: recentProjColumn.width
+                implicitHeight: 40
+                width: listView.width
                 color: removeProjectMenu.opened  ? "#aaa" : urlMouseArea.containsMouse ? "#eee" : "#ddd"
 
                 RowLayout {
@@ -289,15 +287,13 @@ Rectangle {
         }
 
         RowLayout {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
 
             SGControlViewButton {
                 Layout.preferredHeight: 35
                 Layout.preferredWidth: 150
                 text: "Browse"
 
-                function onClicked() {
+                onClicked: {
                     fileDialog.open()
                 }
             }
@@ -307,30 +303,45 @@ Rectangle {
                 Layout.fillWidth: true
                 color: "#eee"
                 border.color: "#444"
-                border.width: 0.5
+                border.width: 1
 
-                SGTextInput {
+                SGText {
                     id: fileOutput
-
-                    anchors.fill: parent
-                    text: "Select a .qrc file..."
                     color: "#333"
+                    anchors {
+                        margins: 8
+                        fill: parent
+                    }
+                    elide: Text.ElideLeft
                     verticalAlignment: Text.AlignVCenter
-                    selectByMouse: true
-                    leftPadding: 10
-                    contextMenuEnabled: true
+                }
+
+                SGText {
+                    visible: fileOutput.text === ""
+                    text: "Select a .qrc file..."
+                    color: "#aaa"
+                    anchors {
+                        margins: 8
+                        fill: parent
+                    }
+                    verticalAlignment: Text.AlignVCenter
                 }
             }
         }
 
-        SGControlViewButton {
-            id: openbutton
+        Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 35
-            text: "Open Project"
 
-            function onClicked() {
-                if (fileOutput.text !== "" && fileOutput.text !== "Select a .qrc file...") {
+            SGControlViewButton {
+                id: openbutton
+                anchors {
+                    fill: parent
+                }
+                text: "Open Project"
+                enabled: fileOutput.text !== ""
+
+                onClicked: {
                     let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
 
                     if (unsavedFileCount > 0 && openProjectContainer.url !== fileDialog.fileUrl) {
@@ -341,10 +352,23 @@ Rectangle {
                             controlViewCreatorRoot.isConfirmCloseOpen = true
                         }
                     } else {
-                        if (openProject(fileOutput.text,true)) {
-                            fileOutput.text = "Select a .qrc file..."
+                        if (openProject(fileOutput.text, true)) {
+                            fileOutput.text = ""
                         }
                     }
+                }
+            }
+
+            MouseArea {
+                id: createButtonToolTipShow
+                anchors.fill: parent
+                hoverEnabled: visible
+                enabled: visible
+                visible: !openbutton.enabled
+
+                ToolTip {
+                    text: "Please browse for a QRC project file to open"
+                    visible: createButtonToolTipShow.containsMouse
                 }
             }
         }
