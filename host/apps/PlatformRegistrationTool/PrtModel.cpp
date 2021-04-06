@@ -180,16 +180,21 @@ void PrtModel::downloadBinaries(
 {
 
     //use this to fake it
-    QTimer::singleShot(2500, this, [this](){
+    QTimer::singleShot(2500, this, [this, bootloaderUrl, firmwareUrl](){
         bool ok = fakeDownloadBinaries(
-                    "/Users/zbh6nr/dev/strata firmware/with_assisted/bootloader-release-erase.bin",
-                    "/Users/zbh6nr/dev/strata firmware/with_assisted/str-level-shifters-gevb-v002.bin");
+                    bootloaderUrl.isEmpty() ? "" : "/Users/zbh6nr/dev/strata firmware/with_assisted/bootloader-release-erase.bin",
+                    firmwareUrl.isEmpty() ? "" : "/Users/zbh6nr/dev/strata firmware/with_assisted/str-level-shifters-gevb-v002.bin");
 
         if (ok == false) {
             emit downloadFirmwareFinished("Fake download failed");
         } else {
-            qDebug() << "bootloader" << bootloaderFile_->fileName();
-            qDebug() << "firmware" << firmwareFile_->fileName();
+            if (bootloaderFile_.isNull() == false) {
+                qDebug() << "bootloader" << bootloaderFile_->fileName();
+            }
+
+            if (firmwareFile_.isNull() == false) {
+                qDebug() << "firmware" << firmwareFile_->fileName();
+            }
 
             emit downloadFirmwareFinished("");
         }
@@ -214,28 +219,37 @@ void PrtModel::downloadBinaries(
 
     QList<strata::DownloadManager::DownloadRequestItem> downloadRequestList;
 
-    strata::DownloadManager::DownloadRequestItem bootloaderItem;
-    bootloaderItem.url = cloudServiceUrl_.resolved(bootloaderUrl);
-    bootloaderItem.md5 = bootloaderMd5;
-    bootloaderItem.filePath = bootloaderFile_->fileName();
-    downloadRequestList << bootloaderItem;
+    if (bootloaderUrl.isEmpty() == false) {
+        strata::DownloadManager::DownloadRequestItem bootloaderItem;
+        bootloaderItem.url = cloudServiceUrl_.resolved(bootloaderUrl);
+        bootloaderItem.md5 = bootloaderMd5;
+        bootloaderItem.filePath = bootloaderFile_->fileName();
+        downloadRequestList << bootloaderItem;
 
-    strata::DownloadManager::DownloadRequestItem firmwareItem;
-    firmwareItem.url = cloudServiceUrl_.resolved(firmwareUrl);
-    firmwareItem.md5 = firmwareMd5;
-    firmwareItem.filePath = firmwareFile_->fileName();
-    downloadRequestList << firmwareItem;
+        qCDebug(logCategoryPrt) << "download bootloader" << bootloaderItem.url.toString()
+                                << "into" << bootloaderItem.filePath;
+    }
+
+    if (firmwareUrl.isEmpty() == false) {
+        strata::DownloadManager::DownloadRequestItem firmwareItem;
+        firmwareItem.url = cloudServiceUrl_.resolved(firmwareUrl);
+        firmwareItem.md5 = firmwareMd5;
+        firmwareItem.filePath = firmwareFile_->fileName();
+        downloadRequestList << firmwareItem;
+
+        qCDebug(logCategoryPrt) << "download firmware" << firmwareItem.url.toString()
+                                << "into" << firmwareItem.filePath;
+    }
+
+    if (downloadRequestList.isEmpty()) {
+        qCWarning(logCategoryPrt) << "nothing to download";
+        return;
+    }
 
     strata::DownloadManager::Settings settings;
     settings.oneFailsAllFail = true;
     settings.keepOriginalName = true;
     settings.removeCorruptedFile = false;
-
-    qCDebug(logCategoryPrt) << "download bootloader" << bootloaderItem.url.toString()
-                            << "into" << bootloaderItem.filePath;
-
-    qCDebug(logCategoryPrt) << "download firmware" << firmwareItem.url.toString()
-                            << "into" << firmwareItem.filePath;
 
     downloadJobId_ = downloadManager_.download(downloadRequestList, settings);
 
@@ -522,34 +536,38 @@ void PrtModel::downloadFinishedHandler(QString groupId, QString errorString)
 bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString &firmwareUrl)
 {
     //bootloader
-    QFile bootloaderFile(bootloaderUrl);
-    if (bootloaderFile.open(QIODevice::ReadOnly) == false) {
-        qCCritical(logCategoryPrt()) << "cannot open bootloader file";
-        return false;
+    if (bootloaderUrl.isEmpty() == false) {
+        QFile bootloaderFile(bootloaderUrl);
+        if (bootloaderFile.open(QIODevice::ReadOnly) == false) {
+            qCCritical(logCategoryPrt()) << "cannot open bootloader file";
+            return false;
+        }
+        QByteArray data = bootloaderFile.readAll();
+
+        bootloaderFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-bootloader-XXXXXX.bin"), this);
+        bootloaderFile_->open();
+        bootloaderFile_->write(data);
+        bootloaderFile_->close();
+        bootloaderFile.close();
+
+        emit bootloaderFilepathChanged();
     }
-    QByteArray data = bootloaderFile.readAll();
-
-    bootloaderFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-bootloader-XXXXXX.bin"), this);
-    bootloaderFile_->open();
-    bootloaderFile_->write(data);
-    bootloaderFile_->close();
-    bootloaderFile.close();
-
-    emit bootloaderFilepathChanged();
 
     //firmware
-    QFile firmwareFile(firmwareUrl);
-    if (firmwareFile.open(QIODevice::ReadOnly) == false) {
-        qCCritical(logCategoryPrt()) << "cannot open firmware file";
-        return false;
-    }
-    data = firmwareFile.readAll();
+    if (firmwareUrl.isEmpty() == false) {
+        QFile firmwareFile(firmwareUrl);
+        if (firmwareFile.open(QIODevice::ReadOnly) == false) {
+            qCCritical(logCategoryPrt()) << "cannot open firmware file";
+            return false;
+        }
+        QByteArray data = firmwareFile.readAll();
 
-    firmwareFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-firmware-XXXXXX.bin"), this);
-    firmwareFile_->open();
-    firmwareFile_->write(data);
-    firmwareFile_->close();
-    firmwareFile.close();
+        firmwareFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-firmware-XXXXXX.bin"), this);
+        firmwareFile_->open();
+        firmwareFile_->write(data);
+        firmwareFile_->close();
+        firmwareFile.close();
+    }
 
     return true;
 }
