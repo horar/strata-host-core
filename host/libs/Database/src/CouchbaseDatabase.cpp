@@ -320,6 +320,9 @@ void CouchbaseDatabase::stopReplicator() {
     }
     if (replicator_) {
         replicator_->stop();
+        replicator_ = nullptr;
+        ctoken_ = nullptr;
+        dtoken_ = nullptr;
     }
 }
 
@@ -434,6 +437,8 @@ std::string CouchbaseDatabase::getReplicatorStatusString() {
             return "Idle";
         case SGActivityLevel::CBLReplicatorBusy:
             return "Busy";
+        default:
+            return "";
     }
 }
 
