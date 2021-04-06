@@ -170,23 +170,7 @@ Item {
                 alternativeColorEnabled: true
                 font.bold: true
                 text: prtModel.debugBuild ? "Production server in use" : "Non-production server in use"
-            }            
+            }
         }
     }
-
-    function resolveFirmwareAndBootloader(registrationMode, embeddedData, assistedData, controllerData) {
-
-        if (registrationMode === ProgramDeviceWizard.Embedded) {
-            latestFirmwareIndex =
-
-            console.log("best firmware:", embeddedData.firmware[latestFirmwareIndex].version, embeddedData.firmware[latestFirmwareIndex].timestamp)
-
-        } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
-
-        } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
-
-        }
-    }
-
-
 }
