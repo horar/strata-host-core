@@ -21,38 +21,45 @@ FocusScope {
 
     property alias jLinkConnector: jLinkConnector
 
-    property bool stateDownloadActive: embeddedStateMachine.stateDownloadActive || assistedStateMachine.stateDownloadActive
+    property bool stateDownloadActive: embeddedStateMachine.stateDownloadActive
+                                       || assistedStateMachine.stateDownloadActive
+                                       || controllerStateMachine.stateDownloadActive
+
     property bool stateControllerCheckActive: assistedStateMachine.stateControllerCheckActive
+                                              || controllerStateMachine.stateControllerCheckActive
+
     property bool stateControllerRegistrationActive: assistedStateMachine.stateControllerRegistrationActive
+                                                     || controllerStateMachine.stateControllerRegistrationActive
+
     property bool stateControllerAlreadyRegisteredActive: assistedStateMachine.stateControllerAlreadyRegisteredActive
-    property bool stateAssistedCheckActive: embeddedStateMachine.stateCheckDeviceActive || assistedStateMachine.stateAssistedDeviceCheckActive
-    property bool stateAssistedRegistrationActive: embeddedStateMachine.stateRegistrationActive || assistedStateMachine.stateAssistedDeviceRegistrationActive
-    property bool stateErrorActive: embeddedStateMachine.stateErrorActive || assistedStateMachine.stateErrorActive
-    property bool stateLoopFailedActive: embeddedStateMachine.stateLoopFailedActive || assistedStateMachine.stateLoopFailedActive
-    property bool stateLoopSucceedActive: embeddedStateMachine.stateLoopSucceedActive || assistedStateMachine.stateLoopSucceedActive
 
-    property string statusText: {
-        if (registrationMode === ProgramDeviceWizard.Embedded) {
-            return embeddedStateMachine.statusText
-        }
+    property bool stateAssistedCheckActive: embeddedStateMachine.stateCheckDeviceActive
+                                            || assistedStateMachine.stateAssistedDeviceCheckActive
 
-        return assistedStateMachine.statusText
-    }
+    property bool stateAssistedRegistrationActive: embeddedStateMachine.stateRegistrationActive
+                                                   || assistedStateMachine.stateAssistedDeviceRegistrationActive
 
-    property string subtext: {
-        if (registrationMode === ProgramDeviceWizard.Embedded) {
-            return embeddedStateMachine.subtext
-        }
+    property bool stateErrorActive: embeddedStateMachine.stateErrorActive
+                                    || assistedStateMachine.stateErrorActive
+                                    || controllerStateMachine.stateErrorActive
 
-        return assistedStateMachine.subtext
-    }
+    property bool stateLoopFailedActive: embeddedStateMachine.stateLoopFailedActive
+                                         || assistedStateMachine.stateLoopFailedActive
+                                         || controllerStateMachine.stateLoopFailedActive
+
+    property bool stateLoopSucceedActive: embeddedStateMachine.stateLoopSucceedActive
+                                          || assistedStateMachine.stateLoopSucceedActive
+                                          || controllerStateMachine.stateLoopSucceedActive
+
+    property string statusText
+    property string subtext
 
     clip: true
 
     enum RegistrationMode {
         Unknown,
         Embedded,
-        ControllerAndAssisted,
+        Assisted,
         ControllerOnly
     }
 
@@ -69,7 +76,7 @@ FocusScope {
             console.log(Logger.prtCategory, "bootloader", embeddedStateMachine.bootloaderData.version, embeddedStateMachine.bootloaderData.file, embeddedStateMachine.bootloaderData.timestamp)
 
             embeddedStateMachine.start()
-        } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+        } else if (registrationMode === ProgramDeviceWizard.Assisted) {
 
             console.log(Logger.prtCategory, "assistedDeviceClassId", assistedStateMachine.assistedDeviceClassId)
             console.log(Logger.prtCategory, "assistedDeviceOpn", assistedStateMachine.assistedDeviceOpn)
@@ -82,7 +89,14 @@ FocusScope {
 
             assistedStateMachine.start()
         } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
-            console.error(Logger.prtCategory, "controller only mode is not implemented yet")
+
+            console.log(Logger.prtCategory, "controllerClassId", controllerStateMachine.controllerClassId)
+            console.log(Logger.prtCategory, "controllerOpn", controllerStateMachine.controllerOpn)
+            console.log(Logger.prtCategory, "mcuJlinkDevice", controllerStateMachine.jlinkDevice)
+            console.log(Logger.prtCategory, "mcuBootloaderStartAddress", controllerStateMachine.bootloaderStartAddress)
+            console.log(Logger.prtCategory, "bootloader", controllerStateMachine.bootloaderData.version, controllerStateMachine.bootloaderData.file, controllerStateMachine.bootloaderData.timestamp)
+
+            controllerStateMachine.start()
         }
     }
 
@@ -92,12 +106,25 @@ FocusScope {
         running: false
         prtModel: wizard.prtModel
         jLinkConnector: wizard.jLinkConnector
-        registrationMode: wizard.registrationMode
         jlinkExePath: wizard.jlinkExePath
         breakButton: breakBtn
         continueButton: continueBtn
         onExitWizardRequested: {
             closeWizard()
+        }
+
+        Binding {
+            target: wizard
+            property: "statusText"
+            value: embeddedStateMachine.statusText
+            when: registrationMode === ProgramDeviceWizard.Embedded
+        }
+
+        Binding {
+            target: wizard
+            property: "subtext"
+            value: embeddedStateMachine.subtext
+            when: registrationMode === ProgramDeviceWizard.Embedded
         }
     }
 
@@ -107,13 +134,55 @@ FocusScope {
         running: false
         prtModel: wizard.prtModel
         jLinkConnector: wizard.jLinkConnector
-        registrationMode: wizard.registrationMode
         jlinkExePath: wizard.jlinkExePath
         breakButton: breakBtn
         continueButton: continueBtn
 
         onExitWizardRequested: {
             closeWizard()
+        }
+
+        Binding {
+            target: wizard
+            property: "statusText"
+            value: assistedStateMachine.statusText
+            when: registrationMode === ProgramDeviceWizard.Assisted
+        }
+
+        Binding {
+            target: wizard
+            property: "subtext"
+            value: assistedStateMachine.subtext
+            when: registrationMode === ProgramDeviceWizard.Assisted
+        }
+    }
+
+    ControllerModeStateMachine {
+        id: controllerStateMachine
+
+        running: false
+        prtModel: wizard.prtModel
+        jLinkConnector: wizard.jLinkConnector
+        jlinkExePath: wizard.jlinkExePath
+        breakButton: breakBtn
+        continueButton: continueBtn
+
+        onExitWizardRequested: {
+            closeWizard()
+        }
+
+        Binding {
+            target: wizard
+            property: "statusText"
+            value: controllerStateMachine.statusText
+            when: registrationMode === ProgramDeviceWizard.ControllerOnly
+        }
+
+        Binding {
+            target: wizard
+            property: "subtext"
+            value: controllerStateMachine.subtext
+            when: registrationMode === ProgramDeviceWizard.ControllerOnly
         }
     }
 
@@ -131,7 +200,17 @@ FocusScope {
             leftMargin: 8
         }
 
-        text: "Registration"
+        text: {
+            if (registrationMode === ProgramDeviceWizard.Embedded) {
+                return "Embedded Platform Registration"
+            } else if (registrationMode === ProgramDeviceWizard.Assisted) {
+                return "Assisted Platform Registration"
+            } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
+                return "Controller Only Registration"
+            }
+
+            return ""
+        }
         font.bold: true
         fontSizeMultiplier: 1.6
     }
@@ -146,16 +225,14 @@ FocusScope {
         }
 
         nodeDownloadHighlight: wizard.stateDownloadActive
-
         nodeControllerCheckHighlight: wizard.stateControllerCheckActive
         nodeControllerRegistrationHighlight: wizard.stateControllerRegistrationActive || wizard.stateControllerAlreadyRegisteredActive
         nodeAssistedCheckHighlight: wizard.stateAssistedCheckActive
         nodeAssistedRegistrationHighlight: wizard.stateAssistedRegistrationActive
-
         nodeDoneHighlight: wizard.stateLoopSucceedActive || wizard.stateLoopFailedActive || wizard.stateErrorActive
 
-        showControllerNodes: registrationMode === ProgramDeviceWizard.ControllerAndAssisted || registrationMode === ProgramDeviceWizard.ControllerOnly
-        showAssistedNodes: registrationMode === ProgramDeviceWizard.ControllerAndAssisted || registrationMode === ProgramDeviceWizard.Embedded
+        showControllerNodes: registrationMode === ProgramDeviceWizard.Assisted || registrationMode === ProgramDeviceWizard.ControllerOnly
+        showAssistedNodes: registrationMode === ProgramDeviceWizard.Assisted || registrationMode === ProgramDeviceWizard.Embedded
     }
 
     CommonCpp.SGJLinkConnector {
@@ -205,8 +282,10 @@ FocusScope {
             /* QtBug-85860: When "running" property is changed too fast,
                     BusyIndicator stays hidden, even though "running" property is "true".*/
 
-            property bool runBusyIndicator: wizard.stateDownloadActive || wizard.stateControllerRegistrationActive || wizard.stateAssistedRegistrationActive
             onRunBusyIndicatorChanged: fixRunIndicatorTimer.start()
+            property bool runBusyIndicator: wizard.stateDownloadActive
+                                            || wizard.stateControllerRegistrationActive
+                                            || wizard.stateAssistedRegistrationActive
 
             Timer {
                 id: fixRunIndicatorTimer
@@ -220,6 +299,7 @@ FocusScope {
                 id: busyIndicator
                 width: parent.width
                 height: parent.height
+                running: false
             }
 
             SGWidgets.SGIcon {
@@ -277,7 +357,7 @@ FocusScope {
                     return "qrc:/images/connect-schema-embedded.svg"
                 }
 
-                if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+                if (registrationMode === ProgramDeviceWizard.Assisted) {
                     return "qrc:/images/connect-schema-assisted.svg"
                 }
 
@@ -340,7 +420,7 @@ FocusScope {
             }
 
             embeddedStateMachine.bootloaderData = wizard.embeddedData.bootloader[highestBootloaderIndex]
-        } else if (registrationMode === ProgramDeviceWizard.ControllerAndAssisted) {
+        } else if (registrationMode === ProgramDeviceWizard.Assisted) {
 
             assistedStateMachine.controllerClassId = wizard.controllerData.class_id
             assistedStateMachine.controllerOpn = wizard.controllerData.opn
@@ -356,9 +436,9 @@ FocusScope {
 
             assistedStateMachine.bootloaderData = wizard.controllerData.bootloader[highestBootloaderIndex]
 
-            var controller_class_id = assistedStateMachine.bootloaderData.controller_class_id
+            var controllerClassId = assistedStateMachine.bootloaderData.controller_class_id
 
-            var highestFirmwareIndex = findHighestBinary(wizard.assistedData.firmware, controller_class_id)
+            var highestFirmwareIndex = findHighestBinary(wizard.assistedData.firmware, controllerClassId)
             if (highestFirmwareIndex < 0) {
                 console.error(Logger.prtCategory,"no intersection for firmware and controller combination", JSON.stringify(wizard.assistedData))
                 return
@@ -368,9 +448,20 @@ FocusScope {
             assistedStateMachine.assistedDeviceClassId = wizard.assistedData.class_id
             assistedStateMachine.assistedDeviceOpn = wizard.assistedData.opn
 
-
         } else if (registrationMode === ProgramDeviceWizard.ControllerOnly) {
 
+            controllerStateMachine.controllerClassId = wizard.controllerData.class_id
+            controllerStateMachine.controllerOpn = wizard.controllerData.opn
+            controllerStateMachine.jlinkDevice = wizard.controllerData.mcu.jlink_device
+            controllerStateMachine.bootloaderStartAddress = wizard.controllerData.mcu.bootloader_start_address
+
+            var highestBootloaderIndex = findHighestBinary(wizard.controllerData.bootloader)
+            if (highestBootloaderIndex < 0) {
+                console.error(Logger.prtCategory,"no valid bootloader available", JSON.stringify(wizard.controllerData))
+                return
+            }
+
+            controllerStateMachine.bootloaderData = wizard.controllerData.bootloader[highestBootloaderIndex]
         }
     }
 
@@ -415,7 +506,8 @@ FocusScope {
     }
 
     function closeWizard() {
+        console.debug(Logger.prtCategory, "program device wizard is about to close")
+
         StackView.view.pop();
     }
-
 }
