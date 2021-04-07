@@ -2982,9 +2982,6 @@ function registerQmlAsLanguage() {
 /*
     External facing functions that will be used in conjunction with the Visual Editor
 */
-var err_flag = false
-var err_msg = ""
-
 function searchForUUID(uuid, err){
     const model = editor.getModel()
     const range = model.getFullModelRange()
