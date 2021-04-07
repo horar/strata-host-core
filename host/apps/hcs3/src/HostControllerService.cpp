@@ -620,7 +620,7 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
             break;
         }
 
-        programData.firmwareClassId = device->classId();
+        programData.firmwareClassId = device->classId(); // class_id becomes the new fw_class_id
         QString controllerClassId = device->controllerClassId();
         if (programData.firmwareClassId.isEmpty() || controllerClassId.isEmpty()) {
             errorString = "Platform has no classId or controllerClassId";
@@ -635,9 +635,9 @@ void HostControllerService::onCmdProgramController(const rapidjson::Value *paylo
         programData.firmwareUrl = storageManager_.getBaseUrl().resolved(firmware.first);
         programData.firmwareMD5 = firmware.second;
 
-        QString currentMD5;
-        if (device->applicationVer().isEmpty() == false) {
-            firmware = storageManager_.getFirmwareUriMd5(programData.firmwareClassId, controllerClassId, device->applicationVer());
+        QString currentMD5; // get md5 accorging to old fw_class_id and fw version
+        if (device->applicationVer().isEmpty() == false && device->firmwareClassId().isNull() == false && device->firmwareClassId().isEmpty() == false) {
+            firmware = storageManager_.getFirmwareUriMd5(device->firmwareClassId(), controllerClassId, device->applicationVer());
             currentMD5 = firmware.second;
         } else {
             qCInfo(logCategoryHcs) << device << "Device has probably no firmware.";
