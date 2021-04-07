@@ -7,12 +7,58 @@ LayoutSGGraph { // start_%1
         layoutInfo.yRows: 0
 
         // start_user_content
-        title: "Basic Graph"
+        title: "SGGraph"
         xMin: 0
         xMax: 1
         yMin: 0
         yMax: 1
         xTitle: "X Axis"
         yTitle: "Y Axis"
+        xGrid : true
+        yGrid : true
+        gridColor: "black"
+
+        Component.onCompleted: {
+                let movingCurve = createCurve("movingCurve")
+                movingCurve.color = "turquoise"
+                movingCurve.autoUpdate = false
+        }
+
         // end_user_content
     } // end_%1
+
+   Timer {
+           interval: 60
+           running: true
+           repeat: true
+
+          property real lastTime
+          onRunningChanged: {
+                        if (running){
+                        if(sgGraph_%1) {
+                            sgGraph_%1.curve(0).clear()
+                         }
+                   lastTime = Date.now()
+                  }
+          }
+
+          onTriggered: {
+                        let currentTime = Date.now()
+                        if(sgGraph_%1) {
+                            let curve = sgGraph_%1.curve(0)
+                            curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                             curve.append(0, Math.random())
+                             removeOutOfViewPoints()
+                             sgGraph_%1.update()
+                        }
+                   lastTime = currentTime
+           }
+
+           function removeOutOfViewPoints() {
+                // recursively clean up points that have moved out of view
+                 if (sgGraph_%1.curve(0).at(0).x > sgGraph_%1.xMax) {
+                          sgGraph_%1.curve(0).remove(0)
+                          removeOutOfViewPoints()
+                   }
+             }
+     }

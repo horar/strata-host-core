@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0
+import QtQml 2.12
 
 import "../../"
 
@@ -10,19 +11,49 @@ LayoutContainer {
     property bool panYEnabled: true
     property bool zoomXEnabled: true
     property bool zoomYEnabled: true
-    property real fontSizeMultiplier: 1.0
-    property alias mouseArea: circularGaugeObject.mouseArea
-    property alias xMin: circularGaugeObject.xMin
-    property alias xMax: circularGaugeObject.xMax
-    property alias yMin: circularGaugeObject.yMin
-    property alias yMax: circularGaugeObject.yMax
-    property alias xTitle: circularGaugeObject.xTitle
-    property alias yTitle: circularGaugeObject.yTitle
-    property alias title: circularGaugeObject.title
+
+    //Advance feature for tooltip.
+    property alias mouseArea: graphObject.mouseArea
+    property alias xMin: graphObject.xMin
+    property alias xMax: graphObject.xMax
+    property alias yMin: graphObject.yMin
+    property alias yMax: graphObject.yMax
+    property alias xTitle: graphObject.xTitle
+    property alias yTitle: graphObject.yTitle
+    property alias title: graphObject.title
+    property alias xGrid: graphObject.xGrid
+    property alias yGrid: graphObject.yGrid
+    property alias gridColor: graphObject.gridColor
+
+
+    function createCurve(name) {
+       return graphObject.createCurve(name)
+    }
+
+    function curve(index) {
+       return graphObject.curve(index)
+    }
+
+    function shiftXAxis(offset) {
+       return graphObject.shiftXAxis(offset)
+    }
+
+    function shiftYAxis(offset) {
+       return graphObject.shiftYAxis(offset)
+    }
+
+    function removeCurve(index) {
+       return graphObject.removeCurve(index)
+    }
+
+    function update() {
+       return graphObject.update()
+    }
+
 
 
     SGGraph {
-        id: circularGaugeObject
+        id: graphObject
         panXEnabled: panXEnabled
         panYEnabled : panYEnabled
         zoomXEnabled : zoomXEnabled

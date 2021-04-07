@@ -11,10 +11,11 @@ LayoutContainer {
     property color borderColorFocused: "#219647"
     property color boxColor: "white"
     property bool dividers: false
-    property real popupHeight: 300 * fontSizeMultiplier
-    property real fontSizeMultiplier: 1.0
-    property string placeholderText
-    property real modelWidth: comboBoxObject.modelWidth
+
+    property alias model: comboBoxObject.model
+    property alias currentIndex: comboBoxObject.currentIndex
+    property alias currentText: comboBoxObject.currentText
+
 
     // private members for advanced customization
     property alias iconImage: comboBoxObject.iconImage
@@ -24,8 +25,11 @@ LayoutContainer {
     property alias popupItem: comboBoxObject.popupItem
     property alias popupBackground: comboBoxObject.popupBackground
 
+    signal activated()
+
      SGComboBox {
          id: comboBoxObject
+         onActivated: parent.activated()
      }
 
 }

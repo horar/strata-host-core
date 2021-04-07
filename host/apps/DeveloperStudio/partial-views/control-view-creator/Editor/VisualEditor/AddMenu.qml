@@ -67,6 +67,10 @@ Popup {
                     text: "Graph"
                     controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Graph/SGGraph.txt"
                 }
+                ListElement {
+                    text: "Slider"
+                    controlUrl: ":/tech/strata/sgwidgets.1.0/cvc-layout/widgets/Slider/SGSlider.txt"
+                }
 
 
             }

@@ -82,5 +82,7 @@
         <file>cvc-layout/widgets/ComboBox/SGComboBox.txt</file>
         <file>cvc-layout/widgets/Graph/LayoutSGGraph.qml</file>
         <file>cvc-layout/widgets/Graph/SGGraph.txt</file>
+        <file>cvc-layout/widgets/Slider/LayoutSGSlider.qml</file>
+        <file>cvc-layout/widgets/Slider/SGSlider.txt</file>
     </qresource>
 </RCC>

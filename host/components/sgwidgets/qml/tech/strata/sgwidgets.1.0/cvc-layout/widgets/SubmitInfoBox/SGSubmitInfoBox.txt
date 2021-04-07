@@ -8,8 +8,12 @@ LayoutSGSubmitInfoBox { // start_%1
 
         // start_user_content
         placeholderText : "0-100"
+        validator: IntValidator {    // Default: no input validator - you may assign your own configured DoubleValidator, IntValidator or RegExpValidator
+            bottom: 0
+            top: 100
+        }
         onAccepted: {
-            console.log("Accepted:", objectName, layoutInfo.uuid)
+            console.log("Accepted:",text,layoutInfo.uuid)
         }
         // end_user_content
     } // end_%1

@@ -2,7 +2,7 @@ LayoutSGCircularGauge { // start_%1
         id: sgCircularGauge_%1
         layoutInfo.uuid: "%1"
         layoutInfo.columnsWide: 10
-        layoutInfo.rowsTall: 6
+        layoutInfo.rowsTall: 10
         layoutInfo.xColumns: 0
         layoutInfo.yRows: 0
 
