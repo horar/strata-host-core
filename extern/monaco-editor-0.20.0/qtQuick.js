@@ -28,6 +28,14 @@ var fullRange = null;
 
 var propRange = {};
 
+var err_flag = false
+var err_msg = ""
+
+const ERROR_TYPES = {
+    UUID_ERROR: "The uuid search failed to find and select specified widget",
+    PARENT_ERROR: "This parent is not recognized, either it needs to be imported or defined",
+    GENERIC_ERROR: "There is an error within the monaco editor that is causing a failure in suggestions"
+}
 
 const qtQuick = [
     {
@@ -2993,10 +3001,10 @@ function searchForUUID(uuid, err){
 
 function consoleErrorMessage(type){
     switch(type){
-        case "uuid_search": err_msg = "The uuid search failed to find and select specified widget"
+        case "uuid_search": err_msg = ERROR_TYPES.UUID_ERROR
         break;
-        case "parent_search": err_msg = "This parent is not recognized, either it needs to be imported or defined"
+        case "parent_search": err_msg = ERROR_TYPES.PARENT_ERROR
         break;
-        default: err_msg = "There is an error within the monaco editor that is causing a failure in suggestions"
+        default: err_msg = ERROR_TYPES.GENERIC_ERROR
     }
 }
