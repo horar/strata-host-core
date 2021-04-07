@@ -662,6 +662,7 @@ function registerQmlAsLanguage() {
                     var prevCheck = model.findPreviousMatch("{", { lineNumber: getId.range.startLineNumber, column: getId.range.startcolumn })
                     if (!(nextCheck.range.startLineNumber === bottomOfFile.range.startLineNumber && prevCheck.range.startLineNumber === topOfFile.range.startLineNumber)) {
                         getTypeID(model)
+                        getPropertyType(model)
                     }
                 }
                 if ((position.lineNumber < topOfFile.range.startLineNumber || position.lineNumber > bottomOfFile.range.startLineNumber)) {
@@ -770,7 +771,7 @@ function registerQmlAsLanguage() {
             var prevId = prevIdLine.replace("\t", "").split(":")[1].trim()
 
             var getIdType = model.findPreviousMatch("{", { lineNumber: getPrevIDPosition.range.startLineNumber, column: getPrevIDPosition.range.startColumn })
-            position = { lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn }
+            position = { lineNumber: getPrevIDPosition.range.startLineNumber, column: getPrevIDPosition.range.startColumn }
             var content = model.getValueInRange({ startLineNumber: getIdType.range.startLineNumber, startColumn: 0, endLineNumber: getIdType.range.startLineNumber, endColumn: getIdType.range.endColumn })
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
             addCustomIdAndTypes(prevId, position, type)
@@ -860,6 +861,9 @@ function registerQmlAsLanguage() {
         var prevNextBracket = previousBracket
         var nextPosition = {lineNumber: prevParentBracket.range.startLineNumber, column: previousBracket.range.startColumn}
         var nextProperty = model.findNextMatch("property",nextPosition)
+        if(nextProperty === null){
+            return;
+        }
         nextPosition = {lineNumber: nextProperty.range.startLineNumber, column: nextProperty.range.startColumn}
         while(previousBracket.range.startLineNumber === prevNextBracket.range.startLineNumber){
             if(nextProperty === null){
@@ -913,7 +917,7 @@ function registerQmlAsLanguage() {
                 var getPropertyType = editor.getModel().findPreviousMatch("{",position,false,false)
                 var content = editor.getModel().getLineContent({lineNumber: getPropertyType.range.startLineNumber, column: getPropertyType.range.startColumn})
                 var type = content.replace("\t","").split(/\{|\t/)[0].trim()
-                addCustomProperties(getPropertyType.range.startLineNumber,type,word)
+                addCustomProperties(event.changes[0].range.startLineNumber,type,word)
             }
         }
     })
