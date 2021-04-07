@@ -88,7 +88,7 @@ CommandResult BaseDeviceCommand::onTimeout() {
 
 CommandResult BaseDeviceCommand::onReject() {
     // Default result is 'Reject' - command was rejected.
-    // If reject is not a problem, reimplement this method and return to 'Done'.
+    // If reject is not a problem, reimplement this method and return 'Done'.
     return CommandResult::Reject;
 }
 
@@ -152,7 +152,7 @@ void BaseDeviceCommand::handleDeviceResponse(const QByteArray data)
 
                     const QByteArray status = CommandValidator::notificationStatus(doc);
                     if (status.isEmpty() == false) {
-                        qCInfo(logCategoryDeviceCommand) << device_ << "Command '" << cmdName_ << "' retruned '" << status << "'.";
+                        qCInfo(logCategoryDeviceCommand) << device_ << "Command '" << cmdName_ << "' returned '" << status << "'.";
                     }
                 }
                 finishCommand(result);
@@ -188,9 +188,13 @@ void BaseDeviceCommand::handleDeviceError(device::Device::ErrorCode errCode, QSt
 
 void BaseDeviceCommand::finishCommand(CommandResult result)
 {
-    if ((result != CommandResult::Repeat) && deviceSignalsConnected_) {
+    // If result is CommandResult::RepeatAndWait it means that command was successfully finished
+    // (ACK and notification are processed) and it is expected to be sent again with new data,
+    // so there is no need to disconnect slots (little optimization).
+    if ((result != CommandResult::RepeatAndWait) && deviceSignalsConnected_) {
         disconnect(device_.get(), &Device::msgFromDevice, this, &BaseDeviceCommand::handleDeviceResponse);
         disconnect(device_.get(), &Device::deviceError, this, &BaseDeviceCommand::handleDeviceError);
+        deviceSignalsConnected_ = false;
     }
     emit finished(result, status_);
 }
