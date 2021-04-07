@@ -2982,7 +2982,7 @@ function registerQmlAsLanguage() {
 /*
     External facing functions that will be used in conjunction with the Visual Editor
 */
-function searchForUUID(uuid, err){
+function searchForUUID(uuid){
     const model = editor.getModel()
     const range = model.getFullModelRange()
     const uuidMatch = model.findNextMatch(uuid,{lineNumber: range.startLineNumber, column: range.startColumn})
