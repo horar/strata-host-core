@@ -44,9 +44,10 @@
                 editor.layout()
             });
 
-            link.goToUUID.connect(function (uuid, err){
+            link.goToUUID.connect(function (uuid){
                 searchForUUID(uuid)
                 link.checkForErrors(err_flag,err_msg)
+                err_flag = false
             })
 
             link.undo.connect(function () {

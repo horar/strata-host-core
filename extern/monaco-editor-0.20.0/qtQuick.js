@@ -2982,7 +2982,7 @@ function registerQmlAsLanguage() {
 /*
     External facing functions that will be used in conjunction with the Visual Editor
 */
-function searchForUUID(uuid, err){
+function searchForUUID(uuid){
     const model = editor.getModel()
     const range = model.getFullModelRange()
     const uuidMatch = model.findNextMatch(uuid,{lineNumber: range.startLineNumber, column: range.startColumn})
@@ -2992,16 +2992,6 @@ function searchForUUID(uuid, err){
         editor.setSelection({startLineNumber: uuidMatch.range.startLineNumber, startColumn: 0, endColumn: endUUidMatch.range.endColumn, endLineNumber: endUUidMatch.range.startLineNumber})
     } else {
         err_flag = true
-        consoleErrorMessage("uuid_search")
-    }
-}
-
-function consoleErrorMessage(type){
-    switch(type){
-        case "uuid_search": err_msg = ERROR_TYPES.UUID_ERROR
-        break;
-        case "parent_search": err_msg = ERROR_TYPES.PARENT_ERROR
-        break;
-        default: err_msg = ERROR_TYPES.GENERIC_ERROR
+        err_msg = ERROR_TYPES.UUID_ERROR
     }
 }
