@@ -12,9 +12,8 @@ import "components/"
 import "../general"
 import "../"
 
-Rectangle {
+Item {
     id: createNewContainer
-    color: "#ccc"
 
     property alias templateButtonGroup: templateButtonGroup
     property var openProjectContainer: openControlView.projectContainer
@@ -77,10 +76,9 @@ Rectangle {
             SGControlViewButton {
                 Layout.preferredHeight: 35
                 Layout.preferredWidth: 150
-                id: browseButton
                 text: "Browse"
 
-                function onClicked() {
+                onClicked: {
                     fileDialog.open()
                 }
             }
@@ -92,18 +90,27 @@ Rectangle {
                 border.color: "#444"
                 border.width: 0.5
 
-                SGTextInput {
+
+                SGText {
                     id: fileOutput
-
-                    anchors.fill: parent
                     color: "#333"
+                    anchors {
+                        margins: 8
+                        fill: parent
+                    }
+                    elide: Text.ElideLeft
                     verticalAlignment: Text.AlignVCenter
-                    selectByMouse: true
-                    leftPadding: 10
+                }
 
-                    readonly property string defaultText: "Select a folder for your project..."
-                    text: defaultText
-                    contextMenuEnabled: true
+                SGText {
+                    visible: fileOutput.text === ""
+                    text: "Select a directory..."
+                    color: "#aaa"
+                    anchors {
+                        margins: 8
+                        fill: parent
+                    }
+                    verticalAlignment: Text.AlignVCenter
                 }
             }
         }
@@ -229,7 +236,7 @@ Rectangle {
 
                 property bool projectNameValid: projectName.text.match(/^[a-zA-Z0-9_.-]*$/)
 
-                function onClicked() {
+                onClicked: {
                     if (enabled) {
                         let unsavedFileCount = editor.openFilesModel.getUnsavedCount()
                         if (unsavedFileCount > 0) {
@@ -241,7 +248,7 @@ Rectangle {
                         } else {
                             if (createControlView(projectName.text, fileOutput.text)) {
                                 projectName.text = ""
-                                fileOutput.text = fileOutput.defaultText
+                                fileOutput.text = ""
                             }
                         }
                     }
@@ -267,7 +274,7 @@ Rectangle {
                         }
                         if (fileOutput.text == "" || fileOutput.text == fileOutput.defaultText) {
                             result += (result === "" ? "" : "<br>")
-                            result += "Project directory is empty"
+                            result += "Project directory is not valid"
                         }
                         return result
                     }

@@ -459,6 +459,9 @@ const qtTypeJson = {
         },
         "Component": {
             "properties": {
+                "delegate": {
+                    "meta_properties": []
+                },
                 "progress": {
                     "meta_properties": []
                 },
@@ -466,6 +469,9 @@ const qtTypeJson = {
                     "meta_properties": []
                 },
                 "url": {
+                    "meta_properties": []
+                },
+                "id": {
                     "meta_properties": []
                 }
             },
@@ -479,7 +485,7 @@ const qtTypeJson = {
                 "destruction()",
             ],
             "inherits": "",
-            "source": "QtQml",
+            "source": "",
             "nonInstantiable": false,
         },
         "Connections": {
