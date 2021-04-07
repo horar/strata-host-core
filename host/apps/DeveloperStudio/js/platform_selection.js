@@ -220,6 +220,7 @@ function parseConnectedPlatforms (connected_platform_list_json) {
                 if(
                         previouslyConnected[previousIndex].class_id !== platform.class_id ||
                         previouslyConnected[previousIndex].controller_class_id !== platform.controller_class_id ||
+                        previouslyConnected[previousIndex].fw_class_id !== platform.fw_class_id ||
                         previouslyConnected[previousIndex].platform_id !== platform.platform_id ||
                         previouslyConnected[previousIndex].controller_platform_id !== platform.controller_platform_id) {
 
