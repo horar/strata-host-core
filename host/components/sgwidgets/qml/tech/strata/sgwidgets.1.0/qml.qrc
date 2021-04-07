@@ -84,5 +84,9 @@
         <file>cvc-layout/widgets/Graph/SGGraph.txt</file>
         <file>cvc-layout/widgets/Slider/LayoutSGSlider.qml</file>
         <file>cvc-layout/widgets/Slider/SGSlider.txt</file>
+        <file>cvc-layout/widgets/RadioButton/LayoutSGRadioButton.qml</file>
+        <file>cvc-layout/widgets/RadioButton/SGRadioButton.txt</file>
+        <file>cvc-layout/widgets/TextField/LayoutSGTextField.qml</file>
+        <file>cvc-layout/widgets/TextField/SGTextField.txt</file>
     </qresource>
 </RCC>
