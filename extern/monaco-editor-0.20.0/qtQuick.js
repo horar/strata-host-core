@@ -22,9 +22,9 @@ var fullRange = null;
 var qtImports = [];
 
 var propRange = {};
-var ids = []
 
 var matchingBrackets = []
+var ids = []
 
 // return an object from a string with definable properties
 function createDynamicProperty(property, isFunction = false) {
@@ -655,7 +655,11 @@ function registerQmlAsLanguage() {
                     }
                 }
                 if (active.includes(":")) {
-                    return { suggestions: Object.values(functionSuggestions) }
+                    var idsSuggestions = []
+                    for(var i = 0; i < ids.length; i++){
+                        idsSuggestions.push(functionSuggestions[ids[i]])
+                    }
+                    return { suggestions: idsSuggestions }
                 }
                 var fetchedSuggestions = searchForChildBrackets(model, position)
                 return { suggestions: fetchedSuggestions }
@@ -738,8 +742,8 @@ function registerQmlAsLanguage() {
             position = { lineNumber: getIdType.range.startLineNumber, column: getIdType.range.startColumn }
             var content = model.getValueInRange({ startLineNumber: getIdType.range.startLineNumber, startColumn: 0, endLineNumber: getIdType.range.startLineNumber, endColumn: getIdType.range.endColumn })
             var type = content.replace("\t", "").split(/\{|\t/)[0].trim()
-                ids.push(prevId)
             addCustomIdAndTypes(prevId, position, type)
+            ids.push(prevId)
         }
         searchedIds = true
     }
@@ -748,7 +752,6 @@ function registerQmlAsLanguage() {
         var content = model.getLineContent(propRange.startLineNumber)
         var splitContent = content.replace("\t", "").split(/\{|\t/)
         var bracketWord = splitContent[0].trim()
-
         if (qtObjectKeyValues.hasOwnProperty(bracketWord)) {
             convertStrArrayToObjArray(bracketWord, qtObjectKeyValues[bracketWord].properties, qtObjectKeyValues[bracketWord].flag, qtObjectKeyValues[bracketWord].isId, bracketWord)
             if (currentItems[bracketWord] === undefined) {
@@ -761,15 +764,11 @@ function registerQmlAsLanguage() {
             return Object.values(functionSuggestions)
         } else {
             if (bracketWord.includes(":")) {
-                var propertyItem = bracketWord.replace("\t", "").split(":")[1].trim()
-                if (qtObjectKeyValues.hasOwnProperty(propertyItem)) {
-                    convertStrArrayToObjArray(propertyItem, qtObjectKeyValues[propertyItem].properties, qtObjectKeyValues[propertyItem].flag, qtObjectKeyValues[propertyItem].isId, propertyItem)
-                    if (currentItems[propertyItem] === undefined) {
-                        currentItems[propertyItem] = {}
-                    }
-                    currentItems[propertyItem][propRange] = qtObjectPropertyValues[propertyItem]
-                    return currentItems[propertyItem][propRange]
+                var idsSuggestions = []
+                for(var i = 0; i < ids.length; i++){
+                    idsSuggestions.push(functionSuggestions[ids[i]])
                 }
+                    return idsSuggestions
             }
             const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber - 1, column: propRange.startColumn })
             if (qtObjectMetaPropertyValues.hasOwnProperty(prevParent)) {
@@ -783,9 +782,6 @@ function registerQmlAsLanguage() {
                 const prevParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber - 1, column: propRange.startColumn })
                 if (prevParent.includes("function") || prevParent.substring(0, 2) === "on" || prevParent.includes("if")) {
                     return Object.values(functionSuggestions)
-                }
-                if (bracketWord.includes(":")) {
-                    return ids
                 }
                 const newParent = findPreviousBracketParent(model, { lineNumber: propRange.startLineNumber, column: propRange.startColumn })
                 if (qtObjectKeyValues.hasOwnProperty(newParent)) {
