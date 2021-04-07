@@ -359,7 +359,6 @@ ColumnLayout {
             }
         }
 
-
         function refreshEditorWithExternalChanges() {
             reset = true
             fileText = openFile()
