@@ -86,8 +86,10 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
     clientMessage.clientID = clientId;
     ApiVersion apiVersion;
 
+    Client client = clientsController_->getClient(clientMessage.clientID);
+
     // Check if registered client
-    if (false == clientsController_->isRegisteredClient(clientId)) {
+    if (true == client.getClientID().isEmpty()) {
         qCDebug(logCategoryStrataServer) << "client not registered";
 
         // Find out the client api version.
@@ -119,8 +121,8 @@ void StrataServer::newClientMessage(const QByteArray &clientId, const QByteArray
         qCInfo(logCategoryStrataServer) << "Client registered successfully";
 
     } else {
-        // Returning client. get the api from the client controller.
-        apiVersion = clientsController_->getClientApiVersion(clientId);
+        // Client already registered
+        apiVersion = client.getApiVersion();
     }
 
     if (apiVersion == ApiVersion::v2) {
