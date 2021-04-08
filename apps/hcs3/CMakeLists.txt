@@ -70,7 +70,7 @@ endif()
 generate_app_version(GITTAG_PREFIX "hcs_" MACBUNDLE OFF)
 generate_app_build_timestamp()
 
-set(HCS_CREDENTIALS_LOCATION ${CMAKE_SOURCE_DIR}/assets/config/hcs/credentials)
+set(HCS_CREDENTIALS_LOCATION ${CMAKE_SOURCE_DIR}/internal/assets/config/hcs/credentials)
 
 if(NOT APPS_CORESW_HCS_CREDENTIALS)
     set(APPS_CORESW_HCS_CREDENTIALS qa.json CACHE STRING "Desired HCS configuration file with credentials." FORCE)
