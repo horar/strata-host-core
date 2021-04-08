@@ -119,7 +119,7 @@ public slots:
             const QJsonArray &firmwareList,
             const QString &error);
 
-    void parseMessageFromClient(QByteArray message, QByteArray clientId);
+    void parseMessageFromClient(const QByteArray &message, const QByteArray &clientId);
 
 private:
     void handleMessage(const PlatformMessage& msg);
