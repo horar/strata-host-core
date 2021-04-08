@@ -611,6 +611,7 @@ FocusScope {
             return
         } else {
             if (dataObject.hasOwnProperty("controller_type") === false) {
+                console.error(Logger.prtCategory, "controller_type is missing")
                 stateMachine.findPlatformReplyNotValid()
                 return
             }
