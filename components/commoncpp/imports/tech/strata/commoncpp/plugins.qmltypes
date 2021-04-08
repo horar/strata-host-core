@@ -918,6 +918,11 @@ Module {
             name: "copyToClipboard"
             Parameter { name: "text"; type: "string" }
         }
+        Method {
+            name: "keySequenceNativeText"
+            type: "string"
+            Parameter { name: "sequence"; type: "string" }
+        }
     }
     Component {
         name: "SGVersionUtils"
