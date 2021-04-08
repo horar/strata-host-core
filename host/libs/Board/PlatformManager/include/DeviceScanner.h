@@ -39,7 +39,7 @@ namespace strata::device::scanner {
          * Get scanner type.
          * @return Type of scanner
          */
-        Device::Type scannerType() const;
+        virtual Device::Type scannerType() const final;
 
     signals:
         /**
