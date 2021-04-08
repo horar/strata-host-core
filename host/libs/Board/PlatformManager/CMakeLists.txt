@@ -10,16 +10,24 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME}
     src/PlatformManager.cpp
+    src/DeviceScanner.cpp
     src/logging/LoggingQtCategories.cpp
+    src/Serial/SerialDeviceScanner.cpp
+    src/Mock/MockDeviceScanner.cpp
 
     #AUTOMOC wont find header if it is in different directory
     include/PlatformManager.h
+    include/DeviceScanner.h
+    include/Serial/SerialDeviceScanner.h
+    include/Mock/MockDeviceScanner.h
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Serial
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Mock
 )
 
 target_link_libraries(${PROJECT_NAME}
