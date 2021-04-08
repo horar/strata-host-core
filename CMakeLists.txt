@@ -55,6 +55,10 @@ file(MAKE_DIRECTORY "${CMAKE_VIEWS_OUTPUT_DIRECTORY}")
 set(CMAKE_PLUGINS_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins")
 file(MAKE_DIRECTORY "${CMAKE_PLUGINS_OUTPUT_DIRECTORY}")
 
+option(BUILD_TESTING "Build the testing tree" ON)
+add_feature_info(BUILD_TESTING BUILD_TESTING "Build the testing tree.")
+enable_testing()
+
 if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/internal")
     add_subdirectory(internal)
 endif()
