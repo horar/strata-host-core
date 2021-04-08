@@ -476,13 +476,11 @@ void HostControllerService::processCmdUpdateFirmware(const QJsonObject &payload,
     FirmwareUpdateController::UpdateFirmwareData updateData;
     updateData.clientId = clientId;
 
-    QByteArray deviceId = payload.value("device_id").toVariant().toByteArray();
-    if (deviceId.isEmpty()) {
+    updateData.deviceId = payload.value("device_id").toVariant().toByteArray();
+    if (updateData.deviceId.isEmpty()) {
         qCWarning(logCategoryHcs) << "device_id attribute is empty or has bad format";
         return;
     }
-
-    updateData.deviceId = deviceId;
 
     QString path = payload.value("path").toString();
     if (path.isEmpty()) {
@@ -522,13 +520,11 @@ void HostControllerService::processCmdProgramController(const QJsonObject &paylo
     FirmwareUpdateController::ProgramControllerData programData;
     programData.clientId = clientId;
 
-    QByteArray deviceId = payload.value("device_id").toVariant().toByteArray();
-    if (deviceId.isEmpty()) {
+    programData.deviceId = payload.value("device_id").toVariant().toByteArray();
+    if (programData.deviceId.isEmpty()) {
         qCWarning(logCategoryHcs) << "device_id attribute is empty or has bad format";
         return;
     }
-
-    programData.deviceId = deviceId;
 
     QString errorString;
     do {
