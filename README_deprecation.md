@@ -33,13 +33,12 @@ Checkout Hello Strata page for more details: https://confluence.onsemi.com/pages
 * deployment/strata/patches/usb-pd-requestedId-retry-patch.patch
 * deployment/strata/usbc-100w-installer.sh
 
-#TODO: update tag and commit id right before merge to get the latest commit
 * To retrieve spyglass old structure with the deleted files and directories, use one of the following methods:
   
   * Using git tag:
 
-    ```git checkout ```
+    ```git checkout old_structure```
   
   * Alternatively using git commit id:
 
-    ```git checkout ```
+    ```git checkout 66de862d6186e936f42fe8b0b089a7e7723ff18d```
