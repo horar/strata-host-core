@@ -333,7 +333,7 @@ function registerQmlAsLanguage() {
 
         //Handles the : after issue
         var line = model.getLineContent(position.lineNumber)
-        if(line.includes(":") && line.substring(0,2) !== "on"){
+        if(line.includes(":") && line.substring(0,2) !== "on" && !line.includes("property")){
             var idsSuggestions = []
             for(var i = 0; i < ids.length; i++){
                 idsSuggestions.push(functionSuggestions[ids[i]])
